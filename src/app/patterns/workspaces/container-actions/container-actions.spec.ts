@@ -5,11 +5,12 @@ import { TestBed } from '@angular/core/testing';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../api/workspaces/client/client.gen';
 import type { SlotDetail } from '$core/workspaces/agents.consumes';
+import { SLOT_AGENTS } from '$core/workspaces/agents.operations';
 import {
   workspacesGoldenMaster,
   workspacesGoldenMasters,
 } from '../../../../testing/golden-masters';
-import { agentName, ContainerActions, type HostedAgent } from './container-actions';
+import { agentName, ContainerActions, type HostedRead } from './container-actions';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
@@ -21,22 +22,27 @@ const ID = Number(
   workspacesGoldenMasters.operation(STOPPED, 'ensureWorkspaceContainer').params['workspaceId'],
 );
 const SLOT = `/workspaces/api/workspaces/${ID}`;
-/** The slot's agents, as qits-workspaces recorded them for "a workspace slot hosting agents". */
-const HOSTED: readonly HostedAgent[] = workspacesGoldenMaster(
-  'a workspace slot hosting agents',
-  'listWorkspaceAgents',
-).agents;
+/**
+ * The page's read of the slot's agents (`SLOT_AGENTS`), answered as qits-workspaces recorded them
+ * for "a workspace slot hosting agents".
+ */
+const AGENTS = workspacesGoldenMaster('a workspace slot hosting agents', 'listWorkspaceAgents');
+const HOSTED = {
+  operation: SLOT_AGENTS,
+  hasValue: () => true,
+  value: signal(AGENTS),
+} as unknown as HostedRead;
 
 @Component({
   imports: [ContainerActions],
   template: `<app-container-actions
     [slot]="slot()"
-    [agents]="agents"
+    [hosted]="hosted"
     (changed)="changed = changed + 1"
   />`,
 })
 class Host {
-  readonly agents = HOSTED;
+  readonly hosted = HOSTED;
   readonly slot = signal<Pick<SlotDetail, 'id' | 'runtimeStatus'>>({
     id: ID,
     runtimeStatus: 'STOPPED',
@@ -132,7 +138,7 @@ describe('ContainerActions', () => {
 
   it('names an agent it does not list by its id', () => {
     expect(agentName(undefined, '0123abcd-0000-4000-8000-000000000000')).toBe('agent 0123abcd');
-    expect(agentName(HOSTED[0], HOSTED[0].agentId ?? '')).toBe('contract-00000001-1');
+    expect(agentName(AGENTS.agents[0], AGENTS.agents[0].agentId ?? '')).toBe('contract-00000001-1');
   });
 
   it('shows a refused start in the service’s words, and still reads the slot again', async () => {

@@ -18,12 +18,19 @@ import {
   RESTART_AGENT,
   STOP_AGENT,
 } from './agent-actions.consumes';
-import { AgentActionsStore } from './agent-actions.store';
+import {
+  AGENT_DISCARD,
+  AGENT_INTERRUPT,
+  AGENT_RESTART,
+  AGENT_STOP,
+} from './agent-actions.operations';
+import { refusalOf } from './refusals';
 
 /**
  * qits-landing-app's pact with qits-workspaces-service, the part the agent page's writes make
- * (epic qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside the other
- * stores' parts:
+ * (epic qits-1230) through `agent-actions.operations.ts` (qits-2146: moved here from
+ * `agent-actions.store.pact.spec.ts` with `AgentActionsStore`, unchanged), in
+ * `pacts/qits-landing-app_qits-workspaces-service.json` beside the other parts:
  *
  * - `discardAgent`: "an agent waiting for a workspace slot" is removed; "an agent whose workspace
  *   daemon is not connected" (409 `AGENT_DAEMON_UNREACHABLE`) and "an agent with leftover work"
@@ -35,7 +42,7 @@ import { AgentActionsStore } from './agent-actions.store';
  *   gets ESC; `stopAgent`, "an agent working on a ticket" is STOPPED; `restartAgent`, the agent of
  *   "a stopped workspace slot" is handed back to the scheduler (YIELDED).
  *
- * A slot's container verbs are `container-actions.store`'s part.
+ * A slot's container verbs are `container-actions.operations`' part.
  *
  * Ids in a path are the states' params, sent as provider-state expressions.
  */
@@ -72,8 +79,14 @@ const given = (
     consumes,
   });
 
-/** The store, calling the mock server. */
-function storeAt(url: string) {
+/**
+ * Runs an operation's `fetch` against the mock server at `url`, in an injection context, and says
+ * what it came to as the pages read it: the answer, or the refusal (`refusalOf`).
+ */
+async function at<T>(
+  url: string,
+  call: () => Promise<{ data?: T; error?: unknown; response?: { status: number } }>,
+) {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -82,8 +95,14 @@ function storeAt(url: string) {
     ],
   });
   workspacesClient.setConfig({ baseUrl: url });
-  return TestBed.inject(AgentActionsStore);
+  const { data, error, response } = await TestBed.runInInjectionContext(call);
+  return error !== undefined || data === undefined
+    ? refusalOf(error, response)
+    : ({ ok: true, value: data } as const);
 }
+
+/** The agent `id`'s path, as the operations take it. */
+const agent = (id: string) => ({ path: { id } });
 
 const params = (state: string, operationId: string) => masters.operation(state, operationId).params;
 
@@ -107,23 +126,29 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
 
   it('discard-agent: an agent waiting for a slot is removed', () =>
     given(WAITING, 'discardAgent', 'discard-agent', DISCARD_AGENT).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.discardAgent(params(WAITING, 'discardAgent')['agentId']);
+      const id = params(WAITING, 'discardAgent')['agentId'];
+      const outcome = await at(server.url, () =>
+        AGENT_DISCARD.fetch({ ...agent(id), body: { force: false } }),
+      );
       expect(outcome.ok && outcome.value.state).toBe('REMOVED');
     }));
 
   it('discard-agent: an agent whose daemon does not answer is refused, with the reason', () =>
     given(UNREACHABLE, 'discardAgent', 'discard-agent', REFUSAL).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.discardAgent(params(UNREACHABLE, 'discardAgent')['agentId']);
+      const id = params(UNREACHABLE, 'discardAgent')['agentId'];
+      const outcome = await at(server.url, () =>
+        AGENT_DISCARD.fetch({ ...agent(id), body: { force: false } }),
+      );
       expect(outcome).toMatchObject({ ok: false, status: 409, code: 'AGENT_DAEMON_UNREACHABLE' });
       expect(!outcome.ok && outcome.message).toBeTruthy();
     }));
 
   it('discard-agent: an agent with leftover work is refused, with the reason', () =>
     given(LEFTOVER, 'discardAgent', 'discard-agent', REFUSAL).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.discardAgent(params(LEFTOVER, 'discardAgent')['agentId']);
+      const id = params(LEFTOVER, 'discardAgent')['agentId'];
+      const outcome = await at(server.url, () =>
+        AGENT_DISCARD.fetch({ ...agent(id), body: { force: false } }),
+      );
       expect(outcome).toMatchObject({ ok: false, status: 409, code: 'AGENT_HAS_LEFTOVER_WORK' });
       expect(!outcome.ok && outcome.message).toBeTruthy();
     }));
@@ -131,24 +156,24 @@ describe('qits-landing-app → qits-workspaces-service pact: the workspace pages
   it('interrupt-agent: an agent in the middle of a turn gets ESC', () =>
     given(MID_TURN, 'interruptAgent', 'interrupt-agent', INTERRUPT_AGENT).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const outcome = await store.interruptAgent(params(MID_TURN, 'interruptAgent')['agentId']);
+        const id = params(MID_TURN, 'interruptAgent')['agentId'];
+        const outcome = await at(server.url, () => AGENT_INTERRUPT.fetch(agent(id)));
         expect(outcome.ok && outcome.value.interrupted).toBe(true);
       },
     ));
 
   it('stop-agent: an agent working on a ticket is stopped', () =>
     given(WORKING, 'stopAgent', 'stop-agent', STOP_AGENT).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.stopAgent(params(WORKING, 'stopAgent')['agentId']);
+      const id = params(WORKING, 'stopAgent')['agentId'];
+      const outcome = await at(server.url, () => AGENT_STOP.fetch(agent(id)));
       expect(outcome.ok && outcome.value.runState).toBe('STOPPED');
     }));
 
   it('restart-agent: a stopped slot’s agent is handed back to the scheduler', () =>
     given(STOPPED_SLOT, 'restartAgent', 'restart-agent', RESTART_AGENT).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const outcome = await store.restartAgent(params(STOPPED_SLOT, 'restartAgent')['agentId']);
+        const id = params(STOPPED_SLOT, 'restartAgent')['agentId'];
+        const outcome = await at(server.url, () => AGENT_RESTART.fetch(agent(id)));
         expect(outcome.ok && outcome.value.runState).toBe('YIELDED');
       },
     ));

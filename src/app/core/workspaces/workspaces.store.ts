@@ -53,7 +53,7 @@ interface WorkspacesState {
  * the events name no project, and an item that just got an agent is not one the store knows yet)
  * → `listOpenWorkspaces` and `listAgents?state=ACTIVE`, each only once it was read (`follow`). An
  * item's history is the work item page's to follow: the same events naming its `workId` →
- * `refreshHistory` (`work-item.page.ts`, through `AgentsStore.follow`). No longer
+ * `refreshHistory` (`work-item.page.ts`, through `refreshOn`). No longer
  * `EntityTransitioned`: a work item's move changes nothing qits-workspaces holds; the agent events
  * that follow it do. Not announced: an agent's creation (no `AgentCreated`), so a queued agent's
  * item reaches the In Progress tab only once the agent is placed.

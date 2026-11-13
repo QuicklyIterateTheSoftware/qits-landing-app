@@ -22,7 +22,7 @@ import {
   LIST_WRAPPER_AGENTS,
   LIST_WRAPPER_SLOTS,
 } from '$core/workspaces/agents.operations';
-import { notRemoved, ofProject } from '$core/workspaces/agents.store';
+import { notRemoved, ofProject } from '$core/workspaces/agent-lists';
 import {
   aboutProjectAgents,
   AGENT_STATUS_EVENTS,
@@ -74,13 +74,13 @@ function loadState(read: { status(): string; hasValue(): boolean }): LoadState {
  * (`QITS_DOMAIN_EVENTS`, `DomainEvents`), debounced 1 s (`WORKSPACE_REFRESH_DEBOUNCE_MS`, the
  * library's `REFRESH_DEBOUNCE_MS` too):
  * - `AGENT_STATUS_EVENTS` about the project (`aboutProjectAgents`: its `projectId`, else an agent or
- *   a repository of the agents listed) → `activeAgents`, as `AgentsStore.followProject` reads the
- *   agents menu's;
+ *   a repository of the agents listed) → `activeAgents`, as `ProjectActiveAgents` reads the agents
+ *   menu's;
  * - `WORKSPACE_EVENTS` naming the wrapper (`repositoryId`) or a listed wrapper agent's `agentId`
  *   (`concerns`) → `slots` and `wrapperAgents`;
  * - `SCMPublishCommit` to the wrapper's main branch (`movesWrapper`) → `repositories`, as
  *   `RepositoriesStore.follow` reads the Repositories page's.
- * Not announced (see `AgentsStore`): a queued agent's creation, a slot's runtime leaving RUNNING.
+ * Not announced: a queued agent's creation, a slot's runtime leaving RUNNING.
  */
 @Component({
   selector: 'app-project-agents-page',

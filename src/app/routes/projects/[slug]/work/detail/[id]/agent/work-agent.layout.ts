@@ -9,18 +9,19 @@ import {
   untracked,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { exit, outcomes } from '@qits/angular';
+import { exit, outcomes, qitsResource } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { AGENT_TABS } from '$core/workspaces/agent-tabs';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import { ITEM_AGENTS } from '$core/workspaces/agents.operations';
 import { Spinner } from '$ui/components/spinner/spinner';
 
 /**
  * Where a work item's agent used to live, `/projects/<slug>/work/detail/<qualified id>/agent` and
  * its tabs (`…/agent/chat`, `/files`, `/terminal`), now that an agent's page is addressed by the
  * agent (`/projects/<slug>/agents/<agent id>`, epic qits-1681). It finds the item's ACTIVE agent
- * (`AgentsStore.loadItem`, by the item's id from `SelectedWork`) and goes to that agent's page on
+ * (its own `qitsResource` over `ITEM_AGENTS`, qits-2146: `listAgents?workId=` by the item's id
+ * from `SelectedWork`) and goes to that agent's page on
  * the same tab, or to the item's page when it has none; either way replacing the old address in
  * the history, so Back skips it. The work item pages' Workspace links still lead here: they know
  * the item, not its agent.
@@ -46,8 +47,8 @@ import { Spinner } from '$ui/components/spinner/spinner';
 export class WorkAgentLayout {
   private readonly selected = inject(SelectedProject);
   private readonly work = inject(SelectedWork);
-  private readonly store = inject(AgentsStore);
   private readonly route = inject(ActivatedRoute);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   private readonly following = outcomes(
     'follow-work-item-agent',
@@ -74,6 +75,12 @@ export class WorkAgentLayout {
     () => this.work.entries().find((e) => e.qualifiedId === this.qualifiedId)?.id,
   );
 
+  /** The item's agents, in the browser only, once its id is known. */
+  private readonly itemAgents = qitsResource(ITEM_AGENTS, () => {
+    const workId = this.workId();
+    return this.browser && workId ? { query: { workId } } : undefined;
+  });
+
   /**
    * Where to go: to the agent's page (on the tab asked for), to the item's page, or undefined while
    * that is not known yet.
@@ -87,9 +94,10 @@ export class WorkAgentLayout {
     if (state === 'error') return item;
     const workId = this.workId();
     if (!workId) return state === 'loaded' ? item : undefined;
-    const read = this.store.itemOf(workId);
-    if (!read || read.status === 'loading') return undefined;
-    const agentId = read.agent?.agentId;
+    const read = this.itemAgents;
+    if (read.status() !== 'error' && !read.hasValue()) return undefined;
+    const agents = read.hasValue() ? (read.value()?.agents ?? []) : [];
+    const agentId = agents.find((agent) => agent.state === 'ACTIVE')?.agentId;
     if (!agentId) return item;
     const params = { slug, agentId };
     switch (this.tab) {
@@ -105,11 +113,7 @@ export class WorkAgentLayout {
   });
 
   constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-    effect(() => {
-      const id = this.workId();
-      if (id) untracked(() => void this.store.loadItem(id));
-    });
+    if (!this.browser) return;
     let gone = false;
     effect(() => {
       const target = this.target();

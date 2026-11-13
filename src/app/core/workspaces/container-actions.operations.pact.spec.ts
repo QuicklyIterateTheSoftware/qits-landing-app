@@ -13,12 +13,19 @@ import { workspacesGoldenMasters as masters } from '../../../testing/golden-mast
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { REFUSAL_MESSAGE } from './agent-actions.consumes';
 import { ENSURE_CONTAINER, STOP_CONTAINER } from './container-actions.consumes';
-import { ContainerActionsStore } from './container-actions.store';
+import {
+  CONTAINER_ENSURE,
+  CONTAINER_RECREATE,
+  CONTAINER_STOP,
+} from './container-actions.operations';
+import { refusalOf } from './refusals';
 
 /**
  * qits-landing-app's pact with qits-workspaces-service, the part a slot's container verbs make
- * (epic qits-1230), on the workspace page only (epic qits-1667), in
- * `pacts/qits-landing-app_qits-workspaces-service.json` beside the other stores' parts:
+ * (epic qits-1230), on the workspace page only (epic qits-1667), through
+ * `container-actions.operations.ts` (qits-2146: moved here from
+ * `container-actions.store.pact.spec.ts` with `ContainerActionsStore`, unchanged), in
+ * `pacts/qits-landing-app_qits-workspaces-service.json` beside the other parts:
  *
  * - `ensureWorkspaceContainer`: "a stopped workspace slot" starts (its WORKSPACE lease queued on
  *   qits-system's targets).
@@ -63,8 +70,14 @@ const given = (
     consumes,
   });
 
-/** The store, calling the mock server. */
-function storeAt(url: string) {
+/**
+ * Runs an operation's `fetch` against the mock server at `url`, in an injection context, and says
+ * what it came to as the page reads it: the answer, or the refusal (`refusalOf`).
+ */
+async function at<T>(
+  url: string,
+  call: () => Promise<{ data?: T; error?: unknown; response?: { status: number } }>,
+) {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -73,7 +86,10 @@ function storeAt(url: string) {
     ],
   });
   workspacesClient.setConfig({ baseUrl: url });
-  return TestBed.inject(ContainerActionsStore);
+  const { data, error, response } = await TestBed.runInInjectionContext(call);
+  return error !== undefined || data === undefined
+    ? refusalOf(error, response)
+    : ({ ok: true, value: data } as const);
 }
 
 const params = (state: string, operationId: string) => masters.operation(state, operationId).params;
@@ -105,8 +121,8 @@ describe('qits-landing-app → qits-workspaces-service pact: a slot’s containe
       'start-workspace-container',
       ENSURE_CONTAINER,
     ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.ensureContainer(slotOf(STOPPED, 'ensureWorkspaceContainer'));
+      const id = slotOf(STOPPED, 'ensureWorkspaceContainer');
+      const outcome = await at(server.url, () => CONTAINER_ENSURE.fetch({ path: { id } }));
       expect(outcome.ok && outcome.value.technicalProcessId).toBeTruthy();
     }));
 
@@ -117,8 +133,8 @@ describe('qits-landing-app → qits-workspaces-service pact: a slot’s containe
       'stop-workspace-container',
       STOP_CONTAINER,
     ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.stopContainer(slotOf(RUNNING, 'stopWorkspaceContainer'));
+      const id = slotOf(RUNNING, 'stopWorkspaceContainer');
+      const outcome = await at(server.url, () => CONTAINER_STOP.fetch({ path: { id } }));
       expect(outcome.ok && outcome.value.runtimeStatus).toBe('STOPPED');
       expect(outcome.ok && outcome.value.affectedAgentIds?.length).toBe(1);
     }));
@@ -130,10 +146,8 @@ describe('qits-landing-app → qits-workspaces-service pact: a slot’s containe
       'recreate-workspace-container',
       REFUSAL_MESSAGE,
     ).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const outcome = await store.recreateContainer(
-        slotOf(UNREACHABLE, 'recreateWorkspaceContainer'),
-      );
+      const id = slotOf(UNREACHABLE, 'recreateWorkspaceContainer');
+      const outcome = await at(server.url, () => CONTAINER_RECREATE.fetch({ path: { id } }));
       expect(outcome).toMatchObject({ ok: false, status: 400 });
       expect(!outcome.ok && outcome.message).toBeTruthy();
     }));

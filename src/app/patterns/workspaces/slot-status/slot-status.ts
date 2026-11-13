@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { QitsEntity, QitsField } from '@qits/angular';
 import type { SlotDetail } from '$core/workspaces/agents.consumes';
 import {
   daemonState,
@@ -27,23 +28,40 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
  * No longer shows which runner a slot is placed on (epic qits-1481): qits-workspaces-service drops
  * `workspace.runner`, so `placementNote` says only that a slot waits or is offline, with no name.
  * A later change adds the execution target back from the lease.
+ *
+ * It marks what it shows (qits-2141): the strip is the slot (`qitsEntity`, by `id`), each value its
+ * field or the fields its words are derived from. The agents' count is the page's, not the slot's.
  */
 @Component({
   selector: 'app-slot-status',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip],
+  imports: [Chip, QitsEntity, QitsField],
   host: { class: 'block' },
   template: `
     <dl
       class="m-0 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 rounded-md border border-line px-4 py-3 text-sm"
       aria-label="Status"
+      [qitsEntity]="slot()"
+      entityKey="id"
     >
       <dt class="font-semibold text-fg-soft">Container</dt>
       <dd class="m-0 flex flex-wrap items-center gap-2 text-fg">
-        <ui-chip [label]="runtime()" [tone]="tone()" />
-        <span class="text-fg-muted">{{ placement() }}</span>
+        <ui-chip
+          [label]="runtime()"
+          [tone]="tone()"
+          [fieldOf]="slot()"
+          [qitsField]="{ derived: ['runtimeStatus'] }"
+        />
+        <span
+          class="text-fg-muted"
+          [fieldOf]="slot()"
+          [qitsField]="{ derived: ['placement', 'runtimeStatus', 'queuedAt'] }"
+          >{{ placement() }}</span
+        >
         @if (slot().runtimeError; as fault) {
-          <span class="text-danger" role="alert">{{ fault }}</span>
+          <span class="text-danger" role="alert" [fieldOf]="slot()" qitsField="runtimeError">{{
+            fault
+          }}</span>
         }
       </dd>
 
@@ -51,14 +69,22 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
       <dd class="m-0 flex flex-wrap items-center gap-2 text-fg">
         @switch (daemon()) {
           @case ('connected') {
-            <span
+            <span [fieldOf]="slot()" [qitsField]="{ derived: ['daemonConnectedAt'] }"
               >connected {{ daemonSince() }}
               @if (slot().daemonVersion; as version) {
-                · version <code class="font-mono text-xs">{{ version }}</code>
+                · version
+                <code class="font-mono text-xs" [fieldOf]="slot()" qitsField="daemonVersion">{{
+                  version
+                }}</code>
               }
             </span>
             @if (slot().daemonOutdated) {
-              <ui-chip label="outdated" tone="waiting" />
+              <ui-chip
+                label="outdated"
+                tone="waiting"
+                [fieldOf]="slot()"
+                [qitsField]="{ derived: ['daemonOutdated'] }"
+              />
             }
           }
           @case ('gone') {
@@ -81,7 +107,12 @@ const RUNTIME_TONES: Readonly<Record<string, ChipTone>> = {
       @if (slot().admin) {
         <dt class="font-semibold text-fg-soft">Admin</dt>
         <dd class="m-0 flex items-center gap-2 text-fg">
-          <ui-chip label="docker socket" tone="waiting" />
+          <ui-chip
+            label="docker socket"
+            tone="waiting"
+            [fieldOf]="slot()"
+            [qitsField]="{ derived: ['admin'] }"
+          />
           <span class="text-fg-muted">its container holds the host's docker socket</span>
         </dd>
       }

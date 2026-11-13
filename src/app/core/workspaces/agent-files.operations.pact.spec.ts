@@ -7,27 +7,27 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as workspaceDaemonClient } from '../../api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from '../../api/workspace-daemon/client/client.gen';
-import { consume } from '@qits/angular';
 import { addGoldenInteraction } from '@qits/angular/testing';
-import { detect, listFiles, readFile } from '../../api/workspace-daemon';
 import type { InteractionSlug } from '../../interactions';
 import { workspaceDaemonGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { DETECT, LIST_FILES, READ_FILE } from './agent-files.consumes';
+import { WORKTREE_DETECTION, WORKTREE_FILE, WORKTREE_FILES } from './agent-files.operations';
 import { containerBase } from './container-proxy';
 
 /**
- * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part `AgentFilesStore`
- * reads, in `pacts/qits-landing-app_qits-workspace-daemon.json` beside the harness's and the chat's
- * parts: the agent's Files tab.
+ * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part the Files tab reads
+ * through `agent-files.operations.ts` (qits-2146: moved here from `agent-files.store.pact.spec.ts`
+ * with `AgentFilesStore`, unchanged), in `pacts/qits-landing-app_qits-workspace-daemon.json` beside
+ * the harness's and the chat's parts: the agent's Files tab.
  *
- * The store reaches the daemon through qits-workspaces' agent proxy (epic qits-1667,
+ * The tab reaches the daemon through qits-workspaces' agent proxy (epic qits-1667,
  * `/workspaces/agent/{agentId}/files…`, `/detection`), which forwards each call to the daemon's own
  * address, `/workspaces/container/{workspaceRowId}/agent-worktrees/{agentId}/…`, and hands back the
- * daemon's answer unchanged. So this spec makes the daemon's calls at that address, with the store's
- * own `consumes` lists, and binds what the daemon must answer there; the store's addressing is the
- * plain spec's (`agent-files.store.spec.ts`).
+ * daemon's answer unchanged. So this spec makes the daemon's calls at that address, with the
+ * operations' `fetch` (their own `consumes` lists), and binds what the daemon must answer there;
+ * the tab's addressing is the page spec's (`agent-files.page.spec.ts`).
  *
  * - "a workspace daemon with an agent whose worktree holds files": the whole eager tree with
  *   `node_modules` as a gitignored stub, the frameworks and the source-to-test graph (its
@@ -102,10 +102,7 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s files',
       const { workspaceRowId, agentId } = masters.operation(FILES, 'listFiles').params;
       clientAt(server.url);
       const { data } = await call(() =>
-        consume(
-          listFiles({ baseUrl: daemonAt(server.url, workspaceRowId), path: { agentId } }),
-          LIST_FILES,
-        ),
+        WORKTREE_FILES.fetch({ baseUrl: daemonAt(server.url, workspaceRowId), path: { agentId } }),
       );
       // The mock server answers each list with its first recorded element, as many times.
       expect(data?.paths.length).toBe(7);
@@ -117,10 +114,10 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s files',
       const { workspaceRowId, agentId } = masters.operation(FILES, 'detect').params;
       clientAt(server.url);
       const { data } = await call(() =>
-        consume(
-          detect({ baseUrl: daemonAt(server.url, workspaceRowId), path: { agentId } }),
-          DETECT,
-        ),
+        WORKTREE_DETECTION.fetch({
+          baseUrl: daemonAt(server.url, workspaceRowId),
+          path: { agentId },
+        }),
       );
       const tree = masters.body<{ generation: string }>(FILES, 'listFiles');
       expect(data?.generation).toBe(tree.generation);
@@ -135,14 +132,11 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s files',
       const op = masters.operation(FILES, 'readFile');
       clientAt(server.url);
       const { data } = await call(() =>
-        consume(
-          readFile({
-            baseUrl: daemonAt(server.url, op.params['workspaceRowId']),
-            path: { agentId: op.params['agentId'] },
-            query: { path: String(op.query?.['path']) },
-          }),
-          READ_FILE,
-        ),
+        WORKTREE_FILE.fetch({
+          baseUrl: daemonAt(server.url, op.params['workspaceRowId']),
+          path: { agentId: op.params['agentId'] },
+          query: { path: String(op.query?.['path']) },
+        }),
       );
       expect(data?.binary).toBe(false);
       expect(data?.content).toContain('class Login');
@@ -153,14 +147,11 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s files',
       const op = masters.operation(IGNORED, 'listFiles');
       clientAt(server.url);
       const { data } = await call(() =>
-        consume(
-          listFiles({
-            baseUrl: daemonAt(server.url, op.params['workspaceRowId']),
-            path: { agentId: op.params['agentId'] },
-            query: { path: String(op.query?.['path']) },
-          }),
-          LIST_FILES,
-        ),
+        WORKTREE_FILES.fetch({
+          baseUrl: daemonAt(server.url, op.params['workspaceRowId']),
+          path: { agentId: op.params['agentId'] },
+          query: { path: String(op.query?.['path']) },
+        }),
       );
       expect(data?.paths).toEqual(['node_modules/.package-lock.json']);
       expect(data?.lazyDirs).toEqual([{ path: 'node_modules/left-pad', childCount: 1 }]);
@@ -171,14 +162,11 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s files',
       const op = masters.operation(IGNORED, 'readFile');
       clientAt(server.url);
       const { response } = await call(() =>
-        consume(
-          readFile({
-            baseUrl: daemonAt(server.url, op.params['workspaceRowId']),
-            path: { agentId: op.params['agentId'] },
-            query: { path: String(op.query?.['path']) },
-          }),
-          [],
-        ),
+        WORKTREE_FILE.fetch({
+          baseUrl: daemonAt(server.url, op.params['workspaceRowId']),
+          path: { agentId: op.params['agentId'] },
+          query: { path: String(op.query?.['path']) },
+        }),
       );
       expect(response?.status).toBe(404);
     }));

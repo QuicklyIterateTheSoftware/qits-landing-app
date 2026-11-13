@@ -4,10 +4,10 @@ import { Component, PLATFORM_ID } from '@angular/core';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { client as workspaceDaemonClient } from '../../../api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from '../../../api/workspace-daemon/client/client.gen';
-import type { DomainEvent } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS, type QitsDomainEvent } from '@qits/angular';
+import { filter, Subject } from 'rxjs';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import { AgentsStore } from '$core/workspaces/agents.store';
-import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
+import { WORKSPACE_REFRESH_DEBOUNCE_MS } from '$core/workspaces/workspace-events';
 import {
   workspaceDaemonGoldenMaster,
   workspaceDaemonGoldenMasters,
@@ -64,12 +64,12 @@ class Host {
 describe('HarnessSetup', () => {
   let http: HttpTestingController;
   let sockets: FakeSocket[];
-  let followed: unknown[][];
+  let events: Subject<QitsDomainEvent>;
   let fixture: ComponentFixture<Host>;
 
   beforeEach(() => {
     sockets = [];
-    followed = [];
+    events = new Subject<QitsDomainEvent>();
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -78,8 +78,11 @@ describe('HarnessSetup', () => {
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
         {
-          provide: AgentsStore,
-          useValue: { follow: (...args: unknown[]) => followed.push(args) },
+          provide: QITS_DOMAIN_EVENTS,
+          useValue: {
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name))),
+          },
         },
         {
           provide: WEB_SOCKET,
@@ -189,19 +192,23 @@ describe('HarnessSetup', () => {
   });
 
   describe('after lifecycle events (qits-1270)', () => {
-    /** Runs the component's `follow` refresh with a burst of `names`. */
-    async function burst(...names: string[]) {
-      const [, scope, refresh, events] = followed[0] as [
-        unknown,
-        () => object,
-        (burst: readonly DomainEvent[]) => void,
-        readonly string[],
-      ];
-      expect(events).toEqual(HARNESS_EVENTS);
-      expect(scope()).toEqual({ workspaceId: String(ROW) });
-      refresh(names.map((name) => ({ name })));
+    /** Sends `name` about `workspaceId` (the slot's, by default), and lets its burst settle. */
+    async function burst(name: string, workspaceId = String(ROW)) {
+      vi.useFakeTimers();
+      events.next({ name, payload: JSON.stringify({ workspaceId }) });
+      vi.advanceTimersByTime(WORKSPACE_REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
+      // A reload starts its read on the resource's effect.
+      fixture.detectChanges();
       await settle();
     }
+
+    it('reads nothing again after another slot’s container started', async () => {
+      await open();
+      await burst('WorkspaceStarted', String(ROW + 1000));
+      http.expectNone(`${BASE}/agents/available`);
+      http.expectNone(`${BASE}/agent-plugins`);
+    });
 
     it('reads nothing again after a harness exit', async () => {
       await open();

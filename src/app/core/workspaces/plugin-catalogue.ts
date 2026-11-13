@@ -71,3 +71,18 @@ export function pluginRows(installed: readonly InstalledPlugin[]): readonly Plug
     }));
   return [...known, ...extra];
 }
+
+/**
+ * `PLUGIN_INSTALL`'s params at the slot daemon's base (`containerBase`): the plugin by its bare id,
+ * and an empty JSON object as the body, as qits-workspace-daemon's recording sends (and its
+ * microfrontend did); its OpenAPI document declares no body for the install. Built here for the
+ * plugins section and the pact spec alike.
+ */
+export function installPluginParams(baseUrl: string, pluginId: string) {
+  return {
+    baseUrl,
+    path: { pluginId },
+    body: {} as never,
+    headers: { 'Content-Type': 'application/json' },
+  };
+}

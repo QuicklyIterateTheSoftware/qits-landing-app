@@ -4,7 +4,8 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { client as workspaceDaemonClient } from '../../../api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from '../../../api/workspace-daemon/client/client.gen';
-import { AgentPluginsStore } from '$core/workspaces/agent-plugins.store';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { NEVER } from 'rxjs';
 import { workspaceDaemonGoldenMaster } from '../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { PluginsSection } from './plugins-section';
@@ -31,6 +32,8 @@ describe('PluginsSection', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
+        // Its staleness (a new container) is the harness setup spec's; no event arrives here.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => NEVER } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -38,14 +41,15 @@ describe('PluginsSection', () => {
 
   afterEach(() => http.verify());
 
+  /** Renders the section, which reads the plugins from the slot's daemon, and answers the read. */
   async function render() {
-    const loaded = TestBed.inject(AgentPluginsStore).load(1);
+    const fixture = TestBed.createComponent(Host);
+    fixture.detectChanges();
     await settle();
     http
       .expectOne(`${BASE}/agent-plugins`)
       .flush(workspaceDaemonGoldenMaster(INSTALLED, 'listPlugins'));
-    await loaded;
-    const fixture = TestBed.createComponent(Host);
+    await settle();
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     const row = (name: string) =>

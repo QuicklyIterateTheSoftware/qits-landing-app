@@ -11,19 +11,19 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import type { DomainEvent } from '$core/events/domain-events';
+import { qitsMutation, qitsResource } from '@qits/angular';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
-import { AgentPluginsStore } from '$core/workspaces/agent-plugins.store';
-import { AgentSignInStore } from '$core/workspaces/agent-sign-in.store';
-import { AgentsStore } from '$core/workspaces/agents.store';
-import { containerTerminalSocketUrl } from '$core/workspaces/container-proxy';
+import { HARNESS_REPORT, SIGN_IN_TERMINAL } from '$core/workspaces/agent-sign-in.operations';
+import { containerBase, containerTerminalSocketUrl } from '$core/workspaces/container-proxy';
+import type { SignedOut } from '$core/workspaces/harness-sign-in';
+import { describeRefusal, runRefusal, sentence } from '$core/workspaces/refusals';
 import {
   EMPTY_TERMINAL_FRAMES,
   TerminalSocket,
   type TerminalLink,
 } from '$core/workspaces/terminal-socket';
-import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
+import { concerns, WORKSPACE_REFRESH_DEBOUNCE_MS } from '$core/workspaces/workspace-events';
 import { PluginsSection } from '$patterns/workspaces/plugins-section/plugins-section';
 import { SignInNotice } from '$patterns/workspaces/sign-in-notice/sign-in-notice';
 import { TerminalScreen } from '$ui/components/terminal-screen/terminal-screen';
@@ -38,21 +38,22 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
 };
 
 /**
- * A slot's harness install (epic qits-1667, moved from the agent's Terminal tab, epic qits-1230): it
- * is the container's, shared by every agent the slot hosts, so it sits on the workspace's page,
+ * A slot's harness install (epic qits-1667, moved from the agent's Terminal tab, epic qits-1230):
+ * it is the container's, shared by every agent the slot hosts, so it sits on the workspace's page,
  * where the container proxy (`/workspaces/container/<slot row id>/…`) is the slot's own address.
  *
  * - The sign-in notice (`app-sign-in-notice`): the slot's daemon reports a harness nobody signed in
- *   (`AgentSignInStore`), and offers the sign-in terminal; once it is open, the screen attaches to
- *   it (`containerTerminalSocketUrl`, a command of the slot's own) until its command ends, when the
- *   report is read again.
- * - The plugins on the shared agent home (`app-plugins-section`, `AgentPluginsStore`).
+ *   (the setup's own `qitsResource` over `HARNESS_REPORT`, qits-2146, handed to the notice), and
+ *   offers the sign-in terminal (`qitsMutation(SIGN_IN_TERMINAL)`, once: a second press keeps the
+ *   one that is open); once it is open, the screen attaches to it (`containerTerminalSocketUrl`, a
+ *   command of the slot's own) until its command ends, when the report is read again.
+ * - The plugins on the shared agent home (`app-plugins-section`, which reads them itself).
  *
- * Staleness (qits-1270): `HARNESS_EVENTS` naming the slot (`workspaceId`): `WorkspaceStarted` (a new
- * container, a new daemon) and `AgentStartRefused` (a daemon refusing a start, often a harness
- * nobody signed in) → the sign-in report (`AgentSignInStore.loadReport`); `WorkspaceStarted` → the
- * plugins (`AgentPluginsStore.load`). Not announced: a sign-in finished or a plugin installed from
- * another page or slot (the daemon emits nothing on qits-events for either).
+ * Staleness (qits-1270): `WorkspaceStarted` (a new container, a new daemon) and `AgentStartRefused`
+ * (a daemon refusing a start, often a harness nobody signed in) naming the slot (`workspaceId`) →
+ * the sign-in report (the resource's `refreshOn`); `WorkspaceStarted` → the plugins (the
+ * section's). Not announced: a sign-in finished or a plugin installed from another page or slot
+ * (the daemon emits nothing on qits-events for either).
  *
  * In the browser only: the server renders it without reading or connecting.
  */
@@ -64,7 +65,14 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
   template: `
     <section class="flex flex-col gap-2 text-sm" aria-labelledby="harness-setup">
       <h2 id="harness-setup" class="m-0 text-base font-semibold text-fg">Harness</h2>
-      <app-sign-in-notice [workspaceRowId]="workspaceRowId()" [harness]="harness()" />
+      <app-sign-in-notice
+        [report]="report"
+        [harness]="harness()"
+        [commandId]="signInCommand()"
+        [opening]="opening()"
+        [problem]="problem()"
+        (open)="open($event)"
+      />
       @if (signInCommand()) {
         <p
           class="m-0 flex items-center gap-3"
@@ -96,10 +104,9 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
   `,
 })
 export class HarnessSetup {
-  private readonly signIn = inject(AgentSignInStore);
-  private readonly plugins = inject(AgentPluginsStore);
-  private readonly agents = inject(AgentsStore);
   private readonly origins = inject(PlatformOrigins);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly signingIn = qitsMutation(SIGN_IN_TERMINAL);
   private readonly openSocket = inject(WEB_SOCKET);
   private readonly document = inject(DOCUMENT);
 
@@ -108,10 +115,39 @@ export class HarnessSetup {
   /** The harness the slot's agents run, so the notice names the one that matters; any when unknown. */
   readonly harness = input<string | null | undefined>(null);
 
-  /** The sign-in terminal somebody opened in the slot's container, while it is open. */
-  protected readonly signInCommand = computed(
-    () => this.signIn.signInOf(this.workspaceRowId())?.commandId ?? null,
+  /** The slot daemon's base, through the container proxy; none for no slot. */
+  private readonly base = computed(() => {
+    const rowId = this.workspaceRowId();
+    return Number.isInteger(rowId) && rowId > 0
+      ? containerBase(this.origins.api('workspaces'), rowId)
+      : undefined;
+  });
+
+  /**
+   * The slot daemon's harness report, in the browser only; again once the container started anew
+   * or a start was refused, and once a sign-in terminal ended.
+   */
+  protected readonly report = qitsResource(
+    HARNESS_REPORT,
+    () => {
+      const baseUrl = this.base();
+      return this.browser && baseUrl ? { baseUrl } : undefined;
+    },
+    {
+      refreshOn: {
+        names: ['WorkspaceStarted', 'AgentStartRefused'],
+        when: (event) => concerns(event, { workspaceId: String(this.workspaceRowId()) }),
+        debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+      },
+    },
   );
+
+  /** The sign-in terminal somebody opened in the slot's container, while it is open. */
+  protected readonly signInCommand = signal<string | null>(null);
+  /** Whether the terminal is being opened. */
+  protected readonly opening = signal(false);
+  /** Why the terminal did not open. */
+  protected readonly problem = signal<string | null>(null);
 
   protected readonly socket = signal<TerminalSocket | null>(null);
   protected readonly frames = computed(() => this.socket()?.frames() ?? EMPTY_TERMINAL_FRAMES);
@@ -122,16 +158,19 @@ export class HarnessSetup {
   private socketFor: string | null = null;
 
   constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+    if (!this.browser) return;
     const destroy = inject(DestroyRef);
+    // Another slot: its own sign-in, none open yet.
+    let shownFor = Number.NaN;
     effect(() => {
       const rowId = this.workspaceRowId();
-      if (rowId) {
-        untracked(() => {
-          void this.signIn.loadReport(rowId);
-          void this.plugins.load(rowId);
-        });
-      }
+      untracked(() => {
+        if (rowId === shownFor) return;
+        shownFor = rowId;
+        this.signInCommand.set(null);
+        this.opening.set(false);
+        this.problem.set(null);
+      });
     });
     effect(() => {
       const rowId = this.workspaceRowId();
@@ -141,27 +180,39 @@ export class HarnessSetup {
     // A sign-in terminal whose command ended (a clean close) is let go of, notice and all.
     effect(() => {
       if (this.signInCommand() && this.link() === 'disconnected') {
-        untracked(() => void this.signIn.finished(this.workspaceRowId()));
+        untracked(() => this.finished());
       }
     });
-    this.agents.follow(
-      destroy,
-      () => ({ workspaceId: String(this.workspaceRowId()) }),
-      (events) => this.reload(events),
-      HARNESS_EVENTS,
-    );
     destroy.onDestroy(() => this.detach());
   }
 
-  /** After a burst that can have changed them: the sign-in report and the plugins. */
-  private reload(events: readonly DomainEvent[]): void {
-    const rowId = this.workspaceRowId();
-    if (!rowId) return;
-    const started = events.some((event) => event.name === 'WorkspaceStarted');
-    if (started || events.some((event) => event.name === 'AgentStartRefused')) {
-      void this.signIn.loadReport(rowId);
+  /** Start the sign-in terminal, once: a second press keeps the one that is open. */
+  protected async open(harness: SignedOut['harness'] | undefined): Promise<void> {
+    const baseUrl = this.base();
+    if (!baseUrl || this.opening() || this.signInCommand()) return;
+    this.opening.set(true);
+    this.problem.set(null);
+    try {
+      const answer = await this.signingIn.run({
+        baseUrl,
+        body: harness ? { agentType: harness } : {},
+      });
+      const commandId = answer?.command?.id;
+      if (!commandId) throw new Error('no command');
+      this.signInCommand.set(commandId);
+    } catch (error) {
+      this.problem.set(
+        sentence(`The sign-in terminal did not open — ${describeRefusal(runRefusal(error))}`),
+      );
+    } finally {
+      this.opening.set(false);
     }
-    if (started) void this.plugins.load(rowId);
+  }
+
+  /** The terminal ended: let go of it, and read the report again. */
+  private finished(): void {
+    this.signInCommand.set(null);
+    if (this.base()) this.report.reload();
   }
 
   protected rearm(): void {

@@ -35,8 +35,11 @@ import { TaskDetail } from '$patterns/work/detail/task-detail/task-detail';
 import { TicketDetail } from '$patterns/work/detail/ticket-detail/ticket-detail';
 import { WorkDetailStore } from '$core/work/work-detail.store';
 import { WorkDrop } from '$patterns/work/detail/work-drop/work-drop';
-import { AgentsStore } from '$core/workspaces/agents.store';
-import { ACTIVE_AGENT_EVENTS } from '$core/workspaces/workspace-events';
+import {
+  ACTIVE_AGENT_EVENTS,
+  concerns,
+  WORKSPACE_REFRESH_DEBOUNCE_MS,
+} from '$core/workspaces/workspace-events';
 import { WorkspacesStore } from '$core/workspaces/workspaces.store';
 import { WorkWorkspaces } from '$patterns/work/detail/work-workspaces/work-workspaces';
 import { WorkInspiration } from '$patterns/ideas/work-inspiration/work-inspiration';
@@ -100,7 +103,7 @@ const notBuiltYet = (): void => undefined;
  * The wrapper closings a VERIFIED ticket's line reads follow their events through
  * `WrapperClosingsStore.follow` (qits-1873; see there).
  * `AgentPlaced`, `AgentRequeued`, `AgentObsolete`, `AgentRemoved` naming this item's `workId` →
- * the item's workspaces (`WorkspacesStore.refreshHistory`, quietly; `AgentsStore.follow`); any of
+ * the item's workspaces (`WorkspacesStore.refreshHistory`, quietly; `refreshOn`); any of
  * them → the open workspaces (`WorkspacesStore.follow`). An agent's creation is not announced: a
  * queued agent's row shows once it is placed.
  *
@@ -218,7 +221,6 @@ export class WorkItemPage {
   private readonly archetypes = inject(ArchetypesStore);
   private readonly details = inject(WorkDetailStore);
   private readonly workspaces = inject(WorkspacesStore);
-  private readonly agents = inject(AgentsStore);
 
   /** The qualified id in the URL. */
   protected readonly id = toSignal(
@@ -350,14 +352,17 @@ export class WorkItemPage {
         const id = this.entryId();
         if (id) untracked(() => void this.workspaces.loadHistory(id));
       });
-      this.agents.follow(
-        destroy,
-        () => ({ workId: this.entryId() }),
-        () => {
-          const id = this.entryId();
-          if (id) void this.workspaces.refreshHistory(id);
+      refreshOn(
+        {
+          names: ACTIVE_AGENT_EVENTS,
+          when: (event) => concerns(event, { workId: this.entryId() }),
+          debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+          refresh: () => {
+            const id = this.entryId();
+            if (id) void this.workspaces.refreshHistory(id);
+          },
         },
-        ACTIVE_AGENT_EVENTS,
+        destroy,
       );
     }
   }

@@ -12,11 +12,26 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { QitsTriggers, type Outcome } from '@qits/angular';
+import { qitsMutation, qitsResource, QitsTriggers, sourceMark, type Outcome } from '@qits/angular';
+import { PlatformOrigins } from '$core/platform/platform-origins';
+import { isMissing } from '$core/resources/resource-family';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
-import { AgentChatStore } from '$core/workspaces/agent-chat.store';
-import { AgentPromptStore } from '$core/workspaces/agent-prompt.store';
+import { PROMPT_REFINEMENT } from '$core/workspaces/agent-chat.operations';
+import {
+  AGENT_PROMPT,
+  PROMPT_DRAFT,
+  PROMPT_DRAFT_DELETE,
+  PROMPT_DRAFT_SAVE,
+} from '$core/workspaces/agent-prompt.operations';
+import { agentRoute } from '$core/workspaces/agent-proxy';
 import { relativeSince } from '$core/workspaces/agent-labels';
+import {
+  promptDraftOf,
+  promptParams,
+  saveDraftParams,
+  type PromptDraft,
+} from '$core/workspaces/prompt-drafts';
+import { runRefusal } from '$core/workspaces/refusals';
 import {
   PickedContext,
   referenceLabel,
@@ -47,28 +62,36 @@ export function deliveryNote(delivery: AgentDelivery): string {
 /** A failed call's status, as the problem line says it. */
 const why = (status: number) => (status ? `the service answered ${status}` : 'no answer');
 
+/** A failed run's status, as the problem line says it. */
+const whyNot = (error: unknown) => why(runRefusal(error).status);
+
 /**
  * Compose the next thing to tell the agent (epic qits-1230), ported from qits-workspaces-frontend's
  * prompt panel without its speech input.
  *
- * - **The prompt box is the draft.** It is restored from the service when the tab opens
- *   (`AgentPromptStore.readDraft`; none is a 404, not an empty box), saved after typing stops for
- *   {@link DRAFT_DEBOUNCE_MS}, and so survives a reload. A failed save marks it unsaved and the next
- *   edit retries. A restored draft says so, with a Discard.
+ * - **The prompt box is the draft.** It is restored from the service when the tab opens (its own
+ *   `qitsResource` over `PROMPT_DRAFT`, qits-2146; none is a 404, not an empty box), saved after
+ *   typing stops for {@link DRAFT_DEBOUNCE_MS} (`qitsMutation(PROMPT_DRAFT_SAVE)`), and so survives
+ *   a reload. A failed save marks it unsaved and the next edit retries. A restored draft says so,
+ *   with a Discard.
  * - **Rough notes are scratch, not the draft.** "Refine into prompt" rewrites them through the
- *   harness in the agent's container (`AgentChatStore.refine`, with what the work is about), "Use
- *   as-is" takes them unchanged; either appends to the prompt and empties the notes. Without a
- *   container (a queued agent) there is no rewrite.
+ *   harness in the agent's container (`qitsMutation(PROMPT_REFINEMENT)`, with what the work is
+ *   about), "Use as-is" takes them unchanged; either appends to the prompt and empties the notes.
+ *   Without a container (a queued agent) there is no rewrite.
  * - **Flush, then send.** The draft is written first and a failed write stops the send; the prompt
- *   goes to the agent by its id (`AgentPromptStore.prompt`, `promptAgent`), which resumes a yielded
- *   or stopped agent to hear it. A delivered prompt empties the box and the draft.
- * - **Picked context.** The line ranges picked in the agent's Files tab (`PickedContext`) are listed
- *   under the prompt: pressing one puts its label and lines in the prompt, ↗ opens it in the Files
- *   tab (`openReference`), ✕ drops it. They are saved with the draft (`picked`) and restored from
- *   it, joined by any picked since; the ones never pressed in are appended to what is sent.
+ *   goes to the agent by its id (`qitsMutation(AGENT_PROMPT)`, `promptAgent`), which resumes a
+ *   yielded or stopped agent to hear it. A delivered prompt empties the box and the draft.
+ * - **Picked context.** The line ranges picked in the agent's Files tab (`PickedContext`) are
+ *   listed under the prompt: pressing one puts its label and lines in the prompt, ↗ opens it in the
+ *   Files tab (`openReference`), ✕ drops it. They are saved with the draft (`picked`) and restored
+ *   from it, joined by any picked since; the ones never pressed in are appended to what is sent.
  * - **Another device's draft** comes in on the slot's `prompt-draft` hint (`WorkspaceHints`, when
- *   the page provides it): adopted only when nothing here is unsaved, and never this tab's own echo
- *   (the `updatedAt` its save answered).
+ *   the page provides it), which reads the draft again: adopted only when nothing here is unsaved,
+ *   and never this tab's own echo (the `updatedAt` its save answered).
+ *
+ * The restored draft is the person's own text in a box they edit, so it carries no field marks; the
+ * restored line and the prompt box name the draft's read as their source (`data-qits-source`,
+ * qits-2141).
  *
  * In the browser only.
  */
@@ -79,7 +102,11 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
   host: { class: 'flex flex-col gap-3' },
   template: `
     @if (restoredAt(); as at) {
-      <p class="m-0 flex items-center gap-3 text-sm text-fg-muted" role="status">
+      <p
+        class="m-0 flex items-center gap-3 text-sm text-fg-muted"
+        role="status"
+        [attr.data-qits-source]="draftSource"
+      >
         Restored draft from {{ ago(at) }}
         <ui-action-button [action]="discardAction()" />
       </p>
@@ -109,7 +136,7 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
       }
     </section>
 
-    <label class="flex flex-col gap-1 text-sm">
+    <label class="flex flex-col gap-1 text-sm" [attr.data-qits-source]="draftSource">
       <span class="font-semibold text-fg-soft">The prompt</span>
       <textarea
         class="rounded-md border border-line-strong bg-surface px-2 py-1.5 font-sans text-sm text-fg"
@@ -175,9 +202,9 @@ const why = (status: number) => (status ? `the service answered ${status}` : 'no
   `,
 })
 export class PromptComposer {
-  private readonly prompts = inject(AgentPromptStore);
-  private readonly chats = inject(AgentChatStore);
+  private readonly origins = inject(PlatformOrigins);
   private readonly hints = inject(WorkspaceHints, { optional: true });
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly picked = inject(PickedContext);
 
   /** Whose draft this is. */
@@ -219,10 +246,26 @@ export class PromptComposer {
   protected readonly sending = signal(false);
   protected readonly sendProblem = signal<string | null>(null);
 
+  /** The saved draft, in the browser only; read again on another device's `prompt-draft` hint. */
+  private readonly draft = qitsResource(PROMPT_DRAFT, () => {
+    const id = this.agentId();
+    return this.browser && id ? { path: { id } } : undefined;
+  });
+  /** The restored line and the prompt box show the draft's read. */
+  protected readonly draftSource = sourceMark(PROMPT_DRAFT);
+
+  private readonly saving = qitsMutation(PROMPT_DRAFT_SAVE);
+  private readonly discarding = qitsMutation(PROMPT_DRAFT_DELETE);
+  private readonly prompting = qitsMutation(AGENT_PROMPT);
+  private readonly rewriting = qitsMutation(PROMPT_REFINEMENT);
+
   private timer: ReturnType<typeof setTimeout> | null = null;
   /** The `updatedAt` this tab last wrote or read: the `prompt-draft` hint's own echo. */
   private lastWrittenAt: string | null = null;
-  private loadedFor = '';
+  /** The agent whose draft was restored (the first answer of its read). */
+  private restoredFor = '';
+  /** A hint read the draft again: its answer is another device's, to reconcile. */
+  private hinted = false;
 
   protected readonly canPromote = computed(
     () => this.notes().trim().length > 0 && !this.refining(),
@@ -273,15 +316,17 @@ export class PromptComposer {
   }));
 
   constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+    if (!this.browser) return;
     effect(() => {
       const agentId = this.agentId();
-      untracked(() => {
-        this.picked.use(agentId);
-        if (this.loadedFor === agentId) return;
-        this.loadedFor = agentId;
-        void this.restore(agentId);
-      });
+      untracked(() => this.picked.use(agentId));
+    });
+    // Each settled answer of the draft's read: the first restores, one a hint asked for reconciles.
+    effect(() => {
+      const status = this.draft.status();
+      const agentId = this.agentId();
+      if (status !== 'resolved' && status !== 'error' && status !== 'local') return;
+      untracked(() => this.answered(agentId));
     });
     const hints = this.hints?.hints('prompt-draft');
     if (hints) {
@@ -290,7 +335,7 @@ export class PromptComposer {
       effect(() => {
         const hint = hints();
         untracked(() => {
-          if (seen >= 0 && hint !== seen) void this.reconcile(this.agentId());
+          if (seen >= 0 && hint !== seen) this.reconcile();
           seen = hint;
         });
       });
@@ -330,10 +375,19 @@ export class PromptComposer {
     if (!notes || this.refining()) return;
     this.refining.set(true);
     this.refineProblem.set(null);
-    const outcome = await this.chats.refine(this.agentId(), notes, this.preamble());
-    this.refining.set(false);
-    if (outcome.ok) this.promote(outcome.value);
-    else this.refineProblem.set(`The rewrite did not happen: ${why(outcome.status)}.`);
+    const preamble = this.preamble();
+    try {
+      const answer = await this.rewriting.run({
+        ...agentRoute(this.origins.api('workspaces'), this.agentId(), 'prompt-refinements'),
+        body: preamble ? { transcript: notes, preamble } : { transcript: notes },
+      });
+      this.refining.set(false);
+      if (answer) this.promote(answer.prompt);
+      else this.refineProblem.set(`The rewrite did not happen: ${why(0)}.`);
+    } catch (error) {
+      this.refining.set(false);
+      this.refineProblem.set(`The rewrite did not happen: ${whyNot(error)}.`);
+    }
   }
 
   protected useAsIs(): void {
@@ -350,12 +404,12 @@ export class PromptComposer {
     this.picked.clear();
     this.restoredAt.set(null);
     this.save.set('clean');
-    const outcome = await this.prompts.discardDraft(this.agentId());
-    if (outcome.ok) {
+    try {
+      await this.discarding.run({ path: { id: this.agentId() } });
       this.lastWrittenAt = null;
       this.saveProblem.set(null);
-    } else {
-      this.saveProblem.set(`The draft could not be discarded: ${why(outcome.status)}.`);
+    } catch (error) {
+      this.saveProblem.set(`The draft could not be discarded: ${whyNot(error)}.`);
     }
   }
 
@@ -371,19 +425,30 @@ export class PromptComposer {
         this.sendProblem.set('The draft did not save, so nothing was sent. Try again.');
         return;
       }
-      const outcome = await this.prompts.prompt(this.agentId(), text);
-      if (!outcome.ok) {
-        this.sendProblem.set(`The message was not sent: ${why(outcome.status)}.`);
+      let delivery: AgentDelivery | undefined;
+      try {
+        delivery = await this.prompting.run(promptParams(this.agentId(), text));
+      } catch (error) {
+        this.sendProblem.set(`The message was not sent: ${whyNot(error)}.`);
         return;
       }
-      this.sent.emit(outcome.value);
+      if (!delivery) {
+        this.sendProblem.set(`The message was not sent: ${why(0)}.`);
+        return;
+      }
+      this.sent.emit(delivery);
       this.clearTimer();
       this.text.set('');
       this.picked.clear();
       this.restoredAt.set(null);
       this.save.set('clean');
       // The prompt is said; a stale draft left behind shows as restored next time, never lost.
-      if ((await this.prompts.discardDraft(this.agentId())).ok) this.lastWrittenAt = null;
+      try {
+        await this.discarding.run({ path: { id: this.agentId() } });
+        this.lastWrittenAt = null;
+      } catch {
+        // Left behind: it shows as restored next time.
+      }
     } finally {
       this.sending.set(false);
     }
@@ -403,12 +468,41 @@ export class PromptComposer {
     this.scheduleSave();
   }
 
-  private async restore(agentId: string): Promise<void> {
+  /**
+   * The draft's read answered: `ok` with the draft (null for none, a 404), or the failure. A read
+   * again that failed keeps its value, so it says nothing new.
+   */
+  private readDraft():
+    | { readonly ok: true; readonly value: PromptDraft | null }
+    | { readonly ok: false; readonly error: unknown } {
+    if (this.draft.status() === 'error') {
+      return isMissing(this.draft)
+        ? { ok: true, value: null }
+        : { ok: false, error: this.draft.error() };
+    }
+    if (this.draft.reloadError() !== undefined) {
+      return { ok: false, error: this.draft.reloadError() };
+    }
+    return { ok: true, value: promptDraftOf(this.draft.value()) };
+  }
+
+  /** An answer of the draft's read: the agent's first restores it, a hinted one reconciles. */
+  private answered(agentId: string): void {
     if (!agentId) return;
-    const outcome = await this.prompts.readDraft(agentId);
-    if (this.agentId() !== agentId) return;
+    if (this.restoredFor !== agentId) {
+      this.restoredFor = agentId;
+      this.hinted = false;
+      this.restore();
+    } else if (this.hinted) {
+      this.hinted = false;
+      this.adopt();
+    }
+  }
+
+  private restore(): void {
+    const outcome = this.readDraft();
     if (!outcome.ok) {
-      this.saveProblem.set(`The saved draft could not be read: ${why(outcome.status)}.`);
+      this.saveProblem.set(`The saved draft could not be read: ${whyNot(outcome.error)}.`);
       return;
     }
     // Typed while the read was out: the box wins.
@@ -425,10 +519,16 @@ export class PromptComposer {
     if (this.picked.restore(outcome.value.picked)) this.scheduleSave();
   }
 
-  /** A `prompt-draft` hint: adopt another device's draft when nothing here is unsaved. */
-  private async reconcile(agentId: string): Promise<void> {
-    if (!agentId || this.save() !== 'clean') return;
-    const outcome = await this.prompts.readDraft(agentId);
+  /** A `prompt-draft` hint: read the draft again, when nothing here is unsaved. */
+  private reconcile(): void {
+    if (!this.agentId() || this.save() !== 'clean' || this.restoredFor !== this.agentId()) return;
+    this.hinted = true;
+    this.draft.reload();
+  }
+
+  /** Adopt another device's draft when nothing here is unsaved, and it is not this tab's echo. */
+  private adopt(): void {
+    const outcome = this.readDraft();
     if (!outcome.ok || !outcome.value || this.save() !== 'clean') return;
     if (outcome.value.updatedAt === this.lastWrittenAt) return;
     this.text.set(outcome.value.text);
@@ -446,17 +546,22 @@ export class PromptComposer {
   private async write(): Promise<void> {
     this.clearTimer();
     this.save.set('saving');
-    const outcome = await this.prompts.saveDraft(
-      this.agentId(),
-      this.text(),
-      this.picked.references(),
-    );
-    if (!outcome.ok) {
+    let written: { readonly draft?: { readonly updatedAt?: string | null } } | undefined;
+    try {
+      written = await this.saving.run(
+        saveDraftParams(this.agentId(), this.text(), this.picked.references()),
+      );
+    } catch (error) {
       this.save.set('dirty');
-      this.saveProblem.set(`The draft is not saved: ${why(outcome.status)}.`);
+      this.saveProblem.set(`The draft is not saved: ${whyNot(error)}.`);
       return;
     }
-    this.lastWrittenAt = outcome.value.updatedAt;
+    if (!written) {
+      this.save.set('dirty');
+      this.saveProblem.set(`The draft is not saved: ${why(0)}.`);
+      return;
+    }
+    this.lastWrittenAt = written.draft?.updatedAt ?? null;
     // Typed while the write was out: the next debounce owns it.
     if (this.save() === 'saving') this.save.set('clean');
     this.saveProblem.set(null);

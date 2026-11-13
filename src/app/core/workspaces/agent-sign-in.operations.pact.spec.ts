@@ -11,15 +11,18 @@ import { addGoldenInteraction } from '@qits/angular/testing';
 import type { InteractionSlug } from '../../interactions';
 import { workspaceDaemonGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { AVAILABLE_AGENTS, OPEN_SIGN_IN } from './agent-sign-in.consumes';
-import { AgentSignInStore, signedOutHarness } from './agent-sign-in.store';
+import { HARNESS_REPORT, SIGN_IN_TERMINAL } from './agent-sign-in.operations';
+import { containerBase } from './container-proxy';
+import { signedOutHarness } from './harness-sign-in';
 
 /**
- * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part `AgentSignInStore`
- * makes, in `pacts/qits-landing-app_qits-workspace-daemon.json` beside the other stores' parts:
- * the Terminal tab's sign-in notice and the sign-in terminal, through qits-workspaces' container
- * proxy (`/workspaces/container/{workspaceRowId}/…`).
+ * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part the workspace
+ * page's harness setup makes through `agent-sign-in.operations.ts` (qits-2146: moved here from
+ * `agent-sign-in.store.pact.spec.ts` with `AgentSignInStore`, unchanged), in
+ * `pacts/qits-landing-app_qits-workspace-daemon.json` beside the other parts: the sign-in notice
+ * and the sign-in terminal, through qits-workspaces' container proxy
+ * (`/workspaces/container/{workspaceRowId}/…`).
  *
  * - "a workspace daemon with a signed-in harness": the report says Claude Code is signed in, so no
  *   notice;
@@ -52,17 +55,16 @@ const given = (
     consumes,
   });
 
-/** The store, calling qits-workspaces' origin at the mock server. */
-function storeAt(url: string) {
+/** Runs `call` with the daemon's generated client at the mock server, in an injection context. */
+function at<T>(call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
       provideHttpClient(withFetch()),
       provideHeyApiClient(workspaceDaemonClient),
-      provideTestPlatformOrigins({ workspaces: url }),
     ],
   });
-  return TestBed.inject(AgentSignInStore);
+  return TestBed.runInInjectionContext(call);
 }
 
 const rowOf = (state: string, operationId: string) =>
@@ -88,22 +90,19 @@ describe('qits-landing-app → qits-workspace-daemon pact: the harness sign-in',
   it('show-agent-sign-in: a signed-in harness needs no notice', () =>
     given(SIGNED_IN, 'availableAgents', 'show-agent-sign-in', AVAILABLE_AGENTS).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const row = rowOf(SIGNED_IN, 'availableAgents');
-        await store.loadReport(row);
-        const signIn = store.signInOf(row)!;
-        expect(signIn.status).toBe('loaded');
-        expect(signedOutHarness(signIn.capabilities, 'CLAUDE')).toBeNull();
+        const baseUrl = containerBase(server.url, rowOf(SIGNED_IN, 'availableAgents'));
+        const { data } = await at(() => HARNESS_REPORT.fetch({ baseUrl }));
+        expect(data?.capabilities).toBeTruthy();
+        expect(signedOutHarness(data?.capabilities ?? [], 'CLAUDE')).toBeNull();
       },
     ));
 
   it('show-agent-sign-in: a harness nobody signed in gets the notice', () =>
     given(SIGNED_OUT, 'availableAgents', 'show-agent-sign-in', AVAILABLE_AGENTS).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const row = rowOf(SIGNED_OUT, 'availableAgents');
-        await store.loadReport(row);
-        const out = signedOutHarness(store.signInOf(row)!.capabilities, 'CLAUDE');
+        const baseUrl = containerBase(server.url, rowOf(SIGNED_OUT, 'availableAgents'));
+        const { data } = await at(() => HARNESS_REPORT.fetch({ baseUrl }));
+        const out = signedOutHarness(data?.capabilities ?? [], 'CLAUDE');
         expect(out?.harness).toBe('CLAUDE');
         expect(out?.message).toContain('Nobody has signed Claude Code in');
       },
@@ -112,11 +111,12 @@ describe('qits-landing-app → qits-workspace-daemon pact: the harness sign-in',
   it('open-sign-in-terminal: the sign-in terminal opens as a command', () =>
     given(SIGNED_OUT, 'openSignInTerminal', 'open-sign-in-terminal', OPEN_SIGN_IN).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const row = rowOf(SIGNED_OUT, 'openSignInTerminal');
-        await store.open(row, 'CLAUDE');
-        expect(store.signInOf(row)?.commandId).toBeTruthy();
-        expect(store.signInOf(row)?.problem).toBeNull();
+        const baseUrl = containerBase(server.url, rowOf(SIGNED_OUT, 'openSignInTerminal'));
+        const { data, error } = await at(() =>
+          SIGN_IN_TERMINAL.fetch({ baseUrl, body: { agentType: 'CLAUDE' } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.command?.id).toBeTruthy();
       },
     ));
 });

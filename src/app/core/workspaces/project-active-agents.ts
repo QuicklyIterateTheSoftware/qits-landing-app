@@ -19,13 +19,13 @@ import {
  * browser only (the server render has no session to send), and again on each opening of the menu
  * (`resource.reload()`). A failed read again keeps the agents shown.
  *
- * The Agents page reads the same request on its own (qits-2143), and the agent pages through
- * `AgentsStore.loadProjectAgents`, until they move over too (qits-2146's agents group).
+ * The Agents page reads the same request on its own (qits-2143); the agent page reads this
+ * service's (qits-2146).
  *
  * Staleness (qits-1270): the resource's `refreshOn`, `AGENT_STATUS_EVENTS` about the open project
  * (`aboutProjectAgents`: the five status events by their `projectId`; `AgentNudged` and
  * `ACTIVE_AGENT_EVENTS`, which name no project, by an agent or a repository of the agents already
- * listed) → the agents, debounced 1 s, as `AgentsStore.followProject` read them. A wait's request
+ * listed) → the agents, debounced 1 s. A wait's request
  * gates follow `RELEASE_REQUEST_EVENTS` through `ProjectReleaseRequests`, an item's status and
  * block `WORK_EVENTS` wherever the work is followed, not this. No timer and no second stream.
  */

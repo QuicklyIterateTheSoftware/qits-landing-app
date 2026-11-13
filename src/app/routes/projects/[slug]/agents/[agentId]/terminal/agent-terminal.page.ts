@@ -10,16 +10,13 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
-import { map } from 'rxjs';
-import type { DomainEvent } from '$core/events/domain-events';
+import { refreshOn } from '$core/events/refresh-on';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { SelectedProject } from '$core/projects/selected-project';
-import { AgentsStore } from '$core/workspaces/agents.store';
-import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
+import { OPEN_AGENT } from '$core/workspaces/open-agent';
+import { concerns, WORKSPACE_REFRESH_DEBOUNCE_MS } from '$core/workspaces/workspace-events';
 import {
   agentTerminalSocketUrl,
   EMPTY_TERMINAL_FRAMES,
@@ -38,26 +35,26 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
 };
 
 /**
- * An agent's Terminal tab, at `/projects/<slug>/agents/<agent id>/terminal` (epic qits-1230; by
- * the agent's id since epic qits-1681): the agent's harness, live, ported from
+ * An agent's Terminal tab, at `/projects/<slug>/agents/<agent id>/terminal` (epic qits-1230; by the
+ * agent's id since epic qits-1681): the agent's harness, live, ported from
  * qits-workspaces-frontend's Terminal tab.
  *
  * Everything is asked of the agent (epic qits-1667), never of its slot. Whether there is a harness
- * to attach to is the agent's own run state (`AgentsStore.agentOf`, the layout's `getAgent`): while
- * it is RUNNING, the screen attaches to the agent's terminal on qits-workspaces' agent proxy
+ * to attach to is the agent's own run state (`OPEN_AGENT`, the layout's `getAgent`, qits-2146):
+ * while it is RUNNING, the screen attaches to the agent's terminal on qits-workspaces' agent proxy
  * (`agentTerminalSocketUrl`, `/workspaces/agent/<agent id>/terminal`, through `WEB_SOCKET`), which
- * the service joins to the agent's running harness command wherever the agent is placed, signed
- * in with the bearer as a subprotocol (`@qits/angular`'s `BearerWebSocket`). A socket that closes
- * says so on the status line and attaches again (`TerminalSocket`); once the attempts are spent, a
+ * the service joins to the agent's running harness command wherever the agent is placed, signed in
+ * with the bearer as a subprotocol (`@qits/angular`'s `BearerWebSocket`). A socket that closes says
+ * so on the status line and attaches again (`TerminalSocket`); once the attempts are spent, a
  * button tries again. A harness started again (`AgentStarted`, a restart) is a new socket. Leaving
  * the tab only detaches: the harness keeps running.
  *
  * The harness install — its sign-in and the plugins on the shared agent home — is the slot's
  * container's, not the agent's, so it is on the workspace's page, which this tab links to.
  *
- * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
- * (`workspaceId`) → the agent (`AgentsStore.loadAgent`, quietly), whose run state attaches or
- * detaches the screen; of them, `AgentStarted` attaches it anew.
+ * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the agent (`agentId`) or its slot
+ * (`workspaceId`) → the agent (the layout's `refreshOn`, quietly), whose run state attaches or
+ * detaches the screen; of them, `AgentStarted` attaches it anew (`refreshOn`, the tab's own).
  *
  * In the browser only: the server renders the tab without connecting.
  */
@@ -122,23 +119,17 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
   `,
 })
 export class AgentTerminalPage {
-  private readonly agents = inject(AgentsStore);
+  private readonly open = inject(OPEN_AGENT);
   private readonly selected = inject(SelectedProject);
   private readonly origins = inject(PlatformOrigins);
   private readonly openSocket = inject(WEB_SOCKET);
   private readonly document = inject(DOCUMENT);
 
   /** The agent's id, the agent layout's `:agentId`. */
-  private readonly agentId = toSignal(
-    this.layoutRoute().paramMap.pipe(map((params) => params.get('agentId') ?? '')),
-    { initialValue: '' },
-  );
+  private readonly agentId = this.open.agentId;
 
-  /** The agent, as the layout read it (`AgentsStore.loadAgent`). */
-  protected readonly agent = computed(() => {
-    const id = this.agentId();
-    return id ? this.agents.agentOf(id)?.agent : undefined;
-  });
+  /** The agent, as the layout read it (`OPEN_AGENT`). */
+  protected readonly agent = this.open.agent;
 
   protected readonly rowId = computed(() => this.agent()?.workspaceRowId ?? 0);
 
@@ -177,30 +168,21 @@ export class AgentTerminalPage {
       const key = this.running() ? `${agentId}/${this.started()}` : null;
       untracked(() => this.attach(agentId, key));
     });
-    this.agents.follow(
+    // A harness start is a new socket; the layout reads the agent (its run state) again itself.
+    refreshOn(
+      {
+        names: ['AgentStarted'],
+        when: (event) =>
+          concerns(event, {
+            agentId: this.agentId() || undefined,
+            workspaceId: this.rowId() ? String(this.rowId()) : undefined,
+          }),
+        debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+        refresh: () => this.started.update((n) => n + 1),
+      },
       destroy,
-      () => ({
-        agentId: this.agentId() || undefined,
-        workspaceId: this.rowId() ? String(this.rowId()) : undefined,
-      }),
-      (events) => this.reload(events),
-      HARNESS_EVENTS,
     );
     destroy.onDestroy(() => this.detach());
-  }
-
-  /** The agent layout's route, which holds `:agentId`. */
-  private layoutRoute(): ActivatedRoute {
-    const route = inject(ActivatedRoute);
-    return route.parent ?? route;
-  }
-
-  /** Reads the agent again; a harness start attaches the screen anew. */
-  protected reload(events: readonly DomainEvent[] = []): void {
-    const agentId = this.agentId();
-    if (!agentId) return;
-    if (events.some((event) => event.name === 'AgentStarted')) this.started.update((n) => n + 1);
-    void this.agents.loadAgent(agentId);
   }
 
   protected rearm(): void {

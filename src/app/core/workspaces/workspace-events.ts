@@ -79,12 +79,12 @@ export const ACTIVE_AGENT_EVENTS = [
 ] as const satisfies readonly (typeof WORKSPACE_EVENTS)[number][];
 
 /**
- * The events that can change a project's agents as `AgentsStore.loadProjectAgents` reads them
- * (epic qits-1681): their waits (opened, the subject moved, closed), their activity, their
- * attention, a nudge, their start-up phase (qits-2007: the slot's container started, the agent's
- * session launched), and which agents are ACTIVE at all (`ACTIVE_AGENT_EVENTS`). The five status
- * events name the `projectId`; the nudge and the lifecycle events name only the agent, its item, its
- * slot and its repository.
+ * The events that can change a project's agents as `LIST_PROJECT_ACTIVE_AGENTS` reads them (epic
+ * qits-1681): their waits (opened, the subject moved, closed), their activity, their attention, a
+ * nudge, their start-up phase (qits-2007: the slot's container started, the agent's session
+ * launched), and which agents are ACTIVE at all (`ACTIVE_AGENT_EVENTS`). The five status events
+ * name the `projectId`; the nudge and the lifecycle events name only the agent, its item, its slot
+ * and its repository.
  */
 export const AGENT_STATUS_EVENTS = [
   'AgentWaitOpened',
@@ -128,7 +128,8 @@ export function workspaceEventIds(event: WithPayload): WorkspaceEventIds {
 /**
  * Whether `event` is about what a page shows: any of `scope`'s ids it names matches. A page names
  * what it is about (a project's wrapper, a slot, an item and its agent's slot), or several such
- * scopes (the wrapper and each agent it lists); an event that names none of them is somebody else's.
+ * scopes (the wrapper and each agent it lists); an event that names none of them is somebody
+ * else's.
  */
 export function concerns(
   event: WithPayload,
@@ -154,7 +155,7 @@ function matches(ids: WorkspaceEventIds, scope: WorkspaceEventIds): boolean {
  * `projectId`; `AgentNudged` and `ACTIVE_AGENT_EVENTS`, which name no project, by an agent or a
  * repository of the agents already listed. So an agent placed in a repository of the project none
  * of whose agents is listed yet shows on the next status event or visit. Nothing is about no
- * project. `AgentsStore.followProject` and the Agents page's `qitsResource` (qits-2143) narrow by it.
+ * project. `ProjectActiveAgents` and the Agents page's `qitsResource` (qits-2143) narrow by it.
  */
 export function aboutProjectAgents(
   ids: PayloadIds,

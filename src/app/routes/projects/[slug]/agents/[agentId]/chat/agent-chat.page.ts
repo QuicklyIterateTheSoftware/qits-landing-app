@@ -10,15 +10,20 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
-import { exit, outcomes } from '@qits/angular';
-import { map } from 'rxjs';
+import { Router } from '@angular/router';
+import { exit, outcomes, QitsEntityList, qitsResource } from '@qits/angular';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { projectSlugOf } from '$core/projects/selected-project';
-import { AgentChatStore } from '$core/workspaces/agent-chat.store';
+import { loadState } from '$core/resources/load-state';
+import { AGENT_TRANSCRIPT } from '$core/workspaces/agent-chat.operations';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
-import { AgentsStore } from '$core/workspaces/agents.store';
-import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
+import { agentRoute } from '$core/workspaces/agent-proxy';
+import { OPEN_AGENT } from '$core/workspaces/open-agent';
+import {
+  concerns,
+  HARNESS_EVENTS,
+  WORKSPACE_REFRESH_DEBOUNCE_MS,
+} from '$core/workspaces/workspace-events';
 import { buildConversation, EMPTY_CONVERSATION } from '$core/workspaces/chat-model';
 import { formatRange } from '$core/workspaces/file-range';
 import type { CodeReference } from '$core/workspaces/picked-context';
@@ -30,33 +35,36 @@ import { deliveryNote, PromptComposer } from '$patterns/workspaces/prompt-compos
 export const TRANSCRIPT_POLL_MS = 3000;
 
 /**
- * An agent's Chat tab, at `/projects/<slug>/agents/<agent id>/chat` (epic qits-1230; by the
- * agent's id since epic qits-1681): the conversation with the agent as it grows, and a prompt box,
- * ported from qits-workspaces-frontend's chat panel without its speech input.
+ * An agent's Chat tab, at `/projects/<slug>/agents/<agent id>/chat` (epic qits-1230; by the agent's
+ * id since epic qits-1681): the conversation with the agent as it grows, and a prompt box, ported
+ * from qits-workspaces-frontend's chat panel without its speech input.
  *
  * Everything is asked of the agent (epic qits-1667), never of its slot. How it runs is the agent's
- * own run state (`AgentsStore.agentOf`, the layout's `getAgent`); its conversation is its harness's
- * transcript through qits-workspaces' agent proxy (`AgentChatStore.loadTranscript`, `GET
- * /workspaces/agent/<agent id>/log?channel=TRANSCRIPT`), read again every {@link
- * TRANSCRIPT_POLL_MS} while the agent is RUNNING and once more when it stops. Its live screen is the
- * Terminal tab; Interrupt and Stop are the agent page's verbs. Below the transcript, the prompt
- * composer (`PromptComposer`), whose draft lives on the service and whose prompt the agent's prompt
- * door hands to it, with the line ranges picked in the Files tab; a pick's ↗ opens it there
- * (`files?path=…&lines=…`, the declared exit `open-picked-reference` `files`, epic qits-2000).
+ * own run state (`OPEN_AGENT`, the layout's `getAgent`); its conversation is its harness's
+ * transcript through qits-workspaces' agent proxy, the tab's own `qitsResource` over
+ * `AGENT_TRANSCRIPT` (qits-2146; `GET /workspaces/agent/<agent id>/log?channel=TRANSCRIPT`), read
+ * again (`reload()`) every {@link TRANSCRIPT_POLL_MS} while the agent is RUNNING and once more when
+ * it stops. The transcript's section names that read as its source (`qitsEntityList`, qits-2141).
+ * Its live screen is the Terminal tab; Interrupt and Stop are the agent page's verbs. Below the
+ * transcript, the prompt composer (`PromptComposer`), whose draft lives on the service and whose
+ * prompt the agent's prompt door hands to it, with the line ranges picked in the Files tab; a
+ * pick's ↗ opens it there (`files?path=…&lines=…`, the declared exit `open-picked-reference`
+ * `files`, epic qits-2000).
  *
- * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot
- * (`workspaceId`) → the agent (`AgentsStore.loadAgent`, quietly), whose run state starts and stops
- * the poll, and the transcript once more. Two exceptions to the one-stream rule stay (qits-1270,
- * lint-allowed by name): the slot's hint channel (`WorkspaceHints`, `/workspaces/api/…`:
- * `prompt-draft` for the composer has no event) and the {@link TRANSCRIPT_POLL_MS} poll while the
- * agent runs (the daemon offers no transcript stream, and qits-events carries no turn).
+ * Staleness (qits-1270): `HARNESS_EVENTS` naming the agent (`agentId`) or its slot (`workspaceId`)
+ * → the transcript once more (its resource's `refreshOn`), and the agent, whose run state starts
+ * and stops the poll (the layout's `refreshOn`, `WORKSPACE_EVENTS`). Two exceptions to the
+ * one-stream rule stay (qits-1270, lint-allowed by name): the slot's hint channel
+ * (`WorkspaceHints`, `/workspaces/api/…`: `prompt-draft` for the composer has no event) and the
+ * {@link TRANSCRIPT_POLL_MS} poll while the agent runs (the daemon offers no transcript stream, and
+ * qits-events carries no turn).
  *
  * In the browser only: the server renders the tab without reading.
  */
 @Component({
   selector: 'app-agent-chat-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Conversation, PromptComposer],
+  imports: [Conversation, PromptComposer, QitsEntityList],
   providers: [WorkspaceHints],
   host: { class: 'block' },
   template: `
@@ -85,6 +93,7 @@ export const TRANSCRIPT_POLL_MS = 3000;
                 class="rounded-md border border-line bg-surface p-3"
                 aria-label="The transcript"
                 aria-live="polite"
+                [qitsEntityList]="log"
               >
                 @if (transcript().items.length === 0) {
                   <p class="m-0 text-fg-soft">The transcript has nothing in it yet.</p>
@@ -111,10 +120,11 @@ export const TRANSCRIPT_POLL_MS = 3000;
   `,
 })
 export class AgentChatPage {
-  private readonly agents = inject(AgentsStore);
-  private readonly chats = inject(AgentChatStore);
+  private readonly open = inject(OPEN_AGENT);
+  private readonly origins = inject(PlatformOrigins);
   private readonly hints = inject(WorkspaceHints);
   private readonly router = inject(Router);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /** A picked reference's ↗ opens its lines in the Files tab (epic qits-2000). */
   protected readonly opening = outcomes('open-picked-reference', {
@@ -122,16 +132,10 @@ export class AgentChatPage {
   });
 
   /** The agent's id, the agent layout's `:agentId`. */
-  private readonly agentId = toSignal(
-    this.layoutRoute().paramMap.pipe(map((params) => params.get('agentId') ?? '')),
-    { initialValue: '' },
-  );
+  private readonly agentId = this.open.agentId;
 
-  /** The agent, as the layout read it (`AgentsStore.loadAgent`). */
-  protected readonly agent = computed(() => {
-    const id = this.agentId();
-    return id ? this.agents.agentOf(id)?.agent : undefined;
-  });
+  /** The agent, as the layout read it (`OPEN_AGENT`). */
+  protected readonly agent = this.open.agent;
 
   protected readonly rowId = computed(() => this.agent()?.workspaceRowId ?? 0);
 
@@ -157,12 +161,44 @@ export class AgentChatPage {
     }
   });
 
-  private readonly transcriptRead = computed(() => this.chats.transcriptOf(this.agentId()));
+  /**
+   * The agent's transcript, once it has a slot, in the browser only; again after a harness event
+   * naming the agent or its slot, and on the poll.
+   */
+  protected readonly log = qitsResource(
+    AGENT_TRANSCRIPT,
+    () => {
+      const agentId = this.agentId();
+      if (!this.browser || !agentId || !this.rowId()) return undefined;
+      return {
+        ...agentRoute(this.origins.api('workspaces'), agentId, 'log'),
+        // The proxy picks the agent's command; the route names none.
+        path: { commandId: '' },
+        query: { channel: 'TRANSCRIPT' as const },
+      };
+    },
+    {
+      refreshOn: {
+        names: HARNESS_EVENTS,
+        when: (event) =>
+          concerns(event, {
+            agentId: this.agentId() || undefined,
+            workspaceId: this.rowId() ? String(this.rowId()) : undefined,
+          }),
+        debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+      },
+    },
+  );
 
-  protected readonly transcriptState = computed(() => this.transcriptRead()?.status ?? 'loading');
+  /** The transcript's read: a read again that fails keeps the lines on screen. */
+  protected readonly transcriptState = computed(() => loadState(this.log));
 
   protected readonly transcript = computed(() => {
-    const lines = this.transcriptRead()?.lines ?? [];
+    const lines = this.log.hasValue()
+      ? [...(this.log.value()?.lines ?? [])]
+          .sort((a, b) => a.sequence - b.sequence)
+          .map((line) => line.content)
+      : [];
     return lines.length === 0 ? EMPTY_CONVERSATION : buildConversation(lines);
   });
 
@@ -172,54 +208,37 @@ export class AgentChatPage {
   private poll: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-    const destroy = inject(DestroyRef);
+    if (!this.browser) return;
     effect(() => {
       const rowId = this.rowId();
       untracked(() => this.hints.watch(rowId));
     });
-    // Keyed by agent, slot and whether it runs: a stop reads the last lines once more.
+    // Keyed by agent, slot and whether it runs: a stop reads the last lines once more. A new agent
+    // or slot is read by the resource itself, its params having changed.
+    let followed = '';
     effect(() => {
       const agentId = this.agentId();
       const rowId = this.rowId();
       const running = this.running();
-      untracked(() => this.followTranscript(agentId, rowId, running));
+      untracked(() => {
+        const key = `${agentId}/${rowId}`;
+        this.followTranscript(agentId, rowId, running, key === followed);
+        followed = key;
+      });
     });
-    this.agents.follow(
-      destroy,
-      () => ({
-        agentId: this.agentId() || undefined,
-        workspaceId: this.rowId() ? String(this.rowId()) : undefined,
-      }),
-      () => this.refresh(),
-      HARNESS_EVENTS,
-    );
-    destroy.onDestroy(() => this.stopPoll());
-  }
-
-  /** The agent layout's route, which holds `:agentId`. */
-  private layoutRoute(): ActivatedRoute {
-    const route = inject(ActivatedRoute);
-    return route.parent ?? route;
+    inject(DestroyRef).onDestroy(() => this.stopPoll());
   }
 
   /** Reads the transcript again. */
   protected reload(): void {
-    const agentId = this.agentId();
-    if (agentId && this.rowId()) void this.chats.loadTranscript(agentId);
-  }
-
-  /** After a harness event: the agent (its run state) and its transcript. */
-  private refresh(): void {
-    const agentId = this.agentId();
-    if (!agentId) return;
-    void this.agents.loadAgent(agentId);
-    this.reload();
+    if (this.agentId() && this.rowId()) this.log.reload();
   }
 
   protected onSent(delivery: AgentDelivery): void {
     this.lastSent.set(deliveryNote(delivery));
-    this.refresh();
+    // The agent (its run state) and its transcript.
+    this.open.reload();
+    this.reload();
   }
 
   /** A picked reference's ↗: its lines, open in the Files tab. */
@@ -230,13 +249,11 @@ export class AgentChatPage {
     );
   }
 
-  private followTranscript(agentId: string, rowId: number, running: boolean): void {
+  private followTranscript(agentId: string, rowId: number, running: boolean, same: boolean): void {
     this.stopPoll();
     if (!agentId || !rowId) return;
-    void this.chats.loadTranscript(agentId);
-    if (running) {
-      this.poll = setInterval(() => void this.chats.loadTranscript(agentId), TRANSCRIPT_POLL_MS);
-    }
+    if (same) this.log.reload();
+    if (running) this.poll = setInterval(() => this.log.reload(), TRANSCRIPT_POLL_MS);
   }
 
   private stopPoll(): void {

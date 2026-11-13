@@ -11,10 +11,16 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import { PlatformOrigins } from '$core/platform/platform-origins';
+import { isMissing } from '$core/resources/resource-family';
 import type { FileDetection, FileListing } from '$core/workspaces/agent-files.consumes';
-import { AgentFilesStore } from '$core/workspaces/agent-files.store';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import {
+  WORKTREE_DETECTION,
+  WORKTREE_FILE,
+  WORKTREE_FILES,
+} from '$core/workspaces/agent-files.operations';
+import { agentRoute, type AgentRoute } from '$core/workspaces/agent-proxy';
 import {
   compileAll,
   frameworkWhitelist,
@@ -50,6 +56,7 @@ import {
   type NarrowingKind,
   type TreeRow,
 } from '$core/workspaces/file-tree-model';
+import { OPEN_AGENT } from '$core/workspaces/open-agent';
 import { PickedContext, referenceLabel, type CodeReference } from '$core/workspaces/picked-context';
 import { WorkspaceHints } from '$core/workspaces/workspace-hints';
 import {
@@ -70,31 +77,57 @@ type ListingState =
   | { readonly status: 'idle' | 'loading' | 'error' }
   | { readonly status: 'loaded'; readonly value: FileListing };
 
+/** The tree before it is read: nothing. */
+const NO_LISTING: FileListing = { paths: [], lazyDirs: [], generation: '' };
+
+/** What one generation of the tree has gathered: opened stubs, or ignore files read, by path. */
+interface ByGeneration<T> {
+  readonly generation: string;
+  readonly byPath: ReadonlyMap<string, T>;
+}
+
+/** `held`, with `path` set to `value`, for `generation`: a new generation starts afresh. */
+function withPath<T>(
+  held: ByGeneration<T>,
+  generation: string,
+  path: string,
+  value: T,
+): ByGeneration<T> {
+  const byPath = held.generation === generation ? new Map(held.byPath) : new Map<string, T>();
+  return { generation, byPath: byPath.set(path, value) };
+}
+
+const NOTHING_GATHERED: ByGeneration<never> = { generation: '', byPath: new Map<string, never>() };
+
 /** A chip's button, written out in full so Tailwind finds it. */
 const CHIP =
   'cursor-pointer rounded-full border px-2.5 py-0.5 font-sans text-xs aria-pressed:border-accent-line aria-pressed:bg-accent-soft aria-pressed:text-accent border-line bg-surface text-fg-soft';
 
 /**
  * An agent's Files tab, at `/projects/<slug>/agents/<agent id>/files` (epic qits-1230; by the
- * agent's id since epic qits-1681): the agent's worktree, ported from qits-workspaces-frontend's files panel. A
- * tree on the left, the open file on the right, and the filters that decide what the tree shows.
+ * agent's id since epic qits-1681): the agent's worktree, ported from qits-workspaces-frontend's
+ * files panel. A tree on the left, the open file on the right, and the filters that decide what the
+ * tree shows.
  *
- * **What it reads** (`AgentFilesStore`, through qits-workspaces' container proxy):
+ * **What it reads** (`agent-files.operations.ts`, through qits-workspaces' agent proxy, qits-2146):
  *
- * - the whole eager tree in one answer (`list`), with every gitignored directory as a stub, and
- *   the detection (`detect`): the frameworks the footer toggles and the source-to-test graph. A
- *   detection is applied only while its `generation` is the tree's, and on a mismatch the last
- *   consistent one is held;
- * - a stub, one level, when it is opened (cached until the tree's `generation` moves);
- * - the open file (`read`), which is the URL's `path` (and `lines`, the range painted and scrolled
- *   to), so a picked reference on the Chat tab and a pasted link open it alike;
- * - an ignore file, once, when its ignore list is first turned on.
+ * - the whole eager tree in one answer (its `qitsResource` over `WORKTREE_FILES`), with every
+ *   gitignored directory as a stub, and the detection (`WORKTREE_DETECTION`): the frameworks the
+ *   footer toggles and the source-to-test graph. A detection is applied only while its `generation`
+ *   is the tree's, and on a mismatch the last consistent one is held;
+ * - the open file (`WORKTREE_FILE`), which is the URL's `path` (and `lines`, the range painted and
+ *   scrolled to), so a picked reference on the Chat tab and a pasted link open it alike;
+ * - on a press, never on its own: a stub, one level, when it is opened (`WORKTREE_FILES`' `fetch`,
+ *   kept until the tree's `generation` moves), and an ignore file, once, when its ignore list is
+ *   first turned on (`WORKTREE_FILE`'s `fetch`).
  *
- * The slot's `files` hint (`WorkspaceHints`) reads the tree, the detection and the open file again.
+ * The slot's `files` hint (`WorkspaceHints`) reads the tree, the detection and the open file again
+ * (each resource's `reload()`). The tree, the footer and the viewer name their read as their source
+ * (`qitsEntityList`, qits-2141); the stub count is derived from the tree's `lazyDirs`.
  *
  * Staleness (qits-1270): no qits-events event says the worktree changed, so the `files` hint (a
  * named, lint-allowed exception) is the trigger; the agent and its slot are the layout's
- * (`AgentsStore.loadAgent`, `WORKSPACE_EVENTS`), and a new slot moves the hint channel with it.
+ * (`OPEN_AGENT`, `WORKSPACE_EVENTS`), and a new slot moves the hint channel with it.
  *
  * **What the tree shows.** A gitignored directory is a dimmed stub with its child count. A name
  * search (fuzzy, a glob with `*`, or a path with `/`) or a manual rule opens the tree fully; a
@@ -105,15 +138,15 @@ const CHIP =
  * test one link away from its source is hidden from the tree (except while searching), and the
  * viewer's strip links a source and its tests both ways.
  *
- * **Picking.** "Pick lines" arms the gutter; a picked range becomes a reference
- * (`PickedContext`), which the Chat tab's prompt composer carries in the draft.
+ * **Picking.** "Pick lines" arms the gutter; a picked range becomes a reference (`PickedContext`),
+ * which the Chat tab's prompt composer carries in the draft.
  *
  * In the browser only: the server renders the tab without reading.
  */
 @Component({
   selector: 'app-agent-files-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FileFilterDialog, FileTree, FileViewer],
+  imports: [FileFilterDialog, FileTree, FileViewer, QitsEntityList, QitsField],
   providers: [WorkspaceHints],
   host: { class: 'block' },
   template: `
@@ -137,7 +170,11 @@ const CHIP =
             />
           }
           <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(14rem,18rem)_minmax(0,1fr)]">
-            <section class="flex min-w-0 flex-col gap-2" aria-label="Working tree">
+            <section
+              class="flex min-w-0 flex-col gap-2"
+              aria-label="Working tree"
+              [qitsEntityList]="treeRead"
+            >
               <div class="flex items-center gap-2">
                 <label class="sr-only" for="file-filter">Filter files by name</label>
                 <input
@@ -198,14 +235,23 @@ const CHIP =
                 />
               }
               @if (unsearched() > 0) {
-                <p class="m-0 text-xs text-fg-soft" role="status">
+                <p
+                  class="m-0 text-xs text-fg-soft"
+                  role="status"
+                  [fieldOf]="shownTree()"
+                  [qitsField]="{ derived: ['lazyDirs'] }"
+                >
                   {{ unsearched() }} collapsed
                   {{ unsearched() === 1 ? 'directory' : 'directories' }} not searched: open to
                   include.
                 </p>
               }
               @if (frameworkToggles().length > 0) {
-                <footer class="flex flex-wrap gap-1.5 pt-1" aria-label="Detected frameworks">
+                <footer
+                  class="flex flex-wrap gap-1.5 pt-1"
+                  aria-label="Detected frameworks"
+                  [qitsEntityList]="detection"
+                >
                   @for (framework of frameworkToggles(); track framework.frameworkId) {
                     <button
                       type="button"
@@ -220,7 +266,11 @@ const CHIP =
               }
             </section>
 
-            <section class="flex min-w-0 flex-col gap-2" aria-label="File viewer">
+            <section
+              class="flex min-w-0 flex-col gap-2"
+              aria-label="File viewer"
+              [qitsEntityList]="fileRead"
+            >
               @if (selectedPath(); as path) {
                 @if (group(); as strip) {
                   <nav class="flex flex-wrap gap-1.5" aria-label="Source and its tests">
@@ -293,7 +343,7 @@ const CHIP =
                 [anchor]="anchor()"
                 [picks]="picksHere()"
                 (pick)="onPick($event)"
-                (retry)="readFile()"
+                (retry)="reloadFile()"
               />
             </section>
           </div>
@@ -303,27 +353,22 @@ const CHIP =
   `,
 })
 export class AgentFilesPage {
-  private readonly agents = inject(AgentsStore);
-  private readonly files = inject(AgentFilesStore);
+  private readonly openAgent = inject(OPEN_AGENT);
+  private readonly origins = inject(PlatformOrigins);
   private readonly hints = inject(WorkspaceHints);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly picked = inject(PickedContext);
   protected readonly chip = CHIP;
 
   /** The agent's id, the agent layout's `:agentId`. */
-  private readonly agentId = toSignal(
-    (this.route.parent ?? this.route).paramMap.pipe(map((params) => params.get('agentId') ?? '')),
-    { initialValue: '' },
-  );
+  private readonly agentId = this.openAgent.agentId;
 
   private readonly params = toSignal(this.route.queryParamMap, { initialValue: null });
 
-  /** The agent, as the layout read it (`AgentsStore.loadAgent`). */
-  protected readonly agent = computed(() => {
-    const id = this.agentId();
-    return id ? this.agents.agentOf(id)?.agent : undefined;
-  });
+  /** The agent, as the layout read it (`OPEN_AGENT`). */
+  protected readonly agent = this.openAgent.agent;
 
   protected readonly rowId = computed(() => this.agent()?.workspaceRowId ?? 0);
 
@@ -335,15 +380,76 @@ export class AgentFilesPage {
     parseRange(this.params()?.get('lines')),
   );
 
-  protected readonly listing = signal<ListingState>({ status: 'idle' });
-  /** Opened stubs, by path; dropped when the tree's generation moves. */
-  private readonly opened = signal<ReadonlyMap<string, FileListing>>(new Map());
+  /** `route` of the agent proxy, for the agent in the browser once it has a slot; else nothing. */
+  private at(route: AgentRoute) {
+    const agentId = this.agentId();
+    if (!this.browser || !agentId || !this.rowId()) return undefined;
+    return { ...agentRoute(this.origins.api('workspaces'), agentId, route), path: { agentId } };
+  }
+
+  /** The whole eager tree (no `path`: a blank one would read as a directory called nothing). */
+  protected readonly treeRead = qitsResource(WORKTREE_FILES, () => this.at('files'));
+
+  /** The frameworks and the source-to-test graph; a failed one only costs the footer. */
+  protected readonly detection = qitsResource(WORKTREE_DETECTION, () => this.at('detection'));
+
+  /** The open file, the URL's `path`. */
+  protected readonly fileRead = qitsResource(WORKTREE_FILE, () => {
+    const at = this.at('files/content');
+    const path = this.selectedPath();
+    return at && path ? { ...at, query: { path } } : undefined;
+  });
+
+  /** The tree as read; an empty one until it answered. */
+  protected readonly shownTree = computed(
+    () => (this.treeRead.hasValue() ? this.treeRead.value() : undefined) ?? NO_LISTING,
+  );
+
+  /** The tree's read: a read again that fails keeps the tree on screen. */
+  protected readonly listing = computed((): ListingState => {
+    if (this.treeRead.hasValue()) {
+      const value = this.treeRead.value();
+      if (value) return { status: 'loaded', value };
+    }
+    const status = this.treeRead.status();
+    if (status === 'error') return { status: 'error' };
+    return status === 'idle' ? { status: 'idle' } : { status: 'loading' };
+  });
+
+  /** Opened stubs, by path, for the tree's generation: a new one drops them. */
+  private readonly openedStubs = signal<ByGeneration<FileListing>>(NOTHING_GATHERED);
+  private readonly opened = computed((): ReadonlyMap<string, FileListing> => {
+    const held = this.openedStubs();
+    return held.generation === this.generation() ? held.byPath : new Map();
+  });
   protected readonly pending = signal<ReadonlySet<string>>(new Set<string>());
   /** The newest detection, whatever tree it describes. */
-  private readonly incoming = signal<FileDetection | null>(null);
+  private readonly incoming = computed(
+    (): FileDetection | null =>
+      (this.detection.hasValue() ? this.detection.value() : undefined) ?? null,
+  );
   /** The newest detection that matched the tree on screen. */
   private readonly held = signal<FileDetection | null>(null);
-  protected readonly file = signal<FileView | null>(null);
+
+  /** What the viewer shows of the open file. */
+  protected readonly file = computed((): FileView | null => {
+    if (!this.rowId() || !this.agentId() || !this.selectedPath()) return null;
+    const read = this.fileRead;
+    if (read.hasValue()) {
+      const value = read.value();
+      if (value) {
+        return {
+          status: 'loaded',
+          binary: value.binary,
+          content: value.binary ? null : (value.content ?? ''),
+        };
+      }
+    }
+    if (read.status() === 'error') {
+      return { status: isMissing(read) ? 'missing' : 'error', binary: false, content: null };
+    }
+    return { status: 'loading', binary: false, content: null };
+  });
 
   /** The name box. */
   readonly query = signal('');
@@ -353,21 +459,22 @@ export class AgentFilesPage {
   readonly rules = signal<readonly FilterRule[]>([]);
   /** The ignore-file basenames turned on. */
   readonly activeIgnores = signal<ReadonlySet<string>>(new Set<string>());
-  /** Ignore files read, by path. */
-  private readonly ignoreText = signal<ReadonlyMap<string, string>>(new Map());
+  /** Ignore files read, by path, for the tree's generation: a new one drops them. */
+  private readonly ignoreFiles = signal<ByGeneration<string>>(NOTHING_GATHERED);
+  private readonly ignoreText = computed((): ReadonlyMap<string, string> => {
+    const held = this.ignoreFiles();
+    return held.generation === this.generation() ? held.byPath : new Map();
+  });
   protected readonly dialogOpen = signal(false);
   /** Pick mode: sticky across picks, disarmed when another file opens. */
   readonly picking = signal(false);
   private readonly expanded = signal<ReadonlySet<string>>(new Set<string>());
 
+  /** `<generation>/<path>` of the ignore files being read. */
   private readingIgnores = new Set<string>();
-  /** The path `file` is about. */
-  private fileFor: string | null = null;
-  /** `<slot row id>/<agent id>` the tree was reset for. */
-  private resetFor: string | null = null;
 
   constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+    if (!this.browser) return;
     const fileHints = this.hints.hints('files');
     effect(() => {
       const rowId = this.rowId();
@@ -377,20 +484,28 @@ export class AgentFilesPage {
       const agentId = this.agentId();
       untracked(() => this.picked.use(agentId));
     });
-    // The tree and the detection: on the agent, and again on every `files` hint.
+    // A new agent or slot is a new tree: what the old one opened, held or read goes.
+    let resetFor = '';
     effect(() => {
-      const rowId = this.rowId();
-      const agentId = this.agentId();
-      fileHints();
-      untracked(() => this.load(rowId, agentId));
+      const key = `${this.rowId()}/${this.agentId()}`;
+      untracked(() => {
+        if (key === resetFor) return;
+        resetFor = key;
+        this.openedStubs.set(NOTHING_GATHERED);
+        this.expanded.set(new Set());
+        this.held.set(null);
+        this.ignoreFiles.set(NOTHING_GATHERED);
+        this.readingIgnores.clear();
+      });
     });
-    // The open file: on the URL, and again on every `files` hint.
+    // The tree, the detection and the open file again on every `files` hint (not its first value).
+    let seen = -1;
     effect(() => {
-      const rowId = this.rowId();
-      const agentId = this.agentId();
-      const path = this.selectedPath();
-      fileHints();
-      untracked(() => void this.readFile(rowId, agentId, path));
+      const hint = fileHints();
+      untracked(() => {
+        if (seen >= 0 && hint !== seen) this.reload();
+        seen = hint;
+      });
     });
     // The generation gate: written, because holding the last consistent answer is state.
     effect(() => {
@@ -412,10 +527,7 @@ export class AgentFilesPage {
 
   // ---- what is on screen ---------------------------------------------------------------------
 
-  private readonly generation = computed(() => {
-    const state = this.listing();
-    return state.status === 'loaded' ? state.value.generation : '';
-  });
+  private readonly generation = computed(() => this.shownTree().generation);
 
   private readonly tree = computed(() => {
     const state = this.listing();
@@ -645,53 +757,30 @@ export class AgentFilesPage {
     if (path) this.picked.add({ path, ...range });
   }
 
+  /** The tree and the detection, read again; on a hint the open file too. */
   protected reload(): void {
-    this.load(this.rowId(), this.agentId());
+    if (!this.rowId() || !this.agentId()) return;
+    this.treeRead.reload();
+    this.detection.reload();
+    this.reloadFile();
+  }
+
+  /** The open file, read again. */
+  protected reloadFile(): void {
+    if (this.selectedPath()) this.fileRead.reload();
   }
 
   // ---- reads ---------------------------------------------------------------------------------
 
-  /** The tree and the detection, read together; a failed detection only costs the footer. */
-  private load(rowId: number, agentId: string): void {
-    if (!rowId || !agentId) return;
-    const key = `${rowId}/${agentId}`;
-    if (this.resetFor !== key) {
-      this.resetFor = key;
-      this.opened.set(new Map());
-      this.expanded.set(new Set());
-      this.held.set(null);
-      this.incoming.set(null);
-      this.ignoreText.set(new Map());
-      this.readingIgnores.clear();
-      this.listing.set({ status: 'loading' });
-    }
-    void this.files.detect(agentId).then((outcome) => {
-      if (outcome.ok && this.resetFor === key) this.incoming.set(outcome.value);
-    });
-    void this.files.list(agentId).then((outcome) => {
-      if (this.resetFor !== key) return;
-      if (!outcome.ok) {
-        // A read again that fails keeps the tree on screen.
-        if (this.listing().status !== 'loaded') this.listing.set({ status: 'error' });
-        return;
-      }
-      // Opened stubs and ignore files describe one generation; a new one drops them.
-      if (this.generation() !== outcome.value.generation) {
-        this.opened.set(new Map());
-        this.ignoreText.set(new Map());
-        this.readingIgnores.clear();
-      }
-      this.listing.set({ status: 'loaded', value: outcome.value });
-    });
-  }
-
+  /** A stub, one level, on a press (`WORKTREE_FILES`' `fetch`); one that fails stays shut. */
   private async openStub(path: string): Promise<void> {
-    const agentId = this.agentId();
+    const at = this.at('files');
+    if (!at) return;
+    const generation = this.generation();
     this.pending.update((pending) => new Set(pending).add(path));
-    const outcome = await this.files.list(agentId, path);
-    // A directory that will not open stays shut.
-    if (outcome.ok) {
-      this.opened.update((opened) => new Map(opened).set(path, outcome.value));
+    const { data, error } = await WORKTREE_FILES.fetch({ ...at, query: { path } });
+    if (error === undefined && data) {
+      this.openedStubs.update((held) => withPath(held, generation, path, data));
       this.expanded.update((expanded) => new Set(expanded).add(path));
     }
     this.pending.update((pending) => {
@@ -701,54 +790,28 @@ export class AgentFilesPage {
     });
   }
 
-  /** The open file; a late answer for a file nobody reads any more is dropped. */
-  protected async readFile(
-    rowId = this.rowId(),
-    agentId = this.agentId(),
-    path = this.selectedPath(),
-  ): Promise<void> {
-    if (!rowId || !agentId || !path) {
-      this.file.set(null);
-      return;
-    }
-    // A read again of the same file keeps its text on screen until the answer.
-    if (this.fileFor !== path || this.file()?.status !== 'loaded') {
-      this.file.set({ status: 'loading', binary: false, content: null });
-    }
-    this.fileFor = path;
-    const outcome = await this.files.read(agentId, path);
-    if (this.selectedPath() !== path) return;
-    if (outcome.ok) {
-      this.file.set({
-        status: 'loaded',
-        binary: outcome.value.binary,
-        content: outcome.value.binary ? null : (outcome.value.content ?? ''),
-      });
-    } else {
-      this.file.set({
-        status: outcome.status === 404 ? 'missing' : 'error',
-        binary: false,
-        content: null,
-      });
-    }
-  }
-
-  /** Each ignore file an active list needs, once; one that fails contributes nothing. */
+  /**
+   * Each ignore file an active list needs, once per generation (`WORKTREE_FILE`'s `fetch`); one
+   * that fails contributes nothing.
+   */
   private readIgnoreFiles(active: ReadonlySet<string>, paths: readonly string[]): void {
-    const rowId = this.rowId();
-    const agentId = this.agentId();
-    if (!rowId || !agentId) return;
+    const at = this.at('files/content');
+    if (!at) return;
+    const generation = this.generation();
     for (const name of active) {
       for (const source of ignoreSources(paths, name)) {
-        if (this.ignoreText().has(source.path) || this.readingIgnores.has(source.path)) continue;
-        this.readingIgnores.add(source.path);
-        void this.files.read(agentId, source.path).then((outcome) => {
-          this.readingIgnores.delete(source.path);
-          if (outcome.ok && !outcome.value.binary && outcome.value.content !== undefined) {
-            const text = outcome.value.content;
-            this.ignoreText.update((known) => new Map(known).set(source.path, text));
-          }
-        });
+        const key = `${generation}/${source.path}`;
+        if (this.ignoreText().has(source.path) || this.readingIgnores.has(key)) continue;
+        this.readingIgnores.add(key);
+        void WORKTREE_FILE.fetch({ ...at, query: { path: source.path } }).then(
+          ({ data, error }) => {
+            this.readingIgnores.delete(key);
+            if (error === undefined && data && !data.binary && data.content !== undefined) {
+              const text = data.content;
+              this.ignoreFiles.update((held) => withPath(held, generation, source.path, text));
+            }
+          },
+        );
       }
     }
   }

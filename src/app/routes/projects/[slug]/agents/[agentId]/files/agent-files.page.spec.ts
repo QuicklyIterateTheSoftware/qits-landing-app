@@ -1,13 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/workspace-daemon/client/client.gen';
 import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import { OPEN_AGENT, type OpenAgentRead } from '$core/workspaces/open-agent';
 import { PickedContext } from '$core/workspaces/picked-context';
 import {
   workspaceDaemonGoldenMaster,
@@ -54,9 +54,14 @@ describe('AgentFilesPage', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
+        // The agent, as the agent layout read it.
         {
-          provide: AgentsStore,
-          useValue: { agentOf: () => ({ status: 'loaded', agent }) },
+          provide: OPEN_AGENT,
+          useFactory: (): OpenAgentRead => ({
+            agentId: signal(agentId),
+            agent: signal(agent),
+            reload: () => undefined,
+          }),
         },
         {
           provide: EVENT_SOURCE,

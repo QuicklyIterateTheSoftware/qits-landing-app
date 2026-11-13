@@ -1,18 +1,16 @@
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { qitsMutation } from '@qits/angular';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+  AGENT_INTERRUPT,
+  AGENT_RESTART,
+  AGENT_STOP,
+} from '$core/workspaces/agent-actions.operations';
 import {
-  AgentActionsStore,
   describeRefusal,
+  outcomeOf,
   sentence,
   type ActionOutcome,
-} from '$core/workspaces/agent-actions.store';
+} from '$core/workspaces/refusals';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -25,7 +23,7 @@ const RESTARTABLE: ReadonlySet<string> = new Set(['RUNNING', 'YIELDED', 'STOPPED
 /**
  * An agent's own verbs (epic qits-1667), addressed by the agent, never by its slot:
  *
- * - **Interrupt**, while it is RUNNING: ESC to its harness (`AgentActionsStore.interruptAgent`),
+ * - **Interrupt**, while it is RUNNING: ESC to its harness (`AGENT_INTERRUPT`),
  *   which stops the turn in flight and changes no run state;
  * - **Stop**, unless it is STOPPED, confirmed ("Confirm stop?"): the agent becomes STOPPED and the
  *   scheduler leaves it alone until a person restarts or prompts it; its container is untouched;
@@ -35,6 +33,7 @@ const RESTARTABLE: ReadonlySet<string> = new Set(['RUNNING', 'YIELDED', 'STOPPED
  *
  * A refusal is said below the buttons in the service's words; an interrupt says what the service
  * said it did. Every answer, a refusal included, emits `changed`, so the page reads the agent again.
+ * Each verb writes through `qitsMutation` over `agent-actions.operations.ts` (qits-2146).
  */
 @Component({
   selector: 'app-agent-run-actions',
@@ -65,7 +64,9 @@ const RESTARTABLE: ReadonlySet<string> = new Set(['RUNNING', 'YIELDED', 'STOPPED
   `,
 })
 export class AgentRunActions {
-  private readonly store = inject(AgentActionsStore);
+  private readonly interrupting = qitsMutation(AGENT_INTERRUPT);
+  private readonly stopping = qitsMutation(AGENT_STOP);
+  private readonly restarting = qitsMutation(AGENT_RESTART);
 
   readonly agentId = input.required<string>();
 
@@ -95,7 +96,7 @@ export class AgentRunActions {
     callback: () =>
       void this.run(
         'interrupt',
-        () => this.store.interruptAgent(this.agentId()),
+        () => outcomeOf(this.interrupting, { path: { id: this.agentId() } }),
         (value) => this.note.set(sentence(value.detail?.trim() || 'Interrupted')),
       ),
   }));
@@ -151,9 +152,9 @@ export class AgentRunActions {
       return;
     }
     this.confirming.set(null);
-    const id = this.agentId();
+    const params = { path: { id: this.agentId() } };
     await this.run(verb, () =>
-      verb === 'stop' ? this.store.stopAgent(id) : this.store.restartAgent(id),
+      verb === 'stop' ? outcomeOf(this.stopping, params) : outcomeOf(this.restarting, params),
     );
   }
 

@@ -17,12 +17,19 @@ import {
   PROMPT_AGENT,
   SAVE_PROMPT_DRAFT,
 } from './agent-prompt.consumes';
-import { AgentPromptStore, draftText } from './agent-prompt.store';
+import {
+  AGENT_PROMPT,
+  PROMPT_DRAFT,
+  PROMPT_DRAFT_DELETE,
+  PROMPT_DRAFT_SAVE,
+} from './agent-prompt.operations';
+import { draftText, promptDraftOf, promptParams, saveDraftParams } from './prompt-drafts';
 
 /**
  * qits-landing-app's pact with qits-workspaces-service, the part the agent's Chat tab makes (epic
- * qits-1230), in `pacts/qits-landing-app_qits-workspaces-service.json` beside the other stores'
- * parts:
+ * qits-1230) through `agent-prompt.operations.ts` (qits-2146: moved here from
+ * `agent-prompt.store.pact.spec.ts` with `AgentPromptStore`, unchanged), in
+ * `pacts/qits-landing-app_qits-workspaces-service.json` beside the other parts:
  *
  * - "an agent with a saved prompt draft": the draft restored, written and thrown away;
  * - "an agent with no prompt draft": nothing was ever composed (404);
@@ -30,7 +37,7 @@ import { AgentPromptStore, draftText } from './agent-prompt.store';
  * The agent's id is a param, so the draft's path takes it as a provider-state expression.
  *
  * - "an agent working on a ticket": the prompt, sent to the agent by its id (`promptAgent`, epic
- *   qits-1667), which it hears as its first turn. The recorded text is what the store sends. The
+ *   qits-1667), which it hears as its first turn. The recorded text is what the composer sends. The
  *   work item delivery door the tab used before (`deliverAgentTurn`) is no longer called.
  */
 const CONSUMER = 'qits-landing-app';
@@ -76,8 +83,8 @@ const given = (
     consumes,
   });
 
-/** The store, calling the mock server. */
-function storeAt(url: string) {
+/** Runs `call` against the mock server at `url`, in an injection context. */
+function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -86,7 +93,7 @@ function storeAt(url: string) {
     ],
   });
   workspacesClient.setConfig({ baseUrl: url });
-  return TestBed.inject(AgentPromptStore);
+  return TestBed.runInInjectionContext(call);
 }
 
 const agentOf = (state: string, operationId: string) =>
@@ -117,32 +124,29 @@ describe('qits-landing-app → qits-workspaces-service pact: the agent’s promp
   it('show-agent-chat: the saved draft is restored', () =>
     given(SAVED, 'getAgentPromptDraft', 'show-agent-chat', GET_PROMPT_DRAFT).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
-        const outcome = await store.readDraft(agentOf(SAVED, 'getAgentPromptDraft'));
+        const id = agentOf(SAVED, 'getAgentPromptDraft');
+        const { data } = await at(server.url, () => PROMPT_DRAFT.fetch({ path: { id } }));
         const recorded = masters.body<{ draft: { content: string } }>(SAVED, 'getAgentPromptDraft');
-        expect(outcome.ok && outcome.value?.text).toBe(draftText(recorded.draft.content));
+        expect(promptDraftOf(data)?.text).toBe(draftText(recorded.draft.content));
       },
     ));
 
   it('show-agent-chat: an agent never given a draft has none', () =>
     given(NONE, 'getAgentPromptDraft', 'show-agent-chat', []).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      expect(await store.readDraft(agentOf(NONE, 'getAgentPromptDraft'))).toEqual({
-        ok: true,
-        value: null,
-      });
+      const id = agentOf(NONE, 'getAgentPromptDraft');
+      const { response } = await at(server.url, () => PROMPT_DRAFT.fetch({ path: { id } }));
+      expect(response?.status).toBe(404);
     }));
 
   it('save-prompt-draft: the prompt box is saved', () =>
     given(SAVED, 'saveAgentPromptDraft', 'save-prompt-draft', SAVE_PROMPT_DRAFT).executeTest(
       async (server) => {
-        const store = storeAt(server.url);
         const { content } = sent<{ content: string }>(SAVED, 'saveAgentPromptDraft');
-        const outcome = await store.saveDraft(
-          agentOf(SAVED, 'saveAgentPromptDraft'),
-          draftText(content),
+        const id = agentOf(SAVED, 'saveAgentPromptDraft');
+        const { data } = await at(server.url, () =>
+          PROMPT_DRAFT_SAVE.fetch(saveDraftParams(id, draftText(content))),
         );
-        expect(outcome.ok && outcome.value.updatedAt).toBeTruthy();
+        expect(data?.draft?.updatedAt).toBeTruthy();
       },
     ));
 
@@ -150,18 +154,18 @@ describe('qits-landing-app → qits-workspaces-service pact: the agent’s promp
     it(`${slug}: the draft is thrown away`, () =>
       given(SAVED, 'deleteAgentPromptDraft', slug, DELETE_PROMPT_DRAFT).executeTest(
         async (server) => {
-          const store = storeAt(server.url);
-          const outcome = await store.discardDraft(agentOf(SAVED, 'deleteAgentPromptDraft'));
-          expect(outcome.ok).toBe(true);
+          const id = agentOf(SAVED, 'deleteAgentPromptDraft');
+          const { error } = await at(server.url, () => PROMPT_DRAFT_DELETE.fetch({ path: { id } }));
+          expect(error).toBeUndefined();
         },
       ));
   }
 
   it('send-agent-prompt: the agent hears the prompt as its first turn', () =>
     given(WORKING, 'promptAgent', 'send-agent-prompt', PROMPT_AGENT).executeTest(async (server) => {
-      const store = storeAt(server.url);
       const { text } = sent<{ text: string }>(WORKING, 'promptAgent');
-      const outcome = await store.prompt(agentOf(WORKING, 'promptAgent'), text);
-      expect(outcome.ok && outcome.value.launched).toBe(true);
+      const id = agentOf(WORKING, 'promptAgent');
+      const { data } = await at(server.url, () => AGENT_PROMPT.fetch(promptParams(id, text)));
+      expect(data?.launched).toBe(true);
     }));
 });

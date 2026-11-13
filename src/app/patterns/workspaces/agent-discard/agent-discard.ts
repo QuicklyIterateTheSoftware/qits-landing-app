@@ -1,18 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
-import {
-  AgentActionsStore,
-  describeRefusal,
-  sentence,
-  type Refusal,
-} from '$core/workspaces/agent-actions.store';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { qitsMutation } from '@qits/angular';
+import { AGENT_DISCARD } from '$core/workspaces/agent-actions.operations';
+import { describeRefusal, outcomeOf, sentence, type Refusal } from '$core/workspaces/refusals';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -25,7 +14,8 @@ export type DiscardStep = 'closed' | 'confirm' | 'force';
  * 409: work in the agent's worktrees that never reached the git host, a daemon that does not
  * answer so they cannot be checked, a harness still busy), its reason is shown and "Discard anyway"
  * sends it again with `force`, throwing that work away. Any other failure is said as it is. A
- * discard that went through emits `discarded`, so the page reads the agent again.
+ * discard that went through emits `discarded`, so the page reads the agent again. It writes
+ * through `qitsMutation(AGENT_DISCARD)` (qits-2146).
  */
 @Component({
   selector: 'app-agent-discard',
@@ -59,7 +49,7 @@ export type DiscardStep = 'closed' | 'confirm' | 'force';
   `,
 })
 export class AgentDiscard {
-  private readonly store = inject(AgentActionsStore);
+  private readonly discarding = qitsMutation(AGENT_DISCARD);
 
   readonly agentId = input.required<string>();
 
@@ -124,7 +114,10 @@ export class AgentDiscard {
   private async send(force: boolean): Promise<void> {
     this.busy.set(true);
     this.problem.set(null);
-    const outcome = await this.store.discardAgent(this.agentId(), force);
+    const outcome = await outcomeOf(this.discarding, {
+      path: { id: this.agentId() },
+      body: { force },
+    });
     this.busy.set(false);
     if (outcome.ok) {
       this.close();

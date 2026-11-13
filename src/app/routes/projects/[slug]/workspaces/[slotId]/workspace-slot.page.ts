@@ -1,19 +1,19 @@
 import { isPlatformBrowser } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  PLATFORM_ID,
-  untracked,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { QitsEntity, QitsEntityList, qitsResource, type QitsRefreshOn } from '@qits/angular';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import { loadState } from '$core/resources/load-state';
+import { isMissing } from '$core/resources/resource-family';
+import { notRemoved } from '$core/workspaces/agent-lists';
+import { SLOT_AGENTS, SLOT_DETAIL, SLOT_START } from '$core/workspaces/agents.operations';
+import {
+  concerns,
+  WORKSPACE_EVENTS,
+  WORKSPACE_REFRESH_DEBOUNCE_MS,
+} from '$core/workspaces/workspace-events';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentRow } from '$patterns/workspaces/agent-row/agent-row';
 import { ContainerActions } from '$patterns/workspaces/container-actions/container-actions';
@@ -34,14 +34,21 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * (`app-harness-setup`: the harness sign-in and the plugins, moved here from the agent's Terminal
  * tab in epic qits-1667, since they are the container's, not one agent's).
  *
- * Read by `AgentsStore.loadSlot`, again after a lifecycle event about this slot (at most once a
- * second). A slot that resolved answers 404: "This workspace is gone". In the browser only.
+ * Read through the page's own `qitsResource`s (qits-2146): the slot (`SLOT_DETAIL`), the start
+ * running against it (`SLOT_START`) and the agents it hosts (`SLOT_AGENTS`), again after a
+ * lifecycle event about this slot (at most once a second) and after a container verb. A slot that
+ * resolved answers 404: "This workspace is gone". In the browser only.
+ *
+ * What it shows carries the data marks (qits-2141): the slot's content is the slot (`qitsEntity`,
+ * by `id`, from `SLOT_DETAIL`; `app-slot-status` marks its fields), the agents' list names
+ * `SLOT_AGENTS` (each `app-agent-row` marks its agent), and the container's verbs are handed that
+ * read.
  *
  * Staleness (qits-1270): `WORKSPACE_EVENTS` naming this slot (`workspaceId`, its row id) → the
- * slot, its live start and the agents it hosts (`AgentsStore.loadSlot`, quietly). Not announced
- * (see `AgentsStore`): the container stopping or a start beginning (and with it the start's log,
- * which shows on a container verb of this page's or the next lifecycle event), the runner going
- * offline, the hosted agents' activity.
+ * slot, its live start and the agents it hosts (each resource's `refreshOn`, quietly). Not
+ * announced: the container stopping or a start beginning (and with it the start's log, which shows
+ * on a container verb of this page's or the next lifecycle event), the runner going offline, the
+ * hosted agents' activity.
  */
 @Component({
   selector: 'app-workspace-slot-page',
@@ -51,6 +58,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     ContainerActions,
     HarnessSetup,
     PageLayoutComponent,
+    QitsEntity,
+    QitsEntityList,
     SlotStatus,
     Spinner,
     StartingLog,
@@ -67,7 +76,12 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             </p>
           }
           @if (slot(); as slot) {
-            <div class="flex flex-col gap-8">
+            <div
+              class="flex flex-col gap-8"
+              [qitsEntity]="slot"
+              entityKey="id"
+              [entitySource]="slotRead"
+            >
               <p class="m-0 max-w-[48rem] text-sm text-fg-soft">
                 A workspace is a slot that hosts agents. It runs one working agent at a time; an
                 agent that waits for a person keeps its harness and terminal, but yields the slot to
@@ -77,7 +91,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 [slot]="slot"
                 [hosted]="agentsLoaded() ? agents().length : undefined"
               />
-              <app-container-actions [slot]="slot" [agents]="agents()" (changed)="reload()" />
+              <app-container-actions [slot]="slot" [hosted]="hosted" (changed)="reload()" />
               @if (processId(); as processId) {
                 <app-starting-log [processId]="processId" />
               }
@@ -90,7 +104,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   >
                     No agent is in this workspace. The platform removes an empty workspace.
                   </p>
-                  <ul class="m-0 flex list-none flex-col gap-2 p-0">
+                  <ul class="m-0 flex list-none flex-col gap-2 p-0" [qitsEntityList]="hosted">
                     @for (agent of agents(); track agent.agentId) {
                       <li><app-agent-row [agent]="agent" [slug]="slug()" /></li>
                     }
@@ -109,7 +123,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class WorkspaceSlotPage {
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(AgentsStore);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly slug = computed(() => this.selected.slug());
 
@@ -119,14 +133,43 @@ export class WorkspaceSlotPage {
     { initialValue: Number.NaN },
   );
 
-  private readonly status = computed(() => this.store.slotOf(this.slotId()));
-  private readonly hostedRead = computed(() => this.store.slotAgentsOf(this.slotId()));
+  /** The slot's path, in the browser only, for a valid row id. */
+  private readonly params = () => {
+    const id = this.slotId();
+    return this.browser && Number.isInteger(id) && id > 0 ? { path: { id } } : undefined;
+  };
 
-  protected readonly slot = computed(() => this.status()?.slot);
-  protected readonly processId = computed(() => this.status()?.processId ?? null);
-  protected readonly missing = computed(() => this.status()?.status === 'missing');
-  protected readonly agents = computed(() => this.hostedRead()?.agents ?? []);
-  protected readonly agentsLoaded = computed(() => this.hostedRead()?.status === 'loaded');
+  /** Each read again after the lifecycle events naming this slot. */
+  private readonly refreshOn: QitsRefreshOn = {
+    names: WORKSPACE_EVENTS,
+    when: (event) => concerns(event, { workspaceId: String(this.slotId()) }),
+    debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+  };
+
+  /** The slot. */
+  protected readonly slotRead = qitsResource(SLOT_DETAIL, this.params, {
+    refreshOn: this.refreshOn,
+  });
+
+  /** The start bringing its container up, if one is live; a failed lookup shows none. */
+  private readonly start = qitsResource(SLOT_START, this.params, { refreshOn: this.refreshOn });
+
+  /** The agents it hosts. */
+  protected readonly hosted = qitsResource(SLOT_AGENTS, this.params, {
+    refreshOn: this.refreshOn,
+  });
+
+  protected readonly slot = computed(() =>
+    this.slotRead.hasValue() ? this.slotRead.value()?.workspace : undefined,
+  );
+  protected readonly processId = computed(() =>
+    this.start.hasValue() ? (this.start.value()?.technicalProcessId ?? null) : null,
+  );
+  protected readonly missing = computed(() => isMissing(this.slotRead));
+  protected readonly agents = computed(() =>
+    notRemoved(this.hosted.hasValue() ? this.hosted.value()?.agents : undefined),
+  );
+  protected readonly agentsLoaded = computed(() => this.hosted.hasValue());
   /** The harness the slot's agents run, for the sign-in notice; any when none is listed. */
   protected readonly harness = computed(
     () => this.agents().find((agent) => agent.harness)?.harness ?? null,
@@ -137,31 +180,17 @@ export class WorkspaceSlotPage {
   );
 
   protected readonly state = computed((): LoadState => {
-    const status = this.status()?.status;
-    if (status === 'loaded' || status === 'missing') return 'loaded';
-    return status === 'error' || !Number.isInteger(this.slotId()) ? 'error' : 'loading';
+    if (isMissing(this.slotRead)) return 'loaded';
+    return !Number.isInteger(this.slotId()) ? 'error' : loadState(this.slotRead);
   });
 
-  protected readonly agentsState = computed((): LoadState => {
-    const status = this.hostedRead()?.status;
-    return status === 'loaded' ? 'loaded' : status === 'loading' || !status ? 'loading' : 'error';
-  });
+  protected readonly agentsState = computed((): LoadState => loadState(this.hosted));
 
-  constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-    effect(() => {
-      const id = this.slotId();
-      if (Number.isInteger(id)) untracked(() => void this.store.loadSlot(id));
-    });
-    this.store.follow(
-      inject(DestroyRef),
-      () => ({ workspaceId: String(this.slotId()) }),
-      () => this.reload(),
-    );
-  }
-
-  /** Reads the slot and its agents again (after a lifecycle event, a container verb). */
+  /** Reads the slot, its start and its agents again (after a container verb). */
   protected reload(): void {
-    void this.store.loadSlot(this.slotId());
+    if (!this.params()) return;
+    this.slotRead.reload();
+    this.start.reload();
+    this.hosted.reload();
   }
 }

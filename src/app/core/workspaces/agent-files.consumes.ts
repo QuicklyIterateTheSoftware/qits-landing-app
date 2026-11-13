@@ -6,14 +6,14 @@ import type {
 } from '../../api/workspace-daemon';
 
 /**
- * What `AgentFilesStore` reads from qits-workspace-daemon's answers, through qits-workspaces'
- * container proxy (epic qits-1230), for the agent's Files tab. The store passes each list to
- * `consume(...)`, so it cannot read any other field, and its pact spec passes the same lists as
- * `consumes`. To read another field, add it here.
+ * What the operations in `agent-files.operations.ts` read from qits-workspace-daemon's answers,
+ * through qits-workspaces' container proxy (epic qits-1230), for the agent's Files tab. Each
+ * operation declares its list as its `consumes`, so a page cannot read any other field, and its
+ * pact spec binds the same lists. To read another field, add it here.
  */
 
 /**
- * `AgentFilesStore.list(workspaceRowId, agentId, path?)`: one level of the agent's worktree
+ * `WORKTREE_FILES`: one level of the agent's worktree
  * (`listFiles`). Without `path`, the whole eager tree (deep paths) and every wholly-ignored
  * directory as a stub; with one, that directory one level deep, its subdirectories as stubs. The
  * `generation` gates the detection.
@@ -25,21 +25,21 @@ export const LIST_FILES = [
   'generation',
 ] as const;
 
-/** One level of the worktree, cut to what the store reads. */
+/** One level of the worktree, cut to what the page reads. */
 export type FileListing = Consumed<ListFilesResponses[200], typeof LIST_FILES>;
 
 /**
- * `AgentFilesStore.read(workspaceRowId, agentId, path)`: one file's text (`readFile`), or
+ * `WORKTREE_FILE`: one file's text (`readFile`), or
  * `binary: true` without it (a binary file, or one over the daemon's 2 MB cap: the same answer).
  * A 404 (the path names nothing) binds the status only.
  */
 export const READ_FILE = ['path', 'binary', 'content'] as const;
 
-/** One file, cut to what the store reads. */
+/** One file, cut to what the page reads. */
 export type FileContent = Consumed<ReadFileResponses[200], typeof READ_FILE>;
 
 /**
- * `AgentFilesStore.detect(workspaceRowId, agentId)`: the frameworks the tree's footer toggles (each
+ * `WORKTREE_DETECTION`: the frameworks the tree's footer toggles (each
  * a whitelist of member paths) and the source-to-test graph the viewer's test links come from
  * (`detect`), stamped with the tree's `generation`.
  */
@@ -53,8 +53,8 @@ export const DETECT = [
   'generation',
 ] as const;
 
-/** The detection, cut to what the store reads. */
+/** The detection, cut to what the page reads. */
 export type FileDetection = Consumed<DetectResponses[200], typeof DETECT>;
 
-/** One source file and the tests that reach it, cut to what the store reads. */
+/** One source file and the tests that reach it, cut to what the page reads. */
 export type FileLink = FileDetection['links'][number];

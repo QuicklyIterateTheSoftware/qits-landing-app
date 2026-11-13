@@ -3,20 +3,41 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
-  effect,
+  forwardRef,
   inject,
   PLATFORM_ID,
-  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsExit,
+  QitsField,
+  qitsResource,
+  sourceMark,
+  type ExitOutcome,
+} from '@qits/angular';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
+import { isMissing } from '$core/resources/resource-family';
+import { loadState } from '$core/resources/load-state';
 import { activityLabel, agentWaitLabel, runStateLabel } from '$core/workspaces/agent-labels';
 import { AGENT_TABS } from '$core/workspaces/agent-tabs';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import type { AgentDetail } from '$core/workspaces/agents.consumes';
+import {
+  AGENT_DETAIL,
+  AGENT_START,
+  LIST_PROJECT_ACTIVE_AGENTS,
+} from '$core/workspaces/agents.operations';
+import { OPEN_AGENT, type OpenAgentRead } from '$core/workspaces/open-agent';
+import { ProjectActiveAgents } from '$core/workspaces/project-active-agents';
+import {
+  concerns,
+  WORKSPACE_EVENTS,
+  WORKSPACE_REFRESH_DEBOUNCE_MS,
+} from '$core/workspaces/workspace-events';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentStatus } from '$patterns/agents/agent-status/agent-status';
 import { AgentDiscard } from '$patterns/workspaces/agent-discard/agent-discard';
@@ -45,14 +66,24 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * slot (`open-agent-workspace`) and one per tab (`switch-agent-tab`, marked current while its tab
  * is open: `[qitsExit]` sets `aria-current`).
  *
- * The agent comes from `AgentsStore.loadAgent` by the URL's `:agentId` (`getAgent`, in any state);
- * its open waits and attention from the project's ACTIVE agents (`AgentsStore.loadProjectAgents`),
- * which `getAgent` does not carry. In the browser only.
+ * The agent comes from the layout's own `qitsResource` over `AGENT_DETAIL` (qits-2146; `getAgent`
+ * by the URL's `:agentId`, in any state), and the start from one over `AGENT_START`
+ * (`getAgentActiveProcess`), read again each time the agent is (its params follow the agent's
+ * read), while the agent has a slot. The layout provides itself as `OPEN_AGENT`, so its tabs follow
+ * the same read. Its open waits and attention come from the project's ACTIVE agents, which
+ * `getAgent` does not carry: the shell's `ProjectActiveAgents`, the same request as the agents
+ * menu's. In the browser only.
+ *
+ * What it shows carries the data marks (qits-2141): the header and the Workspace section are the
+ * agent (`qitsEntity`, by `agentId`, from `AGENT_DETAIL`), each value its field or the fields its
+ * words are derived from; the status line (`app-agent-status`, which marks the agent and its waits)
+ * names `LIST_PROJECT_ACTIVE_AGENTS` as its source.
  *
  * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the agent (`agentId`) or its slot
- * (`workspaceId`) → the agent and its start (`AgentsStore.loadAgent`, quietly, at most once a
- * second). `AGENT_STATUS_EVENTS` about the project → its waits and attention
- * (`AgentsStore.followProject`). Not announced (see `AgentsStore`): the slot's container stopping.
+ * (`workspaceId`) → the agent, and with it its start (the resource's `refreshOn`, quietly, at most
+ * once a second). `AGENT_STATUS_EVENTS` about the project → its waits and attention
+ * (`ProjectActiveAgents`' `refreshOn`). Not announced: a queued agent's creation, the slot's
+ * container stopping.
  */
 @Component({
   selector: 'app-agent-layout',
@@ -63,11 +94,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     AgentStatus,
     Chip,
     PageLayoutComponent,
+    QitsEntity,
     QitsExit,
+    QitsField,
     RouterOutlet,
     Spinner,
     StartingLog,
   ],
+  providers: [{ provide: OPEN_AGENT, useExisting: forwardRef(() => AgentLayout) }],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -77,7 +111,12 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             No agent {{ agentId() }}.
           </p>
           @if (agent(); as agent) {
-            <div class="flex flex-col gap-6">
+            <div
+              class="flex flex-col gap-6"
+              [qitsEntity]="agent"
+              entityKey="agentId"
+              [entitySource]="read"
+            >
               <section class="flex flex-col gap-2 text-sm" aria-label="Agent">
                 @if (agent.entityId || agent.entityTitle) {
                   <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-base">
@@ -86,11 +125,15 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         class="font-semibold text-accent no-underline hover:underline"
                         [qitsExit]="item.open"
                         [exitParams]="{ slug: slug(), id }"
+                        [fieldOf]="agent"
+                        qitsField="entityId"
                         >{{ agent.entityId }}</a
                       >
                     }
                     @if (agent.entityTitle; as title) {
-                      <span class="text-fg">{{ title }}</span>
+                      <span class="text-fg" [fieldOf]="agent" qitsField="entityTitle">{{
+                        title
+                      }}</span>
                     }
                   </p>
                 }
@@ -98,41 +141,70 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   <ui-chip
                     [label]="(agent.state ?? 'unknown').toLowerCase()"
                     [tone]="stateTone()"
+                    [fieldOf]="agent"
+                    [qitsField]="{ derived: ['state'] }"
                   />
-                  <span>{{ runState() }}</span>
+                  <span [fieldOf]="agent" [qitsField]="{ derived: ['runState'] }">{{
+                    runState()
+                  }}</span>
                   @if (doing(); as doing) {
                     <span aria-hidden="true">·</span>
                     <span
                       [class.font-semibold]="doing === 'waiting on you'"
                       [class.text-danger]="doing === 'waiting on you'"
+                      [fieldOf]="agent"
+                      [qitsField]="{ derived: ['activity', 'waitingOn', 'entityStatus'] }"
                       >{{ doing }}</span
                     >
                   }
                   @if (agent.entityStatus; as status) {
                     <span aria-hidden="true">·</span>
-                    <span>item {{ status.toLowerCase() }}</span>
+                    <span [fieldOf]="agent" [qitsField]="{ derived: ['entityStatus'] }"
+                      >item {{ status.toLowerCase() }}</span
+                    >
                   }
                   @if (agent.entityBlocked) {
-                    <ui-chip label="blocked" tone="waiting" />
+                    <ui-chip
+                      label="blocked"
+                      tone="waiting"
+                      [fieldOf]="agent"
+                      [qitsField]="{ derived: ['entityBlocked'] }"
+                    />
                   }
                   @if (agent.harness; as harness) {
                     <span aria-hidden="true">·</span>
-                    <span>{{ harness.toLowerCase() }}</span>
+                    <span [fieldOf]="agent" [qitsField]="{ derived: ['harness'] }">{{
+                      harness.toLowerCase()
+                    }}</span>
                   }
                   @if (agent.admin) {
-                    <ui-chip label="docker socket" tone="waiting" />
+                    <ui-chip
+                      label="docker socket"
+                      tone="waiting"
+                      [fieldOf]="agent"
+                      [qitsField]="{ derived: ['admin'] }"
+                    />
                   }
                 </div>
                 @if (wait(); as wait) {
-                  <p class="m-0 text-warning" role="status">{{ wait }}</p>
+                  <p
+                    class="m-0 text-warning"
+                    role="status"
+                    [fieldOf]="agent"
+                    [qitsField]="{ derived: ['waitingOn', 'waitingOnSince'] }"
+                  >
+                    {{ wait }}
+                  </p>
                 }
                 @if (status(); as status) {
-                  <app-agent-status [agent]="status" />
+                  <app-agent-status [agent]="status" [attr.data-qits-source]="statusSource" />
                 }
                 @if (agent.wrapperBranch; as branch) {
                   <p class="m-0 flex items-center gap-2 text-fg-soft">
                     <span class="font-semibold text-fg-soft">Branch</span>
-                    <code class="font-mono text-xs">{{ branch }}</code>
+                    <code class="font-mono text-xs" [fieldOf]="agent" qitsField="wrapperBranch">{{
+                      branch
+                    }}</code>
                   </p>
                 }
                 @if (agent.agentId && agent.state !== 'REMOVED') {
@@ -155,6 +227,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                       class="font-mono text-accent no-underline hover:underline"
                       [qitsExit]="workspace.open"
                       [exitParams]="{ slug: slug(), slotId: rowId }"
+                      [fieldOf]="agent"
+                      qitsField="workspaceRowId"
                       >ws-{{ rowId }}</a
                     >
                     <span
@@ -195,9 +269,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
     </div>
   `,
 })
-export class AgentLayout {
+export class AgentLayout implements OpenAgentRead {
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(AgentsStore);
+  private readonly activeAgents = inject(ProjectActiveAgents);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /** The header's item, linked to its page (epic qits-2000). */
   protected readonly item = outcomes('open-agent-item', {
@@ -232,28 +307,62 @@ export class AgentLayout {
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** The agent's id in the URL. */
-  protected readonly agentId = toSignal(
+  readonly agentId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('agentId') ?? '')),
     { initialValue: '' },
   );
 
-  private readonly read = computed(() => {
+  /**
+   * The agent, by its id, in the browser only; again after the lifecycle events naming it or its
+   * slot.
+   */
+  protected readonly read = qitsResource(
+    AGENT_DETAIL,
+    () => {
+      const id = this.agentId();
+      return this.browser && id ? { path: { id } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: WORKSPACE_EVENTS,
+        when: (event) =>
+          concerns(event, {
+            agentId: this.agentId() || undefined,
+            workspaceId: this.agent()?.workspaceRowId?.toString(),
+          }),
+        debounceMs: WORKSPACE_REFRESH_DEBOUNCE_MS,
+      },
+    },
+  );
+
+  /** The agent, once read. */
+  readonly agent = computed((): AgentDetail | undefined =>
+    this.read.hasValue() ? this.read.value() : undefined,
+  );
+
+  /**
+   * The start bringing the agent's slot's container up, asked of the agent while it has a slot.
+   * Its params are made anew by every answer of the agent's read, so it is read again each time.
+   */
+  private readonly start = qitsResource(AGENT_START, () => {
+    const agent = this.agent();
     const id = this.agentId();
-    return id ? this.store.agentOf(id) : undefined;
+    return id && agent?.workspaceRowId ? { path: { id } } : undefined;
   });
 
-  protected readonly agent = computed(() => this.read()?.agent);
+  /** The status line's source: the project's ACTIVE agents, as the shell reads them. */
+  protected readonly statusSource = sourceMark(LIST_PROJECT_ACTIVE_AGENTS);
 
   /** The agent as the project's ACTIVE list holds it: its open waits and its attention. */
   protected readonly status = computed(() => {
-    const id = this.selected.project()?.id;
     const agentId = this.agentId();
-    if (!id || !agentId) return undefined;
-    return this.store.projectAgentsOf(id)?.agents.find((a) => a.agentId === agentId);
+    return agentId ? this.activeAgents.agents().find((a) => a.agentId === agentId) : undefined;
   });
 
-  /** The start bringing the agent's slot's container up, while one is live. */
-  protected readonly processId = computed(() => this.read()?.processId ?? null);
+  /** The start bringing the agent's slot's container up, while one is live; none when not known. */
+  protected readonly processId = computed(() =>
+    this.start.hasValue() ? (this.start.value()?.technicalProcessId ?? null) : null,
+  );
 
   protected readonly title = computed(() => {
     const item = this.agent()?.entityId;
@@ -279,12 +388,10 @@ export class AgentLayout {
     this.agent()?.state === 'ACTIVE' ? 'ok' : 'neutral',
   );
 
-  /** The read's state: `missing` when the service does not know the agent. */
-  protected readonly state = computed((): LoadState | 'missing' => {
-    const status = this.read()?.status;
-    if (status === 'loaded' || status === 'error' || status === 'missing') return status;
-    return 'loading';
-  });
+  /** The read's state: `missing` when the service does not know the agent (a 404). */
+  protected readonly state = computed((): LoadState | 'missing' =>
+    isMissing(this.read) ? 'missing' : loadState(this.read),
+  );
 
   /** The spinner's state: a missing agent is a loaded page that says so. */
   protected readonly spinnerState = computed((): LoadState => {
@@ -292,31 +399,8 @@ export class AgentLayout {
     return state === 'missing' ? 'loaded' : state;
   });
 
-  constructor() {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-    const destroy = inject(DestroyRef);
-    effect(() => {
-      const id = this.agentId();
-      if (id) untracked(() => void this.store.loadAgent(id));
-    });
-    effect(() => {
-      const id = this.selected.project()?.id;
-      if (id) untracked(() => void this.store.loadProjectAgents(id));
-    });
-    this.store.followProject(destroy, () => this.selected.project()?.id);
-    this.store.follow(
-      destroy,
-      () => ({
-        agentId: this.agentId() || undefined,
-        workspaceId: this.agent()?.workspaceRowId?.toString(),
-      }),
-      () => this.reload(),
-    );
-  }
-
-  /** Reads the agent again (after a lifecycle event, a discard, an agent verb). */
-  protected reload(): void {
-    const id = this.agentId();
-    if (id) void this.store.loadAgent(id);
+  /** Reads the agent, and with it its start, again (after a discard, a verb, a tab's ask). */
+  reload(): void {
+    if (this.agentId()) this.read.reload();
   }
 }

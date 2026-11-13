@@ -1,15 +1,17 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as workspacesClient } from '../../../../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/workspaces/client/client.gen';
 import { client as workspaceDaemonClient } from '../../../../../../api/workspace-daemon/client.gen';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { NEVER } from 'rxjs';
 import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import { WEB_SOCKET } from '$core/platform/web-socket';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import { OPEN_AGENT, type OpenAgentRead } from '$core/workspaces/open-agent';
 import { PickedContext } from '$core/workspaces/picked-context';
 import {
   workspaceDaemonGoldenMaster,
@@ -61,14 +63,17 @@ describe('AgentChatPage', () => {
         provideHeyApiClient(workspacesClient),
         provideHeyApiClient(workspaceDaemonClient),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
+        // The agent, as the agent layout read it.
         {
-          provide: AgentsStore,
-          useValue: {
-            agentOf: () => ({ status: 'loaded', agent }),
-            loadAgent: (id: string) => loads.push(id),
-            follow: () => undefined,
-          },
+          provide: OPEN_AGENT,
+          useFactory: (): OpenAgentRead => ({
+            agentId: signal(agentId),
+            agent: signal(agent),
+            reload: () => void loads.push(agentId),
+          }),
         },
+        // The transcript's harness events: none arrive here.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => NEVER } },
         {
           provide: EVENT_SOURCE,
           useValue: (url: string): EventSourceLike => {

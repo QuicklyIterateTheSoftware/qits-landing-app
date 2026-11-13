@@ -7,31 +7,32 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as workspaceDaemonClient } from '../../api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from '../../api/workspace-daemon/client/client.gen';
-import { consume } from '@qits/angular';
 import { addGoldenInteraction } from '@qits/angular/testing';
-import { getCommandLog, refinePrompt } from '../../api/workspace-daemon';
 import type { InteractionSlug } from '../../interactions';
 import { workspaceDaemonGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { GET_TRANSCRIPT, REFINE_PROMPT } from './agent-chat.consumes';
+import { AGENT_TRANSCRIPT, PROMPT_REFINEMENT } from './agent-chat.operations';
 import { containerBase } from './container-proxy';
 
 /**
- * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part `AgentChatStore`
- * reads, in `pacts/qits-landing-app_qits-workspace-daemon.json` beside the other stores' parts:
- * the agent's Chat tab.
+ * qits-landing-app's pact with qits-workspace-daemon (epic qits-1230), the part the Chat tab reads
+ * through `agent-chat.operations.ts` (qits-2146: moved here from `agent-chat.store.pact.spec.ts`
+ * with `AgentChatStore`, unchanged), in `pacts/qits-landing-app_qits-workspace-daemon.json` beside
+ * the other parts: the agent's Chat tab.
  *
- * The store reaches the daemon through qits-workspaces' agent proxy (epic qits-1667,
+ * The tab reaches the daemon through qits-workspaces' agent proxy (epic qits-1667,
  * `/workspaces/agent/{agentId}/log`, `/prompt-refinements`), which forwards each call to the
  * daemon's own address, `/workspaces/container/{workspaceRowId}/…` (the log at the agent's
  * command), and hands back the daemon's answer. So this spec makes the daemon's calls at that
- * address, with the store's own `consumes` lists; the store's addressing is the plain spec's.
+ * address, with the operations' `fetch` (their own `consumes` lists); the tab's addressing is the
+ * page spec's.
  *
  * - "a workspace daemon with an agent that has taken turns": the harness's transcript
  *   (`channel=TRANSCRIPT`): the person's prompt, the agent's text, a tool call and its result;
  * - "a workspace daemon with a signed-in harness": rough notes rewritten into a prompt. The
- *   recorded notes and preamble are what the store sends.
+ *   recorded notes and preamble are what the composer sends.
  *
  * The slot's row id and the command's id are the states' params; the path takes them as
  * provider-state expressions (`addGoldenInteraction`).
@@ -94,14 +95,11 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s chat', 
     given(TURNS, 'getCommandLog', 'show-agent-chat', GET_TRANSCRIPT).executeTest(async (server) => {
       const { workspaceRowId, commandId } = masters.operation(TURNS, 'getCommandLog').params;
       const { data } = await at(server.url, () =>
-        consume(
-          getCommandLog({
-            baseUrl: containerBase(server.url, Number(workspaceRowId)),
-            path: { commandId },
-            query: { channel: 'TRANSCRIPT' },
-          }),
-          GET_TRANSCRIPT,
-        ),
+        AGENT_TRANSCRIPT.fetch({
+          baseUrl: containerBase(server.url, Number(workspaceRowId)),
+          path: { commandId },
+          query: { channel: 'TRANSCRIPT' },
+        }),
       );
       expect(data?.lines.length).toBe(4);
       expect(JSON.parse(data!.lines[0].content).type).toBe('user');
@@ -113,13 +111,10 @@ describe('qits-landing-app → qits-workspace-daemon pact: the agent’s chat', 
         const op = masters.operation(SIGNED_IN, 'refinePrompt');
         const sent = op.body as { transcript: string; preamble: string };
         const { data } = await at(server.url, () =>
-          consume(
-            refinePrompt({
-              baseUrl: containerBase(server.url, Number(op.params['workspaceRowId'])),
-              body: { transcript: sent.transcript, preamble: sent.preamble },
-            }),
-            REFINE_PROMPT,
-          ),
+          PROMPT_REFINEMENT.fetch({
+            baseUrl: containerBase(server.url, Number(op.params['workspaceRowId'])),
+            body: { transcript: sent.transcript, preamble: sent.preamble },
+          }),
         );
         expect(data?.prompt).toBe(
           masters.body<{ prompt: string }>(SIGNED_IN, 'refinePrompt').prompt,

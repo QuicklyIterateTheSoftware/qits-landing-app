@@ -1,19 +1,24 @@
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+  QitsEntity,
+  QitsEntityList,
+  QitsField,
+  qitsMutation,
+  type QitsResourceRef,
+} from '@qits/angular';
+import { notRemoved } from '$core/workspaces/agent-lists';
+import type { SlotAgent, SlotAgents, SlotDetail } from '$core/workspaces/agents.consumes';
+import {
+  CONTAINER_ENSURE,
+  CONTAINER_RECREATE,
+  CONTAINER_STOP,
+} from '$core/workspaces/container-actions.operations';
 import {
   describeRefusal,
+  outcomeOf,
   sentence,
   type ActionOutcome,
-} from '$core/workspaces/agent-actions.store';
-import { ContainerActionsStore } from '$core/workspaces/container-actions.store';
-import type { SlotAgent, SlotDetail } from '$core/workspaces/agents.consumes';
+} from '$core/workspaces/refusals';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -26,6 +31,12 @@ type Confirmed = 'stop' | 'recreate';
 /** An agent of the slot, as the confirm names it. */
 export type HostedAgent = Pick<SlotAgent, 'agentId' | 'entityId'>;
 
+/** The slot's hosted agents' read (`SLOT_AGENTS`), as the page hands it over. */
+export type HostedRead = QitsResourceRef<SlotAgents>;
+
+/** The hosted agents before they are read: none. */
+const NO_AGENTS: SlotAgents = { agents: [] };
+
 /** How an agent reads in a sentence: its work item, else its id's first block. */
 export function agentName(agent: HostedAgent | undefined, agentId: string): string {
   return agent?.entityId || `agent ${agentId.split('-')[0]}`;
@@ -37,27 +48,50 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
  * Start (`ensureContainer`) while it is not running, Stop while it is, and Recreate, which replaces
  * the container. Stop and Recreate end whatever the slot's agents are doing, so each asks first
  * ("Confirm stop?", "Confirm recreate?") and names the agents it affects, from the slot's list
- * (`agents`). After the verb, the agents the service says it affected (`affectedAgentIds` of the
- * answer) are named. The service refuses a slot whose runner is offline (409) and a recreate whose
- * working tree it cannot prove clean (400); the refusal is said below the buttons, in the service's
- * words. Every answer, a refusal included, emits `changed`, so the page reads the slot again (a
- * refused verb still says the row is not what it looked like).
+ * (`hosted`, the page's `SLOT_AGENTS` read, its agents not removed). After the verb, the agents the
+ * service says it affected (`affectedAgentIds` of the answer) are named. The service refuses a slot
+ * whose runner is offline (409) and a recreate whose working tree it cannot prove clean (400); the
+ * refusal is said below the buttons, in the service's words. Every answer, a refusal included,
+ * emits `changed`, so the page reads the slot again (a refused verb still says the row is not what
+ * it looked like).
+ *
+ * The verbs write through `qitsMutation` over `container-actions.operations.ts` (qits-2146). What
+ * it shows carries the data marks (qits-2141): the buttons are the slot (`qitsEntity`, by `id`),
+ * their words derived from its `runtimeStatus`; the agents' lines name the hosted read as their
+ * source, derived from its `agents`.
  */
 @Component({
   selector: 'app-container-actions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton],
+  imports: [ActionButton, QitsEntity, QitsEntityList, QitsField],
   host: { class: 'block' },
   template: `
-    <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Container">
-      <ui-action-button [action]="toggle()" />
+    <div
+      class="flex flex-wrap items-center gap-2"
+      role="group"
+      aria-label="Container"
+      [qitsEntity]="slot()"
+      entityKey="id"
+    >
+      <ui-action-button
+        [action]="toggle()"
+        [fieldOf]="slot()"
+        [qitsField]="{ derived: ['runtimeStatus'] }"
+      />
       <ui-action-button [action]="recreate()" />
       @if (confirming()) {
         <ui-action-button [action]="cancel" />
       }
     </div>
     @if (confirming(); as verb) {
-      <p class="m-0 mt-1 text-sm text-fg-soft" role="status" data-confirm>
+      <p
+        class="m-0 mt-1 text-sm text-fg-soft"
+        role="status"
+        data-confirm
+        [qitsEntityList]="hosted()"
+        [fieldOf]="answer()"
+        [qitsField]="{ derived: ['agents'] }"
+      >
         @if (agents().length) {
           {{ verb === 'stop' ? 'Stopping' : 'Recreating' }} the container affects
           {{ agents().length === 1 ? 'its agent' : 'its ' + agents().length + ' agents' }}:
@@ -68,7 +102,14 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
       </p>
     }
     @if (affected(); as affected) {
-      <p class="m-0 mt-1 text-sm text-fg-soft" role="status" data-affected>
+      <p
+        class="m-0 mt-1 text-sm text-fg-soft"
+        role="status"
+        data-affected
+        [qitsEntityList]="hosted()"
+        [fieldOf]="answer()"
+        [qitsField]="{ derived: ['agents'] }"
+      >
         @if (affected.length) {
           Affected {{ affected.length === 1 ? 'agent' : 'agents' }}: {{ affectedNames() }}.
         } @else {
@@ -77,7 +118,13 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
       </p>
     }
     @if (unavailable()) {
-      <p class="m-0 mt-1 text-sm text-fg-soft">
+      <p
+        class="m-0 mt-1 text-sm text-fg-soft"
+        [qitsEntity]="slot()"
+        entityKey="id"
+        [fieldOf]="slot()"
+        [qitsField]="{ derived: ['runtimeStatus'] }"
+      >
         The slot’s runner is offline; the container waits for it to come back.
       </p>
     }
@@ -87,12 +134,24 @@ export function agentName(agent: HostedAgent | undefined, agentId: string): stri
   `,
 })
 export class ContainerActions {
-  private readonly store = inject(ContainerActionsStore);
+  private readonly ensuring = qitsMutation(CONTAINER_ENSURE);
+  private readonly stopping = qitsMutation(CONTAINER_STOP);
+  private readonly recreating = qitsMutation(CONTAINER_RECREATE);
 
   readonly slot = input.required<Pick<SlotDetail, 'id' | 'runtimeStatus'>>();
 
-  /** The agents the slot hosts, which a stop or recreate affects. */
-  readonly agents = input<readonly HostedAgent[]>([]);
+  /** The read of the agents the slot hosts, which a stop or recreate affects. */
+  readonly hosted = input.required<HostedRead>();
+
+  /** The hosted agents' answer; none until it answered. */
+  protected readonly answer = computed(
+    () => (this.hosted().hasValue() ? this.hosted().value() : undefined) ?? NO_AGENTS,
+  );
+
+  /** The agents the slot hosts, not removed. */
+  protected readonly agents = computed((): readonly HostedAgent[] =>
+    notRemoved(this.answer().agents),
+  );
 
   /** A verb was answered (or refused): the page reads the slot again. */
   readonly changed = output<void>();
@@ -172,14 +231,14 @@ export class ContainerActions {
   };
 
   private start(): Promise<void> {
-    return this.run('start', () => this.store.ensureContainer(this.id()));
+    return this.run('start', () => outcomeOf(this.ensuring, { path: { id: this.id() } }));
   }
 
   private async pressStop(): Promise<void> {
     if (this.confirm('stop')) return;
     await this.run(
       'stop',
-      () => this.store.stopContainer(this.id()),
+      () => outcomeOf(this.stopping, { path: { id: this.id() } }),
       (slot) => slot.affectedAgentIds,
     );
   }
@@ -188,7 +247,7 @@ export class ContainerActions {
     if (this.confirm('recreate')) return;
     await this.run(
       'recreate',
-      () => this.store.recreateContainer(this.id()),
+      () => outcomeOf(this.recreating, { path: { id: this.id() } }),
       (recreate) => recreate.affectedAgentIds,
     );
   }

@@ -1,14 +1,15 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
-import type { DomainEvent } from '$core/events/domain-events';
+import { filter, Subject } from 'rxjs';
+import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { SelectedProject } from '$core/projects/selected-project';
-import { AgentsStore } from '$core/workspaces/agents.store';
-import { HARNESS_EVENTS } from '$core/workspaces/workspace-events';
+import { OPEN_AGENT, type OpenAgentRead } from '$core/workspaces/open-agent';
+import { WORKSPACE_REFRESH_DEBOUNCE_MS } from '$core/workspaces/workspace-events';
 import { TERMINAL_BACKOFF_MS } from '$core/workspaces/terminal-socket';
 import { workspacesGoldenMaster } from '../../../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
@@ -56,14 +57,12 @@ describe('AgentTerminalPage', () => {
   let http: HttpTestingController;
   let sockets: FakeSocket[];
   let harness: RouterTestingHarness;
-  let followed: unknown[][];
-  let loads: string[];
+  let events: Subject<DomainEvent>;
   let agent: typeof AGENT;
 
   beforeEach(async () => {
     sockets = [];
-    followed = [];
-    loads = [];
+    events = new Subject<DomainEvent>();
     agent = AGENT;
     TestBed.configureTestingModule({
       providers: [
@@ -78,12 +77,20 @@ describe('AgentTerminalPage', () => {
         provideHttpClientTesting(),
         provideTestPlatformOrigins({ workspaces: ORIGIN }),
         { provide: SelectedProject, useValue: { slug: () => 'contract-00000001' } },
+        // The agent, as the agent layout read it (and reads again on its own events).
         {
-          provide: AgentsStore,
+          provide: OPEN_AGENT,
+          useFactory: (): OpenAgentRead => ({
+            agentId: signal(agentId),
+            agent: signal(agent),
+            reload: () => undefined,
+          }),
+        },
+        {
+          provide: DomainEvents,
           useValue: {
-            agentOf: () => ({ status: 'loaded', agent }),
-            loadAgent: (id: string) => loads.push(id),
-            follow: (...args: unknown[]) => followed.push(args),
+            on: (names: readonly string[]) =>
+              events.pipe(filter((event) => names.includes(event.name ?? ''))),
           },
         },
         {
@@ -209,34 +216,35 @@ describe('AgentTerminalPage', () => {
   });
 
   describe('after lifecycle events (qits-1270)', () => {
-    /** Runs the page's `follow` refresh with a burst of `names`. */
-    async function burst(...names: string[]) {
-      const [, scope, refresh, events] = followed[0] as [
-        unknown,
-        () => object,
-        (burst: readonly DomainEvent[]) => void,
-        readonly string[],
-      ];
-      expect(events).toEqual(HARNESS_EVENTS);
-      expect(scope()).toEqual({ agentId, workspaceId: '1' });
-      refresh(names.map((name) => ({ name })));
-      await settle();
+    /** Sends `name` about `ids`, and lets its burst settle. */
+    function burst(name: string, ids: object) {
+      vi.useFakeTimers();
+      events.next({ id: name, name, payload: JSON.stringify(ids) } as DomainEvent);
+      vi.advanceTimersByTime(WORKSPACE_REFRESH_DEBOUNCE_MS);
+      vi.useRealTimers();
       harness.detectChanges();
     }
 
-    it('reads the agent again after its harness exited, keeping the socket', async () => {
+    it('keeps the socket after its harness exited (the layout reads the agent again)', async () => {
       await open();
-      await burst('AgentHarnessExited');
-      expect(loads).toEqual([agentId]);
+      burst('AgentHarnessExited', { agentId });
       expect(sockets).toHaveLength(1);
+      expect(sockets[0].closed).toBe(false);
     });
 
-    it('attaches anew after the harness started again', async () => {
+    it('attaches anew after the harness started again, named by the agent or its slot', async () => {
       await open();
-      await burst('AgentStarted');
-      expect(loads).toEqual([agentId]);
+      burst('AgentStarted', { agentId });
       expect(sockets[0].closed).toBe(true);
       expect(sockets.map((s) => s.url)).toEqual([SOCKET, SOCKET]);
+      burst('AgentStarted', { workspaceId: '1' });
+      expect(sockets.map((s) => s.url)).toEqual([SOCKET, SOCKET, SOCKET]);
+    });
+
+    it('ignores a harness start of another agent', async () => {
+      await open();
+      burst('AgentStarted', { agentId: 'someone-else', workspaceId: '9' });
+      expect(sockets).toHaveLength(1);
     });
   });
 });

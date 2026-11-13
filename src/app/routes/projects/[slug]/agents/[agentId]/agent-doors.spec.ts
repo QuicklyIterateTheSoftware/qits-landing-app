@@ -10,12 +10,28 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { client as workspaceDaemonClient } from '../../../../../api/workspace-daemon/client.gen';
 import { provideHeyApiClient } from '../../../../../api/workspaces/client/client.gen';
 import { client as workspacesClient } from '../../../../../api/workspaces/client.gen';
-import { AgentActionsStore } from '$core/workspaces/agent-actions.store';
-import { AgentChatStore } from '$core/workspaces/agent-chat.store';
-import { AgentFilesStore } from '$core/workspaces/agent-files.store';
-import { AgentPromptStore } from '$core/workspaces/agent-prompt.store';
-import { AgentsStore } from '$core/workspaces/agents.store';
+import {
+  AGENT_DISCARD,
+  AGENT_INTERRUPT,
+  AGENT_RESTART,
+  AGENT_STOP,
+} from '$core/workspaces/agent-actions.operations';
+import { AGENT_TRANSCRIPT, PROMPT_REFINEMENT } from '$core/workspaces/agent-chat.operations';
+import {
+  WORKTREE_DETECTION,
+  WORKTREE_FILE,
+  WORKTREE_FILES,
+} from '$core/workspaces/agent-files.operations';
+import {
+  AGENT_PROMPT,
+  PROMPT_DRAFT,
+  PROMPT_DRAFT_DELETE,
+  PROMPT_DRAFT_SAVE,
+} from '$core/workspaces/agent-prompt.operations';
+import { agentRoute, type AgentRoute } from '$core/workspaces/agent-proxy';
+import { AGENT_DETAIL, AGENT_START } from '$core/workspaces/agents.operations';
 import { agentChatSocketUrl } from '$core/workspaces/chat-socket';
+import { promptParams, saveDraftParams } from '$core/workspaces/prompt-drafts';
 import { agentTerminalSocketUrl } from '$core/workspaces/terminal-socket';
 import { workspacesGoldenMaster } from '../../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
@@ -96,7 +112,9 @@ describe('the agent page’s doors', () => {
   it('names no container proxy path or container door in its sources or anything they import', () => {
     const files = closure();
     expect(files.map((path) => relative(ROOT, path))).toContain('agent.layout.ts');
-    expect(files.map((path) => relative(APP, path))).toContain('core/workspaces/agents.store.ts');
+    expect(files.map((path) => relative(APP, path))).toContain(
+      'core/workspaces/agents.operations.ts',
+    );
     const offending = files.flatMap((path) => {
       const text = readFileSync(path, 'utf8');
       return FORBIDDEN.filter((word) => text.includes(word)).map(
@@ -106,7 +124,7 @@ describe('the agent page’s doors', () => {
     expect(offending).toEqual([]);
   });
 
-  describe('the stores it calls, at run time', () => {
+  describe('the operations it calls, at run time', () => {
     const ORIGIN = 'https://workspaces.qits.example';
     const AGENT = workspacesGoldenMaster('an agent with a saved prompt draft', 'getAgent');
     const agentId: string = AGENT.agentId;
@@ -141,35 +159,45 @@ describe('the agent page’s doors', () => {
     }
 
     it('asks only the agent’s doors for everything the page reads and writes', async () => {
-      const agents = TestBed.inject(AgentsStore);
-      const loading = agents.loadAgent(agentId);
+      const loading = AGENT_DETAIL.fetch({ path: { id: agentId } });
       await answerAll((request) => {
         if (!request.request.url.endsWith(`/agents/${agentId}`)) return false;
         request.flush(AGENT);
         return true;
       });
-      await answerAll();
       await loading;
 
-      const chats = TestBed.inject(AgentChatStore);
-      const files = TestBed.inject(AgentFilesStore);
-      const prompts = TestBed.inject(AgentPromptStore);
-      const actions = TestBed.inject(AgentActionsStore);
+      // As the pages address them: the agent's doors by its id, its daemon through the agent proxy.
+      const at = (route: AgentRoute) => agentRoute(ORIGIN, agentId, route);
+      const agent = { path: { id: agentId } };
       const calls: Promise<unknown>[] = [
-        chats.loadTranscript(agentId),
-        chats.refine(agentId, 'notes', null),
-        files.list(agentId),
-        files.list(agentId, 'node_modules'),
-        files.read(agentId, 'README.md'),
-        files.detect(agentId),
-        prompts.readDraft(agentId),
-        prompts.saveDraft(agentId, 'text'),
-        prompts.discardDraft(agentId),
-        prompts.prompt(agentId, 'text'),
-        actions.interruptAgent(agentId),
-        actions.stopAgent(agentId),
-        actions.restartAgent(agentId),
-        actions.discardAgent(agentId),
+        AGENT_START.fetch(agent),
+        AGENT_TRANSCRIPT.fetch({
+          ...at('log'),
+          path: { commandId: '' },
+          query: { channel: 'TRANSCRIPT' },
+        }),
+        PROMPT_REFINEMENT.fetch({ ...at('prompt-refinements'), body: { transcript: 'notes' } }),
+        WORKTREE_FILES.fetch({ ...at('files'), path: { agentId } }),
+        WORKTREE_FILES.fetch({
+          ...at('files'),
+          path: { agentId },
+          query: { path: 'node_modules' },
+        }),
+        WORKTREE_FILE.fetch({
+          ...at('files/content'),
+          path: { agentId },
+          query: { path: 'README.md' },
+        }),
+        WORKTREE_DETECTION.fetch({ ...at('detection'), path: { agentId } }),
+        PROMPT_DRAFT.fetch(agent),
+        PROMPT_DRAFT_SAVE.fetch(saveDraftParams(agentId, 'text')),
+        PROMPT_DRAFT_DELETE.fetch(agent),
+        AGENT_PROMPT.fetch(promptParams(agentId, 'text')),
+        AGENT_INTERRUPT.fetch(agent),
+        AGENT_STOP.fetch(agent),
+        AGENT_RESTART.fetch(agent),
+        AGENT_DISCARD.fetch({ ...agent, body: { force: false } }),
       ];
       await answerAll();
       await Promise.all(calls);

@@ -4,7 +4,7 @@ import { Component, PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import type { AgentDelivery } from '$core/workspaces/agent-prompt.consumes';
-import { draftText } from '$core/workspaces/agent-prompt.store';
+import { draftText } from '$core/workspaces/prompt-drafts';
 import {
   PickedContext,
   referenceText,
