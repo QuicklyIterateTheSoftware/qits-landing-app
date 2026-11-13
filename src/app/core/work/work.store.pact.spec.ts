@@ -40,12 +40,16 @@ const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 /**
- * The project card's `show-project-work` interactions are `work.operations.pact.spec.ts`'s
- * (`PROJECT_CARD_WORK`, qits-2146).
+ * The project card's `show-project-work` interactions, the Desk's `show-open-issues` and the
+ * Status actions' `move-work-item` moves are `work.operations.pact.spec.ts`'s (`PROJECT_CARD_WORK`,
+ * `OPEN_ISSUES`, `MOVE_WORK`; qits-2146).
  */
 const OPERATIONS: readonly OwnedOperation[] = [
-  { operationId: 'listProjectWork', interactions: ['show-project-work-board', 'show-open-issues'] },
-  'setWorkStatus',
+  { operationId: 'listProjectWork', interactions: ['show-project-work-board'] },
+  {
+    operationId: 'setWorkStatus',
+    interactions: ['finish-epic', 'drop-work-item', 'schedule-work'],
+  },
   'dispatchWork',
 ];
 
@@ -341,15 +345,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     });
   });
 
-  // The Desk's open issues (`open-issues.ts`, qits-1819): an OPEN issue (qits-2039).
-  it('show-open-issues: a project with an open issue', () =>
-    given('show-open-issues', 'a project with an open issue').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf('a project with an open issue');
-      await store.load(projectId);
-      expect(store.byProject()[projectId]?.status).toBe('loaded');
-    }));
-
   // The work item page reads each item's own state and its project's work (`work-item.page`): the
   // status states of its action screenshots.
   it.each([
@@ -404,36 +399,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
         // No finish state left means the answer carried a status.
         expect(store.finishing()[id]).toBeUndefined();
       }),
-  );
-
-  // One recorded move per status: each state's entity moved once, by the registry's moves. A
-  // verified ticket is left out: its only recorded move targets DONE, and qits-projects-service
-  // refuses every caller's move of a TICKET to DONE (qits-150) — `workActions` never offers it, so
-  // there is no Status action left to exercise here.
-  it.each([
-    'a reported ticket',
-    'a refined ticket',
-    'a ready for dev ticket',
-    'an implementing ticket',
-    'an implemented ticket',
-    'a verifying ticket',
-    'a dropped ticket',
-    'a reported epic',
-    'a refined epic',
-    'a ready for dev epic',
-    'an implementing epic',
-    'an implemented epic',
-    'a verifying epic',
-    'a verified epic',
-    'a dropped epic',
-  ])('move-work-item: a Status action moves %s', (state) =>
-    givenMove('move-work-item', state).executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const { id, qualifiedId, projectId, body } = movedIn(state, 'setWorkStatus');
-      const entry = { id, qualifiedId } as WorkEntry;
-      await store.transition(projectId, entry, body['target'] as WorkStatus);
-      expect(store.transitioning()[id]).toBeUndefined();
-    }),
   );
 
   // The Drop form's Confirm (qits-248): the move carries an outcome and, where it needs one, a

@@ -57,23 +57,20 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  * The Schedule tab's criteria read (`loadCriteria`) is the same `getWork`, binding only the
  * acceptance criteria, of an epic and of a REFINED ticket.
  *
- * The thread's two writes, `addWorkComment` and `editWorkComment`, drive the store's own
- * `addComment` and `editComment` against "a ticket with a comment", with the body the recording
- * sent: the request qits-projects-frontend's thread made (only the body travels; the edit is a merge
- * patch sent as plain `application/json`).
+ * The thread's edit, `editWorkComment`, drives the store's own `editComment` against "a ticket
+ * with a comment", with the body the recording sent: the request qits-projects-frontend's thread
+ * made (a merge patch sent as plain `application/json`). Its other write, `addWorkComment`
+ * (`comment-on-work-item`), and the Desk's `show-open-issues` read of an issue are
+ * `work.operations.pact.spec.ts`'s (`ADD_WORK_COMMENT`, `WORK_ITEM`; qits-2146), unchanged.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const OPERATIONS: readonly OwnedOperation[] = [
-  {
-    operationId: 'getWork',
-    interactions: ['show-work-item', 'show-schedule-criteria', 'show-open-issues'],
-  },
+  { operationId: 'getWork', interactions: ['show-work-item', 'show-schedule-criteria'] },
   'listWorkComments',
   'listWorkDossier',
   'listWorkDossierAssets',
-  'addWorkComment',
   'editWorkComment',
 ];
 
@@ -241,19 +238,6 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
       }),
   );
 
-  // The Desk's open issues read each issue's description (`open-issues.ts`, qits-1819): the
-  // issue "a project with an open issue" records (qits-2039).
-  it('show-open-issues: the item of a project with an open issue', () => {
-    const state = 'a project with an open issue';
-    return given(state, 'getWork', GET_WORK, 'show-open-issues').executeTest(async (server) => {
-      const qualifiedId = refOf(state, 'getWork');
-      const { data } = await at(server.url, () =>
-        consume(getWork({ path: { qualifiedId } }), GET_WORK),
-      );
-      expect(data?.archetype).toBe('ISSUE');
-    });
-  });
-
   // What the item needs (epic qits-1899): a READY_FOR_DEV ticket needing another ticket at
   // VERIFIED, not met. Recorded by qits-projects from 2026.1106.140436 on: until the pin reaches
   // it, the test skips itself and the committed pact holds no such interaction.
@@ -348,15 +332,6 @@ describe('qits-landing-app → qits-projects-service pact: work detail', () => {
       expect(data?.pages).toBeDefined();
     }),
   );
-
-  it('comment-on-work-item: says something on the thread', () =>
-    givenWrite('comment-on-work-item', 'addWorkComment').executeTest(async (server) => {
-      const ref = refOf(COMMENTED, 'addWorkComment');
-      const outcome = await at(server.url, () =>
-        TestBed.inject(WorkDetailStore).addComment(ref, sentBody('addWorkComment')),
-      );
-      expect(outcome.refusal).toBeUndefined();
-    }));
 
   it('edit-comment: rewrites a comment as a merge patch', () =>
     givenWrite('edit-comment', 'editWorkComment').executeTest(async (server) => {

@@ -2,7 +2,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { provideQitsWorkBriefs } from '@qits/ui-components';
+import { EMPTY } from 'rxjs';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { OpenIssues, openIssues } from './open-issues';
@@ -46,6 +48,8 @@ describe('OpenIssues', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // The work's `refreshOn` (qits-2146): a stream that never delivers.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
       ],
     });
     const http = TestBed.inject(HttpTestingController);
@@ -58,11 +62,11 @@ describe('OpenIssues', () => {
     await settle();
     fixture.detectChanges();
     await settle();
+    // The issue's own read, for its description (`app-issue-description`): no thread with it.
     http.expectOne('/projects/api/work/qits-7').flush({
       ...issue,
       description,
     });
-    http.expectOne('/projects/api/work/qits-7/comments').flush({ entries: [] });
     await settle();
     fixture.detectChanges();
     return { fixture, http, element: fixture.nativeElement as HTMLElement };
@@ -110,6 +114,14 @@ describe('OpenIssues', () => {
     const move = http.expectOne('/projects/api/work/qits-7/status');
     expect(move.request.body).toEqual({ target: 'RESOLVED' });
     move.flush({ id: 'i-1', status: 'RESOLVED' });
+    await settle();
+    TestBed.tick();
+    await settle();
+    // The move went through: the project's work is read again, and the issue leaves the list.
+    http.expectOne('/projects/api/projects/p-1/work').flush({ entities: [] });
+    await settle();
+    fixture.detectChanges();
+    expect(element.querySelectorAll('li')).toHaveLength(0);
   });
 
   it('shows the refusal when a comment is refused', async () => {

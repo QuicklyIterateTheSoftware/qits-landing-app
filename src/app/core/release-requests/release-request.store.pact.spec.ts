@@ -71,7 +71,7 @@ const ELIGIBILITY = 'getReleaseRequestApprovalEligibility';
  * The source move (qits-1665), recorded by qits-projects on the frozen state (rr-1's
  * `ticket/contract-12` into rr-2) from the release that adds the door. The pinned
  * `@qits/projects-golden-masters` may predate it: the interaction then skips itself (`isRecorded`,
- * read off the installed package, as `desk-triggers.store.pact.spec.ts` does), the committed pact
+ * read off the installed package, as `desk.operations.pact.spec.ts` does), the committed pact
  * holds no move, and once qits-maintenance bumps the pin to a release that records it the test
  * runs on its own and the pact is rewritten with `QITS_GOLDEN_UPDATE`.
  */

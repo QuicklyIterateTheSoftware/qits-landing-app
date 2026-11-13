@@ -2,7 +2,7 @@ import type { ListDeskTriggerMessagesResponses } from '../../api/projects';
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `DeskTriggersStore` reads from qits-projects' answer (epic qits-1604). The store passes
+ * What the Desk page reads from qits-projects' answer (epic qits-1604, `DESK_TRIGGER_MESSAGES`). The operation passes
  * this list to `consume(...)`, so it cannot read any other field, and its pact spec passes the
  * same list as `consumes`. To read another field, add it here.
  */

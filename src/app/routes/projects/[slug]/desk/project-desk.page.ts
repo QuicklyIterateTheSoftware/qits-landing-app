@@ -1,18 +1,19 @@
 import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  PLATFORM_ID,
-  untracked,
-} from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import type { DeskTriggerEvent, DeskTriggerMessage } from '$core/desk/desk-triggers.consumes';
-import { DeskTriggersStore } from '$core/desk/desk-triggers.store';
+import { DESK_TRIGGER_MESSAGES } from '$core/desk/desk.operations';
 import { utcMinute } from '$core/projects/release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
+import { loadState } from '$core/resources/load-state';
 import { commentAnchor } from '$core/work/comment-anchor';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { OpenIssues } from '$patterns/desk/open-issues/open-issues';
@@ -59,8 +60,9 @@ function when(instant: string | null | undefined): string {
  * in a collapsible `<details>`, hidden while the window is still OPEN (`message` is null until it
  * closes).
  *
- * The messages come from `DeskTriggersStore`, read once per project. A read that fails says so,
- * with Retry.
+ * The messages come from the page's own `qitsResource` over `DESK_TRIGGER_MESSAGES` (qits-2146),
+ * read in the browser only, once per visit. A read that fails says so, with Retry. Marks
+ * (qits-2141): the list is that read, each window a message by its id, each line an event of it.
  *
  * Above them, the project's open issues (`OpenIssues`, qits-1819).
  *
@@ -71,7 +73,17 @@ function when(instant: string | null | undefined): string {
 @Component({
   selector: 'app-project-desk-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, OpenIssues, PageLayoutComponent, QitsExit, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    OpenIssues,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -88,39 +100,69 @@ function when(instant: string | null | undefined): string {
           (retry)="retry()"
         />
         <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="state() === 'error'">
-          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+          <ul class="m-0 flex list-none flex-col gap-2 p-0" [qitsEntityList]="read">
             @for (message of messages(); track message.id) {
-              <li class="rounded-md border border-line bg-surface px-3 py-2">
+              <li
+                class="rounded-md border border-line bg-surface px-3 py-2"
+                [qitsEntity]="message"
+                entityKey="id"
+              >
                 <div class="flex flex-wrap items-baseline gap-2">
-                  <ui-chip [label]="label(message)" [tone]="tone(message)" />
-                  <span class="text-xs whitespace-nowrap text-fg-muted">{{
-                    when(message.openedAt)
-                  }}</span>
+                  <ui-chip
+                    [label]="label(message)"
+                    [tone]="tone(message)"
+                    [fieldOf]="message"
+                    [qitsField]="{ derived: ['state'] }"
+                  />
+                  <span
+                    class="text-xs whitespace-nowrap text-fg-muted"
+                    [fieldOf]="message"
+                    [qitsField]="{ derived: ['openedAt'] }"
+                    >{{ when(message.openedAt) }}</span
+                  >
                   <span
                     class="text-xs whitespace-nowrap text-fg-muted"
                     [class.hidden]="!message.closedAt"
+                    [fieldOf]="message"
+                    [qitsField]="{ derived: ['closedAt'] }"
                     >– {{ when(message.closedAt) }}</span
                   >
                   <span
                     class="text-xs whitespace-nowrap text-fg-muted"
                     [class.hidden]="accepted(message)"
+                    [fieldOf]="message"
+                    [qitsField]="{ derived: ['attempts'] }"
                   >
                     {{ message.attempts ?? 0 }} attempt{{ message.attempts === 1 ? '' : 's' }}
-                    <span [class.hidden]="!message.lastDetail"
+                    <span
+                      [class.hidden]="!message.lastDetail"
+                      [fieldOf]="message"
+                      [qitsField]="{ derived: ['lastStatus', 'lastDetail'] }"
                       >— {{ message.lastStatus }} {{ message.lastDetail }}</span
                     >
                   </span>
                 </div>
                 <ul class="mt-2 flex list-none flex-col gap-1 p-0 text-sm text-fg-soft">
                   @for (event of message.events ?? []; track eventKey(event)) {
-                    <li class="flex flex-wrap items-baseline gap-1.5">
-                      <span class="text-xs font-semibold text-fg-muted">{{ event.source }}</span>
+                    <li
+                      class="flex flex-wrap items-baseline gap-1.5"
+                      [qitsEntity]="event"
+                      entityKey="eventId"
+                    >
+                      <span
+                        class="text-xs font-semibold text-fg-muted"
+                        [fieldOf]="event"
+                        qitsField="source"
+                        >{{ event.source }}</span
+                      >
                       @let kind = linked(event);
                       @if (kind === 'releaseRequest') {
                         <a
                           class="font-mono text-accent no-underline hover:underline"
                           [qitsExit]="opening.releaseRequest"
                           [exitParams]="{ slug: slug(), requestId: event.itemRef ?? '' }"
+                          [fieldOf]="event"
+                          qitsField="itemRef"
                           >{{ event.itemRef }}</a
                         >
                       } @else if (kind === 'workItem') {
@@ -129,15 +171,28 @@ function when(instant: string | null | undefined): string {
                           [qitsExit]="opening.workItem"
                           [exitParams]="{ slug: slug(), id: event.itemRef ?? '' }"
                           [exitFragment]="fragment(event)"
+                          [fieldOf]="event"
+                          qitsField="itemRef"
                           >{{ event.itemRef }}</a
                         >
                       } @else {
-                        <span class="font-mono">{{ event.itemRef }}</span>
+                        <span class="font-mono" [fieldOf]="event" qitsField="itemRef">{{
+                          event.itemRef
+                        }}</span>
                       }
-                      <span [class.hidden]="!event.label">({{ event.label }})</span>
-                      <span class="text-xs text-fg-muted" [class.hidden]="!event.cause">{{
-                        event.cause
-                      }}</span>
+                      <span
+                        [class.hidden]="!event.label"
+                        [fieldOf]="event"
+                        [qitsField]="{ derived: ['label'] }"
+                        >({{ event.label }})</span
+                      >
+                      <span
+                        class="text-xs text-fg-muted"
+                        [class.hidden]="!event.cause"
+                        [fieldOf]="event"
+                        qitsField="cause"
+                        >{{ event.cause }}</span
+                      >
                     </li>
                   }
                 </ul>
@@ -145,6 +200,8 @@ function when(instant: string | null | undefined): string {
                   <summary class="cursor-pointer text-xs text-fg-muted">Message</summary>
                   <pre
                     class="mt-1 max-h-64 overflow-auto rounded bg-surface-inverse p-2 text-xs whitespace-pre-wrap text-fg-on-inverse"
+                    [fieldOf]="message"
+                    qitsField="message"
                     >{{ message.message }}</pre>
                 </details>
               </li>
@@ -163,7 +220,7 @@ function when(instant: string | null | undefined): string {
 })
 export class ProjectDeskPage {
   protected readonly selected = inject(SelectedProject);
-  private readonly store = inject(DeskTriggersStore);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly when = when;
 
@@ -180,17 +237,17 @@ export class ProjectDeskPage {
   /** The open project's slug, for the lines' links. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
-  private readonly answer = computed(() => {
-    const id = this.selected.project()?.id;
-    return id ? this.store.byProject()[id] : undefined;
+  /** The open project's desk trigger messages, in the browser only (the server has no session). */
+  protected readonly read = qitsResource(DESK_TRIGGER_MESSAGES, () => {
+    const projectId = this.selected.project()?.id;
+    return this.browser && projectId ? { path: { projectId } } : undefined;
   });
 
-  protected readonly messages = computed(() => this.answer()?.messages ?? []);
+  protected readonly messages = computed(() =>
+    this.read.hasValue() ? (this.read.value()?.messages ?? []) : [],
+  );
 
-  protected readonly state = computed((): LoadState => {
-    const status = this.answer()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
+  protected readonly state = computed((): LoadState => loadState(this.read));
 
   protected label(message: DeskTriggerMessage): string {
     return (message.state ?? '').toLowerCase();
@@ -227,17 +284,6 @@ export class ProjectDeskPage {
 
   /** Reads the list again after a failed read. */
   protected retry(): void {
-    const id = this.selected.project()?.id;
-    if (id) void this.store.load(id);
-  }
-
-  constructor() {
-    // In the browser only (the server render holds no token). The store fetches once per
-    // project.
-    const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    effect(() => {
-      const id = this.selected.project()?.id;
-      if (browser && id) untracked(() => void this.store.load(id));
-    });
+    this.read.reload();
   }
 }

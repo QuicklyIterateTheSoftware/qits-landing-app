@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { EMPTY } from 'rxjs';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
@@ -22,7 +24,7 @@ const empty = (element: HTMLElement) =>
  * `golden-masters/a-project-whose-desk-received-a-trigger-message/listDeskTriggerMessages.json`
  * (provider state "a project whose desk received a trigger message", operation
  * `listDeskTriggerMessages`), which has not reached `@qits/projects-golden-masters` yet — see
- * `desk-triggers.store.pact.spec.ts`. Flushed here instead of read from the package, as the pact
+ * `desk.operations.pact.spec.ts`. Flushed here instead of read from the package, as the pact
  * spec's file comment says to.
  */
 const DELIVERED_MESSAGE = {
@@ -110,6 +112,8 @@ describe('ProjectDeskPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
+        // The open issues' `refreshOn` (qits-2146): a stream that never delivers.
+        { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
