@@ -4561,6 +4561,86 @@
       "triggers": []
     },
     {
+      "file": "src/app/layout/shell/shell.layout.browser.spec.ts/narrow-open-over-page-dark.html",
+      "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+      "test": "ShellLayout (screenshots) > opens the sidebar over the page’s pinned content on a phone",
+      "name": "narrow-open-over-page",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:work",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule"
+      ]
+    },
+    {
+      "file": "src/app/layout/shell/shell.layout.browser.spec.ts/narrow-open-over-page-light.html",
+      "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+      "test": "ShellLayout (screenshots) > opens the sidebar over the page’s pinned content on a phone",
+      "name": "narrow-open-over-page",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:work",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule"
+      ]
+    },
+    {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/project-dark.html",
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > lists the open project’s sections and marks the current one",
