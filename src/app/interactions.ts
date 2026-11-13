@@ -72,11 +72,17 @@ export const INTERACTIONS = {
    * its dossier (an epic's pages and figures, a ticket's pages).
    */
   'show-work-item': 'The work item page shows the item’s description, dossier and comments',
-  /** `work-comments.ts` via `WorkDetailStore.addComment`: Comment under the item's thread. */
+  /**
+   * `work-comments.ts` via `WorkDetailStore.addComment`: Comment under the item's thread. The Desk's
+   * open issues write the same comment through `ADD_WORK_COMMENT` (`open-issues.ts`, qits-2146).
+   */
   'comment-on-work-item': 'Comment on the work item page adds a comment to the item’s thread',
   /** `work-comments.ts` via `WorkDetailStore.editComment`: Save on a comment being edited. */
   'edit-comment': 'Save on an edited comment rewrites its text',
-  /** `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). */
+  /**
+   * `work-item.page.ts`: a Status action (Mark …, Skip to …, Back to …, Drop, Reopen). The Desk's
+   * Resolve sends the same move through `MOVE_WORK` (`open-issues.ts`, qits-2146).
+   */
   'move-work-item': 'A status action on the work item page moves the item',
   /**
    * `work-item.page.ts` via `app-work-drop`: Confirm drop on the Drop form sends the move with its
@@ -116,8 +122,8 @@ export const INTERACTIONS = {
   'show-project-release-requests':
     'The Release Requests page lists the project’s open and recently finalized release requests',
   /**
-   * `project-desk.page.ts` via `DeskTriggersStore`: the Desk page lists the project’s delivery
-   * desk trigger messages, newest first.
+   * `project-desk.page.ts` via `DESK_TRIGGER_MESSAGES` (qits-2146): the Desk page lists the
+   * project’s delivery desk trigger messages, newest first.
    */
   'show-project-desk':
     'The Desk page lists the project’s delivery-desk trigger messages, newest first',
@@ -504,23 +510,23 @@ export const INTERACTIONS = {
   'agents-menu':
     'The top bar’s agents menu lists the project’s agents with what they wait on and what needs attention',
   /**
-   * The Ideas page (`routes/projects/[slug]/ideas/`) via `IdeasStore.loadList`: the open project's
-   * ideas, filtered by status, with or without the archived ones (epic qits-888). The work item
-   * page's inspiration picker reads the same list.
+   * The Ideas page (`routes/projects/[slug]/ideas/`) via `IDEA_LIST` (qits-2146): the open
+   * project's ideas, filtered by status, with or without the archived ones (epic qits-888). The
+   * idea forms' "Enabled by" choice and the work item page's inspiration picker read the same list.
    */
   'list-ideas': 'The Ideas page lists the project’s ideas',
-  /** An idea's page via `IdeasStore.loadIdea`: the idea, what enables it, what it enables and inspired. */
+  /** An idea's page via `IDEA`: the idea, what enables it, what it enables and inspired. */
   'show-idea': 'An idea’s page shows the idea, the ideas around it and the work it inspired',
-  /** The idea form's Create via `IdeasStore.create`; a refusal shows the service's message. */
+  /** The idea form's Create via `CREATE_IDEA`; a refusal shows the service's message. */
   'create-idea': 'Create on the idea form adds an idea to the project',
-  /** The idea form's Save via `IdeasStore.update`: a merge patch of title, description, enabledBy. */
+  /** The idea form's Save via `EDIT_IDEA`: a merge patch of title, description, enabledBy. */
   'edit-idea': 'Save on the idea form edits an idea',
-  /** Archive on an idea's page via `IdeasStore.archive`, with the reason it asks for. */
+  /** Archive on an idea's page via `ARCHIVE_IDEA`, with the reason it asks for. */
   'archive-idea': 'Archive on an idea’s page archives it with a reason',
-  /** Unarchive on an archived idea's page via `IdeasStore.unarchive`. */
+  /** Unarchive on an archived idea's page via `UNARCHIVE_IDEA`. */
   'unarchive-idea': 'Unarchive on an idea’s page brings it back',
   /**
-   * A drop of a dragged idea on the Ideas page via `IdeasStore.reprioritize`: puts it directly
+   * A drop of a dragged idea on the Ideas page via `REPRIORITIZE`: puts it directly
    * above or below another rankable idea of the project (qits-1791).
    */
   'reprioritize-idea': 'Dragging an idea among the project’s ideas ranks it',
@@ -586,8 +592,9 @@ export const INTERACTIONS = {
    */
   'open-inspiring-idea': 'The work form’s “Inspired by” link opens the inspiring idea',
   /**
-   * The work item page's inspiration (`work-inspiration.ts`) via `WorkWritesStore.setInspiredBy`:
-   * names an idea of the project as an item's inspiration, or clears it.
+   * The work item page's inspiration (`work-inspiration.ts`) via `SET_WORK_INSPIRATION`: names an
+   * idea of the project as an item's inspiration, or clears it. No recording holds it yet, so no
+   * pact interaction names this slug.
    */
   'set-work-inspiration': 'The work item page sets or clears the idea inspiring the item',
   /**
@@ -723,8 +730,8 @@ export const INTERACTIONS = {
    */
   'open-desk-line': 'A trigger line’s item on the Desk page opens its release request or work item',
   /**
-   * `open-issues.ts` via `WorkStore.load` and `WorkDetailStore.load`: the Desk page lists the
-   * project's open issues, each with its description (qits-1819).
+   * `open-issues.ts` via `OPEN_ISSUES` and `issue-description.ts` via `WORK_ITEM` (qits-2146): the
+   * Desk page lists the project's open issues, each with its description (qits-1819).
    */
   'show-open-issues': 'The Desk page lists the project’s open issues, each with its description',
   /**

@@ -76,14 +76,16 @@ counts.
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
 `ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
-`IdeasStore` (`core/ideas/`); the form (`patterns/ideas/idea-form/`) counts the service's rules
-live (`idea-rules.ts`: paragraphs x/3, characters x/600) and shows a 400's `message` as it is. They
-read again after `IDEA_EVENTS` (`IdeaCreated`, `IdeaUpdated`, `IdeaArchived`, `IdeaUnarchived`)
-whose `projectId` is the open project (`IdeasStore.follow`). An idea's Create epic / Create ticket
-open `work/create` (`WorkCreatePage`, `WorkWritesStore.create`) filled from the query and sending
-`inspiredBy`; the work item page shows and sets an item's inspiration
-(`patterns/ideas/work-inspiration/`, `WorkWritesStore.setInspiredBy`, a `patchWork` of
-`inspiredBy` alone, which no recording holds yet, so it has no pact interaction).
+`qitsResource` and `qitsMutation` over `core/ideas/ideas.operations.ts` (qits-2146; the writes'
+requests built by `idea-writes.ts`); the form (`patterns/ideas/idea-form/`) counts the service's
+rules live (`idea-rules.ts`: paragraphs x/3, characters x/600) and shows a 400's `message` as it is.
+They read again after `IDEA_EVENTS` (`IdeaCreated`, `IdeaUpdated`, `IdeaArchived`,
+`IdeaUnarchived`) whose `projectId` is the open project (each resource's `refreshOn`, narrowed by
+`aboutProjectIdeas`). An idea's Create epic / Create ticket open `work/create` (`WorkCreatePage`,
+`WorkWritesStore.create`) filled from the query and sending `inspiredBy`; the work item page shows
+and sets an item's inspiration (`patterns/ideas/work-inspiration/`, `SET_WORK_INSPIRATION` in
+`core/work/work.operations.ts`, a `patchWork` of `inspiredBy` alone, which no recording holds yet,
+so it has no pact interaction).
 
 Needs (epic qits-1899): the one ordering mechanism, "item B needs item A at a status". An epic, a
 ticket, a feature or a task carries `needs[]` (each need's item, the status it needs, where that
@@ -111,7 +113,8 @@ detail bodies (`app-{epic,feature,task,ticket}-detail`, `SelectedProject.slug()`
 description and to `app-work-comments` (`project`), and the Schedule tab to each acceptance
 criterion. Plain-text work text renders through `<qits-commit-message>`: a ticket's impetus (a
 `WorkField` with `workProject`; a field without one, an id or a name, stays text) and an open
-issue's description on the Desk (`app-open-issues`, `slug`).
+issue's description on the Desk (`app-issue-description`, `slug`; each issue's own `WORK_ITEM`
+read, qits-2146).
 
 Work references in commit subjects (qits-1897): a release request's Commits tab (`ui-commit-graph`,
 given the project's `slug` as `project`) and a pin's commits on the Changes tab
@@ -497,6 +500,11 @@ operations' part of the file (`assertPactPart`).
   field, so the pages mark only its source (`data-qits-source`). Plain specs of a page over those
   services run the root effects that start the next read (`TestBed.tick()`), and do not wait for
   `whenStable()` while a read is still open.
+  Group 3 (ideas, desk, events, observability) reads in the components themselves: the idea pages
+  over `ideas.operations.ts`, the Desk over `desk.operations.ts` (`DESK_TRIGGER_MESSAGES`), its open
+  issues over `work.operations.ts` (`OPEN_ISSUES`, each issue's `WORK_ITEM` in
+  `app-issue-description`, writing through `ADD_WORK_COMMENT` and `MOVE_WORK`). A write's
+  refusal is its `QitsApiError` (status and body) read by the domain's refusal helper.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in

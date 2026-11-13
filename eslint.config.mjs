@@ -82,6 +82,18 @@ function dataMarks() {
     'src/app/patterns/contracts/contracts-frame/contracts-frame.ts',
     'src/app/patterns/contracts/er-diagram-box/er-diagram-box.ts',
     'src/app/patterns/ui-builder/call-details/call-details.ts',
+    // Group 3, the ideas, desk, events and observability routes.
+    'src/app/routes/projects/[[]slug]/ideas/project-ideas.page.ts',
+    'src/app/routes/projects/[[]slug]/ideas/create/idea-create.page.ts',
+    'src/app/routes/projects/[[]slug]/ideas/detail/[[]ideaId]/idea.page.ts',
+    'src/app/routes/projects/[[]slug]/ideas/detail/[[]ideaId]/edit/idea-edit.page.ts',
+    'src/app/routes/projects/[[]slug]/desk/project-desk.page.ts',
+    'src/app/routes/projects/[[]slug]/events/project-events.page.ts',
+    'src/app/routes/projects/[[]slug]/observability/project-observability.page.ts',
+    'src/app/patterns/ideas/idea-form/idea-form.ts',
+    'src/app/patterns/ideas/work-inspiration/work-inspiration.ts',
+    'src/app/patterns/desk/open-issues/open-issues.ts',
+    'src/app/patterns/desk/issue-description/issue-description.ts',
   ];
   /** The root services holding the resources those share: no store, no client. */
   const services = [
