@@ -13,6 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
+import { CONTRACTS_MARKS } from '$core/contracts/contracts-marks';
 import { bundleOf, entityGroups, simpleName } from '$core/contracts/contracts-view';
 import { ContractsCatalog } from '$core/ui-builder/contracts-catalog';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
@@ -49,13 +50,13 @@ import { Chip } from '$ui/components/chip/chip';
           <p class="no-map m-0 text-sm text-fg-soft">{{ siteLabel() }} publishes no entity map.</p>
         }
         @case ('loaded') {
-          <div
-            class="flex flex-col gap-5 text-sm"
-            data-qits-source="qits-artifacts-service#getDocsFile"
-          >
+          <div class="flex flex-col gap-5 text-sm" [attr.data-qits-source]="marks.source">
             @for (group of groups(); track group.marking) {
               <section class="marking">
-                <h2 class="m-0 mb-1 text-base font-semibold capitalize">
+                <h2
+                  class="m-0 mb-1 text-base font-semibold capitalize"
+                  data-qits-derived="entities"
+                >
                   {{ group.marking }}
                   <span class="text-xs font-normal text-fg-soft">{{ group.entities.length }}</span>
                 </h2>
@@ -69,22 +70,35 @@ import { Chip } from '$ui/components/chip/chip';
                   </thead>
                   <tbody>
                     @for (e of group.entities; track e.entity) {
-                      <tr class="entity border-b border-line-subtle align-top">
+                      <tr
+                        class="entity border-b border-line-subtle align-top"
+                        [attr.data-qits-item]="marks.entity(e)"
+                      >
                         <td class="py-1 pr-3">
                           <span class="flex flex-wrap items-center gap-1.5">
                             <a
                               class="font-semibold"
+                              data-qits-derived="entity"
                               [qitsExit]="opening.entity"
                               [exitParams]="{ slug: slug(), repo: repo(), entity: e.entity }"
                               >{{ name(e.entity) }}</a
                             >
                             @if (e.knownGap; as gap) {
-                              <ui-chip class="gap" tone="waiting" [label]="'Known gap ' + gap" />
+                              <ui-chip
+                                class="gap"
+                                tone="waiting"
+                                data-qits-derived="knownGap"
+                                [label]="'Known gap ' + gap"
+                              />
                             }
                           </span>
                         </td>
-                        <td class="py-1 pr-3 font-mono text-xs">{{ e.table ?? '—' }}</td>
-                        <td class="py-1 text-right tabular-nums">{{ e.operations.length }}</td>
+                        <td class="py-1 pr-3 font-mono text-xs" data-qits-field="table">
+                          {{ e.table ?? '—' }}
+                        </td>
+                        <td class="py-1 text-right tabular-nums" data-qits-derived="operations">
+                          {{ e.operations.length }}
+                        </td>
                       </tr>
                     }
                   </tbody>
@@ -118,6 +132,9 @@ export class EntitiesPage {
   protected readonly opening = outcomes('open-listed-entity', {
     entity: exit('projects/:slug/repositories/:repo/entities/:entity'),
   });
+
+  /** The data marks of the map's entities (qits-2146; `contracts-marks.ts`). */
+  protected readonly marks = CONTRACTS_MARKS;
 
   protected readonly lookup = computed(() => bundleOf(this.entityMaps.catalog(), this.repo()));
 

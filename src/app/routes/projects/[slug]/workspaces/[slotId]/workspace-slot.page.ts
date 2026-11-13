@@ -2,13 +2,20 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { QitsEntity, QitsEntityList, qitsResource, type QitsRefreshOn } from '@qits/angular';
+import {
+  QitsEntity,
+  QitsEntityList,
+  qitsResource,
+  sourceMark,
+  type QitsRefreshOn,
+} from '@qits/angular';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { isMissing } from '$core/resources/resource-family';
 import { notRemoved } from '$core/workspaces/agent-lists';
 import { SLOT_AGENTS, SLOT_DETAIL, SLOT_START } from '$core/workspaces/agents.operations';
+import { valueMarks } from '$core/marks/value-marks';
 import {
   concerns,
   WORKSPACE_EVENTS,
@@ -67,7 +74,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout [title]="title()">
+      <app-page-layout [title]="title()" [titleMarks]="titleMarks()">
         <ui-spinner [state]="state()" class="min-h-48">
           @if (missing()) {
             <p class="m-0 text-sm text-fg-soft">
@@ -90,6 +97,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               <app-slot-status
                 [slot]="slot"
                 [hosted]="agentsLoaded() ? agents().length : undefined"
+                [hostedMarks]="hostedMarks"
               />
               <app-container-actions [slot]="slot" [hosted]="hosted" (changed)="reload()" />
               @if (processId(); as processId) {
@@ -170,6 +178,12 @@ export class WorkspaceSlotPage {
     notRemoved(this.hosted.hasValue() ? this.hosted.value()?.agents : undefined),
   );
   protected readonly agentsLoaded = computed(() => this.hosted.hasValue());
+  /** The status strip's agent count (qits-2146): counted from the hosted agents' read. */
+  protected readonly hostedMarks = {
+    source: sourceMark(SLOT_AGENTS),
+    item: null,
+    derived: 'agents',
+  } as const;
   /** The harness the slot's agents run, for the sign-in notice; any when none is listed. */
   protected readonly harness = computed(
     () => this.agents().find((agent) => agent.harness)?.harness ?? null,
@@ -178,6 +192,13 @@ export class WorkspaceSlotPage {
   protected readonly title = computed(
     () => `Workspace ${this.slot()?.workspaceId ?? `ws-${this.slotId() || ''}`}`,
   );
+  /** The title's data marks (qits-2146): the slot's workspace id, once the slot is read. */
+  protected readonly titleMarks = computed(() => {
+    const slot = this.slot();
+    return slot?.workspaceId != null
+      ? valueMarks(SLOT_DETAIL, slot, 'id', { derived: ['workspaceId'] })
+      : undefined;
+  });
 
   protected readonly state = computed((): LoadState => {
     if (isMissing(this.slotRead)) return 'loaded';

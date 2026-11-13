@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { SelectedProject } from '$core/projects/selected-project';
-import { QitsEntity, QitsField, type QitsResourceRef } from '@qits/angular';
+import { QitsEntity, QitsField, type QitsFieldMark, type QitsResourceRef } from '@qits/angular';
+import { valueMarks } from '$core/marks/value-marks';
 import type { DossierPages, EntityDetail, WorkThread } from '$core/work/work-detail.consumes';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
@@ -60,14 +61,27 @@ export class TicketDetail {
   protected readonly fields = computed((): readonly WorkField[] => {
     const entity = this.entity();
     const blocked = !!entity?.blocked;
+    // The values are the item's own read (qits-2146): marked once it is in.
+    const marks = (mark: QitsFieldMark<EntityDetail>) =>
+      entity ? valueMarks(this.item().operation, entity, 'id', mark) : undefined;
     return [
-      { label: 'Type', value: entity?.ticketType?.toLowerCase() ?? '' },
-      { label: 'Impetus', value: entity?.impetus ?? '', workProject: this.slug() },
-      { label: 'Assignee', value: entity?.assignee ?? 'Nobody' },
+      {
+        label: 'Type',
+        value: entity?.ticketType?.toLowerCase() ?? '',
+        marks: marks('ticketType'),
+      },
+      {
+        label: 'Impetus',
+        value: entity?.impetus ?? '',
+        workProject: this.slug(),
+        marks: marks('impetus'),
+      },
+      { label: 'Assignee', value: entity?.assignee ?? 'Nobody', marks: marks('assignee') },
       {
         label: 'Blocked',
         value: blocked ? 'Yes. The reason is in the comments.' : 'No',
         alert: blocked,
+        marks: marks({ derived: ['blocked'] }),
       },
     ];
   });

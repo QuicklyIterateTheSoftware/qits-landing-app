@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/chat-model';
+import type { ValueMarks } from '$ui/dom/value-marks';
 
 /**
  * An agent's conversation, drawn (epic qits-1230), ported from qits-workspaces-frontend: the items
@@ -23,6 +24,7 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
           <article class="border-l-4 border-accent pl-3">
             <p class="m-0 mb-0.5 text-xs font-semibold tracking-wide text-accent uppercase">You</p>
             <pre
+              [attr.data-qits-derived]="marks()?.derived"
               class="m-0 font-mono text-sm leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
           </article>
@@ -30,6 +32,7 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
         @case ('assistant') {
           <article class="border-l-4 border-line pl-3">
             <pre
+              [attr.data-qits-derived]="marks()?.derived"
               class="m-0 font-sans text-sm leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
           </article>
@@ -38,6 +41,7 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
           <details class="rounded-md border border-special-line bg-special-soft px-2 py-1">
             <summary class="cursor-pointer text-xs text-fg-soft">Thinking</summary>
             <pre
+              [attr.data-qits-derived]="marks()?.derived"
               class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
           </details>
@@ -45,10 +49,15 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
         @case ('tool-call') {
           <details class="rounded-md border border-line bg-surface-subtle px-2 py-1">
             <summary class="cursor-pointer truncate text-xs text-fg-soft">
-              <span class="font-semibold text-fg">{{ item.name }}</span>
-              <span class="ml-2 font-mono">{{ brief(item.input) }}</span>
+              <span class="font-semibold text-fg" [attr.data-qits-derived]="marks()?.derived">{{
+                item.name
+              }}</span>
+              <span class="ml-2 font-mono" [attr.data-qits-derived]="marks()?.derived">{{
+                brief(item.input)
+              }}</span>
             </summary>
             <pre
+              [attr.data-qits-derived]="marks()?.derived"
               class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.input }}</pre>
           </details>
@@ -65,10 +74,14 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
               {{ item.isError ? 'Tool failed' : 'Tool result' }}
             </summary>
             <pre
+              [attr.data-qits-derived]="marks()?.derived"
               class="m-0 mt-1 font-mono text-xs leading-normal wrap-anywhere whitespace-pre-wrap text-fg"
               >{{ item.text }}</pre>
             @if (item.truncatedFrom) {
-              <p class="m-0 mt-1 text-xs text-fg-soft italic">
+              <p
+                class="m-0 mt-1 text-xs text-fg-soft italic"
+                [attr.data-qits-derived]="marks()?.derived"
+              >
                 Shown to {{ limit }} characters of {{ item.truncatedFrom }}: the rest is in the
                 command’s log.
               </p>
@@ -79,6 +92,7 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
           <p
             class="m-0 rounded-md bg-danger-soft px-2 py-1 text-sm text-danger-strong"
             role="alert"
+            [attr.data-qits-derived]="marks()?.derived"
           >
             {{ item.text }}
           </p>
@@ -89,11 +103,13 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
             [class.border-dashed]="!item.anchored"
           >
             <summary class="cursor-pointer truncate text-xs text-fg-soft">
-              <span class="font-semibold text-fg"
+              <span class="font-semibold text-fg" [attr.data-qits-derived]="marks()?.derived"
                 >Sub-agent{{ item.agentType ? ': ' + item.agentType : '' }}</span
               >
               @if (item.description) {
-                <span class="ml-2 font-mono">{{ item.description }}</span>
+                <span class="ml-2 font-mono" [attr.data-qits-derived]="marks()?.derived">{{
+                  item.description
+                }}</span>
               }
             </summary>
             @if (!item.anchored) {
@@ -102,7 +118,7 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
                 here rather than in its place.
               </p>
             }
-            <app-conversation class="mt-1" [items]="item.items" />
+            <app-conversation class="mt-1" [items]="item.items" [marks]="marks()" />
           </details>
         }
       }
@@ -111,6 +127,12 @@ import { summarise, TOOL_RESULT_LIMIT, type ChatItem } from '$core/workspaces/ch
 })
 export class Conversation {
   readonly items = input.required<readonly ChatItem[]>();
+  /**
+   * The data marks of what the items show (qits-2146): they are made of the harness's lines, so
+   * every value the conversation draws is derived from them; the page names the fields
+   * (`derived`), set on each value as is, never on the words around it.
+   */
+  readonly marks = input<ValueMarks | undefined>(undefined);
 
   protected readonly limit = TOOL_RESULT_LIMIT;
 

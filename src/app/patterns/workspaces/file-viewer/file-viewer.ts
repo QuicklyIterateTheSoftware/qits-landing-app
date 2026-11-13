@@ -12,6 +12,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import type { ValueMarks } from '$ui/dom/value-marks';
 import type { LineRange, PickedRange } from '$core/workspaces/file-range';
 
 /**
@@ -83,7 +84,13 @@ interface ViewerLine {
             <p class="m-0 text-sm text-fg-muted" role="status">This file is empty.</p>
           } @else {
             <div class="max-h-[34rem] overflow-auto rounded-md border border-line bg-surface">
-              <ol class="m-0 list-none py-1.5 pl-0 font-mono text-xs leading-normal">
+              <ol
+                class="m-0 list-none py-1.5 pl-0 font-mono text-xs leading-normal"
+                [attr.data-qits-source]="marks()?.source"
+                [attr.data-qits-item]="marks()?.item"
+                [attr.data-qits-field]="marks()?.field"
+                [attr.data-qits-derived]="marks()?.derived"
+              >
                 @for (line of lines(); track line.number) {
                   <li
                     class="flex items-start gap-2.5 px-2"
@@ -130,6 +137,12 @@ export class FileViewer {
 
   /** The open file as read. */
   readonly file = input<FileView | null>(null);
+
+  /**
+   * The data marks of the lines it shows (qits-2146): they are cut from the file's text, so the page
+   * marks them (`valueMarks`) and they are set on the list of lines as is.
+   */
+  readonly marks = input<ValueMarks | undefined>(undefined);
 
   /** Whether pick mode is armed. */
   readonly picking = input(false);

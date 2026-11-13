@@ -1,18 +1,20 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Action, ActionGroup } from '$ui/components/action-button/action';
+import type { ValueMarks } from '$ui/dom/value-marks';
 import { PageLayoutComponent } from './page-layout';
 
 const noop = () => undefined;
 
 @Component({
   imports: [PageLayoutComponent],
-  template: `<app-page-layout [title]="title()" [actions]="actions()"
+  template: `<app-page-layout [title]="title()" [titleMarks]="titleMarks()" [actions]="actions()"
     ><p>Content</p></app-page-layout
   >`,
 })
 class WithInputs {
   readonly title = signal('Work');
+  readonly titleMarks = signal<ValueMarks | undefined>(undefined);
   readonly actions = signal<readonly (Action | ActionGroup)[]>([]);
 }
 
@@ -57,6 +59,18 @@ describe('PageLayoutComponent', () => {
     expect(element.querySelector('h1')?.textContent?.trim()).toBe('Work');
     expect(element.querySelector('p')?.textContent).toBe('Content');
     expect(actionsBox(element).querySelectorAll('button')).toHaveLength(0);
+  });
+
+  it('marks the title with its data marks only when it is data (qits-2146)', () => {
+    const { fixture, element, host } = render(WithInputs);
+    const h1 = element.querySelector('h1')!;
+    expect(h1.getAttributeNames().filter((n) => n.startsWith('data-qits-'))).toEqual([]);
+    host.titleMarks.set({ source: 'qits-ideas-service#getIdea', item: 'id=i1', field: 'title' });
+    fixture.detectChanges();
+    expect(h1.getAttribute('data-qits-source')).toBe('qits-ideas-service#getIdea');
+    expect(h1.getAttribute('data-qits-item')).toBe('id=i1');
+    expect(h1.getAttribute('data-qits-field')).toBe('title');
+    expect(h1.hasAttribute('data-qits-derived')).toBe(false);
   });
 
   it('prefers the projected header and actions over the inputs', () => {

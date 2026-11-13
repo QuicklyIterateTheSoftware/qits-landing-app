@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import type { ValueMarks } from '$ui/dom/value-marks';
 import type { TreeRow } from '$core/workspaces/file-tree-model';
 
 /**
@@ -58,15 +59,22 @@ import type { TreeRow } from '$core/workspaces/file-tree-model';
               </svg>
             }
             @if (row.prefix.length > 0) {
-              <span class="shrink-0 text-xs text-fg-faint">
+              <span
+                class="shrink-0 text-xs text-fg-faint"
+                [attr.data-qits-derived]="marks()?.derived"
+              >
                 @for (segment of row.prefix; track $index) {
                   {{ segment }}<span class="mx-0.5" aria-hidden="true">/</span>
                 }
               </span>
             }
-            <span class="truncate">{{ row.node.name }}</span>
+            <span class="truncate" [attr.data-qits-derived]="marks()?.derived">{{
+              row.node.name
+            }}</span>
             @if (row.node.kind === 'lazy') {
-              <span class="text-xs text-fg-faint">({{ row.node.childCount }})</span>
+              <span class="text-xs text-fg-faint" [attr.data-qits-derived]="marks()?.derived"
+                >({{ row.node.childCount }})</span
+              >
             }
             @if (loading().has(row.node.path)) {
               <span class="text-xs text-fg-muted italic">Loading…</span>
@@ -89,6 +97,13 @@ export class FileTree {
 
   /** What the tree is called, for a screen reader. */
   readonly label = input('Working tree');
+
+  /**
+   * The data marks of the names and counts the rows show (qits-2146): the rows are made of the
+   * listing's paths (`file-tree-model`), so the page names the fields they are derived from, set
+   * on each name, prefix and count as is.
+   */
+  readonly marks = input<ValueMarks | undefined>(undefined);
 
   /** A file was chosen. */
   readonly openFile = output<string>();

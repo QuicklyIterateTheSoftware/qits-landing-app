@@ -8,7 +8,8 @@ import {
   LOCALE_ID,
 } from '@angular/core';
 import { SelectedProject } from '$core/projects/selected-project';
-import { QitsEntity, QitsField, type QitsResourceRef } from '@qits/angular';
+import { QitsEntity, QitsField, type QitsFieldMark, type QitsResourceRef } from '@qits/angular';
+import { valueMarks } from '$core/marks/value-marks';
 import type { EntityDetail, WorkThread } from '$core/work/work-detail.consumes';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
@@ -65,10 +66,26 @@ export class TaskDetail {
     const entity = this.entity();
     const when = (instant: string | null | undefined) =>
       instant ? formatDate(instant, 'd MMM y, HH:mm', this.locale, 'UTC') : 'Not yet';
+    // The values are the item's own read (qits-2146): marked once it is in.
+    const marks = (mark: QitsFieldMark<EntityDetail>) =>
+      entity ? valueMarks(this.item().operation, entity, 'id', mark) : undefined;
     return [
-      { label: 'Repository', value: entity?.repositoryId ?? 'None', code: !!entity?.repositoryId },
-      { label: 'Started', value: when(entity?.implementingAt) },
-      { label: 'Implemented', value: when(entity?.implementedAt) },
+      {
+        label: 'Repository',
+        value: entity?.repositoryId ?? 'None',
+        code: !!entity?.repositoryId,
+        marks: marks('repositoryId'),
+      },
+      {
+        label: 'Started',
+        value: when(entity?.implementingAt),
+        marks: marks('implementingAt'),
+      },
+      {
+        label: 'Implemented',
+        value: when(entity?.implementedAt),
+        marks: marks('implementedAt'),
+      },
     ];
   });
 }

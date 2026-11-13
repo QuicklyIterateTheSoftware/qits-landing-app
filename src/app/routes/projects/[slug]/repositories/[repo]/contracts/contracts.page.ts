@@ -15,6 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
+import { CONTRACTS_MARKS } from '$core/contracts/contracts-marks';
 import { bundleOf, filterRows, stateRows } from '$core/contracts/contracts-view';
 import { ContractsCatalog } from '$core/ui-builder/contracts-catalog';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
@@ -58,14 +59,17 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
                 [value]="filter()"
                 (input)="filter.set(value($event))"
               />
-              <span class="count text-xs text-fg-soft"
+              <span
+                class="count text-xs text-fg-soft"
+                [attr.data-qits-source]="marks.source"
+                data-qits-derived="states"
                 >{{ shown().length }} of {{ rows().length }}
                 {{ rows().length === 1 ? 'state' : 'states' }}</span
               >
             </div>
             <table
               class="states w-full border-collapse text-left text-sm"
-              data-qits-source="qits-artifacts-service#getDocsFile"
+              [attr.data-qits-source]="marks.source"
             >
               <thead>
                 <tr class="border-b border-line text-xs text-fg-soft">
@@ -76,17 +80,26 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
               </thead>
               <tbody>
                 @for (row of shown(); track row.slug) {
-                  <tr class="state border-b border-line-subtle align-top">
+                  <tr
+                    class="state border-b border-line-subtle align-top"
+                    [attr.data-qits-item]="marks.state(row)"
+                  >
                     <td class="py-1 pr-3">
                       <a
                         class="font-semibold"
+                        data-qits-field="name"
                         [qitsExit]="opening.state"
                         [exitParams]="{ slug: slug(), repo: repo(), state: row.slug }"
                         >{{ row.name }}</a
                       >
                     </td>
-                    <td class="py-1 pr-3 text-right tabular-nums">{{ row.operationCount }}</td>
-                    <td class="py-1 font-mono text-xs break-all text-fg-soft">
+                    <td class="py-1 pr-3 text-right tabular-nums" data-qits-derived="operations">
+                      {{ row.operationCount }}
+                    </td>
+                    <td
+                      class="py-1 font-mono text-xs break-all text-fg-soft"
+                      data-qits-derived="operations"
+                    >
                       {{ row.operationIds.join(', ') }}
                     </td>
                   </tr>
@@ -147,6 +160,9 @@ export class ContractsPage {
     const read = this.indexRead();
     return read?.status === 'loaded' ? stateRows(read.index) : [];
   });
+
+  /** The data marks of the index's states (qits-2146; `contracts-marks.ts`). */
+  protected readonly marks = CONTRACTS_MARKS;
 
   protected readonly filter = signal('');
   protected readonly shown = computed(() => filterRows(this.rows(), this.filter()));

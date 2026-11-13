@@ -10,6 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import type { ValueMarks } from '$ui/dom/value-marks';
 import { Action, ActionGroup, isActionGroup } from '$ui/components/action-button/action';
 import { ActionButton, ActionJoin } from '$ui/components/action-button/action-button';
 
@@ -36,7 +37,8 @@ interface ShownGroup {
  * </app-page-layout>
  * ```
  *
- * - Header: `title` as an `<h1>`, or projected `[slot=header]` / `[uiPageHeader]` content, which wins.
+ * - Header: `title` as an `<h1>` (its data marks `titleMarks`, when it shows data), or projected
+ *   `[slot=header]` / `[uiPageHeader]` content, which wins.
  * - Actions: `actions` (single actions and groups), or projected `[slot=actions]` /
  *   `[uiPageActions]` content, which wins. A group is joined buttons in a `role="group"` named by
  *   its title, which is also its visible caption, centred below the buttons. A group wider than the
@@ -95,7 +97,15 @@ interface ShownGroup {
     </div>
     <div class="flex min-h-10 min-w-[min(12rem,100%)] items-center">
       <ng-content select="[slot=header], [uiPageHeader]">
-        <h1 class="m-0 text-3xl leading-[1.1] font-bold">{{ title() }}</h1>
+        <h1
+          class="m-0 text-3xl leading-[1.1] font-bold"
+          [attr.data-qits-source]="titleMarks()?.source"
+          [attr.data-qits-item]="titleMarks()?.item"
+          [attr.data-qits-field]="titleMarks()?.field"
+          [attr.data-qits-derived]="titleMarks()?.derived"
+        >
+          {{ title() }}
+        </h1>
       </ng-content>
     </div>
     <div class="clear-both pt-6">
@@ -106,6 +116,13 @@ interface ShownGroup {
 export class PageLayoutComponent {
   /** The page's heading, unless a header is projected. */
   readonly title = input('');
+
+  /**
+   * The title's data marks, when it shows data (qits-2146): a title is handed in already made
+   * (`Agent <id>`, an idea's title), so the page makes its marks (`valueMarks`) and they are set on
+   * the `<h1>` as is. None (the default) means the title is design copy.
+   */
+  readonly titleMarks = input<ValueMarks | undefined>(undefined);
 
   /** The page's actions, unless actions are projected. */
   readonly actions = input<readonly (Action | ActionGroup)[]>([]);

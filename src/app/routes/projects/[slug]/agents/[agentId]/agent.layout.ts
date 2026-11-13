@@ -22,6 +22,7 @@ import {
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
 import { isMissing } from '$core/resources/resource-family';
+import { valueMarks } from '$core/marks/value-marks';
 import { loadState } from '$core/resources/load-state';
 import { activityLabel, agentWaitLabel, runStateLabel } from '$core/workspaces/agent-labels';
 import { AGENT_TABS } from '$core/workspaces/agent-tabs';
@@ -105,7 +106,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout [title]="title()">
+      <app-page-layout [title]="title()" [titleMarks]="titleMarks()">
         <ui-spinner [state]="spinnerState()" class="min-h-48">
           <p class="m-0 text-sm text-fg-soft" [class.hidden]="state() !== 'missing'">
             No agent {{ agentId() }}.
@@ -367,6 +368,13 @@ export class AgentLayout implements OpenAgentRead {
   protected readonly title = computed(() => {
     const item = this.agent()?.entityId;
     return item ? `Agent ${item}` : 'Agent';
+  });
+  /** The title's data marks (qits-2146): the agent's work item, once the agent is read. */
+  protected readonly titleMarks = computed(() => {
+    const agent = this.agent();
+    return agent?.entityId
+      ? valueMarks(AGENT_DETAIL, agent, 'agentId', { derived: ['entityId'] })
+      : undefined;
   });
 
   protected readonly runState = computed(() => {
