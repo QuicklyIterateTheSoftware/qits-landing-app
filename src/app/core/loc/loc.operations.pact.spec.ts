@@ -10,23 +10,25 @@ import { provideHeyApiClient } from '../../api/githost/client/client.gen';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { assertPactPart } from '../../../testing/pact-part';
 import { githostGoldenMasters as masters } from '../../../testing/golden-masters';
-import { LIST_LOC } from './loc.consumes';
-import { LocStore } from './loc.store';
+import { lineTotals } from './lines-of-code';
+import { LOC_LIST } from './loc.operations';
 
 /**
  * qits-landing-app's pact with qits-githost-service (epic qits-112), in
- * `pacts/qits-landing-app_qits-githost-service.json`.
+ * `pacts/qits-landing-app_qits-githost-service.json`: the lines-of-code operation's part
+ * (`LOC_LIST`, `loc.operations.ts`, qits-2146; moved here unchanged from `LocStore`'s pact spec).
  *
  * This spec owns the file's `listLoc` interactions; `raw-images.store.pact.spec.ts` owns the raw
  * read's (qits-734). It has one interaction per kind of list the cards meet, each from its own provider state: a repository
  * counted, one counted at an older commit (STALE), one never counted, one without a commit, and a
  * list mixing counted and never counted.
- * Each binds only `LIST_LOC`, the list the store passes to `consume(...)`. See
+ * Each binds only `LOC_LIST.consumes`, the list the read narrows its answer to. See
  * `projects.store.pact.spec.ts` for how the file is written and compared.
  *
  * The mock server answers from the matchers' examples (a language list is its first recorded
  * language, repeated), not the recorded body itself, so these tests check what kind of total the
- * store makes; `loc.store.spec.ts` checks the exact sums against the recorded bodies.
+ * read makes (`lineTotals`); `lines-of-code.spec.ts` checks the exact sums against the recorded
+ * bodies. Each test runs the operation's own `fetch` against the mock server.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-githost-service';
@@ -35,20 +37,22 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
 
-const given = (state: string) =>
-  addGoldenInteraction(pact, masters, {
+const given = (state: string) => {
+  if (LOC_LIST.provider !== PROVIDER) throw new Error('LOC_LIST is not ours');
+  return addGoldenInteraction(pact, masters, {
     provider: PROVIDER,
     state,
-    operationId: 'listLoc',
+    operationId: LOC_LIST.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-project-loc' },
-    consumes: LIST_LOC,
+    consumes: LOC_LIST.consumes,
   });
+};
 
 /** The state's frozen repository id(s), by param name. */
 const param = (state: string, name: string) => masters.operation(state, 'listLoc').params[name];
 
-/** A store on a server platform, so it does not load by itself. */
-function storeAt(url: string) {
+/** The lines read against the mock server at `url`, as `lineTotals` sums them. */
+async function readAt(url: string) {
   TestBed.configureTestingModule({
     providers: [
       { provide: PLATFORM_ID, useValue: 'server' },
@@ -57,7 +61,13 @@ function storeAt(url: string) {
     ],
   });
   githostClient.setConfig({ baseUrl: url });
-  return TestBed.inject(LocStore);
+  const { data } = await TestBed.runInInjectionContext(() => LOC_LIST.fetch({}));
+  const byRepository = new Map(
+    (data?.entries ?? []).flatMap((entry) =>
+      entry.repositoryId ? [[entry.repositoryId, entry] as const] : [],
+    ),
+  );
+  return { totals: (ids: readonly string[]) => lineTotals(byRepository, ids) };
 }
 
 describe('qits-landing-app → qits-githost-service pact', () => {
@@ -77,8 +87,7 @@ describe('qits-landing-app → qits-githost-service pact', () => {
 
   it('show-project-loc: a counted repository adds its lines', () =>
     given('a repository with counted lines').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      await store.load();
+      const store = await readAt(server.url);
       const totals = store.totals([param('a repository with counted lines', 'repositoryId')]);
       expect(totals?.uncounted).toBe(false);
       expect(totals?.main).toBeGreaterThan(0);
@@ -89,8 +98,7 @@ describe('qits-landing-app → qits-githost-service pact', () => {
 
   it('show-project-loc: a repository counted at an older commit adds that count', () =>
     given('a repository counted at an older commit').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      await store.load();
+      const store = await readAt(server.url);
       const totals = store.totals([
         param('a repository counted at an older commit', 'repositoryId'),
       ]);
@@ -101,24 +109,21 @@ describe('qits-landing-app → qits-githost-service pact', () => {
 
   it('show-project-loc: a repository never counted adds nothing', () =>
     given('a repository not counted yet').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      await store.load();
+      const store = await readAt(server.url);
       const id = param('a repository not counted yet', 'repositoryId');
       expect(store.totals([id])).toEqual({ main: 0, test: 0, uncounted: true, languages: [] });
     }));
 
   it('show-project-loc: a repository without a commit adds nothing', () =>
     given('a repository with no commit').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      await store.load();
+      const store = await readAt(server.url);
       const id = param('a repository with no commit', 'repositoryId');
       expect(store.totals([id])).toEqual({ main: 0, test: 0, uncounted: false, languages: [] });
     }));
 
   it('show-project-loc: a list mixing counted and never counted sums the counted one', () =>
     given('two repositories, one counted').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      await store.load();
+      const store = await readAt(server.url);
       const counted = param('two repositories, one counted', 'countedRepositoryId');
       const pending = param('two repositories, one counted', 'pendingRepositoryId');
       const both = store.totals([counted, pending]);

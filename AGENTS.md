@@ -63,7 +63,7 @@ What follows what (each store's comment has the detail). A release request's pag
 events about that request (`affectsReleaseRequest`: its `releaseRequestId`; a `SoftwareRelease` or
 build of its repository at its version or fold; a deployment of its version while RELEASED). The
 Repositories page and the project cards read a project's repositories again after a
-`SCMPublishCommit` to the wrapper's main branch (`RepositoriesStore.follow`). The work pages read the
+`SCMPublishCommit` to the wrapper's main branch (their resources' `refreshOn`, `movesWrapper`). The work pages read the
 open project's work again after `EntityTransitioned` naming it (`entities[].projectId`), and the work
 item page its own data when the event names the item (`entities[].entityId`), and again after
 `EntityCommented` naming it (`entityId`; qits-1660). A request's CI runs and
@@ -244,7 +244,7 @@ the same `TerminalSocket` and `ui-terminal-screen` on another socket: qits-proje
 the tree; otherwise the action sits in the page header. It signs in through the wrapper when that
 has a backup remote, else through a repository that asked for it (the credential store is shared).
 When the session ends (a clean close, or Close) the page does what the old panel did: it reads the
-repositories again (`RepositoriesStore.refresh`), nudges every backup (`RepositoriesStore.syncBackups`,
+repositories again (the resource's `reload()`), nudges every backup (`qitsMutation(BACKUP_SYNC)`,
 `POST /projects/api/projects/{projectId}/repositories/backup-sync`, `backupSyncProject` in the pact)
 and says how many were scheduled. It does not read again on a timer (qits-1270 forbids refresh
 timers, and qits-projects emits no event for a backup's outcome), so an "Auth needed" turns into
@@ -437,15 +437,15 @@ changes. Every screenshot is taken, and frozen, in both schemes (`colorSchemes` 
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                    | Store and pact spec                                                                                 | Pact file                                                 | Golden masters                          |
-| --------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------- |
-| qits-projects-service       | `core/projects/projects.store*.ts`                                                                  | `pacts/qits-landing-app_qits-projects-service.json`       | `@qits/projects-golden-masters`         |
-| qits-githost-service        | `core/loc/loc.store*.ts`, `core/githost/raw-images.store*.ts`                                       | `pacts/qits-landing-app_qits-githost-service.json`        | `@qits/githost-golden-masters`          |
-| qits-workspaces-service     | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`        | `pacts/qits-landing-app_qits-workspaces-service.json`     | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon       | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                    | `pacts/qits-landing-app_qits-workspace-daemon.json`       | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service         | `core/system/targets.store*.ts`                                                                     | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
-| qits-artifacts-service      | `core/ui-builder/{routes-bundle,entity-map}.store*.ts`, `core/contracts/contracts-bundle.store*.ts` | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
-| qits-network-access-service | `core/network-access/peers.store*.ts`                                                               | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
+| Provider                    | Store and pact spec                                                                          | Pact file                                                 | Golden masters                          |
+| --------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------- |
+| qits-projects-service       | `core/projects/projects.store*.ts`                                                           | `pacts/qits-landing-app_qits-projects-service.json`       | `@qits/projects-golden-masters`         |
+| qits-githost-service        | `core/loc/loc.operations*.ts`, `core/githost/raw-images.store*.ts`                           | `pacts/qits-landing-app_qits-githost-service.json`        | `@qits/githost-golden-masters`          |
+| qits-workspaces-service     | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`     | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon       | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`       | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service         | `core/system/targets.store*.ts`                                                              | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
+| qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
+| qits-network-access-service | `core/network-access/peers.store*.ts`                                                        | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -490,6 +490,13 @@ operations' part of the file (`assertPactPart`).
   resource's `refreshOn` needs `QITS_DOMAIN_EVENTS`, which `app.config.ts` (and the browser specs'
   `provideAppRoute()`) provide as `DomainEvents`. A loading resource is a pending task, so
   `openRoute`'s `settled()` stops waiting for stability while a request is open.
+  Group 2 (the repositories routes) adds what a store kept by key: `ResourceFamily`
+  (`core/resources/resource-family.ts`) makes one `qitsResource` per key on demand (a docs site's
+  versions, one file of a bundle), outside a reactive context, in a root service (`ContractsCatalog`,
+  `RoutesBundles`, `ContractsBundles`, `LinesOfCode`). A published docs file (`getDocsFile`) binds no
+  field, so the pages mark only its source (`data-qits-source`). Plain specs of a page over those
+  services run the root effects that start the next read (`TestBed.tick()`), and do not wait for
+  `whenStable()` while a read is still open.
 - **The pact binds only what the app reads, and the compiler keeps it honest.** The golden master
   holds qits-projects' whole answer. `src/app/core/projects/projects.consumes.ts` lists, per call,
   the body paths the store reads (`as const`). The store wraps every client call in
@@ -577,37 +584,38 @@ freeze by hand; run `qits release-request regenerate --kind screenshot-baselines
 
 The UI builder (qits-1951, `projects/<slug>/repositories/<repo>/ui-builder`, linked from the cards
 of FRONTEND and APP repositories) reads a frontend's published freezes back through
-`RoutesBundleStore` (`core/ui-builder/`): the `@routes/` site whose newest version's
+`RoutesBundles` (`core/ui-builder/routes-bundles.ts`, `qitsResource`s over `docs.operations.ts`): the `@routes/` site whose newest version's
 `git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
 `assets/*` on demand. The generated client encodes `/` and `@` in a path parameter, which the docs
 store refuses, so `app.config.ts` puts `literalDocsPaths` on the artifacts client (specs that call
 it do the same). A freeze is drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with
 `allow-scripts`, its asset references inlined as `data:` URLs. The pact binds `getDocsFile` by media
-type only; a path from a provider state matches any path, so its spec makes one docs read per test.
+type only; a path from a provider state matches any path, so its spec makes one docs read per test
+(`docs.operations.pact.spec.ts`, one part per reader).
 
-The builder's entities (qits-1950) come from the services' entity maps through `EntityMapStore`
-(`core/ui-builder/entity-map.store.ts`): every `@contracts/` site whose newest version's
+The builder's entities (qits-1950) come from the services' entity maps through `ContractsCatalog`
+(`core/ui-builder/contracts-catalog.ts`): every `@contracts/` site whose newest version's
 `git.repository.name` is in the page's scope, its `entities.json` (a 404 is "No entity map
 published", not an error). `joinEntities` (`entity-map.ts`) matches the manifest's records on
 (provider, operationId) to the maps' operations and derives each verb from method and path; only
-`domain` entities are shown. Its pact spec owns the docs operations' interactions for
-`show-ui-builder-entities` only (`assertPactPart` by interaction), the routes spec the rest.
+`domain` entities are shown. Its part of the docs pact spec owns the docs operations' interactions
+for `show-ui-builder-entities` only (`assertPactPart` by interaction), the routes part the rest.
 
 A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/repositories/<repo>/contracts`
 (its provider states, filtered by name), `contracts/<state slug>` (params, dependencies, each operation
 with its recorded response), `entities` (its `entities.json` by marking) and `entities/<class name>`
 (DTOs and operations with their link kinds, the states recording each operation). The bundle is the
-`@contracts/` site whose newest version names the repository (`EntityMapStore`'s catalog and maps);
-`ContractsBundleStore` (`core/contracts/`) reads its `golden-masters/index.json` and each recorded
-response through the call popover's `getDocsFile` reads and cache. Links to them come from
+`@contracts/` site whose newest version names the repository (`ContractsCatalog`'s catalog and maps);
+`ContractsBundles` (`core/contracts/contracts-bundles.ts`) reads its `golden-masters/index.json` and
+each recorded response, one `qitsResource` per file, shared with the call popover. Links to them come from
 `core/contracts/contracts-links.ts`. No qits-artifacts recording holds an index, so the loaded
 contracts pages are covered by plain specs answering with qits-projects' own published index
 (`projectsGoldenIndex()`); their browser specs show the bundle with its index refused.
 
 The entity page also draws the ER diagram of the persistence unit holding the entity (qits-2014):
-`ContractsBundleStore.readDiagram` reads the bundle's `database/index.json` (`databaseIndexOf`,
+`ContractsBundles.readDiagram` reads the bundle's `database/index.json` (
 checked by `asDatabaseIndex` in `core/contracts/database-diagram.ts`), finds the unit listing the
-entity, reads its `database/<file>.md` as text (`diagramFileOf`) and hands the fenced mermaid block
+entity, reads its `database/<file>.md` as text and hands the fenced mermaid block
 to `<qits-mermaid-diagram>` (`provideQitsMermaid()` in `app.config.ts` loads mermaid lazily),
 inside `ErDiagramBox` (`patterns/contracts/er-diagram-box/`): the library fits the svg to its width,
 so once drawn (and on each redraw) the box sets its size from its `viewBox` and scrolls itself, never

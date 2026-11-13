@@ -1,7 +1,7 @@
 /**
  * The contracts and entity pages' browser specs (qits-1994), with the links they lead on by (epic
  * qits-2000): qits-artifacts' recordings of qits-2041's contracts bundles, read as the pages read
- * them (`EntityMapStore`'s catalog, then each site's files).
+ * them (`ContractsCatalog`'s catalog, then each site's files through `ContractsBundles`).
  *
  * - `a published contracts bundle with a golden-master index` (`INDEX`): a catalog listing
  *   `@contracts/qits-githost` and `@contracts/qits-projects`, githost's versions (2100.1.0, naming
@@ -18,7 +18,6 @@
  */
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { forgetContractsFiles } from '$core/ui-builder/golden-masters.store';
 import type { OpenedRoute } from './app-route';
 import { goldenMaster } from './golden-master';
 
@@ -49,13 +48,6 @@ export async function answerTwoSiteCatalog(opened: OpenedRoute): Promise<void> {
     .flush(await goldenMaster(ENTITY_MAP, 'listDocsVersions', 'qits-artifacts'));
   await opened.settled();
 }
-
-/**
- * Empties the cache of a bundle's `golden-masters/` reads (`golden-masters.store.ts`), which lives
- * as long as the module, shared by every spec file: call it before each test, so each test reads
- * (and the route ledger notes) what its page shows.
- */
-export const forgetBundleReads = forgetContractsFiles;
 
 /** Answers the read of `file` of `site`'s bundle (`@contracts/<site>/-/<version>/<file>`). */
 export async function answerFile(

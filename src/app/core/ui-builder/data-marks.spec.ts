@@ -71,6 +71,21 @@ describe('markOf (qits-2144)', () => {
     expect(wait).toMatchObject({ item: 'id=w1', field: 'label', outerItem: 'agentId=a6' });
   });
 
+  it('skips an ancestor marking the same record: a component root inside the page row', () => {
+    const d = document.implementation.createHTMLDocument('freeze');
+    d.body.innerHTML = `
+      <ul data-qits-source="${AGENTS}">
+        <li data-qits-item="agentId=a6">
+          <div data-qits-item="agentId=a6">
+            <span data-qits-field="entityTitle">Fix it</span>
+            <p data-qits-item="id=w1" data-qits-field="label">waits</p>
+          </div>
+        </li>
+      </ul>`;
+    expect(markOf(d.querySelector('[data-qits-field="entityTitle"]')!).outerItem).toBeNull();
+    expect(markOf(d.querySelector('p')!).outerItem).toBe('agentId=a6');
+  });
+
   it('resolves no source and no item where none is marked, ignoring leaked attributes', () => {
     const d = doc();
     expect(markOf(d.querySelector('.copy')!)).toEqual({
@@ -131,6 +146,12 @@ describe('findItem (qits-2144)', () => {
       label: 'outer',
     });
     expect(findItem({ waits: BODY.waits }, 'id', '1', outer)).toEqual({ id: 1, label: 'top' });
+  });
+
+  it('ignores an outer item naming the item itself, so a nested object sharing the key loses', () => {
+    const body = { agents: [{ agentId: 'a6', entityTitle: 'Fix', waits: [{ agentId: 'a6' }] }] };
+    const self = { key: 'agentId', value: 'a6' };
+    expect(findItem(body, 'agentId', 'a6', self)).toMatchObject({ entityTitle: 'Fix' });
   });
 });
 

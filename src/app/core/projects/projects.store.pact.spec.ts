@@ -21,7 +21,8 @@ import { ProjectsStore } from './projects.store';
  *
  * This spec covers what is left of `ProjectsStore` (the release request pages' reads),
  * `projects.operations.pact.spec.ts` the project operations (qits-2146), `work.store.pact.spec.ts`
- * `WorkStore` and `repositories.store.pact.spec.ts` `RepositoriesStore`, in the same pact file.
+ * `WorkStore` and `repositories.operations.pact.spec.ts` the repository operations, in the same pact
+ * file.
  * Each test
  * drives one store method, as the UI interaction named in `interactions.ts` does, against a pact
  * mock server that answers with qits-projects' golden master, and checks what the store made of it.
@@ -41,7 +42,8 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
  * What this spec owns in that file: the release request page's `listProjectReleaseRequests`
  * interactions. The operations' pact spec (`projects.operations.pact.spec.ts`, qits-2146) owns
  * `listProjects`, `getProject` and the lightning menu's `open-release-requests` interactions,
- * `WorkStore`'s pact spec `listProjectWork` and `RepositoriesStore`'s `listProjectRepositories`, in
+ * `WorkStore`'s and `work.operations.pact.spec.ts` `listProjectWork`, and the repository operations'
+ * `listProjectRepositories` and `backupSyncProject`, in
  * the same file (`src/testing/pact-part.ts`).
  */
 const OPERATIONS: readonly OwnedOperation[] = [

@@ -2,22 +2,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { PlatformOrigins } from '$core/platform/platform-origins';
-import type { ContractsSite } from '$core/ui-builder/entity-map.store';
-import {
-  goldenCall,
-  goldenResponse,
-  type GoldenOperation,
-  type GoldenState,
-} from '$core/ui-builder/golden-masters.store';
+import { ContractsBundles } from '$core/contracts/contracts-bundles';
+import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
+import type { GoldenOperation, GoldenState } from '$core/ui-builder/golden-masters';
 import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
 
 /** A domain entity this call touches, for the popover's links into the Entities tab. */
@@ -56,7 +54,8 @@ const PREVIEW_CHARS = 12_000;
  * are declared exits (`open-call-contract` `state` and `entity`, epic qits-2000).
  *
  * It reads the provider's `golden-masters/index.json` and the recorded file from its `@contracts/`
- * site (`goldenCall`, `goldenResponse`) when it first opens, never before. Escape, a click outside
+ * site (`ContractsBundles.readIndex`, `readRecording`, qits-2146: the contracts pages' reads, so
+ * each file is read once) when it first opens, never before. Escape, a click outside
  * or picking an entity closes it.
  *
  * The row is a `ui-dropdown`'s button and the popover its panel, a `dialog` (qits-2081): it floats
@@ -86,7 +85,11 @@ const PREVIEW_CHARS = 12_000;
       >
 
       @if (dropdown.isOpen()) {
-        <div dropdown-panel class="call-popover flex flex-col gap-3 p-3 text-xs">
+        <div
+          dropdown-panel
+          class="call-popover flex flex-col gap-3 p-3 text-xs"
+          data-qits-source="qits-artifacts-service#getDocsFile"
+        >
           @let d = details();
           @switch (d.status) {
             @case ('loading') {
@@ -246,7 +249,46 @@ export class CallDetails {
   private readonly origins = inject(PlatformOrigins);
   private readonly dropdown = viewChild.required(Dropdown);
 
-  protected readonly details = signal<Details>({ status: 'closed' });
+  private readonly bundles = inject(ContractsBundles);
+
+  /** Whether it opened yet: it reads nothing before. */
+  private readonly opened = signal(false);
+
+  /** The recorded state and operation, once the index is read; null when it lists no state. */
+  private readonly found = computed(() => {
+    const site = this.site();
+    if (!this.opened() || !site) return undefined;
+    const read = this.bundles.indexRead(site);
+    if (!read || read.status === 'loading') return 'loading' as const;
+    // An index that cannot be read lists no state, as the popover always said.
+    const states = read.status === 'loaded' ? (read.index.states ?? []) : [];
+    const { state, operationId } = this.call();
+    const found = states.find((s) => s.name === state);
+    return found
+      ? {
+          state: found,
+          operation: found.operations.find((o) => o.operationId === operationId) ?? null,
+        }
+      : null;
+  });
+
+  /** What the popover has read about the call. */
+  protected readonly details = computed((): Details => {
+    if (!this.opened()) return { status: 'closed' };
+    const site = this.site();
+    const found = this.found();
+    if (!site || found === null) return { status: 'none' };
+    if (found === undefined || found === 'loading') return { status: 'loading' };
+    const base = { status: 'loaded' as const, ...found };
+    const op = found.operation;
+    if (!op) return { ...base, json: null, jsonStatus: 'none' };
+    // A byte answer has no file to read, and a 204's holds `null`: the popover says it could not
+    // read a response, as it always did.
+    if (op.file === null || op.status === 204) return { ...base, json: null, jsonStatus: 'error' };
+    const read = this.bundles.recordingRead(site, op);
+    if (read?.status === 'loaded') return { ...base, json: read.json, jsonStatus: 'loaded' };
+    return { ...base, json: null, jsonStatus: read?.status ?? 'loading' };
+  });
   protected readonly copied = signal(false);
 
   protected readonly loaded = computed(() => {
@@ -295,9 +337,22 @@ export class CallDetails {
     return site && origin ? `${origin}/read/${site.site}/-/${site.version}` : null;
   });
 
+  constructor() {
+    // The recorded response, once the index names the call's operation.
+    effect(() => {
+      const site = this.site();
+      const found = this.found();
+      const op = typeof found === 'object' ? found?.operation : null;
+      if (site && op) untracked(() => this.bundles.readRecording(site, op));
+    });
+  }
+
   /** The first time it opens, it reads the golden masters. */
   protected onOpened(): void {
-    if (this.details().status === 'closed') void this.read();
+    if (this.opened()) return;
+    this.opened.set(true);
+    const site = this.site();
+    if (site) this.bundles.readIndex(site);
   }
 
   protected pickEntity(key: string): void {
@@ -312,40 +367,5 @@ export class CallDetails {
     } catch {
       // No clipboard (an insecure origin, a denied permission): the preview stays selectable.
     }
-  }
-
-  private async read(): Promise<void> {
-    const site = this.site();
-    if (!site) {
-      this.details.set({ status: 'none' });
-      return;
-    }
-    this.details.set({ status: 'loading' });
-    const { state, operationId } = this.call();
-    let found: Awaited<ReturnType<typeof goldenCall>>;
-    try {
-      found = await goldenCall(site, state, operationId);
-    } catch {
-      this.details.set({ status: 'error' });
-      return;
-    }
-    if (!found) {
-      this.details.set({ status: 'none' });
-      return;
-    }
-    const base = { status: 'loaded' as const, ...found };
-    if (!found.operation) {
-      this.details.set({ ...base, json: null, jsonStatus: 'none' });
-      return;
-    }
-    this.details.set({ ...base, json: null, jsonStatus: 'loading' });
-    const body = await goldenResponse(site, found.operation).catch(() => null);
-    this.details.set(
-      body === null
-        ? { ...base, json: null, jsonStatus: 'error' }
-        : typeof body === 'string'
-          ? { ...base, json: null, jsonStatus: 'none' }
-          : { ...base, json: JSON.stringify(body, null, 2), jsonStatus: 'loaded' },
-    );
   }
 }

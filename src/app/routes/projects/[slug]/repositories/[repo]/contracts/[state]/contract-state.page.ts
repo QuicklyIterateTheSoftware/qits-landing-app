@@ -13,7 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
-import { ContractsBundleStore, type RecordingRead } from '$core/contracts/contracts-bundle.store';
+import { ContractsBundles, type RecordingRead } from '$core/contracts/contracts-bundles';
 import {
   bundleOf,
   dependencyRows,
@@ -21,8 +21,8 @@ import {
   keyValues,
   statesOf,
 } from '$core/contracts/contracts-view';
-import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
-import type { GoldenOperation } from '$core/ui-builder/golden-masters.store';
+import { ContractsCatalog, type ContractsSite } from '$core/ui-builder/contracts-catalog';
+import type { GoldenOperation } from '$core/ui-builder/golden-masters';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
 import { JsonBlock } from '$ui/components/json-block/json-block';
 
@@ -31,7 +31,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
  * `/projects/<slug>/repositories/<repo>/contracts/<state slug>`: its name and slug, its params, what
  * it depends on, and every operation it records (method, path, query, request body, status) with
  * the recorded response pretty-printed, read lazily per operation
- * (`ContractsBundleStore.readRecording`). An operation the index records no file for (a byte
+ * (`ContractsBundles.readRecording`). An operation the index records no file for (a byte
  * answer, qits-1934) shows its status, media type and response headers instead.
  *
  * A dependency on a state of another provider links to that provider's repository's state page
@@ -64,7 +64,10 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
         }
         @case ('loaded') {
           @if (state(); as s) {
-            <div class="flex flex-col gap-6 text-sm">
+            <div
+              class="flex flex-col gap-6 text-sm"
+              data-qits-source="qits-artifacts-service#getDocsFile"
+            >
               <section class="flex flex-col gap-2">
                 <p class="m-0">
                   <a
@@ -228,8 +231,8 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
   `,
 })
 export class ContractStatePage {
-  private readonly entityMaps = inject(EntityMapStore);
-  private readonly bundles = inject(ContractsBundleStore);
+  private readonly entityMaps = inject(ContractsCatalog);
+  private readonly bundles = inject(ContractsBundles);
   private readonly route = inject(ActivatedRoute);
 
   private readonly routeParams = toSignal(
@@ -306,7 +309,7 @@ export class ContractStatePage {
 
   constructor() {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    if (browser) void this.entityMaps.load();
+    if (browser) this.entityMaps.load();
     effect(() => {
       const site = this.site();
       if (browser && site) untracked(() => this.bundles.readIndex(site));

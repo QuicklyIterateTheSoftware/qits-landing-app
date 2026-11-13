@@ -48,7 +48,7 @@ interface ProjectsState {
  *   this store has, so a row-only event (`ReleaseRequestChanged`) reads the whole list too.
  *
  * Its pact (`projects.store.pact.spec.ts`), with the operations' (`projects.operations.pact.spec.ts`),
- * `WorkStore`'s and `RepositoriesStore`'s, is what this app relies on from qits-projects. Every
+ * `WorkStore`'s and the other operations' (`*.operations.pact.spec.ts`), is what this app relies on from qits-projects. Every
  * call goes through `consume(...)` with its list from `projects.consumes.ts`: the store can read
  * only those fields, and the pact binds exactly them.
  */

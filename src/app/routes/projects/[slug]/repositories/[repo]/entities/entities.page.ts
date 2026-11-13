@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
 import { bundleOf, entityGroups, simpleName } from '$core/contracts/contracts-view';
-import { EntityMapStore } from '$core/ui-builder/entity-map.store';
+import { ContractsCatalog } from '$core/ui-builder/contracts-catalog';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
 import { Chip } from '$ui/components/chip/chip';
 
@@ -25,10 +25,10 @@ import { Chip } from '$ui/components/chip/chip';
  * out, its known gap), linking to the entity's page (a declared exit, `open-listed-entity` `entity`,
  * epic qits-2000).
  *
- * The bundle is found as on the contracts pages (`bundleOf`); its map is `EntityMapStore.readMap`,
+ * The bundle is found as on the contracts pages (`bundleOf`); its map is `ContractsCatalog.readMap`,
  * the UI builder's read. A version without an `entities.json` publishes no map, which is said.
  *
- * Staleness (qits-1270): a release of the repository → the catalog (`EntityMapStore.follow`); a
+ * Staleness (qits-1270): a release of the repository → the catalog (`ContractsCatalog.follow`); a
  * map is keyed by its version and never goes stale.
  */
 @Component({
@@ -49,7 +49,10 @@ import { Chip } from '$ui/components/chip/chip';
           <p class="no-map m-0 text-sm text-fg-soft">{{ siteLabel() }} publishes no entity map.</p>
         }
         @case ('loaded') {
-          <div class="flex flex-col gap-5 text-sm">
+          <div
+            class="flex flex-col gap-5 text-sm"
+            data-qits-source="qits-artifacts-service#getDocsFile"
+          >
             @for (group of groups(); track group.marking) {
               <section class="marking">
                 <h2 class="m-0 mb-1 text-base font-semibold capitalize">
@@ -100,7 +103,7 @@ import { Chip } from '$ui/components/chip/chip';
   `,
 })
 export class EntitiesPage {
-  private readonly entityMaps = inject(EntityMapStore);
+  private readonly entityMaps = inject(ContractsCatalog);
   private readonly route = inject(ActivatedRoute);
 
   private readonly routeParams = toSignal(
@@ -140,7 +143,7 @@ export class EntitiesPage {
 
   constructor() {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    if (browser) void this.entityMaps.load();
+    if (browser) this.entityMaps.load();
     effect(() => {
       const site = this.site();
       if (browser && site) untracked(() => this.entityMaps.readMap(site));

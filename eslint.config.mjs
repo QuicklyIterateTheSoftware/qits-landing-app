@@ -69,6 +69,19 @@ function dataMarks() {
     'src/app/routes/projects/[[]slug]/project.page.ts',
     'src/app/routes/projects/[[]slug]/setup/project-setup.page.ts',
     'src/app/routes/network-access/network-access.page.ts',
+    // Group 2, the repositories routes.
+    'src/app/routes/projects/[[]slug]/repositories/project-repositories.page.ts',
+    'src/app/routes/projects/[[]slug]/repositories/[[]repo]/entities/entities.page.ts',
+    'src/app/routes/projects/[[]slug]/repositories/[[]repo]/entities/[[]entity]/entity.page.ts',
+    'src/app/routes/projects/[[]slug]/repositories/[[]repo]/contracts/contracts.page.ts',
+    'src/app/routes/projects/[[]slug]/repositories/[[]repo]/contracts/[[]state]/contract-state.page.ts',
+    'src/app/routes/projects/[[]slug]/repositories/[[]repo]/ui-builder/ui-builder.page.ts',
+    'src/app/patterns/projects/project-card/project-card.ts',
+    'src/app/patterns/repositories/repository-card/repository-card.ts',
+    'src/app/patterns/repositories/remote-login-panel/remote-login-panel.ts',
+    'src/app/patterns/contracts/contracts-frame/contracts-frame.ts',
+    'src/app/patterns/contracts/er-diagram-box/er-diagram-box.ts',
+    'src/app/patterns/ui-builder/call-details/call-details.ts',
   ];
   /** The root services holding the resources those share: no store, no client. */
   const services = [
@@ -77,6 +90,11 @@ function dataMarks() {
     'src/app/core/projects/project-release-requests.ts',
     'src/app/core/projects/project-detail.ts',
     'src/app/core/workspaces/project-active-agents.ts',
+    // Group 2.
+    'src/app/core/loc/lines-of-code.ts',
+    'src/app/core/ui-builder/contracts-catalog.ts',
+    'src/app/core/ui-builder/routes-bundles.ts',
+    'src/app/core/contracts/contracts-bundles.ts',
   ];
   return [
     { files: [...components, ...services], rules: { 'qits/reads-through-resources': 'error' } },

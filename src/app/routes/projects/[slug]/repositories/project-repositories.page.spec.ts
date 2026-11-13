@@ -5,7 +5,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import { EVENT_SOURCE } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { WEB_SOCKET, WEB_SOCKET_OPEN, type WebSocketLike } from '$core/platform/web-socket';
 import { SelectedProject } from '$core/projects/selected-project';
 import type { RepositoryEntry, WrapperView } from '$core/repositories/repositories.consumes';
@@ -107,6 +108,7 @@ describe('ProjectRepositoriesPage', () => {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
         },
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: SelectedProject,
           useValue: { project: signal({ id: ID }), slug: signal('p'), url: signal('') },

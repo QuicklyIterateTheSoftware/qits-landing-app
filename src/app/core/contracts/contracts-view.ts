@@ -1,14 +1,6 @@
 import type { EntityDto, EntityMap, MappedEntity } from '$core/ui-builder/entity-map';
-import type {
-  ContractsCatalog,
-  ContractsSite,
-  EntityMapRead,
-} from '$core/ui-builder/entity-map.store';
-import type {
-  GoldenDependency,
-  GoldenIndex,
-  GoldenState,
-} from '$core/ui-builder/golden-masters.store';
+import type { CatalogRead, ContractsSite, EntityMapRead } from '$core/ui-builder/contracts-catalog';
+import type { GoldenDependency, GoldenIndex, GoldenState } from '$core/ui-builder/golden-masters';
 
 /**
  * The pure part of a repository's contracts and entities pages (qits-1994): which published
@@ -33,7 +25,7 @@ export type BundleLookup =
  * The site whose newest version's `git.repository.name` is `repo` (`contractsSitesOf`). A site
  * whose versions could not be read names no repository, so it only matters when none matches.
  */
-export function bundleOf(catalog: ContractsCatalog | null, repo: string): BundleLookup {
+export function bundleOf(catalog: CatalogRead | null, repo: string): BundleLookup {
   if (!catalog || catalog.status === 'loading') return { status: 'loading' };
   if (catalog.status === 'error') return { status: 'error' };
   const site = catalog.sites.find((s) => s.repository === repo);

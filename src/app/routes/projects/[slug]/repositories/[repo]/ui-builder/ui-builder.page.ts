@@ -17,13 +17,16 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+import { exit, outcomes, QitsExit, qitsResource, type QitsDomainEvent } from '@qits/angular';
 import { map } from 'rxjs';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { SelectedProject } from '$core/projects/selected-project';
-import { RepositoriesStore } from '$core/repositories/repositories.store';
+import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
+import { movesWrapper } from '$core/repositories/repositories.store';
+import { ContractsBundles } from '$core/contracts/contracts-bundles';
 import { callCardinality, joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
-import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
+import { ContractsCatalog, type ContractsSite } from '$core/ui-builder/contracts-catalog';
+import type { GoldenIndex, GoldenOperation } from '$core/ui-builder/golden-masters';
 import {
   itemIn,
   markOf,
@@ -37,9 +40,8 @@ import {
   type ElementMark,
   type MarkRead,
 } from '$core/ui-builder/data-marks';
-import { goldenCall, goldenResponse } from '$core/ui-builder/golden-masters.store';
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
-import { RoutesBundleStore } from '$core/ui-builder/routes-bundle.store';
+import { RoutesBundles } from '$core/ui-builder/routes-bundles';
 import {
   answeringRow,
   appWideCalls,
@@ -111,6 +113,15 @@ type GoldenRead =
       readonly body: unknown;
     };
 
+const LOADING_ANSWER: GoldenRead = { status: 'loading' };
+const NO_ANSWER: GoldenRead = { status: 'loaded', body: null };
+
+/** The operation `record` names in its state of a golden-masters index; null when it lists none. */
+function recordedOperation(index: GoldenIndex, record: FreezeRecord): GoldenOperation | null {
+  const state = index.states?.find((s) => s.name === record.state);
+  return state?.operations.find((o) => o.operationId === record.operationId) ?? null;
+}
+
 /** A recorded value as "Selected data" shows it (qits-2144). */
 interface ShownValue {
   readonly path: string;
@@ -145,7 +156,7 @@ const NO_MARKS =
 /** A call's words for its cardinality (qits-2144): a list or a detail read. */
 const CARDINALITY_LABELS = { collection: 'list', single: 'detail' } as const;
 
-/** A record's key among the answers read (qits-2144): provider, operation and state. */
+/** A record's key among the calls listed or selected (qits-2144): provider, operation and state. */
 const recordKey = ({ provider, operationId, state }: FreezeRecord) =>
   JSON.stringify([provider, operationId, state]);
 
@@ -268,7 +279,7 @@ interface EntityGroup {
  * The UI builder of one frontend (qits-1951), at `/projects/<slug>/repositories/<repo>/ui-builder`:
  * the frontend's routes as a tree, the selected route's frozen states as tabs with the selected
  * state's frozen page, and the calls that screenshot answered, each with its provider and provider
- * state. Everything comes from the frontend's published `@routes/` bundle (`RoutesBundleStore`,
+ * state. Everything comes from the frontend's published `@routes/` bundle (`RoutesBundles`,
  * qits-1947 and qits-1948); the page is a viewer and changes nothing.
  *
  * - Tree (left): `routeTree` of the manifest. Each route shows its state count. A segment without a
@@ -319,11 +330,11 @@ interface EntityGroup {
  *   an "N app-wide calls" group, collapsed by default (a toggle with `aria-expanded`).
  * - Scope (owner rule in qits-1951): `<project slug>-landing-app` covers every service; any other
  *   frontend only its own component, by the `component` its repository declares (the project's
- *   repositories, `RepositoriesStore`), and the calls panel says how many calls it hid. A frontend
+ *   repositories, `PROJECT_REPOSITORIES`), and the calls panel says how many calls it hid. A frontend
  *   whose component is not known yet (the list is loading, or the project does not list it) hides
  *   nothing and shows no chip.
  *
- * - Entities (qits-1950): the services' entity maps (`EntityMapStore`: each `@contracts/` site
+ * - Entities (qits-1950): the services' entity maps (`ContractsCatalog`: each `@contracts/` site
  *   whose newest version names a repository in scope, its `entities.json`), joined with the
  *   manifest's calls on (provider, operationId) by `joinEntities`. Below the calls, the route's
  *   domain entities with their verbs, and how many calls touch no mapped entity. The left panel's
@@ -400,7 +411,7 @@ interface EntityGroup {
  *   (`recordFor`: the record its source names, told apart by the item when the source is recorded
  *   in several states) as the call row's popover, its cardinality, "joined" when a list of another
  *   read is around it, the item, the field's recorded value and a derived mark's inputs with theirs
- *   (`goldenCall`, `goldenResponse`, `itemIn`, `valueAt`), and the read's entities. What it cannot
+ *   (`ContractsBundles.recordedAnswer`, `itemIn`, `valueAt`), and the read's entities. What it cannot
  *   pin says so: "ambiguous" (every candidate listed), "found by item, not marked", "no read
  *   marked", "not in the recorded answer". The read's call row is marked as selected, the app-wide
  *   group opening for it. The data highlight and the outcome highlight are one selection: either
@@ -418,11 +429,11 @@ interface EntityGroup {
  *
  * The data is read in the browser only (the server render holds no token).
  *
- * Staleness (qits-1270): `SCMRelease` of the repository → its bundle (`RoutesBundleStore.follow`):
+ * Staleness (qits-1270): `SCMRelease` of the repository → its bundle (`RoutesBundles.follow`):
  * only a release publishes a new version. A freeze is keyed by its version, so it never goes stale.
  * The same release, or one of a service a contracts site names, → the contracts sites
- * (`EntityMapStore.follow`); a map is keyed by its version, so it never goes stale either.
- * The scope's repositories follow the wrapper's main branch (`RepositoriesStore.follow`).
+ * (`ContractsCatalog.follow`); a map is keyed by its version, so it never goes stale either.
+ * The scope's repositories follow the wrapper's main branch (their resource's `refreshOn`).
  */
 @Component({
   selector: 'app-ui-builder-page',
@@ -1594,15 +1605,29 @@ interface EntityGroup {
 })
 export class UiBuilderPage {
   private readonly selected = inject(SelectedProject);
-  private readonly repositories = inject(RepositoriesStore);
-  private readonly store = inject(RoutesBundleStore);
-  private readonly entityMaps = inject(EntityMapStore);
+  private readonly store = inject(RoutesBundles);
+  private readonly entityMaps = inject(ContractsCatalog);
+  private readonly contracts = inject(ContractsBundles);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
   private readonly theme = inject(ThemePreferenceStore);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /**
+   * The open project's repositories (`PROJECT_REPOSITORIES`, qits-2146), in the browser only, read
+   * again after a commit to its wrapper's main branch.
+   */
+  private readonly repositories = qitsResource(
+    PROJECT_REPOSITORIES,
+    () => {
+      const projectId = this.browser ? this.selected.project()?.id : undefined;
+      return projectId ? { path: { projectId } } : undefined;
+    },
+    { refreshOn: { names: ['SCMPublishCommit'], when: (event) => this.commitsToWrapper(event) } },
+  );
 
   /** The open project's slug, for the links to the entity and contracts pages (qits-1994). */
   protected readonly slug = this.selected.slug;
@@ -1856,14 +1881,12 @@ export class UiBuilderPage {
 
   /** The repository's entry in the open project's list, once it is loaded. */
   private readonly entry = computed(() => {
-    const id = this.selected.project()?.id;
-    const entries = id ? (this.repositories.byProject()[id]?.entries ?? []) : [];
+    const entries = this.repositoryList()?.entries ?? [];
     return entries.find((entry) => entry.repository?.name === this.repo());
   });
 
   private readonly componentOf = computed(() => {
-    const id = this.selected.project()?.id;
-    const entries = id ? (this.repositories.byProject()[id]?.entries ?? []) : [];
+    const entries = this.repositoryList()?.entries ?? [];
     return new Map(entries.map((e) => [e.repository?.name ?? '', e.repository?.component ?? null]));
   });
 
@@ -2170,9 +2193,7 @@ export class UiBuilderPage {
    */
   private readonly scopeSettled = computed(() => {
     if (this.scope()) return true;
-    const id = this.selected.project()?.id;
-    const status = id ? this.repositories.byProject()[id]?.status : undefined;
-    return status === 'loaded' || status === 'error';
+    return this.repositories.hasValue() || this.repositories.status() === 'error';
   });
 
   /** The contracts sites whose repository is in scope, once the scope is decided. */
@@ -2346,9 +2367,6 @@ export class UiBuilderPage {
   /** The calls whose marked items are listed (qits-2144), by `recordKey`. */
   protected readonly expandedCalls = signal<ReadonlySet<string>>(new Set());
 
-  /** The recorded answers read for "Selected data" (qits-2144), by `recordKey`. */
-  private readonly answers = signal<ReadonlyMap<string, GoldenRead>>(new Map());
-
   /** `sourceOf` for the template: a call's `<provider>#<operationId>` (qits-2144). */
   protected readonly sourceOf = sourceOf;
 
@@ -2461,29 +2479,44 @@ export class UiBuilderPage {
    */
   private readonly answerOf = (record: FreezeRecord): unknown => {
     if (this.entityMaps.catalog()?.status === 'error') return null;
-    const read = this.answers().get(recordKey(record));
+    const read = this.answerRead(record);
     return read?.status === 'loaded' ? read.body : undefined;
   };
 
   /**
-   * Reads a record's recorded answer from its provider's contracts site
-   * (`goldenCall`, `goldenResponse`, cached there), once (qits-2144). A provider without a site, a
-   * state the site lacks, and a body that is not JSON all read as no answer.
+   * A record's recorded answer (qits-2144) from its provider's contracts site, as `ContractsBundles`
+   * reads it (qits-2146; the index's state and operation, then the recorded response): undefined
+   * until the catalog and the index are read and the read is asked for, null when there is none (a
+   * provider without a site, a state or operation the index lacks, an unreadable index, a body that
+   * is not JSON).
    */
-  private async readAnswer(record: FreezeRecord): Promise<void> {
-    const key = recordKey(record);
-    if (this.answers().has(key)) return;
-    const set = (read: GoldenRead) => this.answers.update((all) => new Map(all).set(key, read));
-    set({ status: 'loading' });
+  private answerRead(record: FreezeRecord): GoldenRead | undefined {
+    if (this.entityMaps.catalog()?.status !== 'loaded') return undefined;
     const site = this.siteOf(record.provider);
-    const found = site
-      ? await goldenCall(site, record.state, record.operationId).catch(() => null)
-      : null;
-    const body =
-      site && found?.operation
-        ? await goldenResponse(site, found.operation).catch(() => null)
-        : null;
-    set({ status: 'loaded', body: typeof body === 'string' ? null : body });
+    if (!site) return NO_ANSWER;
+    const index = this.contracts.indexRead(site);
+    if (!index) return undefined;
+    if (index.status === 'loading') return LOADING_ANSWER;
+    const op = index.status === 'loaded' ? recordedOperation(index.index, record) : null;
+    return op ? this.contracts.recordedAnswer(site, op) : NO_ANSWER;
+  }
+
+  /**
+   * Starts the reads a record's recorded answer needs (qits-2144), each once: its provider site's
+   * index, then the recorded response the index names. Called again as the index arrives.
+   */
+  private readAnswer(record: FreezeRecord): void {
+    const site = untracked(() => this.siteOf(record.provider));
+    if (!site) return;
+    const index = untracked(() => this.contracts.indexRead(site));
+    if (!index) {
+      this.contracts.readIndex(site);
+      return;
+    }
+    const op = index.status === 'loaded' ? recordedOperation(index.index, record) : null;
+    if (op && !untracked(() => this.contracts.recordedAnswer(site, op))) {
+      this.contracts.readRecording(site, op);
+    }
   }
 
   /**
@@ -2498,7 +2531,7 @@ export class UiBuilderPage {
     const mark = selection.picked;
     const read = recordFor(freeze, mark, this.answerOf);
     const record = read.kind === 'marked' || read.kind === 'byItem' ? read.record : null;
-    const answer = record ? this.answers().get(recordKey(record)) : undefined;
+    const answer = record ? this.answerRead(record) : undefined;
     const body = answer?.status === 'loaded' ? answer.body : undefined;
     const object =
       body === undefined || body === null ? body : mark.item ? itemIn(body, mark) : body;
@@ -2562,11 +2595,7 @@ export class UiBuilderPage {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
     effect(() => {
       const repo = this.repo();
-      if (browser && repo) untracked(() => void this.store.load(repo));
-    });
-    effect(() => {
-      const id = this.selected.project()?.id;
-      if (browser && id) untracked(() => void this.repositories.load(id));
+      if (browser && repo) untracked(() => this.store.load(repo));
     });
     effect(() => {
       const bundle = this.loaded();
@@ -2576,7 +2605,7 @@ export class UiBuilderPage {
       }
     });
     effect(() => {
-      if (browser && this.loaded()) untracked(() => void this.entityMaps.load());
+      if (browser && this.loaded()) untracked(() => this.entityMaps.load());
     });
     effect(() => {
       // Another freeze is shown: its srcdoc load judges it again (qits-2072).
@@ -2613,7 +2642,12 @@ export class UiBuilderPage {
       if (!browser || selection?.kind !== 'mark' || !selection.picked || !freeze) return;
       if (this.entityMaps.catalog()?.status !== 'loaded') return;
       const records = this.answerCandidates(freeze, selection.picked);
-      untracked(() => records.forEach((record) => void this.readAnswer(record)));
+      // Tracks each index read, so the recorded response is asked for once the index names it.
+      records.forEach((record) => {
+        const site = this.siteOf(record.provider);
+        if (site) this.contracts.indexRead(site);
+      });
+      untracked(() => records.forEach((record) => this.readAnswer(record)));
     });
     effect(() => {
       // A selected call in the collapsed app-wide group opens it (qits-2144).
@@ -2638,7 +2672,16 @@ export class UiBuilderPage {
     const destroy = inject(DestroyRef);
     this.store.follow(() => this.repo() || undefined, destroy);
     this.entityMaps.follow(() => this.repo() || undefined, destroy);
-    this.repositories.follow(() => this.selected.project()?.id, destroy);
+  }
+
+  /** The open project's repositories, once read. */
+  private repositoryList() {
+    return this.repositories.hasValue() ? this.repositories.value() : undefined;
+  }
+
+  /** Whether a commit is to the wrapper's main branch, as the repositories read names them. */
+  private commitsToWrapper(event: QitsDomainEvent): boolean {
+    return movesWrapper(event, this.repositoryList());
   }
 
   /**

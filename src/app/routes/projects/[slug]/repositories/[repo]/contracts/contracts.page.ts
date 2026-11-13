@@ -14,9 +14,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { map } from 'rxjs';
-import { ContractsBundleStore } from '$core/contracts/contracts-bundle.store';
+import { ContractsBundles } from '$core/contracts/contracts-bundles';
 import { bundleOf, filterRows, stateRows } from '$core/contracts/contracts-view';
-import { EntityMapStore } from '$core/ui-builder/entity-map.store';
+import { ContractsCatalog } from '$core/ui-builder/contracts-catalog';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
 
 /**
@@ -27,10 +27,10 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
  * filter on the name.
  *
  * The bundle is the `@contracts/` site whose newest version's `git.repository.name` is the
- * repository (`EntityMapStore`'s catalog, `contractsSitesOf`); its index is read through
- * `ContractsBundleStore.readIndex`. The data is read in the browser only.
+ * repository (`ContractsCatalog`'s catalog, `contractsSiteOf`); its index is read through
+ * `ContractsBundles.readIndex`. The data is read in the browser only.
  *
- * Staleness (qits-1270): a release of the repository → the catalog (`EntityMapStore.follow`); the
+ * Staleness (qits-1270): a release of the repository → the catalog (`ContractsCatalog.follow`); the
  * index is keyed by its version, which never changes, so it never goes stale.
  */
 @Component({
@@ -63,7 +63,10 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
                 {{ rows().length === 1 ? 'state' : 'states' }}</span
               >
             </div>
-            <table class="states w-full border-collapse text-left text-sm">
+            <table
+              class="states w-full border-collapse text-left text-sm"
+              data-qits-source="qits-artifacts-service#getDocsFile"
+            >
               <thead>
                 <tr class="border-b border-line text-xs text-fg-soft">
                   <th class="py-1 pr-3 font-semibold">State</th>
@@ -106,8 +109,8 @@ import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-fr
   `,
 })
 export class ContractsPage {
-  private readonly entityMaps = inject(EntityMapStore);
-  private readonly bundles = inject(ContractsBundleStore);
+  private readonly entityMaps = inject(ContractsCatalog);
+  private readonly bundles = inject(ContractsBundles);
   private readonly route = inject(ActivatedRoute);
 
   private readonly params = toSignal(
@@ -150,7 +153,7 @@ export class ContractsPage {
 
   constructor() {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    if (browser) void this.entityMaps.load();
+    if (browser) this.entityMaps.load();
     effect(() => {
       const site = this.site();
       if (browser && site) untracked(() => this.bundles.readIndex(site));

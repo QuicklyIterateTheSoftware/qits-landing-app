@@ -2,17 +2,28 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { DestroyRef, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS, type EventSourceLike } from '$core/events/domain-events';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import {
+  DomainEvents,
+  EVENT_SOURCE,
+  REOPEN_DEBOUNCE_MS,
+  type EventSourceLike,
+} from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../api/artifacts/client.gen';
 import { literalDocsPaths } from './docs-paths';
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
-import { RoutesBundleStore } from './routes-bundle.store';
+import { RoutesBundles } from './routes-bundles';
 
-/** The generated client builds its request after a few awaits; let them run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve));
+/** The generated client builds its request after a few awaits; let them run, and the effects. */
+const settle = async () => {
+  TestBed.tick();
+  await new Promise((resolve) => setTimeout(resolve));
+  TestBed.tick();
+  await new Promise((resolve) => setTimeout(resolve));
+};
 
 const BUNDLE = 'a published routes bundle';
 const FREEZE = 'a published routes bundle freeze';
@@ -24,7 +35,7 @@ const { site: SITE, version: VERSION } = masters.operation(BUNDLE, 'getDocsFile'
 const FREEZE_FILE = masters.operation(FREEZE, 'getDocsFile').params['path'];
 const FONT_FILE = masters.operation(FONT, 'getDocsFile').params['path'];
 
-/** Where the store reads: the site and the file path with `/` and `@` literal, `[`/`]` encoded. */
+/** Where the service reads: the site and the file path with `/` and `@` literal, `[`/`]` encoded. */
 const SITES_URL = '/artifacts/docs/docs';
 const VERSIONS_URL = `/artifacts/docs/docs/${SITE}`;
 const VERSION_URL = `${VERSIONS_URL}/-/${VERSION}`;
@@ -67,7 +78,7 @@ if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
   artifactsClient.interceptors.request.use(literalDocsPaths);
 }
 
-describe('RoutesBundleStore', () => {
+describe('RoutesBundles', () => {
   let http: HttpTestingController;
   let sources: FakeSource[];
 
@@ -88,6 +99,7 @@ describe('RoutesBundleStore', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(artifactsClient),
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -108,56 +120,57 @@ describe('RoutesBundleStore', () => {
   }
 
   it('finds the site by its newest version’s metadata and reads its manifest', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
-    const done = store.load(REPO);
+    const store = TestBed.inject(RoutesBundles);
+    store.load(REPO);
     expect(store.bundles()[REPO]).toEqual({ status: 'loading' });
     await answerBundle();
-    await done;
+    await settle();
     expect(store.bundles()[REPO]).toEqual({
       status: 'loaded',
       site: SITE,
       version: VERSION,
       manifest: masters.body(BUNDLE, 'getDocsFile'),
     });
-    await store.load(REPO);
+    store.load(REPO);
+    await settle();
     http.expectNone(SITES_URL);
   });
 
   it('finds nothing when no @routes/ site is published', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
-    const done = store.load(REPO);
+    const store = TestBed.inject(RoutesBundles);
+    store.load(REPO);
     await settle();
     http.expectOne(SITES_URL).flush(masters.body('a published docs site', 'listDocsSites'));
-    await done;
+    await settle();
     expect(store.bundles()[REPO]).toEqual({ status: 'none' });
   });
 
   it('finds nothing when the newest version names another repository', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
-    const done = store.load('contract-frontend');
+    const store = TestBed.inject(RoutesBundles);
+    store.load('contract-frontend');
     await settle();
     http.expectOne(SITES_URL).flush(masters.body(BUNDLE, 'listDocsSites'));
     await settle();
     http.expectOne(VERSIONS_URL).flush(masters.body(BUNDLE, 'listDocsVersions'));
-    await done;
+    await settle();
     expect(store.bundles()['contract-frontend']).toEqual({ status: 'none' });
   });
 
   it('reports a failed catalog, and reads again on the next ask', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
-    const done = store.load(REPO);
+    const store = TestBed.inject(RoutesBundles);
+    store.load(REPO);
     await settle();
     http.expectOne(SITES_URL).flush(null, { status: 500, statusText: 'Server Error' });
-    await done;
+    await settle();
     expect(store.bundles()[REPO]).toEqual({ status: 'error' });
-    void store.load(REPO);
+    store.load(REPO);
     await settle();
     http.expectOne(SITES_URL);
   });
 
   it('reports a manifest without the manifest’s shape as an error', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
-    const done = store.load(REPO);
+    const store = TestBed.inject(RoutesBundles);
+    store.load(REPO);
     await settle();
     http.expectOne(SITES_URL).flush(masters.body(BUNDLE, 'listDocsSites'));
     await settle();
@@ -165,12 +178,12 @@ describe('RoutesBundleStore', () => {
     await settle();
     // Another recorded JSON answer in the manifest's place: the version list has no `routes`.
     http.expectOne(fileUrl('manifest.json')).flush(masters.body(BUNDLE, 'listDocsVersions'));
-    await done;
+    await settle();
     expect(store.bundles()[REPO]).toEqual({ status: 'error' });
   });
 
   it('reads a freeze and the bundle’s assets once, and inlines the font', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
+    const store = TestBed.inject(RoutesBundles);
     const bundle = { site: SITE, version: VERSION };
     store.freeze(bundle, FREEZE_FILE);
     expect(store.freezeRead(bundle, FREEZE_FILE)).toEqual({ status: 'loading' });
@@ -198,7 +211,7 @@ describe('RoutesBundleStore', () => {
   });
 
   it('shows a freeze without its assets when they cannot be read', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
+    const store = TestBed.inject(RoutesBundles);
     const bundle = { site: SITE, version: VERSION };
     store.freeze(bundle, FREEZE_FILE);
     await settle();
@@ -209,7 +222,7 @@ describe('RoutesBundleStore', () => {
   });
 
   it('reports a freeze that cannot be read', async () => {
-    const store = TestBed.inject(RoutesBundleStore);
+    const store = TestBed.inject(RoutesBundles);
     const bundle = { site: SITE, version: VERSION };
     store.freeze(bundle, FREEZE_FILE);
     await settle();
@@ -226,13 +239,14 @@ describe('RoutesBundleStore', () => {
 
   describe('follow', () => {
     async function followed(destroy = new ManualDestroy()) {
-      const store = TestBed.inject(RoutesBundleStore);
-      const loaded = store.load(REPO);
+      const store = TestBed.inject(RoutesBundles);
+      store.load(REPO);
       await answerBundle();
-      await loaded;
-      vi.useFakeTimers();
+      await settle();
       store.follow(() => REPO, destroy);
-      vi.advanceTimersByTime(REOPEN_DEBOUNCE_MS);
+      // The resources' `refreshOn` subscribed as they were made: the stream opens once it settles.
+      await new Promise((resolve) => setTimeout(resolve, REOPEN_DEBOUNCE_MS + 50));
+      vi.useFakeTimers();
       return { store, source: sources.at(-1)!, destroy };
     }
 
@@ -248,8 +262,11 @@ describe('RoutesBundleStore', () => {
       const { store, source } = await followed();
       source.push('SCMRelease', { repository: REPO, repositoryName: REPO, version: '2' });
       await after();
-      await answerBundle();
+      // The list and the site's versions read again; the manifest of the same version is held.
+      http.expectOne(SITES_URL).flush(masters.body(BUNDLE, 'listDocsSites'));
+      http.expectOne(VERSIONS_URL).flush(masters.body(BUNDLE, 'listDocsVersions'));
       await settle();
+      http.expectNone(fileUrl('manifest.json'));
       expect(store.bundles()[REPO]?.status).toBe('loaded');
     });
 

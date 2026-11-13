@@ -39,7 +39,15 @@ import { WorkStore, type DispatchMode, type WorkStatus } from './work.store';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-const OPERATIONS: readonly OwnedOperation[] = ['listProjectWork', 'setWorkStatus', 'dispatchWork'];
+/**
+ * The project card's `show-project-work` interactions are `work.operations.pact.spec.ts`'s
+ * (`PROJECT_CARD_WORK`, qits-2146).
+ */
+const OPERATIONS: readonly OwnedOperation[] = [
+  { operationId: 'listProjectWork', interactions: ['show-project-work-board', 'show-open-issues'] },
+  'setWorkStatus',
+  'dispatchWork',
+];
 
 /** {@link LIST_PROJECT_WORK} without the need rows: what a state that records no need binds. */
 const WITHOUT_NEED_ROWS = LIST_PROJECT_WORK.filter((path) => !path.includes('.needs[]'));
@@ -273,16 +281,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
     }
   });
 
-  it('show-project-work: the store loads a project’s work', () =>
-    given('show-project-work', 'a project with refined work').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf('a project with refined work');
-      await store.load(projectId);
-      // The pact binds the entities' fields by type, not by value, so the mock answers with the
-      // recorded example repeated; which statuses count is the plain spec's business.
-      expect(store.byProject()[projectId]?.status).toBe('loaded');
-    }));
-
   it('show-project-work-board: the Work page lays out work in every status', () =>
     given('show-project-work-board', 'a project with work in every status').executeTest(
       async (server) => {
@@ -350,26 +348,6 @@ describe('qits-landing-app → qits-projects-service pact: work', () => {
       const projectId = projectOf('a project with an open issue');
       await store.load(projectId);
       expect(store.byProject()[projectId]?.status).toBe('loaded');
-    }));
-
-  it('show-project-work: the work of the first of two projects', () =>
-    given('show-project-work', 'two projects exist').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf('two projects exist');
-      await store.load(projectId);
-      expect(store.byProject()[projectId]?.status).toBe('loaded');
-    }));
-
-  it('show-project-work: a project with no work counts zero', () =>
-    given('show-project-work', 'a project with no work').executeTest(async (server) => {
-      const store = storeAt(server.url);
-      const projectId = projectOf('a project with no work');
-      await store.load(projectId);
-      expect(store.byProject()[projectId]).toEqual({
-        status: 'loaded',
-        count: 0,
-        entries: [],
-      });
     }));
 
   // The work item page reads each item's own state and its project's work (`work-item.page`): the

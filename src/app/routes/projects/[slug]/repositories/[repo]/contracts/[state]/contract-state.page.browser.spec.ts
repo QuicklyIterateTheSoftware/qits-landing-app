@@ -18,7 +18,6 @@ import {
   GITHOST,
   INDEX,
   leftFor,
-  forgetBundleReads,
 } from '../../../../../../../../testing/browser/contracts-bundles';
 
 /**
@@ -47,7 +46,6 @@ describe('ContractStatePage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    forgetBundleReads();
     TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });

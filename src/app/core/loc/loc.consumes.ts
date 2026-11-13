@@ -2,7 +2,7 @@ import type { ListLocResponses } from '../../api/githost';
 import type { Consumed } from '@qits/angular';
 
 /**
- * What `LocStore` reads from qits-githost's answers (epic qits-112). The store passes these to
+ * What `LOC_LIST` reads from qits-githost's answers (epic qits-112; it was `LocStore`'s). The read passes these to
  * `consume(...)`, so it cannot read any other field, and its pact spec passes the same lists as
  * `consumes`, so the pact binds exactly these fields. To read another field, add it here.
  */

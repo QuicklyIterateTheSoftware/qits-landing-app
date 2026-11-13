@@ -3,16 +3,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
-  effect,
   inject,
   PLATFORM_ID,
   signal,
-  untracked,
 } from '@angular/core';
+import { QitsEntityList, qitsMutation, qitsResource, type QitsDomainEvent } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { needsBackupSignIn, signInRepositoryId } from '$core/repositories/remote-login';
-import { RepositoriesStore } from '$core/repositories/repositories.store';
+import { BACKUP_SYNC, PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
+import { movesWrapper } from '$core/repositories/repositories.store';
+import { loadState } from '$core/resources/load-state';
 import { repositoryTree } from '$core/repositories/repository-tree';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
@@ -33,15 +33,20 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
  * the sign-in terminal; otherwise it is a quieter action in the header. One sign-in fills the
  * shared credential store and so clears every repository's (`signInRepositoryId`: the wrapper's
  * backup remote first). The terminal is `app-remote-login-panel`; when its session ends the page
- * does what the old panel did: reads the repositories again (`RepositoriesStore.refresh`) and nudges
- * every backup (`RepositoriesStore.syncBackups`). A refused sync is a quiet note: the backups still
+ * does what the old panel did: reads the repositories again and nudges every backup
+ * (`BACKUP_SYNC`, a `qitsMutation`). A refused sync is a quiet note: the backups still
  * run on their own schedule. The old panel also read the list again 3 s after an accepted sync; that
  * was a refresh timer, which qits-1270 forbids, and qits-projects emits no event for a backup's
  * outcome, so an "Auth needed" turns back into an outcome on the next read.
  *
+ * It reads the open project's repositories through its own `qitsResource` over
+ * `PROJECT_REPOSITORIES` (qits-2146), in the browser only (the server render has no session), and
+ * marks them (qits-2141): the tree lists that read, each card marks its repository.
+ *
  * Staleness (qits-1270): `SCMPublishCommit` to the open project's wrapper on its main branch → the
- * project's repositories (`RepositoriesStore.follow`; see the store for the gaps: no event for a
- * repository created, renamed or deleted, nor for a backup's outcome). The cards show no branch,
+ * project's repositories (the resource's `refreshOn`, narrowed by `movesWrapper` as
+ * `RepositoriesStore.follow` is; see the store for the gaps: no event for a repository created,
+ * renamed or deleted, nor for a backup's outcome). The cards show no branch,
  * commit or version, so `SCMPublishCommit` on other repositories, `SCMPublishTag`,
  * `SCMDeleteBranch` and `SCMRelease` change nothing here.
  */
@@ -52,6 +57,7 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
     NgTemplateOutlet,
     ActionButton,
     PageLayoutComponent,
+    QitsEntityList,
     RemoteLoginPanel,
     Spinner,
     TreeFolder,
@@ -73,8 +79,8 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
               Sign in once and every repository’s backup works again: the credentials go to the
               platform’s shared store.
             </p>
-            @if (signInAction(); as action) {
-              <ui-action-button [action]="action" />
+            @if (signInRepoId()) {
+              <ui-action-button [action]="alertSignIn" />
             } @else {
               <p class="m-0 text-warning-strong">
                 No repository of this project has a backup remote to sign in through.
@@ -91,10 +97,17 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
           />
         }
         @if (syncNote(); as note) {
-          <p class="m-0 mb-4 text-sm text-fg-soft" role="status">{{ note }}</p>
+          <p
+            class="m-0 mb-4 text-sm text-fg-soft"
+            role="status"
+            data-qits-source="qits-projects-service#backupSyncProject"
+            data-qits-derived="scheduled"
+          >
+            {{ note }}
+          </p>
         }
         <ui-spinner [state]="state()" class="min-h-48">
-          <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-6" [qitsEntityList]="repositories">
             <section aria-label="Wrapper" [class]="tree().wrapper ? 'block' : 'hidden'">
               @if (tree().wrapper; as wrapper) {
                 <app-repository-card class="max-w-[24rem]" [entry]="wrapper" [slug]="slug()" />
@@ -152,29 +165,45 @@ import { RepositoryCard } from '$patterns/repositories/repository-card/repositor
 })
 export class ProjectRepositoriesPage {
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(RepositoriesStore);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  private readonly repositories = computed(() => {
-    const id = this.selected.project()?.id;
-    return id ? this.store.byProject()[id] : undefined;
-  });
+  /** The open project's id, in the browser only: the read waits for it. */
+  private readonly projectId = computed(() =>
+    this.browser ? this.selected.project()?.id : undefined,
+  );
+
+  /** The open project's repositories, read again after a commit to its wrapper's main branch. */
+  protected readonly repositories = qitsResource(
+    PROJECT_REPOSITORIES,
+    () => {
+      const projectId = this.projectId();
+      return projectId ? { path: { projectId } } : undefined;
+    },
+    { refreshOn: { names: ['SCMPublishCommit'], when: (event) => this.commitsToWrapper(event) } },
+  );
+
+  /** Nudges every backup after the sign-in. */
+  private readonly sync = qitsMutation(BACKUP_SYNC);
+
+  /** The repositories read, once answered. */
+  private readonly answer = computed(() =>
+    this.repositories.hasValue() ? this.repositories.value() : undefined,
+  );
 
   /** The open project's slug, for the cards' links. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
   protected readonly tree = computed(() => {
-    const repositories = this.repositories();
+    const repositories = this.answer();
     return repositoryTree(repositories?.entries ?? [], repositories?.wrapper);
   });
 
   /** Whether any repository's last backup asked for a sign-in. */
-  protected readonly needsSignIn = computed(() =>
-    needsBackupSignIn(this.repositories()?.entries ?? []),
-  );
+  protected readonly needsSignIn = computed(() => needsBackupSignIn(this.answer()?.entries ?? []));
 
   /** The repository the sign-in terminal pushes through; null when none has a backup remote. */
   protected readonly signInRepoId = computed(() => {
-    const repositories = this.repositories();
+    const repositories = this.answer();
     return signInRepositoryId(repositories?.entries ?? [], repositories?.wrapper?.repositoryId);
   });
 
@@ -185,42 +214,39 @@ export class ProjectRepositoriesPage {
    */
   protected readonly terminalRepoId = signal<string | null>(null);
 
-  protected readonly signInAction = computed((): Action | null =>
-    this.signInRepoId()
-      ? {
-          label: 'Sign in to backup remote',
-          variant: this.needsSignIn() ? 'success' : 'muted',
-          callback: () => {
-            this.syncNote.set('');
-            this.terminalRepoId.set(this.signInRepoId());
-          },
-        }
-      : null,
-  );
+  /** Opens the sign-in terminal through `signInRepoId`'s repository. */
+  private openSignIn(): void {
+    this.syncNote.set('');
+    this.terminalRepoId.set(this.signInRepoId());
+  }
 
-  /** The sign-in, in the header while no backup asks for it (the alert offers it otherwise). */
-  protected readonly headerActions = computed((): Action[] => {
-    const action = this.signInAction();
-    return action && !this.needsSignIn() && !this.terminalRepoId() ? [action] : [];
-  });
+  /** The sign-in in the alert, which shows while a backup asks for it. */
+  protected readonly alertSignIn: Action = {
+    label: 'Sign in to backup remote',
+    variant: 'success',
+    callback: () => this.openSignIn(),
+  };
+
+  /** The sign-in in the header, while no backup asks for it (the alert offers it otherwise). */
+  private readonly headerSignIn: Action = {
+    label: 'Sign in to backup remote',
+    variant: 'muted',
+    callback: () => this.openSignIn(),
+  };
+
+  /** The header's sign-in, when a repository has a backup remote to sign in through. */
+  protected readonly headerActions = computed((): Action[] =>
+    this.signInRepoId() && !this.needsSignIn() && !this.terminalRepoId() ? [this.headerSignIn] : [],
+  );
 
   /** What the nudge after the sign-in came to, for a person; empty before one. */
   protected readonly syncNote = signal('');
 
-  protected readonly state = computed((): LoadState => {
-    const status = this.repositories()?.status;
-    return status === 'loaded' || status === 'error' ? status : 'loading';
-  });
+  protected readonly state = computed((): LoadState => loadState(this.repositories));
 
-  constructor() {
-    // In the browser only (the server render holds no token). Only the project id is
-    // tracked: `load` reads the store's state, and tracking that would fetch again on every answer.
-    const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    effect(() => {
-      const id = this.selected.project()?.id;
-      if (browser && id) untracked(() => void this.store.load(id));
-    });
-    this.store.follow(() => this.selected.project()?.id, inject(DestroyRef));
+  /** Whether a commit is to the wrapper's main branch, as the repositories read names them. */
+  private commitsToWrapper(event: QitsDomainEvent): boolean {
+    return movesWrapper(event, this.answer());
   }
 
   /**
@@ -229,10 +255,13 @@ export class ProjectRepositoriesPage {
    * needed" back into an outcome; if not, the badges come back unchanged.
    */
   protected async signInEnded(): Promise<void> {
-    const id = this.selected.project()?.id;
-    if (!id) return;
-    void this.store.refresh(id);
-    const scheduled = await this.store.syncBackups(id);
+    const projectId = this.selected.project()?.id;
+    if (!projectId) return;
+    this.repositories.reload();
+    const scheduled = await this.sync
+      .run({ path: { projectId } })
+      .then((answer) => (answer ? (answer.scheduled ?? 0) : null))
+      .catch(() => null);
     if (scheduled === null) {
       this.syncNote.set(
         'Could not schedule the backups now; they run again on their own schedule.',

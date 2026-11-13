@@ -19,7 +19,6 @@ import {
   INDEX,
   leftFor,
   PROJECTION,
-  forgetBundleReads,
 } from '../../../../../../../../testing/browser/contracts-bundles';
 
 /**
@@ -52,7 +51,6 @@ describe('EntityPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    forgetBundleReads();
     TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });

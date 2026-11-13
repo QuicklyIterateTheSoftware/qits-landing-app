@@ -23,18 +23,27 @@ export const INTERACTIONS = {
    * project, by the id the list gives its slug.
    */
   'open-project': 'Opening a project fetches its detail',
-  /** `project-card.ts`: each card counts the project's components from its repositories. */
+  /**
+   * `project-card.ts` via `LIST_PROJECT_WRAPPER` (qits-2146): each card counts the project's
+   * components from its repositories.
+   */
   'show-project-repositories': 'A project card shows how many components the project has',
-  /** `project-repositories.ts`: the Repositories page lists the open project's repositories. */
+  /**
+   * `project-repositories.page.ts` via `PROJECT_REPOSITORIES` (qits-2146): the Repositories page
+   * lists the open project's repositories.
+   */
   'show-project-repositories-tree':
     'The Repositories page shows the project’s repositories in the wrapper’s directory tree',
   /**
-   * `project-repositories.page.ts` via `RepositoriesStore.syncBackups`: when the backup sign-in
+   * `project-repositories.page.ts` via `BACKUP_SYNC` (qits-2146): when the backup sign-in
    * terminal ends, the page nudges every repository's backup (qits-1268).
    */
   'sync-backups-after-sign-in':
     'Ending the backup sign-in on the Repositories page schedules every repository’s backup',
-  /** `project-card.ts`: each card counts the project's work from its planning tree. */
+  /**
+   * `project-card.ts` via `PROJECT_CARD_WORK` (qits-2146): each card counts the project's work
+   * from its planning tree.
+   */
   'show-project-work': 'A project card shows how much work the project has',
   /**
    * The work section's pages (`routes/projects/[slug]/work/`) via `SelectedWork`: they lay the
@@ -88,7 +97,10 @@ export const INTERACTIONS = {
   'unschedule-work': 'Unschedule on the Schedule tab takes scheduled work back to refined',
   /** `work-item.page.ts`: Dispatch (the whole flow) or the next phase's button. */
   'dispatch-work-item': 'Dispatch or the next phase on the work item page starts an agent',
-  /** `loc.store.ts`, `load()` from the store's `onInit`: every card's lines of code, one request. */
+  /**
+   * `lines-of-code.ts` via `LOC_LIST` (qits-2146), once a card's languages first open: every
+   * card's lines of code, one request.
+   */
   'show-project-loc': 'The project cards show how many lines of code each project has',
   /**
    * `release-menu.ts`: the top bar's lightning menu, for the open project — fetched when the
@@ -590,47 +602,47 @@ export const INTERACTIONS = {
   'edit-work-needs':
     'Add or Remove on the work item page’s Needs panel rewrites what the item needs',
   /**
-   * `ui-builder.page.ts` via `RoutesBundleStore.load` (qits-1951): the UI builder finds the
+   * `ui-builder.page.ts` via `RoutesBundles.load` (qits-1951, qits-2146): the UI builder finds the
    * frontend's `@routes/` docs site by its newest version's `git.repository.name` and reads its
    * `manifest.json`, the route tree with each route's frozen states.
    */
   'show-ui-builder-routes': 'The UI builder shows a frontend’s routes and how many states each has',
   /**
-   * `ui-builder.page.ts` via `RoutesBundleStore.freeze` (qits-1951): selecting a state tab reads
+   * `ui-builder.page.ts` via `RoutesBundles.freeze` (qits-1951, qits-2146): selecting a state tab reads
    * that freeze's HTML, and the bundle's assets (its fonts) once, to draw the frozen page.
    */
   'show-ui-builder-state': 'Selecting a state in the UI builder shows its frozen page',
   /**
-   * `ui-builder.page.ts` via `EntityMapStore` (qits-1950): the UI builder finds every in-scope
+   * `ui-builder.page.ts` via `ContractsCatalog` (qits-1950, qits-2146): the UI builder finds every in-scope
    * service's `@contracts/` docs site by its newest version's `git.repository.name` and reads its
    * `entities.json`, to show which domain entities each route touches and which routes show each.
    */
   'show-ui-builder-entities': 'The UI builder shows which domain entities each route touches',
   /**
-   * `call-details.ts` via `goldenCall` and `goldenResponse` (qits-1999): opening a call in the UI
+   * `call-details.ts` via `ContractsBundles` (qits-1999, qits-2146): opening a call in the UI
    * builder reads the provider's `golden-masters/index.json` and the call's recorded response from
    * its `@contracts/` docs site.
    */
   'show-ui-builder-call-details':
     'Opening a call in the UI builder shows its state and recorded response',
   /**
-   * `contracts.page.ts` via `EntityMapStore.load` and `ContractsBundleStore.readIndex` (qits-1994):
+   * `contracts.page.ts` via `ContractsCatalog.load` and `ContractsBundles.readIndex` (qits-1994):
    * finds the repository's `@contracts/` docs site by its newest version's `git.repository.name`
    * and reads its `golden-masters/index.json`, to list the provider states it records.
    */
   'show-repository-contracts': 'The contracts page lists the provider states a service records',
   /**
-   * `contract-state.page.ts` via `ContractsBundleStore.readIndex` and `readRecording` (qits-1994):
+   * `contract-state.page.ts` via `ContractsBundles.readIndex` and `readRecording` (qits-1994):
    * reads the bundle's `golden-masters/index.json` and each recorded response of the state.
    */
   'show-contract-state': 'A provider state’s page shows its operations and recorded responses',
   /**
-   * `entities.page.ts` via `EntityMapStore.load` and `readMap` (qits-1994): finds the repository's
+   * `entities.page.ts` via `ContractsCatalog.load` and `readMap` (qits-1994): finds the repository's
    * `@contracts/` docs site and reads its `entities.json`, to list its entities by marking.
    */
   'show-repository-entities': 'The entities page lists a service’s persisted entities by marking',
   /**
-   * `entity.page.ts` via `EntityMapStore.readMap`, `ContractsBundleStore.readIndex` and
+   * `entity.page.ts` via `ContractsCatalog.readMap`, `ContractsBundles.readIndex` and
    * `readDiagram` (qits-1994, qits-2014): reads the bundle's `entities.json` (and a projected
    * application's), its `golden-masters/index.json` for the states recording each operation, and
    * for the ER diagram its `database/index.json` and the `database/<file>.md` of the unit holding

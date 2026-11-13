@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { QitsMermaidDiagram } from '@qits/ui-components';
 import { map } from 'rxjs';
-import { ContractsBundleStore } from '$core/contracts/contracts-bundle.store';
+import { ContractsBundles } from '$core/contracts/contracts-bundles';
 import {
   bundleOf,
   byKind,
@@ -28,8 +28,8 @@ import {
   sortedDtos,
   statesRecording,
 } from '$core/contracts/contracts-view';
-import { EntityMapStore, type ContractsSite } from '$core/ui-builder/entity-map.store';
-import type { GoldenState } from '$core/ui-builder/golden-masters.store';
+import { ContractsCatalog, type ContractsSite } from '$core/ui-builder/contracts-catalog';
+import type { GoldenState } from '$core/ui-builder/golden-masters';
 import { ContractsFrame } from '$patterns/contracts/contracts-frame/contracts-frame';
 import { ErDiagramBox } from '$patterns/contracts/er-diagram-box/er-diagram-box';
 import { Chip } from '$ui/components/chip/chip';
@@ -43,7 +43,7 @@ import { Chip } from '$ui/components/chip/chip';
  * each kind explained; and the operations that hand it out, each linked to the states of the same
  * bundle that record that operationId (its `golden-masters/index.json`); and the ER diagram of the
  * persistence unit holding it (qits-2014: the bundle's `database/index.json` names the unit, its
- * `database/<file>.md` holds the diagram, `ContractsBundleStore.readDiagram`), drawn at its natural
+ * `database/<file>.md` holds the diagram, `ContractsBundles.readDiagram`), drawn at its natural
  * size in a scroll box scrolled to the entity's table (`ErDiagramBox`). A bundle publishing no
  * diagram, or none for this entity's unit, says so in a line; it is not an error.
  *
@@ -53,7 +53,7 @@ import { Chip } from '$ui/components/chip/chip';
  * the projected entity (`open-entity-relation` `projectionOf`) and a recording state
  * (`open-entity-relation` `recordedIn`).
  *
- * Staleness (qits-1270): a release of the repository → the catalog (`EntityMapStore.follow`); the
+ * Staleness (qits-1270): a release of the repository → the catalog (`ContractsCatalog.follow`); the
  * maps and the index are keyed by version and never go stale.
  */
 @Component({
@@ -80,7 +80,10 @@ import { Chip } from '$ui/components/chip/chip';
         }
         @case ('loaded') {
           @if (entity(); as e) {
-            <div class="flex flex-col gap-6 text-sm">
+            <div
+              class="flex flex-col gap-6 text-sm"
+              data-qits-source="qits-artifacts-service#getDocsFile"
+            >
               <section class="flex flex-col gap-2">
                 <p class="m-0">
                   <a
@@ -243,8 +246,8 @@ import { Chip } from '$ui/components/chip/chip';
   `,
 })
 export class EntityPage {
-  private readonly entityMaps = inject(EntityMapStore);
-  private readonly bundles = inject(ContractsBundleStore);
+  private readonly entityMaps = inject(ContractsCatalog);
+  private readonly bundles = inject(ContractsBundles);
   private readonly route = inject(ActivatedRoute);
 
   private readonly routeParams = toSignal(
@@ -336,7 +339,7 @@ export class EntityPage {
 
   constructor() {
     const browser = isPlatformBrowser(inject(PLATFORM_ID));
-    if (browser) void this.entityMaps.load();
+    if (browser) this.entityMaps.load();
     effect(() => {
       const site = this.site();
       if (browser && site) {
