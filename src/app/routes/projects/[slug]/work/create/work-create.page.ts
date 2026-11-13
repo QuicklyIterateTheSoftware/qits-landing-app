@@ -8,17 +8,29 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { exit, outcomes, QitsExit, qitsResource, stay } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsExit,
+  QitsField,
+  qitsMutation,
+  qitsResource,
+  stay,
+} from '@qits/angular';
 import { IDEA } from '$core/ideas/ideas.operations';
 import { SelectedProject } from '$core/projects/selected-project';
-import { WorkStore } from '$core/work/work.store';
+import { SelectedWork } from '$core/work/selected-work';
 import {
+  createWorkParams,
   isRoot,
   ROOT,
   TICKET_TYPES,
-  WorkWritesStore,
+  workWriteRefusal,
+  workWriteRunRefusal,
   type RootArchetype,
-} from '$core/work/work-writes.store';
+} from '$core/work/work-writes';
+import { CREATE_WORK } from '$core/work/work-writes.operations';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
@@ -35,8 +47,8 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * Where each interaction leads is declared (epic qits-2000), and the buttons and the link carry the
  * marks of the outcomes they trigger:
  *
- * - `create-work-item`: Create sends `WorkWritesStore.create`, reads the project's work again
- *   (`WorkStore.refresh`: the service announces no creation) and leaves for the new item's page
+ * - `create-work-item`: Create sends `qitsMutation(CREATE_WORK)` (`createWork`, qits-2146), reads
+ *   the project's work again (`SelectedWork.refreshed`: the service announces no creation) and leaves for the new item's page
  *   (`created`); a refusal stays (`refused`) and shows the service's `message` with the typed form
  *   kept.
  * - `cancel-work-create`: Cancel goes back to the idea it was opened from (`toIdea`), or to the
@@ -48,7 +60,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 @Component({
   selector: 'app-work-create-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, PageLayoutComponent, QitsExit],
+  imports: [ActionButton, PageLayoutComponent, QitsEntity, QitsExit, QitsField],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -60,12 +72,26 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           @if (inspiredBy(); as ideaId) {
             <p class="m-0" data-inspired-by>
               Inspired by
-              <a
-                class="font-semibold text-accent no-underline hover:underline"
-                [qitsExit]="inspiring.open"
-                [exitParams]="{ slug: slug(), ideaId }"
-                >{{ ideaTitle() }}</a
-              >
+              @if (idea.hasValue() ? idea.value() : undefined; as read) {
+                <a
+                  class="font-semibold text-accent no-underline hover:underline"
+                  [qitsExit]="inspiring.open"
+                  [exitParams]="{ slug: slug(), ideaId }"
+                  [qitsEntity]="read"
+                  entityKey="id"
+                  [entitySource]="idea"
+                  [fieldOf]="read"
+                  [qitsField]="{ derived: ['title'] }"
+                  >{{ read.title ?? ideaId }}</a
+                >
+              } @else {
+                <a
+                  class="font-semibold text-accent no-underline hover:underline"
+                  [qitsExit]="inspiring.open"
+                  [exitParams]="{ slug: slug(), ideaId }"
+                  >{{ ideaId }}</a
+                >
+              }
             </p>
           }
           <label class="flex flex-col gap-1">
@@ -143,8 +169,8 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 export class WorkCreatePage {
   private readonly selected = inject(SelectedProject);
   private readonly platform = inject(PLATFORM_ID);
-  private readonly writes = inject(WorkWritesStore);
-  private readonly work = inject(WorkStore);
+  private readonly creating = qitsMutation(CREATE_WORK);
+  private readonly work = inject(SelectedWork);
 
   /** Create: the new item's page, or the form kept with the refusal. */
   private readonly creation = outcomes('create-work-item', {
@@ -186,14 +212,9 @@ export class WorkCreatePage {
   protected readonly heading = computed(() => `New ${this.archetype().toLowerCase()}`);
 
   /** The inspiring idea, for its title; in the browser only. */
-  private readonly idea = qitsResource(IDEA, () => {
+  protected readonly idea = qitsResource(IDEA, () => {
     const id = this.inspiredBy();
     return id && isPlatformBrowser(this.platform) ? { path: { id } } : undefined;
-  });
-
-  protected readonly ideaTitle = computed(() => {
-    const id = this.inspiredBy();
-    return (this.idea.hasValue() ? this.idea.value()?.title : undefined) ?? id;
   });
 
   protected readonly createAction = computed((): Action => ({
@@ -233,7 +254,7 @@ export class WorkCreatePage {
     if (!project || this.busy() || !this.title().trim()) return;
     this.busy.set(true);
     this.refusal.set(null);
-    const outcome = await this.writes.create({
+    const params = createWorkParams({
       archetype: this.archetype(),
       project,
       title: this.title(),
@@ -242,14 +263,21 @@ export class WorkCreatePage {
       impetus: this.impetus(),
       inspiredBy: this.inspiredBy(),
     });
-    if (!outcome.ok) {
+    const outcome = await this.creating.run(params).then(
+      (created) =>
+        created?.qualifiedId
+          ? { qualifiedId: created.qualifiedId }
+          : { refusal: workWriteRefusal(undefined, 201) },
+      (error: unknown) => ({ refusal: workWriteRunRefusal(error) }),
+    );
+    if (outcome.refusal !== undefined) {
       this.busy.set(false);
       this.creation.refused.reach();
       this.refusal.set(outcome.refusal);
       return;
     }
-    await this.work.refresh(project);
+    await this.work.refreshed();
     this.busy.set(false);
-    void this.creation.created.go({ slug: this.slug(), id: outcome.value.qualifiedId ?? '' });
+    void this.creation.created.go({ slug: this.slug(), id: outcome.qualifiedId ?? '' });
   }
 }
