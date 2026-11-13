@@ -1,14 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { NEED_STATUSES, type NeedView } from '$core/work/work-needs';
-import { WorkWritesStore, type NeedDraft } from '$core/work/work-writes.store';
+import { qitsMutation } from '@qits/angular';
+import { needsParams, workWriteRunRefusal, type NeedDraft } from '$core/work/work-writes';
+import { SET_WORK_NEEDS } from '$core/work/work-writes.operations';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 import { Chip } from '$ui/components/chip/chip';
@@ -19,7 +13,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
  * the status it needs, where that item stands now, and whether the need is met. Remove drops one;
  * Add a need asks for an item of the project (its qualified id, `qits-1897`) and a status (the walk,
  * then DROPPED: `NEED_STATUSES`). Each write sends the whole list through
- * `WorkWritesStore.setNeeds` (`patchWork` with `needs`; `[]` clears it). `changed` fires once the
+ * `qitsMutation(SET_WORK_NEEDS)` (`patchWork` with `needs`; `[]` clears it; qits-2146). `changed` fires once the
  * service took it, and the page reads the item and the project's work again: the answer does not
  * carry the needs, and no event follows the edit. A refusal (an unknown item, an ISSUE, the item
  * itself, a cycle) shows in the service's words.
@@ -89,7 +83,7 @@ import { WorkRef } from '$patterns/work/work-ref/work-ref';
   `,
 })
 export class WorkNeedsPanel {
-  private readonly writes = inject(WorkWritesStore);
+  private readonly setNeeds = qitsMutation(SET_WORK_NEEDS);
 
   /** The item's qualified id. */
   readonly qualifiedId = input.required<string>();
@@ -176,10 +170,13 @@ export class WorkNeedsPanel {
     if (this.writing()) return;
     this.writing.set(true);
     this.failure.set(null);
-    const outcome = await this.writes.setNeeds(this.qualifiedId(), needs);
+    const refusal = await this.setNeeds.run(needsParams(this.qualifiedId(), needs)).then(
+      () => undefined,
+      (error: unknown) => workWriteRunRefusal(error),
+    );
     this.writing.set(false);
-    if (!outcome.ok) {
-      this.failure.set(outcome.refusal);
+    if (refusal) {
+      this.failure.set(refusal);
       return;
     }
     this.adding.set(false);

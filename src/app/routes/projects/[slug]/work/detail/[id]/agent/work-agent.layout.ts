@@ -113,6 +113,8 @@ export class WorkAgentLayout {
   });
 
   constructor() {
+    // The item's id comes from the project's work: read it (`SelectedWork` reads only once asked).
+    this.work.want();
     if (!this.browser) return;
     let gone = false;
     effect(() => {

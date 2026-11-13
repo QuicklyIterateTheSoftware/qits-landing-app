@@ -44,7 +44,7 @@ describe('WorkAgentLayout', () => {
           { path: 'projects/:slug/work/detail/:id', children: [] },
         ]),
         { provide: SelectedProject, useValue: { slug: signal('qits') } },
-        { provide: SelectedWork, useValue: { entries, state } },
+        { provide: SelectedWork, useValue: { entries, state, want: () => undefined } },
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(workspacesClient),

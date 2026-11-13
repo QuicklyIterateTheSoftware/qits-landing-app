@@ -6,7 +6,8 @@ import { provideQitsWorkBriefs } from '@qits/ui-components';
 import { of } from 'rxjs';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
-import type { CommentEntry } from '$core/work/work-detail.consumes';
+import type { CommentEntry, WorkThread } from '$core/work/work-detail.consumes';
+import { resourceStub } from '../../../../../testing/resource-stub';
 import { goldenMaster, projectsGoldenMasters } from '../../../../../testing/golden-masters';
 import { provideTestPlatformOrigins } from '../../../../../testing/platform-origins';
 import { WorkComments } from './work-comments';
@@ -57,7 +58,10 @@ describe('WorkComments', () => {
 
   function render(comments: readonly CommentEntry[] = thread()) {
     const fixture = TestBed.createComponent(WorkComments);
-    fixture.componentRef.setInput('comments', comments);
+    fixture.componentRef.setInput(
+      'comments',
+      resourceStub<WorkThread>({ entries: comments.map((comment) => ({ comment })) }),
+    );
     fixture.componentRef.setInput('entry', { qualifiedId: ref, archetype: 'TICKET' });
     fixture.componentRef.setInput('project', slug);
     fixture.detectChanges();
@@ -226,7 +230,10 @@ describe('WorkComments, opened at a comment (qits-1660)', () => {
       ],
     });
     const fixture = TestBed.createComponent(WorkComments);
-    fixture.componentRef.setInput('comments', comments);
+    fixture.componentRef.setInput(
+      'comments',
+      resourceStub<WorkThread>({ entries: comments.map((comment) => ({ comment })) }),
+    );
     fixture.componentRef.setInput('entry', { qualifiedId: ref, archetype: 'TICKET' });
     fixture.detectChanges();
     TestBed.tick();

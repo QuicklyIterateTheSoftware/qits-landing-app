@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { hasEpicBoard } from '$core/work/epic-board';
 import { SelectedWork } from '$core/work/selected-work';
 import { SelectedProject } from '$core/projects/selected-project';
-import type { WorkDetail } from '$core/work/work-detail.store';
+import { QitsEntity, QitsField, type QitsResourceRef } from '@qits/angular';
+import type { DossierPages, EntityDetail, WorkThread } from '$core/work/work-detail.consumes';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
 import { ReorderList } from '$ui/components/reorder/reorder';
@@ -21,14 +22,32 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
 @Component({
   selector: 'app-epic-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, EpicBoard, FeatureListRow, ReorderList, WorkComments, WorkDossier],
+  imports: [
+    EpicBoard,
+    FeatureListRow,
+    Markdown,
+    QitsEntity,
+    QitsField,
+    ReorderList,
+    WorkComments,
+    WorkDossier,
+  ],
   host: { class: 'flex flex-col gap-8' },
   template: `
-    <ui-markdown
-      class="max-w-[48rem]"
-      [text]="detail()?.entity?.description ?? ''"
-      [workProject]="slug()"
-    />
+    @if (entity(); as entity) {
+      <ui-markdown
+        class="max-w-[48rem]"
+        [qitsEntity]="entity"
+        entityKey="id"
+        [entitySource]="item()"
+        [fieldOf]="entity"
+        qitsField="description"
+        [text]="entity.description ?? ''"
+        [workProject]="slug()"
+      />
+    } @else {
+      <ui-markdown class="max-w-[48rem]" text="" [workProject]="slug()" />
+    }
     <section class="flex flex-col gap-4" aria-label="Features">
       <h2 class="m-0 text-base font-semibold text-fg">Features</h2>
       @if (boarded()) {
@@ -48,13 +67,25 @@ import { WorkDossier } from '$patterns/work/detail/work-dossier/work-dossier';
         <p class="m-0 text-sm text-fg-muted" [class.hidden]="features().length">Nothing here</p>
       }
     </section>
-    <app-work-dossier [pages]="detail()?.pages ?? []" [figures]="detail()?.figures ?? {}" />
-    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" [project]="slug()" />
+    <app-work-dossier [pages]="pages()" [figures]="figures()" />
+    <app-work-comments [comments]="comments()" [entry]="entry()" [project]="slug()" />
   `,
 })
 export class EpicDetail {
   readonly entry = input.required<WorkEntry>();
-  readonly detail = input<WorkDetail>();
+  /** The item's own read (`WORK_DETAIL`) and its thread (`WORK_COMMENTS`): the page's. */
+  readonly item = input.required<QitsResourceRef<EntityDetail>>();
+  readonly comments = input.required<QitsResourceRef<WorkThread>>();
+
+  /** The item as read; none until it is in, and after a failed read. */
+  protected readonly entity = computed(() => {
+    const read = this.item();
+    return read.hasValue() ? read.value() : undefined;
+  });
+  /** Its dossier's pages (`WORK_DOSSIER`): the page's read. */
+  readonly pages = input.required<QitsResourceRef<DossierPages>>();
+  /** Where each figure its pages name loads from (`figuresOf`). */
+  readonly figures = input<Readonly<Record<string, string>>>({});
 
   /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
   protected readonly slug = inject(SelectedProject).slug;

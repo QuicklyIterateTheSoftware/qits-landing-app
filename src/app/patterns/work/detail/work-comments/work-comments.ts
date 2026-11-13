@@ -16,9 +16,23 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { commentAnchor, commentOfAnchor } from '$core/work/comment-anchor';
-import type { CommentEntry } from '$core/work/work-detail.consumes';
-import { WorkDetailStore } from '$core/work/work-detail.store';
+import {
+  QitsEntity,
+  QitsEntityList,
+  QitsField,
+  qitsMutation,
+  type QitsResourceRef,
+} from '@qits/angular';
+import type { CommentEntry, WorkThread } from '$core/work/work-detail.consumes';
+import {
+  commentRefusal,
+  commentRunRefusal,
+  editCommentParams,
+  withComment,
+} from '$core/work/work-detail';
+import { EDIT_WORK_COMMENT } from '$core/work/work-detail.operations';
 import type { WorkEntry } from '$core/work/work.consumes';
+import { ADD_WORK_COMMENT } from '$core/work/work.operations';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 import { Markdown } from '$ui/components/markdown/markdown';
@@ -46,54 +60,77 @@ type CommentWrite = 'add' | 'save';
  * box with Save and Cancel. Ported from qits-projects-frontend's thread (`entity-thread.ts`), with
  * the same request: only the body travels, the author is the session's. Comment and Save stay
  * disabled while the box is blank or a write is in flight. The answered comment shows at once
- * (`WorkDetailStore` puts it in the thread); a refusal (a 403, say) is said below, and the typed
- * text stays.
+ * (written into the thread's read, `withComment`); a refusal (a 403, say) is said below, and the
+ * typed text stays. The writes go through `qitsMutation(ADD_WORK_COMMENT)` and
+ * `qitsMutation(EDIT_WORK_COMMENT)` (qits-2146); `comments` is the work item page's read of the
+ * thread (`WORK_COMMENTS`), and each comment marks itself (`qitsEntity` by `id`) and its fields.
  */
 @Component({
   selector: 'app-work-comments',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, DatePipe, Markdown],
+  imports: [ActionButton, DatePipe, Markdown, QitsEntity, QitsEntityList, QitsField],
   host: { class: 'block' },
   template: `
     <section class="flex flex-col gap-3" aria-label="Comments">
       <h2 class="m-0 text-base font-semibold text-fg">Comments</h2>
-      <ol class="m-0 flex list-none flex-col gap-3 p-0">
-        @for (comment of comments(); track comment.id) {
-          <li
-            class="scroll-mt-6 rounded-md border px-4 py-3"
-            [class]="
-              targeted() === comment.id ? 'border-accent ring-2 ring-accent-soft' : 'border-line'
-            "
-            [id]="anchor(comment)"
-          >
-            <div class="mb-1 flex items-start justify-between gap-2">
-              <p class="m-0 text-xs text-fg-soft">
-                <span class="font-semibold text-fg">{{ authorLabel(comment) }}</span>
-                · {{ comment.createdAt | date: 'd MMM y, HH:mm' : 'UTC' }}
-              </p>
-              @if (editing() !== comment.id && comment.editable) {
-                <ui-action-button [action]="editAction(comment)" />
-              }
-            </div>
-            @if (editing() === comment.id) {
-              <textarea
-                class="block min-h-24 w-full rounded-md border border-line-strong px-2 py-1.5 text-sm"
-                rows="4"
-                aria-label="Edit the comment"
-                [value]="draft()"
-                (input)="draft.set(valueOf($event))"
-              ></textarea>
-              <div class="mt-2 flex justify-end gap-2">
-                <ui-action-button [action]="cancelAction()" />
-                <ui-action-button [action]="saveAction()" />
+      <ol class="m-0 flex list-none flex-col gap-3 p-0" [qitsEntityList]="comments()">
+        @for (entry of answer()?.entries ?? []; track entry.comment?.id) {
+          @if (entry.comment; as comment) {
+            <li
+              class="scroll-mt-6 rounded-md border px-4 py-3"
+              [class]="
+                targeted() === comment.id ? 'border-accent ring-2 ring-accent-soft' : 'border-line'
+              "
+              [id]="anchor(comment)"
+              [qitsEntity]="comment"
+              entityKey="id"
+            >
+              <div class="mb-1 flex items-start justify-between gap-2">
+                <p class="m-0 text-xs text-fg-soft">
+                  <span
+                    class="font-semibold text-fg"
+                    [fieldOf]="comment"
+                    [qitsField]="{ derived: ['authorAgentOf', 'author'] }"
+                    >{{ authorLabel(comment) }}</span
+                  >
+                  ·
+                  <span [fieldOf]="comment" [qitsField]="{ derived: ['createdAt'] }">{{
+                    comment.createdAt | date: 'd MMM y, HH:mm' : 'UTC'
+                  }}</span>
+                </p>
+                @if (editing() !== comment.id && comment.editable) {
+                  <ui-action-button
+                    [fieldOf]="comment"
+                    [qitsField]="{ derived: ['editable'] }"
+                    [action]="editAction(comment)"
+                  />
+                }
               </div>
-            } @else {
-              <ui-markdown [text]="comment.body ?? ''" [workProject]="project()" />
-            }
-          </li>
+              @if (editing() === comment.id) {
+                <textarea
+                  class="block min-h-24 w-full rounded-md border border-line-strong px-2 py-1.5 text-sm"
+                  rows="4"
+                  aria-label="Edit the comment"
+                  [value]="draft()"
+                  (input)="draft.set(valueOf($event))"
+                ></textarea>
+                <div class="mt-2 flex justify-end gap-2">
+                  <ui-action-button [action]="cancelAction()" />
+                  <ui-action-button [action]="saveAction()" />
+                </div>
+              } @else {
+                <ui-markdown
+                  [fieldOf]="comment"
+                  qitsField="body"
+                  [text]="comment.body ?? ''"
+                  [workProject]="project()"
+                />
+              }
+            </li>
+          }
         }
       </ol>
-      <p class="m-0 text-sm text-fg-muted" [class.hidden]="comments().length">No comments yet</p>
+      <p class="m-0 text-sm text-fg-muted" [class.hidden]="count()">No comments yet</p>
       <div class="flex flex-col gap-2">
         <textarea
           class="block min-h-20 w-full rounded-md border border-line-strong px-2 py-1.5 text-sm"
@@ -114,10 +151,12 @@ type CommentWrite = 'add' | 'save';
   `,
 })
 export class WorkComments {
-  private readonly store = inject(WorkDetailStore);
   private readonly injector = inject(Injector);
+  private readonly adding = qitsMutation(ADD_WORK_COMMENT);
+  private readonly editingComment = qitsMutation(EDIT_WORK_COMMENT);
 
-  readonly comments = input.required<readonly CommentEntry[]>();
+  /** The item's thread: the work item page's read (`WORK_COMMENTS`). */
+  readonly comments = input.required<QitsResourceRef<WorkThread>>();
   /** The item the thread belongs to: its qualified id addresses the writes. */
   readonly entry = input.required<Pick<WorkEntry, 'qualifiedId' | 'archetype'>>();
   /** The project's slug: the work ids a comment names link with their briefs (qits-1898). */
@@ -129,6 +168,19 @@ export class WorkComments {
   protected readonly draft = signal('');
   protected readonly writing = signal<CommentWrite | null>(null);
   protected readonly failure = signal<string | null>(null);
+
+  /** The thread's comments, oldest first; none until it is read. */
+  /** The thread as read; none until it is in, and after a failed first read. */
+  protected readonly answer = computed(() => {
+    const read = this.comments();
+    return read.hasValue() ? read.value() : undefined;
+  });
+
+  private readonly thread = computed((): readonly CommentEntry[] =>
+    (this.answer()?.entries ?? []).flatMap((e) => (e.comment ? [e.comment] : [])),
+  );
+
+  protected readonly count = computed(() => this.thread().length);
 
   /** The comment the URL's fragment names (`#comment-<id>`); undefined when it names none. */
   protected readonly targeted = computed(() => commentOfAnchor(this.fragment()));
@@ -172,7 +224,7 @@ export class WorkComments {
     effect(() => {
       const id = this.targeted();
       if (!id || id === scrolledTo) return;
-      if (this.comments().some((comment) => comment.id === id)) {
+      if (this.thread().some((comment) => comment.id === id)) {
         scrolledTo = id;
         afterNextRender(
           () => document.getElementById(commentAnchor(id))?.scrollIntoView({ block: 'start' }),
@@ -181,10 +233,10 @@ export class WorkComments {
         return;
       }
       // Only a thread that has loaded can lack it; one still loading is read already.
-      const ref = this.entry().qualifiedId;
-      if (ref && reread !== id && this.store.of(ref)?.status === 'loaded') {
+      const read = this.comments();
+      if (reread !== id && read.hasValue() && read.status() !== 'loading') {
         reread = id;
-        untracked(() => void this.store.refresh(ref));
+        untracked(() => read.reload());
       }
     });
   }
@@ -230,7 +282,9 @@ export class WorkComments {
     if (!body || this.writing()) return;
     this.writing.set('add');
     this.failure.set(null);
-    const { refusal } = await this.store.addComment(this.entry().qualifiedId ?? '', body);
+    const refusal = await this.write(() =>
+      this.adding.run({ path: { qualifiedId: this.entry().qualifiedId ?? '' }, body: { body } }),
+    );
     this.writing.set(null);
     if (refusal) {
       this.failure.set(`Could not add the comment — ${refusal}.`);
@@ -245,10 +299,8 @@ export class WorkComments {
     if (!commentId || !body || this.writing()) return;
     this.writing.set('save');
     this.failure.set(null);
-    const { refusal } = await this.store.editComment(
-      this.entry().qualifiedId ?? '',
-      commentId,
-      body,
+    const refusal = await this.write(() =>
+      this.editingComment.run(editCommentParams(this.entry().qualifiedId ?? '', commentId, body)),
     );
     this.writing.set(null);
     if (refusal) {
@@ -256,5 +308,23 @@ export class WorkComments {
       return;
     }
     this.stopEditing();
+  }
+
+  /**
+   * Runs a comment write; the answered comment goes into the thread's read (a new one last, an
+   * edited one in its place), so it shows without a second read. Why it failed, else nothing.
+   */
+  private async write(
+    run: () => Promise<{ readonly comment?: CommentEntry } | undefined>,
+  ): Promise<string | undefined> {
+    if (!this.entry().qualifiedId) return 'a comment needs some text';
+    try {
+      const comment = (await run())?.comment;
+      if (!comment) return commentRefusal(undefined, 200);
+      this.comments().update((thread) => withComment(thread, comment));
+      return undefined;
+    } catch (error) {
+      return commentRunRefusal(error);
+    }
   }
 }

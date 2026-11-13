@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { SelectedWork } from '$core/work/selected-work';
 import { SelectedProject } from '$core/projects/selected-project';
-import type { WorkDetail } from '$core/work/work-detail.store';
+import { QitsEntity, QitsField, type QitsResourceRef } from '@qits/angular';
+import type { EntityDetail, WorkThread } from '$core/work/work-detail.consumes';
 import type { WorkEntry } from '$core/work/work.consumes';
 import { Markdown } from '$ui/components/markdown/markdown';
 import { ReorderList } from '$ui/components/reorder/reorder';
@@ -15,14 +16,23 @@ import { WorkComments } from '$patterns/work/detail/work-comments/work-comments'
 @Component({
   selector: 'app-feature-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, FeatureListRow, ReorderList, WorkComments],
+  imports: [FeatureListRow, Markdown, QitsEntity, QitsField, ReorderList, WorkComments],
   host: { class: 'flex flex-col gap-8' },
   template: `
-    <ui-markdown
-      class="max-w-[48rem]"
-      [text]="detail()?.entity?.description ?? ''"
-      [workProject]="slug()"
-    />
+    @if (entity(); as entity) {
+      <ui-markdown
+        class="max-w-[48rem]"
+        [qitsEntity]="entity"
+        entityKey="id"
+        [entitySource]="item()"
+        [fieldOf]="entity"
+        qitsField="description"
+        [text]="entity.description ?? ''"
+        [workProject]="slug()"
+      />
+    } @else {
+      <ui-markdown class="max-w-[48rem]" text="" [workProject]="slug()" />
+    }
     <section class="flex flex-col gap-4" aria-label="Tasks">
       <h2 class="m-0 text-base font-semibold text-fg">Tasks</h2>
       <!-- A disabled reorder list: the row is an item of one wherever it is drawn (qits-753). -->
@@ -34,12 +44,20 @@ import { WorkComments } from '$patterns/work/detail/work-comments/work-comments'
         <app-feature-list-row [node]="node()" />
       </div>
     </section>
-    <app-work-comments [comments]="detail()?.comments ?? []" [entry]="entry()" [project]="slug()" />
+    <app-work-comments [comments]="comments()" [entry]="entry()" [project]="slug()" />
   `,
 })
 export class FeatureDetail {
   readonly entry = input.required<WorkEntry>();
-  readonly detail = input<WorkDetail>();
+  /** The item's own read (`WORK_DETAIL`) and its thread (`WORK_COMMENTS`): the page's. */
+  readonly item = input.required<QitsResourceRef<EntityDetail>>();
+  readonly comments = input.required<QitsResourceRef<WorkThread>>();
+
+  /** The item as read; none until it is in, and after a failed read. */
+  protected readonly entity = computed(() => {
+    const read = this.item();
+    return read.hasValue() ? read.value() : undefined;
+  });
 
   /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
   protected readonly slug = inject(SelectedProject).slug;

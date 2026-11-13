@@ -8,8 +8,9 @@ import {
   signal,
 } from '@angular/core';
 import type { WorkEntry } from '$core/work/work.consumes';
+import { QitsEntity, QitsField } from '@qits/angular';
 import { OUTCOME_OPTIONS, referenceRequired, type WorkOutcome } from '$core/work/work-outcome';
-import { WorkStore } from '$core/work/work.store';
+import { WorkMoves } from '$core/work/work-moves';
 import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 
@@ -18,7 +19,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * the detail page's other forms, `work-comments.ts`'s box and `release-withdraw.ts`'s reason): an
  * outcome (required — the six values the wire names, `work-outcome.ts`) and, for DUPLICATE,
  * RESOLVED_ELSEWHERE and SUPERSEDED, a reference naming the item that resolved it (a qualified id,
- * e.g. `qits-378`, or a UUID). Confirm drop sends `WorkStore.drop`, which carries both into the
+ * e.g. `qits-378`, or a UUID). Confirm drop sends `WorkMoves.drop` (`qitsMutation(MOVE_WORK)`), which carries both into the
  * move; Cancel asks nothing. A 400 from the service (an outcome the move's target does not allow,
  * a missing or forbidden reference) shows below the buttons and the typed form stays, so it can be
  * fixed and sent again.
@@ -29,7 +30,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 @Component({
   selector: 'app-work-drop',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton],
+  imports: [ActionButton, QitsEntity, QitsField],
   host: { class: 'block' },
   template: `
     <div
@@ -38,7 +39,11 @@ import { ActionButton } from '$ui/components/action-button/action-button';
       [attr.aria-label]="'Drop ' + (entry().qualifiedId ?? '')"
     >
       <p class="m-0 text-sm font-semibold text-fg">
-        Drop {{ entry().qualifiedId }} — why is it closed?
+        Drop
+        <span [qitsEntity]="entry()" entityKey="id"
+          ><span [fieldOf]="entry()" qitsField="qualifiedId">{{ entry().qualifiedId }}</span></span
+        >
+        — why is it closed?
       </p>
       <label class="flex flex-col gap-1 text-sm text-fg">
         Outcome
@@ -78,9 +83,9 @@ import { ActionButton } from '$ui/components/action-button/action-button';
   `,
 })
 export class WorkDrop {
-  private readonly store = inject(WorkStore);
+  private readonly moves = inject(WorkMoves);
 
-  /** The project the item belongs to, for `WorkStore.drop`. */
+  /** The project the item belongs to, for `WorkMoves.drop`. */
   readonly projectId = input.required<string>();
   readonly entry = input.required<WorkEntry>();
   /** The move went through: the item has left its old status. */
@@ -133,7 +138,7 @@ export class WorkDrop {
     this.writing.set(true);
     this.failure.set(null);
     const reference = this.needsReference() ? this.reference().trim() : undefined;
-    const { status, refusal } = await this.store.drop(
+    const { status, refusal } = await this.moves.drop(
       this.projectId(),
       this.entry(),
       outcome,

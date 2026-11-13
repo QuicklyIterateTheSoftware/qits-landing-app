@@ -93,7 +93,7 @@ describe('WorkItemPage', () => {
   afterEach(() => http.verify());
 
   /**
-   * Answers the item's own reads (`WorkDetailStore`): from `state`'s recordings when it is a detail
+   * Answers the item's own reads (its `qitsResource`s, qits-2146): from `state`'s recordings when it is a detail
    * state, else with 404 (an error answer is a status only), which leaves the page's body without
    * its description, dossier and comments but with its children.
    */
@@ -109,6 +109,9 @@ describe('WorkItemPage', () => {
     const entity = goldenMaster(state, 'getWork');
     items[0]?.flush(entity);
     thread.flush(goldenMaster(state, 'listWorkComments'));
+    await settle();
+    // The dossier's reads wait for the item's archetype; their resources start them in an effect.
+    TestBed.tick();
     await settle();
     if (entity.archetype === 'EPIC') {
       http
@@ -191,7 +194,11 @@ describe('WorkItemPage', () => {
     await answerDetail(state, entity.qualifiedId, detail);
     await answerWorkspaces(failHistory);
     await settle();
-    await harness.fixture.whenStable();
+    // Not `whenStable()`: a read still open (a VERIFIED ticket's wrapper closings) keeps the app
+    // unstable until the spec answers it.
+    TestBed.tick();
+    await settle();
+    harness.fixture.detectChanges();
     const element = harness.routeNativeElement as HTMLElement;
     /**
      * Each link in the children's region but the Workspace links: its text and where it leads.
@@ -511,6 +518,9 @@ describe('WorkItemPage', () => {
       vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
       vi.useRealTimers();
       await settle();
+      // A resource starts its read again from an effect: let it run.
+      TestBed.tick();
+      await settle();
       await settle();
     }
 
@@ -563,6 +573,9 @@ describe('WorkItemPage', () => {
         );
       vi.advanceTimersByTime(REFRESH_DEBOUNCE_MS);
       vi.useRealTimers();
+      await settle();
+      // A resource starts its read again from an effect: let it run.
+      TestBed.tick();
       await settle();
       await settle();
     }

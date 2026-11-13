@@ -120,7 +120,7 @@ describe('WorkItemPage (screenshots)', () => {
   });
 
   /**
-   * Answers the item's own reads (`WorkDetailStore`): from `state`'s recordings when `recorded`,
+   * Answers the item's own reads (its `qitsResource`s, qits-2146): from `state`'s recordings when `recorded`,
    * else with 404 (an error answer is a status only): the body then shows its children only. With
    * `'item'`, the item from `state`'s `getWork` and its thread and dossier 404 (a state recording
    * the item alone).
@@ -139,12 +139,18 @@ describe('WorkItemPage (screenshots)', () => {
     if (recorded === 'item') {
       thread.flush(null, { status: 404, statusText: 'Not Found' });
       await settle();
+      // The dossier's read waits for the item's archetype; its resource starts it in an effect.
+      TestBed.tick();
+      await settle();
       http
         .match(`/projects/api/work/${ref}/dossier`)
         .forEach((read) => read.flush(null, { status: 404, statusText: 'Not Found' }));
       return;
     }
     thread.flush(await goldenMaster(state, 'listWorkComments'));
+    await settle();
+    // The dossier's reads wait for the item's archetype; their resources start them in an effect.
+    TestBed.tick();
     await settle();
     if (entity.archetype === 'EPIC') {
       http
