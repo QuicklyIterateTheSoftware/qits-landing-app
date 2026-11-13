@@ -150,7 +150,12 @@ describe('CallDetails (screenshots)', () => {
     await locator.getByRole('button', { name: /getGitRepository/ }).click();
     await settle();
     http.expectOne((req) => req.url.endsWith('/golden-masters/index.json')).flush(index);
-    await settle();
+    // The popover's effect starts the recorded response's read once the index is drawn (qits-2146:
+    // a `qitsResource`, open until answered, so `whenStable()` waits for it): run it first.
+    for (let i = 0; i < 3; i++) {
+      await settle();
+      fixture.detectChanges();
+    }
     // The recorded response: no recording holds it.
     for (const request of http.match((req) => req.url.endsWith('/getGitRepository.json'))) {
       request.flush(null, { status: 404, statusText: 'Not Found' });
