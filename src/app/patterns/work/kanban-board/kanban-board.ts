@@ -15,6 +15,7 @@ import { SelectionHighlight } from '$ui/components/highlight/highlight';
 import { ReorderList } from '$ui/components/reorder/reorder';
 import { EpicCard } from '$patterns/work/epic-card/epic-card';
 import { TicketCard } from '$patterns/work/ticket-card/ticket-card';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /** How many items of `tree` (not context) sit in each of the board's columns. */
 export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
@@ -58,6 +59,8 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
     </p>
     <ui-board
       class="min-w-[40rem]"
+      [attr.data-qits-source]="marks.source"
+      data-qits-derived="status"
       [columns]="columns()"
       gutter
       uiReorderList
@@ -83,6 +86,9 @@ export function columnCounts(tree: readonly WorkNode[]): readonly number[] {
   `,
 })
 export class KanbanBoard {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   /** The board's work tree: its top-level nodes, in order. */
   readonly tree = input.required<readonly WorkNode[]>();
 

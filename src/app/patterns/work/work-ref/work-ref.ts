@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
+import { WORK_MARKS } from '$core/work/work-marks';
 import { Popover } from '$ui/components/popover/popover';
 import { Tag } from '$ui/components/tag/tag';
 import { TagLink } from '$ui/components/tag-link/tag-link';
@@ -34,23 +35,34 @@ import { TagLink } from '$ui/components/tag-link/tag-link';
   template: `
     <ui-popover #popover tapToOpen>
       <ui-tag-link
+        [attr.data-qits-source]="marks.source"
+        [attr.data-qits-item]="itemMark()"
+        data-qits-derived="archetype qualifiedId"
         [label]="label()"
         [exit]="opening.open"
         [exitParams]="params()"
         [describedBy]="popover.panelId()"
       />
-      <div popover-content class="flex w-72 flex-col gap-1">
+      <div
+        popover-content
+        class="flex w-72 flex-col gap-1"
+        [attr.data-qits-source]="marks.source"
+        [attr.data-qits-item]="itemMark()"
+      >
         <div class="flex items-center gap-2 text-xs text-fg-muted">
           <a
             class="font-mono hover:underline"
+            data-qits-field="qualifiedId"
             [qitsExit]="opening.openFromPreview"
             [exitParams]="params()"
             >{{ qualifiedId() }}</a
           >
-          <span [class.hidden]="!archetype()">{{ archetype() }}</span>
-          <ui-tag [label]="status()" [class.hidden]="!status()" />
+          <span data-qits-derived="archetype" [class.hidden]="!archetype()">{{ archetype() }}</span>
+          <ui-tag data-qits-derived="status" [label]="status()" [class.hidden]="!status()" />
         </div>
-        <p class="m-0 font-semibold" [class.hidden]="!entry()?.title">{{ entry()?.title }}</p>
+        <p class="m-0 font-semibold" data-qits-field="title" [class.hidden]="!entry()?.title">
+          {{ entry()?.title }}
+        </p>
       </div>
     </ui-popover>
   `,
@@ -86,6 +98,13 @@ export class WorkRef {
     slug: this.selected.slug() ?? '',
     id: this.qualifiedId(),
   }));
+
+  /** The data marks of the item it shows (`work-marks.ts`): none while the work does not hold it. */
+  protected readonly marks = WORK_MARKS;
+  protected readonly itemMark = computed(() => {
+    const entry = this.entry();
+    return entry ? WORK_MARKS.item(entry) : null;
+  });
 
   protected readonly status = computed(() => this.entry()?.status?.toLowerCase() ?? '');
 }

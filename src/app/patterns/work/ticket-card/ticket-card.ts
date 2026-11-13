@@ -11,6 +11,7 @@ import { ReorderItem } from '$ui/components/reorder/reorder';
 import { hasUnmetNeeds } from '$core/work/work-needs';
 import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * A ticket on the board: a card (`ui-board-card`) in its column, its id down the left edge, its
@@ -35,6 +36,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   template: `
     @let n = node();
     <ui-board-card
+      [attr.data-qits-source]="marks.source"
+      [attr.data-qits-item]="marks.item(n.entry)"
+      data-qits-derived="qualifiedId title archetype status"
       [column]="n.column ?? 0"
       [code]="n.entry.qualifiedId ?? ''"
       [title]="n.entry.title ?? ''"
@@ -49,7 +53,11 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
     >
       @if (needs()) {
         <div class="mt-1 flex flex-wrap gap-1">
-          <app-work-needs [needs]="n.entry.needs" [unmet]="n.entry.unmetNeeds" />
+          <app-work-needs
+            data-qits-derived="needs unmetNeeds"
+            [needs]="n.entry.needs"
+            [unmet]="n.entry.unmetNeeds"
+          />
         </div>
       }
       <app-workspace-link
@@ -58,11 +66,19 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         [workId]="n.entry.id"
         [qualifiedId]="n.entry.qualifiedId"
       />
-      <ui-drag-handle card-action [shown]="movable(n)" [label]="'Move ' + n.entry.qualifiedId" />
+      <ui-drag-handle
+        card-action
+        data-qits-derived="qualifiedId"
+        [shown]="movable(n)"
+        [label]="'Move ' + n.entry.qualifiedId"
+      />
     </ui-board-card>
   `,
 })
 export class TicketCard {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   readonly node = input.required<WorkNode>();
   /** The ticket is leaving the board: it shrinks away, then emits `left`. */
   readonly leaving = input(false);

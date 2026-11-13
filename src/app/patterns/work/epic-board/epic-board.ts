@@ -18,6 +18,7 @@ import { BoardRow } from '$ui/components/board/board-row';
 import { Leave } from '$ui/components/leave/leave';
 import { Tag } from '$ui/components/tag/tag';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * One epic with its own board, as the epic's page draws it on the board
@@ -51,6 +52,8 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
     @let n = node();
     @let s = slug();
     <article
+      [attr.data-qits-source]="marks.source"
+      [attr.data-qits-item]="marks.item(n.entry)"
       class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-line"
       data-highlight-target
       [attr.aria-label]="n.entry.title"
@@ -65,6 +68,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           class="relative z-40 col-start-1 row-span-2 row-start-1 flex items-end justify-center rounded-tl-xl bg-surface-inverse/40 py-4 text-fg"
         >
           <a
+            data-qits-field="qualifiedId"
             class="rotate-180 font-mono text-[0.6875rem] whitespace-nowrap text-inherit no-underline [writing-mode:vertical-rl] hover:underline"
             [qitsExit]="opening.epic"
             [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
@@ -77,11 +81,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           <!-- First for a screen reader, drawn last: at the bar's right end. -->
           <a
             class="order-last ml-auto text-right text-sm font-semibold"
+            data-qits-field="title"
             [qitsExit]="opening.epic"
             [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
             >{{ n.entry.title }}</a
           >
-          <ui-tag [label]="status()" [class.hidden]="!status()" />
+          <ui-tag data-qits-derived="status" [label]="status()" [class.hidden]="!status()" />
           <app-workspace-link [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
         </header>
       }
@@ -90,16 +95,26 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
            here the board is the end, so the box, and with it the strip, reaches them. -->
       <ui-board
         class="col-span-full row-start-2 pb-6 [&_ui-board-row:last-of-type]:mb-0"
+        data-qits-derived="status"
         [columns]="columns()"
         [pinned]="false"
         gutter
       >
         @for (row of rows(); track row.node.entry.id) {
-          <ui-board-row class="mb-4" solid [idLength]="row.node.entry.qualifiedId?.length ?? 0">
+          <ui-board-row
+            class="mb-4"
+            solid
+            [attr.data-qits-source]="marks.source"
+            [attr.data-qits-item]="marks.item(row.node.entry)"
+            [idLength]="row.node.entry.qualifiedId?.length ?? 0"
+          >
             @for (card of row.cards; track card.node.entry.id) {
               <ui-board-card
                 class="self-start!"
                 [class.opacity-60]="card.done"
+                [attr.data-qits-source]="marks.source"
+                [attr.data-qits-item]="marks.item(card.node.entry)"
+                data-qits-derived="qualifiedId title archetype status"
                 [column]="card.column"
                 [code]="card.node.entry.qualifiedId ?? ''"
                 [title]="card.node.entry.title ?? ''"
@@ -116,9 +131,12 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
                 />
               </ui-board-card>
             }
-            <span row-id class="font-mono">{{ row.node.entry.qualifiedId }}</span>
+            <span row-id class="font-mono" data-qits-field="qualifiedId">{{
+              row.node.entry.qualifiedId
+            }}</span>
             <a
               row-footer
+              data-qits-field="title"
               [qitsExit]="opening.feature"
               [exitParams]="{ slug: s, id: row.node.entry.qualifiedId ?? '' }"
               >{{ row.node.entry.title }}</a
@@ -141,6 +159,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   `,
 })
 export class EpicBoard {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   /** The epic's node: its children are its features, theirs its tasks. */
   readonly node = input.required<WorkNode>();
   /** Shows the epic's own bar; off on the epic's page, which names it already. */

@@ -9,12 +9,14 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+import { exit, outcomes, QitsExit, sourceMark } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
 import { WorkCriteriaReads, type WorkCriteria } from '$core/work/work-criteria';
 import type { WorkEntry } from '$core/work/work.consumes';
+import { WORK_MARKS } from '$core/work/work-marks';
 import { WorkMoves } from '$core/work/work-moves';
+import { WORK_CRITERIA } from '$core/work/work-detail.operations';
 import { Markdown } from '$ui/components/markdown/markdown';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -88,10 +90,13 @@ const REFINED = 'REFINED';
               <ul
                 class="m-0 list-none flex-col gap-2 p-0"
                 [class]="toSchedule().length ? 'flex' : 'hidden'"
+                [attr.data-qits-source]="marks.source"
               >
                 @for (row of toSchedule(); track row.id) {
                   <li
                     class="flex items-start gap-3 rounded-md border border-line bg-surface p-3 text-sm"
+                    [attr.data-qits-source]="marks.source"
+                    [attr.data-qits-item]="marks.item(row.entry)"
                   >
                     <input
                       type="checkbox"
@@ -122,10 +127,13 @@ const REFINED = 'REFINED';
               <ul
                 class="m-0 list-none flex-col gap-2 p-0"
                 [class]="scheduled().length ? 'flex' : 'hidden'"
+                [attr.data-qits-source]="marks.source"
               >
                 @for (row of scheduled(); track row.id) {
                   <li
                     class="flex items-start gap-3 rounded-md border border-line bg-surface p-3 text-sm"
+                    [attr.data-qits-source]="marks.source"
+                    [attr.data-qits-item]="marks.item(row.entry)"
                   >
                     <ng-container
                       *ngTemplateOutlet="item; context: { $implicit: row }"
@@ -157,6 +165,7 @@ const REFINED = 'REFINED';
           <app-work-ref [qualifiedId]="row.qualifiedId" />
           <a
             class="font-medium text-fg no-underline wrap-anywhere hover:underline"
+            data-qits-field="title"
             [qitsExit]="opening.open"
             [exitParams]="{ slug: slug() ?? '', id: row.qualifiedId }"
             >{{ row.entry.title }}</a
@@ -169,7 +178,12 @@ const REFINED = 'REFINED';
           @switch (row.criteria?.status) {
             @case ('loaded') {
               @if (row.criteria.items.length) {
-                <ul class="m-0 list-disc pl-5 text-fg">
+                <ul
+                  class="m-0 list-disc pl-5 text-fg"
+                  [attr.data-qits-source]="marks.criteria"
+                  [attr.data-qits-item]="marks.item(row.entry)"
+                  data-qits-field="acceptanceCriteria"
+                >
                   @for (criterion of row.criteria.items; track $index) {
                     <li><ui-markdown [text]="criterion" [workProject]="slug()" /></li>
                   }
@@ -220,6 +234,13 @@ export class WorkSchedulePage {
 
   /** The project's slug: the work ids a criterion names link with their briefs (qits-1898). */
   protected readonly slug = this.selected.slug;
+
+  /**
+   * The data marks (qits-2141), as plain attributes: each row is a work item of the project's work
+   * (`work-marks.ts`: `SelectedWork`'s read, which the rule cannot trace), its criteria the same
+   * item read by `WORK_CRITERIA`.
+   */
+  protected readonly marks = { ...WORK_MARKS, criteria: sourceMark(WORK_CRITERIA) };
 
   protected readonly opening = outcomes('open-scheduled-item', {
     open: exit('projects/:slug/work/detail/:id'),

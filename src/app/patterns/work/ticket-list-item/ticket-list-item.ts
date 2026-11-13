@@ -13,6 +13,7 @@ import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 import { WrapperClosingLine } from '$patterns/work/wrapper-closing/wrapper-closing';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * A ticket in a list (Backlog, the board stacked, Acceptance, Archive): the board's small card
@@ -55,6 +56,9 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
   template: `
     @let n = node();
     <ui-board-card
+      [attr.data-qits-source]="marks.source"
+      [attr.data-qits-item]="marks.item(n.entry)"
+      data-qits-derived="qualifiedId title archetype"
       [code]="n.entry.qualifiedId ?? ''"
       [title]="n.entry.title ?? ''"
       [kind]="n.entry.archetype?.toLowerCase() ?? ''"
@@ -68,9 +72,13 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       @if (status() || needs() || closesAutomatically()) {
         <div class="mt-1 flex flex-wrap gap-1">
           @if (status(); as status) {
-            <ui-tag [label]="status" />
+            <ui-tag data-qits-derived="status" [label]="status" />
           }
-          <app-work-needs [needs]="n.entry.needs" [unmet]="n.entry.unmetNeeds" />
+          <app-work-needs
+            data-qits-derived="needs unmetNeeds"
+            [needs]="n.entry.needs"
+            [unmet]="n.entry.unmetNeeds"
+          />
           @if (closesAutomatically()) {
             <app-wrapper-closing
               class="text-[0.6875rem]"
@@ -85,11 +93,19 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         [workId]="n.entry.id"
         [qualifiedId]="n.entry.qualifiedId"
       />
-      <ui-drag-handle card-action [shown]="draggable()" [label]="'Move ' + n.entry.qualifiedId" />
+      <ui-drag-handle
+        card-action
+        data-qits-derived="qualifiedId"
+        [shown]="draggable()"
+        [label]="'Move ' + n.entry.qualifiedId"
+      />
     </ui-board-card>
   `,
 })
 export class TicketListItem {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   readonly node = input.required<WorkNode>();
   readonly view = input.required<WorkListView>();
   /** The ticket is leaving the list: it shrinks away, then emits `left`. */

@@ -17,6 +17,7 @@ import { EpicBoard } from '$patterns/work/epic-board/epic-board';
 import { EpicListItem } from '$patterns/work/epic-list-item/epic-list-item';
 import { TicketListItem } from '$patterns/work/ticket-list-item/ticket-list-item';
 import type { WorkListView } from './work-list-view';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * A list of work, drawn like the board: the Backlog (`WorkGraph.tree('backlog')`), the Acceptance
@@ -57,6 +58,7 @@ import type { WorkListView } from './work-list-view';
     <div
       class="flex-col gap-12 [&_ui-board-card]:self-stretch"
       [class]="rows().length ? 'flex' : 'hidden'"
+      [attr.data-qits-source]="marks.source"
       uiReorderList
       reorderLabel="Work"
       [reorderDisabled]="!reorderable()"
@@ -90,6 +92,9 @@ import type { WorkListView } from './work-list-view';
   `,
 })
 export class WorkList {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   /** The list's work tree: its top-level nodes, in order. */
   readonly tree = input.required<readonly WorkNode[]>();
   readonly view = input.required<WorkListView>();

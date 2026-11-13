@@ -19,6 +19,7 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { InProgressViewStore, type InProgressView } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
 import { WrapperClosings } from '$core/work/wrapper-closings';
+import { WORK_SOURCE } from '$core/work/work-marks';
 import { WORK_TABS } from '$core/work/work-tabs';
 import { WorkspaceActivity } from '$core/workspaces/workspace-activity';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
@@ -103,6 +104,8 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
                   >{{ tab.label }}
                   <span
                     class="rounded-full bg-surface-muted px-1.5 text-xs font-normal text-fg-soft tabular-nums"
+                    [attr.data-qits-source]="workSource"
+                    data-qits-derived="status archetype"
                     [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
                     >{{ tab.count }}</span
                   ></a
@@ -116,6 +119,8 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
             {{ tab.label }}
             <span
               class="rounded-full bg-surface-muted px-1.5 text-xs font-normal text-fg-soft tabular-nums"
+              [attr.data-qits-source]="workSource"
+              data-qits-derived="status archetype"
               [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
               >{{ tab.count }}</span
             >
@@ -140,6 +145,8 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
                 >{{ tab.label }}
                 <span
                   class="rounded-full bg-surface-muted px-1.5 text-xs font-normal text-fg-soft tabular-nums"
+                  [attr.data-qits-source]="workSource"
+                  data-qits-derived="status archetype"
                   [class.hidden]="work.state() !== 'loaded' || tab.count === undefined"
                   >{{ tab.count }}</span
                 ></a
@@ -209,6 +216,8 @@ export class WorkLayout {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly choices = VIEW_CHOICES;
+  /** The tabs' counts are counted from the project's work (qits-2141; `work-marks.ts`). */
+  protected readonly workSource = WORK_SOURCE;
   protected readonly cog = COG;
 
   private readonly switching = outcomes('switch-work-tab', {

@@ -11,7 +11,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
-import { qitsResource, type QitsDomainEvent } from '@qits/angular';
+import { qitsResource, sourceMark, type QitsDomainEvent } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { payloadField, payloadIds } from '$core/events/refresh-on';
 import { PlatformOrigins } from '$core/platform/platform-origins';
@@ -33,6 +33,7 @@ import {
   WORK_DOSSIER,
   WORK_DOSSIER_ASSETS,
 } from '$core/work/work-detail.operations';
+import { WORK_MARKS } from '$core/work/work-marks';
 import { WorkMoves } from '$core/work/work-moves';
 import { WrapperClosings } from '$core/work/wrapper-closings';
 import type { Action, ActionGroup } from '$ui/components/action-button/action';
@@ -156,9 +157,16 @@ const notBuiltYet = (): void => undefined;
           <p
             class="m-0 flex-wrap items-center gap-2 text-sm text-fg-soft"
             [class]="entry() ? 'flex' : 'hidden'"
+            [attr.data-qits-source]="marks.source"
+            [attr.data-qits-item]="itemMark()"
           >
-            <span>{{ facts() }}</span>
-            <app-work-needs [needs]="needs()" [unmet]="unmetNeeds()" />
+            <span data-qits-derived="qualifiedId archetype status">{{ facts() }}</span>
+            <app-work-needs
+              [attr.data-qits-source]="needsSource()"
+              data-qits-derived="needs unmetNeeds"
+              [needs]="needs()"
+              [unmet]="unmetNeeds()"
+            />
             @if (closesAutomatically()) {
               <app-wrapper-closing [qualifiedId]="id()" />
             }
@@ -212,6 +220,9 @@ const notBuiltYet = (): void => undefined;
             @if (entry.archetype !== 'ISSUE') {
               <app-work-needs-panel
                 class="mt-6"
+                [attr.data-qits-source]="needsSource()"
+                [attr.data-qits-item]="itemMark()"
+                data-qits-derived="needs"
                 [qualifiedId]="id()"
                 [needs]="needs()"
                 (changed)="needsChanged()"
@@ -380,6 +391,20 @@ export class WorkItemPage {
    * project's work's.
    */
   protected readonly needs = computed(() => this.entity()?.needs ?? this.entry()?.needs ?? []);
+
+  /**
+   * The data marks of the item the header shows (qits-2141), as plain attributes: the project's
+   * work is `SelectedWork`'s read, which the rule cannot trace (`work-marks.ts`). The needs name
+   * the read they come from: the item's own once in, else the project's work.
+   */
+  protected readonly marks = WORK_MARKS;
+  protected readonly itemMark = computed(() => {
+    const entry = this.entry();
+    return entry ? WORK_MARKS.item(entry) : null;
+  });
+  protected readonly needsSource = computed(() =>
+    this.entity() ? sourceMark(WORK_DETAIL) : WORK_MARKS.source,
+  );
 
   /** How many of them are not met, from the same read as {@link needs}. */
   protected readonly unmetNeeds = computed(() => {

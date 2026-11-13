@@ -18,6 +18,7 @@ import { Tag } from '$ui/components/tag/tag';
 import { hasUnmetNeeds } from '$core/work/work-needs';
 import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * A feature in a list, as an epic's lane (`app-epic-list-item`) and a work item's page draw it: a
@@ -50,11 +51,17 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   host: { class: 'contents' },
   template: `
     @let feature = node();
-    <ui-list-row uiReorderItem [reorderItemLabel]="feature.entry.qualifiedId ?? ''">
+    <ui-list-row
+      [attr.data-qits-source]="marks.source"
+      [attr.data-qits-item]="marks.item(feature.entry)"
+      uiReorderItem
+      [reorderItemLabel]="feature.entry.qualifiedId ?? ''"
+    >
       @if (feature.children.length) {
         <!-- The tasks, a list of their own: the same gap as the row's own. -->
         <div
           class="flex flex-col gap-y-2"
+          [attr.data-qits-source]="marks.source"
           uiReorderList
           reorderLabel="Tasks"
           [reorderDisabled]="!reorderable()"
@@ -62,6 +69,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
         >
           @for (task of feature.children; track task.entry.id) {
             <ui-board-card
+              [attr.data-qits-source]="marks.source"
+              [attr.data-qits-item]="marks.item(task.entry)"
+              data-qits-derived="qualifiedId title archetype"
               [code]="task.entry.qualifiedId ?? ''"
               [title]="task.entry.title ?? ''"
               [kind]="task.entry.archetype?.toLowerCase() ?? ''"
@@ -74,9 +84,13 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               @if (taskStatus || hasUnmetNeeds(task.entry)) {
                 <div class="mt-1 flex flex-wrap gap-1">
                   @if (taskStatus) {
-                    <ui-tag [label]="taskStatus" />
+                    <ui-tag data-qits-derived="status" [label]="taskStatus" />
                   }
-                  <app-work-needs [needs]="task.entry.needs" [unmet]="task.entry.unmetNeeds" />
+                  <app-work-needs
+                    data-qits-derived="needs unmetNeeds"
+                    [needs]="task.entry.needs"
+                    [unmet]="task.entry.unmetNeeds"
+                  />
                 </div>
               }
               <app-workspace-link
@@ -87,6 +101,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
               />
               <ui-drag-handle
                 card-action
+                data-qits-derived="qualifiedId"
                 [shown]="reorderable() && movable(task)"
                 [label]="'Move ' + task.entry.qualifiedId"
               />
@@ -94,15 +109,18 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
           }
         </div>
       }
-      <span row-id class="font-mono">{{ feature.entry.qualifiedId }}</span>
+      <span row-id class="font-mono" data-qits-field="qualifiedId">{{
+        feature.entry.qualifiedId
+      }}</span>
       <a
         row-footer
+        data-qits-field="title"
         [qitsExit]="opening.feature"
         [exitParams]="{ slug: slug(), id: feature.entry.qualifiedId ?? '' }"
         >{{ feature.entry.title }}</a
       >
       @if (status(feature); as featureStatus) {
-        <ui-tag row-footer class="shrink-0" [label]="featureStatus" />
+        <ui-tag row-footer class="shrink-0" data-qits-derived="status" [label]="featureStatus" />
       }
       <app-workspace-link
         row-footer-end
@@ -111,6 +129,7 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       />
       <ui-drag-handle
         row-action
+        data-qits-derived="qualifiedId"
         [shown]="reorderable() && movable(feature)"
         [label]="'Move ' + feature.entry.qualifiedId"
       />
@@ -118,6 +137,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   `,
 })
 export class FeatureListRow {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   /** Whether a task needs an item not at its status yet: its badge then shows (epic qits-1899). */
   protected readonly hasUnmetNeeds = hasUnmetNeeds;
 

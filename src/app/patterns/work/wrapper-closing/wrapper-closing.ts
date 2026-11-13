@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { exit, outcomes, QitsExit } from '@qits/angular';
+import { exit, itemMark, outcomes, QitsExit, sourceMark } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { closingLineOf } from '$core/work/wrapper-closing';
 import { WrapperClosings } from '$core/work/wrapper-closings';
+import { WRAPPER_CLOSINGS } from '$core/work/wrapper-closings.operations';
 
 /**
  * A VERIFIED ticket's quiet line on how it will close (qits-1873), in place of a finish button
@@ -34,11 +35,15 @@ import { WrapperClosings } from '$core/work/wrapper-closings';
   template: `
     @let l = line();
     <span
+      [attr.data-qits-source]="source"
+      [attr.data-qits-item]="item()"
+      data-qits-derived="verdict step requestQualifiedId requestState approval"
       [class]="l.warning ? 'text-warning' : 'text-fg-muted'"
       [attr.data-warning]="l.warning || null"
       >{{ l.before
       }}<a
         class="relative z-10 text-accent underline"
+        data-qits-field="requestQualifiedId"
         [class.hidden]="!l.request"
         [qitsExit]="opening.open"
         [exitParams]="params()"
@@ -57,6 +62,13 @@ export class WrapperClosingLine {
   protected readonly line = computed(() =>
     closingLineOf(this.closings.closingOf(this.qualifiedId())),
   );
+
+  /**
+   * Its data marks (qits-2141), as plain attributes (the closings are a root service's read): the
+   * ticket's row of `WRAPPER_CLOSINGS` (by `ticket`, its qualified id), the line derived from it.
+   */
+  protected readonly source = sourceMark(WRAPPER_CLOSINGS);
+  protected readonly item = computed(() => itemMark('ticket', this.qualifiedId()));
 
   protected readonly opening = outcomes('open-closing-request', {
     open: exit('projects/:slug/release-requests/:requestId'),

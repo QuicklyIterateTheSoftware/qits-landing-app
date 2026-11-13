@@ -14,6 +14,7 @@ import { ReorderItem } from '$ui/components/reorder/reorder';
 import { hasUnmetNeeds } from '$core/work/work-needs';
 import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * An epic on the board, with its features and their tasks:
@@ -63,16 +64,24 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
     @let n = node();
     @let s = slug();
     <ui-board-lane
+      [attr.data-qits-source]="marks.source"
+      [attr.data-qits-item]="marks.item(n.entry)"
       collapsible
       uiReorderItem
       [reorderItemLabel]="n.entry.qualifiedId ?? ''"
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
-      <ui-drag-handle lane-action [shown]="movable(n)" [label]="'Move ' + n.entry.qualifiedId" />
+      <ui-drag-handle
+        lane-action
+        data-qits-derived="qualifiedId"
+        [shown]="movable(n)"
+        [label]="'Move ' + n.entry.qualifiedId"
+      />
       @for (tile of tiles(); track tile.column) {
         <ui-board-count
           lane-summary
+          data-qits-derived="status"
           [column]="tile.column"
           [count]="tile.count"
           [label]="tile.label"
@@ -83,23 +92,37 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
       <a
         lane-header
         class="font-semibold"
+        data-qits-field="title"
         [qitsExit]="opening.epic"
         [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
         >{{ n.entry.title }}</a
       >
-      <app-work-needs lane-tags [needs]="n.entry.needs" [unmet]="n.entry.unmetNeeds" />
+      <app-work-needs
+        lane-tags
+        data-qits-derived="needs unmetNeeds"
+        [needs]="n.entry.needs"
+        [unmet]="n.entry.unmetNeeds"
+      />
       <app-workspace-link lane-tags [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
       <a
         lane-gutter
         class="font-mono"
+        data-qits-field="qualifiedId"
         [qitsExit]="opening.epic"
         [exitParams]="{ slug: s, id: n.entry.qualifiedId ?? '' }"
         >{{ n.entry.qualifiedId }}</a
       >
       @for (feature of n.children; track feature.entry.id) {
-        <ui-board-row [idLength]="feature.entry.qualifiedId?.length ?? 0">
+        <ui-board-row
+          [attr.data-qits-source]="marks.source"
+          [attr.data-qits-item]="marks.item(feature.entry)"
+          [idLength]="feature.entry.qualifiedId?.length ?? 0"
+        >
           @for (task of feature.children; track task.entry.id) {
             <ui-board-card
+              [attr.data-qits-source]="marks.source"
+              [attr.data-qits-item]="marks.item(task.entry)"
+              data-qits-derived="qualifiedId title archetype status"
               [column]="task.column ?? 0"
               [code]="task.entry.qualifiedId ?? ''"
               [title]="task.entry.title ?? ''"
@@ -110,7 +133,11 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
             >
               @if (hasUnmetNeeds(task.entry)) {
                 <div class="mt-1 flex flex-wrap gap-1">
-                  <app-work-needs [needs]="task.entry.needs" [unmet]="task.entry.unmetNeeds" />
+                  <app-work-needs
+                    data-qits-derived="needs unmetNeeds"
+                    [needs]="task.entry.needs"
+                    [unmet]="task.entry.unmetNeeds"
+                  />
                 </div>
               }
               <app-workspace-link
@@ -122,11 +149,20 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
             </ui-board-card>
           }
           @if (verified(feature); as count) {
-            <ui-board-count row-gutter column="gutter" [count]="count" label="verified" />
+            <ui-board-count
+              row-gutter
+              data-qits-derived="status"
+              column="gutter"
+              [count]="count"
+              label="verified"
+            />
           }
-          <span row-id class="font-mono">{{ feature.entry.qualifiedId }}</span>
+          <span row-id class="font-mono" data-qits-field="qualifiedId">{{
+            feature.entry.qualifiedId
+          }}</span>
           <a
             row-footer
+            data-qits-field="title"
             [qitsExit]="opening.feature"
             [exitParams]="{ slug: s, id: feature.entry.qualifiedId ?? '' }"
             >{{ feature.entry.title }}</a
@@ -142,6 +178,9 @@ import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
   `,
 })
 export class EpicCard {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   /** Whether a task needs an item not at its status yet: its badge then shows (epic qits-1899). */
   protected readonly hasUnmetNeeds = hasUnmetNeeds;
 

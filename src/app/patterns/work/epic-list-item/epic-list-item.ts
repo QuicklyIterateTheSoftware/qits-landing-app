@@ -14,6 +14,7 @@ import { WorkNeedsBadge } from '$patterns/work/work-needs/work-needs-badge';
 import { WorkspaceLink } from '$patterns/work/workspace-link/workspace-link';
 import { FeatureListRow } from '$patterns/work/feature-list-row/feature-list-row';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
+import { WORK_MARKS } from '$core/work/work-marks';
 
 /**
  * An epic in a list (Backlog, the board stacked, Acceptance, Archive), with
@@ -70,6 +71,8 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
     @let n = node();
     @let params = { slug: slug(), id: n.entry.qualifiedId ?? '' };
     <ui-list-lane
+      [attr.data-qits-source]="marks.source"
+      [attr.data-qits-item]="marks.item(n.entry)"
       collapsible
       [collapsed]="collapsed()"
       uiReorderItem
@@ -77,20 +80,36 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       [uiLeave]="leaving()"
       (left)="left.emit()"
     >
-      <span lane-summary>{{ summary() }}</span>
-      <a lane-header class="font-semibold" [qitsExit]="opening.epic" [exitParams]="params">{{
-        n.entry.title
-      }}</a>
+      <span lane-summary data-qits-derived="status">{{ summary() }}</span>
+      <a
+        lane-header
+        class="font-semibold"
+        data-qits-field="title"
+        [qitsExit]="opening.epic"
+        [exitParams]="params"
+        >{{ n.entry.title }}</a
+      >
       @if (status(); as status) {
-        <ui-tag lane-tags [label]="status" />
+        <ui-tag lane-tags data-qits-derived="status" [label]="status" />
       }
-      <app-work-needs lane-tags [needs]="n.entry.needs" [unmet]="n.entry.unmetNeeds" />
+      <app-work-needs
+        lane-tags
+        data-qits-derived="needs unmetNeeds"
+        [needs]="n.entry.needs"
+        [unmet]="n.entry.unmetNeeds"
+      />
       <app-workspace-link lane-tags [workId]="n.entry.id" [qualifiedId]="n.entry.qualifiedId" />
-      <a lane-gutter class="font-mono" [qitsExit]="opening.epic" [exitParams]="params">{{
-        n.entry.qualifiedId
-      }}</a>
+      <a
+        lane-gutter
+        class="font-mono"
+        data-qits-field="qualifiedId"
+        [qitsExit]="opening.epic"
+        [exitParams]="params"
+        >{{ n.entry.qualifiedId }}</a
+      >
       <ui-finish-button
         lane-action
+        data-qits-derived="qualifiedId status archetype"
         [shown]="finishing.shown() && view() !== 'mixed'"
         [state]="finishing.state()"
         [label]="'Mark ' + n.entry.qualifiedId + ' done'"
@@ -98,6 +117,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
       />
       <ui-drag-handle
         lane-action
+        data-qits-derived="qualifiedId"
         [shown]="draggable() && movable(n)"
         [label]="'Move ' + n.entry.qualifiedId"
       />
@@ -105,6 +125,7 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
         <!-- The features, a list of their own: the same gap as the lane's own. -->
         <div
           class="flex flex-col gap-4"
+          [attr.data-qits-source]="marks.source"
           uiReorderList
           reorderLabel="Features"
           [reorderDisabled]="!reorderable()"
@@ -123,6 +144,9 @@ import type { WorkListView } from '$patterns/work/work-list/work-list-view';
   `,
 })
 export class EpicListItem {
+  /** The data marks of the work it draws (`work-marks.ts`). */
+  protected readonly marks = WORK_MARKS;
+
   /** The epic's node: its children are its features, theirs its tasks. */
   readonly node = input.required<WorkNode>();
   readonly view = input.required<WorkListView>();
