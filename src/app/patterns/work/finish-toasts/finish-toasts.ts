@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { WorkStore, type PendingFinish } from '$core/work/work.store';
+import type { PendingFinish } from '$core/work/moves';
+import { PendingFinishes } from '$core/work/pending-finishes';
+import { WorkMoves } from '$core/work/work-moves';
 import { Toast, ToastStack } from '$ui/components/toast/toast';
 
 /** One toast as drawn. */
@@ -33,7 +35,7 @@ function toast(id: string, pending: ShowableFinish): FinishToast {
 }
 
 /**
- * A toast for each finish the Acceptance list asked for and not settled (`WorkStore.pendingFinishes`):
+ * A toast for each finish the Acceptance list asked for and not settled (`PendingFinishes`):
  * "<id> finished" with Undo while it waits, and the failure with Dismiss if the move to DONE failed.
  * A toast lasts exactly the Undo window: once sending starts Undo no longer works, so the toast has
  * nothing left to offer, and its life must not depend on how long the network call takes (qits-1684).
@@ -58,16 +60,17 @@ function toast(id: string, pending: ShowableFinish): FinishToast {
   `,
 })
 export class FinishToasts {
-  private readonly store = inject(WorkStore);
+  private readonly pending = inject(PendingFinishes);
+  private readonly moves = inject(WorkMoves);
 
   protected readonly toasts = computed(() =>
-    Object.entries(this.store.pendingFinishes()).flatMap(([id, pending]) =>
+    Object.entries(this.pending.all()).flatMap(([id, pending]) =>
       showable(pending) ? [toast(id, pending)] : [],
     ),
   );
 
   protected act(t: FinishToast): void {
-    if (t.failed) this.store.dismissFinish(t.id);
-    else this.store.undoFinish(t.id);
+    if (t.failed) this.moves.dismissFinish(t.id);
+    else this.moves.undoFinish(t.id);
   }
 }

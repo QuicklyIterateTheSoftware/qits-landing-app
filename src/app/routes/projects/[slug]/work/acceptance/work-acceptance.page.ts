@@ -39,4 +39,9 @@ export class WorkAcceptancePage {
   protected readonly acceptance = computed(() =>
     this.work.graph().tree('acceptance', { withoutEpicBoards: this.views.view() === 'epics' }),
   );
+
+  constructor() {
+    // The open project's work is read once a page wants it (`SelectedWork`, qits-2146).
+    this.work.want();
+  }
 }

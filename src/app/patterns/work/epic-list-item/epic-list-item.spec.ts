@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { SelectedProject } from '$core/projects/selected-project';
 import type { WorkEntry } from '$core/work/work.consumes';
-import { WorkStore } from '$core/work/work.store';
+import { WorkMoves } from '$core/work/work-moves';
 import type { WorkNode } from '$core/work/work-tree';
 import type { WorkListView } from '$patterns/work/work-list/work-list-view';
 import { ReorderList } from '$ui/components/reorder/reorder';
@@ -37,7 +37,7 @@ describe('EpicListItem', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: WorkStore, useValue: { finishing: signal({}), finishLater } },
+        { provide: WorkMoves, useValue: { finishing: signal({}), finishLater } },
         {
           provide: SelectedProject,
           useValue: { project: signal({ id: 'p-1' }), slug: signal('qits') },

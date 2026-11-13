@@ -2,7 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { InProgressViewStore } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
-import { WorkspacesStore } from '$core/workspaces/workspaces.store';
+import { WorkspaceActivity } from '$core/workspaces/workspace-activity';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { EpicBoard } from '$patterns/work/epic-board/epic-board';
 import { KanbanBoard } from '$patterns/work/kanban-board/kanban-board';
@@ -28,7 +28,8 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
  * epics' subtrees first, then the rest. Both are always rendered and switched by class, so a server
  * render hydrates as is.
  *
- * Work an agent is on (an ACTIVE agent in qits-workspaces, `WorkspacesStore.loadAgents`) is in
+ * Work an agent is on (an ACTIVE agent in qits-workspaces, `WorkspaceActivity.agents`, a root `qitsResource`
+ * this page wants) is in
  * progress too, whatever its status. On a board status it is on the board already. Before the board
  * ("Agents on earlier work"): such work still REPORTED or REFINED. After it ("Agents on later
  * work"): such work VERIFIED, DONE or DROPPED. Each is drawn like the lists, with its own status,
@@ -86,7 +87,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 })
 export class WorkInProgressPage {
   protected readonly work = inject(SelectedWork);
-  private readonly workspaces = inject(WorkspacesStore);
+  private readonly workspaces = inject(WorkspaceActivity);
   private readonly views = inject(InProgressViewStore);
 
   /** Whether the epic boards view is in use; else the inline one. */
@@ -117,10 +118,12 @@ export class WorkInProgressPage {
   );
 
   constructor() {
+    // The open project's work is read once a page wants it (`SelectedWork`, qits-2146).
+    this.work.want();
     // In the browser only, as the work: the server render holds no token to send. The
     // layout's `follow` reads the agents again after work moves.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
-      void this.workspaces.loadAgents();
+      this.workspaces.wantAgents();
     }
   }
 }

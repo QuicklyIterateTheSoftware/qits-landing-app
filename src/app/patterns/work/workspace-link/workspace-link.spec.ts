@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { client as workspacesClient } from '../../../api/workspaces/client.gen';
 import { provideHeyApiClient } from '../../../api/workspaces/client/client.gen';
 import { SelectedProject } from '$core/projects/selected-project';
-import { WorkspacesStore } from '$core/workspaces/workspaces.store';
+import { WorkspaceActivity } from '$core/workspaces/workspace-activity';
 import {
   workspacesGoldenMaster,
   workspacesGoldenMasters,
@@ -48,12 +48,14 @@ describe('WorkspaceLink', () => {
 
   async function render(workId: string, loaded = true) {
     if (loaded) {
-      const load = TestBed.inject(WorkspacesStore).load();
+      TestBed.inject(WorkspaceActivity).wantOpen();
+      TestBed.tick();
       await settle();
       http
         .expectOne('/workspaces/api/work/workspaces')
         .flush(workspacesGoldenMaster(BOUND, 'listOpenWorkspaces'));
-      await load;
+      await settle();
+      TestBed.tick();
     }
     const fixture = TestBed.createComponent(Host);
     fixture.componentRef.setInput('workId', workId);

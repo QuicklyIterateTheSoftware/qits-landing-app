@@ -12,9 +12,9 @@ import {
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { SelectedWork } from '$core/work/selected-work';
-import { WorkDetailStore, type WorkCriteria } from '$core/work/work-detail.store';
+import { WorkCriteriaReads, type WorkCriteria } from '$core/work/work-criteria';
 import type { WorkEntry } from '$core/work/work.consumes';
-import { WorkStore } from '$core/work/work.store';
+import { WorkMoves } from '$core/work/work-moves';
 import { Markdown } from '$ui/components/markdown/markdown';
 import { Spinner } from '$ui/components/spinner/spinner';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -40,7 +40,7 @@ const REFINED = 'REFINED';
 /**
  * The Schedule tab, at `/projects/<slug>/work/schedule`: where a person decides which refined work
  * an agent may start (qits-887). Two lists, epics and tickets only (a feature or a task moves with
- * its epic), each with its acceptance criteria (`WorkDetailStore.loadCriteria`, one read per item:
+ * its epic), each with its acceptance criteria (`WorkCriteriaReads`, one `getWork` read per item:
  * the project's work list does not carry them):
  *
  * - **To schedule**: every REFINED epic and ticket. The person ticks several and confirms
@@ -200,8 +200,8 @@ const REFINED = 'REFINED';
 export class WorkSchedulePage {
   protected readonly work = inject(SelectedWork);
   private readonly selected = inject(SelectedProject);
-  private readonly store = inject(WorkStore);
-  private readonly details = inject(WorkDetailStore);
+  private readonly moves = inject(WorkMoves);
+  private readonly criteria = inject(WorkCriteriaReads);
 
   private readonly lists = computed(() => this.work.graph().scheduling());
 
@@ -226,6 +226,8 @@ export class WorkSchedulePage {
   });
 
   constructor() {
+    // The open project's work is read once a page wants it (`SelectedWork`, qits-2146).
+    this.work.want();
     // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
       effect(() => {
@@ -234,7 +236,7 @@ export class WorkSchedulePage {
           e.qualifiedId ? [e.qualifiedId] : [],
         );
         untracked(() => {
-          for (const ref of refs) void this.details.loadCriteria(ref);
+          for (const ref of refs) this.criteria.read(ref);
         });
       });
     }
@@ -253,21 +255,20 @@ export class WorkSchedulePage {
     const projectId = this.selected.project()?.id;
     const entries = this.chosen();
     if (!projectId || !entries.length) return;
-    await this.store.transitionAll(projectId, entries, SCHEDULED);
-    const refusals = this.store.refusals();
+    await this.moves.transitionAll(projectId, entries, SCHEDULED);
+    const refusals = this.moves.refusals();
     this.picked.update((picked) => new Set([...picked].filter((id) => refusals[id])));
   }
 
   /** Moves `entry` back to REFINED. */
   protected unschedule(entry: WorkEntry): void {
     const projectId = this.selected.project()?.id;
-    if (projectId) void this.store.transition(projectId, entry, REFINED);
+    if (projectId) void this.moves.transition(projectId, entry, REFINED);
   }
 
   private rows(entries: readonly WorkEntry[]): readonly ScheduleRow[] {
-    const moving = this.store.transitioning();
-    const refusals = this.store.refusals();
-    const criteria = this.details.criteria();
+    const moving = this.moves.transitioning();
+    const refusals = this.moves.refusals();
     return entries.flatMap((entry) => {
       const { id, qualifiedId } = entry;
       if (!id || !qualifiedId) return [];
@@ -276,7 +277,7 @@ export class WorkSchedulePage {
           entry,
           id,
           qualifiedId,
-          criteria: criteria[qualifiedId],
+          criteria: this.criteria.of(qualifiedId),
           refusal: refusals[id] ?? '',
           moving: moving[id] === 'running',
         },

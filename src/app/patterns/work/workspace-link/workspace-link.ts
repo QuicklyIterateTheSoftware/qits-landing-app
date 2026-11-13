@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { exit, outcomes } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
-import { WorkspacesStore } from '$core/workspaces/workspaces.store';
+import { WorkspaceActivity } from '$core/workspaces/workspace-activity';
 import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
 
 /**
  * A "Workspace" link to a work item's agent, `/projects/<slug>/work/detail/<qualified id>/agent`
  * (epic qits-1230), which leads on to its ACTIVE agent's page (`agents/<agent id>`, epic
  * qits-1681): the link knows the item, not its agent. It is the declared exit `open-item-workspace`
- * `open` (epic qits-2000). Shown only while the item has an ACTIVE workspace (`WorkspacesStore.hasOpen`); otherwise
- * it hides itself. The page loads the open workspaces once (`WorkspacesStore.load()`); the link
+ * `open` (epic qits-2000). Shown only while the item has an ACTIVE workspace (`WorkspaceActivity.hasOpen`); otherwise
+ * it hides itself. The page wants the open workspaces (`WorkspaceActivity.wantOpen()`, one read for the app); the link
  * costs no request.
  *
  * `variant` is `ui-tag-link`'s: `tag` among an item's tags (an epic's lane, a feature row's
@@ -35,7 +35,7 @@ export class WorkspaceLink {
   readonly qualifiedId = input.required<string | undefined>();
   readonly variant = input<TagLinkVariant>('tag');
 
-  private readonly workspaces = inject(WorkspacesStore);
+  private readonly workspaces = inject(WorkspaceActivity);
   private readonly selected = inject(SelectedProject);
 
   protected readonly shown = computed(() => this.workspaces.hasOpen(this.workId()));

@@ -100,6 +100,9 @@ describe('WorkLayout', () => {
         return count.classList.contains('hidden') ? undefined : Number(count.textContent);
       });
     const answered = async (state: string) => {
+      // A resource starts its read (again) from an effect: let it run.
+      TestBed.tick();
+      await settle();
       http.expectOne(entities).flush(goldenMaster(state, 'listProjectWork'));
       await settle();
       await harness.fixture.whenStable();

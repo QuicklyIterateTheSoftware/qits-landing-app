@@ -18,9 +18,9 @@ import { exit, outcomes, QitsExit, type ExitOutcome } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 import { InProgressViewStore, type InProgressView } from '$core/work/in-progress-view';
 import { SelectedWork } from '$core/work/selected-work';
-import { WrapperClosingsStore } from '$core/work/wrapper-closings.store';
+import { WrapperClosings } from '$core/work/wrapper-closings';
 import { WORK_TABS } from '$core/work/work-tabs';
-import { WorkspacesStore } from '$core/workspaces/workspaces.store';
+import { WorkspaceActivity } from '$core/workspaces/workspace-activity';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 
 /** A gear's outline on a 24×24 grid, as `ui-automation-cog` draws its cog. */
@@ -56,12 +56,12 @@ const VIEW_CHOICES: readonly { readonly view: InProgressView; readonly label: st
  * outlet (and the page the outlet renders beside it) sets `--app-pin-top` to that plus the tabs'
  * height, measured in the browser (0 on the server).
  *
- * The pages share the open project's work (`SelectedWork`, one request per project), so moving
- * between them fetches nothing. The layout keeps that work current while any of them is open.
- * It also loads the platform's open workspaces once (`WorkspacesStore`), for the cards' Workspace
- * links, and keeps them current the same way. The VERIFIED tickets' lines read the project's
- * wrapper closings (`app-wrapper-closing`, qits-1873); the layout keeps those current too, once read
- * (`WrapperClosingsStore.follow`).
+ * The pages share the open project's work (`SelectedWork`, one root `qitsResource`, one request
+ * per project), so moving between them fetches nothing. The layout keeps that work current while
+ * any of them is open. It also wants the platform's open workspaces (`WorkspaceActivity`, a root
+ * `qitsResource` read once), for the cards' Workspace links, and keeps them current the same way.
+ * The VERIFIED tickets' lines read the project's wrapper closings (`app-wrapper-closing`,
+ * qits-1873); the layout keeps those current too, once read (`WrapperClosings.follow`).
  *
  * While In Progress is the open page, a gear opens that page's view setting (qits-2051,
  * `InProgressViewStore`): a radio group, Epic boards or Inline, applied at once and kept in the
@@ -287,11 +287,11 @@ export class WorkLayout {
       destroy.onDestroy(() => observer.disconnect());
     });
     this.work.followTransitions(destroy);
-    inject(WrapperClosingsStore).follow(destroy, () => this.selected.project()?.id);
+    inject(WrapperClosings).follow(destroy);
     // In the browser only, as the work: the server render holds no token to send.
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
-      const workspaces = inject(WorkspacesStore);
-      void workspaces.load();
+      const workspaces = inject(WorkspaceActivity);
+      workspaces.wantOpen();
       workspaces.follow(destroy);
     }
   }

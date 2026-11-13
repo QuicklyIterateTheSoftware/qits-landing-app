@@ -27,4 +27,9 @@ export class WorkRefinementPage {
   protected readonly work = inject(SelectedWork);
 
   protected readonly backlog = computed(() => this.work.graph().tree('backlog'));
+
+  constructor() {
+    // The open project's work is read once a page wants it (`SelectedWork`, qits-2146).
+    this.work.want();
+  }
 }
