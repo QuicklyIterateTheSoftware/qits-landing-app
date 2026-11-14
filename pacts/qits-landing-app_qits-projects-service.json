@@ -8475,6 +8475,137 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
+            "operationId": "listAgents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-ui-builder-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-ui-builder-agent: listAgents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project whose named agent is running",
+          "params": {
+            "name": "ui-builder",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/agents",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/agents"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "agents": [
+              {
+                "commandId": "desk-command-1",
+                "name": "desk",
+                "state": "IDLE"
+              },
+              {
+                "commandId": "desk-command-1",
+                "name": "desk",
+                "state": "IDLE"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.agents": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.agents[*].commandId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.agents[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.agents[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
             "operationId": "overrideReleaseRequestUpstream"
           },
           "qits-trigger": {
@@ -9435,6 +9566,122 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "promptAgent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "prompt-ui-builder-agent",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "prompt-ui-builder-agent: promptAgent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project whose named agent is running",
+          "params": {
+            "name": "ui-builder",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "text": "Pitch a calmer header."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/agents/${name}/prompt",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/agents/ui-builder/prompt"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "delivered": true,
+            "position": null,
+            "queued": false,
+            "state": "IDLE"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.delivered": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.queued": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             }

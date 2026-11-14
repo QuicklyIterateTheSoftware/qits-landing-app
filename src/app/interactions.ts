@@ -720,6 +720,18 @@ export const INTERACTIONS = {
   'open-entity-relation':
     'An entity’s page opens the entity it projects, or a state recording its operation',
   /**
+   * `agent-dialog.ts` via `NAMED_AGENTS` (qits-2157): the UI builder's Agent action opens the
+   * dialog, which reads the project's named agents for the ui-builder agent's state and the
+   * command whose terminal it attaches, again after each `NamedAgentStateChanged` of the project.
+   */
+  'open-ui-builder-agent':
+    'The UI builder’s Agent action shows the ui-builder agent and its terminal',
+  /**
+   * `agent-dialog.ts` via `PROMPT_NAMED_AGENT` (qits-2157): Send in the agent dialog prompts the
+   * ui-builder agent with the opened context (`openedContext`) and the person's text.
+   */
+  'prompt-ui-builder-agent': 'Send in the UI builder’s agent dialog prompts the ui-builder agent',
+  /**
    * `ui-builder.page.ts`: an entity's entity page from the UI builder: the ↗ of an entity in the
    * Entities tab (`listedEntity`), the picked entity's name above its routes (`pickedEntity`), the
    * ↗ of an entity the route touches (`routeEntity`). Navigates only, and names no pact (epic
