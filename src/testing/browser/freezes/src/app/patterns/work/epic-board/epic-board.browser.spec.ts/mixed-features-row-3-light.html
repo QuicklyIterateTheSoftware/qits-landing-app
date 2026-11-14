@@ -52,7 +52,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .relative { position: relative; }
 .inset-y-0 { inset-block: 0px; }
 .left-full { left: 100%; }
-.z-10 { z-index: 10; }
 .col-span-full { grid-column: 1 / -1; }
 .row-start-2 { grid-row-start: 2; }
 .mt-2 { margin-top: calc(var(--spacing) * 2); }
@@ -62,7 +61,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .flex { display: flex; }
 .grid { display: grid; }
 .hidden { display: none; }
-.inline-block { display: inline-block; }
 .min-h-24 { min-height: calc(var(--spacing) * 24); }
 .min-h-\[max\(6\.75rem\,calc\(var\(--row-id-chars\,0\)\*0\.375rem\+2rem\)\)\] { min-height: max(6.75rem, calc(var(--row-id-chars,0) * 0.375rem + 2rem)); }
 .w-6 { width: calc(var(--spacing) * 6); }
@@ -88,7 +86,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .bg-surface\/20 { background-color: color-mix(in oklab, var(--color-surface) 20%, transparent); }
 }
 .p-4 { padding: calc(var(--spacing) * 4); }
-.px-2\.5 { padding-inline: calc(var(--spacing) * 2.5); }
 .py-1 { padding-block: var(--spacing); }
 .pt-2 { padding-top: calc(var(--spacing) * 2); }
 .pr-2 { padding-right: calc(var(--spacing) * 2); }
@@ -97,14 +94,10 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .font-mono { font-family: var(--font-mono); }
 .text-xs { font-size: var(--text-xs); line-height: var(--tw-leading, var(--text-xs--line-height)); }
 .text-\[0\.625rem\] { font-size: 0.625rem; }
-.text-\[0\.6875rem\] { font-size: 0.6875rem; }
-.leading-4 { --tw-leading: calc(var(--spacing) * 4); line-height: calc(var(--spacing) * 4); }
 .leading-none { --tw-leading: 1; line-height: 1; }
-.font-medium { --tw-font-weight: var(--font-weight-medium); font-weight: var(--font-weight-medium); }
 .wrap-anywhere { overflow-wrap: anywhere; }
 .whitespace-nowrap { white-space: nowrap; }
 .text-fg { color: var(--color-fg); }
-.no-underline { text-decoration-line: none; }
 .ring-1 { --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor); box-shadow: var(--tw-inset-shadow),
       var(--tw-inset-ring-shadow),
       var(--tw-ring-offset-shadow),
@@ -113,9 +106,6 @@ button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-se
 .ring-line { --tw-ring-color: var(--color-line); }
 .\[writing-mode\:vertical-rl\] { writing-mode: vertical-rl; }
 :is(.\*\:shrink-0 > *) { flex-shrink: 0; }
-@media (hover: hover) {
-.hover\:underline:hover { text-decoration-line: underline; }
-}
 .\[\&_ui-board-row\:last-of-type\]\:mb-0 ui-board-row:last-of-type { margin-bottom: 0px; }
 .\[\&\>\*\]\:min-w-0 > * { min-width: 0px; }
 .\[\&\>\[row-footer-end\]\]\:ml-auto > [row-footer-end] { margin-left: auto; }
@@ -196,4 +186,4 @@ body { background: var(--color-surface); color: var(--color-fg); font-family: sy
 @font-face { font-family: "Inter Test"; font-weight: 600; src: url("../../../../../../assets/inter-latin-600-normal.woff2") format("woff2"); }
 html, body { margin: 0px; background: var(--color-surface); color: var(--color-fg); font-family: "Inter Test", sans-serif; font-size: 16px; -webkit-font-smoothing: antialiased; }
 *, ::before, ::after { animation: auto ease 0s 1 normal none running none !important; transition: none !important; caret-color: transparent !important; }
-</style></head><body><div id="f0"><ng-component class="block w-[48rem] p-4"><app-epic-board class="block"><article data-highlight-target="" class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-line" data-qits-source="qits-projects-service#listProjectWork" data-qits-item="id=00000000-0000-4000-8000-000000000001" aria-label="Epic with mixed features"><ui-board data-qits-derived="status" gutter="" class="block col-span-full row-start-2 pb-6 [&amp;_ui-board-row:last-of-type]:mb-0"><div class="relative"><div class="relative -mb-6 grid min-h-24 grid-flow-row pt-2" style="grid-template-columns: 1.75rem repeat(5, minmax(0px, 1fr)) 1.75rem;"><ui-board-row data-highlight-target="" solid="" class="relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 pt-2 ring-1 ring-line has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))] mb-4 bg-surface/20" data-qits-source="qits-projects-service#listProjectWork" data-qits-item="id=00000000-0000-4000-8000-000000000008" style="--row-id-chars: 19; grid-column: 2 / span 5;"><span class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 text-[0.625rem] leading-none whitespace-nowrap text-fg *:shrink-0 [&amp;&gt;[row-gutter]]:mt-auto [&amp;&gt;[row-gutter]]:rounded-br-xl bg-surface-active"><span class="mt-2 rotate-180 [writing-mode:vertical-rl]"><span row-id="" data-qits-field="qualifiedId" class="font-mono">contract-00000001-6</span></span></span><div class="col-span-full flex self-end items-baseline justify-start gap-2 py-1 pr-2 pl-2 text-xs wrap-anywhere [&amp;&gt;*]:min-w-0 text-fg [&amp;&gt;a]:text-inherit [&amp;&gt;a]:no-underline [&amp;&gt;a]:after:absolute [&amp;&gt;a]:after:inset-0 [&amp;&gt;a]:after:-right-6 [&amp;&gt;a]:after:rounded-br-xl [&amp;&gt;a]:after:transition-shadow [&amp;&gt;a]:after:duration-150 [&amp;&gt;a]:hover:underline [&amp;&gt;a]:hover:after:shadow-md [&amp;&gt;[row-footer-end]]:ml-auto [&amp;&gt;[row-footer-end]]:shrink-0 bg-surface-active"><a row-footer="" data-qits-field="title" href="/projects/contract-00000001/work/detail/contract-00000001-6" data-qits-outcome="open-epic-board:feature">Refined feature</a><app-workspace-link row-footer-end="" class="hidden"><ui-tag-link label="Workspace" class="relative z-10 inline-block"><a class="block text-[0.6875rem] no-underline hover:underline font-medium leading-4 px-2.5 text-fg wrap-anywhere" href="/projects/contract-00000001/work/detail/contract-00000001-6/agent" data-qits-outcome="open-item-workspace:open" style="background-color: light-dark(oklch(0.85 0.11 334), oklch(0.48 0.1 334));">Workspace</a></ui-tag-link></app-workspace-link></div></ui-board-row></div></div></ui-board></article></app-epic-board></ng-component></div></body></html>
+</style></head><body><div id="f0"><ng-component class="block w-[48rem] p-4"><app-epic-board class="block"><article data-highlight-target="" class="grid grid-cols-[1.75rem_minmax(0,1fr)] rounded-tl-xl ring-1 ring-line" data-qits-source="qits-projects-service#listProjectWork" data-qits-item="id=00000000-0000-4000-8000-000000000001" aria-label="Epic with mixed features"><ui-board data-qits-derived="status" gutter="" class="block col-span-full row-start-2 pb-6 [&amp;_ui-board-row:last-of-type]:mb-0"><div class="relative"><div class="relative -mb-6 grid min-h-24 grid-flow-row pt-2" style="grid-template-columns: 1.75rem repeat(5, minmax(0px, 1fr)) 1.75rem;"><ui-board-row data-highlight-target="" solid="" class="relative grid min-h-[max(6.75rem,calc(var(--row-id-chars,0)*0.375rem+2rem))] grid-flow-row-dense grid-cols-subgrid grid-rows-[1fr] gap-y-2 pt-2 ring-1 ring-line has-[[row-gutter]]:min-h-[max(7.75rem,calc(var(--row-id-chars,0)*0.375rem+3.5rem))] mb-4 bg-surface/20" data-qits-source="qits-projects-service#listProjectWork" data-qits-item="id=00000000-0000-4000-8000-000000000008" style="--row-id-chars: 19; grid-column: 2 / span 5;"><span class="absolute inset-y-0 left-full flex w-6 flex-col items-center gap-2 rounded-br-xl pt-2 text-[0.625rem] leading-none whitespace-nowrap text-fg *:shrink-0 [&amp;&gt;[row-gutter]]:mt-auto [&amp;&gt;[row-gutter]]:rounded-br-xl bg-surface-active"><span class="mt-2 rotate-180 [writing-mode:vertical-rl]"><span row-id="" data-qits-field="qualifiedId" class="font-mono">contract-00000001-6</span></span></span><div class="col-span-full flex self-end items-baseline justify-start gap-2 py-1 pr-2 pl-2 text-xs wrap-anywhere [&amp;&gt;*]:min-w-0 text-fg [&amp;&gt;a]:text-inherit [&amp;&gt;a]:no-underline [&amp;&gt;a]:after:absolute [&amp;&gt;a]:after:inset-0 [&amp;&gt;a]:after:-right-6 [&amp;&gt;a]:after:rounded-br-xl [&amp;&gt;a]:after:transition-shadow [&amp;&gt;a]:after:duration-150 [&amp;&gt;a]:hover:underline [&amp;&gt;a]:hover:after:shadow-md [&amp;&gt;[row-footer-end]]:ml-auto [&amp;&gt;[row-footer-end]]:shrink-0 bg-surface-active"><a row-footer="" data-qits-field="title" href="/projects/contract-00000001/work/detail/contract-00000001-6" data-qits-outcome="open-epic-board:feature">Refined feature</a><app-workspace-link row-footer-end="" class="hidden"></app-workspace-link></div></ui-board-row></div></div></ui-board></article></app-epic-board></ng-component></div></body></html>
