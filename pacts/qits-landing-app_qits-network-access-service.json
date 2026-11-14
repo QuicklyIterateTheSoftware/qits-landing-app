@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "add-network-device",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "network-access"
           }
         }
       },
@@ -289,7 +290,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-device-app-config",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "network-access"
           }
         }
       },

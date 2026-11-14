@@ -2,7 +2,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { page, userEvent } from 'vitest/browser';
 import { WIREGUARD_KEYS } from '$core/network-access/wireguard-keys';
-import { goldenMaster } from '../../../testing/browser/golden-master';
+import { goldenMaster, goldenMasterString } from '../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute, type OpenedRoute } from '../../../testing/browser/app-route';
 import { fixedWireGuardKeys } from '../../../testing/wireguard-keys';
 
@@ -16,7 +16,7 @@ import { fixedWireGuardKeys } from '../../../testing/wireguard-keys';
  * `createPeer`'s public key), so its QR code is the same every run. Its add answers with the
  * recorded `createPeer` ("an announced private edge"), whose peer is the recorded device peer (the
  * same frozen id), so the config read answers with that peer's recorded `getPeerAppConfig` ("a
- * device peer behind an announced private edge"). A refusal is a status and the service's
+ * device peer behind an announced private edge"), a JSON string read as text (`goldenMasterString`). A refusal is a status and the service's
  * `{ message }`.
  */
 describe('NetworkAccessPage (screenshots)', () => {
@@ -140,7 +140,7 @@ describe('NetworkAccessPage (screenshots)', () => {
     http
       .expectOne('/network-access/api/peers/00000000-0000-4000-8000-000000000001/app-config')
       .flush(
-        await goldenMaster(
+        await goldenMasterString(
           'a device peer behind an announced private edge',
           'getPeerAppConfig',
           'qits-network-access',

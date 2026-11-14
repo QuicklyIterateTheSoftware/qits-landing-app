@@ -50,3 +50,20 @@ export const goldenMasterText = fromGoldenMasterTexts(
     operationId,
   }),
 );
+
+/**
+ * A text body `provider` (default qits-projects) recorded as a JSON string, such as
+ * qits-network-access' WireGuard configs (`text/plain` on the wire, `getPeerAppConfig`; qits-2262):
+ * the string the recording holds, registered as a text recording. `goldenMasterText` would give the
+ * file as it is, quotes and escapes included. A spec `flush(...)`es it as it is, to a request read
+ * as text.
+ */
+export const goldenMasterString = fromGoldenMasterTexts(
+  (state: string, operationId: string, provider?: Provider) =>
+    commands.goldenMaster<string>(state, operationId, provider),
+  (state, operationId, provider = 'qits-projects') => ({
+    provider: REPOSITORY[provider],
+    state,
+    operationId,
+  }),
+);
