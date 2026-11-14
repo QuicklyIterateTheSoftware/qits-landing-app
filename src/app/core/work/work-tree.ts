@@ -239,8 +239,10 @@ export class WorkGraph {
     for (const entry of this.entries) {
       // An issue is not work: the Desk page shows it (qits-1819). Campaigns are retired (epic
       // qits-1899): a CAMPAIGN row a read still carries, until qits-projects deletes them
-      // (qits-1908), is drawn nowhere.
-      if (!entry.id || entry.archetype === 'ISSUE' || entry.archetype === 'CAMPAIGN') continue;
+      // (qits-1908), is drawn nowhere. The client no longer names CAMPAIGN (qits-1908 dropped it
+      // from the spec), so the guard compares the wire string.
+      const archetype: string | undefined = entry.archetype;
+      if (!entry.id || archetype === 'ISSUE' || archetype === 'CAMPAIGN') continue;
       if (!matches(entry)) continue;
       for (let id: string | undefined = entry.id; id; id = this.parentOf.get(id)) {
         included.add(id);

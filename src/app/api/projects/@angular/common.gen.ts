@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AddWorkMemberData, AddWorkMemberResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveMilestoneCriterionData, ApproveMilestoneCriterionResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ApproveWorkMemberCriterionData, ApproveWorkMemberCriterionResponse, ArchiveIdeaData, ArchiveIdeaResponse, ArchiveRepositoryData, ArchiveRepositoryResponse, AttachWorkMilestoneData, AttachWorkMilestoneResponse, BackupResetRepositoryData, BackupResetRepositoryResponse, CollectTagsData, CollectTagsResponse, CreateIdeaData, CreateIdeaResponse, CreateMilestoneData, CreateMilestoneResponse, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiAgentMcpCatalogCredentialsByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DetachWorkMilestoneData, DetachWorkMilestoneResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetBranchDeliveriesData, GetBranchDeliveriesResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetIdeaData, GetIdeaResponse, GetMilestoneData, GetMilestoneResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogCredentialsData, GetProjectsApiAgentMcpCatalogCredentialsResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkProgressData, GetWorkProgressResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListIdeasData, ListIdeasResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListProjectMilestonesData, ListProjectMilestonesResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkBriefsData, ListProjectWorkBriefsResponse, ListProjectWorkData, ListProjectWorkResponse, ListProjectWorkWorkspacesData, ListProjectWorkWorkspacesResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBackupResetsData, ListRepositoryBackupResetsResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkMembersData, ListWorkMembersResponse, ListWorkMilestonesData, ListWorkMilestonesResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, ListWrapperClosingsData, ListWrapperClosingsResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveReleaseRequestSourceData, MoveReleaseRequestSourceResponse2, MoveWorkDossierPageData, MoveWorkDossierPageResponse, MoveWorkMemberData, MoveWorkMemberResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchIdeaData, PatchIdeaResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentMcpCatalogCredentialsByKeyData, PutProjectsApiAgentMcpCatalogCredentialsByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, RemoveWorkMemberData, RemoveWorkMemberResponse, RenameMilestoneData, RenameMilestoneResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, ReprioritizeIdeaData, ReprioritizeIdeaResponse, ReprioritizeWorkData, ReprioritizeWorkResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetMilestoneGroupsData, SetMilestoneGroupsResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkMemberConditionData, SetWorkMemberConditionResponse, SetWorkMemberMilestonesData, SetWorkMemberMilestonesResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UnarchiveIdeaData, UnarchiveIdeaResponse, UnarchiveRepositoryData, UnarchiveRepositoryResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
+import type { AddPitchVersionData, AddRefinementDesignData, AddReleaseRequestSourceData, AddReleaseRequestSourceResponse, AddWorkCommentData, AddWorkCommentResponse, AdoptRepositoryData, AdoptRepositoryResponse, ApproveReleaseRequestData, ApproveReleaseRequestResponse, ArchiveIdeaData, ArchiveIdeaResponse, ArchivePitchData, ArchivePitchResponse, ArchiveRepositoryData, ArchiveRepositoryResponse, BackupResetRepositoryData, BackupResetRepositoryResponse, CollectTagsData, CollectTagsResponse, CreateIdeaData, CreateIdeaResponse, CreatePitchData, CreateProjectRepositoryData, CreateProjectRepositoryResponse, CreateReleaseRequestData, CreateReleaseRequestResponse, CreateWorkChildData, CreateWorkChildResponse, CreateWorkData, CreateWorkDossierPageData, CreateWorkDossierPageResponse, CreateWorkResponse, DeclineReleaseRequestData, DeclineReleaseRequestResponse, DeleteProjectsApiAgentMcpCatalogByKeyData, DeleteProjectsApiAgentMcpCatalogCredentialsByKeyData, DeleteProjectsApiProjectsByIdData, DeleteProjectsApiProjectsByIdResponse, DeleteProjectsApiProjectsByProjectIdAgentContainerData, DeleteProjectsApiProjectsByProjectIdAgentContainerResponse, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, DeleteProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, DeleteProjectsApiRefinementsByIdPromptDraftData, DeleteProjectsApiRefinementsByIdPromptDraftResponse, DeleteProjectsApiRepositoriesByRepoIdBranchesData, DeleteProjectsApiRepositoriesByRepoIdBranchesResponse, DeleteProjectsApiRepositoriesByRepoIdData, DeleteProjectsApiRepositoriesByRepoIdResponse, DeleteRefinementDesignData, DeleteRefinementDesignResponse, DeleteWorkCommentData, DeleteWorkCommentResponse, DeleteWorkData, DeleteWorkDossierPageData, DeleteWorkDossierPageResponse, DeleteWorkResponse, DiscardRefinementData, DiscardRefinementResponse, DispatchWorkData, DispatchWorkResponse, EditWorkCommentData, EditWorkCommentResponse, EnsureAgentConfigRepositoryData, EnsureAgentConfigRepositoryResponse, EnsureRefinementContainerData, EnsureRefinementContainerResponse, EnsureRefinementSessionData, EnsureRefinementSessionResponse, GetAgentLastAnswerData, GetAgentLastAnswerResponse, GetBranchDeliveriesData, GetBranchDeliveriesResponse, GetCommitFileDiffData, GetCommitFileDiffResponse, GetDevelopmentGuideData, GetDevelopmentGuideResponse, GetFrontDeskLastAnswerData, GetFrontDeskLastAnswerResponse, GetIdeaData, GetIdeaResponse, GetPitchData, GetPitchResponse, GetPitchVersionData, GetPitchVersionResponse, GetProjectData, GetProjectReleaseRequestData, GetProjectReleaseRequestResponse, GetProjectResponse, GetProjectsApiAgentCapabilitiesData, GetProjectsApiAgentCapabilitiesResponse, GetProjectsApiAgentConfigurationData, GetProjectsApiAgentConfigurationResponse, GetProjectsApiAgentMcpCatalogByKeyData, GetProjectsApiAgentMcpCatalogByKeyResponse, GetProjectsApiAgentMcpCatalogCredentialsData, GetProjectsApiAgentMcpCatalogCredentialsResponse, GetProjectsApiAgentMcpCatalogData, GetProjectsApiAgentMcpCatalogResponse, GetProjectsApiAgentSurfacesBySurfaceData, GetProjectsApiAgentSurfacesBySurfaceResponse, GetProjectsApiAgentSurfacesBySurfaceRevisionsData, GetProjectsApiAgentSurfacesBySurfaceRevisionsResponse, GetProjectsApiAgentSurfacesData, GetProjectsApiAgentSurfacesResponse, GetProjectsApiProjectsByProjectIdAgentContainerData, GetProjectsApiProjectsByProjectIdAgentContainerResponse, GetProjectsApiProjectsByProjectIdEventsData, GetProjectsApiProjectsByProjectIdEventsResponse, GetProjectsApiProjectsByProjectIdRefinementsData, GetProjectsApiProjectsByProjectIdRefinementsResponse, GetProjectsApiRefinementsByIdData, GetProjectsApiRefinementsByIdEventsData, GetProjectsApiRefinementsByIdEventsResponse, GetProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdContentData, GetProjectsApiRefinementsByIdPromptAttachmentsData, GetProjectsApiRefinementsByIdPromptAttachmentsResponse, GetProjectsApiRefinementsByIdPromptDraftData, GetProjectsApiRefinementsByIdPromptDraftResponse, GetProjectsApiRefinementsByIdResponse, GetProjectsApiRepositoriesByRepoIdActiveProcessData, GetProjectsApiRepositoriesByRepoIdActiveProcessResponse, GetProjectsApiRepositoriesByRepoIdSyncStatusData, GetProjectsApiRepositoriesByRepoIdSyncStatusResponse, GetProjectsApiTechnicalProcessesByIdEventsData, GetProjectsApiTechnicalProcessesByIdEventsResponse, GetRefinementDesignData, GetRefinementDesignResponse, GetReleaseRequestApprovalEligibilityData, GetReleaseRequestApprovalEligibilityResponse, GetReleaseRequestArtifactsData, GetReleaseRequestArtifactsResponse, GetReleaseRequestChangeDiffData, GetReleaseRequestChangeDiffResponse, GetReleaseRequestData, GetReleaseRequestResponse, GetReleaseRequestSubmoduleChangeDiffData, GetReleaseRequestSubmoduleChangeDiffResponse, GetReleaseRequestSubmoduleChangesData, GetReleaseRequestSubmoduleChangesResponse, GetRepositoryData, GetRepositoryResponse, GetWorkArchetypeSchemaData, GetWorkArchetypeSchemaResponse, GetWorkAuditData, GetWorkAuditResponse, GetWorkData, GetWorkDispatchData, GetWorkDispatchResponse, GetWorkDossierAssetContentData, GetWorkDossierPageData, GetWorkDossierPageResponse, GetWorkRefinementData, GetWorkRefinementResponse, GetWorkResponse, InlineWorkDossierAssetData, InlineWorkDossierAssetResponse, ListAgentsData, ListAgentsResponse, ListBranchCommitsData, ListBranchCommitsResponse, ListCommitBuildsData, ListCommitBuildsResponse, ListCommitChangesData, ListCommitChangesResponse, ListDeskTriggerMessagesData, ListDeskTriggerMessagesResponse, ListDevelopmentGuideVariantsData, ListDevelopmentGuideVariantsResponse, ListIdeasData, ListIdeasResponse, ListLaunchPinsData, ListLaunchPinsResponse, ListPitchesData, ListPitchesResponse, ListProjectReleaseRequestsData, ListProjectReleaseRequestsResponse, ListProjectRepositoriesData, ListProjectRepositoriesResponse, ListProjectsData, ListProjectsResponse, ListProjectWorkBriefsData, ListProjectWorkBriefsResponse, ListProjectWorkData, ListProjectWorkResponse, ListProjectWorkWorkspacesData, ListProjectWorkWorkspacesResponse, ListRefinementDesignsData, ListRefinementDesignsResponse, ListReleaseRequestApprovalsData, ListReleaseRequestApprovalsResponse, ListReleaseRequestChangesData, ListReleaseRequestChangesResponse, ListReleaseRequestCommitsData, ListReleaseRequestCommitsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryBackupResetsData, ListRepositoryBackupResetsResponse, ListRepositoryBranchesData, ListRepositoryBranchesResponse, ListRepositoryReleaseRequestsData, ListRepositoryReleaseRequestsResponse, ListWorkArchetypesData, ListWorkArchetypesResponse, ListWorkChildrenData, ListWorkChildrenResponse, ListWorkCommentsData, ListWorkCommentsResponse, ListWorkDossierAssetsData, ListWorkDossierAssetsResponse, ListWorkDossierData, ListWorkDossierResponse, ListWorkWorkspacesData, ListWorkWorkspacesResponse, ListWrapperClosingsData, ListWrapperClosingsResponse, MeasureCommitSubjectsData, MeasureCommitSubjectsResponse, MoveReleaseRequestSourceData, MoveReleaseRequestSourceResponse2, MoveWorkDossierPageData, MoveWorkDossierPageResponse, OverrideReleaseRequestUpstreamData, OverrideReleaseRequestUpstreamResponse, PatchIdeaData, PatchIdeaResponse, PatchProjectsApiRepositoriesByRepoIdData, PatchProjectsApiRepositoriesByRepoIdResponse, PatchWorkData, PatchWorkResponse, PostProjectsApiProjectsByProjectIdAgentContainerEnsureData, PostProjectsApiProjectsByProjectIdAgentContainerEnsureResponse, PostProjectsApiProjectsByProjectIdAgentContainerStopData, PostProjectsApiProjectsByProjectIdAgentContainerStopResponse, PostProjectsApiProjectsByProjectIdReconcileData, PostProjectsApiProjectsByProjectIdReconcileResponse, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncData, PostProjectsApiProjectsByProjectIdRepositoriesBackupSyncResponse, PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse, PostProjectsApiProjectsData, PostProjectsApiProjectsResponse, PostProjectsApiRefinementsByIdPromptAttachmentsData, PostProjectsApiRepositoriesByRepoIdBackupSyncData, PostProjectsApiRepositoriesByRepoIdBackupSyncResponse, PostProjectsApiRepositoriesByRepoIdPullData, PostProjectsApiRepositoriesByRepoIdPullResponse, PostProjectsApiRepositoriesByRepoIdPushData, PostProjectsApiRepositoriesByRepoIdPushResponse, PostProjectsApiRepositoriesByRepoIdSyncData, PostProjectsApiRepositoriesByRepoIdSyncResponse, PromptAgentData, PromptAgentResponse, PromptFrontDeskData, PromptFrontDeskResponse, PutProjectsApiAgentCapabilitiesData, PutProjectsApiAgentCapabilitiesResponse, PutProjectsApiAgentMcpCatalogByKeyData, PutProjectsApiAgentMcpCatalogByKeyResponse, PutProjectsApiAgentMcpCatalogCredentialsByKeyData, PutProjectsApiAgentMcpCatalogCredentialsByKeyResponse, PutProjectsApiAgentSurfacesBySurfaceData, PutProjectsApiAgentSurfacesBySurfaceResponse, PutProjectsApiProjectsByIdData, PutProjectsApiProjectsByIdResponse, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdData, PutProjectsApiRefinementsByIdPromptAttachmentsByAttachmentIdResponse, PutProjectsApiRefinementsByIdPromptDraftData, PutProjectsApiRefinementsByIdPromptDraftResponse, PutProjectsApiRepositoriesByRepoIdMainBranchData, PutProjectsApiRepositoriesByRepoIdMainBranchResponse, PutWorkData, PutWorkDossierPageData, PutWorkDossierPageResponse, PutWorkResponse, ReportWorkAgentWaitingData, ReportWorkAgentWaitingResponse, ReprioritizeIdeaData, ReprioritizeIdeaResponse, ReprioritizeWorkData, ReprioritizeWorkResponse, RerunReleasePipelinePhaseData, RerunReleasePipelinePhaseResponse, RerunReleaseRequestAutomationData, ResolveRepositoryNameData, ResolveRepositoryNameResponse, SetReleaseSourcePriorityData, SetReleaseSourcePriorityResponse, SetWorkBlockedData, SetWorkBlockedResponse, SetWorkStatusData, SetWorkStatusResponse, StartWorkRefinementData, StartWorkRefinementResponse, StopRefinementSessionData, StopRefinementSessionResponse, TransitionWorkData, TransitionWorkResponse, UnarchiveIdeaData, UnarchiveIdeaResponse, UnarchiveRepositoryData, UnarchiveRepositoryResponse, UpdateRefinementDesignData, UpdateRefinementDesignResponse, WaiveReleaseRequestAutomationsData, WaiveReleaseRequestAutomationsResponse, WithdrawReleaseRequestData, WithdrawReleaseRequestResponse } from '../types.gen';
 
 /**
  * Catalogue
@@ -273,60 +273,82 @@ export const unarchiveIdeaRequest = <ThrowOnError extends boolean = false>(optio
 });
 
 /**
- * Read one milestone
- *
- * The milestone with its groups and criteria — each with createdAt and satisfiedAt, a criterion with its evidence or approval — whether it is met and since when, the work entities that wait on it (qualified id, title, status) and the campaign memberships it gates.
- */
-export const getMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<GetMilestoneData, ThrowOnError>): HttpRequest<GetMilestoneResponse> => (options?.client ?? client).requestOptions<GetMilestoneResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/milestones/{milestoneId}',
-    ...options
-});
-
-/**
- * Rename a milestone
- *
- * Changes its displayName and nothing else: no criterion, latch or date moves, and no event is sent. A bound agent renames only in its own project.
- */
-export const renameMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<RenameMilestoneData, ThrowOnError>): HttpRequest<RenameMilestoneResponse> => (options?.client ?? client).requestOptions<RenameMilestoneResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PATCH',
-    url: '/projects/api/milestones/{milestoneId}',
-    ...options
-});
-
-/**
- * A person's yes on a milestone's APPROVAL criterion
- *
- * qits:admin, and then a person this service verified itself; the name recorded is the proof's. The milestone's own project's delivery desk (qits:desk, its own delivery token) may approve too, recorded under its token subject. Sends MilestoneMet when the approval makes the milestone hold. Refused when the criterion is not APPROVAL or is already approved.
- */
-export const approveMilestoneCriterionRequest = <ThrowOnError extends boolean = false>(options: Options<ApproveMilestoneCriterionData, ThrowOnError>): HttpRequest<ApproveMilestoneCriterionResponse> => (options?.client ?? client).requestOptions<ApproveMilestoneCriterionResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/milestones/{milestoneId}/criteria/{criterionId}/approve',
-    ...options
-});
-
-/**
- * Replace a milestone's condition
- *
- * PUT semantics: every group and criterion. A criterion restating an existing id with the same kind and predicate keeps its latch; a changed or new one starts unlatched, its floor moved to now; an omitted one is deleted. A milestone that stops holding loses its satisfiedAt and MilestoneUnmet is sent; one that comes to hold sends MilestoneMet. A bound agent edits only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
- */
-export const setMilestoneGroupsRequest = <ThrowOnError extends boolean = false>(options: Options<SetMilestoneGroupsData, ThrowOnError>): HttpRequest<SetMilestoneGroupsResponse> => (options?.client ?? client).requestOptions<SetMilestoneGroupsResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/projects/api/milestones/{milestoneId}/groups',
-    ...options
-});
-
-/**
  * The container images a launch by this service would pull right now
  */
 export const listLaunchPinsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListLaunchPinsData, ThrowOnError>): HttpRequest<ListLaunchPinsResponse> => (options?.client ?? client).requestOptions<ListLaunchPinsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/projects/api/pins',
+    ...options
+});
+
+/**
+ * A project's pitches, newest change first, without their HTML
+ *
+ * Narrowed by agent, repository (id or name), route and screenshot; archived pitches only with archived=true.
+ */
+export const listPitchesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListPitchesData, ThrowOnError>): HttpRequest<ListPitchesResponse> => (options?.client ?? client).requestOptions<ListPitchesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/pitches',
+    ...options
+});
+
+/**
+ * Pitch a mock of one screenshot: the pitch and its version 1
+ *
+ * Only a named agent of the project pitches, and the pitch is that agent's; anyone else is a 403. The HTML is at most qits.projects.pitch-max-bytes (413), and not empty (400).
+ */
+export const createPitchRequest = <ThrowOnError extends boolean = false>(options: Options<CreatePitchData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/pitches',
+    ...options
+});
+
+/**
+ * One pitch with every version, oldest first, without their HTML
+ */
+export const getPitchRequest = <ThrowOnError extends boolean = false>(options: Options<GetPitchData, ThrowOnError>): HttpRequest<GetPitchResponse> => (options?.client ?? client).requestOptions<GetPitchResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/pitches/{id}',
+    ...options
+});
+
+/**
+ * Archive a pitch: hidden from the default listing, nothing deleted
+ *
+ * The pitch's agent, qits:admin or qits:desk-admin. Idempotent.
+ */
+export const archivePitchRequest = <ThrowOnError extends boolean = false>(options: Options<ArchivePitchData, ThrowOnError>): HttpRequest<ArchivePitchResponse> => (options?.client ?? client).requestOptions<ArchivePitchResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/pitches/{id}/archive',
+    ...options
+});
+
+/**
+ * Append the next version of a pitch
+ *
+ * Only the pitch's agent; an archived pitch is a 409. Answers the new version without its HTML.
+ */
+export const addPitchVersionRequest = <ThrowOnError extends boolean = false>(options: Options<AddPitchVersionData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/pitches/{id}/versions',
+    ...options
+});
+
+/**
+ * One version of a pitch with its HTML, as a JSON field
+ *
+ * number is a version from 1, or latest. The HTML is agent-authored and unsanitised: render it only in a sandboxed, script-free frame.
+ */
+export const getPitchVersionRequest = <ThrowOnError extends boolean = false>(options: Options<GetPitchVersionData, ThrowOnError>): HttpRequest<GetPitchVersionResponse> => (options?.client ?? client).requestOptions<GetPitchVersionResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/pitches/{id}/versions/{number}',
     ...options
 });
 
@@ -429,6 +451,38 @@ export const postProjectsApiProjectsByProjectIdAgentContainerStopRequest = <Thro
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/projects/{projectId}/agent-container/stop',
+    ...options
+});
+
+/**
+ * The project's named agents: the desk, then every other, prompted or not
+ */
+export const listAgentsRequest = <ThrowOnError extends boolean = false>(options: Options<ListAgentsData, ThrowOnError>): HttpRequest<ListAgentsResponse> => (options?.client ?? client).requestOptions<ListAgentsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/projects/{projectId}/agents',
+    ...options
+});
+
+/**
+ * The last answer a named agent gave
+ */
+export const getAgentLastAnswerRequest = <ThrowOnError extends boolean = false>(options: Options<GetAgentLastAnswerData, ThrowOnError>): HttpRequest<GetAgentLastAnswerResponse> => (options?.client ?? client).requestOptions<GetAgentLastAnswerResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/projects/api/projects/{projectId}/agents/{name}/last-answer',
+    ...options
+});
+
+/**
+ * Hand a named agent a prompt; a stopped desk container is started for it
+ *
+ * The desk receives the text behind the brief pointer, as on the front desk's own door; any other agent receives the text alone. A prompt that cannot reach the agent's session yet (the container stopped or starting) is held and answered 202 STARTING, and delivered once the session is up.
+ */
+export const promptAgentRequest = <ThrowOnError extends boolean = false>(options: Options<PromptAgentData, ThrowOnError>): HttpRequest<PromptAgentResponse> => (options?.client ?? client).requestOptions<PromptAgentResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/projects/api/projects/{projectId}/agents/{name}/prompt',
     ...options
 });
 
@@ -585,30 +639,6 @@ export const postProjectsApiProjectsByProjectIdRepositoriesReconcileRequest = <T
     responseStyle: 'data',
     method: 'POST',
     url: '/projects/api/projects/{projectId}/repositories/reconcile',
-    ...options
-});
-
-/**
- * List a project's milestones
- *
- * Every milestone of the project, oldest first, each whole: its groups and criteria with their dates, whether it is met and since when, and what waits on it. The project is its id or its slug. met=false lists the unmet ones only — what work still needs — and met=true the met ones.
- */
-export const listProjectMilestonesRequest = <ThrowOnError extends boolean = false>(options: Options<ListProjectMilestonesData, ThrowOnError>): HttpRequest<ListProjectMilestonesResponse> => (options?.client ?? client).requestOptions<ListProjectMilestonesResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/projects/{project}/milestones',
-    ...options
-});
-
-/**
- * Create a milestone
- *
- * A new milestone of the project, named and with its whole condition. A bound agent creates only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
- */
-export const createMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<CreateMilestoneData, ThrowOnError>): HttpRequest<CreateMilestoneResponse> => (options?.client ?? client).requestOptions<CreateMilestoneResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/projects/{project}/milestones',
     ...options
 });
 
@@ -1361,7 +1391,7 @@ export const getProjectsApiTechnicalProcessesByIdEventsRequest = <ThrowOnError e
 /**
  * Create a work entity of any archetype
  *
- * Files a new epic, ticket, campaign, feature or task from one body shape: the archetype plus the archetype's create schema (GET /projects/api/work/archetypes/{archetype}/schemas/create). A root names its project (id or slug), a node its parent (qualified id or UUID): a feature's parent is an EPIC, a task's a FEATURE. A dependency is a qualified id or a UUID. The status starts REPORTED. Answers the entity in the merged shape, with its qualified id.
+ * Files a new epic, ticket, issue, feature or task from one body shape: the archetype plus the archetype's create schema (GET /projects/api/work/archetypes/{archetype}/schemas/create). A root names its project (id or slug), a node its parent (qualified id or UUID): a feature's parent is an EPIC, a task's a FEATURE. A need's item is a qualified id or a UUID. The status starts REPORTED. Answers the entity in the merged shape, with its qualified id.
  */
 export const createWorkRequest = <ThrowOnError extends boolean = false>(options: Options<CreateWorkData, ThrowOnError>): HttpRequest<CreateWorkResponse> => (options?.client ?? client).requestOptions<CreateWorkResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1397,7 +1427,7 @@ export const getWorkArchetypeSchemaRequest = <ThrowOnError extends boolean = fal
 /**
  * State several work entities in full, as one post-state
  *
- * A map of entity id to the whole state that entity is to have afterwards, validated as one post-state, applied in one transaction and announced once. The keys and every id in an entry (membership.parent, supersededBy, dependsOn) are qualified ids or UUIDs; an id naming nothing is one of the violations in the 400. Answers each entity in the merged shape, keyed as the request was.
+ * A map of entity id to the whole state that entity is to have afterwards, validated as one post-state, applied in one transaction and announced once. The keys and every id in an entry (membership.parent, supersededBy) are qualified ids or UUIDs; an id naming nothing is one of the violations in the 400. Answers each entity in the merged shape, keyed as the request was.
  */
 export const transitionWorkRequest = <ThrowOnError extends boolean = false>(options: Options<TransitionWorkData, ThrowOnError>): HttpRequest<TransitionWorkResponse> => (options?.client ?? client).requestOptions<TransitionWorkResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1409,7 +1439,7 @@ export const transitionWorkRequest = <ThrowOnError extends boolean = false>(opti
 /**
  * Delete a work entity and its subtree
  *
- * Removes the entity, its descendants and their threads, each audited; the audit log outlives them. An epic's or a ticket's delete is qits:admin's, or the delivery desk's (qits:desk) in its own project; a feature's or a task's admits an agent bound to its project and obeys its epic's freeze. A campaign is not deleted but dropped. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
+ * Removes the entity, its descendants and their threads, each audited; the audit log outlives them. An epic's or a ticket's delete is qits:admin's, or the delivery desk's (qits:desk) in its own project; a feature's or a task's admits an agent bound to its project and obeys its epic's freeze. An issue is not deleted but moved to OBSOLETE. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const deleteWorkRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteWorkData, ThrowOnError>): HttpRequest<DeleteWorkResponse> => (options?.client ?? client).requestOptions<DeleteWorkResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1433,7 +1463,7 @@ export const getWorkRequest = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Edit a work entity's fields (JSON merge patch)
  *
- * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/work/{qualifiedId}/status, and a reshape, reparent or supersede through PUT /projects/api/work/{qualifiedId} or POST /projects/api/work/transition. dependsOn is a qualified id or a UUID. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it READY_FOR_DEV or IMPLEMENTING, and a marker moves the item's status with it. An epic's or a ticket's acceptance criteria are frozen from READY_FOR_DEV on, where a changed list is refused and the same list restated passes. The tags are editable at every status, outside every freeze. Answers the entity in the merged shape.
+ * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/work/{qualifiedId}/status, and a reshape, reparent or supersede through PUT /projects/api/work/{qualifiedId} or POST /projects/api/work/transition. A need's item is a qualified id or a UUID. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it READY_FOR_DEV or IMPLEMENTING, and a marker moves the item's status with it. An epic's or a ticket's acceptance criteria are frozen from READY_FOR_DEV on, where a changed list is refused and the same list restated passes. The tags are editable at every status, outside every freeze. Answers the entity in the merged shape.
  */
 export const patchWorkRequest = <ThrowOnError extends boolean = false>(options: Options<PatchWorkData, ThrowOnError>): HttpRequest<PatchWorkResponse> => (options?.client ?? client).requestOptions<PatchWorkResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1445,7 +1475,7 @@ export const patchWorkRequest = <ThrowOnError extends boolean = false>(options: 
 /**
  * State a work entity in full
  *
- * The full edit of one entity: the body is the entity's whole state afterwards — what it is (archetype), where it hangs (membership), every property — and an absent property is cleared, not left alone. It is the one-entry form of POST /projects/api/work/transition and obeys every rule of it, so it is also how a single entity is reshaped, reparented or superseded. Every entity id in the body (membership.parent, supersededBy, dependsOn) is a qualified id or a UUID. Answers the entity as written, in the merged shape.
+ * The full edit of one entity: the body is the entity's whole state afterwards — what it is (archetype), where it hangs (membership), every property — and an absent property is cleared, not left alone. It is the one-entry form of POST /projects/api/work/transition and obeys every rule of it, so it is also how a single entity is reshaped, reparented or superseded. Every entity id in the body (membership.parent, supersededBy) is a qualified id or a UUID. Answers the entity as written, in the merged shape.
  */
 export const putWorkRequest = <ThrowOnError extends boolean = false>(options: Options<PutWorkData, ThrowOnError>): HttpRequest<PutWorkResponse> => (options?.client ?? client).requestOptions<PutWorkResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1469,7 +1499,7 @@ export const reportWorkAgentWaitingRequest = <ThrowOnError extends boolean = fal
 /**
  * A work entity's change history
  *
- * Newest first. A root (epic, ticket, campaign) answers its whole subtree — its features, tasks and every thread under it, deleted rows included; a feature or a task its own rows. The path names the entity by qualified id (<projectSlug>-<n>) or UUID; a UUID still answers after the entity is deleted.
+ * Newest first. A root (epic, ticket, issue) answers its whole subtree — its features, tasks and every thread under it, deleted rows included; a feature or a task its own rows. The path names the entity by qualified id (<projectSlug>-<n>) or UUID; a UUID still answers after the entity is deleted.
  */
 export const getWorkAuditRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkAuditData, ThrowOnError>): HttpRequest<GetWorkAuditResponse> => (options?.client ?? client).requestOptions<GetWorkAuditResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1481,7 +1511,7 @@ export const getWorkAuditRequest = <ThrowOnError extends boolean = false>(option
 /**
  * Block or unblock a work entity
  *
- * Says the phase an epic's, ticket's or campaign's status starts cannot finish right now (or can again). The status does not move — it is the phase to resume — and the next transition clears the block. The reason is required to block and lands on the entity's thread.
+ * Says the phase an epic's or ticket's status starts cannot finish right now (or can again). The status does not move — it is the phase to resume — and the next transition clears the block. The reason is required to block and lands on the entity's thread.
  */
 export const setWorkBlockedRequest = <ThrowOnError extends boolean = false>(options: Options<SetWorkBlockedData, ThrowOnError>): HttpRequest<SetWorkBlockedResponse> => (options?.client ?? client).requestOptions<SetWorkBlockedResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1575,9 +1605,9 @@ export const getWorkDispatchRequest = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
- * Put an agent on an epic or a ticket, or start a campaign
+ * Put an agent on an epic or a ticket
  *
- * mode PHASE runs the one phase the entity's status starts; mode FLOW runs that phase and the ones after it until a status starts none. On a campaign the press is its start. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
+ * mode PHASE runs the one phase the entity's status starts; mode FLOW runs that phase and the ones after it until a status starts none. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const dispatchWorkRequest = <ThrowOnError extends boolean = false>(options: Options<DispatchWorkData, ThrowOnError>): HttpRequest<DispatchWorkResponse> => (options?.client ?? client).requestOptions<DispatchWorkResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1695,146 +1725,14 @@ export const moveWorkDossierPageRequest = <ThrowOnError extends boolean = false>
 });
 
 /**
- * A campaign's members
- *
- * Every membership in campaign order: the entity it gathers, its run record and its condition. The path names the campaign by qualified id (<projectSlug>-<n>) or UUID.
- */
-export const listWorkMembersRequest = <ThrowOnError extends boolean = false>(options: Options<ListWorkMembersData, ThrowOnError>): HttpRequest<ListWorkMembersResponse> => (options?.client ?? client).requestOptions<ListWorkMembersResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/work/{qualifiedId}/members',
-    ...options
-});
-
-/**
- * Gather an entity into a campaign
- *
- * Adds a membership — at position, or at the end — for an entity named by qualified id or UUID. A bound agent adds only in its own project.
- */
-export const addWorkMemberRequest = <ThrowOnError extends boolean = false>(options: Options<AddWorkMemberData, ThrowOnError>): HttpRequest<AddWorkMemberResponse> => (options?.client ?? client).requestOptions<AddWorkMemberResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/work/{qualifiedId}/members',
-    ...options
-});
-
-/**
- * Remove a membership from its campaign
- *
- * Refused once the member was claimed, and while another member's criterion targets it. Answers the members that remain.
- */
-export const removeWorkMemberRequest = <ThrowOnError extends boolean = false>(options: Options<RemoveWorkMemberData, ThrowOnError>): HttpRequest<RemoveWorkMemberResponse> => (options?.client ?? client).requestOptions<RemoveWorkMemberResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}',
-    ...options
-});
-
-/**
- * Replace a membership's condition
- *
- * PUT semantics: the whole condition, groups OR'd and criteria in a group AND'd; an empty list waits on nothing. A criterion restating an existing id keeps its latch. An ENTITY_STATUS predicate's entityId takes a qualified id or a UUID.
- */
-export const setWorkMemberConditionRequest = <ThrowOnError extends boolean = false>(options: Options<SetWorkMemberConditionData, ThrowOnError>): HttpRequest<SetWorkMemberConditionResponse> => (options?.client ?? client).requestOptions<SetWorkMemberConditionResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/condition',
-    ...options
-});
-
-/**
- * A person's yes on a member's APPROVAL criterion
- *
- * qits:admin, and then a person this service verified itself; the name recorded is the proof's. The campaign's own project's delivery desk (qits:desk, its own delivery token) may approve too, recorded under its token subject. Refused when the criterion is not APPROVAL, is already satisfied, or the campaign is DONE or DROPPED.
- */
-export const approveWorkMemberCriterionRequest = <ThrowOnError extends boolean = false>(options: Options<ApproveWorkMemberCriterionData, ThrowOnError>): HttpRequest<ApproveWorkMemberCriterionResponse> => (options?.client ?? client).requestOptions<ApproveWorkMemberCriterionResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/criteria/{criterionId}/approve',
-    ...options
-});
-
-/**
- * Set the milestones a membership waits on
- *
- * PUT semantics: the membership is dispatched once every listed milestone is met, and an empty list waits on nothing. Each must be an existing milestone of the campaign's project; the member entity is attached to each, so it shows what it needs. A milestone left off stays attached to the member entity — except the membership's generated condition (the one PUT …/condition edits), which is detached from it and deleted once nothing waits on it. Refused once the member was claimed (a claim freezes it) and at a DROPPED campaign. A bound agent edits only in its own project.
- */
-export const setWorkMemberMilestonesRequest = <ThrowOnError extends boolean = false>(options: Options<SetWorkMemberMilestonesData, ThrowOnError>): HttpRequest<SetWorkMemberMilestonesResponse> => (options?.client ?? client).requestOptions<SetWorkMemberMilestonesResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/milestones',
-    ...options
-});
-
-/**
- * Move a membership within its campaign
- *
- * Answers the members as the move left them.
- */
-export const moveWorkMemberRequest = <ThrowOnError extends boolean = false>(options: Options<MoveWorkMemberData, ThrowOnError>): HttpRequest<MoveWorkMemberResponse> => (options?.client ?? client).requestOptions<MoveWorkMemberResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/position',
-    ...options
-});
-
-/**
- * The milestones a work entity waits on
- *
- * Each its id, its displayName and since when it is met (satisfiedAt, null while it is not). The entity needs something while any is unmet.
- */
-export const listWorkMilestonesRequest = <ThrowOnError extends boolean = false>(options: Options<ListWorkMilestonesData, ThrowOnError>): HttpRequest<ListWorkMilestonesResponse> => (options?.client ?? client).requestOptions<ListWorkMilestonesResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/work/{qualifiedId}/milestones',
-    ...options
-});
-
-/**
- * A work entity no longer waits on a milestone
- *
- * The milestone itself stays, and so does every campaign membership waiting on it. Answers what the entity waits on now. A bound agent detaches only in its own project.
- */
-export const detachWorkMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<DetachWorkMilestoneData, ThrowOnError>): HttpRequest<DetachWorkMilestoneResponse> => (options?.client ?? client).requestOptions<DetachWorkMilestoneResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'DELETE',
-    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}',
-    ...options
-});
-
-/**
- * A work entity waits on a milestone
- *
- * Idempotent. The milestone must be of the entity's project. Answers what the entity waits on now. A bound agent attaches only in its own project.
- */
-export const attachWorkMilestoneRequest = <ThrowOnError extends boolean = false>(options: Options<AttachWorkMilestoneData, ThrowOnError>): HttpRequest<AttachWorkMilestoneResponse> => (options?.client ?? client).requestOptions<AttachWorkMilestoneResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'PUT',
-    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}',
-    ...options
-});
-
-/**
  * Drop a work item above or below one of its siblings
  *
- * Ranks the item among its siblings — the children of its parent, or for a root every root of its project but the campaigns — by where it was dropped: directly above or directly below one named sibling (qualified id or UUID). DONE and DROPPED siblings take no part. The item and every open sibling above it are renumbered, strictly descending and above every ranked sibling below, so the order reads as dropped; nothing below the drop is written. Answers the renumbered siblings in order.
+ * Ranks the item among its siblings — the children of its parent, or for a root every root of its project but the issues — by where it was dropped: directly above or directly below one named sibling (qualified id or UUID). DONE and DROPPED siblings take no part. The item and every open sibling above it are renumbered, strictly descending and above every ranked sibling below, so the order reads as dropped; nothing below the drop is written. Answers the renumbered siblings in order.
  */
 export const reprioritizeWorkRequest = <ThrowOnError extends boolean = false>(options: Options<ReprioritizeWorkData, ThrowOnError>): HttpRequest<ReprioritizeWorkResponse> => (options?.client ?? client).requestOptions<ReprioritizeWorkResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'PUT',
     url: '/projects/api/work/{qualifiedId}/priority',
-    ...options
-});
-
-/**
- * How a campaign is doing
- *
- * Every member's derived state, what it waits for, each criterion judged (the sentence that would latch it, whether it still can, its evidence), and whether the criteria evaluator is listening. The path names the campaign by qualified id (<projectSlug>-<n>) or UUID.
- */
-export const getWorkProgressRequest = <ThrowOnError extends boolean = false>(options: Options<GetWorkProgressData, ThrowOnError>): HttpRequest<GetWorkProgressResponse> => (options?.client ?? client).requestOptions<GetWorkProgressResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/projects/api/work/{qualifiedId}/progress',
     ...options
 });
 
@@ -1853,7 +1751,7 @@ export const getWorkRefinementRequest = <ThrowOnError extends boolean = false>(o
 /**
  * Open (or find) a work entity's refinement room
  *
- * Find-or-create: an entity has at most one room, and a second open answers the first. The room is a session of the project's front desk, asked for by the open. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, a project with no wrapper, and beyond the project's refinement-sessions cap. The path names the entity (an epic, a ticket or a campaign) by qualified id (<projectSlug>-<n>) or UUID.
+ * Find-or-create: an entity has at most one room, and a second open answers the first. The room is a session of the project's front desk, asked for by the open. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, a project with no wrapper, and beyond the project's refinement-sessions cap. The path names the entity (an epic or a ticket) by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const startWorkRefinementRequest = <ThrowOnError extends boolean = false>(options: Options<StartWorkRefinementData, ThrowOnError>): HttpRequest<StartWorkRefinementResponse> => (options?.client ?? client).requestOptions<StartWorkRefinementResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -1865,7 +1763,7 @@ export const startWorkRefinementRequest = <ThrowOnError extends boolean = false>
 /**
  * Move a work entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. The project's delivery desk (qits:desk) moves what qits:admin-agent moves, superseding included, in its own project only; its scheduling (REFINED to READY_FOR_DEV) is a person's, or the dispatch press's under start_refined. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Nobody moves a ticket to DONE: the platform does, once the wrapper release request carrying its branch is finalized. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, issue, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, an issue, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. The project's delivery desk (qits:desk) moves what qits:admin-agent moves, superseding included, in its own project only; its scheduling (REFINED to READY_FOR_DEV) is a person's, or the dispatch press's under start_refined. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Nobody moves a ticket to DONE: the platform does, once the wrapper release request carrying its branch is finalized. Answers the entity in the merged shape, with statusBefore.
  */
 export const setWorkStatusRequest = <ThrowOnError extends boolean = false>(options: Options<SetWorkStatusData, ThrowOnError>): HttpRequest<SetWorkStatusResponse> => (options?.client ?? client).requestOptions<SetWorkStatusResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -2103,51 +2001,69 @@ export const unarchiveIdeaResource = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
- * Read one milestone
- *
- * The milestone with its groups and criteria — each with createdAt and satisfiedAt, a criterion with its evidence or approval — whether it is met and since when, the work entities that wait on it (qualified id, title, status) and the campaign memberships it gates.
- */
-export const getMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<GetMilestoneData, ThrowOnError> | undefined) => httpResource<GetMilestoneResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getMilestoneRequest(opts) : undefined;
-});
-
-/**
- * Rename a milestone
- *
- * Changes its displayName and nothing else: no criterion, latch or date moves, and no event is sent. A bound agent renames only in its own project.
- */
-export const renameMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<RenameMilestoneData, ThrowOnError> | undefined) => httpResource<RenameMilestoneResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? renameMilestoneRequest(opts) : undefined;
-});
-
-/**
- * A person's yes on a milestone's APPROVAL criterion
- *
- * qits:admin, and then a person this service verified itself; the name recorded is the proof's. The milestone's own project's delivery desk (qits:desk, its own delivery token) may approve too, recorded under its token subject. Sends MilestoneMet when the approval makes the milestone hold. Refused when the criterion is not APPROVAL or is already approved.
- */
-export const approveMilestoneCriterionResource = <ThrowOnError extends boolean = false>(options: () => Options<ApproveMilestoneCriterionData, ThrowOnError> | undefined) => httpResource<ApproveMilestoneCriterionResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? approveMilestoneCriterionRequest(opts) : undefined;
-});
-
-/**
- * Replace a milestone's condition
- *
- * PUT semantics: every group and criterion. A criterion restating an existing id with the same kind and predicate keeps its latch; a changed or new one starts unlatched, its floor moved to now; an omitted one is deleted. A milestone that stops holding loses its satisfiedAt and MilestoneUnmet is sent; one that comes to hold sends MilestoneMet. A bound agent edits only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
- */
-export const setMilestoneGroupsResource = <ThrowOnError extends boolean = false>(options: () => Options<SetMilestoneGroupsData, ThrowOnError> | undefined) => httpResource<SetMilestoneGroupsResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? setMilestoneGroupsRequest(opts) : undefined;
-});
-
-/**
  * The container images a launch by this service would pull right now
  */
 export const listLaunchPinsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListLaunchPinsData, ThrowOnError> | undefined) => httpResource<ListLaunchPinsResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? listLaunchPinsRequest(opts) : undefined;
+});
+
+/**
+ * A project's pitches, newest change first, without their HTML
+ *
+ * Narrowed by agent, repository (id or name), route and screenshot; archived pitches only with archived=true.
+ */
+export const listPitchesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListPitchesData, ThrowOnError> | undefined) => httpResource<ListPitchesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listPitchesRequest(opts) : undefined;
+});
+
+/**
+ * Pitch a mock of one screenshot: the pitch and its version 1
+ *
+ * Only a named agent of the project pitches, and the pitch is that agent's; anyone else is a 403. The HTML is at most qits.projects.pitch-max-bytes (413), and not empty (400).
+ */
+export const createPitchResource = <ThrowOnError extends boolean = false>(options: () => Options<CreatePitchData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? createPitchRequest(opts) : undefined;
+});
+
+/**
+ * One pitch with every version, oldest first, without their HTML
+ */
+export const getPitchResource = <ThrowOnError extends boolean = false>(options: () => Options<GetPitchData, ThrowOnError> | undefined) => httpResource<GetPitchResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getPitchRequest(opts) : undefined;
+});
+
+/**
+ * Archive a pitch: hidden from the default listing, nothing deleted
+ *
+ * The pitch's agent, qits:admin or qits:desk-admin. Idempotent.
+ */
+export const archivePitchResource = <ThrowOnError extends boolean = false>(options: () => Options<ArchivePitchData, ThrowOnError> | undefined) => httpResource<ArchivePitchResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? archivePitchRequest(opts) : undefined;
+});
+
+/**
+ * Append the next version of a pitch
+ *
+ * Only the pitch's agent; an archived pitch is a 409. Answers the new version without its HTML.
+ */
+export const addPitchVersionResource = <ThrowOnError extends boolean = false>(options: () => Options<AddPitchVersionData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? addPitchVersionRequest(opts) : undefined;
+});
+
+/**
+ * One version of a pitch with its HTML, as a JSON field
+ *
+ * number is a version from 1, or latest. The HTML is agent-authored and unsanitised: render it only in a sandboxed, script-free frame.
+ */
+export const getPitchVersionResource = <ThrowOnError extends boolean = false>(options: () => Options<GetPitchVersionData, ThrowOnError> | undefined) => httpResource<GetPitchVersionResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getPitchVersionRequest(opts) : undefined;
 });
 
 /**
@@ -2230,6 +2146,32 @@ export const postProjectsApiProjectsByProjectIdAgentContainerEnsureResource = <T
 export const postProjectsApiProjectsByProjectIdAgentContainerStopResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiProjectsByProjectIdAgentContainerStopData, ThrowOnError> | undefined) => httpResource<PostProjectsApiProjectsByProjectIdAgentContainerStopResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? postProjectsApiProjectsByProjectIdAgentContainerStopRequest(opts) : undefined;
+});
+
+/**
+ * The project's named agents: the desk, then every other, prompted or not
+ */
+export const listAgentsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListAgentsData, ThrowOnError> | undefined) => httpResource<ListAgentsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listAgentsRequest(opts) : undefined;
+});
+
+/**
+ * The last answer a named agent gave
+ */
+export const getAgentLastAnswerResource = <ThrowOnError extends boolean = false>(options: () => Options<GetAgentLastAnswerData, ThrowOnError> | undefined) => httpResource<GetAgentLastAnswerResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getAgentLastAnswerRequest(opts) : undefined;
+});
+
+/**
+ * Hand a named agent a prompt; a stopped desk container is started for it
+ *
+ * The desk receives the text behind the brief pointer, as on the front desk's own door; any other agent receives the text alone. A prompt that cannot reach the agent's session yet (the container stopped or starting) is held and answered 202 STARTING, and delivered once the session is up.
+ */
+export const promptAgentResource = <ThrowOnError extends boolean = false>(options: () => Options<PromptAgentData, ThrowOnError> | undefined) => httpResource<PromptAgentResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? promptAgentRequest(opts) : undefined;
 });
 
 /**
@@ -2358,26 +2300,6 @@ export const resolveRepositoryNameResource = <ThrowOnError extends boolean = fal
 export const postProjectsApiProjectsByProjectIdRepositoriesReconcileResource = <ThrowOnError extends boolean = false>(options: () => Options<PostProjectsApiProjectsByProjectIdRepositoriesReconcileData, ThrowOnError> | undefined) => httpResource<PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? postProjectsApiProjectsByProjectIdRepositoriesReconcileRequest(opts) : undefined;
-});
-
-/**
- * List a project's milestones
- *
- * Every milestone of the project, oldest first, each whole: its groups and criteria with their dates, whether it is met and since when, and what waits on it. The project is its id or its slug. met=false lists the unmet ones only — what work still needs — and met=true the met ones.
- */
-export const listProjectMilestonesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListProjectMilestonesData, ThrowOnError> | undefined) => httpResource<ListProjectMilestonesResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? listProjectMilestonesRequest(opts) : undefined;
-});
-
-/**
- * Create a milestone
- *
- * A new milestone of the project, named and with its whole condition. A bound agent creates only in its own project. Groups are OR'd and the criteria in a group AND'd; the milestone is met while one group holds. Kinds: ENTITY_STATUS {entityId (qualified id or UUID of a work entity of the same project), status}, DEPLOYMENT_ACTIVE, SCM_RELEASE, APPROVAL {} (a person's approve). ENTITY_STATUS latches from the current state at once when its target already stands at or past the status (evidence CURRENT_STATE). DEPLOYMENT_ACTIVE and SCM_RELEASE latch only on events that happen after the criterion was made: a deployment or a release from before it never meets it.
- */
-export const createMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateMilestoneData, ThrowOnError> | undefined) => httpResource<CreateMilestoneResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? createMilestoneRequest(opts) : undefined;
 });
 
 /**
@@ -2995,7 +2917,7 @@ export const getProjectsApiTechnicalProcessesByIdEventsResource = <ThrowOnError 
 /**
  * Create a work entity of any archetype
  *
- * Files a new epic, ticket, campaign, feature or task from one body shape: the archetype plus the archetype's create schema (GET /projects/api/work/archetypes/{archetype}/schemas/create). A root names its project (id or slug), a node its parent (qualified id or UUID): a feature's parent is an EPIC, a task's a FEATURE. A dependency is a qualified id or a UUID. The status starts REPORTED. Answers the entity in the merged shape, with its qualified id.
+ * Files a new epic, ticket, issue, feature or task from one body shape: the archetype plus the archetype's create schema (GET /projects/api/work/archetypes/{archetype}/schemas/create). A root names its project (id or slug), a node its parent (qualified id or UUID): a feature's parent is an EPIC, a task's a FEATURE. A need's item is a qualified id or a UUID. The status starts REPORTED. Answers the entity in the merged shape, with its qualified id.
  */
 export const createWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateWorkData, ThrowOnError> | undefined) => httpResource<CreateWorkResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3025,7 +2947,7 @@ export const getWorkArchetypeSchemaResource = <ThrowOnError extends boolean = fa
 /**
  * State several work entities in full, as one post-state
  *
- * A map of entity id to the whole state that entity is to have afterwards, validated as one post-state, applied in one transaction and announced once. The keys and every id in an entry (membership.parent, supersededBy, dependsOn) are qualified ids or UUIDs; an id naming nothing is one of the violations in the 400. Answers each entity in the merged shape, keyed as the request was.
+ * A map of entity id to the whole state that entity is to have afterwards, validated as one post-state, applied in one transaction and announced once. The keys and every id in an entry (membership.parent, supersededBy) are qualified ids or UUIDs; an id naming nothing is one of the violations in the 400. Answers each entity in the merged shape, keyed as the request was.
  */
 export const transitionWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<TransitionWorkData, ThrowOnError> | undefined) => httpResource<TransitionWorkResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3035,7 +2957,7 @@ export const transitionWorkResource = <ThrowOnError extends boolean = false>(opt
 /**
  * Delete a work entity and its subtree
  *
- * Removes the entity, its descendants and their threads, each audited; the audit log outlives them. An epic's or a ticket's delete is qits:admin's, or the delivery desk's (qits:desk) in its own project; a feature's or a task's admits an agent bound to its project and obeys its epic's freeze. A campaign is not deleted but dropped. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
+ * Removes the entity, its descendants and their threads, each audited; the audit log outlives them. An epic's or a ticket's delete is qits:admin's, or the delivery desk's (qits:desk) in its own project; a feature's or a task's admits an agent bound to its project and obeys its epic's freeze. An issue is not deleted but moved to OBSOLETE. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const deleteWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteWorkData, ThrowOnError> | undefined) => httpResource<DeleteWorkResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3055,7 +2977,7 @@ export const getWorkResource = <ThrowOnError extends boolean = false>(options: (
 /**
  * Edit a work entity's fields (JSON merge patch)
  *
- * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/work/{qualifiedId}/status, and a reshape, reparent or supersede through PUT /projects/api/work/{qualifiedId} or POST /projects/api/work/transition. dependsOn is a qualified id or a UUID. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it READY_FOR_DEV or IMPLEMENTING, and a marker moves the item's status with it. An epic's or a ticket's acceptance criteria are frozen from READY_FOR_DEV on, where a changed list is refused and the same list restated passes. The tags are editable at every status, outside every freeze. Answers the entity in the merged shape.
+ * Partial update of one entity of any archetype. An absent property is left unchanged and an explicit null clears it. The status is never written here — a lifecycle move goes through POST /projects/api/work/{qualifiedId}/status, and a reshape, reparent or supersede through PUT /projects/api/work/{qualifiedId} or POST /projects/api/work/transition. A need's item is a qualified id or a UUID. An epic's, feature's or task's scope follows the epic's freeze: scope edits need the epic REPORTED, the markers need it READY_FOR_DEV or IMPLEMENTING, and a marker moves the item's status with it. An epic's or a ticket's acceptance criteria are frozen from READY_FOR_DEV on, where a changed list is refused and the same list restated passes. The tags are editable at every status, outside every freeze. Answers the entity in the merged shape.
  */
 export const patchWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchWorkData, ThrowOnError> | undefined) => httpResource<PatchWorkResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3065,7 +2987,7 @@ export const patchWorkResource = <ThrowOnError extends boolean = false>(options:
 /**
  * State a work entity in full
  *
- * The full edit of one entity: the body is the entity's whole state afterwards — what it is (archetype), where it hangs (membership), every property — and an absent property is cleared, not left alone. It is the one-entry form of POST /projects/api/work/transition and obeys every rule of it, so it is also how a single entity is reshaped, reparented or superseded. Every entity id in the body (membership.parent, supersededBy, dependsOn) is a qualified id or a UUID. Answers the entity as written, in the merged shape.
+ * The full edit of one entity: the body is the entity's whole state afterwards — what it is (archetype), where it hangs (membership), every property — and an absent property is cleared, not left alone. It is the one-entry form of POST /projects/api/work/transition and obeys every rule of it, so it is also how a single entity is reshaped, reparented or superseded. Every entity id in the body (membership.parent, supersededBy) is a qualified id or a UUID. Answers the entity as written, in the merged shape.
  */
 export const putWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<PutWorkData, ThrowOnError> | undefined) => httpResource<PutWorkResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3085,7 +3007,7 @@ export const reportWorkAgentWaitingResource = <ThrowOnError extends boolean = fa
 /**
  * A work entity's change history
  *
- * Newest first. A root (epic, ticket, campaign) answers its whole subtree — its features, tasks and every thread under it, deleted rows included; a feature or a task its own rows. The path names the entity by qualified id (<projectSlug>-<n>) or UUID; a UUID still answers after the entity is deleted.
+ * Newest first. A root (epic, ticket, issue) answers its whole subtree — its features, tasks and every thread under it, deleted rows included; a feature or a task its own rows. The path names the entity by qualified id (<projectSlug>-<n>) or UUID; a UUID still answers after the entity is deleted.
  */
 export const getWorkAuditResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkAuditData, ThrowOnError> | undefined) => httpResource<GetWorkAuditResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3095,7 +3017,7 @@ export const getWorkAuditResource = <ThrowOnError extends boolean = false>(optio
 /**
  * Block or unblock a work entity
  *
- * Says the phase an epic's, ticket's or campaign's status starts cannot finish right now (or can again). The status does not move — it is the phase to resume — and the next transition clears the block. The reason is required to block and lands on the entity's thread.
+ * Says the phase an epic's or ticket's status starts cannot finish right now (or can again). The status does not move — it is the phase to resume — and the next transition clears the block. The reason is required to block and lands on the entity's thread.
  */
 export const setWorkBlockedResource = <ThrowOnError extends boolean = false>(options: () => Options<SetWorkBlockedData, ThrowOnError> | undefined) => httpResource<SetWorkBlockedResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3173,9 +3095,9 @@ export const getWorkDispatchResource = <ThrowOnError extends boolean = false>(op
 });
 
 /**
- * Put an agent on an epic or a ticket, or start a campaign
+ * Put an agent on an epic or a ticket
  *
- * mode PHASE runs the one phase the entity's status starts; mode FLOW runs that phase and the ones after it until a status starts none. On a campaign the press is its start. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
+ * mode PHASE runs the one phase the entity's status starts; mode FLOW runs that phase and the ones after it until a status starts none. The path names the entity by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const dispatchWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<DispatchWorkData, ThrowOnError> | undefined) => httpResource<DispatchWorkResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3273,123 +3195,13 @@ export const moveWorkDossierPageResource = <ThrowOnError extends boolean = false
 });
 
 /**
- * A campaign's members
- *
- * Every membership in campaign order: the entity it gathers, its run record and its condition. The path names the campaign by qualified id (<projectSlug>-<n>) or UUID.
- */
-export const listWorkMembersResource = <ThrowOnError extends boolean = false>(options: () => Options<ListWorkMembersData, ThrowOnError> | undefined) => httpResource<ListWorkMembersResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? listWorkMembersRequest(opts) : undefined;
-});
-
-/**
- * Gather an entity into a campaign
- *
- * Adds a membership — at position, or at the end — for an entity named by qualified id or UUID. A bound agent adds only in its own project.
- */
-export const addWorkMemberResource = <ThrowOnError extends boolean = false>(options: () => Options<AddWorkMemberData, ThrowOnError> | undefined) => httpResource<AddWorkMemberResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? addWorkMemberRequest(opts) : undefined;
-});
-
-/**
- * Remove a membership from its campaign
- *
- * Refused once the member was claimed, and while another member's criterion targets it. Answers the members that remain.
- */
-export const removeWorkMemberResource = <ThrowOnError extends boolean = false>(options: () => Options<RemoveWorkMemberData, ThrowOnError> | undefined) => httpResource<RemoveWorkMemberResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? removeWorkMemberRequest(opts) : undefined;
-});
-
-/**
- * Replace a membership's condition
- *
- * PUT semantics: the whole condition, groups OR'd and criteria in a group AND'd; an empty list waits on nothing. A criterion restating an existing id keeps its latch. An ENTITY_STATUS predicate's entityId takes a qualified id or a UUID.
- */
-export const setWorkMemberConditionResource = <ThrowOnError extends boolean = false>(options: () => Options<SetWorkMemberConditionData, ThrowOnError> | undefined) => httpResource<SetWorkMemberConditionResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? setWorkMemberConditionRequest(opts) : undefined;
-});
-
-/**
- * A person's yes on a member's APPROVAL criterion
- *
- * qits:admin, and then a person this service verified itself; the name recorded is the proof's. The campaign's own project's delivery desk (qits:desk, its own delivery token) may approve too, recorded under its token subject. Refused when the criterion is not APPROVAL, is already satisfied, or the campaign is DONE or DROPPED.
- */
-export const approveWorkMemberCriterionResource = <ThrowOnError extends boolean = false>(options: () => Options<ApproveWorkMemberCriterionData, ThrowOnError> | undefined) => httpResource<ApproveWorkMemberCriterionResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? approveWorkMemberCriterionRequest(opts) : undefined;
-});
-
-/**
- * Set the milestones a membership waits on
- *
- * PUT semantics: the membership is dispatched once every listed milestone is met, and an empty list waits on nothing. Each must be an existing milestone of the campaign's project; the member entity is attached to each, so it shows what it needs. A milestone left off stays attached to the member entity — except the membership's generated condition (the one PUT …/condition edits), which is detached from it and deleted once nothing waits on it. Refused once the member was claimed (a claim freezes it) and at a DROPPED campaign. A bound agent edits only in its own project.
- */
-export const setWorkMemberMilestonesResource = <ThrowOnError extends boolean = false>(options: () => Options<SetWorkMemberMilestonesData, ThrowOnError> | undefined) => httpResource<SetWorkMemberMilestonesResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? setWorkMemberMilestonesRequest(opts) : undefined;
-});
-
-/**
- * Move a membership within its campaign
- *
- * Answers the members as the move left them.
- */
-export const moveWorkMemberResource = <ThrowOnError extends boolean = false>(options: () => Options<MoveWorkMemberData, ThrowOnError> | undefined) => httpResource<MoveWorkMemberResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? moveWorkMemberRequest(opts) : undefined;
-});
-
-/**
- * The milestones a work entity waits on
- *
- * Each its id, its displayName and since when it is met (satisfiedAt, null while it is not). The entity needs something while any is unmet.
- */
-export const listWorkMilestonesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListWorkMilestonesData, ThrowOnError> | undefined) => httpResource<ListWorkMilestonesResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? listWorkMilestonesRequest(opts) : undefined;
-});
-
-/**
- * A work entity no longer waits on a milestone
- *
- * The milestone itself stays, and so does every campaign membership waiting on it. Answers what the entity waits on now. A bound agent detaches only in its own project.
- */
-export const detachWorkMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<DetachWorkMilestoneData, ThrowOnError> | undefined) => httpResource<DetachWorkMilestoneResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? detachWorkMilestoneRequest(opts) : undefined;
-});
-
-/**
- * A work entity waits on a milestone
- *
- * Idempotent. The milestone must be of the entity's project. Answers what the entity waits on now. A bound agent attaches only in its own project.
- */
-export const attachWorkMilestoneResource = <ThrowOnError extends boolean = false>(options: () => Options<AttachWorkMilestoneData, ThrowOnError> | undefined) => httpResource<AttachWorkMilestoneResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? attachWorkMilestoneRequest(opts) : undefined;
-});
-
-/**
  * Drop a work item above or below one of its siblings
  *
- * Ranks the item among its siblings — the children of its parent, or for a root every root of its project but the campaigns — by where it was dropped: directly above or directly below one named sibling (qualified id or UUID). DONE and DROPPED siblings take no part. The item and every open sibling above it are renumbered, strictly descending and above every ranked sibling below, so the order reads as dropped; nothing below the drop is written. Answers the renumbered siblings in order.
+ * Ranks the item among its siblings — the children of its parent, or for a root every root of its project but the issues — by where it was dropped: directly above or directly below one named sibling (qualified id or UUID). DONE and DROPPED siblings take no part. The item and every open sibling above it are renumbered, strictly descending and above every ranked sibling below, so the order reads as dropped; nothing below the drop is written. Answers the renumbered siblings in order.
  */
 export const reprioritizeWorkResource = <ThrowOnError extends boolean = false>(options: () => Options<ReprioritizeWorkData, ThrowOnError> | undefined) => httpResource<ReprioritizeWorkResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? reprioritizeWorkRequest(opts) : undefined;
-});
-
-/**
- * How a campaign is doing
- *
- * Every member's derived state, what it waits for, each criterion judged (the sentence that would latch it, whether it still can, its evidence), and whether the criteria evaluator is listening. The path names the campaign by qualified id (<projectSlug>-<n>) or UUID.
- */
-export const getWorkProgressResource = <ThrowOnError extends boolean = false>(options: () => Options<GetWorkProgressData, ThrowOnError> | undefined) => httpResource<GetWorkProgressResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? getWorkProgressRequest(opts) : undefined;
 });
 
 /**
@@ -3405,7 +3217,7 @@ export const getWorkRefinementResource = <ThrowOnError extends boolean = false>(
 /**
  * Open (or find) a work entity's refinement room
  *
- * Find-or-create: an entity has at most one room, and a second open answers the first. The room is a session of the project's front desk, asked for by the open. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, a project with no wrapper, and beyond the project's refinement-sessions cap. The path names the entity (an epic, a ticket or a campaign) by qualified id (<projectSlug>-<n>) or UUID.
+ * Find-or-create: an entity has at most one room, and a second open answers the first. The room is a session of the project's front desk, asked for by the open. Refused for a feature or a task, an entity not at REPORTED, one an ACTIVE workspace names, a project with no wrapper, and beyond the project's refinement-sessions cap. The path names the entity (an epic or a ticket) by qualified id (<projectSlug>-<n>) or UUID.
  */
 export const startWorkRefinementResource = <ThrowOnError extends boolean = false>(options: () => Options<StartWorkRefinementData, ThrowOnError> | undefined) => httpResource<StartWorkRefinementResponse>(() => {
     const opts = options ? options() : undefined;
@@ -3415,7 +3227,7 @@ export const startWorkRefinementResource = <ThrowOnError extends boolean = false
 /**
  * Move a work entity through its lifecycle
  *
- * Moves an epic, ticket, campaign, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, a campaign, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. The project's delivery desk (qits:desk) moves what qits:admin-agent moves, superseding included, in its own project only; its scheduling (REFINED to READY_FOR_DEV) is a person's, or the dispatch press's under start_refined. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Nobody moves a ticket to DONE: the platform does, once the wrapper release request carrying its branch is finalized. Answers the entity in the merged shape, with statusBefore.
+ * Moves an epic, ticket, issue, feature or task to the target status, by the same path as the archetype's own transition and under its roles: an agent may move a ticket, an issue, a feature or a task of its own project, a platform service (qits:system) one of any project, and an epic is qits:admin's, or an agent's of its own project, which may not supersede it. The project's delivery desk (qits:desk) moves what qits:admin-agent moves, superseding included, in its own project only; its scheduling (REFINED to READY_FOR_DEV) is a person's, or the dispatch press's under start_refined. A feature or a task moves only once its epic is past REPORTED, and its scheduling (to READY_FOR_DEV, or back) is the epic's. Nobody moves a ticket to DONE: the platform does, once the wrapper release request carrying its branch is finalized. Answers the entity in the merged shape, with statusBefore.
  */
 export const setWorkStatusResource = <ThrowOnError extends boolean = false>(options: () => Options<SetWorkStatusData, ThrowOnError> | undefined) => httpResource<SetWorkStatusResponse>(() => {
     const opts = options ? options() : undefined;

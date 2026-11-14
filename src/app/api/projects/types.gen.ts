@@ -136,7 +136,7 @@ export type ApproveReleaseRequest = {
     note?: string;
 };
 
-export type Archetype = 'EPIC' | 'TICKET' | 'FEATURE' | 'TASK' | 'CAMPAIGN' | 'ISSUE';
+export type Archetype = 'EPIC' | 'TICKET' | 'FEATURE' | 'TASK' | 'ISSUE';
 
 export type ArchetypeRegistryDocument = {
     properties?: Array<EntityProperty>;
@@ -237,113 +237,6 @@ export type BranchDto = {
     parent?: string;
     ahead?: number;
     behind?: number;
-};
-
-export type CampaignCriterionProgressDto = {
-    id?: string;
-    kind?: string;
-    seeded?: boolean;
-    satisfied?: boolean;
-    wouldBeSatisfiedBy?: string;
-    satisfiable?: boolean;
-    reason?: string;
-    evidence?: CriterionEvidenceDto;
-    approval?: CriterionApprovalDto;
-    satisfiedAt?: Instant;
-};
-
-export type CampaignDispatchDto = {
-    workspaceId?: string;
-    branch?: string;
-    agentLaunch?: string;
-};
-
-export type CampaignEvaluatorDto = {
-    connected?: boolean;
-    lastSweepCompletedAt?: Instant;
-    stalled?: boolean;
-    consumerFailing?: boolean;
-    lastError?: string;
-    lastErrorAt?: Instant;
-    watermarkAt?: Instant;
-};
-
-export type CampaignGroupProgressDto = {
-    id?: string;
-    satisfied?: boolean;
-    criteria?: Array<CampaignCriterionProgressDto>;
-};
-
-export type CampaignMemberDto = {
-    membershipId?: string;
-    position?: number;
-    entity?: CampaignMemberEntityDto;
-    claimedAt?: Instant;
-    joinedRunning?: boolean;
-    dispatchedAt?: Instant;
-    dispatch?: CampaignDispatchDto;
-    dispatchRefusal?: string;
-    dispatchRefusedAt?: Instant;
-    dispatchError?: string;
-    groups?: Array<CriterionGroupDto>;
-    holdsStatus?: boolean;
-    milestones?: Array<MilestoneRef>;
-};
-
-export type CampaignMemberEntityDto = {
-    id?: string;
-    archetype?: string;
-    qualifiedId?: string;
-    title?: string;
-    status?: string;
-    blocked?: boolean;
-    blockSource?: string;
-    blockReason?: string;
-    blockedBy?: string;
-    tags?: Array<WorkTag>;
-};
-
-export type CampaignMemberProgressDto = {
-    membershipId?: string;
-    position?: number;
-    entity?: CampaignMemberEntityDto;
-    state?: CampaignMemberState;
-    waitsFor?: Array<string>;
-    joinedRunning?: boolean;
-    groups?: Array<CampaignGroupProgressDto>;
-    dispatchedAt?: Instant;
-    dispatch?: CampaignDispatchDto;
-    dispatchRefusal?: string;
-    dispatchRefusedAt?: Instant;
-    dispatchError?: string;
-};
-
-export type CampaignMemberState = 'DROPPED' | 'DONE' | 'DISPATCH_FAILED' | 'JOINED_RUNNING' | 'RUNNING' | 'REFUSED' | 'READY' | 'WAITING';
-
-export type CampaignProgressCampaignDto = {
-    id?: string;
-    qualifiedId?: string;
-    title?: string;
-    status?: string;
-    blocked?: boolean;
-    start?: CampaignStartDto;
-    blockSource?: string;
-    blockReason?: string;
-    blockedBy?: string;
-    heldBy?: Array<string>;
-};
-
-export type CampaignProgressDto = {
-    campaign?: CampaignProgressCampaignDto;
-    evaluator?: CampaignEvaluatorDto;
-    members?: Array<CampaignMemberProgressDto>;
-};
-
-export type CampaignStartDto = {
-    firstStartedAt?: Instant;
-    startedAt?: Instant;
-    startedBy?: string;
-    active?: boolean;
 };
 
 export type CapabilityReportRequest = {
@@ -533,39 +426,10 @@ export type CredentialRequest = {
     value?: string;
 };
 
-export type CriterionApprovalDto = {
-    approvedBy?: string;
-    note?: string;
-};
-
-export type CriterionDto = {
-    id?: string;
-    kind?: string;
-    predicate?: {
-        [key: string]: unknown;
-    };
-    seeded?: boolean;
-    satisfiedAt?: Instant;
-    evidence?: CriterionEvidenceDto;
-    approval?: CriterionApprovalDto;
-};
-
-export type CriterionEvidenceDto = {
-    eventId?: string;
-    signature?: string;
-    summary?: string;
-};
-
-export type CriterionGroupDto = {
-    id?: string;
-    criteria?: Array<CriterionDto>;
-};
-
 export type DeclaredArchetype = {
     archetype?: Archetype;
     depth?: number;
     mayBeRoot?: boolean;
-    gathers?: boolean;
     required?: Array<EntityProperty>;
     requiredAtCreate?: Array<EntityProperty>;
     requiredOnTransition?: Array<EntityProperty>;
@@ -582,7 +446,7 @@ export type DeclaredArchetype = {
      */
     lifecycle?: Array<string>;
     /**
-     * What a dispatch press (dispatchWork) runs from each status, keyed by every status in lifecycle order. Empty for a kind a dispatch runs no phases on: a feature, a task and a campaign (whose press is its start).
+     * What a dispatch press (dispatchWork) runs from each status, keyed by every status in lifecycle order. Empty for a kind a dispatch runs no phases on: a feature, a task and an issue.
      */
     phases?: {
         [key: string]: DispatchPhases;
@@ -843,7 +707,7 @@ export type EntityDispatchStateDto = {
     waitingOn?: string;
 };
 
-export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'DEPENDS_ON' | 'ACCEPTANCE_CRITERIA' | 'RELATED_TO';
+export type EntityProperty = 'TITLE' | 'SLUG' | 'DESCRIPTION' | 'STATUS' | 'TICKET_TYPE' | 'IMPETUS' | 'ASSIGNEE' | 'CREATED_BY' | 'SUPERSEDED_BY' | 'REPOSITORY_ID' | 'IMPLEMENTED_AT' | 'IMPLEMENTING_AT' | 'ACCEPTANCE_CRITERIA' | 'RELATED_TO';
 
 export type EntitySummary = {
     id?: string;
@@ -866,7 +730,6 @@ export type EntitySummary = {
     repositoryId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
-    dependsOn?: string;
     parent?: string;
     position?: number;
     priority?: number;
@@ -879,8 +742,6 @@ export type EntitySummary = {
     blockedBy?: string;
     waitingOn?: string;
     tags?: Array<WorkTag>;
-    milestones?: Array<MilestoneRef>;
-    unmetMilestones?: number;
     needs?: Array<NeedRef>;
     unmetNeeds?: number;
 };
@@ -897,7 +758,6 @@ export type EntityTransition = {
     supersededBy?: string;
     repositoryId?: string;
     implementedAt?: Instant;
-    dependsOn?: string;
     acceptanceCriteria?: Array<string>;
     outcome?: WorkOutcome;
 };
@@ -1284,7 +1144,7 @@ export type LegalMove = {
     to?: string;
     kind?: TransitionKind;
     /**
-     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers; CHILDREN_CLOSED: every child is DONE or DROPPED and a person or the delivery desk makes the move). Only a FORWARD, SKIP or CLOSE move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
+     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers; CHILDREN_CLOSED: every child is DONE or DROPPED and a person or the delivery desk makes the move; CONDITION_MET: a ticket closing straight to DONE is tagged CONDITION and a person or the delivery desk makes the move). Only a FORWARD, SKIP or CLOSE move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
      */
     gates?: Array<string>;
 };
@@ -1325,161 +1185,6 @@ export type MergeConflictDto = {
     conflicts?: Array<ConflictedPath>;
 };
 
-/**
- * One milestone.
- */
-export type MilestoneAnswer = {
-    milestone?: MilestoneDto;
-};
-
-/**
- * A person's yes on an APPROVAL criterion.
- */
-export type MilestoneApproval = {
-    /**
-     * Why, optionally.
-     */
-    note?: string;
-};
-
-/**
- * A new milestone: its name and its condition.
- */
-export type MilestoneCreate = {
-    /**
-     * What it is called, e.g. "bootstrap test node".
-     */
-    displayName: string;
-    /**
-     * At least one group of at least one criterion.
-     */
-    groups: Array<MilestoneGroupSpec>;
-};
-
-/**
- * One AND'd criterion of a milestone.
- */
-export type MilestoneCriterionDto = {
-    id?: string;
-    kind?: string;
-    predicate?: {
-        [key: string]: unknown;
-    };
-    seeded?: boolean;
-    createdAt?: Instant;
-    satisfiedAt?: Instant;
-    evidence?: CriterionEvidenceDto;
-    approval?: CriterionApprovalDto;
-};
-
-/**
- * One criterion of a milestone, as stated.
- */
-export type MilestoneCriterionSpec = {
-    /**
-     * An existing criterion's id, to keep its latch; omitted states a new one.
-     */
-    id?: string;
-    /**
-     * ENTITY_STATUS, DEPLOYMENT_ACTIVE, SCM_RELEASE or APPROVAL
-     */
-    kind: string;
-    /**
-     * The kind's predicate; an ENTITY_STATUS predicate's entityId takes a qualified id or a UUID. APPROVAL takes {}.
-     */
-    predicate?: {
-        [key: string]: unknown;
-    };
-};
-
-/**
- * A milestone, its condition and what waits on it.
- */
-export type MilestoneDto = {
-    id?: string;
-    projectId?: string;
-    displayName?: string;
-    createdAt?: Instant;
-    satisfiedAt?: Instant;
-    met?: boolean;
-    groups?: Array<MilestoneGroupDto>;
-    entities?: Array<MilestoneWorkDto>;
-    memberships?: Array<MilestoneMembershipDto>;
-};
-
-/**
- * One OR'd group of a milestone's condition.
- */
-export type MilestoneGroupDto = {
-    id?: string;
-    position?: number;
-    createdAt?: Instant;
-    satisfiedAt?: Instant;
-    criteria?: Array<MilestoneCriterionDto>;
-};
-
-/**
- * One OR'd group of a milestone, as stated.
- */
-export type MilestoneGroupSpec = {
-    criteria?: Array<MilestoneCriterionSpec>;
-};
-
-/**
- * A milestone's whole condition.
- */
-export type MilestoneGroups = {
-    /**
-     * At least one group of at least one criterion.
-     */
-    groups: Array<MilestoneGroupSpec>;
-};
-
-/**
- * A project's milestones, oldest first.
- */
-export type MilestoneList = {
-    milestones?: Array<MilestoneDto>;
-};
-
-/**
- * A campaign membership waiting on a milestone.
- */
-export type MilestoneMembershipDto = {
-    membershipId?: string;
-    campaignId?: string;
-    campaignQualifiedId?: string;
-    campaignTitle?: string;
-    entityId?: string;
-    entityQualifiedId?: string;
-    claimedAt?: Instant;
-    generatedCondition?: boolean;
-};
-
-export type MilestoneRef = {
-    id?: string;
-    displayName?: string;
-    satisfiedAt?: Instant;
-};
-
-/**
- * A milestone's new name.
- */
-export type MilestoneRename = {
-    displayName: string;
-};
-
-/**
- * A work entity waiting on a milestone.
- */
-export type MilestoneWorkDto = {
-    id?: string;
-    qualifiedId?: string;
-    archetype?: string;
-    title?: string;
-    status?: string;
-};
-
 export type MoveReleaseRequestSource = {
     branch: string;
     reason: string;
@@ -1488,6 +1193,93 @@ export type MoveReleaseRequestSource = {
 export type MoveReleaseRequestSourceResponse = {
     from?: ReleaseRequestDto;
     to?: ReleaseRequestDto;
+};
+
+export type NamedAgent = {
+    /**
+     * The agent's name: desk, ui-builder
+     */
+    name: string;
+    /**
+     * The agent surface its session launches as
+     */
+    surface: string;
+    /**
+     * STOPPED (no session, none asked for), STARTING (asked for, not running yet), IDLE (running, between turns), BUSY (running, in a turn) or FAILED (the daemon could not run it)
+     */
+    state: 'STOPPED' | 'STARTING' | 'IDLE' | 'BUSY' | 'FAILED';
+    /**
+     * Its harness session, which the next launch resumes; null before it ran
+     */
+    sessionId?: string | null;
+    /**
+     * The daemon's command running it now — the terminal is /projects/container/{projectId}/terminal/commands/{commandId}; null while none runs
+     */
+    commandId?: string | null;
+};
+
+export type NamedAgentLastAnswer = {
+    /**
+     * The command that gave it
+     */
+    commandId?: string | null;
+    /**
+     * Its agent session
+     */
+    sessionId?: string | null;
+    /**
+     * That command's state, as the daemon reports it
+     */
+    state?: string | null;
+    /**
+     * The last answer's text; null before the first
+     */
+    text?: string | null;
+    /**
+     * When it was given; null before the first
+     */
+    at?: string | null;
+};
+
+export type NamedAgentPromptRequest = {
+    /**
+     * The prompt; must not be blank
+     */
+    text: string;
+};
+
+export type NamedAgentPromptResponse = {
+    /**
+     * The command the prompt was given to; null while it is held
+     */
+    commandId?: string | null;
+    /**
+     * That command's state as the daemon reports it, or STARTING when held
+     */
+    state?: string;
+    /**
+     * Whether the prompt was handed to the session at once
+     */
+    delivered?: boolean;
+    /**
+     * Whether it waits instead: behind a running turn, or for the session
+     */
+    queued?: boolean;
+    /**
+     * Its place in the daemon's queue when queued there, else null
+     */
+    position?: number | null;
+};
+
+export type NamedAgentRefusal = {
+    reason?: string;
+};
+
+export type NamedAgents = {
+    /**
+     * Every named agent of the project, the desk first
+     */
+    agents: Array<NamedAgent>;
 };
 
 export type NeedRef = {
@@ -1514,6 +1306,50 @@ export type NewDesign = {
     truncated?: boolean;
 };
 
+/**
+ * A new pitch and its version 1.
+ */
+export type NewPitch = {
+    /**
+     * The project's id or slug
+     */
+    project: string;
+    /**
+     * A repository of the project, by id or name
+     */
+    repository: string;
+    route: string;
+    screenshot: string;
+    kind: 'DATA' | 'NO_DATA' | 'PENDING' | 'ERROR';
+    viewport: 'PHONE' | 'TABLET' | 'DESKTOP';
+    colorScheme?: 'LIGHT' | 'DARK';
+    manifestVersion: string;
+    title: string;
+    note?: string;
+    /**
+     * The whole document, styles inline
+     */
+    html: string;
+    /**
+     * Version 1's note
+     */
+    versionNote?: string;
+};
+
+/**
+ * The next version of a pitch.
+ */
+export type NewPitchVersion = {
+    /**
+     * The whole document, styles inline
+     */
+    html: string;
+    /**
+     * What changed
+     */
+    note?: string;
+};
+
 export type NonComplyingCommit = {
     hash?: string;
     shortHash?: string;
@@ -1529,6 +1365,115 @@ export type OverrideReleaseRequestUpstream = {
     upstreamRequestId: string;
     note?: string;
 };
+
+export type PitchColorScheme = 'LIGHT' | 'DARK';
+
+/**
+ * A pitch with every version, oldest first, no HTML.
+ */
+export type PitchDetail = {
+    id: string;
+    agent: string;
+    repositoryId: string;
+    repositoryName?: string;
+    route: string;
+    screenshot: string;
+    kind: PitchKind;
+    viewport: PitchViewport;
+    colorScheme?: PitchColorScheme;
+    manifestVersion: string;
+    title: string;
+    note?: string;
+    latestVersion: number;
+    archivedAt?: Instant;
+    createdAt: Instant;
+    updatedAt: Instant;
+    versions: Array<PitchVersionSummary>;
+};
+
+export type PitchKind = 'DATA' | 'NO_DATA' | 'PENDING' | 'ERROR';
+
+export type PitchList = {
+    pitches: Array<PitchSummary>;
+};
+
+/**
+ * A pitch without its versions or its HTML.
+ */
+export type PitchSummary = {
+    id: string;
+    /**
+     * The named agent that pitched it, e.g. ui-builder
+     */
+    agent: string;
+    repositoryId: string;
+    /**
+     * The repository's name, null when it answers to none
+     */
+    repositoryName?: string;
+    /**
+     * The freeze's route
+     */
+    route: string;
+    /**
+     * The freeze's file key in manifest.json
+     */
+    screenshot: string;
+    kind: PitchKind;
+    viewport: PitchViewport;
+    /**
+     * Null for an app with no colour schemes
+     */
+    colorScheme?: PitchColorScheme;
+    /**
+     * The @routes bundle version the screenshot came from
+     */
+    manifestVersion: string;
+    title: string;
+    note?: string;
+    /**
+     * The newest version number
+     */
+    latestVersion: number;
+    /**
+     * When it was archived; null while it is not
+     */
+    archivedAt?: Instant;
+    createdAt: Instant;
+    updatedAt: Instant;
+};
+
+/**
+ * One version of a pitch with its HTML — agent-authored, unsanitised, for a sandboxed script-free frame only.
+ */
+export type PitchVersion = {
+    number: number;
+    html: string;
+    htmlBytes: number;
+    note?: string;
+    createdAt: Instant;
+};
+
+/**
+ * One version of a pitch, without its HTML.
+ */
+export type PitchVersionSummary = {
+    /**
+     * From 1
+     */
+    number: number;
+    /**
+     * The HTML's UTF-8 length
+     */
+    htmlBytes: number;
+    /**
+     * What changed
+     */
+    note?: string;
+    createdAt: Instant;
+};
+
+export type PitchViewport = 'PHONE' | 'TABLET' | 'DESKTOP';
 
 export type PlacementDto = {
     outcome?: string;
@@ -2201,7 +2146,6 @@ export type TransitionedEntity = {
     repositoryId?: string;
     implementedAt?: Instant;
     implementingAt?: Instant;
-    dependsOn?: string;
     parent?: string;
     position?: number;
     priority?: number;
@@ -2216,10 +2160,7 @@ export type TransitionedEntity = {
     waitingOn?: string;
     inspiredBy?: string;
     tags?: Array<WorkTag>;
-    heldBy?: Array<string>;
     relatedTo?: string;
-    milestones?: Array<MilestoneRef>;
-    unmetMilestones?: number;
     needs?: Array<NeedRef>;
     unmetNeeds?: number;
 };
@@ -2355,12 +2296,6 @@ export type WorkChildCreate = {
      */
     repositoryId?: string;
     /**
-     * Retired (qits-1903): any value is a 400 — name what this waits for in needs.
-     *
-     * @deprecated
-     */
-    dependsOn?: string;
-    /**
      * What the child waits for (qits-1903): each entry a work item of the same project and the status it must reach.
      */
     needs?: Array<WorkNeedWrite>;
@@ -2419,38 +2354,11 @@ export type WorkCommentPatch = {
 };
 
 /**
- * One criterion of a member's condition.
- */
-export type WorkConditionCriterion = {
-    /**
-     * An existing criterion's id, to keep its latch; omitted mints one.
-     */
-    id?: string;
-    /**
-     * ENTITY_STATUS, APPROVAL, …
-     */
-    kind?: string;
-    /**
-     * The kind's predicate; an ENTITY_STATUS predicate's entityId takes a qualified id or a UUID.
-     */
-    predicate?: {
-        [key: string]: unknown;
-    };
-};
-
-/**
- * One OR'd group of a member's condition.
- */
-export type WorkConditionGroup = {
-    criteria?: Array<WorkConditionCriterion>;
-};
-
-/**
- * A new work entity of any archetype: the archetype, plus exactly the body GET /projects/api/work/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, CAMPAIGN, ISSUE) names its project, a node (FEATURE, TASK) its parent.
+ * A new work entity of any archetype: the archetype, plus exactly the body GET /projects/api/work/archetypes/{archetype}/schemas/create describes for it. A root (EPIC, TICKET, ISSUE) names its project, a node (FEATURE, TASK) its parent.
  */
 export type WorkCreate = {
     /**
-     * EPIC, TICKET, FEATURE, TASK, CAMPAIGN or ISSUE
+     * EPIC, TICKET, FEATURE, TASK or ISSUE
      */
     archetype: Archetype;
     /**
@@ -2486,12 +2394,6 @@ export type WorkCreate = {
      */
     repositoryId?: string;
     /**
-     * Retired (qits-1903): any value is a 400 — name what this waits for in needs.
-     *
-     * @deprecated
-     */
-    dependsOn?: string;
-    /**
      * An epic's or a ticket's acceptance criteria, in order.
      */
     acceptanceCriteria?: Array<string>;
@@ -2508,19 +2410,9 @@ export type WorkCreate = {
      */
     relatedTo?: string;
     /**
-     * What an epic, a ticket, a feature or a task waits for (qits-1903): each entry a work item of the same project and the status it must reach. Refused on an issue and a campaign.
+     * What an epic, a ticket, a feature or a task waits for (qits-1903): each entry a work item of the same project and the status it must reach. Refused on an issue.
      */
     needs?: Array<WorkNeedWrite>;
-};
-
-/**
- * A person's yes on an APPROVAL criterion.
- */
-export type WorkCriterionApproval = {
-    /**
-     * Why, optionally.
-     */
-    note?: string;
 };
 
 /**
@@ -2546,7 +2438,7 @@ export type WorkDispatchRequest = {
      */
     mode: string;
     /**
-     * The delivery desk's rule id this press is made under (backlog-newest-first, start-refined, resume-orphaned). Required for a qits:desk caller, ignored for anyone else.
+     * The delivery desk's rule id this press is made under (backlog-order, start-refined, resume-orphaned; the older backlog-newest-first is still accepted). Required for a qits:desk caller, ignored for anyone else.
      */
     rule?: string;
 };
@@ -2687,72 +2579,6 @@ export type WorkList = {
 };
 
 /**
- * An entity to gather into the campaign.
- */
-export type WorkMemberAdd = {
-    /**
-     * The entity to gather, by qualified id (<projectSlug>-<n>) or UUID.
-     */
-    entityId: string;
-    /**
-     * Where it goes, 0-based; omitted appends.
-     */
-    position?: number;
-    /**
-     * Whether it joins already running; omitted lets the service decide from its status and its workspace.
-     */
-    inFlight?: boolean;
-};
-
-/**
- * One membership of a campaign.
- */
-export type WorkMemberAnswer = {
-    member?: CampaignMemberDto;
-};
-
-/**
- * A member's whole condition: groups OR'd, criteria in a group AND'd.
- */
-export type WorkMemberCondition = {
-    groups?: Array<WorkConditionGroup>;
-};
-
-/**
- * A campaign's members, in campaign order.
- */
-export type WorkMemberList = {
-    members?: Array<CampaignMemberDto>;
-};
-
-/**
- * The milestones a membership waits on, by id, whole.
- */
-export type WorkMemberMilestones = {
-    /**
-     * Existing milestones of the campaign's project.
-     */
-    milestoneIds: Array<string>;
-};
-
-/**
- * Where a membership should now sit.
- */
-export type WorkMemberMove = {
-    /**
-     * The new position, 0-based.
-     */
-    position: number;
-};
-
-/**
- * The milestones a work entity waits on, in the order attached.
- */
-export type WorkMilestoneList = {
-    milestones?: Array<MilestoneRef>;
-};
-
-/**
  * This work waits until item reaches status: met once the item is at or past it on the walk; a DROPPED need is met by DROPPED alone.
  */
 export type WorkNeedWrite = {
@@ -2796,12 +2622,6 @@ export type WorkPatch = {
      * A task's repository, in the task's project. Cannot be cleared.
      */
     repositoryId?: string;
-    /**
-     * Retired (qits-1903): any value is a 400 — name what this waits for in needs.
-     *
-     * @deprecated
-     */
-    dependsOn?: string;
     /**
      * A feature's or task's implemented marker (ISO-8601 instant); null clears it. Moves only while the owning epic is READY_FOR_DEV or IMPLEMENTING. Setting it moves the item's status to IMPLEMENTED; clearing it takes an IMPLEMENTED item back to IMPLEMENTING (or READY_FOR_DEV when it was never marked implementing).
      */
@@ -2848,13 +2668,6 @@ export type WorkPriority = {
 };
 
 /**
- * A campaign's progress, derived on the read.
- */
-export type WorkProgressAnswer = {
-    progress?: CampaignProgressDto;
-};
-
-/**
  * A work entity's refinement room; null on a read that found none.
  */
 export type WorkRefinementAnswer = {
@@ -2880,7 +2693,7 @@ export type WorkReprioritize = {
  */
 export type WorkStatusMove = {
     /**
-     * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk (IMPLEMENTING has no move back, and READY_FOR_DEV none to REPORTED), or IMPLEMENTED from READY_FOR_DEV or VERIFIED from IMPLEMENTED (the skips). A campaign never moves to IMPLEMENTING or VERIFYING.
+     * REPORTED, REFINED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED, VERIFYING, VERIFIED, DONE or DROPPED — one the entity's current status may move to: a neighbour on the walk (IMPLEMENTING has no move back, and READY_FOR_DEV none to REPORTED), or IMPLEMENTED from READY_FOR_DEV or VERIFIED from IMPLEMENTED (the skips).
      */
     target: string;
     /**
@@ -3765,155 +3578,6 @@ export type UnarchiveIdeaResponses = {
 
 export type UnarchiveIdeaResponse = UnarchiveIdeaResponses[keyof UnarchiveIdeaResponses];
 
-export type GetMilestoneData = {
-    body?: never;
-    path: {
-        milestoneId: string;
-    };
-    query?: never;
-    url: '/projects/api/milestones/{milestoneId}';
-};
-
-export type GetMilestoneErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No milestone with this id
-     */
-    404: unknown;
-};
-
-export type GetMilestoneResponses = {
-    /**
-     * The milestone
-     */
-    200: MilestoneAnswer;
-};
-
-export type GetMilestoneResponse = GetMilestoneResponses[keyof GetMilestoneResponses];
-
-export type RenameMilestoneData = {
-    body: MilestoneRename;
-    path: {
-        milestoneId: string;
-    };
-    query?: never;
-    url: '/projects/api/milestones/{milestoneId}';
-};
-
-export type RenameMilestoneErrors = {
-    /**
-     * No name
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No milestone with this id
-     */
-    404: unknown;
-};
-
-export type RenameMilestoneResponses = {
-    /**
-     * The milestone renamed
-     */
-    200: MilestoneAnswer;
-};
-
-export type RenameMilestoneResponse = RenameMilestoneResponses[keyof RenameMilestoneResponses];
-
-export type ApproveMilestoneCriterionData = {
-    body: MilestoneApproval;
-    path: {
-        criterionId: string;
-        milestoneId: string;
-    };
-    query?: never;
-    url: '/projects/api/milestones/{milestoneId}/criteria/{criterionId}/approve';
-};
-
-export type ApproveMilestoneCriterionErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Neither a verified person nor this milestone's project's delivery desk
-     */
-    403: unknown;
-    /**
-     * No milestone, or no such criterion on it
-     */
-    404: unknown;
-    /**
-     * Not an APPROVAL, or already approved
-     */
-    409: unknown;
-};
-
-export type ApproveMilestoneCriterionResponses = {
-    /**
-     * The milestone with the criterion approved
-     */
-    200: MilestoneAnswer;
-};
-
-export type ApproveMilestoneCriterionResponse = ApproveMilestoneCriterionResponses[keyof ApproveMilestoneCriterionResponses];
-
-export type SetMilestoneGroupsData = {
-    body: MilestoneGroups;
-    path: {
-        milestoneId: string;
-    };
-    query?: never;
-    url: '/projects/api/milestones/{milestoneId}/groups';
-};
-
-export type SetMilestoneGroupsErrors = {
-    /**
-     * No groups, an empty group, a predicate the service cannot read, a restated id that is not this milestone's, or an ENTITY_STATUS target outside the project
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No milestone with this id
-     */
-    404: unknown;
-};
-
-export type SetMilestoneGroupsResponses = {
-    /**
-     * The milestone as the edit left it
-     */
-    200: MilestoneAnswer;
-};
-
-export type SetMilestoneGroupsResponse = SetMilestoneGroupsResponses[keyof SetMilestoneGroupsResponses];
-
 export type ListLaunchPinsData = {
     body?: never;
     path?: never;
@@ -3940,6 +3604,188 @@ export type ListLaunchPinsResponses = {
 };
 
 export type ListLaunchPinsResponse = ListLaunchPinsResponses[keyof ListLaunchPinsResponses];
+
+export type ListPitchesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        agent?: string;
+        archived?: boolean;
+        project?: string;
+        repository?: string;
+        route?: string;
+        screenshot?: string;
+    };
+    url: '/projects/api/pitches';
+};
+
+export type ListPitchesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListPitchesResponses = {
+    /**
+     * OK
+     */
+    200: PitchList;
+};
+
+export type ListPitchesResponse = ListPitchesResponses[keyof ListPitchesResponses];
+
+export type CreatePitchData = {
+    body: NewPitch;
+    path?: never;
+    query?: never;
+    url: '/projects/api/pitches';
+};
+
+export type CreatePitchErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type CreatePitchResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetPitchData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/pitches/{id}';
+};
+
+export type GetPitchErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetPitchResponses = {
+    /**
+     * OK
+     */
+    200: PitchDetail;
+};
+
+export type GetPitchResponse = GetPitchResponses[keyof GetPitchResponses];
+
+export type ArchivePitchData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/pitches/{id}/archive';
+};
+
+export type ArchivePitchErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ArchivePitchResponses = {
+    /**
+     * OK
+     */
+    200: PitchDetail;
+};
+
+export type ArchivePitchResponse = ArchivePitchResponses[keyof ArchivePitchResponses];
+
+export type AddPitchVersionData = {
+    body: NewPitchVersion;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/projects/api/pitches/{id}/versions';
+};
+
+export type AddPitchVersionErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type AddPitchVersionResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetPitchVersionData = {
+    body?: never;
+    path: {
+        id: string;
+        number: string;
+    };
+    query?: never;
+    url: '/projects/api/pitches/{id}/versions/{number}';
+};
+
+export type GetPitchVersionErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetPitchVersionResponses = {
+    /**
+     * OK
+     */
+    200: PitchVersion;
+};
+
+export type GetPitchVersionResponse = GetPitchVersionResponses[keyof GetPitchVersionResponses];
 
 export type ListProjectsData = {
     body?: never;
@@ -4246,6 +4092,141 @@ export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponses = {
 };
 
 export type PostProjectsApiProjectsByProjectIdAgentContainerStopResponse = PostProjectsApiProjectsByProjectIdAgentContainerStopResponses[keyof PostProjectsApiProjectsByProjectIdAgentContainerStopResponses];
+
+export type ListAgentsData = {
+    body?: never;
+    path: {
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/agents';
+};
+
+export type ListAgentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project
+     */
+    404: NamedAgentRefusal;
+};
+
+export type ListAgentsError = ListAgentsErrors[keyof ListAgentsErrors];
+
+export type ListAgentsResponses = {
+    /**
+     * Every named agent, in the registry's order
+     */
+    200: NamedAgents;
+};
+
+export type ListAgentsResponse = ListAgentsResponses[keyof ListAgentsResponses];
+
+export type GetAgentLastAnswerData = {
+    body?: never;
+    path: {
+        name: string;
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/agents/{name}/last-answer';
+};
+
+export type GetAgentLastAnswerErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project, no named agent of that name, or the daemon keeps none
+     */
+    404: NamedAgentRefusal;
+    /**
+     * The desk's daemon predates the door
+     */
+    409: NamedAgentRefusal;
+    /**
+     * No daemon is connected for the project, or it could not be reached
+     */
+    503: NamedAgentRefusal;
+};
+
+export type GetAgentLastAnswerError = GetAgentLastAnswerErrors[keyof GetAgentLastAnswerErrors];
+
+export type GetAgentLastAnswerResponses = {
+    /**
+     * Its last answer; text and at are null before the first
+     */
+    200: NamedAgentLastAnswer;
+};
+
+export type GetAgentLastAnswerResponse = GetAgentLastAnswerResponses[keyof GetAgentLastAnswerResponses];
+
+export type PromptAgentData = {
+    body: NamedAgentPromptRequest;
+    path: {
+        name: string;
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/agents/{name}/prompt';
+};
+
+export type PromptAgentErrors = {
+    /**
+     * Blank text
+     */
+    400: NamedAgentRefusal;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project, or no named agent of that name
+     */
+    404: NamedAgentRefusal;
+    /**
+     * A prompt already waits for the agent, the agent is not running, or the desk's daemon predates the door
+     */
+    409: NamedAgentRefusal;
+    /**
+     * The agent's prompt queue is full
+     */
+    429: NamedAgentRefusal;
+    /**
+     * The desk's daemon could not be reached (for the desk: is not connected yet)
+     */
+    503: NamedAgentRefusal;
+};
+
+export type PromptAgentError = PromptAgentErrors[keyof PromptAgentErrors];
+
+export type PromptAgentResponses = {
+    /**
+     * Delivered or queued by the agent's session
+     */
+    200: NamedAgentPromptResponse;
+    /**
+     * Held until the agent's session is up: state STARTING, queued true
+     */
+    202: NamedAgentPromptResponse;
+};
+
+export type PromptAgentResponse = PromptAgentResponses[keyof PromptAgentResponses];
 
 export type ListDeskTriggerMessagesData = {
     body?: never;
@@ -4726,81 +4707,6 @@ export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses = {
 };
 
 export type PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponse = PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses[keyof PostProjectsApiProjectsByProjectIdRepositoriesReconcileResponses];
-
-export type ListProjectMilestonesData = {
-    body?: never;
-    path: {
-        project: string;
-    };
-    query?: {
-        /**
-         * Only the met (true) or the unmet (false) milestones.
-         */
-        met?: boolean;
-    };
-    url: '/projects/api/projects/{project}/milestones';
-};
-
-export type ListProjectMilestonesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such project
-     */
-    404: unknown;
-};
-
-export type ListProjectMilestonesResponses = {
-    /**
-     * The milestones
-     */
-    200: MilestoneList;
-};
-
-export type ListProjectMilestonesResponse = ListProjectMilestonesResponses[keyof ListProjectMilestonesResponses];
-
-export type CreateMilestoneData = {
-    body: MilestoneCreate;
-    path: {
-        project: string;
-    };
-    query?: never;
-    url: '/projects/api/projects/{project}/milestones';
-};
-
-export type CreateMilestoneErrors = {
-    /**
-     * No name, no groups, an empty group, a predicate the service cannot read, or an ENTITY_STATUS target outside the project
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No such project
-     */
-    404: unknown;
-};
-
-export type CreateMilestoneResponses = {
-    /**
-     * The milestone as written, latched from the current state
-     */
-    201: MilestoneAnswer;
-};
-
-export type CreateMilestoneResponse = CreateMilestoneResponses[keyof CreateMilestoneResponses];
 
 export type ListProjectWorkData = {
     body?: never;
@@ -7155,7 +7061,7 @@ export type DeleteWorkErrors = {
      */
     404: unknown;
     /**
-     * A campaign, or a feature or a task whose epic is no longer REPORTED
+     * An issue, or a feature or a task whose epic is no longer REPORTED
      */
     409: unknown;
 };
@@ -7451,7 +7357,7 @@ export type CreateWorkChildErrors = {
      */
     403: unknown;
     /**
-     * No entity, repository or dependency
+     * No entity or repository
      */
     404: unknown;
     /**
@@ -7671,16 +7577,16 @@ export type DispatchWorkErrors = {
      */
     404: unknown;
     /**
-     * A status that starts no phase, a feature or a task, a blocked entity, a project with no wrapper; for the delivery desk also its loop off, a campaign, or its cap reached
+     * A status that starts no phase, a feature or a task, a blocked entity, a project with no wrapper; for the delivery desk also its loop off or its cap reached
      */
     409: unknown;
 };
 
 export type DispatchWorkResponses = {
     /**
-     * The dispatch made, or — for a campaign — its progress as the start press left it
+     * The dispatch made
      */
-    200: WorkDispatchAnswer | WorkProgressAnswer;
+    200: WorkDispatchAnswer;
 };
 
 export type DispatchWorkResponse = DispatchWorkResponses[keyof DispatchWorkResponses];
@@ -8017,384 +7923,6 @@ export type MoveWorkDossierPageResponses = {
 
 export type MoveWorkDossierPageResponse = MoveWorkDossierPageResponses[keyof MoveWorkDossierPageResponses];
 
-export type ListWorkMembersData = {
-    body?: never;
-    path: {
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members';
-};
-
-export type ListWorkMembersErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No campaign with this id
-     */
-    404: unknown;
-};
-
-export type ListWorkMembersResponses = {
-    /**
-     * The members
-     */
-    200: WorkMemberList;
-};
-
-export type ListWorkMembersResponse = ListWorkMembersResponses[keyof ListWorkMembersResponses];
-
-export type AddWorkMemberData = {
-    body: WorkMemberAdd;
-    path: {
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members';
-};
-
-export type AddWorkMemberErrors = {
-    /**
-     * No entityId
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No campaign, or no entity, with this id
-     */
-    404: unknown;
-    /**
-     * The entity cannot join: already a member, a feature or a task, a DROPPED campaign
-     */
-    409: unknown;
-};
-
-export type AddWorkMemberResponses = {
-    /**
-     * The membership as written
-     */
-    201: WorkMemberAnswer;
-};
-
-export type AddWorkMemberResponse = AddWorkMemberResponses[keyof AddWorkMemberResponses];
-
-export type RemoveWorkMemberData = {
-    body?: never;
-    path: {
-        membershipId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}';
-};
-
-export type RemoveWorkMemberErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No campaign, or no such membership on it
-     */
-    404: unknown;
-    /**
-     * Claimed, or targeted by another member
-     */
-    409: unknown;
-};
-
-export type RemoveWorkMemberResponses = {
-    /**
-     * The members that remain
-     */
-    200: WorkMemberList;
-};
-
-export type RemoveWorkMemberResponse = RemoveWorkMemberResponses[keyof RemoveWorkMemberResponses];
-
-export type SetWorkMemberConditionData = {
-    body: WorkMemberCondition;
-    path: {
-        membershipId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/condition';
-};
-
-export type SetWorkMemberConditionErrors = {
-    /**
-     * A criterion the service cannot read
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No campaign, or no such membership on it
-     */
-    404: unknown;
-};
-
-export type SetWorkMemberConditionResponses = {
-    /**
-     * The member with its condition
-     */
-    200: WorkMemberAnswer;
-};
-
-export type SetWorkMemberConditionResponse = SetWorkMemberConditionResponses[keyof SetWorkMemberConditionResponses];
-
-export type ApproveWorkMemberCriterionData = {
-    body: WorkCriterionApproval;
-    path: {
-        criterionId: string;
-        membershipId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/criteria/{criterionId}/approve';
-};
-
-export type ApproveWorkMemberCriterionErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Neither a verified person nor this campaign's project's delivery desk
-     */
-    403: unknown;
-    /**
-     * No campaign, membership or criterion
-     */
-    404: unknown;
-    /**
-     * Not an APPROVAL, already satisfied, or closed
-     */
-    409: unknown;
-};
-
-export type ApproveWorkMemberCriterionResponses = {
-    /**
-     * The member with the criterion satisfied
-     */
-    200: WorkMemberAnswer;
-};
-
-export type ApproveWorkMemberCriterionResponse = ApproveWorkMemberCriterionResponses[keyof ApproveWorkMemberCriterionResponses];
-
-export type SetWorkMemberMilestonesData = {
-    body: WorkMemberMilestones;
-    path: {
-        membershipId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/milestones';
-};
-
-export type SetWorkMemberMilestonesErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No campaign, no such membership on it, or no such milestone
-     */
-    404: unknown;
-    /**
-     * Claimed, a DROPPED campaign, or a milestone of another project
-     */
-    409: unknown;
-};
-
-export type SetWorkMemberMilestonesResponses = {
-    /**
-     * The member with its milestones
-     */
-    200: WorkMemberAnswer;
-};
-
-export type SetWorkMemberMilestonesResponse = SetWorkMemberMilestonesResponses[keyof SetWorkMemberMilestonesResponses];
-
-export type MoveWorkMemberData = {
-    body: WorkMemberMove;
-    path: {
-        membershipId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/members/{membershipId}/position';
-};
-
-export type MoveWorkMemberErrors = {
-    /**
-     * Bad Request
-     */
-    400: unknown;
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No campaign, or no such membership on it
-     */
-    404: unknown;
-};
-
-export type MoveWorkMemberResponses = {
-    /**
-     * The members, in their new order
-     */
-    200: WorkMemberList;
-};
-
-export type MoveWorkMemberResponse = MoveWorkMemberResponses[keyof MoveWorkMemberResponses];
-
-export type ListWorkMilestonesData = {
-    body?: never;
-    path: {
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/milestones';
-};
-
-export type ListWorkMilestonesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No entity with this id
-     */
-    404: unknown;
-};
-
-export type ListWorkMilestonesResponses = {
-    /**
-     * The milestones
-     */
-    200: WorkMilestoneList;
-};
-
-export type ListWorkMilestonesResponse = ListWorkMilestonesResponses[keyof ListWorkMilestonesResponses];
-
-export type DetachWorkMilestoneData = {
-    body?: never;
-    path: {
-        milestoneId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}';
-};
-
-export type DetachWorkMilestoneErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No entity with this id, or it does not wait on this milestone
-     */
-    404: unknown;
-};
-
-export type DetachWorkMilestoneResponses = {
-    /**
-     * The milestones it waits on now
-     */
-    200: WorkMilestoneList;
-};
-
-export type DetachWorkMilestoneResponse = DetachWorkMilestoneResponses[keyof DetachWorkMilestoneResponses];
-
-export type AttachWorkMilestoneData = {
-    body?: never;
-    path: {
-        milestoneId: string;
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/milestones/{milestoneId}';
-};
-
-export type AttachWorkMilestoneErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * An agent outside its own project
-     */
-    403: unknown;
-    /**
-     * No entity, or no milestone, with this id
-     */
-    404: unknown;
-    /**
-     * The milestone is of another project
-     */
-    409: unknown;
-};
-
-export type AttachWorkMilestoneResponses = {
-    /**
-     * The milestones it waits on now
-     */
-    200: WorkMilestoneList;
-};
-
-export type AttachWorkMilestoneResponse = AttachWorkMilestoneResponses[keyof AttachWorkMilestoneResponses];
-
 export type ReprioritizeWorkData = {
     body: WorkReprioritize;
     path: {
@@ -8406,7 +7934,7 @@ export type ReprioritizeWorkData = {
 
 export type ReprioritizeWorkErrors = {
     /**
-     * Both anchors or neither; an anchor naming no entity, naming the item itself, or naming no open sibling (another parent, another project, a campaign, a DONE or DROPPED item); or the item is a campaign
+     * Both anchors or neither; an anchor naming no entity, naming the item itself, or naming no open sibling (another parent, another project, an issue, a DONE or DROPPED item); or the item is an issue
      */
     400: unknown;
     /**
@@ -8435,39 +7963,6 @@ export type ReprioritizeWorkResponses = {
 };
 
 export type ReprioritizeWorkResponse = ReprioritizeWorkResponses[keyof ReprioritizeWorkResponses];
-
-export type GetWorkProgressData = {
-    body?: never;
-    path: {
-        qualifiedId: string;
-    };
-    query?: never;
-    url: '/projects/api/work/{qualifiedId}/progress';
-};
-
-export type GetWorkProgressErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No campaign with this id
-     */
-    404: unknown;
-};
-
-export type GetWorkProgressResponses = {
-    /**
-     * The progress
-     */
-    200: WorkProgressAnswer;
-};
-
-export type GetWorkProgressResponse = GetWorkProgressResponses[keyof GetWorkProgressResponses];
 
 export type GetWorkRefinementData = {
     body?: never;
