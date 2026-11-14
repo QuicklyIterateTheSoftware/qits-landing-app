@@ -7,6 +7,8 @@ export type ClientOptions = {
 export type CompanionDto = {
     image?: string;
     version?: string;
+    entrypoint?: string;
+    user?: string;
 };
 
 export type CreatePeerRequest = {
@@ -25,6 +27,11 @@ export type EdgeDto = {
 };
 
 export type Instant = string;
+
+export type JoinNodeRequest = {
+    name?: string;
+    publicKey?: string;
+};
 
 export type NodeDto = {
     targetId?: Uuid;
@@ -92,7 +99,7 @@ export type GetCompanionErrors = {
 
 export type GetCompanionResponses = {
     /**
-     * The image and its version
+     * The image, its version, entrypoint and user
      */
     200: CompanionDto;
 };
@@ -126,6 +133,37 @@ export type GetNodesResponses = {
 
 export type GetNodesResponse = GetNodesResponses[keyof GetNodesResponses];
 
+export type GetNodeTunnelData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/network-access/api/nodes/qits-node-tunnel';
+};
+
+export type GetNodeTunnelErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * This image carries no helper
+     */
+    404: unknown;
+};
+
+export type GetNodeTunnelResponses = {
+    /**
+     * The binary
+     */
+    200: Blob | File;
+};
+
+export type GetNodeTunnelResponse = GetNodeTunnelResponses[keyof GetNodeTunnelResponses];
+
 export type GetNodeData = {
     body?: never;
     path: {
@@ -158,6 +196,47 @@ export type GetNodeResponses = {
 };
 
 export type GetNodeResponse = GetNodeResponses[keyof GetNodeResponses];
+
+export type JoinNodeData = {
+    body: JoinNodeRequest;
+    path: {
+        targetId: Uuid;
+    };
+    query?: never;
+    url: '/network-access/api/nodes/{targetId}/join';
+};
+
+export type JoinNodeErrors = {
+    /**
+     * A bad name or public key
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * A registration token that is not this target's
+     */
+    403: unknown;
+    /**
+     * No private edge has announced itself, a key another active peer holds, or a full pool
+     */
+    409: unknown;
+    /**
+     * qits-system could not be asked
+     */
+    503: unknown;
+};
+
+export type JoinNodeResponses = {
+    /**
+     * The node's tunnel parameters
+     */
+    200: TunnelDto;
+};
+
+export type JoinNodeResponse = JoinNodeResponses[keyof JoinNodeResponses];
 
 export type GetPeersData = {
     body?: never;
@@ -259,6 +338,43 @@ export type GetPeerResponses = {
 };
 
 export type GetPeerResponse = GetPeerResponses[keyof GetPeerResponses];
+
+export type GetPeerAppConfigData = {
+    body?: never;
+    path: {
+        peerId: Uuid;
+    };
+    query?: never;
+    url: '/network-access/api/peers/{peerId}/app-config';
+};
+
+export type GetPeerAppConfigErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such peer
+     */
+    404: unknown;
+    /**
+     * No private edge has announced itself
+     */
+    409: unknown;
+};
+
+export type GetPeerAppConfigResponses = {
+    /**
+     * The config
+     */
+    200: string;
+};
+
+export type GetPeerAppConfigResponse = GetPeerAppConfigResponses[keyof GetPeerAppConfigResponses];
 
 export type GetPeerConfigData = {
     body?: never;

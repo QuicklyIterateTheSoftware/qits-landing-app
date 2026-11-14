@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreatePeerData, CreatePeerErrors, CreatePeerResponses, GetCompanionData, GetCompanionErrors, GetCompanionResponses, GetNodeData, GetNodeErrors, GetNodeResponses, GetNodesData, GetNodesErrors, GetNodesResponses, GetPeerConfigData, GetPeerConfigErrors, GetPeerConfigResponses, GetPeerData, GetPeerErrors, GetPeerResponses, GetPeersData, GetPeersErrors, GetPeersResponses, GetPeerTunnelData, GetPeerTunnelErrors, GetPeerTunnelResponses, GetPrivateEdgeData, GetPrivateEdgeErrors, GetPrivateEdgeResponses, RevokePeerData, RevokePeerErrors, RevokePeerResponses } from './types.gen';
+import type { CreatePeerData, CreatePeerErrors, CreatePeerResponses, GetCompanionData, GetCompanionErrors, GetCompanionResponses, GetNodeData, GetNodeErrors, GetNodeResponses, GetNodesData, GetNodesErrors, GetNodesResponses, GetNodeTunnelData, GetNodeTunnelErrors, GetNodeTunnelResponses, GetPeerAppConfigData, GetPeerAppConfigErrors, GetPeerAppConfigResponses, GetPeerConfigData, GetPeerConfigErrors, GetPeerConfigResponses, GetPeerData, GetPeerErrors, GetPeerResponses, GetPeersData, GetPeersErrors, GetPeersResponses, GetPeerTunnelData, GetPeerTunnelErrors, GetPeerTunnelResponses, GetPrivateEdgeData, GetPrivateEdgeErrors, GetPrivateEdgeResponses, JoinNodeData, JoinNodeErrors, JoinNodeResponses, RevokePeerData, RevokePeerErrors, RevokePeerResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -19,7 +19,7 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 };
 
 /**
- * The companion image and version to run
+ * How to run the companion: image, version, entrypoint, user
  */
 export const getCompanion = <ThrowOnError extends boolean = false>(options?: Options<GetCompanionData, ThrowOnError>): RequestResult<GetCompanionResponses, GetCompanionErrors, ThrowOnError> => (options?.client ?? client).get<GetCompanionResponses, GetCompanionErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -37,12 +37,34 @@ export const getNodes = <ThrowOnError extends boolean = false>(options?: Options
 });
 
 /**
+ * The static qits-node-tunnel helper a node's install line runs to join
+ */
+export const getNodeTunnel = <ThrowOnError extends boolean = false>(options?: Options<GetNodeTunnelData, ThrowOnError>): RequestResult<GetNodeTunnelResponses, GetNodeTunnelErrors, ThrowOnError> => (options?.client ?? client).get<GetNodeTunnelResponses, GetNodeTunnelErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/network-access/api/nodes/qits-node-tunnel',
+    ...options
+});
+
+/**
  * One joined node, with its active peer
  */
 export const getNode = <ThrowOnError extends boolean = false>(options: Options<GetNodeData, ThrowOnError>): RequestResult<GetNodeResponses, GetNodeErrors, ThrowOnError> => (options.client ?? client).get<GetNodeResponses, GetNodeErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/network-access/api/nodes/{targetId}',
     ...options
+});
+
+/**
+ * Join a qits-system target as a node: register its peer, or answer the one it has under this key
+ */
+export const joinNode = <ThrowOnError extends boolean = false>(options: Options<JoinNodeData, ThrowOnError>): RequestResult<JoinNodeResponses, JoinNodeErrors, ThrowOnError> => (options.client ?? client).post<JoinNodeResponses, JoinNodeErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/network-access/api/nodes/{targetId}/join',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
 
 /**
@@ -73,6 +95,15 @@ export const createPeer = <ThrowOnError extends boolean = false>(options: Option
 export const getPeer = <ThrowOnError extends boolean = false>(options: Options<GetPeerData, ThrowOnError>): RequestResult<GetPeerResponses, GetPeerErrors, ThrowOnError> => (options.client ?? client).get<GetPeerResponses, GetPeerErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/network-access/api/peers/{peerId}',
+    ...options
+});
+
+/**
+ * The peer's config for the WireGuard apps, with a literal <PRIVATE_KEY> placeholder
+ */
+export const getPeerAppConfig = <ThrowOnError extends boolean = false>(options: Options<GetPeerAppConfigData, ThrowOnError>): RequestResult<GetPeerAppConfigResponses, GetPeerAppConfigErrors, ThrowOnError> => (options.client ?? client).get<GetPeerAppConfigResponses, GetPeerAppConfigErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/network-access/api/peers/{peerId}/app-config',
     ...options
 });
 
