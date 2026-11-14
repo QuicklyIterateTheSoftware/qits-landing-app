@@ -189,15 +189,18 @@ function attributesEqual(a: Element, b: Element): boolean {
   return true;
 }
 
-/** `element`'s attributes worth comparing, normalized: `class` as a sorted token set, `style` as collapsed text. */
+/** `element`'s attributes worth comparing, normalized: `class` as a sorted token set, `style` as collapsed text, either left out when empty. */
 function comparableAttributes(element: Element): Map<string, string> {
   const result = new Map<string, string>();
   for (const attribute of Array.from(element.attributes)) {
     const name = attribute.name.toLowerCase();
     if (ignoredAttribute(name)) continue;
-    if (name === 'class') result.set(name, classTokens(attribute.value));
-    else if (name === 'style') result.set(name, collapse(attribute.value));
-    else result.set(name, attribute.value);
+    if (name === 'class' || name === 'style') {
+      // An empty class or style is no class or style: a rendered frame gains `style=""` as soon as
+      // anything touches an element's style, which the parsed original never shows.
+      const value = name === 'class' ? classTokens(attribute.value) : collapse(attribute.value);
+      if (value) result.set(name, value);
+    } else result.set(name, attribute.value);
   }
   return result;
 }

@@ -123,6 +123,18 @@ describe('diffPitch (qits-2158)', () => {
   });
 });
 
+describe('diffPitch: empty class and style (qits-2158)', () => {
+  it('reads an empty style or class as none, as a rendered frame writes style="" when touched', () => {
+    const { diff: d, pitch } = diff(
+      '<input type="radio" name="t" checked><p class="a">A</p>',
+      '<input type="radio" name="t" checked style=""><p class="a">A</p><span class="">S</span>',
+    );
+    expect(d.marks.get(pitch.querySelector('input')!)).toBe('same');
+    expect(d.marks.get(pitch.querySelector('p')!)).toBe('same');
+    expect(d.marks.get(pitch.querySelector('span')!)).toBe('added');
+  });
+});
+
 describe('applyDiff and clearDiff (qits-2158)', () => {
   it('sets DIFF_ATTRIBUTE to each element’s mark, and clearDiff removes it', () => {
     const { diff: d, pitch } = diff(
