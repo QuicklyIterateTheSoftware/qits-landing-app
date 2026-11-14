@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   PLATFORM_ID,
   signal,
@@ -16,9 +17,13 @@ import {
   type QitsResourceRef,
 } from '@qits/angular';
 import {
+  addDeviceRefusal,
   AS_TEXT,
+  asCreatedPeer,
   CONFIG_FORBIDDEN,
+  DEVICE_NAME_RULE,
   filterPeers,
+  isDeviceName,
   networkAccessRefusal,
   PEER_FILTERS,
   REVOKE_FORBIDDEN,
@@ -27,11 +32,14 @@ import {
 import type { PeerEntry, PrivateEdgeEntry } from '$core/network-access/peers.consumes';
 import {
   NODE_LIST,
+  PEER_APP_CONFIG,
   PEER_CONFIG,
+  PEER_CREATE,
   PEER_LIST,
   PEER_REVOKE,
   PRIVATE_EDGE,
 } from '$core/network-access/peers.operations';
+import { WIREGUARD_KEYS, withPrivateKey } from '$core/network-access/wireguard-keys';
 import { utcMinute } from '$core/projects/release-requests';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -40,6 +48,7 @@ import type { Action } from '$ui/components/action-button/action';
 import { ActionButton } from '$ui/components/action-button/action-button';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
+import { QrCode } from '$ui/components/qr-code/qr-code';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** The line that connects this machine: the companion container, through the CLI. */
@@ -69,6 +78,21 @@ function statusTone(status: string | undefined): ChipTone {
   }
 }
 
+/** What Add device says when the browser cannot make WireGuard keys: nothing was sent. */
+export const NO_X25519 =
+  'This browser cannot make WireGuard keys (its WebCrypto has no X25519), so nothing was sent. ' +
+  'Add the device with the qits CLI, or from a current browser.';
+
+/**
+ * A device Add device made, shown once: its name and address as the service answered them, and
+ * its config with the private key in it. Held only in the page's memory, never sent or stored.
+ */
+interface AddedDevice {
+  readonly name: string;
+  readonly tunnelIp: string;
+  readonly config: string;
+}
+
 /** The private edge, as its read left it: `none` is the service's 404, no edge announced yet. */
 type PrivateEdgeRead =
   | { readonly status: 'loading' | 'error' | 'none' }
@@ -91,10 +115,21 @@ type PrivateEdgeRead =
  *   visitor's credential may not revoke peers).
  * - Download WireGuard config on an ACTIVE DEVICE row reads the peer's `wg-quick` text
  *   (`PEER_CONFIG`'s `fetch`: a read on a press, not something the pane shows) and saves it as
- *   `<name>.conf`, the `<PRIVATE_KEY>` placeholder kept: the pane makes no keys and adds no devices.
+ *   `<name>.conf`, the `<PRIVATE_KEY>` placeholder kept: an existing device's key is not the pane's.
+ * - Add device (qits-2262), for a phone or a laptop without the CLI, while a private edge is
+ *   announced: a name the service takes (`isDeviceName`, its DNS-label rule, checked as typed),
+ *   then the browser makes an X25519 keypair (`WIREGUARD_KEYS`, WebCrypto), `adding`
+ *   (`PEER_CREATE`) sends the name and the public key and reads the lists again, and
+ *   `PEER_APP_CONFIG`'s `fetch` reads the new peer's config for the WireGuard apps, whose
+ *   `<PRIVATE_KEY>` the page fills in memory. The config is shown once (`added`): a QR code drawn in
+ *   the page (`ui-qr-code`), Download .conf, Copy and the text, with the warning that it is gone once
+ *   closed. The private key is never sent, stored or marked; Done and leaving the page drop it. A
+ *   refused add shows the service's own words (`addDeviceRefusal`); a browser without X25519 sends
+ *   nothing; a config that cannot be read after the add says to revoke the device and add it again.
  * - The private edge card (`edgeRead`, `PRIVATE_EDGE`): its endpoint, public key and announce time,
  *   or "No private edge has announced itself yet." on the service's 404.
- * - Connect this machine: the copyable `qits network-access up`, then a Browsers step with the
+ * - Connect this machine: the copyable `qits network-access up` (pointing a device without the CLI
+ *   at Add device), then a Browsers step with the
  *   companion's copyable PAC URL (qits-network-access-service `proxy.go`'s `/proxy.pac`): it only
  *   routes once `up` is running on this machine, is set as the system's or browser's automatic
  *   proxy configuration URL, and leaves public apps working while the companion is stopped.
@@ -105,7 +140,7 @@ type PrivateEdgeRead =
  * no mark can say: it is marked derived from the peer's own fields.
  *
  * Staleness (qits-1270): none yet. qits-network-access sends no domain event, so the pane reads
- * again only after its own revoke, and on Retry.
+ * again only after its own revoke or add, and on Retry.
  */
 @Component({
   selector: 'app-network-access-page',
@@ -118,6 +153,7 @@ type PrivateEdgeRead =
     PageLayoutComponent,
     QitsEntity,
     QitsField,
+    QrCode,
     Spinner,
   ],
   host: { class: 'block' },
@@ -141,9 +177,10 @@ type PrivateEdgeRead =
           </p>
           <app-copy-text [text]="connectCommand" label="Copy" />
           <p class="mt-2 mb-0 text-xs text-fg-muted">
-            For a client outside the CLI, a device row’s Download WireGuard config gives its
-            <code>wg-quick</code> file; put your own private key in place of
-            <code>&lt;PRIVATE_KEY&gt;</code>.
+            For a phone, or a laptop without the CLI, use Add device below: it makes the device’s
+            keys in this browser and shows its WireGuard config once. A device row’s Download
+            WireGuard config gives its <code>wg-quick</code> file without the key; put your own
+            private key in place of <code>&lt;PRIVATE_KEY&gt;</code>.
           </p>
 
           <h3 class="mt-3 mb-1 text-sm font-semibold text-fg">Browsers</h3>
@@ -199,6 +236,76 @@ type PrivateEdgeRead =
             }
             @default {
               <p class="m-0 text-sm text-fg-muted">Reading the private edge…</p>
+            }
+          }
+        </section>
+
+        <section
+          class="mb-6 rounded-md border border-line bg-surface px-4 py-3"
+          aria-labelledby="add-heading"
+          data-add-device
+        >
+          <h2 id="add-heading" class="m-0 mb-1 text-base font-semibold text-fg">Add device</h2>
+          @if (added(); as device) {
+            <div data-device-config>
+              <p class="mt-0 mb-2 text-sm text-fg-soft">
+                <strong class="text-fg">{{ device.name }}</strong> is added at
+                <code>{{ device.tunnelIp }}</code
+                >. Scan the QR code with the WireGuard app, or download the file and import it.
+              </p>
+              <p
+                class="mt-0 mb-3 rounded-md border border-warning-line bg-warning-soft px-3 py-2 text-sm text-warning-strong"
+                role="note"
+              >
+                This config holds the device’s private key. It is shown once and stored nowhere:
+                once you close it, it is gone. If it is lost, revoke this device and add it again.
+              </p>
+              <div class="grid gap-4 md:grid-cols-[16rem_minmax(0,1fr)]">
+                <ui-qr-code
+                  class="w-64 max-w-full"
+                  [text]="device.config"
+                  [label]="'WireGuard config of ' + device.name"
+                />
+                <div class="min-w-0">
+                  <app-copy-text [text]="device.config" label="Copy" />
+                  <div class="mt-2 flex flex-wrap gap-1">
+                    <ui-action-button [action]="downloadAdded" />
+                    <ui-action-button [action]="done" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <p class="mt-0 mb-2 text-sm text-fg-soft">
+              For a phone or a laptop without the qits CLI. This browser makes the device’s keys;
+              only its public key is sent.
+            </p>
+            <div class="flex flex-wrap items-start gap-2">
+              <input
+                class="h-8 w-64 max-w-full rounded-md border border-line-strong bg-surface px-2 text-sm text-fg aria-invalid:border-danger"
+                type="text"
+                name="device-name"
+                aria-label="Device name"
+                placeholder="phone"
+                autocomplete="off"
+                spellcheck="false"
+                [value]="name()"
+                [attr.aria-invalid]="nameRefused() ? 'true' : null"
+                [disabled]="addBlocked() !== null || adding()"
+                (input)="name.set(text($event))"
+                (keydown.enter)="add()"
+              />
+              <ui-action-button [action]="addAction()" />
+            </div>
+            @if (addBlocked(); as why) {
+              <p class="mt-2 mb-0 text-xs text-fg-muted" data-add-blocked>{{ why }}</p>
+            } @else if (nameRefused()) {
+              <p class="mt-2 mb-0 text-xs text-danger" data-name-rule>{{ nameRule }}</p>
+            }
+            @if (addFailure(); as failure) {
+              <p class="mt-2 mb-0 text-sm text-danger" role="alert" data-add-refusal>
+                {{ failure }}
+              </p>
             }
           }
         </section>
@@ -334,6 +441,17 @@ export class NetworkAccessPage {
   protected readonly failure = signal<string | null>(null);
   /** Whether Mine was chosen once: its read starts then, and stays. */
   private readonly mineAsked = signal(false);
+  /** Makes a new device's keys: WebCrypto, or a spec's fixed pair. */
+  private readonly keys = inject(WIREGUARD_KEYS);
+  protected readonly nameRule = DEVICE_NAME_RULE;
+  /** The name Add device will send, as typed. */
+  protected readonly name = signal('');
+  /** Whether an add (keys, write, config read) is under way. */
+  protected readonly adding = signal(false);
+  /** Why the last add did not end with a config shown. */
+  protected readonly addFailure = signal<string | null>(null);
+  /** The device just added, with its private key: shown once, until Done or leaving the page. */
+  protected readonly added = signal<AddedDevice | null>(null);
 
   /** Every peer. */
   protected readonly peers = qitsResource(PEER_LIST, () => (this.browser ? {} : undefined));
@@ -349,6 +467,11 @@ export class NetworkAccessPage {
   /** The announced private edge; its 404 is "none announced yet". */
   protected readonly edgeRead = qitsResource(PRIVATE_EDGE, () => (this.browser ? {} : undefined));
 
+  /** Adds a device peer, then reads the lists again, so its row shows. */
+  private readonly creating = qitsMutation(PEER_CREATE, {
+    affects: () => [this.peers, this.mine],
+  });
+
   /** Revokes a peer, then reads the lists again. */
   private readonly revoking = qitsMutation(PEER_REVOKE, {
     affects: () => [this.peers, this.nodes, this.mine],
@@ -363,6 +486,55 @@ export class NetworkAccessPage {
     const edge = read.hasValue() ? read.value() : undefined;
     return edge ? { status: 'loaded', edge } : { status: 'loading' };
   });
+
+  /**
+   * Why Add device cannot add now, or null: a peer behind no private edge has no config to
+   * connect with, so it waits for one.
+   */
+  protected readonly addBlocked = computed((): string | null => {
+    switch (this.edge().status) {
+      case 'loaded':
+        return null;
+      case 'none':
+        return 'No private edge has announced itself yet, so a new device would have nothing to connect to.';
+      case 'error':
+        return 'The private edge could not be read, so no device can be added now.';
+      default:
+        return 'Reading the private edge…';
+    }
+  });
+
+  /** Whether the typed name is one the service refuses (an empty field is not refused yet). */
+  protected readonly nameRefused = computed(() => this.name() !== '' && !isDeviceName(this.name()));
+
+  protected readonly addAction = computed((): Action => ({
+    label: this.adding() ? 'Adding…' : 'Add',
+    variant: 'success',
+    disabled: this.addBlocked() !== null || this.adding() || !isDeviceName(this.name()),
+    callback: () => void this.add(),
+  }));
+
+  /** Saves the shown config as `<name>.conf`. */
+  protected readonly downloadAdded: Action = {
+    label: 'Download .conf',
+    variant: 'muted',
+    callback: () => {
+      const device = this.added();
+      if (device) this.save(`${device.name}.conf`, device.config);
+    },
+  };
+
+  /** Closes the shown config: its private key is dropped with it. */
+  protected readonly done: Action = {
+    label: 'Done',
+    variant: 'success',
+    callback: () => this.added.set(null),
+  };
+
+  constructor() {
+    // Leaving the page drops a config still shown, private key and all.
+    inject(DestroyRef).onDestroy(() => this.added.set(null));
+  }
 
   protected readonly edgeEntry = computed(() =>
     this.edgeRead.hasValue() ? this.edgeRead.value() : undefined,
@@ -460,6 +632,67 @@ export class NetworkAccessPage {
     if (failed(this.peers)) this.peers.reload();
     if (failed(this.nodes)) this.nodes.reload();
     if (this.edge().status === 'error') this.edgeRead.reload();
+  }
+
+  /** The text of an input event's target. */
+  protected text(event: Event): string {
+    return (event.target as HTMLInputElement).value;
+  }
+
+  /**
+   * Adds the typed device: makes its keys, sends the name and the public key, reads its config for
+   * the WireGuard apps and fills the private key in, then shows it once. The private key lives in
+   * this call and in `added`, nowhere else.
+   */
+  protected async add(): Promise<void> {
+    const name = this.name();
+    if (!this.browser || this.adding() || this.addBlocked() !== null || !isDeviceName(name)) return;
+    this.addFailure.set(null);
+    this.adding.set(true);
+    try {
+      let keys;
+      try {
+        keys = await this.keys();
+      } catch {
+        this.addFailure.set(NO_X25519);
+        return;
+      }
+      let peer;
+      try {
+        peer = asCreatedPeer(
+          await this.creating.run({ body: { name, publicKey: keys.publicKey } }),
+        );
+      } catch (error) {
+        this.addFailure.set(
+          error instanceof QitsApiError
+            ? addDeviceRefusal(error.error, error.status)
+            : addDeviceRefusal(undefined, undefined),
+        );
+        return;
+      }
+      const shownName = peer?.name || name;
+      const config = peer?.id
+        ? await PEER_APP_CONFIG.fetch({ path: { peerId: peer.id }, ...AS_TEXT }).catch(
+            () => undefined,
+          )
+        : undefined;
+      const text = config?.data as unknown;
+      if (!config || config.error !== undefined || typeof text !== 'string') {
+        this.addFailure.set(
+          `${shownName} was added, but its config could not be read, and its private key is gone ` +
+            'with it. Revoke it and add it again.',
+        );
+        return;
+      }
+      this.name.set('');
+      this.added.set({
+        name: shownName,
+        tunnelIp: peer?.tunnelIp ?? '',
+        config: withPrivateKey(text, keys.privateKey),
+      });
+    } finally {
+      this.adding.set(false);
+    }
   }
 
   private async revoke(peer: PeerEntry): Promise<void> {
