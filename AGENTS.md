@@ -762,8 +762,14 @@ release requests'`), its ACTIVE agents (refused with 403: the agents menu shows 
   for that URL): `reads` names the state, or `'unanswered'` leaves them all to the spec, which
   answers each (`http.match`) and calls `settled()` after so the reads that follow it are answered too. The spec
   answers only its page's own reads. It screenshots `frame` (the shell's host) and scopes its
-  assertions to `page` (the routed page). The shell is shown in one settled state, menus closed;
-  its own states (wide, narrow, the burger, each menu) are `shell.layout.browser.spec.ts`'s, the
+  assertions to `page` (the routed page). The shell is shown in one settled state, menus closed,
+  but for one rule (qits-2225): the outcome check judges the shell's triggers per page route, so
+  each project page's spec calls `shootShellMenus(opened, name)` (`src/testing/browser/
+shell-menus.ts`) once, which shoots the page with each top-bar menu holding a declared exit
+  open, and a page drawing a work reference `shootWorkRefPreview` (its preview open). A trigger
+  nobody can reach on a route is not rendered there at all (a closed sidebar section's pages, the
+  agents menu and gear with no project, a hidden Workspace link), never only hidden. The
+  shell's other states (wide, narrow, the burger, each menu) are `shell.layout.browser.spec.ts`'s, the
   one page or layout spec that keeps stand-in routes (`TestPage`, `TallPage`). A change to the
   shell or the navigation therefore changes every page's references and freezes: regenerate them
   as for any changed screenshot.
