@@ -85829,6 +85829,468 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)",
+      "name": "pitched-none",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with a pitch",
+          "operationId": "listPitches"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": [
+            "provider",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": "operationId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)",
+      "name": "pitched-none",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with a pitch",
+          "operationId": "listPitches"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": [
+            "provider",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": "operationId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)",
+      "name": "pitched-none",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with a pitch",
+          "operationId": "listPitches"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": [
+            "provider",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": "operationId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)",
+      "name": "pitched-none",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with a pitch",
+          "operationId": "listPitches"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": null,
+          "derived": [
+            "provider",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#getDocsFile",
+          "item": null,
+          "field": "operationId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)",
+      "name": "pitched-none",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with a pitch",
+          "operationId": "listPitches"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+      "test": "UiBuilderPage (screenshots) > says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)",
+      "name": "pitched-none",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/repositories/:repo/ui-builder",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published routes bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with a pitch",
+          "operationId": "listPitches"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with repositories in components",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
       "test": "UiBuilderPage (screenshots) > lists the calls of the state picked, not the route’s (qits-2080)",
@@ -156737,6 +157199,12 @@
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none-phone-light.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none-tablet-dark.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/none-tablet-light.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-desktop-dark.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-desktop-light.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-phone-dark.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-phone-light.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-tablet-dark.html",
+      "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/pitched-none-tablet-light.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-desktop-dark.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-desktop-light.html",
       "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts/state-data-phone-dark.html",
