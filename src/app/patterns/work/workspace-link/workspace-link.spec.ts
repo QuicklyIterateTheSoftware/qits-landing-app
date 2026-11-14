@@ -75,10 +75,13 @@ describe('WorkspaceLink', () => {
   it('hides itself for an item without one', async () => {
     const link = await render(params['improvementTicketId']);
     expect(link.classList.contains('hidden')).toBe(true);
+    // Not rendered at all: no trigger a person cannot reach (qits-2225).
+    expect(link.querySelector('a')).toBeNull();
   });
 
   it('hides itself until the open workspaces are loaded', async () => {
     const link = await render(params['bugTicketId'], false);
     expect(link.classList.contains('hidden')).toBe(true);
+    expect(link.querySelector('a')).toBeNull();
   });
 });

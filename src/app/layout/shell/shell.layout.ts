@@ -184,8 +184,9 @@ export interface NavNote {
         <ui-breadcrumbs [home]="home" [crumbs]="crumbs()" />
         <!-- The menus at the right end: the platform's network access (from 768px), version bumps
              and notifications (always), then the open project's agents and its release requests,
-             the theme (from 768px, qits-2086), and the open project's settings (agents, release
-             requests and settings hidden, not removed, while no project is open). -->
+             the theme (from 768px, qits-2086), and the open project's settings (release requests
+             hidden while no project is open; agents and settings not rendered then, qits-2225: a
+             trigger nobody can reach would count against every project-less route). -->
         <div class="ml-auto flex items-center gap-1">
           <a
             class="hidden size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg md:inline-flex aria-[current=page]:text-fg"
@@ -217,29 +218,30 @@ export interface NavNote {
             [state]="releaseRequests.state()"
           />
           <app-theme-menu class="max-md:hidden" />
-          <a
-            class="size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:text-fg"
-            [class]="slug() ? 'inline-flex' : 'hidden'"
-            [qitsExit]="settings.open"
-            [exitParams]="{ slug: slug() }"
-            aria-label="Settings"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              class="size-5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          @if (slug()) {
+            <a
+              class="inline-flex size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:text-fg"
+              [qitsExit]="settings.open"
+              [exitParams]="{ slug: slug() }"
+              aria-label="Settings"
             >
-              <path
-                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-              />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          </a>
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="size-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </a>
+          }
         </div>
       </header>
 
@@ -276,13 +278,14 @@ export interface NavNote {
                   >
                 </span></a
               >
-              <!-- The open section's pages, indented below it; switched by class, so the server
-                   render hydrates as is. -->
+              <!-- The open section's pages, indented below it; the list switched by class, so the
+                   server render hydrates as is, its links rendered only while the section is open
+                   (\`openChildren\`, qits-2225). -->
               <ul
                 class="m-0 mt-0.5 mb-1 ml-3 list-none border-l border-line pl-2"
                 [class.hidden]="!link.children?.length || link.path !== section()?.path"
               >
-                @for (child of link.children ?? []; track child.path) {
+                @for (child of openChildren(link); track child.path) {
                   <li>
                     <a
                       class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
@@ -528,6 +531,17 @@ export class ShellLayout {
   protected currentOf(link: NavLink): 'page' | 'true' | null {
     if (link.path !== this.section()?.path) return null;
     return link.children?.some((child) => this.isAt(child)) ? 'true' : 'page';
+  }
+
+  /**
+   * A section's own pages as the sidebar renders them: all of them while the section is open,
+   * none otherwise. Not rendered rather than hidden (ticket qits-2225): a closed section's links
+   * are triggers no person can reach (the sidebar has no control that opens a section without
+   * leaving for it), and the outcome check counts a trigger a route renders and never shows
+   * against that route.
+   */
+  protected openChildren(link: NavLink): readonly NavChild[] {
+    return link.path === this.section()?.path ? (link.children ?? []) : [];
   }
 
   /** A note's chip colours; neutral while there is no note. */

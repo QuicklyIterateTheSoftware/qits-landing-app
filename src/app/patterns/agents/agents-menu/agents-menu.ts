@@ -164,11 +164,16 @@ interface AgentMenuRow {
  * wait's label), "Blocked since HH:mm" when its item is blocked (the work list carries no block
  * reason), and, when it needs a person (`needsAttention`), the attention's reason in the danger tone with
  * its action (`attentionAction`: Prompt agent → the agent page's Chat tab, Open item → the item,
- * or the overdue wait's subject). Shown only while a project is open, like the lightning menu.
+ * or the overdue wait's subject). Shown only while a project is open, like the lightning menu;
+ * with none open the dropdown is not rendered at all (ticket qits-2225), not just hidden: its
+ * "All agents" link would be a trigger the page renders and no person can reach, which the
+ * per-route outcome check counts against every project-less route.
  *
  * Rows needing a person come first, then the rest by `lastActivityAt`, newest first. The badge
  * counts the agents needing a person, in red; with none, the active agents, in amber; it is hidden
- * at none. The footer links "All agents" to the project's Agents page.
+ * at none. The footer links "All agents" to the project's Agents page; it sits below the list's
+ * spinner rather than in it, so it stays usable while the agents cannot be read (a refusal, an
+ * error: the spinner's overlay covers only the list, qits-2225).
  *
  * The agents are read as soon as a project opens (`ProjectActiveAgents`, a root service: the
  * shell's trail names an agent from the same read), and again on each opening (`reload()`). The
@@ -206,276 +211,283 @@ interface AgentMenuRow {
     '[class]': "projectId() ? 'inline-flex' : 'hidden'",
   },
   template: `
-    <ui-dropdown
-      #menu
-      label="Agents"
-      panelLabel="The project's agents"
-      panelId="agents-menu"
-      (opened)="load()"
-    >
-      <svg
-        dropdown-trigger
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-        class="size-5"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+    @if (projectId()) {
+      <ui-dropdown
+        #menu
+        label="Agents"
+        panelLabel="The project's agents"
+        panelId="agents-menu"
+        (opened)="load()"
       >
-        <rect x="4" y="8" width="16" height="12" rx="3" />
-        <path d="M12 8V4" />
-        <circle cx="12" cy="3.5" r="1" />
-        <circle cx="9" cy="14" r="1" />
-        <circle cx="15" cy="14" r="1" />
-        <path d="M2 13v3M22 13v3" />
-      </svg>
-      <span
-        dropdown-trigger
-        class="absolute -top-0.5 -right-0.5 min-w-4 rounded-full px-1 text-[0.625rem] leading-4 font-semibold"
-        [class]="
-          (attention()
-            ? 'bg-danger text-fg-on-accent'
-            : 'bg-warning-soft text-warning-strong ring-1 ring-warning-line') +
-          (count() ? '' : ' hidden')
-        "
-        aria-hidden="true"
-        [qitsEntityList]="agents()"
-        [fieldOf]="answer()"
-        [qitsField]="{ derived: ['agents'] }"
-        >{{ attention() || count() }}</span
-      >
-      <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
-        <ul class="m-0 list-none p-0" [qitsEntityList]="agents()">
-          @for (row of rows(); track row.agent.agentId) {
-            @let agent = row.agent;
-            <li
-              class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0"
-              [class]="row.action ? 'border-l-4 border-l-danger bg-danger-soft' : ''"
-              [qitsEntity]="agent"
-              entityKey="agentId"
-            >
-              <div class="flex items-baseline justify-between gap-2">
-                @if (slug() && agent.agentId; as agentId) {
-                  <a
-                    class="min-w-0 truncate text-sm text-fg no-underline hover:underline"
-                    [qitsExit]="opening.agent"
-                    [exitParams]="{ slug: slug(), agentId }"
-                    (click)="menu.close()"
-                    [fieldOf]="agent"
-                    [qitsField]="{ derived: ['entityId', 'entityTitle'] }"
-                    ><span class="font-semibold" [fieldOf]="agent" qitsField="entityId">{{
-                      agent.entityId
-                    }}</span>
-                    {{ agent.entityTitle }}</a
-                  >
-                } @else {
+        <svg
+          dropdown-trigger
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          class="size-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="4" y="8" width="16" height="12" rx="3" />
+          <path d="M12 8V4" />
+          <circle cx="12" cy="3.5" r="1" />
+          <circle cx="9" cy="14" r="1" />
+          <circle cx="15" cy="14" r="1" />
+          <path d="M2 13v3M22 13v3" />
+        </svg>
+        <span
+          dropdown-trigger
+          class="absolute -top-0.5 -right-0.5 min-w-4 rounded-full px-1 text-[0.625rem] leading-4 font-semibold"
+          [class]="
+            (attention()
+              ? 'bg-danger text-fg-on-accent'
+              : 'bg-warning-soft text-warning-strong ring-1 ring-warning-line') +
+            (count() ? '' : ' hidden')
+          "
+          aria-hidden="true"
+          [qitsEntityList]="agents()"
+          [fieldOf]="answer()"
+          [qitsField]="{ derived: ['agents'] }"
+          >{{ attention() || count() }}</span
+        >
+        <ui-spinner dropdown-panel [state]="state()" class="min-h-16">
+          <ul class="m-0 list-none p-0" [qitsEntityList]="agents()">
+            @for (row of rows(); track row.agent.agentId) {
+              @let agent = row.agent;
+              <li
+                class="flex flex-col gap-1 border-b border-line-subtle px-3 py-2 last:border-b-0"
+                [class]="row.action ? 'border-l-4 border-l-danger bg-danger-soft' : ''"
+                [qitsEntity]="agent"
+                entityKey="agentId"
+              >
+                <div class="flex items-baseline justify-between gap-2">
+                  @if (slug() && agent.agentId; as agentId) {
+                    <a
+                      class="min-w-0 truncate text-sm text-fg no-underline hover:underline"
+                      [qitsExit]="opening.agent"
+                      [exitParams]="{ slug: slug(), agentId }"
+                      (click)="menu.close()"
+                      [fieldOf]="agent"
+                      [qitsField]="{ derived: ['entityId', 'entityTitle'] }"
+                      ><span class="font-semibold" [fieldOf]="agent" qitsField="entityId">{{
+                        agent.entityId
+                      }}</span>
+                      {{ agent.entityTitle }}</a
+                    >
+                  } @else {
+                    <span
+                      class="min-w-0 truncate text-sm text-fg"
+                      [fieldOf]="agent"
+                      [qitsField]="{ derived: ['entityId', 'agentId', 'entityTitle'] }"
+                      ><span class="font-semibold">{{ agent.entityId ?? agent.agentId }}</span>
+                      {{ agent.entityTitle }}</span
+                    >
+                  }
                   <span
-                    class="min-w-0 truncate text-sm text-fg"
+                    class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap"
+                    [class]="chip(row.activity.tone)"
+                    data-activity
                     [fieldOf]="agent"
-                    [qitsField]="{ derived: ['entityId', 'agentId', 'entityTitle'] }"
-                    ><span class="font-semibold">{{ agent.entityId ?? agent.agentId }}</span>
-                    {{ agent.entityTitle }}</span
+                    [qitsField]="marks.activity"
+                    >{{ row.activity.label }}</span
                   >
-                }
-                <span
-                  class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap"
-                  [class]="chip(row.activity.tone)"
-                  data-activity
-                  [fieldOf]="agent"
-                  [qitsField]="marks.activity"
-                  >{{ row.activity.label }}</span
-                >
-              </div>
-              @for (wait of row.waits; track wait.id) {
-                @let source = wait.wait;
-                <div
-                  class="flex flex-col gap-0.5 text-[0.8125rem] text-fg-soft"
-                  data-wait
-                  [qitsEntity]="source"
-                  entityKey="id"
-                >
-                  <div class="flex items-baseline justify-between gap-2">
-                    <span class="min-w-0 truncate">
-                      <span class="text-fg-muted">waits on </span>
-                      @switch (slug() && wait.subject.id ? wait.subject.kind : null) {
-                        @case ('RELEASE_REQUEST') {
-                          <a
-                            class="text-fg"
-                            [qitsExit]="waiting.releaseRequest"
-                            [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
-                            (click)="menu.close()"
-                            [fieldOf]="source"
-                            [qitsField]="marks.subject"
-                            >{{ wait.subject.text }}</a
-                          >
-                        }
-                        @case ('WORK_ITEM') {
-                          <a
-                            class="text-fg"
-                            [qitsExit]="waiting.workItem"
-                            [exitParams]="{ slug: slug(), id: wait.subject.id! }"
-                            (click)="menu.close()"
-                            [fieldOf]="source"
-                            [qitsField]="marks.subject"
-                            >{{ wait.subject.text }}</a
-                          >
-                        }
-                        @case ('COMMENTS') {
-                          <a
-                            class="text-fg"
-                            [qitsExit]="waiting.comments"
-                            [exitParams]="{ slug: slug(), id: wait.subject.id! }"
-                            (click)="menu.close()"
-                            [fieldOf]="source"
-                            [qitsField]="marks.subject"
-                            >{{ wait.subject.text }}</a
-                          >
-                        }
-                        @default {
-                          @if (wait.subject.href; as href) {
+                </div>
+                @for (wait of row.waits; track wait.id) {
+                  @let source = wait.wait;
+                  <div
+                    class="flex flex-col gap-0.5 text-[0.8125rem] text-fg-soft"
+                    data-wait
+                    [qitsEntity]="source"
+                    entityKey="id"
+                  >
+                    <div class="flex items-baseline justify-between gap-2">
+                      <span class="min-w-0 truncate">
+                        <span class="text-fg-muted">waits on </span>
+                        @switch (slug() && wait.subject.id ? wait.subject.kind : null) {
+                          @case ('RELEASE_REQUEST') {
                             <a
                               class="text-fg"
-                              [href]="href"
+                              [qitsExit]="waiting.releaseRequest"
+                              [exitParams]="{ slug: slug(), requestId: wait.subject.id! }"
                               (click)="menu.close()"
                               [fieldOf]="source"
-                              [qitsField]="marks.run"
+                              [qitsField]="marks.subject"
                               >{{ wait.subject.text }}</a
                             >
-                          } @else {
-                            <span class="text-fg" [fieldOf]="source" [qitsField]="marks.run">{{
-                              wait.subject.text
-                            }}</span>
+                          }
+                          @case ('WORK_ITEM') {
+                            <a
+                              class="text-fg"
+                              [qitsExit]="waiting.workItem"
+                              [exitParams]="{ slug: slug(), id: wait.subject.id! }"
+                              (click)="menu.close()"
+                              [fieldOf]="source"
+                              [qitsField]="marks.subject"
+                              >{{ wait.subject.text }}</a
+                            >
+                          }
+                          @case ('COMMENTS') {
+                            <a
+                              class="text-fg"
+                              [qitsExit]="waiting.comments"
+                              [exitParams]="{ slug: slug(), id: wait.subject.id! }"
+                              (click)="menu.close()"
+                              [fieldOf]="source"
+                              [qitsField]="marks.subject"
+                              >{{ wait.subject.text }}</a
+                            >
+                          }
+                          @default {
+                            @if (wait.subject.href; as href) {
+                              <a
+                                class="text-fg"
+                                [href]="href"
+                                (click)="menu.close()"
+                                [fieldOf]="source"
+                                [qitsField]="marks.run"
+                                >{{ wait.subject.text }}</a
+                              >
+                            } @else {
+                              <span class="text-fg" [fieldOf]="source" [qitsField]="marks.run">{{
+                                wait.subject.text
+                              }}</span>
+                            }
                           }
                         }
+                      </span>
+                      @if (wait.subject.state; as state) {
+                        <span
+                          class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap"
+                          [class]="chip(wait.tone)"
+                          [fieldOf]="source"
+                          [qitsField]="marks.subjectState"
+                          >{{ state }}</span
+                        >
                       }
-                    </span>
-                    @if (wait.subject.state; as state) {
-                      <span
-                        class="shrink-0 rounded px-1.5 text-[0.6875rem] leading-4 font-semibold whitespace-nowrap"
-                        [class]="chip(wait.tone)"
+                    </div>
+                    @if (wait.lifecycle; as points) {
+                      <ui-lifecycle-line
+                        [points]="points"
+                        [spread]="true"
                         [fieldOf]="source"
-                        [qitsField]="marks.subjectState"
-                        >{{ state }}</span
+                        [qitsField]="marks.request"
+                      />
+                    } @else if (wait.subject.gates?.length) {
+                      <span
+                        class="flex flex-wrap gap-1"
+                        [fieldOf]="source"
+                        [qitsField]="marks.request"
                       >
+                        @for (gate of wait.subject.gates; track $index) {
+                          <span
+                            class="rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
+                            [class]="chip(tone(gate.state))"
+                            >{{ gate.kind }} {{ gate.state }}</span
+                          >
+                        }
+                      </span>
                     }
                   </div>
-                  @if (wait.lifecycle; as points) {
-                    <ui-lifecycle-line
-                      [points]="points"
-                      [spread]="true"
-                      [fieldOf]="source"
-                      [qitsField]="marks.request"
-                    />
-                  } @else if (wait.subject.gates?.length) {
-                    <span
-                      class="flex flex-wrap gap-1"
-                      [fieldOf]="source"
-                      [qitsField]="marks.request"
-                    >
-                      @for (gate of wait.subject.gates; track $index) {
-                        <span
-                          class="rounded px-1.5 text-[0.6875rem] leading-4 font-semibold"
-                          [class]="chip(tone(gate.state))"
-                          >{{ gate.kind }} {{ gate.state }}</span
-                        >
+                }
+                @if (row.blockedAt !== undefined) {
+                  <span
+                    class="text-[0.8125rem] text-fg-soft"
+                    data-blocked
+                    [fieldOf]="agent"
+                    [qitsField]="{ derived: ['entityBlocked', 'blockedAt'] }"
+                    >{{ row.blockedAt ? 'Blocked since ' + row.blockedAt : 'Blocked' }}</span
+                  >
+                }
+                @if (row.action; as action) {
+                  <div
+                    class="flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]"
+                    data-attention
+                  >
+                    <span class="text-danger" [fieldOf]="agent" qitsField="attention.reason">{{
+                      agent.attention?.reason
+                    }}</span>
+                    @switch (action.kind) {
+                      @case ('prompt') {
+                        @if (slug() && agent.agentId; as agentId) {
+                          <a
+                            class="font-semibold text-fg"
+                            [qitsExit]="acting.prompt"
+                            [exitParams]="{ slug: slug(), agentId }"
+                            (click)="menu.close()"
+                            [fieldOf]="agent"
+                            [qitsField]="marks.prompt"
+                            data-action
+                            >{{ action.label }}</a
+                          >
+                        }
                       }
-                    </span>
-                  }
-                </div>
-              }
-              @if (row.blockedAt !== undefined) {
-                <span
-                  class="text-[0.8125rem] text-fg-soft"
-                  data-blocked
-                  [fieldOf]="agent"
-                  [qitsField]="{ derived: ['entityBlocked', 'blockedAt'] }"
-                  >{{ row.blockedAt ? 'Blocked since ' + row.blockedAt : 'Blocked' }}</span
-                >
-              }
-              @if (row.action; as action) {
-                <div class="flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]" data-attention>
-                  <span class="text-danger" [fieldOf]="agent" qitsField="attention.reason">{{
-                    agent.attention?.reason
-                  }}</span>
-                  @switch (action.kind) {
-                    @case ('prompt') {
-                      @if (slug() && agent.agentId; as agentId) {
-                        <a
-                          class="font-semibold text-fg"
-                          [qitsExit]="acting.prompt"
-                          [exitParams]="{ slug: slug(), agentId }"
-                          (click)="menu.close()"
-                          [fieldOf]="agent"
-                          [qitsField]="marks.prompt"
-                          data-action
-                          >{{ action.label }}</a
-                        >
+                      @case ('open-item') {
+                        @if (slug() && action.itemId; as id) {
+                          <a
+                            class="font-semibold text-fg"
+                            [qitsExit]="acting.openItem"
+                            [exitParams]="{ slug: slug(), id }"
+                            (click)="menu.close()"
+                            [fieldOf]="agent"
+                            [qitsField]="marks.openItem"
+                            data-action
+                            >{{ action.label }}</a
+                          >
+                        }
                       }
-                    }
-                    @case ('open-item') {
-                      @if (slug() && action.itemId; as id) {
-                        <a
-                          class="font-semibold text-fg"
-                          [qitsExit]="acting.openItem"
-                          [exitParams]="{ slug: slug(), id }"
-                          (click)="menu.close()"
-                          [fieldOf]="agent"
-                          [qitsField]="marks.openItem"
-                          data-action
-                          >{{ action.label }}</a
-                        >
-                      }
-                    }
-                    @case ('subject') {
-                      @if (
-                        slug() && action.subject.kind === 'RELEASE_REQUEST' && action.subject.id;
-                        as requestId
-                      ) {
-                        <a
-                          class="font-semibold text-fg"
-                          [qitsExit]="acting.overdueRequest"
-                          [exitParams]="{ slug: slug(), requestId }"
-                          (click)="menu.close()"
-                          [fieldOf]="agent"
-                          [qitsField]="marks.prompt"
-                          data-action
-                          >{{ action.label }}</a
-                        >
-                      } @else if (action.subject.href; as href) {
-                        <a
-                          class="font-semibold text-fg"
-                          [href]="href"
-                          (click)="menu.close()"
-                          [fieldOf]="agent"
-                          [qitsField]="marks.prompt"
-                          data-action
-                          >{{ action.label }}</a
-                        >
+                      @case ('subject') {
+                        @if (
+                          slug() && action.subject.kind === 'RELEASE_REQUEST' && action.subject.id;
+                          as requestId
+                        ) {
+                          <a
+                            class="font-semibold text-fg"
+                            [qitsExit]="acting.overdueRequest"
+                            [exitParams]="{ slug: slug(), requestId }"
+                            (click)="menu.close()"
+                            [fieldOf]="agent"
+                            [qitsField]="marks.prompt"
+                            data-action
+                            >{{ action.label }}</a
+                          >
+                        } @else if (action.subject.href; as href) {
+                          <a
+                            class="font-semibold text-fg"
+                            [href]="href"
+                            (click)="menu.close()"
+                            [fieldOf]="agent"
+                            [qitsField]="marks.prompt"
+                            data-action
+                            >{{ action.label }}</a
+                          >
+                        }
                       }
                     }
-                  }
-                </div>
-              }
-            </li>
-          }
-        </ul>
-        <p
-          class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
-          [class.hidden]="state() !== 'loaded' || rows().length > 0"
-        >
-          No active agents
-        </p>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+          <p
+            class="m-0 px-3 py-4 text-center text-sm text-fg-muted"
+            [class.hidden]="state() !== 'loaded' || rows().length > 0"
+          >
+            No active agents
+          </p>
+        </ui-spinner>
+        <!-- Below the spinner, not in it: its error overlay would cover the link (qits-2225). -->
         <a
+          dropdown-panel
           class="block border-t border-line-subtle px-3 py-2 text-center text-sm font-semibold text-fg-soft no-underline hover:bg-surface-subtle"
           [qitsExit]="all.agents"
           [exitParams]="{ slug: slug() }"
           (click)="menu.close()"
           >All agents</a
         >
-      </ui-spinner>
-    </ui-dropdown>
+      </ui-dropdown>
+    }
   `,
 })
 export class AgentsMenu {

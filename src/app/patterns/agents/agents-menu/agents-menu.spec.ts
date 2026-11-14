@@ -127,6 +127,8 @@ describe('AgentsMenu', () => {
     fixture.detectChanges();
     const menu = (fixture.nativeElement as HTMLElement).querySelector('app-agents-menu')!;
     expect(menu.classList.contains('hidden')).toBe(true);
+    // Not rendered at all: no trigger a person cannot reach (qits-2225).
+    expect(menu.querySelector('ui-dropdown, a')).toBeNull();
     await settle();
     http.expectNone(agentsUrl);
     http.expectNone(requestsUrl);

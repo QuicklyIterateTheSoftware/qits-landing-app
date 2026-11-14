@@ -13,20 +13,27 @@ import { TagLink, type TagLinkVariant } from '$ui/components/tag-link/tag-link';
  * costs no request.
  *
  * `variant` is `ui-tag-link`'s: `tag` among an item's tags (an epic's lane, a feature row's
- * `[row-footer-end]`), `corner` as a card's `[card-corner]` bubble. Hidden by
- * class, never by `@if`, so a server render (which loads nothing, so shows none) hydrates as is.
+ * `[row-footer-end]`), `corner` as a card's `[card-corner]` bubble. The host is hidden by class,
+ * so a server render (which loads nothing, so shows none) hydrates as is; the link inside it is
+ * rendered only while it is shown (ticket qits-2225): a hidden one is a trigger no person can
+ * reach, which the outcome check would count against every route that draws the item. The server
+ * renders none either way, so the browser only ever adds it.
  */
 @Component({
   selector: 'app-workspace-link',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TagLink],
   host: { '[class]': 'hostClasses()' },
-  template: `<ui-tag-link
-    label="Workspace"
-    [exit]="opening.open"
-    [exitParams]="params()"
-    [variant]="variant()"
-  />`,
+  template: `
+    @if (shown()) {
+      <ui-tag-link
+        label="Workspace"
+        [exit]="opening.open"
+        [exitParams]="params()"
+        [variant]="variant()"
+      />
+    }
+  `,
 })
 export class WorkspaceLink {
   /** The item's id: qits-projects' entity id, which qits-workspaces binds a workspace to. */
