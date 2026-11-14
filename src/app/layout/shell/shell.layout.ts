@@ -104,9 +104,11 @@ export interface NavNote {
  *
  * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
  * "…" and the current page beside the burger and all five menus. The network-access link is the
- * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977). The
- * theme menu (qits-2086) is the seventh and shows from 768px only for the same reason; below
- * 768px the same radios (`app-theme-choices`) sit at the foot of the burger's navigation.
+ * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977); there
+ * the sidebar's own Network access entry (qits-2262), below the project's sections and shown with
+ * no project open too, leads to it. The theme menu (qits-2086) is the seventh and shows from 768px
+ * only for the same reason; below 768px the same radios (`app-theme-choices`) sit at the foot of
+ * the burger's navigation.
  *
  * Who scrolls (qits-2050): from 768px up the shell is exactly the window's height and the window
  * never scrolls; the sidebar and the page (`<main>`) each scroll on their own, with their own
@@ -119,11 +121,12 @@ export interface NavNote {
  * covers both cases.
  *
  * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
- * sidebar's sections (`open-sidebar-section`) and the work pages below Work
- * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry), the gear (`open-project-settings`),
- * the network icon (`open-network-access`), and the trail's brand and crumbs
- * (`follow-breadcrumb`), handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and
- * release menus declare their own, being patterns (app-wide too). The gear, the network icon and a
+ * sidebar's sections (`open-sidebar-section`), the work pages below Work
+ * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry) and its Network access entry
+ * (`open-sidebar-network-access`), the gear (`open-project-settings`), the network icon
+ * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`), handed to
+ * `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare their own,
+ * being patterns (app-wide too). The gear, the network icon, the sidebar's Network access and a
  * work page are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true`
  * while one of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]`
  * through `[exitCurrent]` (qits-2064).
@@ -251,7 +254,8 @@ export interface NavNote {
         [class.hidden]="!navOpen()"
         aria-label="qits"
       >
-        <ul class="m-0 list-none px-2 py-3">
+        <!-- The open project's sections; switched by class while there are none. -->
+        <ul class="m-0 list-none px-2 py-3" [class.hidden]="links().length === 0">
           @for (link of links(); track link.key) {
             <li>
               <a
@@ -299,6 +303,22 @@ export interface NavNote {
               </ul>
             </li>
           }
+        </ul>
+        <!-- The platform's own pages, with or without a project open: Network access (qits-2262),
+             also the phone's way there, where the top bar's icon does not show. -->
+        <ul
+          class="m-0 list-none px-2 py-3"
+          [class.border-t]="links().length > 0"
+          [class.border-line]="links().length > 0"
+        >
+          <li>
+            <a
+              class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+              [qitsExit]="platformPages.networkAccess"
+              (click)="closeNav()"
+              >Network access</a
+            >
+          </li>
         </ul>
         <!-- Below 768px the top bar has no room for the theme menu: its radios sit here instead. -->
         <app-theme-choices class="border-t border-line px-5 py-3 md:hidden" name="theme-nav" />
@@ -363,6 +383,14 @@ export class ShellLayout {
   });
 
   /**
+   * The sidebar's platform pages, below the project's sections and shown without one too: Network
+   * access (qits-2262), the phone's way to it.
+   */
+  protected readonly platformPages = outcomes('open-sidebar-network-access', {
+    networkAccess: exit('network-access'),
+  });
+
+  /**
    * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
    * the project, and the sections a subpage crumb can follow (Work, Agents, Release Requests).
    */
@@ -416,8 +444,9 @@ export class ShellLayout {
   });
 
   /**
-   * The sidebar lists the open project's sections; with no project open it is empty. Where you
-   * are is the breadcrumb's job, so the sidebar does not repeat the project's name.
+   * The sidebar lists the open project's sections; with no project open there are none, and only
+   * the platform's pages below them show. Where you are is the breadcrumb's job, so the sidebar
+   * does not repeat the project's name.
    */
   protected readonly links = computed((): readonly NavLink[] => {
     const slug = this.selected.slug();

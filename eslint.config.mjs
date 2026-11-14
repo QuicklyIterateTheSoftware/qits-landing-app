@@ -10,7 +10,8 @@ export default tseslint.config(
     files: ['**/*.ts'],
     // EVENT_SOURCE and WEB_SOCKET are transport seams (a fake stream or socket that never
     // connects); EVENT_SOURCE's payloads still go through assertRecorded, and a socket's frames are
-    // raw terminal text, which no golden master records.
+    // raw terminal text, which no golden master records. WIREGUARD_KEYS is the browser's key maker
+    // (qits-2262), no backend's data: a spec fixes the keypair so its QR code is the same each run.
     rules: {
       // qits-2005: every navigation goes through a declared outcome; the library ships it as a
       // warning.
@@ -24,7 +25,7 @@ export default tseslint.config(
       'qits/page-screenshot-whole-page': 'error',
       'qits/browser-spec-data-from-golden-masters': [
         'error',
-        { allowTokens: ['EVENT_SOURCE', 'WEB_SOCKET'] },
+        { allowTokens: ['EVENT_SOURCE', 'WEB_SOCKET', 'WIREGUARD_KEYS'] },
       ],
       // The screenshot specs' app route helper sets every client up, as `app.config.ts` does
       // (qits-1997); it calls none of them.

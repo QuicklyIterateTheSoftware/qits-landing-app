@@ -3,6 +3,12 @@
     {
       "provider": "qits-network-access-service",
       "state": "a device peer behind an announced private edge",
+      "operationId": "getPeerAppConfig",
+      "route": "network-access"
+    },
+    {
+      "provider": "qits-network-access-service",
+      "state": "a device peer behind an announced private edge",
       "operationId": "getPeers",
       "route": "network-access"
     },
@@ -10,6 +16,12 @@
       "provider": "qits-network-access-service",
       "state": "a joined node",
       "operationId": "getNodes",
+      "route": "network-access"
+    },
+    {
+      "provider": "qits-network-access-service",
+      "state": "an announced private edge",
+      "operationId": "createPeer",
       "route": "network-access"
     },
     {

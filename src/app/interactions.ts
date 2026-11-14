@@ -802,6 +802,17 @@ export const INTERACTIONS = {
   /** `network-access.page.ts` via `PEER_CONFIG`: a DEVICE row's WireGuard config download. */
   'download-wireguard-config': 'Downloading a device peer’s WireGuard config',
   /**
+   * `network-access.page.ts` via `PEER_CREATE`: Add device sends the name and the public key the
+   * browser made (qits-2262).
+   */
+  'add-network-device': 'Adding a device on the Network access page',
+  /**
+   * `network-access.page.ts` via `PEER_APP_CONFIG`: the new device's config for the WireGuard
+   * apps, read once after Add device and shown once with its private key (qits-2262).
+   */
+  'show-device-app-config':
+    'The Network access page shows a new device’s config once, as a QR code',
+  /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
    * Agents, Release Requests, Desk, Repositories, Observability, Events). Navigates only, and
    * names no pact (epic qits-2000).
@@ -822,6 +833,11 @@ export const INTERACTIONS = {
    * and names no pact (epic qits-2000).
    */
   'open-network-access': 'The top bar’s network icon opens the Network access page',
+  /**
+   * `shell.layout.ts`: the sidebar's Network access entry, shown with or without a project open,
+   * opens the Network access page (qits-2262). Navigates only, and names no pact.
+   */
+  'open-sidebar-network-access': 'The sidebar’s Network access entry opens the Network access page',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and

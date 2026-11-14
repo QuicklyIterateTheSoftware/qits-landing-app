@@ -1,10 +1,20 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { type HttpRequest, provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+  type TestRequest,
+} from '@angular/common/http/testing';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { client as networkAccessClient } from '../../api/network-access/client.gen';
 import { provideHeyApiClient } from '../../api/network-access/client/client.gen';
+import { WIREGUARD_KEYS, type WireGuardKeyMaker } from '$core/network-access/wireguard-keys';
 import { networkAccessGoldenMaster } from '../../../testing/golden-masters';
-import { CONNECT_COMMAND, NetworkAccessPage, PAC_URL } from './network-access.page';
+import {
+  FIXED_WIREGUARD_KEYS,
+  fixedWireGuardKeys,
+  noX25519,
+} from '../../../testing/wireguard-keys';
+import { CONNECT_COMMAND, NetworkAccessPage, NO_X25519, PAC_URL } from './network-access.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -35,13 +45,27 @@ function deviceAndNode() {
 describe('NetworkAccessPage', () => {
   let http: HttpTestingController;
   let fixture: ComponentFixture<NetworkAccessPage>;
+  /** Every request the page made, as sent: Add device's checks look for the private key in them. */
+  let sent: HttpRequest<unknown>[];
+  /** What `WIREGUARD_KEYS` makes: the fixed pair, unless a test says otherwise. */
+  let makeKeys: WireGuardKeyMaker;
 
   beforeEach(() => {
+    sent = [];
+    makeKeys = fixedWireGuardKeys;
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(
+          withInterceptors([
+            (request, next) => {
+              sent.push(request);
+              return next(request);
+            },
+          ]),
+        ),
         provideHttpClientTesting(),
         provideHeyApiClient(networkAccessClient),
+        { provide: WIREGUARD_KEYS, useValue: () => makeKeys() },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -216,4 +240,190 @@ describe('NetworkAccessPage', () => {
       click.mockRestore();
     }
   });
+
+  describe('Add device', () => {
+    const CREATED = 'an announced private edge';
+    const DEVICE_ID = '00000000-0000-4000-8000-000000000001';
+    const section = () => element().querySelector('[data-add-device]') as HTMLElement;
+    const input = () => section().querySelector('input') as HTMLInputElement;
+
+    async function type(name: string) {
+      input().value = name;
+      input().dispatchEvent(new Event('input'));
+      await redraw();
+    }
+
+    /** Types `name`, presses Add, and answers the add with `answer`. */
+    async function addAnswered(name: string, answer: (request: TestRequest) => void) {
+      await type(name);
+      button('Add', section())?.click();
+      await redraw();
+      answer(http.expectOne({ method: 'POST', url: PEERS }));
+      await redraw();
+    }
+
+    /** Answers the lists the add reads again, and gives the config read. */
+    async function afterAdd() {
+      http.expectOne(PEERS).flush(networkAccessGoldenMaster(DEVICE, 'getPeers'));
+      await redraw();
+      return http.expectOne(`${PEERS}/${DEVICE_ID}/app-config`);
+    }
+
+    const created = (request: TestRequest) =>
+      request.flush(networkAccessGoldenMaster(CREATED, 'createPeer'), {
+        status: 201,
+        statusText: 'Created',
+      });
+
+    /** Whether the private key shows anywhere in what the page sent. */
+    const keySent = () =>
+      sent.some((request) =>
+        [
+          request.urlWithParams,
+          JSON.stringify(request.body ?? null),
+          ...headerValues(request),
+        ].some((part) => part.includes(FIXED_WIREGUARD_KEYS.privateKey)),
+      );
+
+    it('sends the name and the public key, then shows the config once with the private key', async () => {
+      await render();
+      expect(button('Add', section())?.disabled).toBe(true);
+      await addAnswered('laptop', (request) => {
+        expect(request.request.body).toEqual({
+          name: 'laptop',
+          publicKey: FIXED_WIREGUARD_KEYS.publicKey,
+        });
+        created(request);
+      });
+      (await afterAdd()).flush(networkAccessGoldenMaster<string>(DEVICE, 'getPeerAppConfig'));
+      await redraw();
+
+      const shown = section().querySelector('[data-device-config]') as HTMLElement;
+      expect(shown.textContent).toContain('laptop is added at 100.96.0.10');
+      expect(shown.textContent).toContain('It is shown once and stored nowhere');
+      expect(shown.textContent).toContain('revoke this device and add it again');
+      const config = shown.querySelector('app-copy-text code')?.textContent ?? '';
+      expect(config).toContain(`PrivateKey = ${FIXED_WIREGUARD_KEYS.privateKey}`);
+      expect(config).not.toContain('<PRIVATE_KEY>');
+      expect(shown.querySelector('ui-qr-code svg path')?.getAttribute('d')).toBeTruthy();
+      // The config, the QR code and the key carry no data mark; nothing was sent or stored with it.
+      expect(shown.querySelector('[data-qits-field], [data-qits-entity]')).toBeNull();
+      expect(sent.map((request) => request.method)).toContain('POST');
+      expect(keySent()).toBe(false);
+      expect(JSON.stringify({ ...localStorage })).not.toContain(FIXED_WIREGUARD_KEYS.privateKey);
+      expect(JSON.stringify({ ...sessionStorage })).not.toContain(FIXED_WIREGUARD_KEYS.privateKey);
+
+      // Download .conf saves what is shown, as `<name>.conf`.
+      const clicks: HTMLAnchorElement[] = [];
+      const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+        this: HTMLAnchorElement,
+      ) {
+        clicks.push(this);
+      });
+      try {
+        button('Download .conf', shown)?.click();
+        expect(clicks[0]?.download).toBe('laptop.conf');
+        expect(
+          decodeURIComponent(clicks[0].href.replace(/^data:text\/plain;charset=utf-8,/, '')),
+        ).toBe(config);
+      } finally {
+        click.mockRestore();
+      }
+
+      button('Done', shown)?.click();
+      await redraw();
+      expect(section().querySelector('[data-device-config]')).toBeNull();
+      expect(element().textContent).not.toContain(FIXED_WIREGUARD_KEYS.privateKey);
+      expect(input().value).toBe('');
+    });
+
+    it('drops a config still shown when the page goes', async () => {
+      await render();
+      await addAnswered('laptop', created);
+      (await afterAdd()).flush(networkAccessGoldenMaster<string>(DEVICE, 'getPeerAppConfig'));
+      await redraw();
+      const page = fixture.componentInstance as unknown as { added(): unknown };
+      expect(page.added()).not.toBeNull();
+      fixture.destroy();
+      expect(page.added()).toBeNull();
+    });
+
+    it('waits for a private edge: nothing can be added without one', async () => {
+      await render(404);
+      await type('laptop');
+      expect(input().disabled).toBe(true);
+      expect(button('Add', section())?.disabled).toBe(true);
+      expect(section().querySelector('[data-add-blocked]')?.textContent).toContain(
+        'No private edge has announced itself yet',
+      );
+    });
+
+    it('checks the name as the service does, before anything is sent', async () => {
+      await render();
+      await type('My_Phone');
+      expect(section().querySelector('[data-name-rule]')?.textContent?.trim()).toBe(
+        'name must be a DNS label: lower-case letters, digits and inner dashes, at most 63',
+      );
+      expect(button('Add', section())?.disabled).toBe(true);
+      http.expectNone({ method: 'POST', url: PEERS });
+    });
+
+    it('shows a 400’s or a 409’s own words, and reads no config', async () => {
+      await render();
+      const refusals = [
+        { status: 400, statusText: 'Bad Request', message: 'publicKey must decode to 32 bytes' },
+        {
+          status: 409,
+          statusText: 'Conflict',
+          message: 'you already have an active peer of this name',
+        },
+      ];
+      for (const { status, statusText, message } of refusals) {
+        await addAnswered('laptop', (request) =>
+          request.flush({ message }, { status, statusText }),
+        );
+        expect(section().querySelector('[data-add-refusal]')?.textContent?.trim()).toBe(message);
+      }
+      http.expectNone(`${PEERS}/${DEVICE_ID}/app-config`);
+      expect(section().querySelector('[data-device-config]')).toBeNull();
+    });
+
+    it('says the credential may not add devices on a 403', async () => {
+      await render();
+      await addAnswered('laptop', (request) =>
+        request.flush(null, { status: 403, statusText: 'Forbidden' }),
+      );
+      expect(section().querySelector('[data-add-refusal]')?.textContent?.trim()).toBe(
+        'Your credential may not add devices.',
+      );
+    });
+
+    it('says to revoke and add again when the config cannot be read after the add', async () => {
+      await render();
+      await addAnswered('laptop', created);
+      (await afterAdd()).flush(null, { status: 409, statusText: 'Conflict' });
+      await redraw();
+      expect(section().querySelector('[data-add-refusal]')?.textContent?.trim()).toBe(
+        'laptop was added, but its config could not be read, and its private key is gone with ' +
+          'it. Revoke it and add it again.',
+      );
+      expect(section().querySelector('[data-device-config]')).toBeNull();
+      expect(element().textContent).not.toContain(FIXED_WIREGUARD_KEYS.privateKey);
+    });
+
+    it('sends nothing where the browser cannot make X25519 keys', async () => {
+      makeKeys = noX25519;
+      await render();
+      await type('laptop');
+      button('Add', section())?.click();
+      await redraw();
+      http.expectNone({ method: 'POST', url: PEERS });
+      expect(section().querySelector('[data-add-refusal]')?.textContent?.trim()).toBe(NO_X25519);
+    });
+  });
 });
+
+/** Every header value of `request`. */
+function headerValues(request: HttpRequest<unknown>): string[] {
+  return request.headers.keys().flatMap((name) => request.headers.getAll(name) ?? []);
+}

@@ -1,21 +1,26 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  createPeer,
   getNodes,
+  getPeerAppConfig,
   getPeerConfig,
   getPeers,
   getPrivateEdge,
   revokePeer,
 } from '../../api/network-access';
 import {
+  CREATE_PEER,
+  GET_PEER_APP_CONFIG,
   GET_PEER_CONFIG,
   GET_PRIVATE_EDGE,
   LIST_NODES,
   LIST_PEERS,
+  REFUSAL_MESSAGE,
   REVOKE_PEER,
 } from './peers.consumes';
 
 /**
- * qits-network-access' reads and its one write, declared as operations (qits-2145) for the Network
+ * qits-network-access' reads and its two writes, declared as operations (qits-2145) for the Network
  * access pane (`network-access.page.ts`, epic qits-1977), which reads them through `qitsResource`
  * and writes through `qitsMutation` instead of `PeersStore` (qits-2146);
  * `peers.operations.pact.spec.ts` binds each with the same provider, operationId and `consumes`.
@@ -67,4 +72,31 @@ export const PEER_REVOKE = qitsOperation({
   method: 'POST',
   call: revokePeer,
   consumes: REVOKE_PEER,
+});
+
+/**
+ * Adds a device peer owned by the visitor (`createPeer`, qits-2262): Add device sends the name and
+ * the public key the browser made, never the private key. A 400 or 409 carries the service's
+ * reason as `message`.
+ */
+export const PEER_CREATE = qitsOperation({
+  provider: 'qits-network-access-service',
+  operationId: 'createPeer',
+  method: 'POST',
+  call: createPeer,
+  consumes: CREATE_PEER,
+  errorConsumes: REFUSAL_MESSAGE,
+});
+
+/**
+ * A device's config for the WireGuard apps (`getPeerAppConfig`, read as text: `AS_TEXT`), which
+ * Add device fills with the new private key in memory and shows once as a QR code and a file. A
+ * read on a press: the pane calls its `fetch`.
+ */
+export const PEER_APP_CONFIG = qitsOperation({
+  provider: 'qits-network-access-service',
+  operationId: 'getPeerAppConfig',
+  method: 'GET',
+  call: getPeerAppConfig,
+  consumes: GET_PEER_APP_CONFIG,
 });

@@ -88,8 +88,9 @@ class PinnedPage {}
  * golden masters its own browser spec uses, to show where its panel lies.
  *
  * The shell's navigation is declared in the layout (epic qits-2000), and each exit is followed once
- * to a stand-in route: the sidebar's sections (`open-sidebar-section`) and work pages
- * (`open-sidebar-work-page`), the gear (`open-project-settings`), the network icon
+ * to a stand-in route: the sidebar's sections (`open-sidebar-section`), work pages
+ * (`open-sidebar-work-page`) and Network access (`open-sidebar-network-access`, with no project
+ * open and with one, qits-2262), the gear (`open-project-settings`), the network icon
  * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`). The agents and
  * release menus' own exits are followed in their own specs.
  */
@@ -191,10 +192,11 @@ describe('ShellLayout (screenshots)', () => {
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
-    // At the root the navigation is empty: the "qits" brand leads home.
-    expect(
-      page.getByRole('navigation', { name: 'qits' }).getByRole('link').elements(),
-    ).toHaveLength(0);
+    // At the root the navigation holds no project's sections, only Network access, the phone's
+    // way there (qits-2262): the "qits" brand leads home.
+    const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
+    expect(links.elements().map((link) => link.textContent?.trim())).toEqual(['Network access']);
+    await expect.element(links.first()).toBeVisible();
     // The top bar has no room for the theme menu on a phone: its radios are at the navigation's
     // foot instead, so System, Light and Dark are reachable at every width (qits-2086).
     await expect
@@ -332,6 +334,8 @@ describe('ShellLayout (screenshots)', () => {
       'Repositories',
       'Observability',
       'Events',
+      // The platform's pages, below the project's sections (qits-2262).
+      'Network access',
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
@@ -501,10 +505,10 @@ describe('ShellLayout (screenshots)', () => {
       const box = element.getBoundingClientRect();
       return document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
     };
-    // Work lies where the page's pinned bar (z-45) pins, Refinement and Events over its raised
-    // content: the sidebar is drawn over all of it (qits-2224).
+    // Work lies where the page's pinned bar (z-45) pins, Refinement, Events and Network access over
+    // its raised content: the sidebar is drawn over all of it (qits-2224).
     const links = [...nav.querySelectorAll('a')];
-    for (const label of ['Work', 'Refinement', 'Events']) {
+    for (const label of ['Work', 'Refinement', 'Events', 'Network access']) {
       const link = links.find((a) => a.textContent?.trim() === label)!;
       expect(link, label).toBeDefined();
       expect(nav.contains(atCentre(link)), label).toBe(true);
@@ -595,10 +599,38 @@ describe('ShellLayout (screenshots)', () => {
 
   it('open-network-access open: the network icon opens the Network access page', async () => {
     const { fixture } = await renderProject('/work/acceptance');
-    const icon = page.getByRole('link', { name: 'Network access' });
+    const icon = page.getByRole('banner').getByRole('link', { name: 'Network access' });
     expect(await follow(fixture, icon)).toBe('/network-access');
     expect(reached()).toEqual(['open-network-access:open']);
     await expect.element(icon).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('open-sidebar-network-access networkAccess: the sidebar’s Network access opens it with no project open, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture, layout } = await render();
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Network access' });
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/network-access');
+    expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    await expect.element(layout).toMatchScreenshot('network-access-current', { kind: 'DATA' });
+  });
+
+  it('open-sidebar-network-access networkAccess: the sidebar’s Network access opens it from a project, below its sections', async () => {
+    const { fixture } = await renderProject('/work/acceptance');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels.at(-1)).toBe('Network access');
+    expect(labels).toContain('Events');
+    const entry = navigation.getByRole('link', { name: 'Network access' });
+    expect(await follow(fixture, entry)).toBe('/network-access');
+    expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
   it('marks Agents current on a slot’s page, with the slot below it in the trail', async () => {

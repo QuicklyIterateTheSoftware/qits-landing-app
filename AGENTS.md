@@ -337,8 +337,10 @@ field it read, `workspace.runner`, is gone from what this app consumes, ahead of
 dropping it.
 
 The Network access pane (epic qits-1977): `network-access` (`NetworkAccessPage`), under the shell
-with no project open, reached by the top bar's Network access link (beside the bumps menu, always
-shown). The page reads through `qitsResource` and writes through `qitsMutation` (qits-2146), over
+with no project open, reached by the top bar's Network access link (beside the bumps menu, from
+768px) and by the sidebar's Network access entry below the project's sections, shown with or
+without a project open and in the phone's burger (`open-sidebar-network-access`, qits-2262). The
+page reads through `qitsResource` and writes through `qitsMutation` (qits-2146), over
 `core/network-access/peers.operations.ts`: qits-network-access' peers (`getPeers`), nodes
 (`getNodes`, naming a NODE peer's target) and private edge (`getPrivateEdge`; its 404 is "No private
 edge has announced itself yet."). The filters All, Devices, Nodes and Revoked narrow the one list;
@@ -346,8 +348,22 @@ Mine reads `getPeers?owner=me`, which no recording holds, so it has no pact inte
 on an ACTIVE row is confirmed, then `revokePeer` (a 403 reads "Your credential may not revoke
 peers."), then the lists are read again. An ACTIVE DEVICE row's Download WireGuard config reads
 `getPeerConfig` as text and saves it as `<name>.conf` through a `data:` link, `<PRIVATE_KEY>` kept.
-The pane makes no keys and adds no devices: "Connect this machine" shows the copyable
-`qits network-access up`. qits-network-access sends no domain event, so nothing follows live.
+"Connect this machine" shows the copyable `qits network-access up`, and points a phone or a laptop
+without the CLI at Add device (qits-2262): while a private edge is announced, a name checked as typed
+against the service's DNS-label rule (`isDeviceName`), then the browser makes an X25519 keypair
+(`WIREGUARD_KEYS`, `core/network-access/wireguard-keys.ts`: WebCrypto, a 32-byte `raw` public key and
+the JWK's `d`; a browser without X25519 sends nothing), `createPeer` (`PEER_CREATE`, through
+`qitsMutation`, the lists read again) gets the name and the public key only, and `getPeerAppConfig`
+(`PEER_APP_CONFIG`, as text) gets the new peer's config for the WireGuard apps, whose `<PRIVATE_KEY>`
+the page fills in memory. It is shown once: a QR code drawn in the page (`ui-qr-code`, over
+`qrcode-generator`, nothing external), Download .conf, Copy and the text; Done or leaving the page
+drops it. The private key is in no request, no storage, no log and no data mark. A refused add shows
+the service's `message` (`addDeviceRefusal`; a 409 there is not the private edge's). `createPeer`'s 201
+has no schema in the service's OpenAPI document, so the client types it `unknown` and
+`asCreatedPeer` checks it. Specs fix the keypair (`src/testing/wireguard-keys.ts`), so the QR code is
+the same each run; `WIREGUARD_KEYS` is allowed in a browser spec's providers for that. The
+recorded configs are JSON strings read as text: a browser spec answers them with
+`goldenMasterString`. qits-network-access sends no domain event, so nothing follows live.
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
@@ -462,7 +478,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-workspace-daemon       | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`       | `@qits/workspace-daemon-golden-masters` |
 | qits-system-service         | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
 | qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
-| qits-network-access-service | `core/network-access/peers.store*.ts`                                                        | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
+| qits-network-access-service | `core/network-access/peers.operations*.ts`                                                   | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -769,7 +785,8 @@ step image that has Chromium, so a changed pixel fails the release request.
   (provider `qits-projects` unless named), which registers the body as a frozen recording, and
   `flush(...)`es it, or a part of it, as it is. `guardGoldenMasters()` (`setup.ts`) fails a 2xx
   answer that is not a recording; an error answer is only a status and may carry anything. No
-  `useValue` for a store or a `$core` token (only `EVENT_SOURCE`, a transport seam), no
+  `useValue` for a store or a `$core` token (only `EVENT_SOURCE`, a transport seam, and
+  `WIREGUARD_KEYS`, the browser's key maker), no
   `patchState`, no copies or spreads (lint `qits/browser-spec-data-from-golden-masters`). A case
   no recording holds gets a new provider state in the provider and a pact interaction here. One
   reader is not gated by a pact (qits-2044): `qits-idp`, whose `issueToken` answer the sign-in

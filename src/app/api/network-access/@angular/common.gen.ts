@@ -4,10 +4,10 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CreatePeerData, GetCompanionData, GetCompanionResponse, GetNodeData, GetNodeResponse, GetNodesData, GetNodesResponse, GetPeerConfigData, GetPeerConfigResponse, GetPeerData, GetPeerResponse, GetPeersData, GetPeersResponse, GetPeerTunnelData, GetPeerTunnelResponse, GetPrivateEdgeData, GetPrivateEdgeResponse, RevokePeerData, RevokePeerResponse } from '../types.gen';
+import type { CreatePeerData, GetCompanionData, GetCompanionResponse, GetNodeData, GetNodeResponse, GetNodesData, GetNodesResponse, GetNodeTunnelData, GetNodeTunnelResponse, GetPeerAppConfigData, GetPeerAppConfigResponse, GetPeerConfigData, GetPeerConfigResponse, GetPeerData, GetPeerResponse, GetPeersData, GetPeersResponse, GetPeerTunnelData, GetPeerTunnelResponse, GetPrivateEdgeData, GetPrivateEdgeResponse, JoinNodeData, JoinNodeResponse, RevokePeerData, RevokePeerResponse } from '../types.gen';
 
 /**
- * The companion image and version to run
+ * How to run the companion: image, version, entrypoint, user
  */
 export const getCompanionRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCompanionData, ThrowOnError>): HttpRequest<GetCompanionResponse> => (options?.client ?? client).requestOptions<GetCompanionResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -27,12 +27,32 @@ export const getNodesRequest = <ThrowOnError extends boolean = false>(options?: 
 });
 
 /**
+ * The static qits-node-tunnel helper a node's install line runs to join
+ */
+export const getNodeTunnelRequest = <ThrowOnError extends boolean = false>(options?: Options<GetNodeTunnelData, ThrowOnError>): HttpRequest<GetNodeTunnelResponse> => (options?.client ?? client).requestOptions<GetNodeTunnelResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/network-access/api/nodes/qits-node-tunnel',
+    ...options
+});
+
+/**
  * One joined node, with its active peer
  */
 export const getNodeRequest = <ThrowOnError extends boolean = false>(options: Options<GetNodeData, ThrowOnError>): HttpRequest<GetNodeResponse> => (options?.client ?? client).requestOptions<GetNodeResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/network-access/api/nodes/{targetId}',
+    ...options
+});
+
+/**
+ * Join a qits-system target as a node: register its peer, or answer the one it has under this key
+ */
+export const joinNodeRequest = <ThrowOnError extends boolean = false>(options: Options<JoinNodeData, ThrowOnError>): HttpRequest<JoinNodeResponse> => (options?.client ?? client).requestOptions<JoinNodeResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/network-access/api/nodes/{targetId}/join',
     ...options
 });
 
@@ -63,6 +83,16 @@ export const getPeerRequest = <ThrowOnError extends boolean = false>(options: Op
     responseStyle: 'data',
     method: 'GET',
     url: '/network-access/api/peers/{peerId}',
+    ...options
+});
+
+/**
+ * The peer's config for the WireGuard apps, with a literal <PRIVATE_KEY> placeholder
+ */
+export const getPeerAppConfigRequest = <ThrowOnError extends boolean = false>(options: Options<GetPeerAppConfigData, ThrowOnError>): HttpRequest<GetPeerAppConfigResponse> => (options?.client ?? client).requestOptions<GetPeerAppConfigResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/network-access/api/peers/{peerId}/app-config',
     ...options
 });
 
@@ -107,7 +137,7 @@ export const getPrivateEdgeRequest = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
- * The companion image and version to run
+ * How to run the companion: image, version, entrypoint, user
  */
 export const getCompanionResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCompanionData, ThrowOnError> | undefined) => httpResource<GetCompanionResponse>(() => {
     const opts = options ? options() : undefined;
@@ -123,11 +153,27 @@ export const getNodesResource = <ThrowOnError extends boolean = false>(options?:
 });
 
 /**
+ * The static qits-node-tunnel helper a node's install line runs to join
+ */
+export const getNodeTunnelResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetNodeTunnelData, ThrowOnError> | undefined) => httpResource<GetNodeTunnelResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getNodeTunnelRequest(opts) : undefined;
+});
+
+/**
  * One joined node, with its active peer
  */
 export const getNodeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetNodeData, ThrowOnError> | undefined) => httpResource<GetNodeResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? getNodeRequest(opts) : undefined;
+});
+
+/**
+ * Join a qits-system target as a node: register its peer, or answer the one it has under this key
+ */
+export const joinNodeResource = <ThrowOnError extends boolean = false>(options: () => Options<JoinNodeData, ThrowOnError> | undefined) => httpResource<JoinNodeResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? joinNodeRequest(opts) : undefined;
 });
 
 /**
@@ -152,6 +198,14 @@ export const createPeerResource = <ThrowOnError extends boolean = false>(options
 export const getPeerResource = <ThrowOnError extends boolean = false>(options: () => Options<GetPeerData, ThrowOnError> | undefined) => httpResource<GetPeerResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? getPeerRequest(opts) : undefined;
+});
+
+/**
+ * The peer's config for the WireGuard apps, with a literal <PRIVATE_KEY> placeholder
+ */
+export const getPeerAppConfigResource = <ThrowOnError extends boolean = false>(options: () => Options<GetPeerAppConfigData, ThrowOnError> | undefined) => httpResource<GetPeerAppConfigResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getPeerAppConfigRequest(opts) : undefined;
 });
 
 /**

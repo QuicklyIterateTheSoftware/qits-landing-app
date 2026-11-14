@@ -8,6 +8,116 @@
         "references": {
           "qits-call": {
             "app": "qits-network-access-service",
+            "operationId": "createPeer"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "add-network-device",
+            "kind": "ui",
+            "route": "network-access"
+          }
+        }
+      },
+      "description": "add-network-device: createPeer",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an announced private edge",
+          "params": {
+            "publicKey": "AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc="
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "name": "laptop",
+            "publicKey": "AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc="
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/network-access/api/peers"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "name": "laptop",
+            "status": "ACTIVE",
+            "tunnelIp": "100.96.0.10"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.tunnelIp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
             "operationId": "getPeerConfig"
           },
           "qits-trigger": {
@@ -161,6 +271,90 @@
                 {
                   "match": "regex",
                   "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-network-access-service",
+            "operationId": "getPeerAppConfig"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-device-app-config",
+            "kind": "ui",
+            "route": "network-access"
+          }
+        }
+      },
+      "description": "show-device-app-config: getPeerAppConfig",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a device peer behind an announced private edge",
+          "params": {
+            "peerId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/network-access/api/peers/${peerId}/app-config",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/network-access/api/peers/00000000-0000-4000-8000-000000000001/app-config"
+      },
+      "response": {
+        "body": {
+          "content": "IyBxaXRzIG5ldHdvcmsgYWNjZXNzOiBsYXB0b3AgKDAwMDAwMDAwLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMSksIERFVklDRQpbSW50ZXJmYWNlXQpQcml2YXRlS2V5ID0gPFBSSVZBVEVfS0VZPgpBZGRyZXNzID0gMTAwLjk2LjAuMTAvMzIKRE5TID0gMTAwLjk2LjAuMQpNVFUgPSAxMzgwCgpbUGVlcl0KUHVibGljS2V5ID0gQUFBQUFRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBYz0KRW5kcG9pbnQgPSA0Ni4yMjQuMTcxLjMzOjQ3ODEyCkFsbG93ZWRJUHMgPSAxMDAuOTYuMC4xLzMyClBlcnNpc3RlbnRLZWVwYWxpdmUgPSAyNQo=",
+          "contentType": "*/*",
+          "encoded": "base64"
+        },
+        "headers": {
+          "Content-Type": [
+            "text/plain"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "contentType",
+                  "value": "text/plain"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "text/plain.*"
                 }
               ]
             }
