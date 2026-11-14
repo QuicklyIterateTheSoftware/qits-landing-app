@@ -11,6 +11,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 import { leftFor } from '../../../../../../../testing/browser/contracts-bundles';
 
 /**
@@ -69,6 +70,7 @@ describe('EntitiesPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
+    await shootShellMenus(opened, 'loaded');
   });
 
   it('open-listed-entity entity: an entity’s name opens its page', async () => {

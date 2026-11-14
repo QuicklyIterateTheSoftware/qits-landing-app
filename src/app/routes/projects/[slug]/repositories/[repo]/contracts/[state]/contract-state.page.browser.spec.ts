@@ -11,6 +11,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../../testing/browser/shell-menus';
 import {
   answerFile,
   answerTwoSiteCatalog,
@@ -136,6 +137,7 @@ describe('ContractStatePage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('dependencies', { kind: 'DATA' });
+    await shootShellMenus(opened, 'dependencies');
   });
 
   it('open-state-dependency dependency: a dependency opens the state in its repository', async () => {

@@ -10,6 +10,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of one release request's page inside the shell (`openRoute`). The open project is the
@@ -220,6 +221,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('obsolete', { kind: 'DATA' });
+    await shootShellMenus(opened, 'obsolete');
   });
 
   it('open-release-request-work item: the head’s work item opens its page', async () => {

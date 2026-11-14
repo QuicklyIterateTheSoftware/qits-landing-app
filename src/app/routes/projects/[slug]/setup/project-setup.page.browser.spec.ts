@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of a project's Setup page inside the shell (`openRoute`), which names the project
@@ -52,6 +53,7 @@ describe('ProjectSetupPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
+    await shootShellMenus(opened, 'loaded');
   });
 
   it('shows that the project is loading', async () => {

@@ -9,6 +9,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of the Desk page inside the shell (`openRoute`). The open project is the recorded
@@ -92,6 +93,7 @@ describe('ProjectDeskPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
+    await shootShellMenus(opened, 'loaded');
   });
 
   it.each([

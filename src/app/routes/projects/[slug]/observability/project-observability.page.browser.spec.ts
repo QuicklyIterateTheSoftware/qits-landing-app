@@ -2,6 +2,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
 import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of a project's Observability page inside the shell (`openRoute`), at the recorded
@@ -24,5 +25,6 @@ describe('ProjectObservabilityPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('blank', { kind: 'NO_DATA' });
+    await shootShellMenus(opened, 'blank', 'NO_DATA');
   });
 });

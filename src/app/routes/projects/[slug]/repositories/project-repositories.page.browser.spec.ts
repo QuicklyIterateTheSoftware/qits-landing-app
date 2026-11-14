@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { commands, page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of the Repositories page inside the shell (`openRoute`), answered with qits-projects'
@@ -50,6 +51,7 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('tree', { kind: 'DATA' });
+    await shootShellMenus(opened, 'tree');
   });
 
   it('shows a card’s clone URL, backup URL and main branch when opened', async () => {

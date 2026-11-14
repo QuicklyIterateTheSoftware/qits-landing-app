@@ -9,6 +9,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 const IDEAS = 'a project with ideas';
 const NO_WORK = 'a project with no work';
@@ -94,6 +95,11 @@ describe('IdeaCreatePage (screenshots)', () => {
     await leftFor(opened);
     expect(reached()).toEqual(['cancel-idea-create:back']);
     expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/ideas`);
+  });
+
+  it('shows the shell’s menus over the form (qits-2225)', async () => {
+    const { opened } = await form();
+    await shootShellMenus(opened, 'form');
   });
 
   it('shows the form with its counts, and the service’s refusal', async () => {

@@ -4,6 +4,7 @@ import { page } from 'vitest/browser';
 import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of an agent's Files tab, at `agents/<agent id>/files`, inside the shell and the
@@ -107,6 +108,7 @@ describe('AgentFilesPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('tree-and-file', { kind: 'DATA' });
+    await shootShellMenus(opened, 'tree-and-file');
   });
 
   it('shows a gitignored directory opened, dimmed, with a name search on', async () => {

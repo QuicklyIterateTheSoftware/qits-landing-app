@@ -9,6 +9,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
 const IDEAS = 'a project with ideas';
 const ENABLED = 'an idea enabled by another idea';
@@ -55,6 +56,7 @@ describe('IdeaPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('idea', { kind: 'DATA' });
+    await shootShellMenus(opened, 'idea');
   });
 
   /**

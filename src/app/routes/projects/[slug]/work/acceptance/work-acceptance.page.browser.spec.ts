@@ -4,6 +4,7 @@ import { page } from 'vitest/browser';
 import { IN_PROGRESS_VIEW_KEY } from '$core/work/in-progress-view';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 import {
   answerWrapperClosings,
   WRAPPER_CLOSINGS,
@@ -52,6 +53,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     const opened = await openRoute((project) => `/projects/${project.slug}/work/acceptance`);
     const work = http.expectOne(`/projects/api/projects/${opened.project.id}/work`);
     return {
+      opened,
       element: page.elementLocator(opened.page),
       frame: page.elementLocator(opened.frame),
       work,
@@ -62,7 +64,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
 
   // qits-150: the epic carries its finish button; the ticket shows the quiet hint instead.
   it('shows the verified work, the epic with its finish button, the ticket with its hint', async () => {
-    const { element, frame, work, answered, projectId } = await shown();
+    const { opened, element, frame, work, answered, projectId } = await shown();
     work.flush(await goldenMaster('a project with work in every status', 'listProjectWork'));
     await answered();
     // qits-1873: the ticket's line asks for the closings, which do not name it.
@@ -78,6 +80,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await expect.element(element).toMatchTextContent('Closes once its release lands');
     expect(element.getByRole('button').elements().length).toBeGreaterThanOrEqual(1);
     await expect.element(frame).toMatchScreenshot('acceptance', { kind: 'DATA' });
+    await shootShellMenus(opened, 'acceptance');
   });
 
   // qits-1873: each VERIFIED ticket's card says how its wrapper closing stands, the request linked.

@@ -4,6 +4,7 @@ import { page } from 'vitest/browser';
 import { IN_PROGRESS_VIEW_KEY } from '$core/work/in-progress-view';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of a project's In Progress page inside the shell and the work tabs (`openRoute`), in
@@ -87,6 +88,7 @@ describe('WorkInProgressPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('epic-boards-data', { kind: 'DATA' });
+    await shootShellMenus(opened, 'epic-boards-data');
   });
 
   it('shows a verified feature in its epic board’s Verified column', async () => {

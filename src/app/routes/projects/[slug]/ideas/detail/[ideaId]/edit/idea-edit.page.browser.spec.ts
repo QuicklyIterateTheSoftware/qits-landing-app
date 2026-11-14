@@ -9,6 +9,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../../testing/browser/shell-menus';
 
 const IDEAS = 'a project with ideas';
 const RANKED = 'a project with three ideas, one with a priority';
@@ -144,5 +145,6 @@ describe('IdeaEditPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('form', { kind: 'DATA' });
+    await shootShellMenus(opened, 'form');
   });
 });

@@ -10,6 +10,7 @@ import {
   type FrameReads,
   type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of a project's Agents page inside the shell (`openRoute`). Its ACTIVE agents (the
@@ -132,6 +133,7 @@ describe('ProjectAgentsPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('slots-and-agents', { kind: 'DATA' });
+    await shootShellMenus(opened, 'slots-and-agents');
   });
 
   /**

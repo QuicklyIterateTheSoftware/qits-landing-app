@@ -11,6 +11,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of an agent's Terminal tab, at `agents/<agent id>/terminal`, inside the shell and the
@@ -145,6 +146,7 @@ describe('AgentTerminalPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('attached', { kind: 'DATA' });
+    await shootShellMenus(opened, 'attached');
   });
 
   it('shows a socket that cannot attach as closed, with a way to try again', async () => {

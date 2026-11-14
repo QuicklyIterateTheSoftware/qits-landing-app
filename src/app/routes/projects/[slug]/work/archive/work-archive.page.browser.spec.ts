@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of a project's Archive inside the shell and the work tabs (`openRoute`), answered
@@ -45,6 +46,7 @@ describe('WorkArchivePage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('archive', { kind: 'DATA' });
+    await shootShellMenus(opened, 'archive');
   });
 
   it('says so when nothing is archived', async () => {

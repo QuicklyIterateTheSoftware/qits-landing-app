@@ -12,6 +12,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of an agent's Chat tab, at `agents/<agent id>/chat`, inside the shell and the agent's
@@ -115,6 +116,13 @@ describe('AgentChatPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('transcript', { kind: 'DATA' });
+    // The tab reads the transcript again every 3 s while the agent runs: the same turns.
+    const turns = await goldenMaster(TURNS, 'getCommandLog', 'qits-workspace-daemon');
+    await shootShellMenus(opened, 'transcript', 'DATA', async () => {
+      for (const read of http.match((r) => r.urlWithParams.includes(`/agent/${agentId}/log?`))) {
+        read.flush(turns);
+      }
+    });
   });
 
   /** Answers the transcript and the saved draft, as the tab reads them. */

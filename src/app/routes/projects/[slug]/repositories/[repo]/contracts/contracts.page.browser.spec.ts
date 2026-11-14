@@ -7,6 +7,7 @@ import { client as artifactsClient } from '../../../../../../api/artifacts/clien
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 import {
   answerFile,
   answerTwoSiteCatalog,
@@ -71,6 +72,7 @@ describe('ContractsPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('states', { kind: 'DATA' });
+    await shootShellMenus(opened, 'states');
   });
 
   it('open-listed-contract-state state: a state’s name opens its page', async () => {

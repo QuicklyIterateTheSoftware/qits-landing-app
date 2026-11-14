@@ -8,6 +8,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of the Release Requests page inside the shell (`openRoute`), answered with
@@ -62,6 +63,7 @@ describe('ReleaseRequestsPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('requests', { kind: 'DATA' });
+    await shootShellMenus(opened, 'requests');
   });
 
   /**

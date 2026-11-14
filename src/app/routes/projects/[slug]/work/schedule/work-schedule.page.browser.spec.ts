@@ -9,6 +9,8 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
+import { shootWorkRefPreview } from '../../../../../../testing/browser/work-ref-preview';
 
 /**
  * Screenshots of a project's Schedule tab inside the shell and the work tabs (`openRoute`),
@@ -84,6 +86,8 @@ describe('WorkSchedulePage (screenshots)', () => {
     await expect.element(locator).toMatchTextContent('It does what it says.');
     await expect.element(locator).not.toMatchTextContent('Implementing ticket');
     await expect.element(frame).toMatchScreenshot('lists', { kind: 'DATA' });
+    await shootShellMenus(opened, 'lists');
+    await shootWorkRefPreview(opened, 'lists');
   });
 
   it('shows the service’s refusal under an item it would not schedule', async () => {

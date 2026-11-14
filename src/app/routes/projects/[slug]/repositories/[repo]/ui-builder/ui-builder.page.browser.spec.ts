@@ -13,6 +13,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of the UI builder inside the shell (`openRoute`), answered with qits-artifacts'
@@ -147,6 +148,7 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
+    await shootShellMenus(opened, 'loaded');
   });
 
   it('lists the domain entities the route touches, with their verbs', async () => {

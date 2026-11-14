@@ -9,6 +9,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 const IDEAS = 'a project with ideas';
 const NO_WORK = 'a project with no work';
@@ -88,6 +89,7 @@ describe('WorkCreatePage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot(`from-idea-${archetype.toLowerCase()}`, { kind: 'DATA' });
+    await shootShellMenus(opened, `from-idea-${archetype.toLowerCase()}`);
   });
 
   it('create-work-item created: goes to the new ticket’s page', async () => {

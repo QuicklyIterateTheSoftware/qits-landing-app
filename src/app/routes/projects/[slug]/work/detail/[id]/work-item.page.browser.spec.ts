@@ -9,6 +9,8 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
+import { shootWorkRefPreview } from '../../../../../../../testing/browser/work-ref-preview';
 import {
   answerWrapperClosings,
   WRAPPER_CLOSINGS,
@@ -437,6 +439,12 @@ describe('WorkItemPage (screenshots)', () => {
     await fitWholePage(opened);
     await commands.parkPointer();
     await expect.element(frame).toMatchScreenshot('detail-needs', { kind: 'DATA' });
+    await shootShellMenus(opened, 'detail-needs');
+    await shootWorkRefPreview(
+      opened,
+      'detail-needs',
+      panel.getByRole('link', { name: 'Ticket: contract-00000001-1' }).element() as HTMLElement,
+    );
   });
 
   describe('workspaces', () => {

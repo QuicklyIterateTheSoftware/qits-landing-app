@@ -11,6 +11,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../../../testing/browser/shell-menus';
 import {
   answerFile,
   answerTwoSiteCatalog,
@@ -94,6 +95,7 @@ describe('EntityPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('domain', { kind: 'DATA' });
+    await shootShellMenus(opened, 'domain');
   });
 
   it('shows why a technical entity is one', async () => {

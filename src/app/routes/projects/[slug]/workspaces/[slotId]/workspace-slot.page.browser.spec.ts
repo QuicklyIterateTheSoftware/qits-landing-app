@@ -9,6 +9,7 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../testing/browser/app-route';
+import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
  * Screenshots of one workspace slot's page inside the shell (`openRoute`), answered with
@@ -134,6 +135,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('slot', { kind: 'DATA' });
+    await shootShellMenus(opened, 'slot');
   });
 
   it('names the agents a stop affects before it is confirmed', async () => {
