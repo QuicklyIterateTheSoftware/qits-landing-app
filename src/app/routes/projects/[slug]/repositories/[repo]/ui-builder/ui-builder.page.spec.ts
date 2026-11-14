@@ -11,6 +11,7 @@ import { provideHeyApiClient } from '../../../../../../api/projects/client/clien
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
+import { WEB_SOCKET } from '$core/platform/web-socket';
 import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
@@ -201,9 +202,13 @@ describe('UiBuilderPage', () => {
   /** The app's resolved colour scheme (`ThemePreferenceStore.resolved`, qits-2086); light per case. */
   const appScheme = signal<'light' | 'dark'>('light');
 
+  /** The agent dialog's terminal sockets, by URL (qits-2157). */
+  let sockets: string[] = [];
+
   /** The testing module, as every case starts with it. */
   function configure() {
     appScheme.set('light');
+    sockets = [];
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -225,6 +230,22 @@ describe('UiBuilderPage', () => {
           useValue: { project: signal({ id: ID }), slug: signal(SLUG), url: signal('') },
         },
         { provide: ThemePreferenceStore, useValue: { resolved: appScheme.asReadonly() } },
+        // The agent dialog's terminal (qits-2157): a socket that never opens.
+        {
+          provide: WEB_SOCKET,
+          useValue: (url: string) => {
+            sockets.push(url);
+            return {
+              onopen: null,
+              onmessage: null,
+              onclose: null,
+              onerror: null,
+              readyState: 0,
+              send: () => {},
+              close: () => {},
+            };
+          },
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -1516,6 +1537,97 @@ describe('UiBuilderPage', () => {
       expect(element.querySelector('.no-states')?.textContent).toContain(
         'No screenshot test for this route, so nothing is frozen.',
       );
+    });
+  });
+
+  /** The project's named agents, as qits-projects recorded them: ui-builder IDLE (qits-2157). */
+  const AGENT_STATE = 'a project whose named agent is running';
+
+  /**
+   * Presses the header's Agent action, answers the dialog's read of the named agents, and gives a
+   * function that sends `text` from its prompt field and answers it, returning the text posted.
+   */
+  async function openAgent(
+    fixture: { detectChanges(): void; whenStable(): Promise<unknown> },
+    element: HTMLElement,
+  ) {
+    const action = [
+      ...element.querySelectorAll<HTMLButtonElement>('[data-page-actions] button'),
+    ].find((button) => button.textContent?.trim() === 'Agent')!;
+    action.click();
+    for (let i = 0; i < 3; i++) await settle();
+    fixture.detectChanges();
+    http
+      .expectOne(`/projects/api/projects/${ID}/agents`)
+      .flush(goldenMaster(AGENT_STATE, 'listAgents'));
+    for (let i = 0; i < 3; i++) await settle();
+    fixture.detectChanges();
+    return async (text: string) => {
+      const field = element.querySelector<HTMLTextAreaElement>('dialog textarea')!;
+      field.value = text;
+      field.dispatchEvent(new Event('input'));
+      field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', cancelable: true }));
+      for (let i = 0; i < 3; i++) await settle();
+      const sent = http.expectOne(`/projects/api/projects/${ID}/agents/ui-builder/prompt`);
+      sent.flush(goldenMaster(AGENT_STATE, 'promptAgent'));
+      for (let i = 0; i < 3; i++) await settle();
+      fixture.detectChanges();
+      return (sent.request.body as { text: string }).text;
+    };
+  }
+
+  describe('the agent (qits-2157)', () => {
+    it('opens the agent dialog from the header’s Agent action, attached to its command', async () => {
+      const { fixture, element } = await render('qits-landing-app');
+      await answerFreeze(ERROR_FREEZE, fixture);
+      expect(element.querySelector('dialog')).toBeNull();
+      await openAgent(fixture, element);
+      const dialog = element.querySelector('dialog');
+      expect(dialog?.hasAttribute('open')).toBe(true);
+      expect(dialog?.querySelector('h2')?.textContent).toBe('UI builder agent');
+      expect(dialog?.querySelector('.agent-state')?.textContent?.trim()).toBe('Idle');
+      expect(sockets).toEqual([`/projects/container/${ID}/terminal/commands/ui-builder-command-1`]);
+
+      dialog!.querySelector<HTMLButtonElement>('button.close')!.click();
+      for (let i = 0; i < 3; i++) await settle();
+      fixture.detectChanges();
+      expect(element.querySelector('dialog')).toBeNull();
+    });
+
+    it('puts what the page shows before the prompt: repository, route, bundle and screenshot', async () => {
+      const { fixture, element } = await render('qits-landing-app');
+      await answerFreeze(ERROR_FREEZE, fixture);
+      const send = await openAgent(fixture, element);
+      const text = await send('Pitch a calmer header.');
+      expect(text.split('\n')).toEqual([
+        '<opened-context>',
+        'repository: qits-landing-app',
+        'route: projects/:slug/repositories',
+        `manifestVersion: ${VERSION}`,
+        `screenshot: ${ERROR_FREEZE}`,
+        'kind: none',
+        'viewport: none',
+        'colorScheme: none',
+        'connectivity: online',
+        'selection: none',
+        '</opened-context>',
+        '',
+        'Pitch a calmer header.',
+      ]);
+      expect(element.querySelector('dialog .result')?.textContent?.trim()).toBe(
+        'Delivered to the agent.',
+      );
+    });
+
+    it('names the entity picked in the Entities tab as the selection', async () => {
+      const { fixture, element } = await render('qits-landing-app', undefined, recordedMap);
+      await answerFreeze(ERROR_FREEZE, fixture);
+      clickTab(element, 'Entities');
+      fixture.detectChanges();
+      element.querySelectorAll<HTMLButtonElement>('button.entity')[1].click();
+      fixture.detectChanges();
+      const send = await openAgent(fixture, element);
+      expect((await send('Why is this here?')).split('\n')[9]).toBe('selection: entity Project');
     });
   });
 
@@ -2821,6 +2933,22 @@ describe('UiBuilderPage', () => {
       );
       expect(callRow(element, 'getProject').querySelector('.cardinality')?.textContent).toContain(
         'detail',
+      );
+    });
+
+    it('names the highlighted mark as the agent prompt’s selection (qits-2157)', async () => {
+      const { fixture, element } = await renderMarked();
+      const row = callRow(element, 'listProjects');
+      row.querySelector<HTMLButtonElement>('.call-items-toggle')!.click();
+      fixture.detectChanges();
+      row
+        .querySelectorAll<HTMLButtonElement>('.call-item')[0]
+        .querySelectorAll<HTMLButtonElement>('.data-mark')[1]
+        .click();
+      fixture.detectChanges();
+      const send = await openAgent(fixture, element);
+      expect((await send('Make the name bold.')).split('\n')[9]).toBe(
+        `selection: mark qitsField ${LIST} id=p1 name`,
       );
     });
 

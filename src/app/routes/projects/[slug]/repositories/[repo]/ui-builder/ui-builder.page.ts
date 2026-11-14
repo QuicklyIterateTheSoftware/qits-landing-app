@@ -42,7 +42,9 @@ import {
   type ElementMark,
   type MarkRead,
 } from '$core/ui-builder/data-marks';
+import { AgentDialog } from '$patterns/ui-builder/agent-dialog/agent-dialog';
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
+import type { OpenedContextFields, OpenedSelection } from '$core/ui-builder/opened-context';
 import { RoutesBundles } from '$core/ui-builder/routes-bundles';
 import {
   answeringRow,
@@ -88,6 +90,7 @@ import {
   type TreeRow,
 } from '$core/ui-builder/routes-manifest';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import type { Action } from '$ui/components/action-button/action';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
@@ -473,6 +476,12 @@ interface EntityGroup {
  *   the title row scrolls away. Below 1280px the panels stack and the page scrolls as one, as
  *   before. A tree row scrolled into view (`revealSelected`) scrolls the tree's panel.
  *
+ * - Agent (qits-2157): the header's one action opens `app-agent-dialog`, the project's
+ *   `ui-builder` named agent: its terminal, its state, and a prompt field whose every prompt starts
+ *   with the opened-context block (`openedContextFields`: the repository, the selected route, the
+ *   bundle's version, the drawn freeze and its kind, viewport, scheme and network, else the
+ *   switches', and the selected entity or data mark). Closing the dialog only detaches.
+ *
  * The data is read in the browser only (the server render holds no token).
  *
  * Staleness (qits-1270): `SCMRelease` of the repository → its bundle (`RoutesBundles.follow`):
@@ -484,11 +493,19 @@ interface EntityGroup {
 @Component({
   selector: 'app-ui-builder-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, PageLayoutComponent, Spinner, CallDetails, QitsExit, NgTemplateOutlet],
+  imports: [
+    AgentDialog,
+    Chip,
+    PageLayoutComponent,
+    Spinner,
+    CallDetails,
+    QitsExit,
+    NgTemplateOutlet,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[96rem] px-6 pt-8 pb-12 xl:pb-0">
-      <app-page-layout>
+      <app-page-layout [actions]="headerActions()">
         <div slot="header" class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 class="m-0 text-3xl leading-[1.1] font-bold">UI builder</h1>
           <span class="repo font-mono text-fg-soft">{{ repo() }}</span>
@@ -1308,6 +1325,13 @@ interface EntityGroup {
           }
         </ui-spinner>
       </app-page-layout>
+      @if (agentOpen()) {
+        <app-agent-dialog
+          [projectId]="projectId()"
+          [context]="openedContextFields()"
+          (closed)="agentOpen.set(false)"
+        />
+      }
     </div>
 
     <!-- Why no outcome is listed, in place of a list (qits-2006). -->
@@ -2522,6 +2546,59 @@ export class UiBuilderPage {
     const key = this.pickedEntity();
     if (this.leftTab() !== 'entities' || key === null) return null;
     return this.join()?.entities.find((entity) => entity.key === key) ?? null;
+  });
+
+  /** Whether the agent dialog is open (qits-2157). */
+  protected readonly agentOpen = signal(false);
+
+  /** The open project's id, for the agent dialog; empty until known. */
+  protected readonly projectId = computed(() => this.selected.project()?.id ?? '');
+
+  /** The loaded `@routes/` bundle's version (qits-2157): the opened context's `manifestVersion`. */
+  protected readonly manifestVersion = computed(() => this.loaded()?.version ?? null);
+
+  /**
+   * The header's one action (qits-2157): Agent opens the ui-builder agent's dialog
+   * (`open-ui-builder-agent`), disabled until the project is known.
+   */
+  protected readonly headerActions = computed((): readonly Action[] => [
+    {
+      label: 'Agent',
+      variant: 'muted',
+      disabled: !this.projectId(),
+      details: {
+        title: 'The ui-builder agent',
+        items: [
+          'Its terminal, live, and a prompt that tells it what this page shows',
+          'It can pitch a changed screenshot of the route you have open',
+        ],
+      },
+      callback: () => this.agentOpen.set(true),
+    },
+  ]);
+
+  /**
+   * What the page shows, put before each prompt of the agent dialog (`openedContext`, qits-2157):
+   * the repository, the selected route, the bundle's version, the drawn freeze, the switches, and
+   * the selection (the Entities tab's entity, else the highlighted data mark; a selected call has
+   * no form in the format).
+   */
+  protected readonly openedContextFields = computed((): OpenedContextFields => {
+    const entity = this.selectedEntity();
+    const data = this.dataSelection();
+    const selection: OpenedSelection = entity
+      ? { kind: 'entity', name: entity.name }
+      : data?.kind === 'mark'
+        ? { kind: 'mark', mark: data.mark }
+        : null;
+    return {
+      repository: this.repo(),
+      route: this.selectedPath(),
+      manifestVersion: this.manifestVersion(),
+      freeze: this.freeze(),
+      asked: { viewport: this.viewport(), colorScheme: this.scheme(), network: this.network() },
+      selection,
+    };
   });
 
   /** The selected freeze's data marks (qits-2144); none for a freeze without `dataMarks`. */
