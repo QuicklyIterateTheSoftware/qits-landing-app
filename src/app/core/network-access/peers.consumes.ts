@@ -3,6 +3,7 @@ import type {
   GetNodesResponses,
   GetPeersResponses,
   GetPrivateEdgeResponses,
+  PeerDto,
 } from '../../api/network-access';
 
 /**
@@ -58,3 +59,25 @@ export const REVOKE_PEER = ['status'] as const;
  * is bound by field; the pact binds the status and the media type.
  */
 export const GET_PEER_CONFIG = [] as const;
+
+/**
+ * `PEER_CREATE`: the new DEVICE peer, as Add device reads it: `id` to read its config, the rest to
+ * name it in the shown-once result.
+ */
+export const CREATE_PEER = ['id', 'name', 'tunnelIp', 'status'] as const;
+
+/**
+ * The new peer, cut to what Add device reads. The service's OpenAPI document gives `createPeer`'s
+ * 201 no schema, so the client types the answer `unknown`; `asCreatedPeer` (`peers.ts`) checks it
+ * into this shape, the `PeerDto` the service sends.
+ */
+export type CreatedPeer = Consumed<PeerDto, typeof CREATE_PEER>;
+
+/** The refusal body's field a write reads: the service's own words (`{"message": "..."}`). */
+export const REFUSAL_MESSAGE = ['message'] as const;
+
+/**
+ * `PEER_APP_CONFIG`: the WireGuard apps' config, read as text like `PEER_CONFIG`; the pact binds
+ * the status and the media type.
+ */
+export const GET_PEER_APP_CONFIG = [] as const;

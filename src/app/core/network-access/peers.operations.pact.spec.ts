@@ -11,19 +11,28 @@ import { client as networkAccessClient } from '../../api/network-access/client.g
 import { provideHeyApiClient } from '../../api/network-access/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { networkAccessGoldenMasters as masters } from '../../../testing/golden-masters';
-import { AS_TEXT } from './peers';
-import { NODE_LIST, PEER_CONFIG, PEER_LIST, PEER_REVOKE, PRIVATE_EDGE } from './peers.operations';
+import { AS_TEXT, asCreatedPeer } from './peers';
+import {
+  NODE_LIST,
+  PEER_APP_CONFIG,
+  PEER_CONFIG,
+  PEER_CREATE,
+  PEER_LIST,
+  PEER_REVOKE,
+  PRIVATE_EDGE,
+} from './peers.operations';
 
 /**
  * qits-landing-app's pact with qits-network-access-service (epic qits-1977), in
  * `pacts/qits-landing-app_qits-network-access-service.json`: the Network access pane's operations
- * (`peers.operations.ts`, qits-2146), its peers, nodes and private edge, a revoke, and a device's
- * WireGuard config. The operations are the only users of the qits-network-access client, so this
- * file is the whole pact. Moved here from `peers.store.pact.spec.ts` with `PeersStore`, unchanged.
+ * (`peers.operations.ts`, qits-2146), its peers, nodes and private edge, a revoke, a device's
+ * WireGuard config, and Add device's write and its config for the WireGuard apps (qits-2262). The
+ * operations are the only users of the qits-network-access client, so this file is the whole pact.
+ * Moved here from `peers.store.pact.spec.ts` with `PeersStore`, unchanged.
  *
- * The config is text (`text/plain`, read with `responseType: 'text'`); the recording holds it as a
- * JSON string, so its interaction binds the status and the media type, with the recorded text as
- * the example body (`NonJsonResponse`).
+ * Each config is text (`text/plain`, read with `responseType: 'text'`); the recording holds it as
+ * a JSON string, so each one's interaction binds the status and the media type, with the recorded
+ * text as the example body (`NonJsonResponse`).
  *
  * Not here: the Mine filter's `getPeers?owner=me`. No recording holds that query, so it has no
  * interaction yet; `network-access.page.spec.ts` covers it.
@@ -118,6 +127,36 @@ describe('qits-landing-app → qits-network-access-service pact: the Network acc
       const peerId = param(DEVICE, 'getPeerConfig', 'peerId');
       const { data } = await at(server.url, () =>
         PEER_CONFIG.fetch({ path: { peerId }, ...AS_TEXT }),
+      );
+      const text = data as unknown;
+      expect(typeof text).toBe('string');
+      expect(text).toContain('[Interface]');
+      expect(text).toContain('PrivateKey = <PRIVATE_KEY>');
+    }));
+
+  it('add-network-device: the new DEVICE peer, from the name and the public key alone', () =>
+    given(PEER_CREATE, EDGE, 'add-network-device').executeTest(async (server) => {
+      // The recorded request: a name and a public key, nothing else.
+      const sent = masters.operation(EDGE, 'createPeer').body as {
+        name: string;
+        publicKey: string;
+      };
+      const { data } = await at(server.url, () =>
+        PEER_CREATE.fetch({ body: { name: sent.name, publicKey: sent.publicKey } }),
+      );
+      const peer = asCreatedPeer(data);
+      expect(peer?.id).toBe(masters.body<{ id: string }>(EDGE, 'createPeer').id);
+      expect(peer?.status).toBe('ACTIVE');
+    }));
+
+  it('show-device-app-config: the WireGuard apps’ text, private key left as a placeholder', () =>
+    given(PEER_APP_CONFIG, DEVICE, 'show-device-app-config', {
+      contentType: 'text/plain',
+      body: new TextEncoder().encode(masters.body<string>(DEVICE, 'getPeerAppConfig')),
+    }).executeTest(async (server) => {
+      const peerId = param(DEVICE, 'getPeerAppConfig', 'peerId');
+      const { data } = await at(server.url, () =>
+        PEER_APP_CONFIG.fetch({ path: { peerId }, ...AS_TEXT }),
       );
       const text = data as unknown;
       expect(typeof text).toBe('string');
