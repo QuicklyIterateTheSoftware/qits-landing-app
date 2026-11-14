@@ -21039,6 +21039,96 @@
       "triggers": []
     },
     {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "auth/callback",
+      "records": [],
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "auth/callback",
+      "records": [],
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "auth/callback",
+      "records": [],
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "auth/callback",
+      "records": [],
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "auth/callback",
+      "records": [],
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+      "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "auth/callback",
+      "records": [],
+      "triggers": [
+        "sign-in-failed:restarted"
+      ]
+    },
+    {
       "file": "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-desktop-dark.html",
       "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
       "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unknown-state",
@@ -156595,6 +156685,12 @@
       "src/app/routes/auth-callback.page.browser.spec.ts/signing-in-phone-light.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/signing-in-tablet-dark.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/signing-in-tablet-light.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-tablet-light.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-desktop-dark.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-desktop-light.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-phone-dark.html",
@@ -159007,6 +159103,15 @@
     "fired": [
       {
         "spec": "src/app/app.config.browser.spec.ts",
+        "test": "app config: the bearer interceptor with the idp unavailable (qits-2250) > session-expired unavailable: a 401 whose refresh goes unanswered lands on the callback page saying so, and never leaves",
+        "route": null,
+        "interaction": "session-expired",
+        "outcome": "unavailable",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/app.config.browser.spec.ts",
         "test": "app config: the bearer interceptor’s expired session (qits-2052) > session-expired signedOut: a platform call answering 401 leaves for the idp’s sign-in",
         "route": null,
         "interaction": "session-expired",
@@ -159021,6 +159126,24 @@
         "interaction": "session-guard",
         "outcome": "signedOut",
         "kind": "external",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/app.routes.browser.spec.ts",
+        "test": "app routes: the session guard with the idp unavailable (qits-2250) > session-guard unavailable: an unanswered refresh lands on the callback page saying so, and never leaves",
+        "route": null,
+        "interaction": "session-guard",
+        "outcome": "unavailable",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/app.routes.browser.spec.ts",
+        "test": "app routes: the session guard with the idp unavailable (qits-2250) > session-guard unavailable: an unanswered refresh lands on the callback page saying so, and never leaves",
+        "route": null,
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
         "freeze": null
       },
       {
@@ -159625,6 +159748,15 @@
         "outcome": "failed",
         "kind": "stay",
         "freeze": "src/app/routes/auth-callback.page.browser.spec.ts/refused-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
+        "test": "QitsAuthCallbackPage (screenshots) > sign-in failed: stays and shows that the sign-in failed: unavailable",
+        "route": "auth/callback",
+        "interaction": "sign-in",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/routes/auth-callback.page.browser.spec.ts/unavailable-desktop-light.html"
       },
       {
         "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
