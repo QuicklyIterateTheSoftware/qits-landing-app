@@ -216,6 +216,7 @@ interface SendResult {
           <div class="flex items-end gap-2">
             <textarea
               id="agent-dialog-prompt"
+              autofocus
               class="box-border min-h-16 flex-1 resize-y rounded-md border border-line bg-surface px-2 py-1 font-sans text-sm text-fg"
               rows="3"
               placeholder="Ask for a pitch of what you see, or about it"

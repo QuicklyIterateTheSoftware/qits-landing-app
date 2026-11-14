@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page } from 'vitest/browser';
 import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
+import { WEB_SOCKET } from '$core/platform/web-socket';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster, goldenMasterText } from '../../../../../../../testing/browser/golden-master';
 import { leftFor } from '../../../../../../../testing/browser/contracts-bundles';
@@ -61,7 +62,24 @@ describe('UiBuilderPage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
+    TestBed.configureTestingModule({
+      providers: [
+        provideAppRoute(),
+        // The agent dialog's terminal (qits-2157): a socket that never opens.
+        {
+          provide: WEB_SOCKET,
+          useValue: () => ({
+            onopen: null,
+            onmessage: null,
+            onclose: null,
+            onerror: null,
+            readyState: 0,
+            send: () => {},
+            close: () => {},
+          }),
+        },
+      ],
+    });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -397,10 +415,14 @@ describe('UiBuilderPage (screenshots)', () => {
     for (const column of columns) {
       expect(column.scrollHeight).toBeGreaterThan(column.clientHeight);
     }
-    // Scrolled to its end, <main> shows the panels filling it exactly, the title row gone.
+    // Scrolled to its end, <main> shows the panels filling it exactly below the pinned actions
+    // (the Agent action, qits-2157; `--page-actions-h`), the title row gone.
     main.scrollTop = main.scrollHeight;
     const box = main.getBoundingClientRect();
-    expect(Math.round(grid.getBoundingClientRect().top)).toBe(Math.round(box.top));
+    const actions = opened.page.querySelector('[data-page-actions]')!.getBoundingClientRect();
+    expect(actions.height).toBeGreaterThan(0);
+    expect(Math.round(actions.top)).toBe(Math.round(box.top));
+    expect(Math.round(grid.getBoundingClientRect().top)).toBe(Math.round(box.top + actions.height));
     expect(Math.round(grid.getBoundingClientRect().bottom)).toBe(Math.round(box.bottom));
     const mainTop = main.scrollTop;
     for (const [i, column] of columns.entries()) {
@@ -412,6 +434,33 @@ describe('UiBuilderPage (screenshots)', () => {
       expect(main.scrollTop).toBe(mainTop);
       expect(document.scrollingElement!.scrollTop).toBe(0);
     }
+  });
+
+  it('opens the ui-builder agent’s dialog from the Agent action (qits-2157)', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites);
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('button', { name: 'Agent', exact: true }).click();
+    await opened.settled();
+    // The project's named agents, as qits-projects recorded them: ui-builder IDLE on its command.
+    http
+      .expectOne(`/projects/api/projects/${opened.project.id}/agents`)
+      .flush(await goldenMaster('a project whose named agent is running', 'listAgents'));
+    await opened.settled();
+    await commands.parkPointer();
+    const dialog = view.getByRole('dialog', { name: 'UI builder agent' });
+    await expect.element(dialog).toBeVisible();
+    await expect.element(dialog.getByText('Idle', { exact: true })).toBeVisible();
+    await expect.element(dialog.getByRole('textbox', { name: 'Prompt' })).toHaveFocus();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('agent-open', { kind: 'DATA' });
+
+    await dialog.getByRole('button', { name: 'Close the agent dialog' }).click();
+    await opened.settled();
+    await expect
+      .element(view.getByRole('dialog', { name: 'UI builder agent' }))
+      .not.toBeInTheDocument();
   });
 
   it('says a route without states has nothing frozen', async () => {
