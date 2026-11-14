@@ -844,6 +844,12 @@
     },
     {
       "provider": "qits-projects-service",
+      "state": "a project whose named agent is running",
+      "operationId": "listAgents",
+      "route": "projects/:slug/repositories/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/repositories/:repo/ui-builder"
