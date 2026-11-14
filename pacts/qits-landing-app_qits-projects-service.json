@@ -8480,7 +8480,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "open-ui-builder-agent",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
