@@ -463,6 +463,37 @@ describe('UiBuilderPage (screenshots)', () => {
       .not.toBeInTheDocument();
   });
 
+  it('says on the Pitched tab that no pitch mocks the screenshot yet (qits-2158)', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites);
+    const view = page.elementLocator(opened.page);
+    const tabs = view.getByRole('tablist', { name: 'Screenshot' });
+    await expect
+      .element(tabs.getByRole('tab', { name: 'Original' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await tabs.getByRole('tab', { name: 'Pitched' }).click();
+    await commands.parkPointer();
+    await opened.settled();
+    // The project's pitches, as qits-projects recorded them: one live pitch of `contract-app`'s
+    // `work/board-desktop-light.html`, none of this bundle's screenshots. No recording pitches a
+    // screenshot of `@routes/qits-landing`, so a drawn pitch (and its diff) is the plain spec's.
+    http
+      .expectOne((req) =>
+        req.urlWithParams.endsWith(`/projects/api/pitches?project=${opened.project.id}`),
+      )
+      .flush(await goldenMaster('a project with a pitch', 'listPitches'));
+    await opened.settled();
+    await expect
+      .element(tabs.getByRole('tab', { name: 'Pitched' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await expect
+      .element(view)
+      .toMatchTextContent('No pitch for this screenshot yet — ask the agent to pitch one.');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('pitched-none', { kind: 'NO_DATA' });
+  });
+
   it('says a route without states has nothing frozen', async () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites);

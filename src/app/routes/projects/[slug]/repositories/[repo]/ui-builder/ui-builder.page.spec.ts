@@ -10,7 +10,8 @@ import { client as projectsClient } from '../../../../../../api/projects/client.
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
-import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
+import { DomainEvents, EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { SelectedProject } from '$core/projects/selected-project';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
@@ -205,10 +206,14 @@ describe('UiBuilderPage', () => {
   /** The agent dialog's terminal sockets, by URL (qits-2157). */
   let sockets: string[] = [];
 
+  /** The domain event streams the page opened (qits-2158), newest last. */
+  let eventSources: EventSourceLike[] = [];
+
   /** The testing module, as every case starts with it. */
   function configure() {
     appScheme.set('light');
     sockets = [];
+    eventSources = [];
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
@@ -222,7 +227,16 @@ describe('UiBuilderPage', () => {
         provideTestPlatformOrigins({}),
         {
           provide: EVENT_SOURCE,
-          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+          useValue: () => {
+            const source: EventSourceLike = {
+              onmessage: null,
+              onerror: null,
+              readyState: 0,
+              close: () => {},
+            };
+            eventSources.push(source);
+            return source;
+          },
         },
         { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
@@ -1628,6 +1642,385 @@ describe('UiBuilderPage', () => {
       fixture.detectChanges();
       const send = await openAgent(fixture, element);
       expect((await send('Why is this here?')).split('\n')[9]).toBe('selection: entity Project');
+    });
+  });
+
+  describe('pitches (qits-2158)', () => {
+    const PITCHED = 'a project with a pitch';
+    /** A frontend of the recorded project, so the open repository has an id to match pitches on. */
+    const REPO = 'contract-frontend';
+    const REPO_ID = goldenMaster<{ entries: { repository: { id: string; name: string } }[] }>(
+      'a project with repositories in components',
+      'listProjectRepositories',
+    ).entries.find((entry) => entry.repository.name === REPO)!.repository.id;
+    const RECORDED = goldenMaster<{ pitches: (Record<string, unknown> & { id: string })[] }>(
+      PITCHED,
+      'listPitches',
+    ).pitches[0];
+    const PITCH_ID = RECORDED.id;
+    const LIST_URL = `/projects/api/pitches?project=${ID}`;
+    const PITCH_URL = `/projects/api/pitches/${PITCH_ID}`;
+    const versionUrl = (id: string, number: string) =>
+      `/projects/api/pitches/${id}/versions/${number}`;
+    const DETAIL = goldenMaster<{
+      versions: { number: number; note: string; createdAt: string }[];
+    }>(PITCHED, 'getPitch');
+    const HTML = goldenMaster<{ html: string }>(PITCHED, 'getPitchVersion').html;
+
+    /**
+     * The recorded pitch, moved onto this spec's screenshot: it is recorded on `contract-app`'s
+     * `work/board-desktop-light.html` at manifest `2026.1113.1`; here it mocks `contract-frontend`'s
+     * `error` freeze (`ERROR_FREEZE`, by the repository's id in the project's recorded list), pitched
+     * against this spec's bundle (`VERSION`). `changes` move it further (another id, title, time…).
+     */
+    const pitch = (changes: Record<string, unknown> = {}) =>
+      ({
+        ...RECORDED,
+        repositoryId: REPO_ID,
+        repositoryName: REPO,
+        screenshot: ERROR_FREEZE,
+        manifestVersion: VERSION,
+        ...changes,
+      }) as typeof RECORDED;
+
+    /** The frame tab named `name`. */
+    const frameTab = (element: HTMLElement, name: string) =>
+      [
+        ...element.querySelectorAll<HTMLButtonElement>('[aria-label="Screenshot"] [role="tab"]'),
+      ].find((tab) => tab.textContent?.trim() === name)!;
+
+    /** The builder on `contract-frontend`'s `error` freeze, its frozen page answered. */
+    async function renderFrontend() {
+      const rendered = await render(REPO, versionsNaming(REPO));
+      await answerFreeze(ERROR_FREEZE, rendered.fixture);
+      return rendered;
+    }
+
+    /** Lets the reads the page started go out, and draws what came back. */
+    async function drawn(fixture: { detectChanges(): void }) {
+      for (let i = 0; i < 3; i++) await settle();
+      fixture.detectChanges();
+    }
+
+    /**
+     * Opens the Pitched tab, answering the list with `pitches` and, when one is shown, its versions
+     * (the recorded detail) and its newest version's HTML (the recorded one).
+     */
+    async function openPitched(
+      rendered: Awaited<ReturnType<typeof renderFrontend>>,
+      pitches: object[] = [pitch()],
+      shown: string | null = PITCH_ID,
+    ) {
+      frameTab(rendered.element, 'Pitched').click();
+      await drawn(rendered.fixture);
+      http.expectOne(LIST_URL).flush({ pitches });
+      await drawn(rendered.fixture);
+      if (shown) {
+        http.expectOne(`/projects/api/pitches/${shown}`).flush({ ...DETAIL, id: shown });
+        http.expectOne(versionUrl(shown, 'latest')).flush(goldenMaster(PITCHED, 'getPitchVersion'));
+        await drawn(rendered.fixture);
+      }
+    }
+
+    /** Sends `payload` as a `PitchChanged` on the page's event stream, and lets its burst settle. */
+    async function pitchChanged(payload: Record<string, unknown>) {
+      // The stream opens once its subscriptions settle (`REOPEN_DEBOUNCE_MS`).
+      if (!eventSources.at(-1)?.onmessage) await new Promise((resolve) => setTimeout(resolve, 250));
+      const event = { name: 'PitchChanged', payload: JSON.stringify(payload) };
+      eventSources
+        .at(-1)!
+        .onmessage?.(new MessageEvent('message', { data: JSON.stringify(event) }));
+      // A burst reads again once it pauses (a second).
+      await new Promise((resolve) => setTimeout(resolve, 1_100));
+      await settle();
+    }
+
+    /** A `PitchChanged` of the shown screenshot. */
+    const changed = (change: string, changes: Record<string, unknown> = {}) => ({
+      projectId: ID,
+      pitchId: PITCH_ID,
+      agentName: 'ui-builder',
+      repositoryId: REPO_ID,
+      route: 'projects/:slug/repositories',
+      screenshot: ERROR_FREEZE,
+      change,
+      version: 1,
+      ...changes,
+    });
+
+    /** Hands the page a loaded frame holding `html`, as the pitch's srcdoc load would. */
+    function loadPitch(page: UiBuilderPage, html = HTML): Document {
+      const doc = document.implementation.createHTMLDocument('pitch');
+      doc.body.innerHTML = html;
+      Object.defineProperty(doc, 'URL', { configurable: true, value: 'about:srcdoc' });
+      (page as unknown as { frameLoaded(e: Event): void }).frameLoaded({
+        target: { contentDocument: doc },
+      } as unknown as Event);
+      return doc;
+    }
+
+    it('shows Original by default, and the pitch in the same sandboxed frame on Pitched', async () => {
+      const rendered = await renderFrontend();
+      const { element, texts, fixture } = rendered;
+      expect(texts('[aria-label="Screenshot"] [role="tab"]')).toEqual(['Original', 'Pitched']);
+      expect(frameTab(element, 'Original').getAttribute('aria-selected')).toBe('true');
+      expect(element.querySelector('iframe')?.getAttribute('title')).toBe('Frozen state error');
+      // Nothing is read for the Original tab.
+      expect(element.querySelector('button.pitch-diff')).toBeNull();
+
+      await openPitched(rendered);
+      expect(frameTab(element, 'Pitched').getAttribute('aria-selected')).toBe('true');
+      expect(texts('button.pitch .pitch-title')).toEqual([RECORDED['title']]);
+      expect(
+        element.querySelector('button.pitch .pitch-by')?.textContent?.replace(/\s+/g, ' ').trim(),
+      ).toBe(`${RECORDED['agent']} · ${RECORDED['note']}`);
+      // Newest first: number, note, time.
+      expect(texts('button.pitch-version')).toEqual(
+        [...DETAIL.versions]
+          .reverse()
+          .map((v) => `v${v.number} ${v.note} ${formatInstant(v.createdAt)}`),
+      );
+      expect(element.querySelector('button.pitch-version')?.getAttribute('aria-pressed')).toBe(
+        'true',
+      );
+      const frame = element.querySelector('iframe')!;
+      expect(frame.getAttribute('title')).toBe(`Pitch ${RECORDED['title']}`);
+      expect(frame.getAttribute('sandbox')).toBe('allow-same-origin');
+      expect(element.innerHTML).not.toContain('allow-scripts');
+      expect(element.querySelector('.pitch-stale')).toBeNull();
+      // The pitch is never part of this page's own DOM.
+      expect(element.querySelector('nav')?.textContent).not.toBe('Filters');
+
+      frameTab(element, 'Original').click();
+      fixture.detectChanges();
+      expect(element.querySelector('iframe')?.getAttribute('title')).toBe('Frozen state error');
+      expect(element.querySelector('section[aria-label="Pitches"]')).toBeNull();
+    });
+
+    it('lists only the open repository’s pitches of the drawn screenshot, newest change first', async () => {
+      const rendered = await renderFrontend();
+      const newer = pitch({
+        id: '00000000-0000-4000-8000-0000000000a1',
+        title: 'A newer pitch',
+        updatedAt: '2026-01-02T00:00:00Z',
+      });
+      await openPitched(
+        rendered,
+        [
+          pitch(),
+          // Another screenshot, another repository, an archived one: none of them shown.
+          pitch({ id: '00000000-0000-4000-8000-0000000000a2', screenshot: LOADED_FREEZE }),
+          pitch({ id: '00000000-0000-4000-8000-0000000000a3', repositoryId: ID }),
+          pitch({ id: '00000000-0000-4000-8000-0000000000a4', archivedAt: '2026-01-03T00:00:00Z' }),
+          newer,
+        ],
+        newer.id,
+      );
+      expect(rendered.texts('button.pitch .pitch-title')).toEqual([
+        'A newer pitch',
+        RECORDED['title'],
+      ]);
+      expect(rendered.element.querySelector('button.pitch')?.getAttribute('aria-pressed')).toBe(
+        'true',
+      );
+
+      // Another pitch: its versions and its newest version.
+      rendered.element.querySelectorAll<HTMLButtonElement>('button.pitch')[1].click();
+      await drawn(rendered.fixture);
+      http.expectOne(PITCH_URL).flush(DETAIL);
+      http
+        .expectOne(versionUrl(PITCH_ID, 'latest'))
+        .flush(goldenMaster(PITCHED, 'getPitchVersion'));
+      await drawn(rendered.fixture);
+      expect(
+        rendered.element.querySelectorAll('button.pitch')[1].getAttribute('aria-pressed'),
+      ).toBe('true');
+    });
+
+    it('reads an older version by its number, and the newest as latest again', async () => {
+      const rendered = await renderFrontend();
+      await openPitched(rendered);
+      const versions = () =>
+        rendered.element.querySelectorAll<HTMLButtonElement>('button.pitch-version');
+      versions()[1].click();
+      await drawn(rendered.fixture);
+      // The recorded answer, read as version 1.
+      http.expectOne(versionUrl(PITCH_ID, '1')).flush({
+        ...goldenMaster<object>(PITCHED, 'getPitchVersion'),
+        number: 1,
+        html: '<main></main>',
+      });
+      await drawn(rendered.fixture);
+      expect(versions()[1].getAttribute('aria-pressed')).toBe('true');
+      expect(versions()[0].getAttribute('aria-pressed')).toBe('false');
+
+      versions()[0].click();
+      await drawn(rendered.fixture);
+      http
+        .expectOne(versionUrl(PITCH_ID, 'latest'))
+        .flush(goldenMaster(PITCHED, 'getPitchVersion'));
+      await drawn(rendered.fixture);
+      expect(versions()[0].getAttribute('aria-pressed')).toBe('true');
+    });
+
+    it('says so when no pitch mocks the screenshot', async () => {
+      const rendered = await renderFrontend();
+      await openPitched(rendered, [pitch({ screenshot: LOADED_FREEZE })], null);
+      expect(rendered.element.querySelector('iframe')).toBeNull();
+      expect(rendered.element.querySelector('.frame-placeholder')?.textContent?.trim()).toBe(
+        'No pitch for this screenshot yet — ask the agent to pitch one.',
+      );
+      expect(frameTab(rendered.element, 'Pitched')).toBeTruthy();
+    });
+
+    it('says when the pitch was made against another manifest', async () => {
+      const rendered = await renderFrontend();
+      // As recorded: pitched against 2026.1113.1, not this spec's bundle.
+      await openPitched(rendered, [pitch({ manifestVersion: RECORDED['manifestVersion'] })]);
+      expect(
+        rendered.element.querySelector('.pitch-stale')?.textContent?.replace(/\s+/g, ' ').trim(),
+      ).toBe(
+        `Pitched against manifest ${RECORDED['manifestVersion']}; the screenshot is now ${VERSION}.`,
+      );
+    });
+
+    it('goes back to Original when another screenshot is drawn', async () => {
+      const rendered = await renderFrontend();
+      await openPitched(rendered);
+      [
+        ...rendered.element.querySelectorAll<HTMLButtonElement>(
+          '[aria-label="States"] [role="tab"]',
+        ),
+      ]
+        .find((tab) => tab.firstChild?.textContent?.trim() === 'loaded')!
+        .click();
+      await navigated(rendered.fixture);
+      http.expectOne(fileUrl(LOADED_FREEZE)).flush('<p>loaded</p>');
+      await drawn(rendered.fixture);
+      expect(frameTab(rendered.element, 'Original').getAttribute('aria-selected')).toBe('true');
+      expect(rendered.element.querySelector('section[aria-label="Pitches"]')).toBeNull();
+      expect(rendered.element.querySelector('iframe')?.getAttribute('title')).toBe(
+        'Frozen state loaded',
+      );
+    });
+
+    // Five bursts, each read again a second after it pauses (`refreshOn`'s debounce), in real time.
+    it('follows PitchChanged of the screenshot: a new pitch, a new version, an archived pitch', async () => {
+      const rendered = await renderFrontend();
+      await openPitched(rendered);
+      const { element, fixture, texts } = rendered;
+
+      // Another screenshot's event reads nothing.
+      await pitchChanged(
+        changed('CREATED', {
+          pitchId: '00000000-0000-4000-8000-0000000000b2',
+          screenshot: LOADED_FREEZE,
+        }),
+      );
+      http.expectNone(LIST_URL);
+
+      // A new pitch of this screenshot: the list again, the new one listed first.
+      const created = pitch({
+        id: '00000000-0000-4000-8000-0000000000b1',
+        title: 'A second pitch',
+        updatedAt: '2026-01-05T00:00:00Z',
+      });
+      await pitchChanged(changed('CREATED', { pitchId: created.id }));
+      http.expectOne(LIST_URL).flush({ pitches: [pitch(), created] });
+      await drawn(fixture);
+      expect(texts('button.pitch .pitch-title')).toEqual(['A second pitch', RECORDED['title']]);
+      // The picked pitch stays the recorded one, which the person was looking at, newest or not.
+      element.querySelectorAll<HTMLButtonElement>('button.pitch')[1].click();
+      await drawn(fixture);
+      http.expectNone(PITCH_URL);
+      expect(element.querySelectorAll('button.pitch')[1].getAttribute('aria-pressed')).toBe('true');
+
+      // A new version while on the newest: the list, the versions and `latest` again.
+      const three = {
+        ...DETAIL,
+        latestVersion: 3,
+        versions: [
+          ...DETAIL.versions,
+          { ...DETAIL.versions[1], number: 3, note: 'Saved views under the filters' },
+        ],
+      };
+      await pitchChanged(changed('VERSION_ADDED', { version: 3 }));
+      http.expectOne(LIST_URL).flush({ pitches: [pitch(), created] });
+      http.expectOne(PITCH_URL).flush(three);
+      http
+        .expectOne(versionUrl(PITCH_ID, 'latest'))
+        .flush(goldenMaster(PITCHED, 'addPitchVersion'));
+      await drawn(fixture);
+      const pressed = () =>
+        [...element.querySelectorAll('button.pitch-version')].map((b) =>
+          b.getAttribute('aria-pressed'),
+        );
+      expect(texts('button.pitch-version span.font-semibold')).toEqual(['v3', 'v2', 'v1']);
+      expect(pressed()).toEqual(['true', 'false', 'false']);
+
+      // On an older version, a newer one becomes selectable and the older stays drawn.
+      element.querySelectorAll<HTMLButtonElement>('button.pitch-version')[2].click();
+      await drawn(fixture);
+      http.expectOne(versionUrl(PITCH_ID, '1')).flush(goldenMaster(PITCHED, 'getPitchVersion'));
+      await drawn(fixture);
+      await pitchChanged(changed('VERSION_ADDED', { version: 4 }));
+      http.expectOne(LIST_URL).flush({ pitches: [pitch(), created] });
+      http.expectOne(PITCH_URL).flush({
+        ...three,
+        latestVersion: 4,
+        versions: [...three.versions, { ...three.versions[2], number: 4 }],
+      });
+      http.expectNone(versionUrl(PITCH_ID, 'latest'));
+      await drawn(fixture);
+      expect(texts('button.pitch-version span.font-semibold')).toEqual(['v4', 'v3', 'v2', 'v1']);
+      expect(pressed()).toEqual(['false', 'false', 'false', 'true']);
+
+      // Archived: it drops out, the other pitch is shown.
+      await pitchChanged(changed('ARCHIVED'));
+      http.expectOne(LIST_URL).flush({ pitches: [created] });
+      http.expectOne(PITCH_URL).flush(three);
+      await drawn(fixture);
+      expect(texts('button.pitch .pitch-title')).toEqual(['A second pitch']);
+      http.expectOne(`/projects/api/pitches/${created.id}`).flush({ ...DETAIL, id: created.id });
+      http
+        .expectOne(versionUrl(created.id, 'latest'))
+        .flush(goldenMaster(PITCHED, 'getPitchVersion'));
+      await drawn(fixture);
+    }, 15_000);
+
+    it('diffs the pitch against the original on its toggle, off by default, and lists what it removed', async () => {
+      const rendered = await renderFrontend();
+      await openPitched(rendered);
+      const { element, fixture, page } = rendered;
+      const toggle = element.querySelector<HTMLButtonElement>('button.pitch-diff')!;
+      expect(toggle.getAttribute('aria-pressed')).toBe('false');
+      // The original freeze is `<a href="/projects/x">x</a>` (`answerFreeze`); the pitch replaces it.
+      const doc = loadPitch(page, '<main><h1>Board</h1><nav>Filters</nav></main>');
+      expect(doc.querySelector('[data-qits-builder-diff]')).toBeNull();
+      expect(element.querySelector('[aria-label="Removed"]')).toBeNull();
+
+      toggle.click();
+      fixture.detectChanges();
+      expect(toggle.getAttribute('aria-pressed')).toBe('true');
+      expect(doc.querySelector('main')?.getAttribute('data-qits-builder-diff')).toBe('added');
+      expect(doc.querySelector('style[data-qits-builder-diff-style]')).not.toBeNull();
+      const removed = element.querySelectorAll('[aria-label="Removed"] li.removed-node');
+      expect(removed).toHaveLength(1);
+      expect(removed[0].textContent?.replace(/\s+/g, ' ').trim()).toMatch(/^<a> x$/i);
+
+      // Loaded again with the diff on (another version): diffed again.
+      const again = loadPitch(page, '<a href="/projects/x">x</a>');
+      fixture.detectChanges();
+      expect(again.querySelector('a')?.getAttribute('data-qits-builder-diff')).toBe('same');
+      expect(element.querySelector('[aria-label="Removed"]')?.textContent).toContain(
+        'None removed.',
+      );
+
+      toggle.click();
+      fixture.detectChanges();
+      expect(again.querySelector('[data-qits-builder-diff]')).toBeNull();
+      expect(again.querySelector('style[data-qits-builder-diff-style]')).toBeNull();
+      expect(element.querySelector('[aria-label="Removed"]')).toBeNull();
     });
   });
 

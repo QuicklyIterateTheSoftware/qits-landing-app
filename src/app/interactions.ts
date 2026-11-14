@@ -732,6 +732,22 @@ export const INTERACTIONS = {
    */
   'prompt-ui-builder-agent': 'Send in the UI builder’s agent dialog prompts the ui-builder agent',
   /**
+   * `ui-builder.page.ts` via `PITCHES` (qits-2158): the UI builder's Pitched tab lists the
+   * project's pitches, narrowed to the open repository and screenshot, again after each
+   * `PitchChanged` of that screenshot.
+   */
+  'show-ui-builder-pitches': 'The UI builder’s Pitched tab lists the pitches of the screenshot',
+  /**
+   * `ui-builder.page.ts` via `PITCH` (qits-2158): the Pitched tab reads the chosen pitch's versions
+   * for its version picker, again after each `PitchChanged` of that pitch.
+   */
+  'show-ui-builder-pitch-versions': 'A pitch in the UI builder’s Pitched tab lists its versions',
+  /**
+   * `ui-builder.page.ts` via `PITCH_VERSION` (qits-2158): the Pitched tab draws the chosen version's
+   * HTML in the sandboxed frame, the newest as `latest`.
+   */
+  'show-ui-builder-pitch-version': 'The UI builder’s Pitched tab draws a version of a pitch',
+  /**
    * `ui-builder.page.ts`: an entity's entity page from the UI builder: the ↗ of an entity in the
    * Entities tab (`listedEntity`), the picked entity's name above its routes (`pickedEntity`), the
    * ↗ of an entity the route touches (`routeEntity`). Navigates only, and names no pact (epic

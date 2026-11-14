@@ -17,12 +17,22 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { exit, outcomes, QitsExit, qitsResource, type QitsDomainEvent } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+  type QitsDomainEvent,
+} from '@qits/angular';
 import { map } from 'rxjs';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { formatInstant } from '$core/release-requests/release-request-model';
+import { payloadField } from '$core/events/refresh-on';
 import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
@@ -46,6 +56,16 @@ import { AgentDialog } from '$patterns/ui-builder/agent-dialog/agent-dialog';
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
 import type { OpenedContextFields, OpenedSelection } from '$core/ui-builder/opened-context';
 import { RoutesBundles } from '$core/ui-builder/routes-bundles';
+import {
+  applyDiff,
+  clearDiff,
+  diffCss,
+  diffPitch,
+  type RemovedNode,
+} from '$core/ui-builder/pitch-diff';
+import type { PitchEntry } from '$core/ui-builder/pitches.consumes';
+import { PITCH, PITCH_VERSION, PITCHES } from '$core/ui-builder/pitches.operations';
+import { PITCH_CHANGED, screenshotPitches } from '$core/ui-builder/pitches';
 import {
   answeringRow,
   appWideCalls,
@@ -182,6 +202,20 @@ const HIGHLIGHT = 'data-qits-builder-highlight';
  */
 const highlightCss = (accent: string) =>
   `[${HIGHLIGHT}] { outline: 3px solid var(--color-accent, ${accent || 'currentColor'}) !important; outline-offset: 2px !important; }`;
+
+/** The frame's tabs (qits-2158): the frozen screenshot, or an agent's pitch of it. */
+type FrameTab = 'original' | 'pitched';
+
+const FRAME_TABS: readonly { readonly id: FrameTab; readonly label: string }[] = [
+  { id: 'original', label: 'Original' },
+  { id: 'pitched', label: 'Pitched' },
+];
+
+/** What the Pitched tab says of a screenshot no pitch mocks (qits-2158). */
+const NO_PITCH = 'No pitch for this screenshot yet — ask the agent to pitch one.';
+
+/** The diff's style in the frame (qits-2158), beside the highlight's `<style data-qits-builder>`. */
+const DIFF_STYLE = 'data-qits-builder-diff-style';
 
 /** `value` escaped for a double-quoted CSS attribute value (qits-2006). */
 const quoted = (value: string) => value.replace(/["\\]/g, '\\$&').replace(/\n/g, '\\a ');
@@ -481,6 +515,12 @@ interface EntityGroup {
  *   with the opened-context block (`openedContextFields`: the repository, the selected route, the
  *   bundle's version, the drawn freeze and its kind, viewport, scheme and network, else the
  *   switches', and the selected entity or data mark). Closing the dialog only detaches.
+ * - Pitches (qits-2158): Original | Pitched tabs above the frame, Original by default and again
+ *   whenever another freeze is drawn. Pitched lists the drawn screenshot's pitches (`PITCHES`,
+ *   narrowed by `screenshotPitches`), the shown one's versions newest first (`PITCH`), and draws the
+ *   chosen version (`PITCH_VERSION`, the newest as `latest`) in the same sandboxed frame; it
+ *   follows `PitchChanged`, says when a pitch was made against another manifest, and with Diff on
+ *   marks what the pitch keeps, changes and adds (`drawDiff`) and lists what it removed.
  *
  * The data is read in the browser only (the server render holds no token).
  *
@@ -499,7 +539,10 @@ interface EntityGroup {
     PageLayoutComponent,
     Spinner,
     CallDetails,
+    QitsEntity,
+    QitsEntityList,
     QitsExit,
+    QitsField,
     NgTemplateOutlet,
   ],
   host: { class: 'block' },
@@ -974,6 +1017,150 @@ interface EntityGroup {
                         </div>
                       </div>
                       <!--
+                        Original | Pitched (qits-2158): the frozen screenshot, or an agent's mock of
+                        it. Page-local, back to Original whenever another screenshot is drawn.
+                      -->
+                      <div class="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <div role="tablist" aria-label="Screenshot" class="flex gap-1">
+                          @for (tab of frameTabs; track tab.id) {
+                            <button
+                              type="button"
+                              role="tab"
+                              class="frame-tab cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                              [class]="
+                                tab.id === frameTab()
+                                  ? 'bg-surface-inverse text-fg-on-inverse'
+                                  : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                              "
+                              [attr.aria-selected]="tab.id === frameTab()"
+                              (click)="pickFrameTab(tab.id)"
+                            >
+                              {{ tab.label }}
+                            </button>
+                          }
+                        </div>
+                        @if (frameTab() === 'pitched') {
+                          <button
+                            type="button"
+                            class="pitch-diff cursor-pointer rounded px-2 py-0.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                            [class]="
+                              diffOn()
+                                ? 'bg-surface-inverse text-fg-on-inverse'
+                                : 'bg-surface-muted text-fg-soft enabled:hover:bg-surface-active'
+                            "
+                            [attr.aria-pressed]="diffOn()"
+                            [disabled]="!pitchPreview()"
+                            title="Grey out what the pitch keeps, outline what it changes or adds"
+                            (click)="toggleDiff()"
+                          >
+                            Diff
+                          </button>
+                        }
+                      </div>
+                      @if (frameTab() === 'pitched' && shownPitches().length) {
+                        <section aria-label="Pitches" class="pitched mb-2 text-[0.8125rem]">
+                          <ul
+                            class="pitch-list m-0 mb-1 flex list-none flex-wrap gap-1 p-0"
+                            [qitsEntityList]="pitches"
+                          >
+                            @for (pitch of shownPitches(); track pitch.id) {
+                              <li [qitsEntity]="pitch" entityKey="id">
+                                <button
+                                  type="button"
+                                  class="pitch flex cursor-pointer flex-col items-start rounded px-2 py-0.5 text-left"
+                                  [class]="
+                                    pitch.id === shownPitchId()
+                                      ? 'bg-surface-inverse text-fg-on-inverse'
+                                      : 'bg-surface-muted hover:bg-surface-active'
+                                  "
+                                  [attr.aria-pressed]="pitch.id === shownPitchId()"
+                                  (click)="pickPitch(pitch.id)"
+                                >
+                                  <span
+                                    class="pitch-title text-xs font-semibold"
+                                    [fieldOf]="pitch"
+                                    qitsField="title"
+                                    >{{ pitch.title }}</span
+                                  >
+                                  <span class="pitch-by text-[0.6875rem] opacity-80">
+                                    <span [fieldOf]="pitch" qitsField="agent">{{
+                                      pitch.agent
+                                    }}</span>
+                                    @if (pitch.note) {
+                                      ·
+                                      <span [fieldOf]="pitch" qitsField="note">{{
+                                        pitch.note
+                                      }}</span>
+                                    }
+                                  </span>
+                                </button>
+                              </li>
+                            }
+                          </ul>
+                          @if (shownPitch(); as pitch) {
+                            @if (pitch.manifestVersion !== manifestVersion()) {
+                              <p
+                                class="pitch-stale m-0 mb-1 text-xs text-fg-soft"
+                                [qitsEntity]="pitch"
+                                entityKey="id"
+                                [entitySource]="pitches"
+                              >
+                                Pitched against manifest
+                                <span [fieldOf]="pitch" qitsField="manifestVersion">{{
+                                  pitch.manifestVersion
+                                }}</span
+                                >; the screenshot is now {{ manifestVersion() }}.
+                              </p>
+                            }
+                          }
+                          @if (pitchVersions(); as detail) {
+                            <ul
+                              role="group"
+                              aria-label="Versions"
+                              class="pitch-versions m-0 flex list-none flex-wrap gap-1 p-0"
+                              [qitsEntity]="detail"
+                              entityKey="id"
+                              [entitySource]="pitchDetail"
+                            >
+                              @for (version of versionsNewestFirst(); track version.number) {
+                                <li>
+                                  <button
+                                    type="button"
+                                    class="pitch-version cursor-pointer rounded px-2 py-0.5 text-left text-xs"
+                                    [class]="
+                                      version.number === shownVersion()
+                                        ? 'bg-surface-inverse text-fg-on-inverse'
+                                        : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                                    "
+                                    [attr.aria-pressed]="version.number === shownVersion()"
+                                    (click)="pickVersion(version.number)"
+                                  >
+                                    <span
+                                      class="font-semibold"
+                                      [fieldOf]="version"
+                                      [qitsField]="{ derived: ['number'] }"
+                                      >v{{ version.number }}</span
+                                    >
+                                    @if (version.note) {
+                                      ·
+                                      <span [fieldOf]="version" qitsField="note">{{
+                                        version.note
+                                      }}</span>
+                                    }
+                                    ·
+                                    <span
+                                      [fieldOf]="version"
+                                      [qitsField]="{ derived: ['createdAt'] }"
+                                      >{{ instant(version.createdAt) }}</span
+                                    >
+                                  </button>
+                                </li>
+                              }
+                            </ul>
+                          }
+                        </section>
+                      }
+                      <!--
                         One line, always as tall, so a notice never moves the frame (qits-2072).
                       -->
                       <p class="notice-line m-0 mb-2 h-4 truncate text-xs text-fg-soft">
@@ -984,7 +1171,12 @@ interface EntityGroup {
                         }
                       </p>
                       <div #frameBox class="frame-box">
-                        @if (preview(); as html) {
+                        <!--
+                          The frame draws the original freeze or, on the Pitched tab, the chosen
+                          version of a pitch (qits-2158): both through the same sandboxed srcdoc
+                          frame and the same (load), so highlights, Pick data and links work alike.
+                        -->
+                        @if (framed(); as html) {
                           @if (frameSize(); as size) {
                             <!-- The window the freeze was shot in, scaled to the column (qits-2047). -->
                             <div
@@ -992,9 +1184,10 @@ interface EntityGroup {
                               [style.height.px]="(size.height + frameBorder) * frameScale()"
                             >
                               <!--
-                                sandbox without allow-scripts, always: the frozen page is drawn on
-                                this page's own origin. allow-same-origin alone lets this page cancel
-                                the frame's link clicks; nothing in the frame can run.
+                                sandbox without allow-scripts, always: the frozen page (or an
+                                agent's unsanitised pitch) is drawn on this page's own origin.
+                                allow-same-origin alone lets this page cancel the frame's link
+                                clicks; nothing in the frame can run.
                               -->
                               <iframe
                                 class="block origin-top-left box-content rounded-md border border-line"
@@ -1005,36 +1198,54 @@ interface EntityGroup {
                                   frameScale() < 1 ? 'scale(' + frameScale() + ')' : null
                                 "
                                 [srcdoc]="html"
-                                [title]="'Frozen state ' + (freeze()?.name ?? '')"
+                                [title]="frameTitle()"
                                 (load)="frameLoaded($event)"
                               ></iframe>
                             </div>
                           } @else {
                             <!--
-                              sandbox without allow-scripts, always: the frozen page is drawn on this
-                              page's own origin. allow-same-origin alone lets this page cancel the
-                              frame's link clicks; nothing in the frame can run.
+                              sandbox without allow-scripts, always: the frozen page (or an agent's
+                              unsanitised pitch) is drawn on this page's own origin.
+                              allow-same-origin alone lets this page cancel the frame's link clicks;
+                              nothing in the frame can run.
                             -->
                             <iframe
                               class="block h-[32rem] w-full rounded-md border border-line"
                               sandbox="allow-same-origin"
                               [srcdoc]="html"
-                              [title]="'Frozen state ' + (freeze()?.name ?? '')"
+                              [title]="frameTitle()"
                               (load)="frameLoaded($event)"
                             ></iframe>
                           }
                         } @else {
                           <div
-                            class="frame-placeholder flex h-[32rem] items-center justify-center rounded-md border border-line bg-surface text-sm text-fg-soft"
+                            class="frame-placeholder flex h-[32rem] items-center justify-center rounded-md border border-line bg-surface px-4 text-center text-sm text-fg-soft"
                           >
-                            {{
-                              freezeFailed()
-                                ? 'Could not read this frozen state.'
-                                : 'Reading the frozen state…'
-                            }}
+                            {{ placeholder() }}
                           </div>
                         }
                       </div>
+                      @if (frameTab() === 'pitched' && diffOn() && pitchPreview()) {
+                        <section aria-label="Removed" class="pitch-removed mt-2 text-xs">
+                          <h3 class="m-0 mb-1 text-xs font-semibold text-fg-soft">
+                            Removed by the pitch
+                          </h3>
+                          @if (removed().length) {
+                            <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+                              @for (node of removed(); track $index) {
+                                <li class="removed-node">
+                                  <span class="font-mono">&lt;{{ node.tag }}&gt;</span>
+                                  @if (node.text) {
+                                    <span class="text-fg-soft"> {{ node.text }}</span>
+                                  }
+                                </li>
+                              }
+                            </ul>
+                          } @else {
+                            <p class="m-0 text-fg-soft">None removed.</p>
+                          }
+                        </section>
+                      }
                     } @else if (!forward()) {
                       <p class="no-states m-0 text-sm text-fg-soft">
                         No screenshot test for this route, so nothing is frozen.
@@ -2093,6 +2304,228 @@ export class UiBuilderPage {
     return html === null ? null : this.sanitizer.bypassSecurityTrustHtml(html);
   });
 
+  /** Original | Pitched above the frame (qits-2158). */
+  protected readonly frameTabs = FRAME_TABS;
+
+  /** The frame's tab (qits-2158): page-local, back to Original whenever another freeze is drawn. */
+  protected readonly frameTab = signal<FrameTab>('original');
+
+  /**
+   * The pitch picked in the Pitched tab, or the one shown first (kept, so a newer pitch arriving does
+   * not replace it); null, or one no longer listed (archived), shows the newest.
+   */
+  private readonly pickedPitch = signal<string | null>(null);
+
+  /** The version picked, and of which pitch; null follows the newest, as a new one arrives. */
+  private readonly versionPick = signal<{ readonly pitch: string; readonly number: number } | null>(
+    null,
+  );
+
+  /** The version picked of the shown pitch (a pick of another pitch counts for none). */
+  private readonly pickedVersion = computed(() => {
+    const pick = this.versionPick();
+    return pick && pick.pitch === this.shownPitchId() ? pick.number : null;
+  });
+
+  /** Whether the Pitched tab's diff is on (qits-2158); off by default and on every reset. */
+  protected readonly diffOn = signal(false);
+
+  /** What the drawn pitch removed of the original, as the last diff found it. */
+  protected readonly removed = signal<readonly RemovedNode[]>([]);
+
+  /** The open repository's id, once the project's repositories are read. */
+  private readonly repositoryId = computed(() => this.entry()?.repository?.id ?? null);
+
+  /**
+   * The project's pitches (qits-2158, `PITCHES`), read while the Pitched tab is open, again after a
+   * `PitchChanged` of the drawn screenshot (`aboutShownScreenshot`): a new pitch, a new version,
+   * an archived one.
+   */
+  protected readonly pitches = qitsResource(
+    PITCHES,
+    () => {
+      const project = this.browser && this.frameTab() === 'pitched' ? this.projectId() : '';
+      return project ? { query: { project } } : undefined;
+    },
+    {
+      refreshOn: { names: [PITCH_CHANGED], when: (event) => this.aboutShownScreenshot(event) },
+    },
+  );
+
+  /**
+   * The drawn screenshot's pitches, newest change first (`screenshotPitches`): those of the open
+   * repository (by id once the project lists it, else by name) whose `screenshot` is the freeze's
+   * file, archived ones left out.
+   */
+  protected readonly shownPitches = computed((): readonly PitchEntry[] => {
+    const file = this.freeze()?.file;
+    const list = this.pitches.hasValue() ? this.pitches.value()?.pitches : undefined;
+    if (!file || !list) return [];
+    return screenshotPitches(list, {
+      repositoryId: this.repositoryId(),
+      repository: this.repo(),
+      screenshot: file,
+    });
+  });
+
+  /** The pitch shown: the one picked while it is listed, else the newest. */
+  protected readonly shownPitch = computed((): PitchEntry | null => {
+    const pitches = this.shownPitches();
+    return pitches.find((pitch) => pitch.id === this.pickedPitch()) ?? pitches[0] ?? null;
+  });
+
+  /** Its id, a primitive so a list read again that keeps it reads nothing else again. */
+  protected readonly shownPitchId = computed(() => this.shownPitch()?.id ?? null);
+
+  /** The shown pitch's versions (`PITCH`), again after a `PitchChanged` of it. */
+  protected readonly pitchDetail = qitsResource(
+    PITCH,
+    () => {
+      const id = this.shownPitchId();
+      return id ? { path: { id } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: [PITCH_CHANGED],
+        when: (event) =>
+          !!this.shownPitchId() && payloadField(event, 'pitchId') === this.shownPitchId(),
+      },
+    },
+  );
+
+  /** The shown pitch's versions, once read for it. */
+  protected readonly pitchVersions = computed(() => {
+    const detail = this.pitchDetail.hasValue() ? this.pitchDetail.value() : undefined;
+    return detail && detail.id === this.shownPitchId() ? detail : null;
+  });
+
+  /** Its versions for the picker, newest first. */
+  protected readonly versionsNewestFirst = computed(() =>
+    [...(this.pitchVersions()?.versions ?? [])].sort((a, b) => b.number - a.number),
+  );
+
+  /** The version drawn: the one picked, else the newest. */
+  protected readonly shownVersion = computed(
+    () => this.pickedVersion() ?? this.pitchVersions()?.latestVersion ?? null,
+  );
+
+  /**
+   * How the drawn version is asked for: `latest` while it follows the newest (and before the
+   * versions are read), else its number.
+   */
+  private readonly versionParam = computed(() => {
+    const picked = this.pickedVersion();
+    return picked === null || picked === this.pitchVersions()?.latestVersion
+      ? 'latest'
+      : String(picked);
+  });
+
+  /**
+   * The drawn version's HTML (`PITCH_VERSION`). While it is `latest`, a `VERSION_ADDED` of the pitch
+   * reads it again: the person on the newest version moves to the new one; on an older one, stays.
+   */
+  private readonly pitchHtml = qitsResource(
+    PITCH_VERSION,
+    () => {
+      const id = this.shownPitchId();
+      return id ? { path: { id, number: this.versionParam() } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: [PITCH_CHANGED],
+        when: (event) =>
+          this.versionParam() === 'latest' &&
+          !!this.shownPitchId() &&
+          payloadField(event, 'pitchId') === this.shownPitchId() &&
+          payloadField(event, 'change') === 'VERSION_ADDED',
+      },
+    },
+  );
+
+  /**
+   * The drawn pitch, trusted so the whole document reaches `srcdoc`, exactly as `preview` is.
+   *
+   * A pitch is agent-authored and unsanitised (qits-2155), so this is safe only because of the
+   * sandbox on the element: `sandbox="allow-same-origin"` and never `allow-scripts`, so nothing in
+   * it can run. It is never put in this page's DOM (`innerHTML`); only the frame draws it.
+   */
+  protected readonly pitchPreview = computed((): SafeHtml | null => {
+    const version = this.pitchHtml.hasValue() ? this.pitchHtml.value() : undefined;
+    return version && this.shownPitchId()
+      ? this.sanitizer.bypassSecurityTrustHtml(version.html)
+      : null;
+  });
+
+  /** What the frame draws: the original freeze, or on the Pitched tab the drawn pitch. */
+  protected readonly framed = computed(() =>
+    this.frameTab() === 'pitched' ? this.pitchPreview() : this.preview(),
+  );
+
+  /** The frame's title, for a reader: the frozen state's, or the pitch's. */
+  protected readonly frameTitle = computed(() =>
+    this.frameTab() === 'pitched'
+      ? `Pitch ${this.shownPitch()?.title ?? ''}`
+      : `Frozen state ${this.freeze()?.name ?? ''}`,
+  );
+
+  /**
+   * What stands in the frame's place while it has nothing to draw: where the read is, never a value
+   * of it (a method, so `qits/data-through-fields` reads it as the status copy it is).
+   */
+  protected placeholder(): string {
+    if (this.frameTab() === 'original') {
+      return this.freezeFailed()
+        ? 'Could not read this frozen state.'
+        : 'Reading the frozen state…';
+    }
+    if (this.pitches.status() === 'error') return 'Could not read the pitches.';
+    if (!this.pitches.hasValue()) return 'Reading the pitches…';
+    if (!this.shownPitch()) return NO_PITCH;
+    return this.pitchHtml.status() === 'error'
+      ? 'Could not read this pitch.'
+      : 'Reading the pitch…';
+  }
+
+  protected pickFrameTab(tab: FrameTab): void {
+    this.frameTab.set(tab);
+  }
+
+  protected pickPitch(id: string): void {
+    this.pickedPitch.set(id);
+    this.versionPick.set(null);
+  }
+
+  /** Picks a version; the newest is followed (null), so a new one moves the frame to it. */
+  protected pickVersion(number: number): void {
+    const pitch = this.shownPitchId();
+    this.versionPick.set(
+      pitch && number !== this.pitchVersions()?.latestVersion ? { pitch, number } : null,
+    );
+  }
+
+  protected toggleDiff(): void {
+    this.diffOn.set(!this.diffOn());
+    this.drawDiff();
+  }
+
+  /** An instant as the app writes one. */
+  protected instant(value: string): string {
+    return formatInstant(value);
+  }
+
+  /**
+   * Whether a `PitchChanged` is about the drawn screenshot: the open project, the open repository
+   * (while its id is known) and the freeze's file.
+   */
+  private aboutShownScreenshot(event: QitsDomainEvent): boolean {
+    const repositoryId = this.repositoryId();
+    return (
+      payloadField(event, 'projectId') === this.projectId() &&
+      (repositoryId === null || payloadField(event, 'repositoryId') === repositoryId) &&
+      payloadField(event, 'screenshot') === this.freeze()?.file
+    );
+  }
+
   /** The repository's entry in the open project's list, once it is loaded. */
   private readonly entry = computed(() => {
     const entries = this.repositoryList()?.entries ?? [];
@@ -2942,6 +3375,22 @@ export class UiBuilderPage {
       untracked(() => this.highlightNotice.set(null));
     });
     effect(() => {
+      // Another freeze is drawn (qits-2158): back to Original, the newest pitch, diff off.
+      this.shownFile();
+      untracked(() => {
+        this.frameTab.set('original');
+        this.pickedPitch.set(null);
+        this.versionPick.set(null);
+        this.diffOn.set(false);
+        this.removed.set([]);
+      });
+    });
+    effect(() => {
+      // The pitch shown stays shown (qits-2158): a newer pitch arriving is listed, not switched to.
+      const shown = this.shownPitchId();
+      if (shown) untracked(() => this.pickedPitch.set(shown));
+    });
+    effect(() => {
       // Another freeze is selected (qits-2080): a highlight whose trigger it does not show goes.
       const triggers = this.shownTriggers();
       untracked(() => {
@@ -3236,6 +3685,40 @@ export class UiBuilderPage {
     this.holdLinks(event);
     this.frame = event.target as HTMLIFrameElement;
     this.drawHighlight();
+    this.drawDiff();
+  }
+
+  /**
+   * Draws the Pitched tab's diff into the frame's document (qits-2158), the same way the highlight
+   * is drawn: with the diff on and a pitch drawn, the original freeze's HTML is parsed (`DOMParser`,
+   * never rendered) and compared with the frame's document (`diffPitch`), every element of it
+   * marked (`applyDiff`) and one `<style data-qits-builder-diff-style>` put beside the highlight's,
+   * in the same accent; what the pitch removed is listed beside the frame. Otherwise every mark and
+   * the style go. The highlight's `!important` outline still draws on top.
+   */
+  private drawDiff(): void {
+    const doc = this.frameDocument();
+    if (!doc) return;
+    const style = doc.querySelector(`style[${DIFF_STYLE}]`);
+    const bundle = this.loaded();
+    const freeze = this.freeze();
+    const original = bundle && freeze ? this.store.preview(bundle, freeze.file) : null;
+    if (this.frameTab() !== 'pitched' || !this.diffOn() || !this.pitchPreview() || !original) {
+      clearDiff(doc);
+      style?.remove();
+      this.removed.set([]);
+      return;
+    }
+    clearDiff(doc);
+    const diff = diffPitch(new DOMParser().parseFromString(original, 'text/html'), doc);
+    applyDiff(diff);
+    if (!style) {
+      const added = doc.createElement('style');
+      added.setAttribute(DIFF_STYLE, '');
+      added.textContent = diffCss(`var(--color-accent, ${this.hostAccent() || 'currentColor'})`);
+      (doc.head ?? doc.documentElement).append(added);
+    }
+    this.removed.set(diff.removed);
   }
 
   /**

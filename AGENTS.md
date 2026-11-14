@@ -689,6 +689,27 @@ detaches), and a prompt field posting `PROMPT_NAMED_AGENT` with the `<opened-con
 qits-2156 before the text (`openedContext`, `core/ui-builder/opened-context.ts`, pinned byte for byte
 by its spec). Typing in the terminal carries no context: only the prompt door can prefix it.
 
+The agent's pitches (qits-2158, the doors of qits-2155) show on **Original | Pitched** tabs above the
+frame: page-local signals, back to Original (diff off) whenever `freeze().file` changes. Pitched reads
+`PITCHES` (`core/ui-builder/pitches.operations.ts`, qits-projects' `listPitches` by `?project=` only,
+as recorded) and narrows it client-side (`screenshotPitches`, `pitches.ts`) to the open repository
+(by id once `PROJECT_REPOSITORIES` names it, else by `repositoryName`) and `screenshot ===
+freeze().file`, unarchived, newest `updatedAt` first; the shown pitch stays shown when a newer one
+arrives. Its versions come from `PITCH` (newest first, `formatInstant`), its HTML from
+`PITCH_VERSION`, the newest as `latest` (the one path the pact binds), an older one by number. The
+HTML is unsanitised: it goes through the same `bypassSecurityTrustHtml` → `[srcdoc]` of the same
+`sandbox="allow-same-origin"` frame (both copies, same `(load)` → `frameLoaded`), never
+`allow-scripts`, never `innerHTML`, so highlights, Pick data (still the freeze's records) and link
+holding work on it. `PitchChanged` of the project, repository and screenshot reads the list again; of
+the shown pitch its versions; `VERSION_ADDED` its `latest` HTML only while the person is on the
+newest. "Pitched against manifest <v>; …" shows when `manifestVersion` differs from the bundle's.
+The **Diff** toggle (`pitch-diff.ts`) parses the original freeze with `DOMParser`, marks the frame's
+elements `data-qits-builder-diff` and injects `<style data-qits-builder-diff-style>` beside the
+highlight style (`drawDiff`, after each load and on each flip), and lists what the pitch removed.
+No recording pitches a screenshot of `@routes/qits-landing`, so the browser spec shows only the
+empty Pitched tab; a drawn pitch and its diff are the plain spec's (the recording moved onto the
+spec's screenshot).
+
 A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/repositories/<repo>/contracts`
 (its provider states, filtered by name), `contracts/<state slug>` (params, dependencies, each operation
 with its recorded response), `entities` (its `entities.json` by marking) and `entities/<class name>`
