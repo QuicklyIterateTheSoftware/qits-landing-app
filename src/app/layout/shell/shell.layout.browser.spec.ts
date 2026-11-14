@@ -334,6 +334,8 @@ describe('ShellLayout (screenshots)', () => {
       'Repositories',
       'Observability',
       'Events',
+      // The platform's pages, below the project's sections (qits-2262).
+      'Network access',
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
