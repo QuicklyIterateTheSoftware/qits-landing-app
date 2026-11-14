@@ -680,6 +680,15 @@ published", not an error). `joinEntities` (`entity-map.ts`) matches the manifest
 `domain` entities are shown. Its part of the docs pact spec owns the docs operations' interactions
 for `show-ui-builder-entities` only (`assertPactPart` by interaction), the routes part the rest.
 
+The builder's Agent action (qits-2157) opens `app-agent-dialog` (`patterns/ui-builder/agent-dialog/`),
+a native `<dialog>` for the project's `ui-builder` named agent (qits-2154): its state from
+`NAMED_AGENTS` (`core/named-agents/`, qits-projects' `listAgents`, read again after a
+`NamedAgentStateChanged` of the project, whose own state and command show at once), its terminal on
+qits-projects' container proxy (`namedAgentTerminalSocketUrl`, `TerminalSocket`; closing only
+detaches), and a prompt field posting `PROMPT_NAMED_AGENT` with the `<opened-context>` block of
+qits-2156 before the text (`openedContext`, `core/ui-builder/opened-context.ts`, pinned byte for byte
+by its spec). Typing in the terminal carries no context: only the prompt door can prefix it.
+
 A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/repositories/<repo>/contracts`
 (its provider states, filtered by name), `contracts/<state slug>` (params, dependencies, each operation
 with its recorded response), `entities` (its `entities.json` by marking) and `entities/<class name>`
