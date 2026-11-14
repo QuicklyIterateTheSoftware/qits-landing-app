@@ -33981,7 +33981,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-pitches",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/ui-builder"
           }
         }
       },
