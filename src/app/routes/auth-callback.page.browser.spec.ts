@@ -103,6 +103,13 @@ describe('QitsAuthCallbackPage (screenshots)', () => {
       technical: 'The idp answered the code swap with 400 invalid_grant.',
       shown: 'The sign-in could not be finished: its code was wrong, already used or expired.',
     },
+    // qits-2250: the idp did not answer (a 5xx, a failed or timed-out request, or its own
+    // `temporarily_unavailable`, which the session guard and the bearer interceptor also send here).
+    {
+      reason: 'unavailable',
+      technical: 'The idp did not answer the code swap.',
+      shown: 'The sign-in service cannot be reached right now. Try again in a moment.',
+    },
   ];
 
   /** The page after `complete()` rejected for `reason`, its failure shown. */

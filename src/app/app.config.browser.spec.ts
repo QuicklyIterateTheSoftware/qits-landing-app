@@ -1,8 +1,13 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { provideQitsBearerSignIn, QITS_LEAVE_APP, qitsBearerInterceptor } from '@qits/angular';
+import { provideRouter, Router } from '@angular/router';
+import {
+  provideQitsBearerSignIn,
+  QITS_LEAVE_APP,
+  QITS_SIGN_IN_FETCH,
+  qitsBearerInterceptor,
+} from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
@@ -77,5 +82,96 @@ describe('app config: the bearer interceptor’s expired session (qits-2052)', (
       sessionStorage.getItem(`qits.sign-in.qits-spa.pkce.${query.get('state')}`) ?? 'null',
     );
     expect(pending?.returnPath).toBe(`${location.pathname}${location.search}`);
+  });
+});
+
+/**
+ * The interceptor's other outcome (qits-2250): a 401 whose refresh the idp does not answer (its
+ * gateway's 502) does not send the visitor to the idp's authorize page, which would not answer
+ * either. `QitsSessionExpiry` navigates in-app to `/auth/callback?error=temporarily_unavailable`
+ * instead, through the declared outcome `session-expired:unavailable` (an exit to `auth/callback`,
+ * app-wide, `triggered: false`), which the library merges into this app's outcomes beside
+ * `signedOut`. Here `QitsTokens` holds tokens from an earlier sign-in whose access token expired:
+ * the call goes out without a bearer once the refresh fails, the platform answers 401, the retry's
+ * refresh fails too, and the router ends on the callback page. The page itself is the routes spec's
+ * and the callback spec's; nothing is shown here, so there is no screenshot.
+ */
+describe('app config: the bearer interceptor with the idp unavailable (qits-2250)', () => {
+  const PLATFORM_DOMAIN = 'qits.example.test';
+  const API = '/projects/api/projects';
+  const UNAVAILABLE = '/auth/callback?error=temporarily_unavailable';
+  let leave: ReturnType<typeof vi.fn>;
+  let idp: ReturnType<typeof vi.fn>;
+
+  /** A JWT whose payload names `sub`, as `QitsTokens` decodes it (unverified). */
+  function jwt(sub: string): string {
+    const part = (value: object) =>
+      btoa(JSON.stringify(value)).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+    return `${part({ alg: 'none' })}.${part({ sub })}.signature`;
+  }
+
+  beforeEach(() => {
+    sessionStorage.clear();
+    // Kept from an earlier sign-in: the access token expired, the refresh token still good.
+    sessionStorage.setItem(
+      'qits.sign-in.qits-spa.tokens',
+      JSON.stringify({
+        accessToken: jwt('visitor'),
+        accessExpiresAt: Date.now() - 60_000,
+        refreshToken: 'refresh-token',
+        refreshExpiresAt: Date.now() + 3_600_000,
+      }),
+    );
+    leave = vi.fn();
+    // The idp's gateway, with the idp behind it down.
+    idp = vi.fn(async () => new Response('', { status: 502 }));
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(routes),
+        // As `app.config.ts` signs in and signs its calls.
+        provideQitsBearerSignIn({
+          clientId: 'qits-spa',
+          platformDomain: PLATFORM_DOMAIN,
+          callbackRoute: false,
+        }),
+        provideHttpClient(withInterceptors([qitsBearerInterceptor])),
+        provideHttpClientTesting(),
+        { provide: QITS_SIGN_IN_FETCH, useValue: idp },
+        { provide: QITS_LEAVE_APP, useValue: leave },
+      ],
+    });
+  });
+
+  afterEach(() => {
+    TestBed.inject(HttpTestingController).verify();
+    sessionStorage.clear();
+  });
+
+  it('session-expired unavailable: a 401 whose refresh goes unanswered lands on the callback page saying so, and never leaves', async () => {
+    const http = TestBed.inject(HttpTestingController);
+    const answer = firstValueFrom(TestBed.inject(HttpClient).get(API));
+    // The refresh failed first, so the call goes out without a bearer, and the platform refuses it.
+    await vi.waitFor(() => {
+      const call = http.expectOne(API);
+      expect(call.request.headers.has('authorization')).toBe(false);
+      call.flush(null, { status: 401, statusText: 'Unauthorized' });
+    });
+    await expect(answer).rejects.toMatchObject({ status: 401 });
+    await vi.waitFor(() => expect(TestBed.inject(Router).url).toBe(UNAVAILABLE));
+    // Both refreshes asked the idp's token endpoint; neither got an answer worth leaving for.
+    expect(idp.mock.calls.length).toBeGreaterThanOrEqual(2);
+    for (const [url] of idp.mock.calls as [string][]) {
+      expect(url).toBe(`https://idp.${PLATFORM_DOMAIN}/idp/token`);
+    }
+    expect(leave).not.toHaveBeenCalled();
+    expect(outcomeRecords()).toEqual([
+      expect.objectContaining({
+        interaction: 'session-expired',
+        outcome: 'unavailable',
+        kind: 'exit',
+        to: 'auth/callback',
+        url: UNAVAILABLE,
+      }),
+    ]);
   });
 });
