@@ -347,7 +347,7 @@ edge has announced itself yet."). The filters All, Devices, Nodes and Revoked na
 Mine reads `getPeers?owner=me`, which no recording holds, so it has no pact interaction yet. Revoke
 on an ACTIVE row is confirmed, then `revokePeer` (a 403 reads "Your credential may not revoke
 peers."), then the lists are read again. An ACTIVE DEVICE row's Download WireGuard config reads
-`getPeerConfig` as text and saves it as `<name>.conf` through a `data:` link, `<PRIVATE_KEY>` kept.
+`getPeerConfig` as text and saves it as `qits.conf` through an `application/octet-stream` `data:` link, `<PRIVATE_KEY>` kept.
 "Connect this machine" shows the copyable `qits network-access up`, and points a phone or a laptop
 without the CLI at Add device (qits-2262): while a private edge is announced, a name checked as typed
 against the service's DNS-label rule (`isDeviceName`), then the browser makes an X25519 keypair

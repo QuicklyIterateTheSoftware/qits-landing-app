@@ -115,7 +115,7 @@ type PrivateEdgeRead =
  *   visitor's credential may not revoke peers).
  * - Download WireGuard config on an ACTIVE DEVICE row reads the peer's `wg-quick` text
  *   (`PEER_CONFIG`'s `fetch`: a read on a press, not something the pane shows) and saves it as
- *   `<name>.conf`, the `<PRIVATE_KEY>` placeholder kept: an existing device's key is not the pane's.
+ *   `qits.conf`, the `<PRIVATE_KEY>` placeholder kept: an existing device's key is not the pane's.
  * - Add device (qits-2262), for a phone or a laptop without the CLI, while a private edge is
  *   announced: a name the service takes (`isDeviceName`, its DNS-label rule, checked as typed),
  *   then the browser makes an X25519 keypair (`WIREGUARD_KEYS`, WebCrypto), `adding`
@@ -514,13 +514,13 @@ export class NetworkAccessPage {
     callback: () => void this.add(),
   }));
 
-  /** Saves the shown config as `<name>.conf`. */
+  /** Saves the shown config as `qits.conf`, the file name WireGuard apps take as the tunnel's. */
   protected readonly downloadAdded: Action = {
     label: 'Download .conf',
     variant: 'muted',
     callback: () => {
       const device = this.added();
-      if (device) this.save(`${device.name}.conf`, device.config);
+      if (device) this.save(CONFIG_FILE, device.config);
     },
   };
 
@@ -729,7 +729,7 @@ export class NetworkAccessPage {
         this.failure.set(networkAccessRefusal(error, response?.status, CONFIG_FORBIDDEN));
         return;
       }
-      this.save(`${peer.name || 'qits'}.conf`, text);
+      this.save(CONFIG_FILE, text);
     } finally {
       this.pending.set(null);
     }
@@ -738,7 +738,7 @@ export class NetworkAccessPage {
   /**
    * Hands `text` to the browser as a file download, through a `data:` link. Typed
    * `application/octet-stream`, not `text/plain`: Android Chrome appends `.txt` to a `text/plain`
-   * download, and the WireGuard app then cannot import `<name>.conf.txt` as it is.
+   * download, and the WireGuard app then cannot import `qits.conf.txt` as it is.
    */
   private save(filename: string, text: string): void {
     const link = this.document.createElement('a');
@@ -748,6 +748,12 @@ export class NetworkAccessPage {
     link.click();
   }
 }
+
+/**
+ * Every download's file name. A WireGuard app names the tunnel after the file (wg-quick its
+ * interface, at most 15 characters), so it is the platform's, not the device's: `qits`.
+ */
+const CONFIG_FILE = 'qits.conf';
 
 /** Why a mutation was refused, for a person: its `QitsApiError`'s status and body, else unreachable. */
 function refusalOf(error: unknown, forbidden: string): string {

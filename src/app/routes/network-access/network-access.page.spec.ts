@@ -230,7 +230,7 @@ describe('NetworkAccessPage', () => {
         .flush(networkAccessGoldenMaster<string>(DEVICE, 'getPeerConfig'));
       await redraw();
       expect(clicks).toHaveLength(1);
-      expect(clicks[0].download).toBe('laptop.conf');
+      expect(clicks[0].download).toBe('qits.conf');
       const text = decodeURIComponent(
         clicks[0].href.replace(/^data:application\/octet-stream;charset=utf-8,/, ''),
       );
@@ -313,7 +313,7 @@ describe('NetworkAccessPage', () => {
       expect(JSON.stringify({ ...localStorage })).not.toContain(FIXED_WIREGUARD_KEYS.privateKey);
       expect(JSON.stringify({ ...sessionStorage })).not.toContain(FIXED_WIREGUARD_KEYS.privateKey);
 
-      // Download .conf saves what is shown, as `<name>.conf`.
+      // Download .conf saves what is shown, as `qits.conf`.
       const clicks: HTMLAnchorElement[] = [];
       const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
         this: HTMLAnchorElement,
@@ -322,7 +322,7 @@ describe('NetworkAccessPage', () => {
       });
       try {
         button('Download .conf', shown)?.click();
-        expect(clicks[0]?.download).toBe('laptop.conf');
+        expect(clicks[0]?.download).toBe('qits.conf');
         expect(
           decodeURIComponent(
             clicks[0].href.replace(/^data:application\/octet-stream;charset=utf-8,/, ''),
