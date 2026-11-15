@@ -735,10 +735,14 @@ export class NetworkAccessPage {
     }
   }
 
-  /** Hands `text` to the browser as a file download, through a `data:` link. */
+  /**
+   * Hands `text` to the browser as a file download, through a `data:` link. Typed
+   * `application/octet-stream`, not `text/plain`: Android Chrome appends `.txt` to a `text/plain`
+   * download, and the WireGuard app then cannot import `<name>.conf.txt` as it is.
+   */
   private save(filename: string, text: string): void {
     const link = this.document.createElement('a');
-    link.href = `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`;
+    link.href = `data:application/octet-stream;charset=utf-8,${encodeURIComponent(text)}`;
     link.download = filename;
     link.rel = 'noopener';
     link.click();

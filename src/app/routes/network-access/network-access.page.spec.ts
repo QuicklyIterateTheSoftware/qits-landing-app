@@ -232,7 +232,7 @@ describe('NetworkAccessPage', () => {
       expect(clicks).toHaveLength(1);
       expect(clicks[0].download).toBe('laptop.conf');
       const text = decodeURIComponent(
-        clicks[0].href.replace(/^data:text\/plain;charset=utf-8,/, ''),
+        clicks[0].href.replace(/^data:application\/octet-stream;charset=utf-8,/, ''),
       );
       expect(text).toBe(networkAccessGoldenMaster<string>(DEVICE, 'getPeerConfig'));
       expect(text).toContain('PrivateKey = <PRIVATE_KEY>');
@@ -324,7 +324,9 @@ describe('NetworkAccessPage', () => {
         button('Download .conf', shown)?.click();
         expect(clicks[0]?.download).toBe('laptop.conf');
         expect(
-          decodeURIComponent(clicks[0].href.replace(/^data:text\/plain;charset=utf-8,/, '')),
+          decodeURIComponent(
+            clicks[0].href.replace(/^data:application\/octet-stream;charset=utf-8,/, ''),
+          ),
         ).toBe(config);
       } finally {
         click.mockRestore();
