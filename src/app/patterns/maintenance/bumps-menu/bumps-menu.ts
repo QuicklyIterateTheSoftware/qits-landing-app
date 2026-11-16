@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import type { UpstreamPoolEntry } from '$core/edge/edge.consumes';
+import { UPSTREAM_POOLS } from '$core/edge/edge.operations';
 import { PENDING_BUMPS, type BumpEntry } from '$core/maintenance/maintenance.consumes';
 import { PENDING_BUMPS_LIST } from '$core/maintenance/maintenance.operations';
 import { loadState } from '$core/resources/load-state';
@@ -44,24 +45,6 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
 }
 
 /**
- * One origin's edge-side connection pool, as the edge serves it: already sorted by `open`
- * descending, one entry per origin with at least one open connection (qits-1065).
- */
-export interface UpstreamPool {
-  readonly name: string;
-  readonly environment: string;
-  readonly origin: string;
-  readonly open: number;
-  readonly max: number;
-}
-
-/**
- * Where the edge serves current upstream connection-pool occupancy — same origin, on every host,
- * like `/main-navigation`. Not a generated client: the edge, not a platform service, answers it.
- */
-export const UPSTREAM_POOLS_URL = '/upstream-pools';
-
-/**
  * The top bar's bumps menu (a lighthouse): the version bumps qits-maintenance has under way across
  * the platform — each one's repository, what it moves, its mode and how it stands. Always shown,
  * because bumps are the platform's, not a project's.
@@ -78,10 +61,14 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
  * (`qitsEntityList`), each row its bump (`qitsEntity`, by `id`), each value its field or the fields
  * it is derived from (`qitsField`); each change line its change, by the dependency's `name`.
  *
- * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): fetched
- * fresh from `/upstream-pools` every time the panel opens. A non-2xx answer, a network error or an
- * empty array all render nothing for that section — it is not something gone wrong, just nothing to
- * show, so it carries no error state of its own.
+ * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): its own
+ * `qitsResource` over `UPSTREAM_POOLS` (the edge's `getUpstreamPools`, on the page's own origin;
+ * qits-2220, pacted with qits-edge-service), read on the first opening and again on every later
+ * one. One row per pool and origin, in the edge's order (fullest first); a `stream` pool's row says
+ * so beside the name. A refused or failed read (a failed re-read too) and an empty array render
+ * nothing for that section: it is not something gone wrong, just nothing to show, so it carries no
+ * error state of its own. Its marks are the bumps' kind: the list its read, each row its pool (by
+ * `origin`), each value its field.
  */
 @Component({
   selector: 'app-bumps-menu',
@@ -184,13 +171,26 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
           </p>
         </ui-spinner>
         @if (pools().length > 0) {
-          <ul class="m-0 list-none border-t border-line-subtle p-0">
-            @for (pool of pools(); track pool.origin) {
+          <ul
+            class="m-0 list-none border-t border-line-subtle p-0"
+            [qitsEntityList]="upstreamPools"
+          >
+            @for (pool of pools(); track pool.origin + '|' + pool.pool) {
               <li
                 class="flex items-center justify-between gap-2 px-3 py-1.5 text-[0.8125rem] text-fg-soft"
+                [qitsEntity]="pool"
+                entityKey="origin"
               >
-                <span class="truncate text-fg">{{ pool.name }}</span>
-                <span class="shrink-0 text-fg-muted">{{ pool.open }}/{{ pool.max }}</span>
+                <span class="truncate text-fg"
+                  ><span [fieldOf]="pool" qitsField="name">{{ pool.name }}</span>
+                  @if (pool.pool === 'stream') {
+                    <span [fieldOf]="pool" qitsField="pool"> · stream</span>
+                  }
+                </span>
+                <span class="shrink-0 text-fg-muted"
+                  ><span [fieldOf]="pool" qitsField="open">{{ pool.open }}</span
+                  >/<span [fieldOf]="pool" qitsField="max">{{ pool.max }}</span></span
+                >
               </li>
             }
           </ul>
@@ -200,8 +200,6 @@ export const UPSTREAM_POOLS_URL = '/upstream-pools';
   `,
 })
 export class BumpsMenu {
-  private readonly http = inject(HttpClient);
-
   /** Whether the menu has been opened: nothing is read before. */
   private readonly asked = signal(false);
 
@@ -222,25 +220,33 @@ export class BumpsMenu {
 
   protected readonly state = computed((): LoadState => loadState(this.bumps));
 
-  /** The pools shown below the bumps; empty renders nothing (never an error of its own). */
-  protected readonly pools = signal<readonly UpstreamPool[]>([]);
+  /** The edge's upstream pools, from the first opening on; read again on every later opening. */
+  protected readonly upstreamPools = qitsResource(UPSTREAM_POOLS, () =>
+    this.asked() ? {} : undefined,
+  );
+
+  /**
+   * The pools shown below the bumps; none until read, and none after a refused or failed read
+   * (a failed re-read keeps the resource's value, but the section shows nothing, as for a first
+   * failure): never an error of its own.
+   */
+  protected readonly pools = computed((): readonly UpstreamPoolEntry[] =>
+    this.upstreamPools.hasValue() && !this.upstreamPools.reloadError()
+      ? (this.upstreamPools.value() ?? [])
+      : [],
+  );
 
   /**
    * Each time the panel opens: the bumps (the first opening reads them, one after a failure reads
-   * them again), and a fresh read of the pools.
+   * them again), and the pools (the first opening reads them, every later one reads them again).
    */
   protected opened(): void {
-    if (!this.asked()) this.asked.set(true);
-    else if (this.bumps.status() === 'error') this.bumps.reload();
-    this.loadPools();
-  }
-
-  private loadPools(): void {
-    this.http.get<readonly UpstreamPool[]>(UPSTREAM_POOLS_URL).subscribe({
-      next: (pools) => this.pools.set(pools ?? []),
-      // Non-2xx or a network error: nothing to show for this section, never an error state.
-      error: () => this.pools.set([]),
-    });
+    if (!this.asked()) {
+      this.asked.set(true);
+      return;
+    }
+    if (this.bumps.status() === 'error') this.bumps.reload();
+    this.upstreamPools.reload();
   }
 
   protected shown(bump: BumpEntry) {

@@ -22,6 +22,7 @@ declare module 'vitest/browser' {
         | 'qits-system'
         | 'qits-artifacts'
         | 'qits-network-access'
+        | 'qits-edge'
         | 'qits-idp',
     ) => Promise<T>;
     /**

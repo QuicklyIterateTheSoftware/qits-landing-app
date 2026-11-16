@@ -79,6 +79,9 @@ export const networkAccessGoldenMasters = goldenMasters(
   'qits-network-access',
 );
 
+/** qits-edge's golden masters (qits-2220: its upstream pools), from its npm package. */
+export const edgeGoldenMasters = goldenMasters('@qits/edge-golden-masters', 'qits-edge');
+
 /**
  * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
  * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this
@@ -145,6 +148,10 @@ export const systemGoldenMaster = <T = any>(state: string, operationId: string):
 /** The body qits-network-access recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const networkAccessGoldenMaster = <T = any>(state: string, operationId: string): T =>
   networkAccessGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-edge recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const edgeGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  edgeGoldenMasters.body<T>(state, operationId);
 
 /** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>

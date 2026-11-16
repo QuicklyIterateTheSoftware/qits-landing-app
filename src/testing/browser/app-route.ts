@@ -38,6 +38,7 @@ import { QITS_DOMAIN_EVENTS, QitsSession } from '@qits/angular';
 import { routes } from '../../app/app.routes';
 import { client as artifactsClient } from '../../app/api/artifacts/client.gen';
 import { client as ciClient } from '../../app/api/ci/client.gen';
+import { client as edgeClient } from '../../app/api/edge/client.gen';
 import { client as eventsClient } from '../../app/api/events/client.gen';
 import { client as githostClient } from '../../app/api/githost/client.gen';
 import { client as maintenanceClient } from '../../app/api/maintenance/client.gen';
@@ -88,6 +89,7 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(systemClient),
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(networkAccessClient),
+    provideHeyApiClient(edgeClient),
     provideTestPlatformOrigins(),
     // The live stream never connects: no event reaches a screenshot.
     {

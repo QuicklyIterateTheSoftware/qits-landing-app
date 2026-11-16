@@ -59,3 +59,4 @@ contracts:
     qits-system-service: { packages: [maven] }
     qits-artifacts-service: { packages: [maven] }
     qits-network-access-service: { packages: [maven] }
+    qits-edge-service: { packages: [maven] }

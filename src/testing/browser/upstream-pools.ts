@@ -1,15 +1,16 @@
-import { recorded } from '@qits/angular/testing/browser';
-import type { UpstreamPool } from '$patterns/maintenance/bumps-menu/bumps-menu';
+import type { TestRequest } from '@angular/common/http/testing';
 
 /**
- * A fixture for the edge's `/upstream-pools` (qits-1065), registered as a recording the way a
- * provider's `goldenMaster(...)` is. The edge serves this endpoint itself, and this app pins no
- * edge document with a pact — neither `/main-navigation` nor this one — so there is no
- * golden-master package to read a body out of. A browser spec's `flush(...)` still needs a
- * recording to answer a 2xx with (`guardGoldenMasters`/`qits/browser-spec-data-from-golden-masters`),
- * so this is the one place that registers the hand-written body: a spec takes `pools` from here
- * rather than wrapping `recorded(...)` itself.
+ * The edge's `/upstream-pools` (`getUpstreamPools`, qits-2220) as the browser specs answer it:
+ * the bumps menu reads it on the page's own origin, through `UPSTREAM_POOLS`. A spec showing pools
+ * answers with `goldenMaster('an open upstream pool', 'getUpstreamPools', 'qits-edge')`.
  */
-export function upstreamPoolsGoldenMaster(pools: readonly UpstreamPool[]): readonly UpstreamPool[] {
-  return recorded(pools);
-}
+export const UPSTREAM_POOLS_PATH = '/upstream-pools';
+
+/**
+ * No pools below the bumps. The edge records no empty answer, and an empty array of the spec's own
+ * would not be a recording, so the read is refused (401, the edge's answer to a caller it does
+ * not admit): the section shows nothing either way.
+ */
+export const noPools = (request: TestRequest) =>
+  request.flush(null, { status: 401, statusText: 'Unauthorized' });

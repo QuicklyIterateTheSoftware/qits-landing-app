@@ -16,6 +16,7 @@ import {
 import { provideQitsMermaid } from '@qits/ui-components/mermaid';
 import { client as artifactsClient } from './api/artifacts/client.gen';
 import { client as ciClient } from './api/ci/client.gen';
+import { client as edgeClient } from './api/edge/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
@@ -38,7 +39,8 @@ import { environment } from '../environments/environment';
  * Each generated client and the backend it calls. The workspace daemon is reached through
  * qits-workspaces' container proxy, so it calls qits-workspaces' origin; its store gives each call
  * the container's base (`/workspaces/container/<slot row id>`). qits-artifacts answers on the
- * `registry` host (`HOST_LABELS`).
+ * `registry` host (`HOST_LABELS`). The edge's client is not here: the edge answers its own documents
+ * on every host, so its `baseUrl` stays empty and its calls go to the page's own origin (qits-2220).
  */
 const CLIENTS = [
   [projectsClient, 'projects'],
@@ -101,6 +103,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(systemClient),
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(networkAccessClient),
+    provideHeyApiClient(edgeClient),
     provideBackendOrigins(),
     // A `qitsResource`'s `refreshOn` (qits-2145) reads the app's one live stream (qits-1270): the
     // library opens none of its own.

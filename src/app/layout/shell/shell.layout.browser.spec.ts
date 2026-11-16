@@ -13,23 +13,20 @@ import { client as maintenanceClient } from '../../api/maintenance/client.gen';
 import { client as eventsClient } from '../../api/events/client.gen';
 import { client as systemClient } from '../../api/system/client.gen';
 import { client as ciClient } from '../../api/ci/client.gen';
+import { client as edgeClient } from '../../api/edge/client.gen';
 import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { RECENT_EVENTS } from '$core/events/events.consumes';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
-import { UPSTREAM_POOLS_URL } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Board } from '$ui/components/board/board';
 import { BoardCard } from '$ui/components/board/board-card';
 import { ShellLayout } from './shell.layout';
 import { goldenMaster } from '../../../testing/browser/golden-master';
-import { upstreamPoolsGoldenMaster } from '../../../testing/browser/upstream-pools';
+import { noPools, UPSTREAM_POOLS_PATH } from '../../../testing/browser/upstream-pools';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
-
-/** No upstream pools below the bumps: the bumps menu's own spec draws them. */
-const NO_POOLS = upstreamPoolsGoldenMaster([]);
 
 /** A page with fixed text, so the screenshots show the layout and nothing that loads. */
 @Component({ selector: 'app-test-page', template: `<p>Page content</p>` })
@@ -132,6 +129,7 @@ describe('ShellLayout (screenshots)', () => {
         provideHeyApiClient(eventsClient),
         provideHeyApiClient(systemClient),
         provideHeyApiClient(ciClient),
+        provideHeyApiClient(edgeClient),
         provideTestPlatformOrigins(),
         {
           provide: EVENT_SOURCE,
@@ -729,7 +727,8 @@ describe('ShellLayout (screenshots)', () => {
         http
           .expectOne(`/maintenance/api/bumps/pending?limit=${PENDING_BUMPS}`)
           .flush(await goldenMaster('pending bumps', 'listPendingBumps', 'qits-maintenance'));
-        http.expectOne(UPSTREAM_POOLS_URL).flush(NO_POOLS);
+        // No upstream pools below the bumps (refused): the bumps menu's own spec draws them.
+        noPools(http.expectOne(UPSTREAM_POOLS_PATH));
       },
     },
     {

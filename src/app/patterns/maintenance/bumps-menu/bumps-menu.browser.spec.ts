@@ -3,38 +3,24 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { page } from 'vitest/browser';
+import { client as edgeClient } from '../../../api/edge/client.gen';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
 import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
-import { BumpsMenu, UPSTREAM_POOLS_URL, type UpstreamPool } from './bumps-menu';
+import { BumpsMenu } from './bumps-menu';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
-import { upstreamPoolsGoldenMaster } from '../../../../testing/browser/upstream-pools';
+import { noPools, UPSTREAM_POOLS_PATH } from '../../../../testing/browser/upstream-pools';
 
 /**
- * Screenshots of the top bar's bumps menu, its bumps answered from qits-maintenance' golden
- * masters. The upstream pools below them (qits-1065) are a fixture from
- * `upstreamPoolsGoldenMaster` (the edge carries no pact with this app, see the ticket's
- * "Fix — edge" section), registered as a recording the way a provider's `goldenMaster(...)` is.
+ * Screenshots of the top bar's bumps menu, its bumps answered from qits-maintenance's golden
+ * masters and the upstream pools below them (qits-1065) from the edge's (`an open upstream pool`,
+ * qits-2220). A screenshot that is not about the pools refuses their read (`noPools`), which shows
+ * nothing, as an empty answer would.
  */
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
-
-/** No pools: the default for every screenshot that is not about the pools section itself. */
-const NO_POOLS = upstreamPoolsGoldenMaster([]);
-
-/** Two pools, already sorted by `open` descending, the way the edge serves them. */
-const SOME_POOLS = upstreamPoolsGoldenMaster([
-  {
-    name: 'qits-projects',
-    environment: 'dev',
-    origin: 'dev-qits-projects:8080',
-    open: 12,
-    max: 64,
-  },
-  { name: 'qits-githost', environment: 'dev', origin: 'dev-qits-githost:8080', open: 3, max: 64 },
-]);
 
 describe('BumpsMenu (screenshots)', () => {
   let http: HttpTestingController;
@@ -46,6 +32,7 @@ describe('BumpsMenu (screenshots)', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(maintenanceClient),
+        provideHeyApiClient(edgeClient),
         // No live stream in a screenshot: the real DomainEvents, on a stream that never connects.
         {
           provide: EVENT_SOURCE,
@@ -72,16 +59,19 @@ describe('BumpsMenu (screenshots)', () => {
   }
 
   /**
-   * Opens the panel. `poolsBody` answers the pools request that fires alongside the bumps one;
-   * it defaults to none, for every test that is not about the pools section.
+   * Opens the panel. `withPools` answers the pools request that fires alongside the bumps one with
+   * the edge's recording; without it the read is refused, for every test not about the pools.
    */
-  async function opened(poolsBody: readonly UpstreamPool[] = NO_POOLS) {
+  async function opened(withPools = false) {
     const rendered = await render();
     await page.getByRole('button', { name: 'Version bumps' }).click();
     rendered.fixture.detectChanges();
     await settle();
     const list = http.expectOne(LIST);
-    http.expectOne(UPSTREAM_POOLS_URL).flush(poolsBody);
+    const pools = http.expectOne(UPSTREAM_POOLS_PATH);
+    if (withPools) {
+      pools.flush(await goldenMaster('an open upstream pool', 'getUpstreamPools', 'qits-edge'));
+    } else noPools(pools);
     return { ...rendered, list };
   }
 
@@ -97,7 +87,7 @@ describe('BumpsMenu (screenshots)', () => {
   });
 
   it('lists the pending version bumps, and the upstream pools below them', async () => {
-    const { fixture, frame, list } = await opened(SOME_POOLS);
+    const { fixture, frame, list } = await opened(true);
     list.flush(await goldenMaster('pending bumps', 'listPendingBumps', 'qits-maintenance'));
     await answered(fixture);
     await expect.element(frame).toMatchScreenshot('open', { kind: 'DATA' });

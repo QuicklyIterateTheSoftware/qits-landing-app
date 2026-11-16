@@ -156,7 +156,10 @@ page reads it too, so the request is made once. The notifications menu reads the
 opening and puts every new event at the top of its list once it is loaded. The bumps menu (the
 lighthouse, `patterns/maintenance/bumps-menu/`) reads qits-maintenance's pending bumps
 (`listPendingBumps`) through its own `qitsResource` on its first opening and again after
-`BUMP_EVENTS` (`ReleaseRequestStateChanged` among them), at most once a second.
+`BUMP_EVENTS` (`ReleaseRequestStateChanged` among them), at most once a second. Below them it
+reads the edge's upstream pools (`getUpstreamPools`, `core/edge/edge.operations.ts`, on the page's
+own origin; pact on qits-edge-service in state `an open upstream pool`, qits-2220) on every
+opening; a refusal shows nothing.
 The lightning menu's top line (`patterns/system/runner-slots/`, its own `qitsResource` over
 `TARGET_LIST`, qits-2146) reads qits-system's targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
 `TargetLoginChanged`). qits-system sends no event when a runner connects or drops. A person whose

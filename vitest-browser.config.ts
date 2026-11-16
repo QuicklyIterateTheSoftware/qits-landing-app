@@ -12,6 +12,7 @@ import {
 import {
   artifactsGoldenMasters,
   ciGoldenMasters,
+  edgeGoldenMasters,
   eventsGoldenMasters,
   githostGoldenMasters,
   idpGoldenMasters,
@@ -54,6 +55,7 @@ const READERS = {
     networkAccessGoldenMasters,
     pactWith('qits-network-access-service'),
   ),
+  'qits-edge': pactedGoldenMasters(edgeGoldenMasters, pactWith('qits-edge-service')),
   // The one reader no pact of this app gates (qits-2044): the sign-in's code swap (`issueToken`)
   // is `@qits/angular`'s `QitsTokens` calling the idp through `QITS_SIGN_IN_FETCH`, not a store of
   // this app, and qits-idp records no authorization code issued to this app's client (`qits-spa`,

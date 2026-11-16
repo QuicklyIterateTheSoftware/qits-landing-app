@@ -28,6 +28,8 @@ const services = [
   'qits-artifacts/qits-artifacts-service',
   // The Network access pane (epic qits-1977): peers, nodes and the private edge.
   'qits-network-access/qits-network-access-service',
+  // The edge's own documents (qits-2220): the bumps menu's upstream pools.
+  'qits-edge/qits-edge-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */
