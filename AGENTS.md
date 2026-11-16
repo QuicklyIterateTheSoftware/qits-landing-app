@@ -526,10 +526,11 @@ operations' part of the file (`assertPactPart`).
   Group 2 (the repositories routes) adds what a store kept by key: `ResourceFamily`
   (`core/resources/resource-family.ts`) makes one `qitsResource` per key on demand (a docs site's
   versions, one file of a bundle), outside a reactive context, in a root service (`ContractsCatalog`,
-  `RoutesBundles`, `ContractsBundles`, `LinesOfCode`). A published docs file (`getDocsFile`) binds no
-  field, so the pages mark only its source (`data-qits-source`). Plain specs of a page over those
-  services run the root effects that start the next read (`TestBed.tick()`), and do not wait for
-  `whenStable()` while a read is still open.
+  `RoutesBundles`, `ContractsBundles`, `LinesOfCode`). A page over a published docs file
+  (`getDocsFile`) marks its source, each entry by its key in the file, and each value as its field or
+  derived paths, as plain attributes (`CONTRACTS_MARKS`, `BUILDER_MARKS`). Plain specs of a page over
+  those services run the root effects that start the next read (`TestBed.tick()`), and do not wait
+  for `whenStable()` while a read is still open.
   Group 3 (ideas, desk, events, observability) reads in the components themselves: the idea pages
   over `ideas.operations.ts`, the Desk over `desk.operations.ts` (`DESK_TRIGGER_MESSAGES`), its open
   issues over `work.operations.ts` (`OPEN_ISSUES`, each issue's `WORK_ITEM` in
@@ -695,6 +696,17 @@ published", not an error). `joinEntities` (`entity-map.ts`) matches the manifest
 (provider, operationId) to the maps' operations and derives each verb from method and path; only
 `domain` entities are shown. Its part of the docs pact spec owns the docs operations' interactions
 for `show-ui-builder-entities` only (`assertPactPart` by interaction), the routes part the rest.
+
+The builder marks what it shows of the docs files it reads (qits-2220, `builder-marks.ts`, plain
+attributes as on the contracts pages): the manifest's routes by `fullPath` (tree rows, the Outcomes
+tab, the path heading; a row's state count derived from `freezes`, its ◆ from `outcomes`),
+each state tab's freeze by `file` (`name`, the chip's `kind`), and each entity of `entities.json` by
+`entity` (the Entities tab, the entity aside, the route's entities); a count over a file is derived
+from its top-level key (`routes`, `entities`). The frame, the switches, Selected data, the outcome
+rows and the chrome of call and Sync rows render marks or recorded answers and carry none. Its own
+freezes therefore read `getDocsFile` in several states: `recordFor` pins an itemless mark to the
+one answer holding the top-level key of each of its paths, and each call row lists (and its ◎
+outlines) only the marks pinned to its record, plus those pinned to none.
 
 The builder's Agent action (qits-2157) opens `app-agent-dialog` (`patterns/ui-builder/agent-dialog/`),
 a native `<dialog>` for the project's `ui-builder` named agent (qits-2154): its state from

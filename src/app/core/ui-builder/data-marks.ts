@@ -244,23 +244,30 @@ function distinctRecords(freeze: Freeze): readonly FreezeRecord[] {
   return [...seen.values()];
 }
 
+/** What {@link recordFor} reads of a mark: its source and item, and its paths when it has them. */
+export type MarkToRead = Pick<ElementMark, 'source' | 'item'> &
+  Partial<Pick<ElementMark, 'outerItem' | 'field' | 'derived'>>;
+
 /**
  * The record of `freeze` a mark reads (qits-2144). Its candidates are the records whose
  * `<provider>#<operationId>` is the mark's source: one is it; several are told apart by which
- * recorded answer holds the item (`responses`). A mark without a source searches every record's
- * answer for its item. See {@link MarkRead} for what each outcome means.
+ * recorded answer holds the item (`responses`), or, for a mark without an item (qits-2220: a
+ * count over a docs file read twice, its manifest and an entity map), by which answer is an object
+ * holding the first segment of each of its `field` and `derived` paths as a top-level key
+ * (`entities` holds the map's, `routes` the manifest's). A mark with neither an item nor a path
+ * stays ambiguous. A mark without a source searches every record's answer for its item. See
+ * {@link MarkRead} for what each outcome means.
  */
-export function recordFor(
-  freeze: Freeze,
-  mark: Pick<ElementMark, 'source' | 'item'> & Partial<Pick<ElementMark, 'outerItem'>>,
-  responses: Responses,
-): MarkRead {
+export function recordFor(freeze: Freeze, mark: MarkToRead, responses: Responses): MarkRead {
   const records = distinctRecords(freeze);
   if (mark.source !== null) {
     const candidates = records.filter((record) => sourceOf(record) === mark.source);
     if (candidates.length === 1) return { kind: 'marked', record: candidates[0] };
-    if (!candidates.length || mark.item === null) return { kind: 'ambiguous', records: candidates };
-    const hits = holding(candidates, mark, responses);
+    if (!candidates.length) return { kind: 'ambiguous', records: candidates };
+    const hits =
+      mark.item === null
+        ? keying(candidates, mark, responses)
+        : holding(candidates, mark, responses);
     if (hits === 'loading') return { kind: 'loading' };
     return hits.length === 1
       ? { kind: 'marked', record: hits[0] }
@@ -270,6 +277,27 @@ export function recordFor(
   const hits = holding(records, mark, responses);
   if (hits === 'loading') return { kind: 'loading' };
   return hits.length === 1 ? { kind: 'byItem', record: hits[0] } : { kind: 'none' };
+}
+
+/**
+ * The records whose answer is an object holding the top-level key each of the mark's paths starts
+ * with; none when the mark has no path; `loading` while one is still read.
+ */
+function keying(
+  records: readonly FreezeRecord[],
+  mark: Partial<Pick<ElementMark, 'field' | 'derived'>>,
+  responses: Responses,
+): readonly FreezeRecord[] | 'loading' {
+  const paths = [...(mark.field ? [mark.field] : []), ...(mark.derived ?? [])];
+  if (!paths.length) return [];
+  const keys = paths.map((path) => path.split('.')[0]);
+  const hits: FreezeRecord[] = [];
+  for (const record of records) {
+    const body = responses(record);
+    if (body === undefined) return 'loading';
+    if (isObject(body) && keys.every((key) => key in body)) hits.push(record);
+  }
+  return hits;
 }
 
 /** The records whose answer holds the mark's item; `loading` while one is still read. */

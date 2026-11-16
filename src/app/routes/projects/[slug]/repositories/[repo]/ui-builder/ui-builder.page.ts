@@ -37,6 +37,7 @@ import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations
 import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
 import { callCardinality, joinEntities, type EntityUsage } from '$core/ui-builder/entity-map';
+import { BUILDER_MARKS } from '$core/ui-builder/builder-marks';
 import { ContractsCatalog, type ContractsSite } from '$core/ui-builder/contracts-catalog';
 import type { GoldenIndex, GoldenOperation } from '$core/ui-builder/golden-masters';
 import {
@@ -127,12 +128,13 @@ type LeftTab = 'routes' | 'entities' | 'outcomes';
 type OutcomeStatus = 'unrecorded' | 'invalid' | 'undeclared' | 'declared';
 
 /**
- * The data highlighted in the frame (qits-2144): every marked element of a call's read (`call`),
- * or the elements of exactly one mark (`mark`), picked in the frame (`picked`, the element's
- * resolved mark, which opens "Selected data") or chosen among a call's items.
+ * The data highlighted in the frame (qits-2144): every marked element of a call's read (`call`,
+ * its `record` among several of one source, qits-2220), or the elements of exactly one mark
+ * (`mark`), picked in the frame (`picked`, the element's resolved mark, which opens "Selected
+ * data") or chosen among a call's items.
  */
 type DataSelection =
-  | { readonly kind: 'call'; readonly source: string }
+  | { readonly kind: 'call'; readonly source: string; readonly record: FreezeRecord }
   | { readonly kind: 'mark'; readonly mark: DataMark; readonly picked: ElementMark | null };
 
 /** A call's recorded answer, as read for "Selected data" (qits-2144). */
@@ -500,6 +502,18 @@ interface EntityGroup {
  *   group opening for it. The data highlight and the outcome highlight are one selection: either
  *   clears the other, and another freeze that does not mark it clears it. A screenshot without
  *   `dataMarks` says it marks no data, and Pick data is disabled.
+ *   Several distinct records of one source (one docs file read twice) split its marks: a call row
+ *   lists, and its ◎ outlines, only the marks `recordFor` resolves to its own record, and those it
+ *   cannot pin to either; an itemless mark is pinned by the top-level keys its paths start with.
+ * - The builder's own marks (qits-2220): what it shows of the docs files it reads carries plain
+ *   attributes (`BUILDER_MARKS`, as the contracts pages' `CONTRACTS_MARKS`): the tree, the Outcomes
+ *   tab and the path heading mark the manifest's routes by `fullPath` (a row's segment, its state
+ *   count `freezes` and its ◆ `outcomes` derived), each state tab its freeze by `file` (`name`, the
+ *   chip's `kind`), the Entities tab, the entity aside and the route's entities each entity of
+ *   `entities.json` by `entity`; counts over a file are derived from its top-level key (`routes`,
+ *   `entities`). Exempt: the frame, the viewport, scheme and network switches, Selected data, the
+ *   outcome rows and their sources, and the chrome of call and Sync rows (◎, ▸, item groups,
+ *   cardinality): they render marks or recorded answers, not a read of the page's own.
  *
  * - Columns (qits-2050): from 1280px up the three panels sit side by side and each scrolls on its
  *   own, so a long tree, a tall frozen page or a long list of calls never moves the other two. The
@@ -588,10 +602,16 @@ interface EntityGroup {
                     }
                   </div>
                   @if (leftTab() === 'routes') {
-                    <nav aria-label="Routes" class="text-[0.8125rem]">
+                    <nav
+                      aria-label="Routes"
+                      class="text-[0.8125rem]"
+                      [attr.data-qits-source]="marks.source"
+                      data-qits-derived="routes"
+                    >
                       @for (row of shownRows(); track row.fullPath) {
                         <div
                           class="route-row group flex w-full items-center rounded"
+                          [attr.data-qits-item]="row.kind === 'segment' ? null : marks.route(row)"
                           [class]="
                             row.kind === 'route' && row.fullPath === selectedPath()
                               ? 'bg-surface-inverse text-fg-on-inverse'
@@ -609,10 +629,15 @@ interface EntityGroup {
                             [attr.aria-current]="row.fullPath === selectedPath() ? 'page' : null"
                             (click)="select(row.fullPath)"
                           >
-                            <span class="shrink-0">{{ row.segment }}</span>
+                            <span
+                              class="shrink-0"
+                              [attr.data-qits-derived]="row.kind === 'segment' ? null : 'fullPath'"
+                              >{{ row.segment }}</span
+                            >
                             @if (row.forward) {
                               <span
                                 class="forward-mark shrink-0 text-[0.6875rem] opacity-70"
+                                data-qits-field="forward"
                                 role="img"
                                 aria-label="Forwards"
                                 title="Forwards"
@@ -620,7 +645,9 @@ interface EntityGroup {
                               >
                             }
                             @if (row.kind === 'redirect') {
-                              <span class="min-w-0 truncate text-[0.6875rem]"
+                              <span
+                                class="min-w-0 truncate text-[0.6875rem]"
+                                data-qits-field="redirectTo"
                                 >→ {{ row.redirectTo }}</span
                               >
                             }
@@ -632,6 +659,7 @@ interface EntityGroup {
                             @if (mark.outcomes > 0) {
                               <span
                                 class="outcome-mark mr-1 shrink-0 rounded px-1 text-[0.6875rem] leading-4 tabular-nums"
+                                data-qits-derived="outcomes"
                                 [class.gap]="mark.gaps > 0"
                                 [class]="
                                   mark.gaps > 0
@@ -658,19 +686,26 @@ interface EntityGroup {
                             >
                               <span
                                 class="opacity-70 pointer-fine:group-hover:invisible pointer-fine:[[aria-expanded=false]>&]:invisible"
+                                [attr.data-qits-derived]="row.kind === 'route' ? 'freezes' : null"
                                 >{{ row.kind === 'route' ? row.states : '' }}</span
                               >
                             </button>
                           } @else if (row.kind === 'route') {
-                            <span class="shrink-0 pr-2 text-[0.6875rem] tabular-nums opacity-70">{{
-                              row.states
-                            }}</span>
+                            <span
+                              class="shrink-0 pr-2 text-[0.6875rem] tabular-nums opacity-70"
+                              data-qits-derived="freezes"
+                              >{{ row.states }}</span
+                            >
                           }
                         </div>
                       }
                     </nav>
                   } @else if (leftTab() === 'entities') {
-                    <section aria-label="Entities" class="text-[0.8125rem]">
+                    <section
+                      aria-label="Entities"
+                      class="text-[0.8125rem]"
+                      [attr.data-qits-source]="marks.source"
+                    >
                       @switch (entityState()) {
                         @case ('loading') {
                           <p class="m-0 text-fg-soft">Reading the entity maps…</p>
@@ -681,12 +716,15 @@ interface EntityGroup {
                           </p>
                         }
                         @default {
-                          <p class="entity-summary m-0 font-semibold">
+                          <p class="entity-summary m-0 font-semibold" data-qits-derived="entities">
                             {{ entityCounts().untouched }} of {{ entityCounts().total }} domain
                             entities have no route
                           </p>
                           @if (entityCounts().leftOut; as leftOut) {
-                            <p class="left-out m-0 mt-0.5 text-xs text-fg-soft">
+                            <p
+                              class="left-out m-0 mt-0.5 text-xs text-fg-soft"
+                              data-qits-derived="entities"
+                            >
                               {{ leftOut }} technical or projection
                               {{ leftOut === 1 ? 'entity' : 'entities' }} left out.
                             </p>
@@ -711,7 +749,10 @@ interface EntityGroup {
                               }
                               @default {
                                 @for (entity of group.entities; track entity.key) {
-                                  <div class="flex items-center gap-0.5">
+                                  <div
+                                    class="flex items-center gap-0.5"
+                                    [attr.data-qits-item]="marks.entity(entity)"
+                                  >
                                     <button
                                       type="button"
                                       class="entity flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left"
@@ -725,17 +766,21 @@ interface EntityGroup {
                                       "
                                       (click)="pickedEntity.set(entity.key)"
                                     >
-                                      <span class="min-w-0 truncate font-mono">{{
-                                        entity.name
-                                      }}</span>
+                                      <span
+                                        class="min-w-0 truncate font-mono"
+                                        data-qits-derived="entity"
+                                        >{{ entity.name }}</span
+                                      >
                                       @if (entity.routes.length) {
                                         <span
                                           class="ml-auto text-[0.6875rem] tabular-nums opacity-70"
+                                          data-qits-derived="operations"
                                           >{{ entity.routes.length }}</span
                                         >
                                       } @else {
                                         <ui-chip
                                           class="untouched ml-auto"
+                                          data-qits-derived="operations"
                                           tone="waiting"
                                           label="No route shows this"
                                         />
@@ -766,10 +811,17 @@ interface EntityGroup {
                       }
                     </section>
                   } @else {
-                    <section aria-label="Inbound outcomes" class="text-[0.8125rem]">
+                    <section
+                      aria-label="Inbound outcomes"
+                      class="text-[0.8125rem]"
+                      [attr.data-qits-source]="marks.source"
+                    >
                       @if (outcomeStatus() === 'declared') {
                         @if (inboundCounts().unreachable > 0) {
-                          <p class="inbound-summary m-0 font-semibold">
+                          <p
+                            class="inbound-summary m-0 font-semibold"
+                            data-qits-derived="routes outcomes"
+                          >
                             {{ inboundCounts().unreachable }} of {{ inboundCounts().total }} routes
                             can't be reached: no outcome leads to
                             {{ inboundCounts().unreachable === 1 ? 'it' : 'them' }}.
@@ -777,7 +829,7 @@ interface EntityGroup {
                         }
                         <ul class="m-0 mt-2 flex list-none flex-col gap-0.5 p-0">
                           @for (route of inboundRoutes(); track route.fullPath) {
-                            <li class="inbound-route">
+                            <li class="inbound-route" [attr.data-qits-item]="marks.route(route)">
                               <button
                                 type="button"
                                 class="inbound flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left hover:bg-surface-subtle"
@@ -785,16 +837,21 @@ interface EntityGroup {
                                 [attr.aria-expanded]="expandedInbound().has(route.fullPath)"
                                 (click)="toggleInbound(route.fullPath)"
                               >
-                                <span class="min-w-0 truncate font-mono"
+                                <span class="min-w-0 truncate font-mono" data-qits-field="fullPath"
                                   >/{{ route.fullPath }}</span
                                 >
                                 <span class="ml-auto flex shrink-0 items-center gap-1">
                                   @if (route.entry) {
-                                    <ui-chip class="entry" label="Entry point" />
+                                    <ui-chip
+                                      class="entry"
+                                      data-qits-field="entry"
+                                      label="Entry point"
+                                    />
                                   }
                                   @if (route.unreachable) {
                                     <ui-chip
                                       class="no-inbound"
+                                      data-qits-derived="outcomes"
                                       tone="waiting"
                                       label="No outcome leads here"
                                     />
@@ -802,6 +859,7 @@ interface EntityGroup {
                                   @if (route.sources.length) {
                                     <span
                                       class="inbound-count text-[0.6875rem] tabular-nums opacity-70"
+                                      data-qits-derived="outcomes"
                                       >{{ route.sources.length }}</span
                                     >
                                   }
@@ -853,7 +911,13 @@ interface EntityGroup {
 
                 <section aria-label="Preview" class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
                   @if (selectedPath(); as path) {
-                    <h2 class="m-0 mb-2 font-mono text-base">/{{ path }}</h2>
+                    <h2
+                      class="m-0 mb-2 font-mono text-base"
+                      [attr.data-qits-source]="marks.source"
+                      [attr.data-qits-item]="marks.route({ fullPath: path })"
+                    >
+                      <span data-qits-field="fullPath">/{{ path }}</span>
+                    </h2>
                     @if (selectedRow()?.alsoAnswers; as also) {
                       <p class="also-answers m-0 mb-2 text-xs text-fg-soft">
                         Also answers
@@ -886,7 +950,12 @@ interface EntityGroup {
                       </section>
                     }
                     @if (states().length) {
-                      <div role="tablist" aria-label="States" class="mb-2 flex flex-wrap gap-1">
+                      <div
+                        role="tablist"
+                        aria-label="States"
+                        class="mb-2 flex flex-wrap gap-1"
+                        [attr.data-qits-source]="marks.source"
+                      >
                         @for (item of states(); track item.name; let i = $index) {
                           <button
                             type="button"
@@ -898,12 +967,15 @@ interface EntityGroup {
                                 : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
                             "
                             [attr.aria-selected]="i === stateIndex()"
+                            [attr.data-qits-item]="marks.freeze(tabFreeze(item))"
+                            data-qits-field="name"
                             (click)="pickState(item.name)"
                           >
                             {{ item.name }}
                             @if (item.kind; as kind) {
                               <ui-chip
                                 class="kind ml-1"
+                                data-qits-field="kind"
                                 [label]="kindLabel(kind)"
                                 [tone]="kindLabels[kind].tone"
                               />
@@ -1258,6 +1330,8 @@ interface EntityGroup {
                   <aside
                     aria-label="Entity routes"
                     class="text-[0.8125rem] xl:min-h-0 xl:overflow-y-auto xl:pb-6"
+                    [attr.data-qits-source]="marks.source"
+                    [attr.data-qits-item]="marks.entity(entity)"
                   >
                     <h3 class="m-0 text-xs font-semibold text-fg-soft uppercase">Routes showing</h3>
                     <p class="entity-heading m-0 mb-1">
@@ -1271,16 +1345,23 @@ interface EntityGroup {
                             entity: entity.entity,
                           }"
                           [title]="'Open ' + entity.name + ' entity page'"
+                          data-qits-derived="entity"
                           >{{ entity.name }}</a
                         >
                       } @else {
-                        <span class="font-mono">{{ entity.name }}</span>
+                        <span class="font-mono" data-qits-derived="entity">{{ entity.name }}</span>
                       }
                       <span class="text-xs text-fg-muted"> · {{ entity.application }}</span>
                     </p>
-                    <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                    <ul
+                      class="m-0 flex list-none flex-col gap-1 p-0"
+                      data-qits-derived="operations"
+                    >
                       @for (route of entity.routes; track route.route) {
-                        <li class="entity-route flex flex-wrap items-center gap-1">
+                        <li
+                          class="entity-route flex flex-wrap items-center gap-1"
+                          data-qits-derived="operations"
+                        >
                           <button
                             type="button"
                             class="cursor-pointer rounded px-1 text-left font-mono text-xs hover:bg-surface-subtle"
@@ -1289,7 +1370,7 @@ interface EntityGroup {
                             /{{ route.route }}
                           </button>
                           @for (verb of route.verbs; track verb) {
-                            <ui-chip class="verb" [label]="verb" />
+                            <ui-chip class="verb" data-qits-derived="operations" [label]="verb" />
                           }
                         </li>
                       } @empty {
@@ -1489,10 +1570,19 @@ interface EntityGroup {
                       Entities
                     </h3>
                     @if (routeEntities(); as found) {
-                      <ul class="m-0 flex list-none flex-col gap-1 p-0">
+                      <ul
+                        class="m-0 flex list-none flex-col gap-1 p-0"
+                        [attr.data-qits-source]="marks.source"
+                        data-qits-derived="entities"
+                      >
                         @for (entity of found.entities; track entity.key) {
-                          <li class="route-entity flex flex-wrap items-center gap-1">
-                            <span class="font-mono text-xs">{{ entity.name }}</span>
+                          <li
+                            class="route-entity flex flex-wrap items-center gap-1"
+                            [attr.data-qits-item]="marks.entity(entity)"
+                          >
+                            <span class="font-mono text-xs" data-qits-derived="entity">{{
+                              entity.name
+                            }}</span>
                             @if (slug(); as project) {
                               <a
                                 class="entity-link text-xs text-fg-soft no-underline hover:text-fg"
@@ -1509,7 +1599,7 @@ interface EntityGroup {
                             }
                             <span class="text-xs text-fg-muted">{{ entity.application }}</span>
                             @for (verb of entity.verbs; track verb) {
-                              <ui-chip class="verb" [label]="verb" />
+                              <ui-chip class="verb" data-qits-derived="operations" [label]="verb" />
                             }
                           </li>
                         } @empty {
@@ -1519,7 +1609,11 @@ interface EntityGroup {
                         }
                       </ul>
                       @if (found.unmatched; as unmatched) {
-                        <p class="unmatched m-0 mt-2 text-xs text-fg-soft">
+                        <p
+                          class="unmatched m-0 mt-2 text-xs text-fg-soft"
+                          [attr.data-qits-source]="marks.source"
+                          data-qits-derived="entities"
+                        >
                           {{ unmatched }} {{ unmatched === 1 ? 'call touches' : 'calls touch' }} no
                           mapped entity.
                         </p>
@@ -1997,6 +2091,9 @@ export class UiBuilderPage {
   private readonly origins = inject(PlatformOrigins);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
+  /** The marks of what the page shows of the docs files it reads (qits-2220; `builder-marks.ts`). */
+  protected readonly marks = BUILDER_MARKS;
+
   /**
    * The open project's repositories (`PROJECT_REPOSITORIES`, qits-2146), in the browser only, read
    * again after a commit to its wrapper's main branch.
@@ -2242,8 +2339,13 @@ export class UiBuilderPage {
    */
   protected readonly freeze = computed((): Freeze | null => {
     const state = this.states()[this.stateIndex()];
-    return state ? stateFreeze(state, this.viewport(), this.scheme()) : null;
+    return state ? this.tabFreeze(state) : null;
   });
+
+  /** The freeze a state's tab draws at the chosen viewport and scheme (its data mark, qits-2220). */
+  protected tabFreeze(state: FreezeState): Freeze {
+    return stateFreeze(state, this.viewport(), this.scheme());
+  }
 
   /** The window the drawn freeze was shot in (qits-2047); null for one at the test's own viewport. */
   protected readonly frameSize = computed(() => {
@@ -3071,9 +3173,62 @@ export class UiBuilderPage {
   /** `sourceOf` for the template: a call's `<provider>#<operationId>` (qits-2144). */
   protected readonly sourceOf = sourceOf;
 
-  /** A call's marks in the selected freeze (qits-2144). */
+  /**
+   * The selected freeze's distinct records of each marked source it records in several states
+   * (qits-2220): the calls whose marks `recordFor` tells apart by their recorded answers.
+   */
+  private readonly sharedSources = computed((): ReadonlyMap<string, readonly FreezeRecord[]> => {
+    const bySource = new Map<string, Map<string, FreezeRecord>>();
+    const marked = this.marksBySource();
+    for (const record of this.freeze()?.records ?? []) {
+      const source = sourceOf(record);
+      if (!marked.has(source)) continue;
+      const records = bySource.get(source) ?? new Map<string, FreezeRecord>();
+      records.set(recordKey(record), record);
+      bySource.set(source, records);
+    }
+    return new Map(
+      [...bySource]
+        .filter(([, records]) => records.size > 1)
+        .map(([source, records]) => [source, [...records.values()]]),
+    );
+  });
+
+  /**
+   * Each call's marks in the selected freeze (qits-2144), by `recordKey`. A source recorded in
+   * several states (qits-2220) gives each of its calls only the marks `recordFor` pins to it, and
+   * those it pins to none (ambiguous, or still read) to every one of them.
+   */
+  private readonly marksByRecord = computed((): ReadonlyMap<string, readonly DataMark[]> => {
+    const byRecord = new Map<string, readonly DataMark[]>();
+    const freeze = this.freeze();
+    if (!freeze) return byRecord;
+    const shared = this.sharedSources();
+    for (const record of freeze.records) {
+      const key = recordKey(record);
+      const marks = this.marksBySource().get(sourceOf(record)) ?? [];
+      byRecord.set(
+        key,
+        shared.has(sourceOf(record))
+          ? marks.filter((mark) => this.readBy(freeze, mark, key))
+          : marks,
+      );
+    }
+    return byRecord;
+  });
+
+  /**
+   * Whether the record keyed `key` reads `mark` (qits-2220): `recordFor` pins the mark to it, or to
+   * no record at all (ambiguous, or its answers still read).
+   */
+  private readBy(freeze: Freeze, mark: DataMark, key: string): boolean {
+    const read = recordFor(freeze, mark, this.answerOf);
+    return read.kind !== 'marked' || recordKey(read.record) === key;
+  }
+
+  /** A call's marks in the selected freeze (qits-2144; split by record, qits-2220). */
   protected marksOf(call: FreezeRecord): readonly DataMark[] {
-    return this.marksBySource().get(sourceOf(call)) ?? [];
+    return this.marksByRecord().get(recordKey(call)) ?? [];
   }
 
   /**
@@ -3124,10 +3279,10 @@ export class UiBuilderPage {
     });
   }
 
-  /** Whether a call's data is highlighted (qits-2144): its whole read. */
+  /** Whether a call's data is highlighted (qits-2144): its whole read, of its record (qits-2220). */
   protected isCallHighlighted(call: FreezeRecord): boolean {
     const selection = this.dataSelection();
-    return selection?.kind === 'call' && selection.source === sourceOf(call);
+    return selection?.kind === 'call' && recordKey(selection.record) === recordKey(call);
   }
 
   /** Whether exactly `mark` is highlighted (qits-2144), picked or chosen. */
@@ -3138,7 +3293,9 @@ export class UiBuilderPage {
 
   /** Highlights every marked element of a call's read, or clears it when it is already (qits-2144). */
   protected toggleCallData(call: FreezeRecord): void {
-    this.selectData(this.isCallHighlighted(call) ? null : { kind: 'call', source: sourceOf(call) });
+    this.selectData(
+      this.isCallHighlighted(call) ? null : { kind: 'call', source: sourceOf(call), record: call },
+    );
   }
 
   /** Highlights exactly the elements of `mark`, or clears it when it is already (qits-2144). */
@@ -3281,14 +3438,19 @@ export class UiBuilderPage {
 
   /**
    * The elements of `doc` the data selection highlights (qits-2144): every element carrying a mark
-   * whose resolved source is the call's, or whose resolved mark is the selected one.
+   * whose resolved source is the call's (and, for a source recorded in several states, that its
+   * record reads, qits-2220), or whose resolved mark is the selected one.
    */
   private dataElements(doc: Document, selection: DataSelection): readonly Element[] {
-    return [...doc.querySelectorAll(MARKED)].filter((element) => {
-      const mark = markOf(element);
-      return selection.kind === 'call'
-        ? mark.source === selection.source
-        : sameMark(mark, selection.mark);
+    return untracked(() => {
+      const freeze = this.freeze();
+      const split = selection.kind === 'call' && this.sharedSources().has(selection.source);
+      return [...doc.querySelectorAll(MARKED)].filter((element) => {
+        const mark = markOf(element);
+        if (selection.kind === 'mark') return sameMark(mark, selection.mark);
+        if (mark.source !== selection.source) return false;
+        return !split || !freeze || this.readBy(freeze, mark, recordKey(selection.record));
+      });
     });
   }
 
@@ -3408,9 +3570,30 @@ export class UiBuilderPage {
         const kept =
           selection === null ||
           (selection.kind === 'call'
-            ? marks.some((mark) => mark.source === selection.source)
+            ? marks.some((mark) => mark.source === selection.source) &&
+              !!this.freeze()?.records.some(
+                (record) => recordKey(record) === recordKey(selection.record),
+              )
             : marks.some((mark) => sameMark(mark, selection.mark)));
         if (!kept) this.dataSelection.set(null);
+      });
+    });
+    effect(() => {
+      // A source recorded in several states (qits-2220): read each answer, which splits its marks.
+      const records = [...this.sharedSources().values()].flat();
+      if (!browser || !records.length) return;
+      if (this.entityMaps.catalog()?.status !== 'loaded') return;
+      records.forEach((record) => {
+        const site = this.siteOf(record.provider);
+        if (site) this.contracts.indexRead(site);
+      });
+      untracked(() => records.forEach((record) => this.readAnswer(record)));
+    });
+    effect(() => {
+      // A highlighted call's marks split as its answers arrive (qits-2220): draw them again.
+      this.marksByRecord();
+      untracked(() => {
+        if (this.dataSelection()?.kind === 'call') this.drawHighlight();
       });
     });
     effect(() => {

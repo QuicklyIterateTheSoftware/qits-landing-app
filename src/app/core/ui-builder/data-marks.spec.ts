@@ -254,6 +254,63 @@ describe('recordFor (qits-2144)', () => {
   });
 });
 
+describe('recordFor without an item (qits-2220)', () => {
+  const DOCS = 'qits-artifacts-service#getDocsFile';
+  const MANIFEST: FreezeRecord = {
+    provider: 'qits-artifacts-service',
+    state: 'a published routes bundle',
+    operationId: 'getDocsFile',
+  };
+  const MAP: FreezeRecord = {
+    ...MANIFEST,
+    state: 'a published contracts bundle with an entity map',
+  };
+  const freeze: Freeze = { file: 'b.html', name: 'b', route: null, records: [MANIFEST, MAP] };
+  const BODIES = new Map<FreezeRecord, unknown>([
+    [MANIFEST, { routes: [], freezes: [], byRoute: {} }],
+    [MAP, { formatVersion: 2, application: 'qits-projects', entities: [{ entity: 'a.B' }] }],
+  ]);
+  const responses: Responses = (record) => BODIES.get(record);
+  const docs = (field: string | null, derived: string[] = []) => ({
+    source: DOCS,
+    item: null,
+    field,
+    derived,
+  });
+  const ambiguous = { kind: 'ambiguous', records: [MANIFEST, MAP] };
+
+  it('pins a mark to the one answer holding the top-level key of each of its paths', () => {
+    expect(recordFor(freeze, docs(null, ['entities']), responses)).toEqual({
+      kind: 'marked',
+      record: MAP,
+    });
+    expect(recordFor(freeze, docs(null, ['routes']), responses)).toEqual({
+      kind: 'marked',
+      record: MANIFEST,
+    });
+    expect(recordFor(freeze, docs('freezes.0.name', ['routes']), responses)).toEqual({
+      kind: 'marked',
+      record: MANIFEST,
+    });
+  });
+
+  it('stays ambiguous for paths both answers or neither hold, or no path at all', () => {
+    expect(recordFor(freeze, docs(null, ['routes', 'entities']), responses)).toEqual(ambiguous);
+    expect(recordFor(freeze, docs('nope'), responses)).toEqual(ambiguous);
+    const both = { ...(BODIES.get(MANIFEST) as object), entities: [] };
+    expect(
+      recordFor(freeze, docs(null, ['entities']), (r) => (r === MANIFEST ? both : BODIES.get(r))),
+    ).toEqual(ambiguous);
+    expect(recordFor(freeze, docs(null), () => undefined)).toEqual(ambiguous);
+  });
+
+  it('is loading while an answer is still read', () => {
+    expect(
+      recordFor(freeze, docs(null, ['entities']), (r) => (r === MAP ? undefined : BODIES.get(r))),
+    ).toEqual({ kind: 'loading' });
+  });
+});
+
 describe('readDataMarks and the manifest’s dataMarks (qits-2144)', () => {
   const MARK = { source: AGENTS, item: 'agentId=a6', field: 'entityTitle', derived: [] };
 

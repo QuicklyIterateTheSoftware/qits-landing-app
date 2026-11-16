@@ -324,13 +324,33 @@ describe('UiBuilderPage', () => {
     http.expectOne(SITES_URL).flush(artifacts.body(BUNDLE, 'listDocsSites'));
   }
 
-  /** Answers the catalog, the contracts site's versions, and its `entities.json` with `map`. */
-  function answerContracts(map: (read: { flush(body: unknown, opts?: object): void }) => void) {
+  /**
+   * Answers the catalog, the contracts site's versions, and its `entities.json` with `map`; with
+   * `repository`, the site's newest version names that repository instead of the recorded one.
+   */
+  function answerContracts(
+    map: (read: { flush(body: unknown, opts?: object): void }) => void,
+    repository?: string,
+  ) {
     return async () => {
       const { site, version } = artifacts.operation(CONTRACTS, 'getDocsFile').params;
       http.expectOne(SITES_URL).flush(artifacts.body(CONTRACTS, 'listDocsSites'));
       await settle();
-      http.expectOne(`${SITES_URL}/${site}`).flush(artifacts.body(CONTRACTS, 'listDocsVersions'));
+      const versions = artifacts.body<{ versions: { metadata: object }[] }>(
+        CONTRACTS,
+        'listDocsVersions',
+      );
+      http.expectOne(`${SITES_URL}/${site}`).flush(
+        repository
+          ? {
+              ...versions,
+              versions: versions.versions.map((v) => ({
+                ...v,
+                metadata: { ...v.metadata, 'git.repository.name': repository },
+              })),
+            }
+          : versions,
+      );
       for (let i = 0; i < 3; i++) await settle();
       map(http.expectOne(`${SITES_URL}/${site}/-/${version}/entities.json`));
     };
@@ -412,6 +432,36 @@ describe('UiBuilderPage', () => {
     expect(frame?.getAttribute('sandbox')).toBe('allow-same-origin');
     expect(element.innerHTML).not.toContain('allow-scripts');
     expect(element.querySelector('.link-notice')).toBeNull();
+  });
+
+  it('marks what it shows of the manifest by the file’s own keys (qits-2220)', async () => {
+    const { fixture, element } = await render('qits-landing-app');
+    const nav = element.querySelector('nav[aria-label="Routes"]')!;
+    expect(nav.getAttribute('data-qits-source')).toBe('qits-artifacts-service#getDocsFile');
+    expect(nav.getAttribute('data-qits-derived')).toBe('routes');
+    expect(
+      [...nav.querySelectorAll('.route-row')].map((row) => row.getAttribute('data-qits-item')),
+    ).toEqual([
+      'fullPath=',
+      'fullPath=projects',
+      null,
+      'fullPath=projects/:slug/repositories',
+      'fullPath=projects/:slug/workspaces',
+      'fullPath=**',
+    ]);
+    expect(element.querySelector('h2')?.getAttribute('data-qits-item')).toBe(
+      'fullPath=projects/:slug/repositories',
+    );
+    expect(
+      [...element.querySelectorAll('[aria-label="States"] [role="tab"]')].map((tab) => [
+        tab.getAttribute('data-qits-item'),
+        tab.getAttribute('data-qits-field'),
+      ]),
+    ).toEqual([
+      [`file=${ERROR_FREEZE}`, 'name'],
+      [`file=${LOADED_FREEZE}`, 'name'],
+    ]);
+    await answerFreeze(ERROR_FREEZE, fixture);
   });
 
   it('folds a parent row’s children with the number at its end, and unfolds them again', async () => {
@@ -3355,6 +3405,140 @@ describe('UiBuilderPage', () => {
       expect(pick.title).toContain('marks no data');
       expect(element.querySelector('.call-data')).toBeNull();
       expect(element.querySelector('.cardinality')).toBeNull();
+    });
+
+    describe('a docs file read twice (qits-2220)', () => {
+      const ARTIFACTS = 'qits-artifacts-service';
+      const DOCS = `${ARTIFACTS}#getDocsFile`;
+      const MANIFEST_STATE = 'a published routes bundle';
+      const MAP_STATE = 'a published contracts bundle with an entity map';
+      const docsRecord = (state: string) => ({
+        provider: ARTIFACTS,
+        state,
+        operationId: 'getDocsFile',
+      });
+
+      /** The freeze `error`, reading the manifest and an entity map, each counted once. */
+      function readTwice(): RoutesManifest {
+        const recorded = artifacts.body<RoutesManifest>(BUNDLE, 'getDocsFile');
+        return {
+          ...recorded,
+          freezes: recorded.freezes.map((freeze): Freeze =>
+            freeze.file === ERROR_FREEZE
+              ? {
+                  ...freeze,
+                  records: [...freeze.records, docsRecord(MANIFEST_STATE), docsRecord(MAP_STATE)],
+                  dataMarks: [
+                    mark(DOCS, null, null, ['routes']),
+                    mark(DOCS, null, null, ['entities']),
+                  ],
+                }
+              : freeze,
+          ),
+        };
+      }
+
+      /**
+       * The recorded contracts site, its newest version naming qits-artifacts-service, so its
+       * golden masters answer the docs reads.
+       */
+      const artifactsSite = answerContracts(
+        (read) => read.flush(artifacts.body(CONTRACTS, 'getDocsFile')),
+        ARTIFACTS,
+      );
+
+      const DOCS_INDEX = {
+        formatVersion: 1,
+        provider: 'qits-artifacts',
+        states: [MANIFEST_STATE, MAP_STATE].map((name, i) => ({
+          name,
+          slug: `docs-${i}`,
+          operations: [
+            {
+              operationId: 'getDocsFile',
+              method: 'GET',
+              path: '/artifacts/docs/docs/{site}/-/{version}/{path}',
+              status: 200,
+              file: `docs-${i}/getDocsFile.json`,
+            },
+          ],
+        })),
+      };
+
+      const HTML_TWICE = `
+        <nav data-qits-source="${DOCS}" data-qits-derived="routes"><a href="/projects">r</a></nav>
+        <section data-qits-source="${DOCS}" data-qits-derived="entities"><p class="map">m</p></section>`;
+
+      /** The builder on the freeze, both docs answers read. */
+      async function renderTwice() {
+        const rendered = await renderMarked(readTwice(), artifactsSite, HTML_TWICE);
+        await settle();
+        http.expectOne(`${GOLDEN}/index.json`).flush(DOCS_INDEX);
+        for (let i = 0; i < 3; i++) await settle();
+        http.expectOne(`${GOLDEN}/docs-0/getDocsFile.json`).flush({ routes: [], freezes: [] });
+        http
+          .expectOne(`${GOLDEN}/docs-1/getDocsFile.json`)
+          .flush({ entities: [{ entity: 'a.B' }] });
+        for (let i = 0; i < 3; i++) await settle();
+        await stable();
+        rendered.fixture.detectChanges();
+        return rendered;
+      }
+
+      /** The call row of the docs read in `state`. */
+      const docsRow = (element: HTMLElement, state: string) =>
+        [...element.querySelectorAll<HTMLElement>('li.call')].find((li) =>
+          words(li.querySelector('.call-trigger')!).includes(state),
+        )!;
+
+      /** A call row's marked items, each its key and its marks, opening them first. */
+      function itemsOf(row: HTMLElement, fixture: { detectChanges(): void }) {
+        row.querySelector<HTMLButtonElement>('.call-items-toggle')!.click();
+        fixture.detectChanges();
+        return [...row.querySelectorAll('.call-item')].map((item) =>
+          [...item.querySelectorAll('.item-key, .data-mark')].map((e) => e.textContent?.trim()),
+        );
+      }
+
+      it('lists an itemless mark under the call whose answer holds its paths', async () => {
+        const { fixture, element } = await renderTwice();
+        expect(itemsOf(docsRow(element, MAP_STATE), fixture)).toEqual([
+          ['no item', 'derived: entities'],
+        ]);
+        expect(itemsOf(docsRow(element, MANIFEST_STATE), fixture)).toEqual([
+          ['no item', 'derived: routes'],
+        ]);
+      });
+
+      it('outlines only its own call’s marks with a call’s toggle', async () => {
+        const { fixture, element, highlighted } = await renderTwice();
+        const map = docsRow(element, MAP_STATE).querySelector<HTMLButtonElement>('.call-data')!;
+        const manifest = docsRow(element, MANIFEST_STATE).querySelector<HTMLButtonElement>(
+          '.call-data',
+        )!;
+        map.click();
+        fixture.detectChanges();
+        expect(highlighted()).toEqual(['entities']);
+        expect(map.getAttribute('aria-pressed')).toBe('true');
+        expect(manifest.getAttribute('aria-pressed')).toBe('false');
+      });
+
+      it('shows a picked itemless mark’s read and its derived value from the whole answer', async () => {
+        const { fixture, element, click } = await renderTwice();
+        pickData(element, fixture);
+        click('p.map');
+        for (let i = 0; i < 3; i++) await settle();
+        fixture.detectChanges();
+        const section = selected(element)!;
+        expect(words(section.querySelector('.read .call-trigger')!)).toBe(
+          `getDocsFile ${ARTIFACTS} · “${MAP_STATE}”`,
+        );
+        expect(
+          [...section.querySelectorAll('li.derived')].map((li) =>
+            li.textContent?.replace(/\s+/g, ' ').trim(),
+          ),
+        ).toEqual(['entities: [{"entity":"a.B"}]']);
+      });
     });
 
     it('follows links in the frame as before while Pick data is off', async () => {
