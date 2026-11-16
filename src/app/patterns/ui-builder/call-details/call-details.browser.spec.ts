@@ -188,13 +188,16 @@ describe('CallDetails (screenshots)', () => {
     });
     const dialog = locator.getByRole('dialog').element();
     await expect.element(locator.getByRole('dialog')).toBeVisible();
-    await expect.poll(() => dialog.dataset['floatingSide']).toBe('below');
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-    expectUnclipped(dialog);
     const trigger = locator.getByRole('button', { name: /getGitRepository/ }).element();
-    expect(dialog.getBoundingClientRect().top).toBeGreaterThanOrEqual(
-      trigger.getBoundingClientRect().bottom,
-    );
+    // Placed for the popover's final content: it grows as its reads are answered, and the floating
+    // directive re-places it a frame after its ResizeObserver sees that (qits-2255).
+    await vi.waitFor(() => {
+      expect(dialog.dataset['floatingSide']).toBe('below');
+      expectUnclipped(dialog);
+      expect(dialog.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        trigger.getBoundingClientRect().bottom,
+      );
+    });
     // Wider than the column: it reaches out of it, to the left.
     const column = (locator.element() as HTMLElement).getBoundingClientRect();
     expect(dialog.getBoundingClientRect().left).toBeLessThan(column.left);
@@ -208,13 +211,15 @@ describe('CallDetails (screenshots)', () => {
     });
     const dialog = locator.getByRole('dialog').element();
     await expect.element(locator.getByRole('dialog')).toBeVisible();
-    await expect.poll(() => dialog.dataset['floatingSide']).toBe('above');
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-    expectUnclipped(dialog);
     const trigger = locator.getByRole('button', { name: /getGitRepository/ }).element();
-    expect(dialog.getBoundingClientRect().bottom).toBeLessThanOrEqual(
-      trigger.getBoundingClientRect().top,
-    );
+    // As above: the popover above its call only once placed for its final content (qits-2255).
+    await vi.waitFor(() => {
+      expect(dialog.dataset['floatingSide']).toBe('above');
+      expectUnclipped(dialog);
+      expect(dialog.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+        trigger.getBoundingClientRect().top,
+      );
+    });
   });
 
   it('closes on Escape, its call focused again, and on a click outside', async () => {
