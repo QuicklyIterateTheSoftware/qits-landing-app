@@ -11,13 +11,16 @@ import { client as edgeClient } from '../../api/edge/client.gen';
 import { provideHeyApiClient } from '../../api/edge/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { edgeGoldenMasters as masters } from '../../../testing/golden-masters';
-import { UPSTREAM_POOLS } from './edge.operations';
+import { privateOriginsOf } from '$core/platform/private-apps';
+import { MAIN_NAVIGATION, UPSTREAM_POOLS } from './edge.operations';
 
 /**
  * qits-landing-app's pact with qits-edge-service (qits-2220), in
  * `pacts/qits-landing-app_qits-edge-service.json`: the bumps menu's pools section
- * (`edge.operations.ts`), the edge's `getUpstreamPools` in the state `an open upstream pool`. The
- * operation is the only user of the edge's client, so this file is the whole pact.
+ * (`edge.operations.ts`), the edge's `getUpstreamPools` in the state `an open upstream pool`, and
+ * the private apps (`PrivateApps`, qits-2297), its `getMainNavigation` in the state `a signed-in
+ * caller and a private app`. The operations are the only users of the edge's client, so this file
+ * is the whole pact.
  *
  * The interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and the test runs the operation's own `fetch`
@@ -59,7 +62,7 @@ const given = (
   });
 };
 
-describe('qits-landing-app → qits-edge-service pact: the bumps menu’s pools', () => {
+describe('qits-landing-app → qits-edge-service pact: the bumps menu’s pools, the private apps', () => {
   afterAll(() => {
     edgeClient.setConfig({ baseUrl: '' });
     try {
@@ -79,6 +82,16 @@ describe('qits-landing-app → qits-edge-service pact: the bumps menu’s pools'
         expect(pools.every((pool) => pool.pool === 'ordinary' || pool.pool === 'stream')).toBe(
           true,
         );
+      },
+    ));
+
+  it('find-private-apps: the navigation names the private apps’ origins', () =>
+    given(MAIN_NAVIGATION, 'a signed-in caller and a private app', 'find-private-apps').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () => MAIN_NAVIGATION.fetch({}));
+        expect(privateOriginsOf(data?.applications ?? {})).toEqual([
+          'https://stt.qits.example.com',
+        ]);
       },
     ));
 });

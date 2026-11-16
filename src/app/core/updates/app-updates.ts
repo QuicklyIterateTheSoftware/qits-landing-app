@@ -12,6 +12,9 @@ import { filter } from 'rxjs';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { payloadField } from '$core/events/refresh-on';
 
+/** The service worker script the app registers: the wrapper around ngsw (qits-2297). */
+export const SERVICE_WORKER_SCRIPT = 'sw.js';
+
 /** This app's name in the deployment events. */
 export const LANDING_APPLICATION = 'qits-landing';
 
@@ -88,10 +91,15 @@ export class AppUpdates {
 /**
  * The service worker and {@link AppUpdates}. The worker is registered in production builds only
  * (`isDevMode()` is false), once the app is stable or after 30 s.
+ *
+ * The script registered is `sw.js` (`public/sw.js`, qits-2297), not `ngsw-worker.js` itself: it
+ * keeps every cross-origin request out of the worker, so a call to a platform app on the private
+ * network is made by the page, which may ask for Chrome's Local Network Access permission, and then
+ * imports `ngsw-worker.js` for everything else.
  */
 export function provideAppUpdates() {
   return [
-    provideServiceWorker('ngsw-worker.js', {
+    provideServiceWorker(SERVICE_WORKER_SCRIPT, {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),

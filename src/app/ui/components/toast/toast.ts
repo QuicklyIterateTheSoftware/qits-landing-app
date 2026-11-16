@@ -22,7 +22,7 @@ export type ToastTone = 'note' | 'error';
       <span class="grow">{{ message() }}</span>
       <button
         type="button"
-        class="cursor-pointer rounded border-0 bg-transparent px-2 py-1 font-semibold text-inherit underline-offset-2 hover:underline focus-visible:ring-1 focus-visible:ring-fg-on-accent focus-visible:outline-none"
+        class="shrink-0 cursor-pointer rounded border-0 bg-transparent px-2 py-1 font-semibold whitespace-nowrap text-inherit underline-offset-2 hover:underline focus-visible:ring-1 focus-visible:ring-fg-on-accent focus-visible:outline-none"
         [class]="action() ? 'inline-block' : 'hidden'"
         (click)="act.emit()"
       >

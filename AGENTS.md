@@ -374,7 +374,8 @@ panel are projected, `opened` fires on each opening.
 ## Backend origins
 
 Where each platform application answers comes from code, not from the network: inject
-`PlatformOrigins` (`core/platform/platform-origins.ts`). The app does not read `/main-navigation`.
+`PlatformOrigins` (`core/platform/platform-origins.ts`). The app reads `/main-navigation` for one
+thing only: which applications are on the private network (below), never for an address.
 
 - `api(app)`: the origin of calls, the event stream and the idp's sign-in pages. `app.config.ts`
   gives each generated client its `baseUrl` from it, synchronously, and, deployed,
@@ -387,6 +388,32 @@ server both are `''`, and the server calls nothing. Under `ng serve` (`environme
 are `HOST_LABELS`, the one place a hostname is composed; a new application gets an entry there
 (and in `CLIENTS` when it has a generated client). Specs provide `provideTestPlatformOrigins`
 (`src/testing/`); pact specs keep setting each client's `baseUrl` to their mock server.
+
+### Private apps and Chrome's Local Network Access (qits-2297)
+
+Some platform apps answer on the private network (the tunnel's private edge), the rest publicly,
+and Chrome asks once per site before this public page may call a local address. Three parts:
+
+- **The service worker leaves cross-origin requests alone.** The app registers `sw.js`
+  (`public/sw.js`), not `ngsw-worker.js`: its first `fetch` listener stops every request to another
+  origin before ngsw sees it and does not answer it, then it `importScripts('ngsw-worker.js')`. ngsw
+  answers every request itself, and a worker can neither raise the permission prompt nor use the
+  page's grant, so its fetch failed with a synthetic 504. `sw.js` is served `no-cache`
+  (`UNHASHED`, `src/server.ts`) and kept out of ngsw's asset cache (`ngsw-config.json`);
+  `core/updates/service-worker.spec.ts` runs it against a fake worker scope.
+- **Private calls are marked.** `PrivateApps` (`core/platform/private-apps.ts`, started in
+  `app.config.ts`) reads the edge's `/main-navigation` (`MAIN_NAVIGATION`, the page's own origin,
+  pact state `a signed-in caller and a private app`) once, after the first navigation past the
+  sign-in, and hands the origins of the applications marked `exposure: 'private'` to
+  `core/platform/local-network.ts`, whose `fetch` wrapper (installed in `main.ts` after the
+  telemetry and before the bootstrap, browser only) adds `targetAddressSpace: 'local'` to every call
+  to one of them. A failed read marks nothing.
+- **The shell says why.** `app-local-network-notice` (`patterns/platform/local-network-notice/`)
+  follows `navigator.permissions.query({ name: 'local-network' })` (never the legacy
+  `local-network-access`) while an app is private: `prompt` explains and offers Allow access (one
+  `PROJECT_LIST` call, so the prompt follows a press), `denied` says how to turn it back on, a
+  change to `granted` reloads the page (`PAGE_RELOAD`). A browser without the permission shows
+  nothing. The page and layout specs never start `PrivateApps`, so the notice stays hidden there.
 
 ## Signing in: cookie deployed, bearer under `ng serve`
 
