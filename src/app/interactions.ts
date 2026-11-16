@@ -813,6 +813,20 @@ export const INTERACTIONS = {
   'show-device-app-config':
     'The Network access page shows a new device’s config once, as a QR code',
   /**
+   * `private-apps.ts` via `MAIN_NAVIGATION` (qits-2297): once signed in, the app reads the edge's
+   * navigation for the platform apps on the private network, whose calls it marks for Chrome's
+   * Local Network Access and about which the shell's notice speaks.
+   */
+  'find-private-apps': 'Signing in finds which platform apps are on the private network',
+  /**
+   * `local-network-notice.ts` via `PROJECT_LIST` (qits-2297): the notice's Allow access sends one
+   * call to a private app, so Chrome's Local Network Access prompt follows the press. It is the
+   * project list's own call, whose pact interaction `list-projects` names, so no pact interaction
+   * names this slug.
+   */
+  'allow-local-network-access':
+    'Allow access on the local network notice makes the browser ask for local network access',
+  /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
    * Agents, Release Requests, Desk, Repositories, Observability, Events). Navigates only, and
    * names no pact (epic qits-2000).
