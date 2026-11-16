@@ -8969,6 +8969,82 @@
       ]
     },
     {
+      "file": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts/denied-dark.html",
+      "spec": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts",
+      "test": "LocalNetworkNotice (screenshots) > denied: how to turn local network access back on",
+      "name": "denied",
+      "kind": "ERROR",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-edge-service",
+          "state": "a signed-in caller and a private app",
+          "operationId": "getMainNavigation"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts/denied-light.html",
+      "spec": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts",
+      "test": "LocalNetworkNotice (screenshots) > denied: how to turn local network access back on",
+      "name": "denied",
+      "kind": "ERROR",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-edge-service",
+          "state": "a signed-in caller and a private app",
+          "operationId": "getMainNavigation"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts/prompt-dark.html",
+      "spec": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts",
+      "test": "LocalNetworkNotice (screenshots) > prompt: why the browser asks, and Allow access",
+      "name": "prompt",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-edge-service",
+          "state": "a signed-in caller and a private app",
+          "operationId": "getMainNavigation"
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "file": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts/prompt-light.html",
+      "spec": "src/app/patterns/platform/local-network-notice/local-network-notice.browser.spec.ts",
+      "test": "LocalNetworkNotice (screenshots) > prompt: why the browser asks, and Allow access",
+      "name": "prompt",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-edge-service",
+          "state": "a signed-in caller and a private app",
+          "operationId": "getMainNavigation"
+        }
+      ],
+      "triggers": []
+    },
+    {
       "file": "src/app/patterns/projects/project-card/project-card.browser.spec.ts/collapsed-dark.html",
       "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
       "test": "ProjectCard (screenshots) > starts collapsed, with a button to show the languages",
