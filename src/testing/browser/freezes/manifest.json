@@ -4557,6 +4557,7 @@
       "route": null,
       "records": [],
       "triggers": [
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -4572,6 +4573,7 @@
       "route": null,
       "records": [],
       "triggers": [
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -4669,6 +4671,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -4686,6 +4689,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -5080,6 +5084,42 @@
       ]
     },
     {
+      "file": "src/app/layout/shell/shell.layout.browser.spec.ts/root-sidebar-dark.html",
+      "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+      "test": "ShellLayout (screenshots) > lists the global sections, then Network access, with no project open",
+      "name": "root-sidebar",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/layout/shell/shell.layout.browser.spec.ts/root-sidebar-light.html",
+      "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+      "test": "ShellLayout (screenshots) > lists the global sections, then Network access, with no project open",
+      "name": "root-sidebar",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/slot-dark.html",
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > marks Agents current on a slot’s page, with the slot below it in the trail",
@@ -5189,6 +5229,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -5206,6 +5247,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -21467,6 +21509,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -21601,6 +21644,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -21961,6 +22005,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -22095,6 +22140,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -22455,6 +22501,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -22589,6 +22636,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -22723,6 +22771,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -22857,6 +22906,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -23001,6 +23051,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -23145,6 +23196,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -23535,6 +23587,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -23679,6 +23732,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -23813,6 +23867,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -23947,6 +24002,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -24307,6 +24363,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -24371,6 +24428,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -24430,6 +24488,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -24530,6 +24589,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -24788,6 +24848,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -24872,6 +24933,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -171707,6 +171769,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171730,6 +171793,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171791,6 +171855,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171814,6 +171879,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171831,6 +171897,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171848,6 +171915,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171891,6 +171959,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171908,6 +171977,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -171952,6 +172022,7 @@
         "follow-breadcrumb:home",
         "open-network-access:open",
         "open-project-card:project",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -172084,6 +172155,7 @@
         "follow-breadcrumb:home",
         "open-network-access:open",
         "open-project-card:project",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -172474,6 +172546,7 @@
         "follow-breadcrumb:home",
         "open-network-access:open",
         "open-project-card:project",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -172606,6 +172679,7 @@
         "follow-breadcrumb:home",
         "open-network-access:open",
         "open-project-card:project",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ],
       "dataMarks": [
@@ -172711,6 +172785,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -172728,6 +172803,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -172771,6 +172847,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -172788,6 +172865,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-network-access:open",
+        "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess"
       ]
     },
@@ -176999,6 +177077,15 @@
         "interaction": "open-project-settings",
         "outcome": "open",
         "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-idp-admin open: the sidebar’s IdP admin leaves for the idp’s admin, in this tab",
+        "route": null,
+        "interaction": "open-sidebar-idp-admin",
+        "outcome": "open",
+        "kind": "external",
         "freeze": null
       },
       {
