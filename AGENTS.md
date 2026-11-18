@@ -339,6 +339,16 @@ managed. A slot's status strip no longer names which runner it is placed on
 field it read, `workspace.runner`, is gone from what this app consumes, ahead of the service
 dropping it.
 
+With no project open, the sidebar shows its global sections in the project's sections' place
+(`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
+to no project. Today that is IdP admin (`open-sidebar-idp-admin`, qits-2319), which leaves the app
+(`external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
+(qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
+page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
+idp origin (the server render) it has no address, is hidden by class and names
+no outcome. System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry
+there with their own `outcomes(...)` exit. With a project open the list is empty.
+
 The Network access pane (epic qits-1977): `network-access` (`NetworkAccessPage`), under the shell
 with no project open, reached by the top bar's Network access link (beside the bumps menu, from
 768px) and by the sidebar's Network access entry below the project's sections, shown with or

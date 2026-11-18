@@ -171583,6 +171583,16 @@
       },
       {
         "route": null,
+        "interaction": "open-sidebar-idp-admin",
+        "outcome": "open",
+        "kind": "external",
+        "to": "idp",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-sidebar-network-access",
         "outcome": "networkAccess",
         "kind": "exit",
