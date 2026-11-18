@@ -10,14 +10,24 @@ import { provideHeyApiClient } from '../../api/ci/client/client.gen';
 import { addGoldenInteraction } from '@qits/angular/testing';
 import { ciGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
-import { ACTIVE_RUNS, REPOSITORY_RUNS, RUN_REPORT, RUN_REPORTS, RUNS_LIMIT } from './ci.operations';
+import {
+  ACTIVE_RUNS,
+  REPOSITORY_RUNS,
+  REPOSITORY_SUMMARIES,
+  RUN_REPORT,
+  RUN_REPORTS,
+  RUNS_LIMIT,
+} from './ci.operations';
 
 /**
  * qits-landing-app's pact with qits-ci-service: `pacts/qits-landing-app_qits-ci-service.json`,
  * against qits-ci's golden masters (`@qits/ci-golden-masters`), for the operations of
  * `ci.operations.ts`: a repository's newest runs (the release request page), every queued or
  * running run (the lightning menu), and a run's reports and one report's payload
- * (`app-run-reports`).
+ * (`app-run-reports`); and the project's CI page (qits-2314): every repository's summary and the
+ * active runs, in a state whose repositories are the ones qits-projects' "a project with 3
+ * repositories" lists. "no runs recorded" is not pacted: its lists are empty, which the pact would
+ * bind as exactly empty, and the provider verifies against a database other test classes share.
  *
  * Moved here from `CiRunsStore`'s and `CiReportsStore`'s pact specs when the stores went
  * (qits-2146), unchanged: the same descriptions, states, requests and bound fields. Each test runs
@@ -30,7 +40,14 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const RUNS_STATE = 'a repository with the runs of a release request';
 const ACTIVE_STATE = 'a commit with a run in flight';
 const REPORTS_STATE = 'a run with reports: failing tests and coverage';
-const OPERATIONS = ['listRuns', 'listActiveRuns', 'listRunReports', 'getRunReport'];
+const PROJECT_STATE = 'a project whose repositories have runs';
+const OPERATIONS = [
+  'listRuns',
+  'listActiveRuns',
+  'listRunReports',
+  'getRunReport',
+  'listRepositorySummaries',
+];
 
 /** What an interaction takes of an operation: its provider, operationId and `consumes`. */
 interface Bound {
@@ -109,6 +126,34 @@ describe('qits-landing-app → qits-ci-service pact', () => {
         );
       },
     ));
+
+  it('show-project-ci: the CI page reads every repository’s newest runs', () =>
+    given(PROJECT_STATE, REPOSITORY_SUMMARIES, 'show-project-ci').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => REPOSITORY_SUMMARIES.fetch({}));
+      expect(error).toBeUndefined();
+      // The list is filtered to the state's rows (`listFilteredTo`): the mock answers one row per
+      // recorded shape, each one of the recorded rows.
+      const recorded = masters.body<{
+        repositories: { repositoryId: string; lastRun: { id: string; status: string } }[];
+      }>(PROJECT_STATE, 'listRepositorySummaries');
+      const rows = recorded.repositories.map((row) => [row.repositoryId, row.lastRun.status]);
+      expect(data?.repositories?.length).toBeGreaterThan(0);
+      for (const row of data?.repositories ?? []) {
+        expect(rows).toContainEqual([row.repositoryId, row.lastRun?.status]);
+      }
+    }));
+
+  it('show-project-ci: the CI page reads the runs in flight, with their repositories', () =>
+    given(PROJECT_STATE, ACTIVE_RUNS, 'show-project-ci').executeTest(async (server) => {
+      const { data } = await at(server.url, () => ACTIVE_RUNS.fetch({}));
+      const recorded = masters.body<{ runs: { id: string; repoId: string }[] }>(
+        PROJECT_STATE,
+        'listActiveRuns',
+      );
+      expect(data?.runs?.map((run) => [run.id, run.repoId])).toEqual(
+        recorded.runs.map((run) => [run.id, run.repoId]),
+      );
+    }));
 
   it('show-release-request-reports: the page reads a run’s reports', () =>
     given(REPORTS_STATE, RUN_REPORTS, 'show-release-request-reports').executeTest(

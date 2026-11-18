@@ -153,6 +153,12 @@ export const INTERACTIONS = {
    */
   'show-release-request-active-runs': 'The lightning menu marks the requests with an active CI run',
   /**
+   * `ci-runs.page.ts` via `REPOSITORY_SUMMARIES` and `ACTIVE_RUNS` (qits-2314): the project's CI
+   * page lists each repository's newest runs, and the project's runs in flight above them.
+   */
+  'show-project-ci':
+    'A project’s CI page lists each repository’s newest runs and the runs in flight',
+  /**
    * `commit-changes.ts` via `COMMIT_CHANGES` and `COMMIT_FILE_DIFF` (qits-2146): a commit under
    * "What this release folds in", opened: its changed files and one file's patch.
    */
