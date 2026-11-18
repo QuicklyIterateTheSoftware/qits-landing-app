@@ -117,6 +117,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/desk', component: TestPage },
           { path: 'projects/:slug/repositories', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
+          { path: 'projects/:slug/observability/logs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
           { path: 'projects/:slug/setup', component: TestPage },
           { path: 'projects/:slug/workspaces/:slotId', component: TestPage },
@@ -582,6 +583,19 @@ describe('ShellLayout (screenshots)', () => {
         .toHaveAttribute('aria-current', 'true');
     });
   }
+
+  it('open-sidebar-observability-page logs: Logs below Observability opens it', async () => {
+    // On the section's page already, so its pages show below Observability.
+    const { fixture, project } = await renderProject('/observability');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Logs', exact: true });
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/observability/logs`);
+    expect(reached()).toEqual(['open-sidebar-observability-page:logs']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Observability', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+  });
 
   it('open-project-settings open: the gear opens the project’s settings, marked current there', async () => {
     const { fixture, project } = await renderProject('/work/acceptance');

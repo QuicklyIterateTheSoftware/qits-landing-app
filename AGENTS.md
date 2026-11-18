@@ -368,6 +368,22 @@ the same each run; `WIREGUARD_KEYS` is allowed in a browser spec's providers for
 recorded configs are JSON strings read as text: a browser spec answers them with
 `goldenMasterString`. qits-network-access sends no domain event, so nothing follows live.
 
+The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
+component whose pages are its children, one route per view (the errors, metrics, slow spans and
+traces pages come as their own children later); its own address redirects to `logs` by a relative
+`redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
+below it while one is open (`open-sidebar-observability-page`). `observability/logs`
+(`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
+`core/observability/observability.operations.ts` (`TELEMETRY_SOURCES`, `listTelemetrySources`;
+`TELEMETRY_LOGS`, `searchTelemetryLogs`), on the `observability` host: the SERVICE sources with
+their counts and reach (`oldestReceivedAt`), and the chosen one's lines newest first (the service
+answers oldest first, at most 200). The view lives in the query, with the retired
+qits-observability-frontend's names so its bookmarks forward as they are: `source` (a source key),
+`level` (→ `minSeverity`, absent: all), `q` (→ `query`) and `since` (minutes → `sinceMinutes`,
+absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
+`qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
+again.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -509,6 +525,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-system-service         | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
 | qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
 | qits-network-access-service | `core/network-access/peers.operations*.ts`                                                   | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
+| qits-observability-service  | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json`  | `@qits/observability-golden-masters`    |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
