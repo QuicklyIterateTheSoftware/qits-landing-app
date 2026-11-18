@@ -55,6 +55,7 @@ type SectionKey =
   | 'releaseRequests'
   | 'desk'
   | 'repositories'
+  | 'deployments'
   | 'observability'
   | 'events'
   | 'setup';
@@ -72,6 +73,8 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'release-requests'
   | 'desk'
   | 'repositories'
+  | 'deployments'
+  | 'deployments/requests'
   | 'observability'
   | 'observability/logs'
   | 'events'
@@ -400,6 +403,7 @@ export class ShellLayout {
     releaseRequests: exit('projects/:slug/release-requests'),
     desk: exit('projects/:slug/desk'),
     repositories: exit('projects/:slug/repositories'),
+    deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
     events: exit('projects/:slug/events'),
   });
@@ -411,6 +415,11 @@ export class ShellLayout {
     inProgress: exit('projects/:slug/work/in-progress'),
     acceptance: exit('projects/:slug/work/acceptance'),
     archive: exit('projects/:slug/work/archive'),
+  });
+
+  /** The Deployments pages below Deployments in the sidebar, one exit per page (qits-2315). */
+  private readonly deploymentsPages = outcomes('open-sidebar-deployments-page', {
+    requests: exit('projects/:slug/deployments/requests'),
   });
 
   /** The Observability pages below Observability in the sidebar, one exit per page (qits-2313). */
@@ -559,6 +568,16 @@ export class ShellLayout {
       },
       link('desk', 'Desk', sections.desk),
       link('repositories', 'Repositories', sections.repositories),
+      {
+        ...link('deployments', 'Deployments', sections.deployments),
+        children: [
+          {
+            label: 'Requests',
+            exit: this.deploymentsPages.requests,
+            path: this.deploymentsPages.requests.url(params),
+          },
+        ],
+      },
       {
         ...link('observability', 'Observability', sections.observability),
         children: [

@@ -170,6 +170,10 @@ export const networkAccessGoldenMaster = <T = any>(state: string, operationId: s
 export const edgeGoldenMaster = <T = any>(state: string, operationId: string): T =>
   edgeGoldenMasters.body<T>(state, operationId);
 
+/** The body qits-deployments recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const deploymentsGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  deploymentsGoldenMasters.body<T>(state, operationId);
+
 /** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>
   ciGoldenMasters.body<T>(state, operationId);

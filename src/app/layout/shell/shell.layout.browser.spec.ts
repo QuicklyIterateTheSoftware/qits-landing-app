@@ -122,6 +122,8 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
           { path: 'projects/:slug/desk', component: TestPage },
           { path: 'projects/:slug/repositories', component: TestPage },
+          { path: 'projects/:slug/deployments', component: TestPage },
+          { path: 'projects/:slug/deployments/requests', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
           { path: 'projects/:slug/observability/logs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
@@ -341,6 +343,7 @@ describe('ShellLayout (screenshots)', () => {
       'Release Requests',
       'Desk',
       'Repositories',
+      'Deployments',
       'Observability',
       'Events',
       // The platform's pages, below the project's sections (qits-2262).
@@ -551,6 +554,7 @@ describe('ShellLayout (screenshots)', () => {
     { label: /^Release Requests/, segment: 'release-requests', outcome: 'releaseRequests' },
     { label: 'Desk', segment: 'desk', outcome: 'desk' },
     { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
+    { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
     { label: 'Events', segment: 'events', outcome: 'events' },
   ] as const;
@@ -593,6 +597,19 @@ describe('ShellLayout (screenshots)', () => {
         .toHaveAttribute('aria-current', 'true');
     });
   }
+
+  it('open-sidebar-deployments-page requests: Requests below Deployments opens it', async () => {
+    // On the section's page already, so its pages show below Deployments.
+    const { fixture, project } = await renderProject('/deployments');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Requests', exact: true });
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/deployments/requests`);
+    expect(reached()).toEqual(['open-sidebar-deployments-page:requests']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Deployments', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+  });
 
   it('open-sidebar-observability-page logs: Logs below Observability opens it', async () => {
     // On the section's page already, so its pages show below Observability.
