@@ -88,7 +88,7 @@ export const observabilityGoldenMasters = goldenMasters(
   'qits-observability',
 );
 
-/** qits-deployments' golden masters (qits-2315: a project's deployment requests), from its npm package. */
+/** qits-deployments' golden masters (qits-2315: a project's deployment requests), from npm. */
 export const deploymentsGoldenMasters = goldenMasters(
   '@qits/deployments-golden-masters',
   'qits-deployments',
@@ -102,13 +102,18 @@ export const deploymentsGoldenMasters = goldenMasters(
 export const idpGoldenMasters = goldenMasters('@qits/idp-golden-masters', 'qits-idp');
 
 /**
- * Whether the installed `@qits/projects-golden-masters` records `operationId` in `state`. A spec of
- * a case the provider records from a later release than the pinned one skips itself until
- * qits-maintenance bumps the pin (`it.skipIf(!isRecorded(…))`), as the pact specs' interactions do.
+ * Whether the installed golden masters of `masters` (`@qits/projects-golden-masters` unless given)
+ * record `operationId` in `state`. A spec of a case the provider records from a later release than
+ * the pinned one skips itself until qits-maintenance bumps the pin (`it.skipIf(!isRecorded(…))`),
+ * as the pact specs' interactions do.
  */
-export function isRecorded(state: string, operationId: string): boolean {
+export function isRecorded(
+  state: string,
+  operationId: string,
+  masters: GoldenMasters = projectsGoldenMasters,
+): boolean {
   try {
-    projectsGoldenMasters.operation(state, operationId);
+    masters.operation(state, operationId);
     return true;
   } catch {
     return false;
