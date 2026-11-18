@@ -12,7 +12,8 @@ import { provideHeyApiClient } from '../../api/events/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { eventsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { RECENT_EVENTS } from './events.consumes';
-import { RECENT_EVENTS_LIST } from './events.operations';
+import { EVENT_NAMES, PROJECT_EVENTS_LIST, RECENT_EVENTS_LIST } from './events.operations';
+import { NO_FILTER, projectEventsQuery } from './project-events';
 
 /**
  * qits-landing-app's pact with qits-events-service (epic qits-112), in
@@ -24,6 +25,12 @@ import { RECENT_EVENTS_LIST } from './events.operations';
  *
  * The empty list has an interaction too ("no events"): the menu's screenshot of it shows that
  * recorded body, and every body a screenshot shows is one the provider verifies.
+ *
+ * A project's Events page (qits-2312) reads its events (`PROJECT_EVENTS_LIST`, the query
+ * `projectEventsQuery` builds: `attr=projectid=<id>&order=desc&limit=50`, plus `name` once types
+ * are chosen) in the states "a project with recent events", "…, filtered by name" and "a project
+ * with no events", and the type filter's choices (`EVENT_NAMES`) in "events of two names". The
+ * project id in the query is the state's `projectId`, a provider-state expression.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
@@ -65,6 +72,11 @@ const given = (
   });
 };
 
+/** The project the "a project with recent events" states record (their `projectId` param). */
+const PROJECT_ID = '00000000-0000-4000-8000-000000000005';
+/** The project "a project with no events" records. */
+const EMPTY_PROJECT_ID = '00000000-0000-4000-8000-000000000001';
+
 /** The menu's request: the newest {@link RECENT_EVENTS}. */
 const NEWEST = { query: { limit: String(RECENT_EVENTS) } };
 
@@ -87,6 +99,47 @@ describe('qits-landing-app → qits-events-service pact: the notifications menu�
         expect(events.every((event) => (event.name ?? '').length > 0)).toBe(true);
       },
     ));
+
+  it('show-project-events: the project’s newest events, its own only', () =>
+    given(PROJECT_EVENTS_LIST, 'a project with recent events', 'show-project-events').executeTest(
+      async (server) => {
+        const query = projectEventsQuery(PROJECT_ID, NO_FILTER, Date.now());
+        const { data } = await at(server.url, () => PROJECT_EVENTS_LIST.fetch({ query }));
+        const events = data?.events ?? [];
+        expect(events.length).toBeGreaterThan(0);
+        expect(events.every((event) => (event.payload ?? '').includes(PROJECT_ID))).toBe(true);
+        expect(data?.nextCursor).toBeNull();
+      },
+    ));
+
+  it('filter-project-events: the project’s events of the chosen type', () =>
+    given(
+      PROJECT_EVENTS_LIST,
+      'a project with recent events, filtered by name',
+      'filter-project-events',
+    ).executeTest(async (server) => {
+      const names = ['ReleaseRequestStateChanged'];
+      const query = projectEventsQuery(PROJECT_ID, { ...NO_FILTER, names }, Date.now());
+      const { data } = await at(server.url, () => PROJECT_EVENTS_LIST.fetch({ query }));
+      const events = data?.events ?? [];
+      expect(events.length).toBeGreaterThan(0);
+      expect(events.every((event) => event.name === 'ReleaseRequestStateChanged')).toBe(true);
+    }));
+
+  it('show-project-events: an empty list when the project has no events', () =>
+    given(PROJECT_EVENTS_LIST, 'a project with no events', 'show-project-events').executeTest(
+      async (server) => {
+        const query = projectEventsQuery(EMPTY_PROJECT_ID, NO_FILTER, Date.now());
+        const { data } = await at(server.url, () => PROJECT_EVENTS_LIST.fetch({ query }));
+        expect(data?.events).toEqual([]);
+      },
+    ));
+
+  it('show-event-names: every stored event name', () =>
+    given(EVENT_NAMES, 'events of two names', 'show-event-names').executeTest(async (server) => {
+      const { data } = await at(server.url, () => EVENT_NAMES.fetch({}));
+      expect(data?.names?.length).toBeGreaterThan(0);
+    }));
 
   it('open-notifications: an empty list when there are no events', () =>
     given(RECENT_EVENTS_LIST, 'no events', 'open-notifications').executeTest(async (server) => {

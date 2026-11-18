@@ -11,6 +11,7 @@ export type CreateEventRequest = {
     description?: string;
     parentId?: string;
     environment?: string;
+    publisher: string;
 };
 
 export type EventDto = {
@@ -23,6 +24,7 @@ export type EventDto = {
     environment?: string;
     createdAt?: Instant;
     updatedAt?: Instant;
+    publisher?: string;
 };
 
 export type Instant = string;
@@ -34,6 +36,7 @@ export type PublishEventRequest = {
     description?: string;
     parentId?: string;
     environment?: string;
+    publisher: string;
 };
 
 export type Response = {
@@ -98,14 +101,14 @@ export type ListEventsResponses = {
 
 export type ListEventsResponse = ListEventsResponses[keyof ListEventsResponses];
 
-export type PostEventsApiEventsData = {
+export type CreateEventData = {
     body: CreateEventRequest;
     path?: never;
     query?: never;
     url: '/events/api/events';
 };
 
-export type PostEventsApiEventsErrors = {
+export type CreateEventErrors = {
     /**
      * Bad Request
      */
@@ -120,23 +123,23 @@ export type PostEventsApiEventsErrors = {
     403: unknown;
 };
 
-export type PostEventsApiEventsResponses = {
+export type CreateEventResponses = {
     /**
      * OK
      */
     200: Response5;
 };
 
-export type PostEventsApiEventsResponse = PostEventsApiEventsResponses[keyof PostEventsApiEventsResponses];
+export type CreateEventResponse = CreateEventResponses[keyof CreateEventResponses];
 
-export type GetEventsApiEventsNamesData = {
+export type ListEventNamesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/events/api/events/names';
 };
 
-export type GetEventsApiEventsNamesErrors = {
+export type ListEventNamesErrors = {
     /**
      * Not Authorized
      */
@@ -147,16 +150,16 @@ export type GetEventsApiEventsNamesErrors = {
     403: unknown;
 };
 
-export type GetEventsApiEventsNamesResponses = {
+export type ListEventNamesResponses = {
     /**
      * OK
      */
     200: Response1;
 };
 
-export type GetEventsApiEventsNamesResponse = GetEventsApiEventsNamesResponses[keyof GetEventsApiEventsNamesResponses];
+export type ListEventNamesResponse = ListEventNamesResponses[keyof ListEventNamesResponses];
 
-export type DeleteEventsApiEventsByIdData = {
+export type DeleteEventData = {
     body?: never;
     path: {
         id: string;
@@ -165,7 +168,7 @@ export type DeleteEventsApiEventsByIdData = {
     url: '/events/api/events/{id}';
 };
 
-export type DeleteEventsApiEventsByIdErrors = {
+export type DeleteEventErrors = {
     /**
      * Not Authorized
      */
@@ -176,16 +179,16 @@ export type DeleteEventsApiEventsByIdErrors = {
     403: unknown;
 };
 
-export type DeleteEventsApiEventsByIdResponses = {
+export type DeleteEventResponses = {
     /**
      * OK
      */
     200: Response4;
 };
 
-export type DeleteEventsApiEventsByIdResponse = DeleteEventsApiEventsByIdResponses[keyof DeleteEventsApiEventsByIdResponses];
+export type DeleteEventResponse = DeleteEventResponses[keyof DeleteEventResponses];
 
-export type GetEventsApiEventsByIdData = {
+export type GetEventData = {
     body?: never;
     path: {
         id: string;
@@ -194,7 +197,7 @@ export type GetEventsApiEventsByIdData = {
     url: '/events/api/events/{id}';
 };
 
-export type GetEventsApiEventsByIdErrors = {
+export type GetEventErrors = {
     /**
      * Not Authorized
      */
@@ -205,16 +208,16 @@ export type GetEventsApiEventsByIdErrors = {
     403: unknown;
 };
 
-export type GetEventsApiEventsByIdResponses = {
+export type GetEventResponses = {
     /**
      * OK
      */
     200: Response3;
 };
 
-export type GetEventsApiEventsByIdResponse = GetEventsApiEventsByIdResponses[keyof GetEventsApiEventsByIdResponses];
+export type GetEventResponse = GetEventResponses[keyof GetEventResponses];
 
-export type PutEventsApiEventsByIdData = {
+export type PublishEventData = {
     body: PublishEventRequest;
     path: {
         id: string;
@@ -223,7 +226,7 @@ export type PutEventsApiEventsByIdData = {
     url: '/events/api/events/{id}';
 };
 
-export type PutEventsApiEventsByIdErrors = {
+export type PublishEventErrors = {
     /**
      * Bad Request
      */
@@ -238,16 +241,16 @@ export type PutEventsApiEventsByIdErrors = {
     403: unknown;
 };
 
-export type PutEventsApiEventsByIdResponses = {
+export type PublishEventResponses = {
     /**
      * OK
      */
     200: Response;
 };
 
-export type PutEventsApiEventsByIdResponse = PutEventsApiEventsByIdResponses[keyof PutEventsApiEventsByIdResponses];
+export type PublishEventResponse = PublishEventResponses[keyof PublishEventResponses];
 
-export type GetEventsApiStreamData = {
+export type StreamEventsData = {
     body?: never;
     path?: never;
     query?: {
@@ -256,7 +259,7 @@ export type GetEventsApiStreamData = {
     url: '/events/api/stream';
 };
 
-export type GetEventsApiStreamErrors = {
+export type StreamEventsErrors = {
     /**
      * Not Authorized
      */
@@ -267,11 +270,11 @@ export type GetEventsApiStreamErrors = {
     403: unknown;
 };
 
-export type GetEventsApiStreamResponses = {
+export type StreamEventsResponses = {
     /**
      * An open SSE stream. Each event carries the event id in its id: field and the EventCreated envelope's JSON in its data: field; comment lines mark the open and keep the connection alive. The body never ends.
      */
     200: string;
 };
 
-export type GetEventsApiStreamResponse = GetEventsApiStreamResponses[keyof GetEventsApiStreamResponses];
+export type StreamEventsResponse = StreamEventsResponses[keyof StreamEventsResponses];

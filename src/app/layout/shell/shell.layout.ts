@@ -1,6 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { exit, itemMark, outcomes, QitsExit, sourceMark, type ExitOutcome } from '@qits/angular';
+import {
+  exit,
+  external,
+  itemMark,
+  outcomes,
+  QitsExit,
+  QitsTriggers,
+  sourceMark,
+  type ExitOutcome,
+  type ExternalOutcome,
+} from '@qits/angular';
 import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { PROJECT_LIST, PROJECT_RELEASE_REQUESTS } from '$core/projects/projects.operations';
 import {
@@ -12,6 +22,7 @@ import {
 } from '$core/projects/release-requests';
 import type { ReleaseRequestEntry } from '$core/projects/projects.consumes';
 import { SelectedProject } from '$core/projects/selected-project';
+import { PlatformOrigins } from '$core/platform/platform-origins';
 import { loadState } from '$core/resources/load-state';
 import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
 import { LIST_PROJECT_ACTIVE_AGENTS } from '$core/workspaces/agents.operations';
@@ -82,6 +93,18 @@ export interface NavChild extends NavPage {
   readonly exit: ProjectPageExit;
 }
 
+/**
+ * One of the sidebar's global sections, shown while no project is open: a platform page that
+ * belongs to no project. It leaves the app for `href`, through its own declared outcome.
+ */
+export interface GlobalLink {
+  readonly label: string;
+  /** Where the entry leads; `''` while it is not known (the server render), and then hidden. */
+  readonly href: string;
+  /** Its `external(...)` outcome, which records and then leaves for `href`. */
+  readonly open: ExternalOutcome;
+}
+
 /** The line below a sidebar entry's label. */
 export interface NavNote {
   readonly text: string;
@@ -107,10 +130,10 @@ export interface NavNote {
  * Below 768px the top bar's padding and gaps tighten, so on a phone the trail keeps room for its
  * "…" and the current page beside the burger and all five menus. The network-access link is the
  * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977); there
- * the sidebar's own Network access entry (qits-2262), below the project's sections and shown with
- * no project open too, leads to it. The theme menu (qits-2086) is the seventh and shows from 768px
- * only for the same reason; below 768px the same radios (`app-theme-choices`) sit at the foot of
- * the burger's navigation.
+ * the sidebar's own Network access entry (qits-2262), below the project's sections (or, with no
+ * project open, below the global sections) and shown in both cases, leads to it. The theme menu
+ * (qits-2086) is the seventh and shows from 768px only for the same reason; below 768px the same
+ * radios (`app-theme-choices`) sit at the foot of the burger's navigation.
  *
  * Who scrolls (qits-2050): from 768px up the shell is exactly the window's height and the window
  * never scrolls; the sidebar and the page (`<main>`) each scroll on their own, with their own
@@ -125,13 +148,14 @@ export interface NavNote {
  * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry) and its Network access entry
- * (`open-sidebar-network-access`), the gear (`open-project-settings`), the network icon
- * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`), handed to
- * `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare their own,
- * being patterns (app-wide too). The gear, the network icon, the sidebar's Network access and a
- * work page are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true`
- * while one of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]`
- * through `[exitCurrent]` (qits-2064).
+ * (`open-sidebar-network-access`), the global sections shown with no project open (IdP admin,
+ * `open-sidebar-idp-admin`, which leaves the app for the idp's own admin), the gear
+ * (`open-project-settings`), the network icon (`open-network-access`), and the trail's brand and
+ * crumbs (`follow-breadcrumb`), handed to `ui-breadcrumbs` as each crumb's exit and params. The
+ * agents and release menus declare their own, being patterns (app-wide too). The gear, the network
+ * icon, the sidebar's Network access and a work page are marked current by `[qitsExit]`; a section
+ * keeps its own rule (`currentOf`: `true` while one of its pages below it is open, and Agents on a
+ * slot's page), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
@@ -153,6 +177,7 @@ export interface NavNote {
     AgentsMenu,
     Breadcrumbs,
     QitsExit,
+    QitsTriggers,
     RouterOutlet,
     BumpsMenu,
     FinishToasts,
@@ -260,6 +285,23 @@ export interface NavNote {
         [class.hidden]="!navOpen()"
         aria-label="qits"
       >
+        <!-- With no project open, the global sections in its place (System, Mirror, ... as they
+             come): each leaves the app, so it is a real link that records its outcome first. The
+             list and an entry with no address yet (the server render) are
+             switched by class; such an entry names no outcome, being a trigger nobody can reach. -->
+        <ul class="m-0 list-none px-2 py-3" [class.hidden]="!globalShown()">
+          @for (link of globalLinks(); track link.label) {
+            <li [class.hidden]="!link.href">
+              <a
+                class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted"
+                [attr.href]="link.href || null"
+                [qitsTriggers]="link.href ? [link.open] : []"
+                (click)="leave($event, link)"
+                >{{ link.label }}</a
+              >
+            </li>
+          }
+        </ul>
         <!-- The open project's sections; switched by class while there are none. -->
         <ul class="m-0 list-none px-2 py-3" [class.hidden]="links().length === 0">
           @for (link of links(); track link.key) {
@@ -314,8 +356,8 @@ export interface NavNote {
              also the phone's way there, where the top bar's icon does not show. -->
         <ul
           class="m-0 list-none px-2 py-3"
-          [class.border-t]="links().length > 0"
-          [class.border-line]="links().length > 0"
+          [class.border-t]="links().length > 0 || globalShown()"
+          [class.border-line]="links().length > 0 || globalShown()"
         >
           <li>
             <a
@@ -402,6 +444,35 @@ export class ShellLayout {
   protected readonly platformPages = outcomes('open-sidebar-network-access', {
     networkAccess: exit('network-access'),
   });
+
+  /**
+   * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
+   * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
+   * (owner, 2026-11-18). Same tab.
+   */
+  protected readonly idpAdmin = outcomes('open-sidebar-idp-admin', {
+    open: external('idp'),
+  });
+
+  /** The idp's page origin; `''` on the server render. */
+  private readonly idpOrigin = inject(PlatformOrigins).page('idp');
+
+  /** The idp admin's address: `<idp origin>/idp/`, or none while the origin is not known. */
+  private readonly idpAdminHref = this.idpOrigin ? `${this.idpOrigin}/idp/` : '';
+
+  /**
+   * The sidebar's global sections: where the sections that belong to no project go, shown in the
+   * project's sections' place while no project is open, and not at all while one is. IdP admin
+   * (qits-2319) is the first; System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359)
+   * will each add one entry here, with its own `outcomes(...)` exit.
+   */
+  protected readonly globalLinks = computed((): readonly GlobalLink[] => {
+    if (this.selected.slug() !== undefined) return [];
+    return [{ label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open }];
+  });
+
+  /** Whether any global section has an address, so the list shows. */
+  protected readonly globalShown = computed(() => this.globalLinks().some((link) => link.href));
 
   /**
    * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
@@ -608,6 +679,13 @@ export class ShellLayout {
 
   protected closeNav(): void {
     this.navOpen.set(false);
+  }
+
+  /** A global section's click: records its outcome and leaves for its address, in this tab. */
+  protected leave(event: MouseEvent, link: GlobalLink): void {
+    event.preventDefault();
+    link.open.leave(link.href);
+    this.closeNav();
   }
 }
 
