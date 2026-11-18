@@ -321,6 +321,27 @@ export const INTERACTIONS = {
    */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /**
+   * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
+   * project's newest events (`attr=projectid=…`, newest first, fifty at a time).
+   */
+  'show-project-events': 'The Events page lists the open project’s newest domain events',
+  /**
+   * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): choosing event types on the
+   * Events page lists the project's events of those names only (`name=…`).
+   */
+  'filter-project-events': 'Choosing event types on the Events page narrows the list to them',
+  /**
+   * `project-events.page.ts` via `EVENT_NAMES` (qits-2312): the Events page's type filter offers
+   * every stored event name.
+   */
+  'show-event-names': 'The Events page’s type filter offers every stored event name',
+  /**
+   * `project-events.page.ts`: a release request or a work item an event names opens its page.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-project-event-subject':
+    'A release request or work item an event names on the Events page opens its page',
+  /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
    */

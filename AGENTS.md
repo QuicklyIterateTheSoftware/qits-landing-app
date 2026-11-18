@@ -368,6 +368,17 @@ the same each run; `WIREGUARD_KEYS` is allowed in a browser spec's providers for
 recorded configs are JSON strings read as text: a browser spec answers them with
 `goldenMasterString`. qits-network-access sends no domain event, so nothing follows live.
 
+A project's Events page (qits-2312, `projects/<slug>/events`, `ProjectEventsPage`) reads the
+project's events through its own `qitsResource` over `PROJECT_EVENTS_LIST` (`listEvents` with
+`attr=projectid=<id>&order=desc&limit=50`, plus `name`, `since`, `q`, further `attr`s and `cursor`
+only when a filter sets them; built by `projectEventsQuery` in `core/events/project-events.ts`),
+"Load older" through its `fetch` by `nextCursor`, and the type filter's names through `EVENT_NAMES`
+(`listEventNames`). Live frames come through `DomainEvents` and are put at the top when
+`matchesProjectEvents` lets them through (the project by `payloadIds().projectIds`, which reads
+`entities[].projectId` too); none while "until" is set, held while paused. A row names what the
+payload concerns (`eventSubjects`) and links a release request and a work item
+(`open-project-event-subject`); an agent is named, not linked, as no recording names one.
+
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
 
@@ -670,7 +681,7 @@ because golden-recordings re-runs only when a golden-master pin moves. A run fil
 (`-t`, `.only`) replaces a spec's section with what those tests showed, so run whole spec files
 before keeping a ledger change.
 
-A page that answers no backend request (`events`, `observability` today) has no section. Never edit
+A page that answers no backend request (`observability` today) has no section. Never edit
 the ledger by hand: QA re-runs the browser suite and fails a ledger that differs from what it writes
 as stale `screenshot-baselines`, and the pact specs fail a pact whose routes differ from the ledger.
 Either is fixed by running the generator, not by editing its output: `qits release-request

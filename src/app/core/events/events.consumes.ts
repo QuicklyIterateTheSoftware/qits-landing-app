@@ -1,4 +1,4 @@
-import type { ListEventsResponses } from '../../api/events';
+import type { ListEventNamesResponses, ListEventsResponses } from '../../api/events';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -30,3 +30,34 @@ export const LIST_EVENTS = [
 export type EventEntry = NonNullable<
   Consumed<ListEventsResponses[200], typeof LIST_EVENTS>['events']
 >[number];
+
+/** How many events a project's Events page reads at a time (qits-2312): one page, `limit=50`. */
+export const PROJECT_EVENTS_PAGE = 50;
+
+/**
+ * `PROJECT_EVENTS_LIST`: a project's events, newest first, one page at a time (qits-2312). Each row
+ * shows the event's name and when it happened, what it concerns (read from its `payload`), and,
+ * opened, the whole envelope: its `publisher`, `environment` and `parentId` too. `nextCursor` is
+ * the next (older) page's cursor, null on the last.
+ */
+export const LIST_PROJECT_EVENTS = [
+  'events[].id',
+  'events[].name',
+  'events[].occurredAt',
+  'events[].payload',
+  'events[].publisher',
+  'events[].environment',
+  'events[].parentId',
+  'nextCursor',
+] as const;
+
+/** One of a project's events, cut to what the Events page reads. */
+export type ProjectEventEntry = NonNullable<
+  Consumed<ListEventsResponses[200], typeof LIST_PROJECT_EVENTS>['events']
+>[number];
+
+/** `EVENT_NAMES`: every event name qits-events has stored, the Events page's type filter. */
+export const LIST_EVENT_NAMES = ['names'] as const;
+
+/** The names' answer, cut to what the type filter reads. */
+export type EventNames = Consumed<ListEventNamesResponses[200], typeof LIST_EVENT_NAMES>;

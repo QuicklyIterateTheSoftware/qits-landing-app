@@ -44691,10 +44691,10 @@
       ]
     },
     {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-desktop-dark.html",
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank",
+      "test": "ProjectEventsPage (screenshots) > says so when no event of the project matches",
+      "name": "empty",
       "kind": "NO_DATA",
       "viewport": "DESKTOP",
       "colorScheme": "DARK",
@@ -44702,6 +44702,16 @@
       "route": "projects/:slug/events",
       "records": [
         {
+          "provider": "qits-events-service",
+          "state": "a project with no events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -44738,10 +44748,10 @@
       ]
     },
     {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-desktop-light.html",
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-desktop-light.html",
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank",
+      "test": "ProjectEventsPage (screenshots) > says so when no event of the project matches",
+      "name": "empty",
       "kind": "NO_DATA",
       "viewport": "DESKTOP",
       "colorScheme": "LIGHT",
@@ -44749,6 +44759,16 @@
       "route": "projects/:slug/events",
       "records": [
         {
+          "provider": "qits-events-service",
+          "state": "a project with no events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -44785,112 +44805,26 @@
       ]
     },
     {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-menu-agents-desktop-dark.html",
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-phone-dark.html",
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank-menu-agents",
-      "kind": "NO_DATA",
-      "viewport": "DESKTOP",
-      "colorScheme": "DARK",
-      "colorSchemeReason": null,
-      "route": "projects/:slug/events",
-      "records": [
-        {
-          "provider": "qits-projects-service",
-          "state": "a project exists",
-          "operationId": "listProjects"
-        },
-        {
-          "provider": "qits-projects-service",
-          "state": "a project with no release requests",
-          "operationId": "listProjectReleaseRequests"
-        }
-      ],
-      "triggers": [
-        "follow-breadcrumb:home",
-        "follow-breadcrumb:project",
-        "follow-breadcrumb:projects",
-        "open-all-agents:agents",
-        "open-network-access:open",
-        "open-project-settings:open",
-        "open-sidebar-network-access:networkAccess",
-        "open-sidebar-section:agents",
-        "open-sidebar-section:desk",
-        "open-sidebar-section:events",
-        "open-sidebar-section:ideas",
-        "open-sidebar-section:observability",
-        "open-sidebar-section:releaseRequests",
-        "open-sidebar-section:repositories",
-        "open-sidebar-section:work"
-      ],
-      "dataMarks": [
-        {
-          "source": "qits-projects-service#listProjects",
-          "item": "id=00000000-0000-4000-8000-000000000001",
-          "field": "name",
-          "derived": []
-        }
-      ]
-    },
-    {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-menu-agents-desktop-light.html",
-      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank-menu-agents",
-      "kind": "NO_DATA",
-      "viewport": "DESKTOP",
-      "colorScheme": "LIGHT",
-      "colorSchemeReason": null,
-      "route": "projects/:slug/events",
-      "records": [
-        {
-          "provider": "qits-projects-service",
-          "state": "a project exists",
-          "operationId": "listProjects"
-        },
-        {
-          "provider": "qits-projects-service",
-          "state": "a project with no release requests",
-          "operationId": "listProjectReleaseRequests"
-        }
-      ],
-      "triggers": [
-        "follow-breadcrumb:home",
-        "follow-breadcrumb:project",
-        "follow-breadcrumb:projects",
-        "open-all-agents:agents",
-        "open-network-access:open",
-        "open-project-settings:open",
-        "open-sidebar-network-access:networkAccess",
-        "open-sidebar-section:agents",
-        "open-sidebar-section:desk",
-        "open-sidebar-section:events",
-        "open-sidebar-section:ideas",
-        "open-sidebar-section:observability",
-        "open-sidebar-section:releaseRequests",
-        "open-sidebar-section:repositories",
-        "open-sidebar-section:work"
-      ],
-      "dataMarks": [
-        {
-          "source": "qits-projects-service#listProjects",
-          "item": "id=00000000-0000-4000-8000-000000000001",
-          "field": "name",
-          "derived": []
-        }
-      ]
-    },
-    {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-phone-dark.html",
-      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank",
+      "test": "ProjectEventsPage (screenshots) > says so when no event of the project matches",
+      "name": "empty",
       "kind": "NO_DATA",
       "viewport": "PHONE",
       "colorScheme": "DARK",
       "colorSchemeReason": null,
       "route": "projects/:slug/events",
       "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with no events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -44915,16 +44849,26 @@
       ]
     },
     {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-phone-light.html",
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-phone-light.html",
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank",
+      "test": "ProjectEventsPage (screenshots) > says so when no event of the project matches",
+      "name": "empty",
       "kind": "NO_DATA",
       "viewport": "PHONE",
       "colorScheme": "LIGHT",
       "colorSchemeReason": null,
       "route": "projects/:slug/events",
       "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with no events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -44949,16 +44893,26 @@
       ]
     },
     {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-tablet-dark.html",
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-tablet-dark.html",
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank",
+      "test": "ProjectEventsPage (screenshots) > says so when no event of the project matches",
+      "name": "empty",
       "kind": "NO_DATA",
       "viewport": "TABLET",
       "colorScheme": "DARK",
       "colorSchemeReason": null,
       "route": "projects/:slug/events",
       "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with no events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -44996,16 +44950,26 @@
       ]
     },
     {
-      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-tablet-light.html",
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-tablet-light.html",
       "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
-      "test": "ProjectEventsPage (screenshots) > shows the blank page",
-      "name": "blank",
+      "test": "ProjectEventsPage (screenshots) > says so when no event of the project matches",
+      "name": "empty",
       "kind": "NO_DATA",
       "viewport": "TABLET",
       "colorScheme": "LIGHT",
       "colorSchemeReason": null,
       "route": "projects/:slug/events",
       "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with no events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -45034,6 +44998,3166 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered-detail",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "id",
+            "name",
+            "occurredAt",
+            "publisher",
+            "environment",
+            "parentId",
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered-detail",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "id",
+            "name",
+            "occurredAt",
+            "publisher",
+            "environment",
+            "parentId",
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered-detail",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "id",
+            "name",
+            "occurredAt",
+            "publisher",
+            "environment",
+            "parentId",
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered-detail",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "id",
+            "name",
+            "occurredAt",
+            "publisher",
+            "environment",
+            "parentId",
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered-detail",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "id",
+            "name",
+            "occurredAt",
+            "publisher",
+            "environment",
+            "parentId",
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered-detail",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "id",
+            "name",
+            "occurredAt",
+            "publisher",
+            "environment",
+            "parentId",
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > narrows the list to a chosen type, and opens a row to the whole event",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events, filtered by name",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+      "test": "ProjectEventsPage (screenshots) > lists the project’s events, newest first, with what each concerns",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/events",
+      "records": [
+        {
+          "provider": "qits-events-service",
+          "state": "a project with recent events",
+          "operationId": "listEvents"
+        },
+        {
+          "provider": "qits-events-service",
+          "state": "events of two names",
+          "operationId": "listEventNames"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-event-subject:releaseRequest",
+        "open-project-event-subject:workItem",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-events-service#listEvents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "occurredAt"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "payload"
+          ]
+        },
+        {
+          "source": "qits-events-service#listEvents",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "name",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -169633,14 +172757,44 @@
       "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/loading-tablet-light.html"
     ],
     "projects/:slug/events": [
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-desktop-dark.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-desktop-light.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-menu-agents-desktop-dark.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-menu-agents-desktop-light.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-phone-dark.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-phone-light.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-tablet-dark.html",
-      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/blank-tablet-light.html"
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-phone-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-phone-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-tablet-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/error-tablet-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-phone-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-phone-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-tablet-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-detail-tablet-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-phone-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-phone-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-tablet-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/filtered-tablet-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-phone-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-phone-light.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-tablet-dark.html",
+      "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/populated-tablet-light.html"
     ],
     "projects/:slug/ideas": [
       "src/app/routes/projects/[slug]/ideas/project-ideas.page.browser.spec.ts/error-desktop-dark.html",
@@ -170630,6 +173784,26 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/desk/project-desk.page.ts"
+      },
+      {
+        "route": "projects/:slug/events",
+        "interaction": "open-project-event-subject",
+        "outcome": "releaseRequest",
+        "kind": "exit",
+        "to": "projects/:slug/release-requests/:requestId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/events/project-events.page.ts"
+      },
+      {
+        "route": "projects/:slug/events",
+        "interaction": "open-project-event-subject",
+        "outcome": "workItem",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/events/project-events.page.ts"
       },
       {
         "route": "projects/:slug/ideas",
@@ -172659,6 +175833,24 @@
         "test": "ProjectDeskPage (screenshots) > open-desk-line workItem: the line’s item “contract-00000001-1580” opens its page",
         "route": "projects/:slug/desk",
         "interaction": "open-desk-line",
+        "outcome": "workItem",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+        "test": "ProjectEventsPage (screenshots) > open-project-event-subject releaseRequest: a request a row names opens its page",
+        "route": "projects/:slug/events",
+        "interaction": "open-project-event-subject",
+        "outcome": "releaseRequest",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts",
+        "test": "ProjectEventsPage (screenshots) > open-project-event-subject workItem: a work item a row names opens its page",
+        "route": "projects/:slug/events",
+        "interaction": "open-project-event-subject",
         "outcome": "workItem",
         "kind": "exit",
         "freeze": null

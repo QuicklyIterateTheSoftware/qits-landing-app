@@ -12,6 +12,183 @@
           },
           "qits-trigger": {
             "app": "qits-landing-app",
+            "interaction": "filter-project-events",
+            "kind": "ui",
+            "route": "projects/:slug/events"
+          }
+        }
+      },
+      "description": "filter-project-events: listEvents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with recent events, filtered by name",
+          "params": {
+            "buildEventId": "00000000-0000-4000-8000-000000000001",
+            "commitEventId": "00000000-0000-4000-8000-000000000002",
+            "otherProjectEventId": "00000000-0000-4000-8000-000000000003",
+            "otherProjectId": "00000000-0000-4000-8000-000000000004",
+            "projectId": "00000000-0000-4000-8000-000000000005",
+            "releaseRequestEventId": "00000000-0000-4000-8000-000000000006",
+            "ticketEventId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "attr": {
+              "expression": "projectid=${projectId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "attr": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events",
+        "query": {
+          "attr": [
+            "projectid=00000000-0000-4000-8000-000000000005"
+          ],
+          "limit": [
+            "50"
+          ],
+          "name": [
+            "ReleaseRequestStateChanged"
+          ],
+          "order": [
+            "desc"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "events": [
+              {
+                "environment": "dev",
+                "id": "00000000-0000-4000-8000-000000000006",
+                "name": "ReleaseRequestStateChanged",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "parentId": null,
+                "payload": "{\"backingBranch\":\"release/qits-ci-service-rr-12\",\"branches\":[\"main\"],\"changedAt\":\"2026-01-01T00:00:00Z\",\"mergedSha\":\"0123456789abcdef0123456789abcdef01234567\",\"previousState\":\"PENDING\",\"projectId\":\"00000000-0000-4000-8000-000000000005\",\"releaseRequestId\":\"00000000-0000-4000-8000-000000000008\",\"releaseRequestQualifiedId\":\"qits-ci-service-rr-12\",\"repoId\":\"00000000-0000-4000-8000-000000000009\",\"repoName\":\"qits-ci-service\",\"state\":\"READY\",\"version\":\"2026.101.100000\"}",
+                "publisher": "eu.wohlben.qits:qits-projects-service"
+              }
+            ],
+            "nextCursor": null
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.events": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.environment": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.payload": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.publisher": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEvents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
             "interaction": "open-notifications",
             "kind": "ui"
           }
@@ -179,6 +356,358 @@
           ]
         },
         "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEventNames"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-event-names",
+            "kind": "ui",
+            "route": "projects/:slug/events"
+          }
+        }
+      },
+      "description": "show-event-names: listEventNames",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "events of two names",
+          "params": {
+            "firstName": "GoldenMasterAlpha",
+            "secondName": "GoldenMasterBeta"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/events/api/events/names"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "names": [
+              "GoldenMasterAlpha"
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.names": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEvents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-events",
+            "kind": "ui",
+            "route": "projects/:slug/events"
+          }
+        }
+      },
+      "description": "show-project-events: listEvents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with no events",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "attr": {
+              "expression": "projectid=${projectId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "attr": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events",
+        "query": {
+          "attr": [
+            "projectid=00000000-0000-4000-8000-000000000001"
+          ],
+          "limit": [
+            "50"
+          ],
+          "order": [
+            "desc"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "events": [],
+            "nextCursor": null
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEvents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-events",
+            "kind": "ui",
+            "route": "projects/:slug/events"
+          }
+        }
+      },
+      "description": "show-project-events: listEvents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with recent events",
+          "params": {
+            "buildEventId": "00000000-0000-4000-8000-000000000001",
+            "commitEventId": "00000000-0000-4000-8000-000000000002",
+            "otherProjectEventId": "00000000-0000-4000-8000-000000000003",
+            "otherProjectId": "00000000-0000-4000-8000-000000000004",
+            "projectId": "00000000-0000-4000-8000-000000000005",
+            "releaseRequestEventId": "00000000-0000-4000-8000-000000000006",
+            "ticketEventId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "attr": {
+              "expression": "projectid=${projectId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "attr": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events",
+        "query": {
+          "attr": [
+            "projectid=00000000-0000-4000-8000-000000000005"
+          ],
+          "limit": [
+            "50"
+          ],
+          "order": [
+            "desc"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "events": [
+              {
+                "environment": "dev",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "name": "SCMPublishCommit",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "parentId": null,
+                "payload": "{\"branch\":\"main\",\"message\":\"feat(qits-42): show a project's events\",\"parents\":[\"0123456789abcdef0123456789abcdef01234567\"],\"projectId\":\"00000000-0000-4000-8000-000000000005\",\"repoId\":\"00000000-0000-4000-8000-000000000008\",\"repoName\":\"qits-ci-service\",\"sha\":\"89abcdef0123456789abcdef0123456789abcdef\"}",
+                "publisher": "eu.wohlben.qits:qits-githost-service"
+              }
+            ],
+            "nextCursor": null
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.events": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.environment": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.payload": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.publisher": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
           "header": {
             "Content-Type": {
               "combine": "AND",

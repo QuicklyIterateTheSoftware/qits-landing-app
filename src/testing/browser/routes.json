@@ -235,6 +235,30 @@
   ],
   "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts": [
     {
+      "provider": "qits-events-service",
+      "state": "a project with no events",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "a project with recent events",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "a project with recent events, filtered by name",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "events of two names",
+      "operationId": "listEventNames",
+      "route": "projects/:slug/events"
+    },
+    {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
