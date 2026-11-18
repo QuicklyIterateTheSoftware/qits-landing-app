@@ -42,6 +42,7 @@ type SectionKey =
   | 'ideas'
   | 'agents'
   | 'releaseRequests'
+  | 'ci'
   | 'desk'
   | 'repositories'
   | 'observability'
@@ -59,6 +60,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'ideas'
   | 'agents'
   | 'release-requests'
+  | 'ci'
   | 'desk'
   | 'repositories'
   | 'observability'
@@ -355,6 +357,7 @@ export class ShellLayout {
     ideas: exit('projects/:slug/ideas'),
     agents: exit('projects/:slug/agents'),
     releaseRequests: exit('projects/:slug/release-requests'),
+    ci: exit('projects/:slug/ci'),
     desk: exit('projects/:slug/desk'),
     repositories: exit('projects/:slug/repositories'),
     observability: exit('projects/:slug/observability'),
@@ -480,6 +483,7 @@ export class ShellLayout {
         ...link('releaseRequests', 'Release Requests', sections.releaseRequests),
         note: this.latestRelease(),
       },
+      link('ci', 'CI', sections.ci),
       link('desk', 'Desk', sections.desk),
       link('repositories', 'Repositories', sections.repositories),
       link('observability', 'Observability', sections.observability),

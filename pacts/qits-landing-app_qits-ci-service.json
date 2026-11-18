@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-ci",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci"
           }
         }
       },
@@ -161,7 +162,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-ci",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci"
           }
         }
       },
