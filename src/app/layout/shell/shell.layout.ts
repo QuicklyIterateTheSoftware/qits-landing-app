@@ -73,6 +73,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'desk'
   | 'repositories'
   | 'observability'
+  | 'observability/logs'
   | 'events'
   | 'setup'}`>;
 
@@ -412,6 +413,11 @@ export class ShellLayout {
     archive: exit('projects/:slug/work/archive'),
   });
 
+  /** The Observability pages below Observability in the sidebar, one exit per page (qits-2313). */
+  private readonly observabilityPages = outcomes('open-sidebar-observability-page', {
+    logs: exit('projects/:slug/observability/logs'),
+  });
+
   /** Each work page's exit, by its segment (`WORK_TABS`). */
   private readonly workPageExits: Readonly<Record<string, ProjectPageExit>> = {
     refinement: this.workPages.refinement,
@@ -553,7 +559,16 @@ export class ShellLayout {
       },
       link('desk', 'Desk', sections.desk),
       link('repositories', 'Repositories', sections.repositories),
-      link('observability', 'Observability', sections.observability),
+      {
+        ...link('observability', 'Observability', sections.observability),
+        children: [
+          {
+            label: 'Logs',
+            exit: this.observabilityPages.logs,
+            path: this.observabilityPages.logs.url(params),
+          },
+        ],
+      },
       link('events', 'Events', sections.events),
     ];
   });

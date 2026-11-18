@@ -62,6 +62,7 @@
     "@qits/idp-golden-masters": "2026.1109.13349",
     "@qits/maintenance-golden-masters": "2026.1116.183857",
     "@qits/network-access-golden-masters": "2026.1114.182344",
+    "@qits/observability-golden-masters": "2026.1107.172205",
     "@qits/projects-golden-masters": "2026.1116.190952",
     "@qits/system-golden-masters": "2026.1112.808",
     "@qits/workspace-daemon-golden-masters": "2026.1111.190934",

@@ -21,6 +21,7 @@ import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as networkAccessClient } from './api/network-access/client.gen';
+import { client as observabilityClient } from './api/observability/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { client as systemClient } from './api/system/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
@@ -54,6 +55,7 @@ const CLIENTS = [
   [systemClient, 'system'],
   [artifactsClient, 'artifacts'],
   [networkAccessClient, 'network-access'],
+  [observabilityClient, 'observability'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -104,6 +106,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(systemClient),
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(networkAccessClient),
+    provideHeyApiClient(observabilityClient),
     provideHeyApiClient(edgeClient),
     provideBackendOrigins(),
     // Which platform apps are on the private network, read from the edge once signed in, so their

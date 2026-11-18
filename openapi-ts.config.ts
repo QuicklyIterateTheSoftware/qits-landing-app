@@ -30,6 +30,8 @@ const services = [
   'qits-network-access/qits-network-access-service',
   // The edge's own documents (qits-2220): the bumps menu's upstream pools.
   'qits-edge/qits-edge-service',
+  // The Observability section (qits-2313): the telemetry buffer's sources and logs.
+  'qits-observability/qits-observability-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */
