@@ -136,6 +136,17 @@ export const INTERACTIONS = {
   'show-project-desk':
     'The Desk page lists the project’s delivery-desk trigger messages, newest first',
   /**
+   * `observability-logs.page.ts` via `TELEMETRY_SOURCES` (qits-2313): the Observability section's
+   * source picker lists the telemetry buffer's platform services, with counts and reach.
+   */
+  'show-telemetry-sources':
+    'The Observability section lists the platform services the telemetry buffer holds records of',
+  /**
+   * `observability-logs.page.ts` via `TELEMETRY_LOGS` (qits-2313): the Logs page shows the chosen
+   * source's buffered log lines, narrowed by level, body text and age, newest first.
+   */
+  'show-telemetry-logs': 'The Logs page shows a source’s buffered log lines, newest first',
+  /**
    * `release-request.page.ts` via `RELEASE_REQUEST`, `RELEASE_COMMITS`, `COMMIT_BUILDS`,
    * `RELEASE_ARTIFACTS` and `APPROVAL_ELIGIBILITY` (qits-2146): a request's page reads the request,
    * the commits its fold brought in, the CI verdicts on the fold, once released what it published,
@@ -837,6 +848,12 @@ export const INTERACTIONS = {
    * per page (`WORK_TABS`). Navigates only, and names no pact (epic qits-2000).
    */
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
+  /**
+   * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
+   * one exit per page (qits-2313: Logs). Navigates only, and names no pact.
+   */
+  'open-sidebar-observability-page':
+    'An Observability page below Observability in the sidebar opens that page',
   /**
    * `shell.layout.ts`: the top bar's gear opens the open project's settings (`setup`). Navigates
    * only, and names no pact (epic qits-2000).
