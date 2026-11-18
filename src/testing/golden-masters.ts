@@ -82,6 +82,12 @@ export const networkAccessGoldenMasters = goldenMasters(
 /** qits-edge's golden masters (qits-2220: its upstream pools), from its npm package. */
 export const edgeGoldenMasters = goldenMasters('@qits/edge-golden-masters', 'qits-edge');
 
+/** qits-observability's golden masters (qits-2313: the telemetry buffer), from its npm package. */
+export const observabilityGoldenMasters = goldenMasters(
+  '@qits/observability-golden-masters',
+  'qits-observability',
+);
+
 /**
  * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
  * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this

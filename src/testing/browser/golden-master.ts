@@ -14,6 +14,7 @@ const REPOSITORY = {
   'qits-artifacts': 'qits-artifacts-service',
   'qits-network-access': 'qits-network-access-service',
   'qits-edge': 'qits-edge-service',
+  'qits-observability': 'qits-observability-service',
   'qits-idp': 'qits-idp-service',
 } as const;
 
