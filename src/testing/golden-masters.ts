@@ -88,6 +88,12 @@ export const observabilityGoldenMasters = goldenMasters(
   'qits-observability',
 );
 
+/** qits-deployments' golden masters (qits-2315: a project's deployment requests), from its npm package. */
+export const deploymentsGoldenMasters = goldenMasters(
+  '@qits/deployments-golden-masters',
+  'qits-deployments',
+);
+
 /**
  * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
  * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this

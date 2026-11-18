@@ -32,6 +32,8 @@ const services = [
   'qits-edge/qits-edge-service',
   // The Observability section (qits-2313): the telemetry buffer's sources and logs.
   'qits-observability/qits-observability-service',
+  // The Deployments section (qits-2315): a project's deployment requests.
+  'qits-deployments/qits-deployments-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

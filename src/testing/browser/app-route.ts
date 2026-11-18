@@ -39,6 +39,7 @@ import { routes } from '../../app/app.routes';
 import { client as artifactsClient } from '../../app/api/artifacts/client.gen';
 import { client as ciClient } from '../../app/api/ci/client.gen';
 import { client as edgeClient } from '../../app/api/edge/client.gen';
+import { client as deploymentsClient } from '../../app/api/deployments/client.gen';
 import { client as eventsClient } from '../../app/api/events/client.gen';
 import { client as githostClient } from '../../app/api/githost/client.gen';
 import { client as maintenanceClient } from '../../app/api/maintenance/client.gen';
@@ -91,6 +92,7 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(networkAccessClient),
     provideHeyApiClient(observabilityClient),
+    provideHeyApiClient(deploymentsClient),
     provideHeyApiClient(edgeClient),
     // The idp's page origin, so the root sidebar's IdP admin (qits-2319) shows on the routes
     // without a project, as it does deployed.
