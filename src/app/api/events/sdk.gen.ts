@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, ServerSentEventsResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteEventsApiEventsByIdData, DeleteEventsApiEventsByIdErrors, DeleteEventsApiEventsByIdResponses, GetEventsApiEventsByIdData, GetEventsApiEventsByIdErrors, GetEventsApiEventsByIdResponses, GetEventsApiEventsNamesData, GetEventsApiEventsNamesErrors, GetEventsApiEventsNamesResponses, GetEventsApiStreamData, GetEventsApiStreamErrors, GetEventsApiStreamResponse, GetEventsApiStreamResponses, ListEventsData, ListEventsErrors, ListEventsResponses, PostEventsApiEventsData, PostEventsApiEventsErrors, PostEventsApiEventsResponses, PutEventsApiEventsByIdData, PutEventsApiEventsByIdErrors, PutEventsApiEventsByIdResponses } from './types.gen';
+import type { CreateEventData, CreateEventErrors, CreateEventResponses, DeleteEventData, DeleteEventErrors, DeleteEventResponses, GetEventData, GetEventErrors, GetEventResponses, ListEventNamesData, ListEventNamesErrors, ListEventNamesResponses, ListEventsData, ListEventsErrors, ListEventsResponses, PublishEventData, PublishEventErrors, PublishEventResponses, StreamEventsData, StreamEventsErrors, StreamEventsResponse, StreamEventsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -30,7 +30,7 @@ export const listEvents = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * Create
  */
-export const postEventsApiEvents = <ThrowOnError extends boolean = false>(options: Options<PostEventsApiEventsData, ThrowOnError>): RequestResult<PostEventsApiEventsResponses, PostEventsApiEventsErrors, ThrowOnError> => (options.client ?? client).post<PostEventsApiEventsResponses, PostEventsApiEventsErrors, ThrowOnError>({
+export const createEvent = <ThrowOnError extends boolean = false>(options: Options<CreateEventData, ThrowOnError>): RequestResult<CreateEventResponses, CreateEventErrors, ThrowOnError> => (options.client ?? client).post<CreateEventResponses, CreateEventErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/events/api/events',
     ...options,
@@ -43,7 +43,7 @@ export const postEventsApiEvents = <ThrowOnError extends boolean = false>(option
 /**
  * Names
  */
-export const getEventsApiEventsNames = <ThrowOnError extends boolean = false>(options?: Options<GetEventsApiEventsNamesData, ThrowOnError>): RequestResult<GetEventsApiEventsNamesResponses, GetEventsApiEventsNamesErrors, ThrowOnError> => (options?.client ?? client).get<GetEventsApiEventsNamesResponses, GetEventsApiEventsNamesErrors, ThrowOnError>({
+export const listEventNames = <ThrowOnError extends boolean = false>(options?: Options<ListEventNamesData, ThrowOnError>): RequestResult<ListEventNamesResponses, ListEventNamesErrors, ThrowOnError> => (options?.client ?? client).get<ListEventNamesResponses, ListEventNamesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/events/api/events/names',
     ...options
@@ -52,7 +52,7 @@ export const getEventsApiEventsNames = <ThrowOnError extends boolean = false>(op
 /**
  * Delete
  */
-export const deleteEventsApiEventsById = <ThrowOnError extends boolean = false>(options: Options<DeleteEventsApiEventsByIdData, ThrowOnError>): RequestResult<DeleteEventsApiEventsByIdResponses, DeleteEventsApiEventsByIdErrors, ThrowOnError> => (options.client ?? client).delete<DeleteEventsApiEventsByIdResponses, DeleteEventsApiEventsByIdErrors, ThrowOnError>({
+export const deleteEvent = <ThrowOnError extends boolean = false>(options: Options<DeleteEventData, ThrowOnError>): RequestResult<DeleteEventResponses, DeleteEventErrors, ThrowOnError> => (options.client ?? client).delete<DeleteEventResponses, DeleteEventErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/events/api/events/{id}',
     ...options
@@ -61,7 +61,7 @@ export const deleteEventsApiEventsById = <ThrowOnError extends boolean = false>(
 /**
  * Get
  */
-export const getEventsApiEventsById = <ThrowOnError extends boolean = false>(options: Options<GetEventsApiEventsByIdData, ThrowOnError>): RequestResult<GetEventsApiEventsByIdResponses, GetEventsApiEventsByIdErrors, ThrowOnError> => (options.client ?? client).get<GetEventsApiEventsByIdResponses, GetEventsApiEventsByIdErrors, ThrowOnError>({
+export const getEvent = <ThrowOnError extends boolean = false>(options: Options<GetEventData, ThrowOnError>): RequestResult<GetEventResponses, GetEventErrors, ThrowOnError> => (options.client ?? client).get<GetEventResponses, GetEventErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/events/api/events/{id}',
     ...options
@@ -70,7 +70,7 @@ export const getEventsApiEventsById = <ThrowOnError extends boolean = false>(opt
 /**
  * Publish
  */
-export const putEventsApiEventsById = <ThrowOnError extends boolean = false>(options: Options<PutEventsApiEventsByIdData, ThrowOnError>): RequestResult<PutEventsApiEventsByIdResponses, PutEventsApiEventsByIdErrors, ThrowOnError> => (options.client ?? client).put<PutEventsApiEventsByIdResponses, PutEventsApiEventsByIdErrors, ThrowOnError>({
+export const publishEvent = <ThrowOnError extends boolean = false>(options: Options<PublishEventData, ThrowOnError>): RequestResult<PublishEventResponses, PublishEventErrors, ThrowOnError> => (options.client ?? client).put<PublishEventResponses, PublishEventErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/events/api/events/{id}',
     ...options,
@@ -85,7 +85,7 @@ export const putEventsApiEventsById = <ThrowOnError extends boolean = false>(opt
  *
  * Pushes each newly created event whose name is named by ?names= (comma-separated; '*' means everything; absent means nothing) as an SSE event whose id: field is the event id and whose data is the EventCreated envelope. Live only: no replay, no offset, no catch-up.
  */
-export const getEventsApiStream = <ThrowOnError extends boolean = false>(options?: Options<GetEventsApiStreamData, ThrowOnError, GetEventsApiStreamResponse>): Promise<ServerSentEventsResult<GetEventsApiStreamResponses>> => (options?.client ?? client).sse.get<GetEventsApiStreamResponses, GetEventsApiStreamErrors, ThrowOnError>({
+export const streamEvents = <ThrowOnError extends boolean = false>(options?: Options<StreamEventsData, ThrowOnError, StreamEventsResponse>): Promise<ServerSentEventsResult<StreamEventsResponses>> => (options?.client ?? client).sse.get<StreamEventsResponses, StreamEventsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/events/api/stream',
     ...options
