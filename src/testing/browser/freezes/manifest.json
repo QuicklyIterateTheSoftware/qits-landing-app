@@ -42145,6 +42145,728 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
+      "test": "CiRunsPage (screenshots) > says the project has no runs when every run is of a repository outside it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/ci",
+      "records": [
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listActiveRuns"
+        },
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listRepositorySummaries"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
+      "test": "CiRunsPage (screenshots) > says the project has no runs when every run is of a repository outside it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/ci",
+      "records": [
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listActiveRuns"
+        },
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listRepositorySummaries"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
+      "test": "CiRunsPage (screenshots) > says the project has no runs when every run is of a repository outside it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/ci",
+      "records": [
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listActiveRuns"
+        },
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listRepositorySummaries"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
+      "test": "CiRunsPage (screenshots) > says the project has no runs when every run is of a repository outside it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/ci",
+      "records": [
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listActiveRuns"
+        },
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listRepositorySummaries"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
+      "test": "CiRunsPage (screenshots) > says the project has no runs when every run is of a repository outside it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/ci",
+      "records": [
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listActiveRuns"
+        },
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listRepositorySummaries"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
+      "test": "CiRunsPage (screenshots) > says the project has no runs when every run is of a repository outside it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/ci",
+      "records": [
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listActiveRuns"
+        },
+        {
+          "provider": "qits-ci-service",
+          "state": "runs only of repositories outside the project",
+          "operationId": "listRepositorySummaries"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-ci-service#listRepositorySummaries",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectRepositories",
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/error-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts",
       "test": "CiRunsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
@@ -174785,6 +175507,12 @@
       "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts/workspace-link-tablet-light.html"
     ],
     "projects/:slug/ci": [
+      "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/empty-tablet-light.html",
       "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/error-desktop-dark.html",
       "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/error-desktop-light.html",
       "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts/error-phone-dark.html",

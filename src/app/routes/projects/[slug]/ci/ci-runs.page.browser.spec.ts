@@ -23,13 +23,15 @@ const CI = 'https://ci.example.test';
  * contract-service RUNNING, the one active run. The open project is the recorded one ("a project
  * exists"), found by the URL's slug in the recorded project list.
  *
- * The page with no run at all ("No CI runs for this project yet") has no screenshot: qits-ci's
- * "no runs recorded" answers empty lists, which the pact would bind as exactly empty while the
- * provider verifies against a shared database, so that state is not pacted and the golden-master
- * guard refuses it here. The plain spec (`ci-runs.page.spec.ts`) shows that state.
+ * The page with no run at all ("No CI runs for this project yet") is qits-ci's "runs only of
+ * repositories outside the project": its summaries and its one active run are all of repositories
+ * the project does not hold, so the join leaves every row without a run. ("no runs recorded" answers
+ * empty lists, which the pact cannot bind against the provider's shared database, so it is not
+ * pacted and the golden-master guard refuses it here.)
  */
 const REPOSITORIES = 'a project with 3 repositories';
 const RUNS = 'a project whose repositories have runs';
+const OUTSIDE = 'runs only of repositories outside the project';
 
 describe('CiRunsPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -60,13 +62,13 @@ describe('CiRunsPage (screenshots)', () => {
     };
   }
 
-  /** The page at `query`, every read answered from the recordings. */
-  async function render(query = '') {
+  /** The page at `query`, every read answered from the recordings, qits-ci's in `runs`. */
+  async function render(query = '', runs = RUNS) {
     const reads = await open(query);
     reads.repositories().flush(await goldenMaster(REPOSITORIES, 'listProjectRepositories'));
     await reads.opened.settled();
-    reads.summaries().flush(await goldenMaster(RUNS, 'listRepositorySummaries', 'qits-ci'));
-    reads.active().flush(await goldenMaster(RUNS, 'listActiveRuns', 'qits-ci'));
+    reads.summaries().flush(await goldenMaster(runs, 'listRepositorySummaries', 'qits-ci'));
+    reads.active().flush(await goldenMaster(runs, 'listActiveRuns', 'qits-ci'));
     await reads.opened.settled();
     return reads.opened;
   }
@@ -141,6 +143,26 @@ describe('CiRunsPage (screenshots)', () => {
     await opened.settled();
     expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/ci`);
     expect(listed(opened)).toHaveLength(4);
+  });
+
+  it('says the project has no runs when every run is of a repository outside it', async () => {
+    const opened = await render('', OUTSIDE);
+    const view = page.elementLocator(opened.page);
+    await expect.element(view).toMatchTextContent('No CI runs for this project yet.');
+    expect(listed(opened)).toHaveLength(4);
+    for (const row of opened.page.querySelectorAll('[data-ci-row]')) {
+      expect(row.textContent).toContain('No runs yet');
+    }
+    // The one active run is of a repository outside the project: Running now stays hidden.
+    const running = opened.page.querySelector<HTMLElement>(
+      'section[aria-labelledby="ci-running-now"]',
+    );
+    expect(running?.className).toContain('hidden');
+    expect(running?.getClientRects()).toHaveLength(0);
+    expect(opened.page.querySelectorAll('[data-active-run]')).toHaveLength(0);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {

@@ -157,6 +157,152 @@
         "references": {
           "qits-call": {
             "app": "qits-ci-service",
+            "operationId": "listActiveRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-ci",
+            "kind": "ui",
+            "route": "projects/:slug/ci"
+          }
+        }
+      },
+      "description": "show-project-ci: listActiveRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "runs only of repositories outside the project",
+          "params": {
+            "branchRunId": "00000000-0000-4000-8000-000000000001",
+            "failedRunId": "00000000-0000-4000-8000-000000000002",
+            "greenRunId": "00000000-0000-4000-8000-000000000003",
+            "mainRunId": "00000000-0000-4000-8000-000000000004",
+            "otherGreenRunId": "00000000-0000-4000-8000-000000000005",
+            "outsideProjectId": "00000000-0000-4000-8000-000000000006",
+            "outsideRepository1Id": "00000000-0000-4000-8000-000000000007",
+            "outsideRepository2Id": "00000000-0000-4000-8000-000000000008",
+            "runningRunId": "00000000-0000-4000-8000-000000000009"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/ci/api/runs/active"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "runs": [
+              {
+                "branch": "main",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000009",
+                "releaseRequestId": null,
+                "repoId": "00000000-0000-4000-8000-000000000008",
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "RUNNING"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.runs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.repoId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
             "operationId": "listRepositorySummaries"
           },
           "qits-trigger": {
@@ -233,6 +379,338 @@
                   "status": "RUNNING"
                 },
                 "repositoryId": "00000000-0000-4000-8000-000000000005"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.repositories": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.lastMainRun.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastRun.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastRun.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastRun.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastRun.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastRun.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.lastRun.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repositoryId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.lastMainRun.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.lastMainRun.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastRun.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastRun.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastRun.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.lastRun.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.lastRun.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repositoryId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "listRepositorySummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-ci",
+            "kind": "ui",
+            "route": "projects/:slug/ci"
+          }
+        }
+      },
+      "description": "show-project-ci: listRepositorySummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "runs only of repositories outside the project",
+          "params": {
+            "branchRunId": "00000000-0000-4000-8000-000000000001",
+            "failedRunId": "00000000-0000-4000-8000-000000000002",
+            "greenRunId": "00000000-0000-4000-8000-000000000003",
+            "mainRunId": "00000000-0000-4000-8000-000000000004",
+            "otherGreenRunId": "00000000-0000-4000-8000-000000000005",
+            "outsideProjectId": "00000000-0000-4000-8000-000000000006",
+            "outsideRepository1Id": "00000000-0000-4000-8000-000000000007",
+            "outsideRepository2Id": "00000000-0000-4000-8000-000000000008",
+            "runningRunId": "00000000-0000-4000-8000-000000000009"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/ci/api/repositories/summary"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "repositories": [
+              {
+                "lastMainRun": {
+                  "branch": "main",
+                  "commitSha": "0000000000000000000000000000000000000014",
+                  "createdAt": "2026-01-01T00:00:00Z",
+                  "finishedAt": "2026-01-01T00:00:00Z",
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "status": "SUCCESS"
+                },
+                "lastRun": {
+                  "branch": "feature/csv-export",
+                  "commitSha": "0000000000000000000000000000000000000015",
+                  "createdAt": "2026-01-01T00:00:00Z",
+                  "finishedAt": "2026-01-01T00:00:00Z",
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "status": "FAILED"
+                },
+                "repositoryId": "00000000-0000-4000-8000-000000000007"
+              },
+              {
+                "lastMainRun": {
+                  "branch": "main",
+                  "commitSha": "0000000000000000000000000000000000000019",
+                  "createdAt": "2026-01-01T00:00:00Z",
+                  "finishedAt": null,
+                  "id": "00000000-0000-4000-8000-000000000009",
+                  "status": "RUNNING"
+                },
+                "lastRun": {
+                  "branch": "main",
+                  "commitSha": "0000000000000000000000000000000000000019",
+                  "createdAt": "2026-01-01T00:00:00Z",
+                  "finishedAt": null,
+                  "id": "00000000-0000-4000-8000-000000000009",
+                  "status": "RUNNING"
+                },
+                "repositoryId": "00000000-0000-4000-8000-000000000008"
               }
             ]
           },

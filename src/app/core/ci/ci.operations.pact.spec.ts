@@ -26,8 +26,10 @@ import {
  * running run (the lightning menu), and a run's reports and one report's payload
  * (`app-run-reports`); and the project's CI page (qits-2314): every repository's summary and the
  * active runs, in a state whose repositories are the ones qits-projects' "a project with 3
- * repositories" lists. "no runs recorded" is not pacted: its lists are empty, which the pact would
- * bind as exactly empty, and the provider verifies against a database other test classes share.
+ * repositories" lists, and one whose runs are all of repositories outside that project (the page's
+ * empty state, by the join). "no runs recorded" is not pacted: its lists are empty, which the pact
+ * would bind as exactly empty, and the provider verifies against a database other test classes
+ * share.
  *
  * Moved here from `CiRunsStore`'s and `CiReportsStore`'s pact specs when the stores went
  * (qits-2146), unchanged: the same descriptions, states, requests and bound fields. Each test runs
@@ -41,6 +43,7 @@ const RUNS_STATE = 'a repository with the runs of a release request';
 const ACTIVE_STATE = 'a commit with a run in flight';
 const REPORTS_STATE = 'a run with reports: failing tests and coverage';
 const PROJECT_STATE = 'a project whose repositories have runs';
+const OUTSIDE_STATE = 'runs only of repositories outside the project';
 const OPERATIONS = [
   'listRuns',
   'listActiveRuns',
@@ -148,6 +151,31 @@ describe('qits-landing-app → qits-ci-service pact', () => {
       const { data } = await at(server.url, () => ACTIVE_RUNS.fetch({}));
       const recorded = masters.body<{ runs: { id: string; repoId: string }[] }>(
         PROJECT_STATE,
+        'listActiveRuns',
+      );
+      expect(data?.runs?.map((run) => [run.id, run.repoId])).toEqual(
+        recorded.runs.map((run) => [run.id, run.repoId]),
+      );
+    }));
+
+  it('show-project-ci: the CI page reads summaries of repositories outside the project only', () =>
+    given(OUTSIDE_STATE, REPOSITORY_SUMMARIES, 'show-project-ci').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => REPOSITORY_SUMMARIES.fetch({}));
+      expect(error).toBeUndefined();
+      const recorded = masters.body<{ repositories: { repositoryId: string }[] }>(
+        OUTSIDE_STATE,
+        'listRepositorySummaries',
+      );
+      const ids = recorded.repositories.map((row) => row.repositoryId);
+      expect(data?.repositories?.length).toBeGreaterThan(0);
+      for (const row of data?.repositories ?? []) expect(ids).toContain(row.repositoryId);
+    }));
+
+  it('show-project-ci: the CI page reads runs in flight of repositories outside the project', () =>
+    given(OUTSIDE_STATE, ACTIVE_RUNS, 'show-project-ci').executeTest(async (server) => {
+      const { data } = await at(server.url, () => ACTIVE_RUNS.fetch({}));
+      const recorded = masters.body<{ runs: { id: string; repoId: string }[] }>(
+        OUTSIDE_STATE,
         'listActiveRuns',
       );
       expect(data?.runs?.map((run) => [run.id, run.repoId])).toEqual(

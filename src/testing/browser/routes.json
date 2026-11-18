@@ -215,6 +215,18 @@
       "route": "projects/:slug/ci"
     },
     {
+      "provider": "qits-ci-service",
+      "state": "runs only of repositories outside the project",
+      "operationId": "listActiveRuns",
+      "route": "projects/:slug/ci"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "runs only of repositories outside the project",
+      "operationId": "listRepositorySummaries",
+      "route": "projects/:slug/ci"
+    },
+    {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
