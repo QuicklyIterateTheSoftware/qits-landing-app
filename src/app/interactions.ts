@@ -853,6 +853,11 @@ export const INTERACTIONS = {
    */
   'open-sidebar-network-access': 'The sidebar’s Network access entry opens the Network access page',
   /**
+   * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, leaves
+   * the app for the idp's own admin (qits-2319). Leaves only, and names no pact.
+   */
+  'open-sidebar-idp-admin': 'The sidebar’s IdP admin entry opens the standalone idp admin',
+  /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
    * the Work, Agents or Release Requests section above a subpage. Navigates only, and names no pact
