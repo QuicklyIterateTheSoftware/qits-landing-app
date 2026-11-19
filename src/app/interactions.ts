@@ -499,10 +499,32 @@ export const INTERACTIONS = {
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
    * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (an image, a package, a coordinate, a daemon or a docs site), until the
-   * Artifacts section's own detail pages land (qits-2316). Leaves only, and names no pact.
+   * qits-artifacts explorer (a package, a coordinate, a daemon or a docs site), until the Artifacts
+   * section's own detail pages land (qits-2316; an image's landed, `open-artifact-image`). Leaves
+   * only, and names no pact.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
+  /**
+   * `artifacts-repository.page.ts`: an image row's name opens the image's page in this app,
+   * `artifacts/repositories/:repo/images/:image` (qits-2324). Navigates only, and names no pact.
+   */
+  'open-artifact-image': 'An image of an image repository opens its page',
+  /**
+   * `artifacts-image.page.ts` via `ARTIFACT_IMAGE_TAGS`, `ARTIFACT_IMAGE_MANIFESTS` and
+   * `ARTIFACT_IMAGES` (qits-2324): the image page reads the image's tags and manifests, and the
+   * repository's images for the image's own counts and size. Refresh reads all three again.
+   */
+  'show-artifact-image': 'An image’s page lists its tags and manifests, under its counts and size',
+  /**
+   * `artifacts-image.page.ts`: the back link, and the store page a non-image repository's note
+   * links, open the repository's page (qits-2324). Navigates only, and names no pact.
+   */
+  'leave-artifact-image': 'An image’s page leads back to its repository',
+  /**
+   * `artifacts-image.page.ts`: shows the digests whole, or shortened again (qits-2324). Changes
+   * the page only: no request, and names no pact.
+   */
+  'toggle-image-digests': 'An image’s page shows its digests whole or shortened',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).

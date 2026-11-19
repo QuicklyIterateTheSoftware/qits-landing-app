@@ -1,7 +1,8 @@
 /**
  * The Artifacts section's pure steps (qits-2316): which listing a store repository's type has, how
- * a count and a size read, the name search, and the old explorer's address of a row's detail page.
- * Mirrors qits-artifacts-frontend's `repository-type.ts` and `format.ts`, whose
+ * a count and a size read, the name search, and the old explorer's address of a row's detail page;
+ * and the image page's (qits-2324): a digest shortened, the tags newest push first, the untagged
+ * manifests counted. Mirrors qits-artifacts-frontend's `repository-type.ts` and `format.ts`, whose
  * `repositories/:repo` page this section replaces.
  */
 
@@ -47,10 +48,10 @@ export const LISTING_NOUNS: Readonly<Record<ListingKind, string>> = {
 
 /**
  * The old explorer's segment for a row's detail page below `repositories/<repo>/`; none for the ci
- * records, which have no detail page.
+ * records, which have no detail page, and none for the images, whose page is this app's own
+ * (`artifacts/repositories/:repo/images/:image`, `ArtifactsImagePage`, qits-2324).
  */
 const DETAIL_SEGMENTS: Readonly<Partial<Record<ListingKind, string>>> = {
-  images: 'images',
   npm: 'packages',
   maven: 'maven-packages',
   daemons: 'daemons',
@@ -61,7 +62,8 @@ const DETAIL_SEGMENTS: Readonly<Partial<Record<ListingKind, string>>> = {
  * The address of a row's detail page in the old explorer (qits-artifacts-frontend), until its
  * landing page exists: `<origin>/repositories/<repo>/<segment>/<name>`, the repository and the name
  * each one segment (`@qits/angular` is `%40qits%2Fangular`). `''` while the origin is not known
- * (the server render) or for a listing without detail pages.
+ * (the server render) or for a listing without detail pages there (the ci records; the images,
+ * which open this app's image page instead).
  */
 export function oldDetailHref(
   origin: string,
@@ -137,4 +139,36 @@ export function searched<T>(
 export function metadataLine(metadata: Readonly<Record<string, string>> | undefined): string {
   const entries = Object.entries(metadata ?? {});
   return entries.length ? entries.map(([key, value]) => `${key}=${value}`).join(' · ') : '—';
+}
+
+/**
+ * `sha256:1b91a3dfff59`: a digest's algorithm and the first 12 characters of its hex, as the old
+ * explorer shortened them; a digest without an algorithm is cut the same; `—` for none.
+ */
+export function shortDigest(digest: string | null | undefined): string {
+  if (!digest) return '—';
+  const colon = digest.indexOf(':');
+  const algorithm = colon >= 0 ? digest.slice(0, colon + 1) : '';
+  return `${algorithm}${digest.slice(colon + 1, colon + 13)}`;
+}
+
+/** An instant's epoch milliseconds; 0 for none or one that does not parse (sorted last). */
+const epochOf = (iso: string | undefined): number => Date.parse(iso ?? '') || 0;
+
+/**
+ * The tags newest push first (`createdAt`), a tag without one last, then by name; never mutates
+ * `tags`.
+ */
+export function newestPushFirst<T extends { readonly tag?: string; readonly createdAt?: string }>(
+  tags: readonly T[],
+): readonly T[] {
+  return [...tags].sort(
+    (a, b) =>
+      epochOf(b.createdAt) - epochOf(a.createdAt) || (a.tag ?? '').localeCompare(b.tag ?? ''),
+  );
+}
+
+/** How many manifests no tag names (their `tags` empty or absent). */
+export function untaggedCount(manifests: readonly { readonly tags?: readonly string[] }[]): number {
+  return manifests.filter((manifest) => (manifest.tags ?? []).length === 0).length;
 }

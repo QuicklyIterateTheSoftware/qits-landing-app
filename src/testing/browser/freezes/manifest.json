@@ -282,6 +282,10 @@
             {
               "path": "repositories/:repo",
               "fullPath": "artifacts/repositories/:repo"
+            },
+            {
+              "path": "repositories/:repo/images/:image",
+              "fullPath": "artifacts/repositories/:repo/images/:image"
             }
           ]
         },
@@ -24787,7 +24791,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:image",
+        "open-artifact-image:image",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -24974,7 +24978,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:image",
+        "open-artifact-image:image",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -25523,7 +25527,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:image",
+        "open-artifact-image:image",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -25710,7 +25714,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:image",
+        "open-artifact-image:image",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -29794,6 +29798,3760 @@
           "item": "name=sboms",
           "field": "name",
           "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says there is no such image when the repository holds none of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says there is no such image when the repository holds none of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says there is no such image when the repository holds none of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says there is no such image when the repository holds none of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says there is no such image when the repository holds none of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says there is no such image when the repository holds none of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+      "name": "full-digests",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+      "name": "full-digests",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+      "name": "full-digests",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+      "name": "full-digests",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+      "name": "full-digests",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+      "name": "full-digests",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > shows an image’s counts and size, its tags and its manifests",
+      "name": "image",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > shows an image’s counts and size, its tags and its manifests",
+      "name": "image",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > shows an image’s counts and size, its tags and its manifests",
+      "name": "image",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > shows an image’s counts and size, its tags and its manifests",
+      "name": "image",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > shows an image’s counts and size, its tags and its manifests",
+      "name": "image",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > shows an image’s counts and size, its tags and its manifests",
+      "name": "image",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a repository of another type is not an image repository, linking its page",
+      "name": "not-an-image-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "leave-artifact-image:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a repository of another type is not an image repository, linking its page",
+      "name": "not-an-image-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "leave-artifact-image:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a repository of another type is not an image repository, linking its page",
+      "name": "not-an-image-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a repository of another type is not an image repository, linking its page",
+      "name": "not-an-image-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a repository of another type is not an image repository, linking its page",
+      "name": "not-an-image-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "leave-artifact-image:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a repository of another type is not an image repository, linking its page",
+      "name": "not-an-image-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "leave-artifact-image:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "leave-artifact-image:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a manifest no tag names is untagged, and counts them",
+      "name": "untagged",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a manifest no tag names is untagged, and counts them",
+      "name": "untagged",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a manifest no tag names is untagged, and counts them",
+      "name": "untagged",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a manifest no tag names is untagged, and counts them",
+      "name": "untagged",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-image:back",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a manifest no tag names is untagged, and counts them",
+      "name": "untagged",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+      "test": "ArtifactsImagePage (screenshots) > says a manifest no tag names is untagged, and counts them",
+      "name": "untagged",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/images/:image",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageManifestSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImageTagSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "an image with a manifest no tag names",
+          "operationId": "listImages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-image:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "toggle-image-digests:toggled"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": null,
+          "derived": [
+            "tags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageManifestSummaries",
+          "item": "digest=sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+          "field": "mediaType",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listImageTagSummaries",
+          "item": "tag=2100.1.0",
+          "field": "tag",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listImages",
+          "item": "name=contract-image",
+          "field": null,
+          "derived": [
+            "tagCount",
+            "manifestCount",
+            "sizeBytes"
+          ]
         }
       ]
     },
@@ -250151,6 +253909,56 @@
       "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts/unknown-repository-tablet-dark.html",
       "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts/unknown-repository-tablet-light.html"
     ],
+    "artifacts/repositories/:repo/images/:image": [
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/error-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/image-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/not-an-image-repository-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/unknown-repository-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-tablet-light.html"
+    ],
     "auth/callback": [
       "src/app/routes/auth-callback.page.browser.spec.ts/no-code-desktop-dark.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/no-code-desktop-light.html",
@@ -251782,6 +255590,16 @@
       },
       {
         "route": "artifacts/repositories/:repo",
+        "interaction": "open-artifact-image",
+        "outcome": "image",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo/images/:image",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo",
         "interaction": "open-artifacts-entry",
         "outcome": "daemon",
         "kind": "external",
@@ -251794,16 +255612,6 @@
         "route": "artifacts/repositories/:repo",
         "interaction": "open-artifacts-entry",
         "outcome": "docsSite",
-        "kind": "external",
-        "to": "artifacts",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
-      },
-      {
-        "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "image",
         "kind": "external",
         "to": "artifacts",
         "global": false,
@@ -251839,6 +255647,36 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "leave-artifact-image",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "leave-artifact-image",
+        "outcome": "repository",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "toggle-image-digests",
+        "outcome": "toggled",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.ts"
       },
       {
         "route": "auth/callback",
@@ -254341,6 +258179,15 @@
       },
       {
         "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
+        "test": "ArtifactsRepositoryPage (screenshots) > open-artifact-image image: an image row opens the image’s page here",
+        "route": "artifacts/repositories/:repo",
+        "interaction": "open-artifact-image",
+        "outcome": "image",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
         "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry daemon: a row leaves for its page in the old explorer",
         "route": "artifacts/repositories/:repo",
         "interaction": "open-artifacts-entry",
@@ -254354,15 +258201,6 @@
         "route": "artifacts/repositories/:repo",
         "interaction": "open-artifacts-entry",
         "outcome": "docsSite",
-        "kind": "external",
-        "freeze": null
-      },
-      {
-        "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
-        "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry image: a row leaves for its page in the old explorer",
-        "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "image",
         "kind": "external",
         "freeze": null
       },
@@ -254391,6 +258229,42 @@
         "interaction": "switch-artifacts-repository",
         "outcome": "repository",
         "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+        "test": "ArtifactsImagePage (screenshots) > leave-artifact-image back: the back link opens the repository’s page",
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "leave-artifact-image",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+        "test": "ArtifactsImagePage (screenshots) > leave-artifact-image repository: a non-image repository’s note opens its page",
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "leave-artifact-image",
+        "outcome": "repository",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+        "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "toggle-image-digests",
+        "outcome": "toggled",
+        "kind": "stay",
+        "freeze": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/full-digests-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts",
+        "test": "ArtifactsImagePage (screenshots) > toggle-image-digests toggled: shows the digests whole, and shortened again",
+        "route": "artifacts/repositories/:repo/images/:image",
+        "interaction": "toggle-image-digests",
+        "outcome": "toggled",
+        "kind": "stay",
         "freeze": null
       },
       {

@@ -15,8 +15,26 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
+      "operationId": "listImageManifestSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImageTagSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listImages",
       "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo/images/:image"
     },
     {
       "provider": "qits-artifacts-service",
@@ -47,6 +65,80 @@
       "state": "a store with nothing published",
       "operationId": "listRepositories",
       "route": "artifacts/repositories/:repo"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImageManifestSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImageTagSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listImageManifestSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listImageTagSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "an image with a manifest no tag names",
+      "operationId": "listImageManifestSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "an image with a manifest no tag names",
+      "operationId": "listImageTagSummaries",
+      "route": "artifacts/repositories/:repo/images/:image"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "an image with a manifest no tag names",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo/images/:image"
     }
   ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [

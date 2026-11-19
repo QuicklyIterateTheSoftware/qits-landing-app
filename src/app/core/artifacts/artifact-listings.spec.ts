@@ -3,9 +3,12 @@ import {
   itemNoun,
   listingOf,
   metadataLine,
+  newestPushFirst,
   oldDetailHref,
   plural,
   searched,
+  shortDigest,
+  untaggedCount,
 } from './artifact-listings';
 
 describe('artifact listings (qits-2316)', () => {
@@ -35,6 +38,8 @@ describe('artifact listings (qits-2316)', () => {
       'https://registry.example.test/repositories/docs/docs/%40routes%2Fqits-landing',
     );
     expect(oldDetailHref('', 'qits', 'images', 'x')).toBe('');
+    // An image opens this app's own image page (qits-2324), not the old explorer's.
+    expect(oldDetailHref(origin, 'qits', 'images', 'x')).toBe('');
     expect(oldDetailHref(origin, 'ci-videos', 'records', 'x')).toBe('');
   });
 
@@ -57,5 +62,29 @@ describe('artifact listings (qits-2316)', () => {
   it('writes a record’s metadata as key=value pairs', () => {
     expect(metadataLine({ branch: 'main', sha: 'abc' })).toBe('branch=main · sha=abc');
     expect(metadataLine(undefined)).toBe('—');
+  });
+
+  it('shortens a digest to its algorithm and 12 hex characters (qits-2324)', () => {
+    expect(
+      shortDigest('sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2'),
+    ).toBe('sha256:1b91a3dfff59');
+    expect(shortDigest('1b91a3dfff59dad5c1d9')).toBe('1b91a3dfff59');
+    expect(shortDigest(undefined)).toBe('—');
+  });
+
+  it('orders tags newest push first, then by name, a tag without a push last', () => {
+    const tags = [
+      { tag: 'b', createdAt: '2026-01-01T00:00:00Z' },
+      { tag: 'old' },
+      { tag: 'new', createdAt: '2026-02-01T00:00:00Z' },
+      { tag: 'a', createdAt: '2026-01-01T00:00:00Z' },
+    ];
+    expect(newestPushFirst(tags).map((t) => t.tag)).toEqual(['new', 'a', 'b', 'old']);
+    expect(tags[0].tag).toBe('b');
+  });
+
+  it('counts the manifests no tag names', () => {
+    expect(untaggedCount([{ tags: ['2100.1.0'] }, { tags: [] }, {}])).toBe(2);
+    expect(untaggedCount([])).toBe(0);
   });
 });
