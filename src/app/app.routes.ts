@@ -57,6 +57,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
+ * A project's docs are at `projects/<slug>/docs` (`ProjectDocsPage`, qits-2318): every site of
+ * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`.
+ *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
@@ -339,6 +342,11 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/events/project-events.page').then(
             (m) => m.ProjectEventsPage,
           ),
+      },
+      {
+        path: 'projects/:slug/docs',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
       },
       {
         path: 'projects/:slug/setup',

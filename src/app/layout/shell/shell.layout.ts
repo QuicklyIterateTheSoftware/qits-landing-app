@@ -56,6 +56,7 @@ type SectionKey =
   | 'desk'
   | 'repositories'
   | 'observability'
+  | 'docs'
   | 'events'
   | 'setup';
 
@@ -74,6 +75,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'repositories'
   | 'observability'
   | 'observability/logs'
+  | 'docs'
   | 'events'
   | 'setup'}`>;
 
@@ -401,6 +403,7 @@ export class ShellLayout {
     desk: exit('projects/:slug/desk'),
     repositories: exit('projects/:slug/repositories'),
     observability: exit('projects/:slug/observability'),
+    docs: exit('projects/:slug/docs'),
     events: exit('projects/:slug/events'),
   });
 
@@ -569,6 +572,7 @@ export class ShellLayout {
           },
         ],
       },
+      link('docs', 'Docs', sections.docs),
       link('events', 'Events', sections.events),
     ];
   });

@@ -1,4 +1,4 @@
-import { artifactLinks, releaseLinks, repositoryScope } from './release-links';
+import { artifactLinks, docsReadPath, releaseLinks, repositoryScope } from './release-links';
 
 // Pure rules, so hand-built artifacts (ported from qits-projects-frontend's artifact links spec).
 
@@ -32,6 +32,13 @@ describe('release links', () => {
     expect(artifactLinks({ type: 'docs', name: 'guide', version: '2' }, SCOPE)).toEqual([
       { label: 'guide', app: 'docs', path: `${SCOPE}read/guide/-/2` },
     ]);
+  });
+
+  it('reads a docs site at a version, or at its newest without one (qits-2318)', () => {
+    expect(docsReadPath('/qits/', '@apidocs/qits-ci', '2026.1.1')).toBe(
+      '/qits/read/@apidocs/qits-ci/-/2026.1.1',
+    );
+    expect(docsReadPath('/qits/', '@apidocs/qits-ci')).toBe('/qits/read/@apidocs/qits-ci');
   });
 
   it('draws a type nothing serves as a name without a link', () => {

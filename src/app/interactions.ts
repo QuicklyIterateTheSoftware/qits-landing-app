@@ -353,6 +353,16 @@ export const INTERACTIONS = {
   'open-project-event-subject':
     'A release request or work item an event names on the Events page opens its page',
   /**
+   * `project-docs.page.ts` via `DOCS_SITES` (qits-2318): the Docs page lists every docs site the
+   * platform publishes, grouped by section.
+   */
+  'show-project-docs': 'The Docs page lists every published docs site, by section',
+  /**
+   * `project-docs.page.ts`: a docs site's row opens its reader on the docs app (until qits-2337
+   * moves it here), same tab. Leaves the app, and names no pact.
+   */
+  'open-docs-site': 'A docs site’s row on the Docs page opens its reader',
+  /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
    */

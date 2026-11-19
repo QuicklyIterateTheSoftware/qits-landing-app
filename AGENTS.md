@@ -392,6 +392,17 @@ only when a filter sets them; built by `projectEventsQuery` in `core/events/proj
 payload concerns (`eventSubjects`) and links a release request and a work item
 (`open-project-event-subject`); an agent is named, not linked, as no recording names one.
 
+A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
+between Observability and Events) reads qits-artifacts' whole docs catalog through its own
+`qitsResource` over `DOCS_SITES` (`listDocsSites` of the `docs` repository; never
+qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
+`shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
+rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
+A row leaves for the site's reader on the docs app (`open-docs-site`, `external('docs')`,
+`docsReadPath` without a version) until qits-2337 moves it here. The docs store sends no domain
+event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
+empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
+
 ## Backend origins
 
 Where each platform application answers comes from code, not from the network: inject

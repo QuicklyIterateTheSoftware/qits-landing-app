@@ -8,8 +8,16 @@ import type { ListDocsSitesResponses, ListDocsVersionsResponses } from '../../ap
  * same.
  */
 
-/** Every docs site, to keep the `@routes/` or `@contracts/` ones and their newest version. */
-export const LIST_DOCS_SITES = ['sites[].name', 'sites[].latestVersion'] as const;
+/**
+ * Every docs site, to keep the `@routes/` or `@contracts/` ones and their newest version, and for
+ * the Docs page (qits-2318) how many versions each holds and when its newest was published.
+ */
+export const LIST_DOCS_SITES = [
+  'sites[].name',
+  'sites[].latestVersion',
+  'sites[].versionCount',
+  'sites[].latestPublishedAt',
+] as const;
 
 /**
  * A site's versions, to learn which repository its newest version names (`git.repository.name`).

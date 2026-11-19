@@ -297,16 +297,22 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               }
             ]
           },
@@ -327,6 +333,23 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
                 }
               ]
             },
@@ -355,6 +378,20 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -411,12 +448,16 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               }
             ]
           },
@@ -440,6 +481,19 @@
                 }
               ]
             },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
             "$.sites[*].latestVersion": {
               "combine": "AND",
               "matchers": [
@@ -459,6 +513,17 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -1101,16 +1166,22 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               }
             ]
           },
@@ -1131,6 +1202,23 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
                 }
               ]
             },
@@ -1159,6 +1247,20 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -1215,12 +1317,16 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               }
             ]
           },
@@ -1244,6 +1350,19 @@
                 }
               ]
             },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
             "$.sites[*].latestVersion": {
               "combine": "AND",
               "matchers": [
@@ -1263,6 +1382,17 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -1751,16 +1881,22 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-githost"
+                "name": "@contracts/qits-githost",
+                "versionCount": 1
               }
             ]
           },
@@ -1781,6 +1917,23 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
                 }
               ]
             },
@@ -1809,6 +1962,20 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -1865,12 +2032,16 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               }
             ]
           },
@@ -1894,6 +2065,19 @@
                 }
               ]
             },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
             "$.sites[*].latestVersion": {
               "combine": "AND",
               "matchers": [
@@ -1913,6 +2097,17 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -2315,12 +2510,16 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               }
             ]
           },
@@ -2344,6 +2543,19 @@
                 }
               ]
             },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
             "$.sites[*].latestVersion": {
               "combine": "AND",
               "matchers": [
@@ -2363,6 +2575,17 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -2807,12 +3030,16 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               },
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "@contracts/qits-projects"
+                "name": "@contracts/qits-projects",
+                "versionCount": 1
               }
             ]
           },
@@ -2836,6 +3063,19 @@
                 }
               ]
             },
+            "$.sites[*].latestPublishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
             "$.sites[*].latestVersion": {
               "combine": "AND",
               "matchers": [
@@ -2855,6 +3095,17 @@
                 },
                 {
                   "match": "type"
+                }
+              ]
+            },
+            "$.sites[*].versionCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
                 }
               ]
             }
@@ -3213,8 +3464,10 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2100.1.0",
-                "name": "contract-docs-site"
+                "name": "contract-docs-site",
+                "versionCount": 1
               }
             ]
           },
@@ -3237,6 +3490,15 @@
                     {
                       "index": 0,
                       "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
                         "$.latestVersion": {
                           "combine": "AND",
                           "matchers": [
@@ -3250,6 +3512,14 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
                             }
                           ]
                         }
@@ -3312,8 +3582,10 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2026.1109.73025",
-                "name": "@routes/qits-landing"
+                "name": "@routes/qits-landing",
+                "versionCount": 1
               }
             ]
           },
@@ -3336,6 +3608,15 @@
                     {
                       "index": 0,
                       "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
                         "$.latestVersion": {
                           "combine": "AND",
                           "matchers": [
@@ -3349,6 +3630,14 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
                             }
                           ]
                         }
@@ -3411,8 +3700,10 @@
           "content": {
             "sites": [
               {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
                 "latestVersion": "2026.1111.50732",
-                "name": "@routes/qits-landing"
+                "name": "@routes/qits-landing",
+                "versionCount": 1
               }
             ]
           },
@@ -3435,6 +3726,15 @@
                     {
                       "index": 0,
                       "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
                         "$.latestVersion": {
                           "combine": "AND",
                           "matchers": [
@@ -3448,6 +3748,14 @@
                           "matchers": [
                             {
                               "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
                             }
                           ]
                         }

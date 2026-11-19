@@ -124,6 +124,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/repositories', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
           { path: 'projects/:slug/observability/logs', component: TestPage },
+          { path: 'projects/:slug/docs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
           { path: 'projects/:slug/setup', component: TestPage },
           { path: 'projects/:slug/workspaces/:slotId', component: TestPage },
@@ -342,6 +343,7 @@ describe('ShellLayout (screenshots)', () => {
       'Desk',
       'Repositories',
       'Observability',
+      'Docs',
       'Events',
       // The platform's pages, below the project's sections (qits-2262).
       'Network access',
@@ -552,6 +554,7 @@ describe('ShellLayout (screenshots)', () => {
     { label: 'Desk', segment: 'desk', outcome: 'desk' },
     { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
+    { label: 'Docs', segment: 'docs', outcome: 'docs' },
     { label: 'Events', segment: 'events', outcome: 'events' },
   ] as const;
 

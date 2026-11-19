@@ -12,6 +12,7 @@ export type RoutePath =
   | 'projects/:slug/agents/:agentId/files'
   | 'projects/:slug/agents/:agentId/terminal'
   | 'projects/:slug/desk'
+  | 'projects/:slug/docs'
   | 'projects/:slug/events'
   | 'projects/:slug/ideas'
   | 'projects/:slug/ideas/create'
