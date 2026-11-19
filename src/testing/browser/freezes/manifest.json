@@ -100564,6 +100564,408 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > says what matched nothing per section, never that nothing has been scanned",
+      "name": "no-match",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no external dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > says what matched nothing per section, never that nothing has been scanned",
+      "name": "no-match",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no external dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > says what matched nothing per section, never that nothing has been scanned",
+      "name": "no-match",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no external dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > says what matched nothing per section, never that nothing has been scanned",
+      "name": "no-match",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no external dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > says what matched nothing per section, never that nothing has been scanned",
+      "name": "no-match",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no external dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > says what matched nothing per section, never that nothing has been scanned",
+      "name": "no-match",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no dependencies matching a glob",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no external dependencies matching a glob",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
       "test": "MaintenanceDependenciesPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
@@ -100831,6 +101233,1596 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > opens a searched link with the glob in the box and in both reads, counted with it",
+      "name": "searched",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "external dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "error",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > opens a searched link with the glob in the box and in both reads, counted with it",
+      "name": "searched",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "external dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "error",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > opens a searched link with the glob in the box and in both reads, counted with it",
+      "name": "searched",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "external dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "error",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > opens a searched link with the glob in the box and in both reads, counted with it",
+      "name": "searched",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "external dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "error",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > opens a searched link with the glob in the box and in both reads, counted with it",
+      "name": "searched",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "external dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "error",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts",
+      "test": "MaintenanceDependenciesPage (screenshots) > opens a searched link with the glob in the box and in both reads, counted with it",
+      "name": "searched",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/dependencies",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "dependencies matching a glob, some behind",
+          "operationId": "listRepositories"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "external dependencies matching a glob, some behind",
+          "operationId": "listDependencies"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=maven:io.quarkus.platform:quarkus-bom",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:@qits/ui-components",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "error",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:left-pad",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "latest"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": null,
+          "derived": [
+            "pending"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listDependencies",
+          "item": "key=npm:typescript",
+          "field": "version",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -224464,12 +226456,24 @@
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/loading-phone-light.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/loading-tablet-dark.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/no-match-tablet-light.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-desktop-dark.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-desktop-light.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-phone-dark.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-phone-light.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-tablet-dark.html",
-      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-tablet-light.html"
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/refused-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/searched-tablet-light.html"
     ],
     "projects/:slug/observability/logs": [
       "src/app/routes/projects/[slug]/observability/logs/observability-logs.page.browser.spec.ts/empty-desktop-dark.html",
