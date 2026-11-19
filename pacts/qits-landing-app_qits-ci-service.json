@@ -8,6 +8,1573 @@
         "references": {
           "qits-call": {
             "app": "qits-ci-service",
+            "operationId": "cancelRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "cancel-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "cancel-ci-run: cancelRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a running run of the project",
+          "params": {
+            "failedRunId": "00000000-0000-4000-8000-000000000001",
+            "gateRunId": "00000000-0000-4000-8000-000000000002",
+            "leaseId": "00000000-0000-4000-8000-000000000003",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runId": "00000000-0000-4000-8000-000000000006",
+            "targetId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "reason": "..."
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}/cancel",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000006/cancel"
+      },
+      "response": {
+        "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "retryRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "retry-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "retry-ci-run: retryRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a finished run of the project",
+          "params": {
+            "leaseId": "00000000-0000-4000-8000-000000000001",
+            "originalRunId": "00000000-0000-4000-8000-000000000002",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000003",
+            "reportId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runId": "00000000-0000-4000-8000-000000000006",
+            "targetId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}/retry",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000006/retry"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "runId": "00000000-0000-4000-8000-000000000008"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.runId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "getRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-ci-run: getRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a finished run of the project",
+          "params": {
+            "leaseId": "00000000-0000-4000-8000-000000000001",
+            "originalRunId": "00000000-0000-4000-8000-000000000002",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000003",
+            "reportId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runId": "00000000-0000-4000-8000-000000000006",
+            "targetId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000006"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetypeName": "java-service",
+            "archetypeVersion": "2026.1101.1",
+            "autoRetry": true,
+            "autoRetryDeferredUntil": null,
+            "branch": "release/contract-service-rr-7",
+            "cancellationReason": null,
+            "commitSha": "0000000000000000000000000000000000000029",
+            "configPath": ".config/qits/release.yml",
+            "continuedFromRunId": null,
+            "createdAt": "2026-01-01T00:00:00Z",
+            "daemonVersion": "2026.1101.120000",
+            "expectedFinishInMillis": null,
+            "expectedStartInMillis": null,
+            "finishedAt": "2026-01-01T00:00:00Z",
+            "id": "00000000-0000-4000-8000-000000000006",
+            "leaseId": "00000000-0000-4000-8000-000000000001",
+            "oomKills": 1,
+            "oomScope": "LEASE",
+            "phase": "RELEASE_REQUEST",
+            "queuePosition": null,
+            "releaseRequestId": "00000000-0000-4000-8000-000000000003",
+            "releaseRequestQualifiedId": "contract-service-rr-7",
+            "repoId": "00000000-0000-4000-8000-000000000005",
+            "repoName": "contract-service",
+            "retryOfRunId": "00000000-0000-4000-8000-000000000002",
+            "retryReason": "infra failure (the connection to the run's lease container was lost) on run 00000000-0000-4000-8000-000000000002 — automatic retry 1 of 2",
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "FAILED",
+            "steps": [
+              {
+                "exitCode": 0,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "image": "alpine:3",
+                "name": "build",
+                "output": "[... output truncated ...]\n[INFO] Compiling 214 source files with javac [debug release 21] to target/classes\n[INFO] BUILD SUCCESS\n",
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCESS",
+                "stepIndex": 0
+              },
+              {
+                "exitCode": 0,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "image": "alpine:3",
+                "name": "build",
+                "output": "[... output truncated ...]\n[INFO] Compiling 214 source files with javac [debug release 21] to target/classes\n[INFO] BUILD SUCCESS\n",
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCESS",
+                "stepIndex": 0
+              },
+              {
+                "exitCode": 0,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "image": "alpine:3",
+                "name": "build",
+                "output": "[... output truncated ...]\n[INFO] Compiling 214 source files with javac [debug release 21] to target/classes\n[INFO] BUILD SUCCESS\n",
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCESS",
+                "stepIndex": 0
+              }
+            ],
+            "supersededByRunId": null,
+            "targetId": "00000000-0000-4000-8000-000000000007",
+            "triggerEventName": "ReleaseRequestChanged",
+            "triggerType": "EVENT"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetypeName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.archetypeVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.autoRetry": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.commitSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.configPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.daemonVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.leaseId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.oomKills": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.oomScope": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.phase": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.releaseRequestId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.releaseRequestQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.retryOfRunId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.retryReason": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.steps[*].exitCode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.steps[*].finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.steps[*].image": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].output": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.steps[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].stepIndex": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.targetId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.triggerEventName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.triggerType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "getRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-ci-run: getRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a queued run of the project",
+          "params": {
+            "aheadRunId": "00000000-0000-4000-8000-000000000001",
+            "inFlightRunId": "00000000-0000-4000-8000-000000000002",
+            "leaseId": "00000000-0000-4000-8000-000000000003",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runId": "00000000-0000-4000-8000-000000000006",
+            "targetId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000006"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetypeName": "java-service",
+            "archetypeVersion": "2026.1101.1",
+            "autoRetry": false,
+            "autoRetryDeferredUntil": null,
+            "branch": "release/contract-service-rr-7",
+            "cancellationReason": null,
+            "commitSha": "000000000000000000000000000000000000002f",
+            "configPath": ".config/qits/release.yml",
+            "continuedFromRunId": null,
+            "createdAt": "2026-01-01T00:00:00Z",
+            "daemonVersion": null,
+            "expectedFinishInMillis": 705000,
+            "expectedStartInMillis": 240000,
+            "finishedAt": null,
+            "id": "00000000-0000-4000-8000-000000000006",
+            "leaseId": null,
+            "oomKills": null,
+            "oomScope": null,
+            "phase": "RELEASE_REQUEST",
+            "queuePosition": 1,
+            "releaseRequestId": "00000000-0000-4000-8000-000000000004",
+            "releaseRequestQualifiedId": "contract-service-rr-7",
+            "repoId": "00000000-0000-4000-8000-000000000005",
+            "repoName": "contract-service",
+            "retryOfRunId": null,
+            "retryReason": null,
+            "startedAt": null,
+            "status": "QUEUED",
+            "steps": [],
+            "supersededByRunId": null,
+            "targetId": null,
+            "triggerEventName": "ReleaseRequestChanged",
+            "triggerType": "EVENT"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetypeName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.archetypeVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.autoRetry": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.commitSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.configPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.expectedFinishInMillis": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.expectedStartInMillis": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.phase": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.queuePosition": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.releaseRequestId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.releaseRequestQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.triggerEventName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.triggerType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "getRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-ci-run: getRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a running run of the project",
+          "params": {
+            "failedRunId": "00000000-0000-4000-8000-000000000001",
+            "gateRunId": "00000000-0000-4000-8000-000000000002",
+            "leaseId": "00000000-0000-4000-8000-000000000003",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runId": "00000000-0000-4000-8000-000000000006",
+            "targetId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000006"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "archetypeName": "java-service",
+            "archetypeVersion": "2026.1101.1",
+            "autoRetry": false,
+            "autoRetryDeferredUntil": null,
+            "branch": "2026.1001.1",
+            "cancellationReason": null,
+            "commitSha": "000000000000000000000000000000000000002c",
+            "configPath": ".config/qits/release.yml",
+            "continuedFromRunId": "00000000-0000-4000-8000-000000000002",
+            "createdAt": "2026-01-01T00:00:00Z",
+            "daemonVersion": "2026.1101.120000",
+            "expectedFinishInMillis": 0,
+            "expectedStartInMillis": null,
+            "finishedAt": null,
+            "id": "00000000-0000-4000-8000-000000000006",
+            "leaseId": "00000000-0000-4000-8000-000000000003",
+            "live": {
+              "output": "\u001b[36mpushing\u001b[0m qits/contract-service:2026.1001.1\n\u001b[32mpushed\u001b[0m layer 3 of 7\n",
+              "startedAt": "2026-01-01T00:00:00Z",
+              "stepIndex": 1
+            },
+            "oomKills": null,
+            "oomScope": null,
+            "phase": "RELEASE",
+            "queuePosition": null,
+            "releaseRequestId": "00000000-0000-4000-8000-000000000004",
+            "releaseRequestQualifiedId": "contract-service-rr-7",
+            "repoId": "00000000-0000-4000-8000-000000000005",
+            "repoName": "contract-service",
+            "retryOfRunId": null,
+            "retryReason": null,
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "RUNNING",
+            "steps": [
+              {
+                "exitCode": 0,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "image": "alpine:3",
+                "name": "build",
+                "output": "[INFO] Building contract-service 2026.1001.1\n[INFO] BUILD SUCCESS\n",
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCESS",
+                "stepIndex": 0
+              }
+            ],
+            "supersededByRunId": null,
+            "targetId": "00000000-0000-4000-8000-000000000007",
+            "triggerEventName": "SCMRelease",
+            "triggerType": "EVENT"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.archetypeName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.archetypeVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.autoRetry": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.commitSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.configPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.continuedFromRunId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.daemonVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.expectedFinishInMillis": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.leaseId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.live.output": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.live.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.live.stepIndex": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.phase": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.releaseRequestId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.releaseRequestQualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repoId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.repoName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.steps[*].exitCode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.steps[*].finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.steps[*].image": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].output": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.steps[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps[*].stepIndex": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.targetId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.triggerEventName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.triggerType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "getRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-ci-run: getRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no run with the given id",
+          "params": {
+            "runId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000001"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "listRunReports"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-ci-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-ci-run: listRunReports",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a finished run of the project",
+          "params": {
+            "leaseId": "00000000-0000-4000-8000-000000000001",
+            "originalRunId": "00000000-0000-4000-8000-000000000002",
+            "releaseRequestId": "00000000-0000-4000-8000-000000000003",
+            "reportId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runId": "00000000-0000-4000-8000-000000000006",
+            "targetId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/ci/api/runs/${runId}/reports",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/ci/api/runs/00000000-0000-4000-8000-000000000006/reports"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "reports": [
+              {
+                "highlights": [
+                  {
+                    "delta": null,
+                    "metric": "tests.total",
+                    "severity": "good",
+                    "text": "128 tests, none failed",
+                    "value": 128
+                  }
+                ],
+                "id": "00000000-0000-4000-8000-000000000004",
+                "kind": "test-results",
+                "kindVersion": 1,
+                "stepIndex": 1
+              }
+            ],
+            "runId": "00000000-0000-4000-8000-000000000006"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.reports": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.reports[*].highlights": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.reports[*].highlights[*].metric": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reports[*].highlights[*].severity": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reports[*].highlights[*].text": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reports[*].highlights[*].value": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.reports[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.reports[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reports[*].kindVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.reports[*].stepIndex": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.runId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
             "operationId": "listActiveRuns"
           },
           "qits-trigger": {
