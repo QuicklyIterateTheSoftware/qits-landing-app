@@ -3,14 +3,12 @@ import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } fro
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
-import type {
-  DependencyEntry,
-  MaintenanceRepository,
-} from '$core/maintenance/maintenance.consumes';
+import type { DependencyEntry } from '$core/maintenance/maintenance.consumes';
 import {
   MAINTENANCE_DEPENDENCIES,
   MAINTENANCE_REPOSITORIES,
 } from '$core/maintenance/maintenance.operations';
+import { projectRepositories } from '$core/maintenance/project-repositories';
 import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -29,20 +27,6 @@ export interface ProjectDependency extends DependencyEntry {
   readonly pins: DependencyPin[];
   /** How many of its pins are behind (`pending`). */
   readonly behind: number;
-}
-
-/** The names of the repositories of `projectId`, from the inventory's repositories. */
-export function projectRepositories(
-  repositories: readonly MaintenanceRepository[],
-  projectId: string | undefined,
-): ReadonlySet<string> {
-  if (!projectId) return new Set();
-  return new Set(
-    repositories
-      .filter((repository) => repository.project === projectId)
-      .map((repository) => repository.name ?? '')
-      .filter(Boolean),
-  );
 }
 
 /**

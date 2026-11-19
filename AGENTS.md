@@ -589,10 +589,11 @@ approval" (with `approveDeploymentRequest`), "… held for decline" (with `decli
 and its recorded note), "an application deployed in an environment" and "an environment".
 
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
-component whose pages are its children (the internal, external, bump, adoption, repository and
-trains pages come as their own children later: qits-2330 to qits-2335); its own address redirects
-to `dependencies` by a relative `redirectTo`, which keeps the query. The sidebar's Maintenance
-entry lists the section's pages below it while one is open (`open-sidebar-maintenance-page`).
+component whose pages are its children (`artifacts`, qits-2330; the external, bump, adoption,
+repository and trains pages come as their own children later: qits-2331 to qits-2335); its own
+address redirects to `dependencies` by a relative `redirectTo`, which keeps the query. The
+sidebar's Maintenance entry lists the section's pages below it while one is open
+(`open-sidebar-maintenance-page`).
 `maintenance/dependencies` (`MaintenanceDependenciesPage`) reads qits-maintenance's inventory
 through `qitsResource` over `core/maintenance/maintenance.operations.ts`
 (`MAINTENANCE_REPOSITORIES`, `listRepositories`; `MAINTENANCE_DEPENDENCIES`, `listDependencies`
@@ -604,6 +605,24 @@ with a behind (`pending`) pin first, then by name, each pin with its repository 
 version, manifest and a "behind" tag; a null `latest` shows as unknown with the `error` beside it.
 "Only behind" is `?behind=true` (written with `replaceUrl`). Only staff roles may read the
 inventory; a 403 says so. No domain event follows the inventory: Refresh reads all three again.
+`projectRepositories` (`core/maintenance/project-repositories.ts`) is that project filter, shared by
+the section's pages.
+
+`maintenance/artifacts` (`MaintenanceArtifactsPage`, qits-2330) is what the project has released
+and who still ships an old copy, read off the SBOMs; it is not the global `/artifacts` (the
+artifact store, qits-2316). The listing reads `MAINTENANCE_REPOSITORIES` and
+`MAINTENANCE_ARTIFACTS` (`listArtifacts`) and keeps the artifacts whose `repository` is one of the
+project's: artifacts with a behind dependent (`behindCount > 0`) first, then by name, each with its
+ecosystem, repository (plain text), newest version and build time, latest (unknown when null), SBOM
+status, dependents and behind counts; the heading counts the artifacts, those shipped behind and
+those whose SBOM is MISSING or FAILED. "Only behind" is `?behind=true`, as on Dependencies. A name
+links to the detail on the same page (`?ecosystem=&name=`, `MAINTENANCE_DEPENDENTS`,
+`listDependencyDependents`), except a `daemon` row's: the door reads maven, npm and docker only and
+answers anything else with a 400, whose `message` (`errorConsumes`) the detail shows. The detail
+keeps the listing's reads for the artifact's own row, and lists every dependent, not filtered by
+project, as current, behind or unknown (`currencyOf`: `embeddedVersion` against `latest`), the
+behind ones first, then by repository; its back link drops `ecosystem` and `name` and keeps
+`behind`. A 403 on any read says so; Refresh reads the open view's reads again.
 
 ## Styling
 

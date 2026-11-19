@@ -1,4 +1,6 @@
 import type {
+  GetMaintenanceApiArtifactsResponses,
+  GetMaintenanceApiDependenciesDependentsResponses,
   GetMaintenanceApiDependenciesResponses,
   GetMaintenanceApiRepositoriesResponses,
   ListPendingBumpsResponses,
@@ -73,3 +75,61 @@ export type DependencyEntry = Consumed<
   GetMaintenanceApiDependenciesResponses[200],
   typeof LIST_DEPENDENCIES
 >[number];
+
+/**
+ * `MAINTENANCE_ARTIFACTS` (qits-2330): every artifact the platform has released, one row each, read
+ * by the Maintenance section's Artifacts page for its project only (the artifacts whose
+ * `repository` is one of the open project's): its ecosystem and name, the repository producing it,
+ * its latest version (null when unknown), its newest release (`version`, built at `occurredAt`)
+ * and whether that release's SBOM was read (`sbomStatus`: INGESTED, MISSING, FAILED), and how many
+ * newest releases of ours embed it (`dependentCount`), of which an older copy (`behindCount`).
+ */
+export const LIST_ARTIFACTS = [
+  '[].ecosystem',
+  '[].name',
+  '[].repository',
+  '[].latest',
+  '[].version',
+  '[].occurredAt',
+  '[].sbomStatus',
+  '[].dependentCount',
+  '[].behindCount',
+] as const;
+
+/**
+ * `MAINTENANCE_DEPENDENTS` (qits-2330): for one artifact (`?ecosystem=&name=`), its latest version
+ * and every released artifact of ours whose newest release embeds it, read off the SBOMs: that
+ * artifact (`artifactEcosystem`, `artifactName`, `artifactVersion`), its repository, the version it
+ * embeds, whether directly, when it was built and its own SBOM's status.
+ */
+export const LIST_DEPENDENCY_DEPENDENTS = [
+  'ecosystem',
+  'name',
+  'latest',
+  'dependents[].artifactEcosystem',
+  'dependents[].artifactName',
+  'dependents[].artifactVersion',
+  'dependents[].repository',
+  'dependents[].embeddedVersion',
+  'dependents[].direct',
+  'dependents[].occurredAt',
+  'dependents[].sbomStatus',
+] as const;
+
+/**
+ * `MAINTENANCE_DEPENDENTS`'s refusal: a 400 (an ecosystem the door does not read, such as
+ * `daemon`, or no name) carries the service's reason as `message`, which the detail shows.
+ */
+export const DEPENDENTS_REFUSAL = ['message'] as const;
+
+/** One released artifact, cut to what the Artifacts page reads. */
+export type ArtifactEntry = Consumed<
+  GetMaintenanceApiArtifactsResponses[200],
+  typeof LIST_ARTIFACTS
+>[number];
+
+/** One artifact's dependents, cut to what the Artifacts page's detail reads. */
+export type ArtifactDependents = Consumed<
+  GetMaintenanceApiDependenciesDependentsResponses[200],
+  typeof LIST_DEPENDENCY_DEPENDENTS
+>;

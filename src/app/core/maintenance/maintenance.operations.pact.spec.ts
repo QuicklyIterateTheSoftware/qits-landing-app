@@ -13,7 +13,9 @@ import type { InteractionSlug } from '../../interactions';
 import { maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
 import { PENDING_BUMPS } from './maintenance.consumes';
 import {
+  MAINTENANCE_ARTIFACTS,
   MAINTENANCE_DEPENDENCIES,
+  MAINTENANCE_DEPENDENTS,
   MAINTENANCE_REPOSITORIES,
   PENDING_BUMPS_LIST,
 } from './maintenance.operations';
@@ -35,6 +37,12 @@ import {
  * ("dependencies of a project, some behind", "external dependencies of a project, some behind"),
  * and an empty one ("no dependencies", "no external dependencies"), each as the page's screenshots
  * show it.
+ *
+ * Its Artifacts page (qits-2330) reads the inventory's repositories, the released artifacts and,
+ * for one artifact (`?ecosystem=&name=`, which the golden master records and the interaction
+ * requires), the released artifacts embedding it: a project that has released artifacts, one with
+ * dependents current, behind and transitive ("released artifacts, some behind"), and none ("no
+ * released artifacts"), each as the page's screenshots show it.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
@@ -86,6 +94,15 @@ const NO_EXTERNAL = 'no external dependencies';
 
 /** The page's request for the dependencies of `kind`. */
 const ofKind = (kind: 'INTERNAL' | 'EXTERNAL') => ({ query: { kind } });
+
+const RELEASED = 'released artifacts, some behind';
+const NOTHING_RELEASED = 'no released artifacts';
+
+/** The detail's request for the artifact `state` recorded the dependents of. */
+const dependentsOf = (state: string) => {
+  const { ecosystem, name } = masters.operation(state, 'listDependencyDependents').query;
+  return { query: { ecosystem, name } };
+};
 
 /** The project the recorded states' repositories belong to. */
 const projectOf = (state: string): string =>
@@ -181,6 +198,70 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
           MAINTENANCE_DEPENDENCIES.fetch(ofKind('EXTERNAL')),
         );
         expect(data).toEqual([]);
+      },
+    ));
+
+  it('show-project-artifacts: the inventory’s repositories, with their projects', () =>
+    given(MAINTENANCE_REPOSITORIES, RELEASED, 'show-project-artifacts').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
+        expect(error).toBeUndefined();
+        const repositories = data ?? [];
+        expect(repositories.length).toBeGreaterThan(0);
+        expect(repositories[0]?.project).toBe(projectOf(RELEASED));
+      },
+    ));
+
+  it('show-project-artifacts: no repositories when nothing was released', () =>
+    given(MAINTENANCE_REPOSITORIES, NOTHING_RELEASED, 'show-project-artifacts').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
+        expect(data).toEqual([]);
+      },
+    ));
+
+  it('show-project-artifacts: the released artifacts, with their SBOMs and dependents', () =>
+    given(MAINTENANCE_ARTIFACTS, RELEASED, 'show-project-artifacts').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
+      expect(error).toBeUndefined();
+      // The mock answers each row with the recorded first one (a type match per element).
+      const artifacts = data ?? [];
+      expect(artifacts.length).toBeGreaterThan(0);
+      expect(
+        artifacts.every((a) => !!a.ecosystem && !!a.name && !!a.repository && !!a.sbomStatus),
+      ).toBe(true);
+      expect(artifacts.every((a) => typeof a.behindCount === 'number')).toBe(true);
+    }));
+
+  it('show-project-artifacts: no artifacts when nothing was released', () =>
+    given(MAINTENANCE_ARTIFACTS, NOTHING_RELEASED, 'show-project-artifacts').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
+        expect(data).toEqual([]);
+      },
+    ));
+
+  it('show-artifact-dependents: an artifact’s dependents, direct and transitive', () =>
+    given(MAINTENANCE_DEPENDENTS, RELEASED, 'show-artifact-dependents').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_DEPENDENTS.fetch(dependentsOf(RELEASED)),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.latest).toBeTruthy();
+        const dependents = data?.dependents ?? [];
+        expect(dependents.length).toBeGreaterThan(0);
+        expect(dependents.every((d) => !!d.repository && !!d.embeddedVersion)).toBe(true);
+      },
+    ));
+
+  it('show-artifact-dependents: nothing embeds an artifact when nothing was released', () =>
+    given(MAINTENANCE_DEPENDENTS, NOTHING_RELEASED, 'show-artifact-dependents').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () =>
+          MAINTENANCE_DEPENDENTS.fetch(dependentsOf(NOTHING_RELEASED)),
+        );
+        expect(data?.dependents).toEqual([]);
       },
     ));
 });

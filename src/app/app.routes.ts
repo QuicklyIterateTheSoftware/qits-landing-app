@@ -85,6 +85,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * (`MaintenanceDependenciesPage`, the project's internal and external pins, the behind ones first)
  * by a relative `redirectTo`, which keeps the query, so `/maintenance?behind=true` lands on the
  * behind pins only.
+ * `maintenance/artifacts` (`MaintenanceArtifactsPage`, qits-2330) is what the project has
+ * released and who still ships an old copy: the listing, and one artifact's dependents at
+ * `?ecosystem=&name=` on the same page. It is not the global `/artifacts` (the artifact store,
+ * qits-2316).
  *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
@@ -426,6 +430,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page').then(
                 (m) => m.MaintenanceDependenciesPage,
+              ),
+          },
+          {
+            path: 'artifacts',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page').then(
+                (m) => m.MaintenanceArtifactsPage,
               ),
           },
         ],
