@@ -2759,7 +2759,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-docs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs"
           }
         }
       },
@@ -2881,7 +2882,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-docs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs"
           }
         }
       },
