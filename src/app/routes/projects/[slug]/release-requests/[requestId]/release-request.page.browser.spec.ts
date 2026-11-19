@@ -506,6 +506,18 @@ describe('ReleaseRequestPage (screenshots)', () => {
       .toMatchScreenshot('released', { kind: 'DATA' });
   });
 
+  it('open-release-deployment-request request: “the deployment” opens its deployment request', async () => {
+    const recorded = await goldenMaster('a released release request', 'getReleaseRequest');
+    const deploy = recorded.request.pipeline.phases.find(
+      (phase: { phase: string }) => phase.phase === 'DEPLOY',
+    );
+    const { opened, view } = await shown('a released release request');
+    await view.getByRole('link', { name: 'the deployment' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-release-deployment-request:request']);
+    expect(url()).toBe(`/projects/${opened.project.slug}/deployments/requests/${deploy.runId}`);
+  });
+
   it('shows the paths a conflicted request could not fold', async () => {
     const recorded = await goldenMaster('a conflicted release request', 'getReleaseRequest');
     const { opened, view } = await shown('a conflicted release request');

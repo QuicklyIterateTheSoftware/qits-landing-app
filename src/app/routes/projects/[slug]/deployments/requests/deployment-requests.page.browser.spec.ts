@@ -2,9 +2,11 @@ import type { TestRequest } from '@angular/common/http/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { leftFor } from '../../../../../../testing/browser/contracts-bundles';
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
 
@@ -17,20 +19,16 @@ import { provideTestPlatformOrigins } from '../../../../../../testing/platform-o
  * with deployment requests" (a request held for approval, pending, and one deployed ACTIVE through
  * a met gate at priority HIGH, completed) and "a project with no deployment requests" (none). A
  * refusal is a 403 with no body, as the service answers a credential without a deployments role.
- * The deployments frontend's page origin is fixed, so each row's Open link has its address.
+ * Each row's Open leads to the request's own page in this app (qits-2322).
  */
 describe('DeploymentRequestsPage (screenshots)', () => {
   let http: HttpTestingController;
-  const DEPLOYMENTS_PAGE = 'https://deployments.qits.example.test';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         provideAppRoute(),
-        provideTestPlatformOrigins(
-          {},
-          { idp: 'https://idp.qits.example.test', deployments: DEPLOYMENTS_PAGE },
-        ),
+        provideTestPlatformOrigins({}, { idp: 'https://idp.qits.example.test' }),
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -93,7 +91,7 @@ describe('DeploymentRequestsPage (screenshots)', () => {
       .element(completed.getByRole('link', { name: 'Open' }))
       .toHaveAttribute(
         'href',
-        `${DEPLOYMENTS_PAGE}/${opened.project.slug}/deployment-requests/${recorded[1].id}`,
+        `/projects/${opened.project.slug}/deployments/requests/${recorded[1].id}`,
       );
     await expect
       .element(page.elementLocator(opened.frame))
@@ -163,5 +161,23 @@ describe('DeploymentRequestsPage (screenshots)', () => {
     );
     await opened.settled();
     await expect.element(view.getByRole('region', { name: 'Pending' })).toBeVisible();
+  });
+
+  it('open-deployment-request request: a row’s Open opens the request’s page', async () => {
+    const { opened, view } = await answered(WITH_REQUESTS);
+    const recorded = (
+      await goldenMaster(WITH_REQUESTS, 'listDeploymentRequests', 'qits-deployments')
+    ).deploymentRequests as { id: string }[];
+    await view
+      .getByRole('region', { name: 'Completed' })
+      .getByRole('link', { name: 'Open' })
+      .click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-deployment-request:request',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/deployments/requests/${recorded[1].id}`,
+    );
   });
 });

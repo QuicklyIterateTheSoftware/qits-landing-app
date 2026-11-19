@@ -490,7 +490,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-deployment-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/:requestId"
           }
         }
       },
@@ -852,7 +853,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-deployment-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/:requestId"
           }
         }
       },
@@ -1094,7 +1096,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-deployment-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/:requestId"
           }
         }
       },
@@ -1242,7 +1245,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-deployment-request",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/:requestId"
           }
         }
       },
