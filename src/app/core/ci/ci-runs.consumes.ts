@@ -1,4 +1,8 @@
-import type { ListActiveRunsResponses, ListRunsResponses } from '../../api/ci';
+import type {
+  ListActiveRunsResponses,
+  ListRepositorySummariesResponses,
+  ListRunsResponses,
+} from '../../api/ci';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -30,16 +34,52 @@ export type CiRun = NonNullable<
 
 /**
  * Every queued or running run, all repositories: the lightning menu marks each pending request
- * with its active runs (`activeRunsOf`), and links them.
+ * with its active runs (`activeRunsOf`), and links them. The project's CI page (qits-2314) lists
+ * the ones of the project's repositories (`repoId`) under "Running now", with when each was
+ * queued (`createdAt`) and started (`startedAt`).
  */
 export const LIST_ACTIVE_RUNS = [
   'runs[].id',
+  'runs[].repoId',
   'runs[].status',
   'runs[].branch',
   'runs[].releaseRequestId',
+  'runs[].createdAt',
+  'runs[].startedAt',
 ] as const;
 
-/** One active run, cut to what the menu reads. */
+/** One active run, cut to what the menu and the CI page read. */
 export type ActiveCiRun = NonNullable<
   Consumed<ListActiveRunsResponses[200], typeof LIST_ACTIVE_RUNS>['runs']
 >[number];
+
+/**
+ * Each repository's newest run and newest run on main, all repositories
+ * (`/ci/api/repositories/summary`): the project's CI page (qits-2314) joins the rows to the
+ * project's repositories by `repositoryId` (never by the row's `projectId`, which qits-ci knows
+ * only for a push on the public address), and shows each run's status, branch, commit and when it
+ * was queued and finished.
+ */
+export const LIST_REPOSITORY_SUMMARIES = [
+  'repositories[].repositoryId',
+  'repositories[].lastRun.id',
+  'repositories[].lastRun.status',
+  'repositories[].lastRun.branch',
+  'repositories[].lastRun.commitSha',
+  'repositories[].lastRun.createdAt',
+  'repositories[].lastRun.finishedAt',
+  'repositories[].lastMainRun.id',
+  'repositories[].lastMainRun.status',
+  'repositories[].lastMainRun.branch',
+  'repositories[].lastMainRun.commitSha',
+  'repositories[].lastMainRun.createdAt',
+  'repositories[].lastMainRun.finishedAt',
+] as const;
+
+/** One repository's summary, cut to what the CI page reads. */
+export type CiRepositorySummary = NonNullable<
+  Consumed<ListRepositorySummariesResponses[200], typeof LIST_REPOSITORY_SUMMARIES>['repositories']
+>[number];
+
+/** A summary's run (its newest, or its newest on main), cut to what the CI page reads. */
+export type CiSummaryRun = NonNullable<CiRepositorySummary['lastRun']>;

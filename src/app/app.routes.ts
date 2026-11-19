@@ -54,6 +54,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`),
  * one request at `release-requests/<requestId>` (`ReleaseRequestPage`).
  *
+ * A project's CI is at `projects/<slug>/ci` (`CiRunsPage`, qits-2314): each repository's newest
+ * run and newest run on main, filtered by `?repository=` and `?status=`, with the project's
+ * running and queued runs above them.
+ *
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
@@ -276,6 +280,11 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/release-requests/[requestId]/release-request.page').then(
             (m) => m.ReleaseRequestPage,
           ),
+      },
+      {
+        path: 'projects/:slug/ci',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ci/ci-runs.page').then((m) => m.CiRunsPage),
       },
       {
         path: 'projects/:slug/desk',

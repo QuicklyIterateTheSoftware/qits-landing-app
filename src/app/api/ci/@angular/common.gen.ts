@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CancelReleaseRequestRunsData, CancelReleaseRequestRunsResponse2, CancelRunData, GetCiApiRepositoriesData, GetCiApiRepositoriesResponse, GetCiApiRepositoriesSummaryData, GetCiApiRepositoriesSummaryResponse, GetCiApiRunsFinishedData, GetCiApiRunsFinishedResponse, GetDaemonPinData, GetDaemonPinResponse, GetReleasePhaseData, GetReleasePhaseResponse, GetRunBaselineData, GetRunBaselineResponse, GetRunData, GetRunQueueData, GetRunQueueResponse, GetRunReportData, GetRunReportResponse, GetRunResponse, ListActiveRunsData, ListActiveRunsResponse, ListReleaseArtifactsData, ListReleaseArtifactsResponse, ListRunBaselineReportsData, ListRunBaselineReportsResponse, ListRunGateReportsData, ListRunGateReportsResponse, ListRunReportsData, ListRunReportsResponse, ListRunsData, ListRunsResponse2, PutRunStepReportData, PutRunStepReportResponse, RerunReleaseRequestPhaseData, RerunReleaseRequestPhaseResponse, RetryRunData, RetryRunResponse2, TriggerEventData, TriggerEventResponse } from '../types.gen';
+import type { CancelReleaseRequestRunsData, CancelReleaseRequestRunsResponse2, CancelRunData, GetCiApiRepositoriesData, GetCiApiRepositoriesResponse, GetCiApiRunsFinishedData, GetCiApiRunsFinishedResponse, GetDaemonPinData, GetDaemonPinResponse, GetReleasePhaseData, GetReleasePhaseResponse, GetRunBaselineData, GetRunBaselineResponse, GetRunData, GetRunQueueData, GetRunQueueResponse, GetRunReportData, GetRunReportResponse, GetRunResponse, ListActiveRunsData, ListActiveRunsResponse, ListReleaseArtifactsData, ListReleaseArtifactsResponse, ListRepositorySummariesData, ListRepositorySummariesResponse2, ListRunBaselineReportsData, ListRunBaselineReportsResponse, ListRunGateReportsData, ListRunGateReportsResponse, ListRunReportsData, ListRunReportsResponse, ListRunsData, ListRunsResponse2, PutRunStepReportData, PutRunStepReportResponse, RerunReleaseRequestPhaseData, RerunReleaseRequestPhaseResponse, RetryRunData, RetryRunResponse2, TriggerEventData, TriggerEventResponse } from '../types.gen';
 
 /**
  * The daemon binary this instance is configured to launch
@@ -39,7 +39,7 @@ export const getCiApiRepositoriesRequest = <ThrowOnError extends boolean = false
 /**
  * Each repository with its newest run and its newest run on main
  */
-export const getCiApiRepositoriesSummaryRequest = <ThrowOnError extends boolean = false>(options?: Options<GetCiApiRepositoriesSummaryData, ThrowOnError>): HttpRequest<GetCiApiRepositoriesSummaryResponse> => (options?.client ?? client).requestOptions<GetCiApiRepositoriesSummaryResponse, ThrowOnError>({
+export const listRepositorySummariesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListRepositorySummariesData, ThrowOnError>): HttpRequest<ListRepositorySummariesResponse2> => (options?.client ?? client).requestOptions<ListRepositorySummariesResponse2, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/ci/api/repositories/summary',
@@ -245,9 +245,9 @@ export const getCiApiRepositoriesResource = <ThrowOnError extends boolean = fals
 /**
  * Each repository with its newest run and its newest run on main
  */
-export const getCiApiRepositoriesSummaryResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetCiApiRepositoriesSummaryData, ThrowOnError> | undefined) => httpResource<GetCiApiRepositoriesSummaryResponse>(() => {
+export const listRepositorySummariesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListRepositorySummariesData, ThrowOnError> | undefined) => httpResource<ListRepositorySummariesResponse2>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getCiApiRepositoriesSummaryRequest(opts) : undefined;
+    return opts ? listRepositorySummariesRequest(opts) : undefined;
 });
 
 /**
