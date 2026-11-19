@@ -607,8 +607,9 @@ approval" (with `approveDeploymentRequest`), "… held for decline" (with `decli
 and its recorded note), "an application deployed in an environment" and "an environment".
 
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
-component whose pages are its children (`artifacts`, qits-2330; the external, bump, adoption,
-repository and trains pages come as their own children later: qits-2331 to qits-2335); its own
+component whose pages are its children (`artifacts`, qits-2330; `bumps/:bumpId`, qits-2332; the
+external, adoption, repository and trains pages come as their own children later: qits-2331,
+qits-2333 to qits-2335); its own
 address redirects to `dependencies` by a relative `redirectTo`, which keeps the query. The
 sidebar's Maintenance entry lists the section's pages below it while one is open
 (`open-sidebar-maintenance-page`).
@@ -641,6 +642,24 @@ keeps the listing's reads for the artifact's own row, and lists every dependent,
 project, as current, behind or unknown (`currencyOf`: `embeddedVersion` against `latest`), the
 behind ones first, then by repository; its back link drops `ecosystem` and `name` and keeps
 `behind`. A 403 on any read says so; Refresh reads the open view's reads again.
+
+`maintenance/bumps/<bumpId>` (`MaintenanceBumpPage`, qits-2332) is one bump, a detail page with no
+sidebar entry (the sidebar keeps Maintenance open). It reads only `MAINTENANCE_BUMP` (`getBump`,
+no project filter: the id is the whole address), again after `BUMP_EVENTS`
+(`core/maintenance/bump-events.ts`, shared with the bumps menu) only while the bump is REQUESTED
+or RUNNING. It shows the group and repository with the status as a chip (any status, SUPERSEDED
+or unknown, as its word), the facts, the release request (a uuid links
+`projects/<slug>/release-requests/<id>`, `open-bump-release-request`; the sentinels `converged`
+and `refused` are words with what they mean; null is none), `releaseState` and `releaseDetail`
+verbatim as of `releaseStateAt` (only REJECTED, FAILED and CONFLICTED say the release is not
+coming: every automation bump that succeeded is REQUESTED), one link per CI run (`ciRunIds`, else
+`ciRunId` split on commas) through `CiRunLinks`, the `message` as plain text (an alert only when
+FAILED; with no changes it follows "This bump sent no changes."), a failed run's `failure` (step,
+image, exit code, the excerpt in a `<pre>`) and the changes table. A 404 is "No bump <id>.", a 403
+a refusal. The bumps menu's rows link the page in the open project (`open-menu-bump`); with no
+project open they are plain. The pact reads `getBump` in "pending bumps" (`releasedBumpId`), "a
+bump that changed nothing", "a failed bump" (`bumpId`) and "no such bump" (404, status only); a
+field under a recorded `null` (`failure`) is bound only where the recording holds it (`heldBy`).
 
 ## Styling
 
