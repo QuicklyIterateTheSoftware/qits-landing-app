@@ -5,7 +5,6 @@ export type RoutePath =
   | ''
   | 'artifacts'
   | 'artifacts/repositories/:repo'
-  | 'network-access'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'

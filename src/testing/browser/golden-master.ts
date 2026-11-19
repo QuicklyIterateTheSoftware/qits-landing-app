@@ -12,7 +12,6 @@ const REPOSITORY = {
   'qits-workspace-daemon': 'qits-workspace-daemon',
   'qits-system': 'qits-system-service',
   'qits-artifacts': 'qits-artifacts-service',
-  'qits-network-access': 'qits-network-access-service',
   'qits-edge': 'qits-edge-service',
   'qits-observability': 'qits-observability-service',
   'qits-deployments': 'qits-deployments-service',
@@ -47,23 +46,6 @@ export const goldenMaster = fromGoldenMasters(
 export const goldenMasterText = fromGoldenMasterTexts(
   (state: string, operationId: string, provider?: Provider) =>
     commands.goldenMasterText(state, operationId, provider),
-  (state, operationId, provider = 'qits-projects') => ({
-    provider: REPOSITORY[provider],
-    state,
-    operationId,
-  }),
-);
-
-/**
- * A text body `provider` (default qits-projects) recorded as a JSON string, such as
- * qits-network-access' WireGuard configs (`text/plain` on the wire, `getPeerAppConfig`; qits-2262):
- * the string the recording holds, registered as a text recording. `goldenMasterText` would give the
- * file as it is, quotes and escapes included. A spec `flush(...)`es it as it is, to a request read
- * as text.
- */
-export const goldenMasterString = fromGoldenMasterTexts(
-  (state: string, operationId: string, provider?: Provider) =>
-    commands.goldenMaster<string>(state, operationId, provider),
   (state, operationId, provider = 'qits-projects') => ({
     provider: REPOSITORY[provider],
     state,

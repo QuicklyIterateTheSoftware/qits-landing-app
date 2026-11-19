@@ -159,9 +159,12 @@ export interface NavNote {
  * "…" and the current page beside the burger and all five menus. The network-access link is the
  * sixth and shows from 768px only: on a phone it would clip the current page (qits-1977); there
  * the sidebar's own Network access entry (qits-2262), below the project's sections (or, with no
- * project open, below the global sections) and shown in both cases, leads to it. The theme menu
- * (qits-2086) is the seventh and shows from 768px only for the same reason; below 768px the same
- * radios (`app-theme-choices`) sit at the foot of the burger's navigation.
+ * project open, below the global sections) and shown in both cases, leads to it. Both leave this
+ * app for qits-network-access' own frontend at `https://network-access.<domain>/`
+ * (`PlatformOrigins.page('network-access')`, qits-2361), which stays public while this app is on
+ * the private network. The theme menu (qits-2086) is the seventh and shows from 768px only for the
+ * same reason; below 768px the same radios (`app-theme-choices`) sit at the foot of the burger's
+ * navigation.
  *
  * Who scrolls (qits-2050): from 768px up the shell is exactly the window's height and the window
  * never scrolls; the sidebar and the page (`<main>`) each scroll on their own, with their own
@@ -176,15 +179,17 @@ export interface NavNote {
  * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry) and its Network access entry
- * (`open-sidebar-network-access`), the global sections shown with no project open (Artifacts,
- * `open-sidebar-artifacts`, an in-app section; IdP admin, `open-sidebar-idp-admin`, which leaves
- * the app for the idp's own admin), the gear
- * (`open-project-settings`), the network icon (`open-network-access`), and the trail's brand and
- * crumbs (`follow-breadcrumb`), handed to `ui-breadcrumbs` as each crumb's exit and params. The
- * agents and release menus declare their own, being patterns (app-wide too). The gear, the network
- * icon, the sidebar's Network access and Artifacts and a work page are marked current by `[qitsExit]`; a section
- * keeps its own rule (`currentOf`: `true` while one of its pages below it is open, and Agents on a
- * slot's page), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
+ * (`open-sidebar-network-access`, external), the global sections shown with no project open
+ * (Artifacts, `open-sidebar-artifacts`, an in-app section; IdP admin, `open-sidebar-idp-admin`,
+ * which leaves the app for the idp's own admin), the gear (`open-project-settings`), the network
+ * icon (`open-network-access`, external), and the trail's brand and crumbs (`follow-breadcrumb`),
+ * handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare
+ * their own, being patterns (app-wide too). The two Network access links and IdP admin are plain
+ * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
+ * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts and a work page
+ * are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true` while one
+ * of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]` through
+ * `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
@@ -245,15 +250,18 @@ export interface NavNote {
           <span class="block h-0.5 bg-fg-control"></span>
         </button>
         <ui-breadcrumbs [home]="home" [crumbs]="crumbs()" />
-        <!-- The menus at the right end: the platform's network access (from 768px), version bumps
+        <!-- The menus at the right end: the platform's network access (from 768px, qits-network-access'
+             own frontend, qits-2361), version bumps
              and notifications (always), then the open project's agents and its release requests,
              the theme (from 768px, qits-2086), and the open project's settings (release requests
              hidden while no project is open; agents and settings not rendered then, qits-2225: a
              trigger nobody can reach would count against every project-less route). -->
         <div class="ml-auto flex items-center gap-1">
           <a
-            class="hidden size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg md:inline-flex aria-[current=page]:text-fg"
-            [qitsExit]="network.open"
+            class="hidden size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg md:inline-flex"
+            [attr.href]="networkAccessHref || null"
+            [qitsTriggers]="[network.open]"
+            (click)="leave($event, networkAccessHref, network.open)"
             aria-label="Network access"
             title="Network access"
           >
@@ -394,7 +402,8 @@ export interface NavNote {
           }
         </ul>
         <!-- The platform's own pages, with or without a project open: Network access (qits-2262),
-             also the phone's way there, where the top bar's icon does not show. -->
+             also the phone's way there, where the top bar's icon does not show; qits-network-access'
+             own frontend (qits-2361). -->
         <ul
           class="m-0 list-none px-2 py-3"
           [class.border-t]="links().length > 0 || globalShown()"
@@ -402,9 +411,10 @@ export interface NavNote {
         >
           <li>
             <a
-              class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
-              [qitsExit]="platformPages.networkAccess"
-              (click)="closeNav()"
+              class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted"
+              [attr.href]="networkAccessHref || null"
+              [qitsTriggers]="[platformPages.networkAccess]"
+              (click)="closeNav(); leave($event, networkAccessHref, platformPages.networkAccess)"
               >Network access</a
             >
           </li>
@@ -430,6 +440,15 @@ export class ShellLayout {
   protected readonly releaseRequests = inject(ProjectReleaseRequests);
   protected readonly activeAgents = inject(ProjectActiveAgents);
   private readonly openDeploymentRequest = inject(OpenDeploymentRequest);
+
+  /**
+   * qits-network-access' own frontend, at the root of its host (qits-2361); `''` while its origin
+   * is not known (the server render), so the link has no `href` until the browser takes over.
+   */
+  private readonly networkAccessOrigin = inject(PlatformOrigins).page('network-access');
+  protected readonly networkAccessHref = this.networkAccessOrigin
+    ? `${this.networkAccessOrigin}/`
+    : '';
 
   /** The agents menu's spinner: the agents' read, as the menu's own read was. */
   protected readonly agentsState = computed(() => loadState(this.activeAgents.resource));
@@ -488,17 +507,17 @@ export class ShellLayout {
     open: exit('projects/:slug/setup'),
   });
 
-  /** The network icon: the Network access page (epic qits-2000). */
+  /** The network icon: qits-network-access' own frontend (epic qits-2000, qits-2361). */
   protected readonly network = outcomes('open-network-access', {
-    open: exit('network-access'),
+    open: external('network-access'),
   });
 
   /**
    * The sidebar's platform pages, below the project's sections and shown without one too: Network
-   * access (qits-2262), the phone's way to it.
+   * access (qits-2262), the phone's way to it, qits-network-access' own frontend (qits-2361).
    */
   protected readonly platformPages = outcomes('open-sidebar-network-access', {
-    networkAccess: exit('network-access'),
+    networkAccess: external('network-access'),
   });
 
   /**
@@ -775,8 +794,23 @@ export class ShellLayout {
     this.navOpen.set(false);
   }
 
-  /** A leaving global section's click: records its outcome and leaves for `href`, in this tab. */
+  /**
+   * A leaving link's click (a global section, or Network access, qits-2361): a plain primary click
+   * records `open` and leaves for `href`, in this tab (`open.leave`); a click with a modifier,
+   * another button or no `href` yet is the browser's, as `QitsExit` leaves it, and records nothing.
+   */
   protected leave(event: MouseEvent, href: string, open: ExternalOutcome): void {
+    if (
+      !href ||
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
     event.preventDefault();
     open.leave(href);
     this.closeNav();

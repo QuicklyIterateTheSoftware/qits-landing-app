@@ -26,6 +26,9 @@ import { goldenMaster } from '../../../testing/browser/golden-master';
 import { noPools, UPSTREAM_POOLS_PATH } from '../../../testing/browser/upstream-pools';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 
+/** qits-network-access' page origin in these specs: its frontend is at `/` of that host (qits-2361). */
+const NETWORK_ACCESS = 'https://network-access.qits.example.test';
+
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
@@ -87,13 +90,14 @@ class PinnedPage {}
  *
  * The shell's navigation is declared in the layout (epic qits-2000), and each exit is followed once
  * to a stand-in route: the sidebar's sections (`open-sidebar-section`), work pages
- * (`open-sidebar-work-page`) and Network access (`open-sidebar-network-access`, with no project
- * open and with one, qits-2262), the gear (`open-project-settings`), the network icon
- * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`). The agents and
- * release menus' own exits are followed in their own specs. The global sections shown with no
- * project open open a section of this app (Artifacts, `open-sidebar-artifacts`, qits-2316, to a
- * stand-in route) or leave the app (IdP admin, `open-sidebar-idp-admin`, qits-2319): the idp's page
- * origin is under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
+ * (`open-sidebar-work-page`), the gear (`open-project-settings`), and the trail's brand and crumbs
+ * (`follow-breadcrumb`). The agents and release menus' own exits are followed in their own specs.
+ * The global sections shown with no project open open a section of this app (Artifacts,
+ * `open-sidebar-artifacts`, qits-2316, to a stand-in route) or leave the app (IdP admin,
+ * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
+ * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
+ * and with one, qits-2262) and the network icon (`open-network-access`) are pressed once each. The
+ * page origins are under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
  */
 describe('ShellLayout (screenshots)', () => {
   const PLATFORM_DOMAIN = 'qits.example.test';
@@ -106,7 +110,6 @@ describe('ShellLayout (screenshots)', () => {
       providers: [
         provideRouter([
           { path: '', component: TestPage },
-          { path: 'network-access', component: TestPage },
           { path: 'artifacts', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
@@ -145,7 +148,13 @@ describe('ShellLayout (screenshots)', () => {
         provideHeyApiClient(systemClient),
         provideHeyApiClient(ciClient),
         provideHeyApiClient(edgeClient),
-        provideTestPlatformOrigins({}, { idp: hostOrigin('idp', PLATFORM_DOMAIN) }),
+        provideTestPlatformOrigins(
+          {},
+          {
+            idp: hostOrigin('idp', PLATFORM_DOMAIN),
+            'network-access': NETWORK_ACCESS,
+          },
+        ),
         { provide: QITS_LEAVE_APP, useValue: leave },
         {
           provide: EVENT_SOURCE,
@@ -663,25 +672,26 @@ describe('ShellLayout (screenshots)', () => {
       .toMatchTextContent(`${project.name}›Setup`);
   });
 
-  it('open-network-access open: the network icon opens the Network access page', async () => {
+  it('open-network-access open: the network icon leaves for the Network access frontend', async () => {
     const { fixture } = await renderProject('/work/acceptance');
     const icon = page.getByRole('banner').getByRole('link', { name: 'Network access' });
-    expect(await follow(fixture, icon)).toBe('/network-access');
+    await expect.element(icon).toHaveAttribute('href', `${NETWORK_ACCESS}/`);
+    const before = TestBed.inject(Router).url;
+    expect(await follow(fixture, icon)).toBe(before);
+    expect(leave).toHaveBeenCalledExactlyOnceWith(`${NETWORK_ACCESS}/`);
     expect(reached()).toEqual(['open-network-access:open']);
-    await expect.element(icon).toHaveAttribute('aria-current', 'page');
   });
 
-  it('open-sidebar-network-access networkAccess: the sidebar’s Network access opens it with no project open, marked current there', async () => {
+  it('open-sidebar-network-access networkAccess: the sidebar’s Network access leaves for its frontend with no project open', async () => {
     await page.viewport(1280, 800);
-    const { fixture, layout } = await render();
+    const { fixture } = await render();
     const entry = page
       .getByRole('navigation', { name: 'qits' })
       .getByRole('link', { name: 'Network access' });
-    await expect.element(entry).not.toHaveAttribute('aria-current');
-    expect(await follow(fixture, entry)).toBe('/network-access');
+    await expect.element(entry).toHaveAttribute('href', `${NETWORK_ACCESS}/`);
+    expect(await follow(fixture, entry)).toBe('/');
+    expect(leave).toHaveBeenCalledExactlyOnceWith(`${NETWORK_ACCESS}/`);
     expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
-    await expect.element(entry).toHaveAttribute('aria-current', 'page');
-    await expect.element(layout).toMatchScreenshot('network-access-current', { kind: 'DATA' });
   });
 
   it('lists the global sections, then Network access, with no project open', async () => {
@@ -736,7 +746,7 @@ describe('ShellLayout (screenshots)', () => {
       .not.toBeInTheDocument();
   });
 
-  it('open-sidebar-network-access networkAccess: the sidebar’s Network access opens it from a project, below its sections', async () => {
+  it('open-sidebar-network-access networkAccess: the sidebar’s Network access leaves for its frontend from a project, below its sections', async () => {
     const { fixture } = await renderProject('/work/acceptance');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     const labels = navigation
@@ -746,9 +756,10 @@ describe('ShellLayout (screenshots)', () => {
     expect(labels.at(-1)).toBe('Network access');
     expect(labels).toContain('Events');
     const entry = navigation.getByRole('link', { name: 'Network access' });
-    expect(await follow(fixture, entry)).toBe('/network-access');
+    const before = TestBed.inject(Router).url;
+    expect(await follow(fixture, entry)).toBe(before);
+    expect(leave).toHaveBeenCalledExactlyOnceWith(`${NETWORK_ACCESS}/`);
     expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
-    await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
   it('marks Agents current on a slot’s page, with the slot below it in the trail', async () => {

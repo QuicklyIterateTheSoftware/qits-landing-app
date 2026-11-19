@@ -21,7 +21,6 @@ declare module 'vitest/browser' {
         | 'qits-workspace-daemon'
         | 'qits-system'
         | 'qits-artifacts'
-        | 'qits-network-access'
         | 'qits-edge'
         | 'qits-observability'
         | 'qits-deployments'

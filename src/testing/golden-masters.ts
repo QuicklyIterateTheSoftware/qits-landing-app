@@ -73,12 +73,6 @@ export const artifactsGoldenMasters = goldenMasters(
   'qits-artifacts',
 );
 
-/** qits-network-access' golden masters (epic qits-1977), from its npm package. */
-export const networkAccessGoldenMasters = goldenMasters(
-  '@qits/network-access-golden-masters',
-  'qits-network-access',
-);
-
 /** qits-edge's golden masters (qits-2220: its upstream pools), from its npm package. */
 export const edgeGoldenMasters = goldenMasters('@qits/edge-golden-masters', 'qits-edge');
 
@@ -161,10 +155,6 @@ export const workspaceDaemonGoldenMaster = <T = any>(state: string, operationId:
 /** The body qits-system recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const systemGoldenMaster = <T = any>(state: string, operationId: string): T =>
   systemGoldenMasters.body<T>(state, operationId);
-
-/** The body qits-network-access recorded for `operationId` in `state`, for a spec to `flush(...)`. */
-export const networkAccessGoldenMaster = <T = any>(state: string, operationId: string): T =>
-  networkAccessGoldenMasters.body<T>(state, operationId);
 
 /** The body qits-edge recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const edgeGoldenMaster = <T = any>(state: string, operationId: string): T =>
