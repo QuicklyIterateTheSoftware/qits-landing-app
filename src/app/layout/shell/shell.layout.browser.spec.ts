@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { QITS_DOMAIN_EVENTS } from '@qits/angular';
+import { QITS_DOMAIN_EVENTS, QITS_LEAVE_APP } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { client as projectsClient } from '../../api/projects/client.gen';
@@ -15,6 +15,7 @@ import { client as systemClient } from '../../api/system/client.gen';
 import { client as ciClient } from '../../api/ci/client.gen';
 import { client as edgeClient } from '../../api/edge/client.gen';
 import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
+import { hostOrigin } from '$core/platform/platform-origins';
 import { RECENT_EVENTS } from '$core/events/events.consumes';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -89,12 +90,17 @@ class PinnedPage {}
  * (`open-sidebar-work-page`) and Network access (`open-sidebar-network-access`, with no project
  * open and with one, qits-2262), the gear (`open-project-settings`), the network icon
  * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`). The agents and
- * release menus' own exits are followed in their own specs.
+ * release menus' own exits are followed in their own specs. The global sections shown with no
+ * project open leave the app (IdP admin, `open-sidebar-idp-admin`, qits-2319): the idp's page origin
+ * is under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
  */
 describe('ShellLayout (screenshots)', () => {
+  const PLATFORM_DOMAIN = 'qits.example.test';
   let http: HttpTestingController;
+  let leave: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    leave = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
@@ -118,6 +124,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/desk', component: TestPage },
           { path: 'projects/:slug/repositories', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
+          { path: 'projects/:slug/observability/logs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
           { path: 'projects/:slug/setup', component: TestPage },
           { path: 'projects/:slug/workspaces/:slotId', component: TestPage },
@@ -131,7 +138,8 @@ describe('ShellLayout (screenshots)', () => {
         provideHeyApiClient(systemClient),
         provideHeyApiClient(ciClient),
         provideHeyApiClient(edgeClient),
-        provideTestPlatformOrigins(),
+        provideTestPlatformOrigins({}, { idp: hostOrigin('idp', PLATFORM_DOMAIN) }),
+        { provide: QITS_LEAVE_APP, useValue: leave },
         {
           provide: EVENT_SOURCE,
           useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
@@ -191,10 +199,13 @@ describe('ShellLayout (screenshots)', () => {
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
-    // At the root the navigation holds no project's sections, only Network access, the phone's
-    // way there (qits-2262): the "qits" brand leads home.
+    // At the root the navigation holds no project's sections: the global sections (IdP admin,
+    // qits-2319), then Network access, the phone's way there (qits-2262); the "qits" brand leads home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
-    expect(links.elements().map((link) => link.textContent?.trim())).toEqual(['Network access']);
+    expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
+      'IdP admin',
+      'Network access',
+    ]);
     await expect.element(links.first()).toBeVisible();
     // The top bar has no room for the theme menu on a phone: its radios are at the navigation's
     // foot instead, so System, Light and Dark are reachable at every width (qits-2086).
@@ -586,6 +597,19 @@ describe('ShellLayout (screenshots)', () => {
     });
   }
 
+  it('open-sidebar-observability-page logs: Logs below Observability opens it', async () => {
+    // On the section's page already, so its pages show below Observability.
+    const { fixture, project } = await renderProject('/observability');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Logs', exact: true });
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/observability/logs`);
+    expect(reached()).toEqual(['open-sidebar-observability-page:logs']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Observability', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+  });
+
   it('open-project-settings open: the gear opens the project’s settings, marked current there', async () => {
     const { fixture, project } = await renderProject('/work/acceptance');
     const gear = page.getByRole('link', { name: 'Settings' });
@@ -617,6 +641,42 @@ describe('ShellLayout (screenshots)', () => {
     expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
     await expect.element(layout).toMatchScreenshot('network-access-current', { kind: 'DATA' });
+  });
+
+  it('lists the global sections, then Network access, with no project open', async () => {
+    const { layout } = await render();
+    const labels = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels).toEqual(['IdP admin', 'Network access']);
+    await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
+  });
+
+  it('open-sidebar-idp-admin open: the sidebar’s IdP admin leaves for the idp’s admin, in this tab', async () => {
+    await render();
+    const href = `https://idp.${PLATFORM_DOMAIN}/idp/`;
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'IdP admin' });
+    await expect.element(entry).toHaveAttribute('href', href);
+    await expect.element(entry).not.toHaveAttribute('target');
+    await userEvent.click(entry);
+    expect(reached()).toEqual(['open-sidebar-idp-admin:open']);
+    expect(leave).toHaveBeenCalledTimes(1);
+    expect(leave).toHaveBeenCalledWith(href);
+    // The click left through the spy, not the link: the router stays where it was.
+    expect(TestBed.inject(Router).url).toBe('/');
+  });
+
+  it('shows no global sections with a project open', async () => {
+    await renderProject('/work/acceptance');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect.element(navigation.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
+    await expect
+      .element(navigation.getByRole('link', { name: 'IdP admin', includeHidden: true }))
+      .not.toBeInTheDocument();
   });
 
   it('open-sidebar-network-access networkAccess: the sidebar’s Network access opens it from a project, below its sections', async () => {

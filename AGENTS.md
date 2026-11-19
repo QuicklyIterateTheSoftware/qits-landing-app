@@ -339,6 +339,16 @@ managed. A slot's status strip no longer names which runner it is placed on
 field it read, `workspace.runner`, is gone from what this app consumes, ahead of the service
 dropping it.
 
+With no project open, the sidebar shows its global sections in the project's sections' place
+(`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
+to no project. Today that is IdP admin (`open-sidebar-idp-admin`, qits-2319), which leaves the app
+(`external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
+(qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
+page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
+idp origin (the server render) it has no address, is hidden by class and names
+no outcome. System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry
+there with their own `outcomes(...)` exit. With a project open the list is empty.
+
 The Network access pane (epic qits-1977): `network-access` (`NetworkAccessPage`), under the shell
 with no project open, reached by the top bar's Network access link (beside the bumps menu, from
 768px) and by the sidebar's Network access entry below the project's sections, shown with or
@@ -370,6 +380,17 @@ recorded configs are JSON strings read as text: a browser spec answers them with
 
 The top bar's menus are built on `ui/components/dropdown/` (`ui-dropdown`): the trigger and the
 panel are projected, `opened` fires on each opening.
+
+A project's Events page (qits-2312, `projects/<slug>/events`, `ProjectEventsPage`) reads the
+project's events through its own `qitsResource` over `PROJECT_EVENTS_LIST` (`listEvents` with
+`attr=projectid=<id>&order=desc&limit=50`, plus `name`, `since`, `q`, further `attr`s and `cursor`
+only when a filter sets them; built by `projectEventsQuery` in `core/events/project-events.ts`),
+"Load older" through its `fetch` by `nextCursor`, and the type filter's names through `EVENT_NAMES`
+(`listEventNames`). Live frames come through `DomainEvents` and are put at the top when
+`matchesProjectEvents` lets them through (the project by `payloadIds().projectIds`, which reads
+`entities[].projectId` too); none while "until" is set, held while paused. A row names what the
+payload concerns (`eventSubjects`) and links a release request and a work item
+(`open-project-event-subject`); an agent is named, not linked, as no recording names one.
 
 ## Backend origins
 
@@ -466,6 +487,22 @@ contract: `GET /api/config.json` (the relay, `telemetry: null` when the server's
 and `POST /api/otel/v1/{traces,logs}` (forwarded unchanged to the receiver). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
+The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
+component whose pages are its children, one route per view (the errors, metrics, slow spans and
+traces pages come as their own children later); its own address redirects to `logs` by a relative
+`redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
+below it while one is open (`open-sidebar-observability-page`). `observability/logs`
+(`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
+`core/observability/observability.operations.ts` (`TELEMETRY_SOURCES`, `listTelemetrySources`;
+`TELEMETRY_LOGS`, `searchTelemetryLogs`), on the `observability` host: the SERVICE sources with
+their counts and reach (`oldestReceivedAt`), and the chosen one's lines newest first (the service
+answers oldest first, at most 200). The view lives in the query, with the retired
+qits-observability-frontend's names so its bookmarks forward as they are: `source` (a source key),
+`level` (→ `minSeverity`, absent: all), `q` (→ `query`) and `since` (minutes → `sinceMinutes`,
+absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
+`qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
+again.
+
 ## Styling
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in
@@ -509,6 +546,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-system-service         | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
 | qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
 | qits-network-access-service | `core/network-access/peers.operations*.ts`                                                   | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
+| qits-observability-service  | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json`  | `@qits/observability-golden-masters`    |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -670,7 +708,7 @@ because golden-recordings re-runs only when a golden-master pin moves. A run fil
 (`-t`, `.only`) replaces a spec's section with what those tests showed, so run whole spec files
 before keeping a ledger change.
 
-A page that answers no backend request (`events`, `observability` today) has no section. Never edit
+A page that answers no backend request has no section. Never edit
 the ledger by hand: QA re-runs the browser suite and fails a ledger that differs from what it writes
 as stale `screenshot-baselines`, and the pact specs fail a pact whose routes differ from the ledger.
 Either is fixed by running the generator, not by editing its output: `qits release-request

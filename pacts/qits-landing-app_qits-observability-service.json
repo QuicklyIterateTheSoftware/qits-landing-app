@@ -1,0 +1,615 @@
+{
+  "consumer": {
+    "name": "qits-landing-app"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "searchTelemetryLogs"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-logs",
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
+          }
+        }
+      },
+      "description": "show-telemetry-logs: searchTelemetryLogs",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "telemetry from one platform service",
+          "params": {
+            "service": "qits-example",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "source": {
+              "expression": "${source}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/observability/api/telemetry/logs",
+        "query": {
+          "source": [
+            "_service/qits-example"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "logs": [
+              {
+                "body": "listing invoices",
+                "epochNanos": 1767225600010000000,
+                "resourceAttributes": {
+                  "deployment.environment.name": "dev",
+                  "service.name": "qits-example",
+                  "service.version": "2026.1231.120000"
+                },
+                "severityText": "INFO"
+              },
+              {
+                "body": "listing invoices",
+                "epochNanos": 1767225600010000000,
+                "resourceAttributes": {
+                  "deployment.environment.name": "dev",
+                  "service.name": "qits-example",
+                  "service.version": "2026.1231.120000"
+                },
+                "severityText": "INFO"
+              }
+            ],
+            "truncated": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.logs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.logs[*].body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].epochNanos": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['deployment.environment.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['service.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['service.version']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].severityText": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.truncated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "searchTelemetryLogs"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-logs",
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
+          }
+        }
+      },
+      "description": "show-telemetry-logs: searchTelemetryLogs",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "telemetry records of every kind",
+          "params": {
+            "now": "2026-01-01T00:05:00Z",
+            "service": "qits-example",
+            "since": "2025-12-31T23:05:00Z",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+            "until": "2026-01-01T00:05:00Z"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "source": {
+              "expression": "${source}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/observability/api/telemetry/logs",
+        "query": {
+          "sinceMinutes": [
+            "60"
+          ],
+          "source": [
+            "_service/qits-example"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "logs": [
+              {
+                "body": "listing invoices",
+                "epochNanos": 1767225600010000000,
+                "resourceAttributes": {
+                  "deployment.environment.name": "dev",
+                  "service.name": "qits-example",
+                  "service.version": "2026.1231.120000"
+                },
+                "severityText": "INFO"
+              },
+              {
+                "body": "listing invoices",
+                "epochNanos": 1767225600010000000,
+                "resourceAttributes": {
+                  "deployment.environment.name": "dev",
+                  "service.name": "qits-example",
+                  "service.version": "2026.1231.120000"
+                },
+                "severityText": "INFO"
+              }
+            ],
+            "truncated": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.logs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.logs[*].body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].epochNanos": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['deployment.environment.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['service.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['service.version']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].severityText": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.truncated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "listTelemetrySources"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-sources",
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
+          }
+        }
+      },
+      "description": "show-telemetry-sources: listTelemetrySources",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an empty telemetry buffer",
+          "params": {
+            "authorization": "Bearer qits_tok_contract-telemetry"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/observability/api/telemetry/sources"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sources": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "listTelemetrySources"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-sources",
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
+          }
+        }
+      },
+      "description": "show-telemetry-sources: listTelemetrySources",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "telemetry from one platform service",
+          "params": {
+            "service": "qits-example",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/observability/api/telemetry/sources"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sources": [
+              {
+                "key": "_service/qits-example",
+                "kind": "SERVICE",
+                "label": "qits-example",
+                "logs": 2,
+                "metricSeries": 2,
+                "oldestReceivedAt": "2026-01-01T00:00:00Z",
+                "spans": 3
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sources": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.sources[*].key": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.sources[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.sources[*].label": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.sources[*].logs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.sources[*].metricSeries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.sources[*].oldestReceivedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.sources[*].spans": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "qits-observability-service"
+  }
+}

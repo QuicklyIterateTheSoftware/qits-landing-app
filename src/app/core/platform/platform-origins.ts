@@ -15,7 +15,8 @@ export type PlatformApp =
   | 'docs'
   | 'artifacts'
   | 'system'
-  | 'network-access';
+  | 'network-access'
+  | 'observability';
 
 /**
  * Each application's host label: it answers at `https://<label>.<domain>` (epic qits-528). The one
@@ -34,6 +35,7 @@ export const HOST_LABELS: Readonly<Record<PlatformApp, string>> = {
   artifacts: 'registry',
   system: 'system',
   'network-access': 'network-access',
+  observability: 'observability',
 };
 
 /** `https://<label of app>.<domain>`. */

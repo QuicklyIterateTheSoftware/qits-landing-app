@@ -61,6 +61,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
+ * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
+ * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
+ * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
+ * `/observability?source=_service/qits-ci` lands on that source's logs.
+ *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
  * (`ProjectAgentsPage`); `agents/<agent id>` is one agent (`AgentLayout`): a layout, whose
@@ -323,11 +328,19 @@ export const routes: Routes = [
           ),
       },
       {
+        // The Observability section (qits-2313): no layout of its own, one page per view.
         path: 'projects/:slug/observability',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/observability/project-observability.page').then(
-            (m) => m.ProjectObservabilityPage,
-          ),
+        children: [
+          // Relative, so the query (`?source=…`) rides along: see "The Observability section".
+          { path: '', pathMatch: 'full', redirectTo: 'logs' },
+          {
+            path: 'logs',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/logs/observability-logs.page').then(
+                (m) => m.ObservabilityLogsPage,
+              ),
+          },
+        ],
       },
       {
         path: 'projects/:slug/events',

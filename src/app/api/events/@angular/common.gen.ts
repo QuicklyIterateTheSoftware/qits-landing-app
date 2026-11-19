@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { DeleteEventsApiEventsByIdData, DeleteEventsApiEventsByIdResponse, GetEventsApiEventsByIdData, GetEventsApiEventsByIdResponse, GetEventsApiEventsNamesData, GetEventsApiEventsNamesResponse, GetEventsApiStreamData, GetEventsApiStreamResponse, ListEventsData, ListEventsResponse, PostEventsApiEventsData, PostEventsApiEventsResponse, PutEventsApiEventsByIdData, PutEventsApiEventsByIdResponse } from '../types.gen';
+import type { CreateEventData, CreateEventResponse, DeleteEventData, DeleteEventResponse, GetEventData, GetEventResponse, ListEventNamesData, ListEventNamesResponse, ListEventsData, ListEventsResponse, PublishEventData, PublishEventResponse, StreamEventsData, StreamEventsResponse } from '../types.gen';
 
 /**
  * List
@@ -19,7 +19,7 @@ export const listEventsRequest = <ThrowOnError extends boolean = false>(options?
 /**
  * Create
  */
-export const postEventsApiEventsRequest = <ThrowOnError extends boolean = false>(options: Options<PostEventsApiEventsData, ThrowOnError>): HttpRequest<PostEventsApiEventsResponse> => (options?.client ?? client).requestOptions<PostEventsApiEventsResponse, ThrowOnError>({
+export const createEventRequest = <ThrowOnError extends boolean = false>(options: Options<CreateEventData, ThrowOnError>): HttpRequest<CreateEventResponse> => (options?.client ?? client).requestOptions<CreateEventResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/events/api/events',
@@ -29,7 +29,7 @@ export const postEventsApiEventsRequest = <ThrowOnError extends boolean = false>
 /**
  * Names
  */
-export const getEventsApiEventsNamesRequest = <ThrowOnError extends boolean = false>(options?: Options<GetEventsApiEventsNamesData, ThrowOnError>): HttpRequest<GetEventsApiEventsNamesResponse> => (options?.client ?? client).requestOptions<GetEventsApiEventsNamesResponse, ThrowOnError>({
+export const listEventNamesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListEventNamesData, ThrowOnError>): HttpRequest<ListEventNamesResponse> => (options?.client ?? client).requestOptions<ListEventNamesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/events/api/events/names',
@@ -39,7 +39,7 @@ export const getEventsApiEventsNamesRequest = <ThrowOnError extends boolean = fa
 /**
  * Delete
  */
-export const deleteEventsApiEventsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteEventsApiEventsByIdData, ThrowOnError>): HttpRequest<DeleteEventsApiEventsByIdResponse> => (options?.client ?? client).requestOptions<DeleteEventsApiEventsByIdResponse, ThrowOnError>({
+export const deleteEventRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteEventData, ThrowOnError>): HttpRequest<DeleteEventResponse> => (options?.client ?? client).requestOptions<DeleteEventResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'DELETE',
     url: '/events/api/events/{id}',
@@ -49,7 +49,7 @@ export const deleteEventsApiEventsByIdRequest = <ThrowOnError extends boolean = 
 /**
  * Get
  */
-export const getEventsApiEventsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetEventsApiEventsByIdData, ThrowOnError>): HttpRequest<GetEventsApiEventsByIdResponse> => (options?.client ?? client).requestOptions<GetEventsApiEventsByIdResponse, ThrowOnError>({
+export const getEventRequest = <ThrowOnError extends boolean = false>(options: Options<GetEventData, ThrowOnError>): HttpRequest<GetEventResponse> => (options?.client ?? client).requestOptions<GetEventResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/events/api/events/{id}',
@@ -59,7 +59,7 @@ export const getEventsApiEventsByIdRequest = <ThrowOnError extends boolean = fal
 /**
  * Publish
  */
-export const putEventsApiEventsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<PutEventsApiEventsByIdData, ThrowOnError>): HttpRequest<PutEventsApiEventsByIdResponse> => (options?.client ?? client).requestOptions<PutEventsApiEventsByIdResponse, ThrowOnError>({
+export const publishEventRequest = <ThrowOnError extends boolean = false>(options: Options<PublishEventData, ThrowOnError>): HttpRequest<PublishEventResponse> => (options?.client ?? client).requestOptions<PublishEventResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'PUT',
     url: '/events/api/events/{id}',
@@ -71,7 +71,7 @@ export const putEventsApiEventsByIdRequest = <ThrowOnError extends boolean = fal
  *
  * Pushes each newly created event whose name is named by ?names= (comma-separated; '*' means everything; absent means nothing) as an SSE event whose id: field is the event id and whose data is the EventCreated envelope. Live only: no replay, no offset, no catch-up.
  */
-export const getEventsApiStreamRequest = <ThrowOnError extends boolean = false>(options?: Options<GetEventsApiStreamData, ThrowOnError>): HttpRequest<GetEventsApiStreamResponse> => (options?.client ?? client).requestOptions<GetEventsApiStreamResponse, ThrowOnError>({
+export const streamEventsRequest = <ThrowOnError extends boolean = false>(options?: Options<StreamEventsData, ThrowOnError>): HttpRequest<StreamEventsResponse> => (options?.client ?? client).requestOptions<StreamEventsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/events/api/stream',
@@ -89,41 +89,41 @@ export const listEventsResource = <ThrowOnError extends boolean = false>(options
 /**
  * Create
  */
-export const postEventsApiEventsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostEventsApiEventsData, ThrowOnError> | undefined) => httpResource<PostEventsApiEventsResponse>(() => {
+export const createEventResource = <ThrowOnError extends boolean = false>(options: () => Options<CreateEventData, ThrowOnError> | undefined) => httpResource<CreateEventResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postEventsApiEventsRequest(opts) : undefined;
+    return opts ? createEventRequest(opts) : undefined;
 });
 
 /**
  * Names
  */
-export const getEventsApiEventsNamesResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetEventsApiEventsNamesData, ThrowOnError> | undefined) => httpResource<GetEventsApiEventsNamesResponse>(() => {
+export const listEventNamesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListEventNamesData, ThrowOnError> | undefined) => httpResource<ListEventNamesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getEventsApiEventsNamesRequest(opts) : undefined;
+    return opts ? listEventNamesRequest(opts) : undefined;
 });
 
 /**
  * Delete
  */
-export const deleteEventsApiEventsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteEventsApiEventsByIdData, ThrowOnError> | undefined) => httpResource<DeleteEventsApiEventsByIdResponse>(() => {
+export const deleteEventResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteEventData, ThrowOnError> | undefined) => httpResource<DeleteEventResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? deleteEventsApiEventsByIdRequest(opts) : undefined;
+    return opts ? deleteEventRequest(opts) : undefined;
 });
 
 /**
  * Get
  */
-export const getEventsApiEventsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetEventsApiEventsByIdData, ThrowOnError> | undefined) => httpResource<GetEventsApiEventsByIdResponse>(() => {
+export const getEventResource = <ThrowOnError extends boolean = false>(options: () => Options<GetEventData, ThrowOnError> | undefined) => httpResource<GetEventResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getEventsApiEventsByIdRequest(opts) : undefined;
+    return opts ? getEventRequest(opts) : undefined;
 });
 
 /**
  * Publish
  */
-export const putEventsApiEventsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<PutEventsApiEventsByIdData, ThrowOnError> | undefined) => httpResource<PutEventsApiEventsByIdResponse>(() => {
+export const publishEventResource = <ThrowOnError extends boolean = false>(options: () => Options<PublishEventData, ThrowOnError> | undefined) => httpResource<PublishEventResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? putEventsApiEventsByIdRequest(opts) : undefined;
+    return opts ? publishEventRequest(opts) : undefined;
 });
 
 /**
@@ -131,7 +131,7 @@ export const putEventsApiEventsByIdResource = <ThrowOnError extends boolean = fa
  *
  * Pushes each newly created event whose name is named by ?names= (comma-separated; '*' means everything; absent means nothing) as an SSE event whose id: field is the event id and whose data is the EventCreated envelope. Live only: no replay, no offset, no catch-up.
  */
-export const getEventsApiStreamResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetEventsApiStreamData, ThrowOnError> | undefined) => httpResource<GetEventsApiStreamResponse>(() => {
+export const streamEventsResource = <ThrowOnError extends boolean = false>(options?: () => Options<StreamEventsData, ThrowOnError> | undefined) => httpResource<StreamEventsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getEventsApiStreamRequest(opts) : undefined;
+    return opts ? streamEventsRequest(opts) : undefined;
 });

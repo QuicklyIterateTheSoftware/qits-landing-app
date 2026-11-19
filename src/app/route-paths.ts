@@ -19,6 +19,7 @@ export type RoutePath =
   | 'projects/:slug/ideas/detail/:ideaId'
   | 'projects/:slug/ideas/detail/:ideaId/edit'
   | 'projects/:slug/observability'
+  | 'projects/:slug/observability/logs'
   | 'projects/:slug/release-requests'
   | 'projects/:slug/release-requests/:requestId'
   | 'projects/:slug/repositories'

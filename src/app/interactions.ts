@@ -136,6 +136,17 @@ export const INTERACTIONS = {
   'show-project-desk':
     'The Desk page lists the project’s delivery-desk trigger messages, newest first',
   /**
+   * `observability-logs.page.ts` via `TELEMETRY_SOURCES` (qits-2313): the Observability section's
+   * source picker lists the telemetry buffer's platform services, with counts and reach.
+   */
+  'show-telemetry-sources':
+    'The Observability section lists the platform services the telemetry buffer holds records of',
+  /**
+   * `observability-logs.page.ts` via `TELEMETRY_LOGS` (qits-2313): the Logs page shows the chosen
+   * source's buffered log lines, narrowed by level, body text and age, newest first.
+   */
+  'show-telemetry-logs': 'The Logs page shows a source’s buffered log lines, newest first',
+  /**
    * `release-request.page.ts` via `RELEASE_REQUEST`, `RELEASE_COMMITS`, `COMMIT_BUILDS`,
    * `RELEASE_ARTIFACTS` and `APPROVAL_ELIGIBILITY` (qits-2146): a request's page reads the request,
    * the commits its fold brought in, the CI verdicts on the fold, once released what it published,
@@ -326,6 +337,27 @@ export const INTERACTIONS = {
    * menu, on its first opening.
    */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
+  /**
+   * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
+   * project's newest events (`attr=projectid=…`, newest first, fifty at a time).
+   */
+  'show-project-events': 'The Events page lists the open project’s newest domain events',
+  /**
+   * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): choosing event types on the
+   * Events page lists the project's events of those names only (`name=…`).
+   */
+  'filter-project-events': 'Choosing event types on the Events page narrows the list to them',
+  /**
+   * `project-events.page.ts` via `EVENT_NAMES` (qits-2312): the Events page's type filter offers
+   * every stored event name.
+   */
+  'show-event-names': 'The Events page’s type filter offers every stored event name',
+  /**
+   * `project-events.page.ts`: a release request or a work item an event names opens its page.
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-project-event-subject':
+    'A release request or work item an event names on the Events page opens its page',
   /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
@@ -844,6 +876,12 @@ export const INTERACTIONS = {
    */
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
+   * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
+   * one exit per page (qits-2313: Logs). Navigates only, and names no pact.
+   */
+  'open-sidebar-observability-page':
+    'An Observability page below Observability in the sidebar opens that page',
+  /**
    * `shell.layout.ts`: the top bar's gear opens the open project's settings (`setup`). Navigates
    * only, and names no pact (epic qits-2000).
    */
@@ -858,6 +896,11 @@ export const INTERACTIONS = {
    * opens the Network access page (qits-2262). Navigates only, and names no pact.
    */
   'open-sidebar-network-access': 'The sidebar’s Network access entry opens the Network access page',
+  /**
+   * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, leaves
+   * the app for the idp's own admin (qits-2319). Leaves only, and names no pact.
+   */
+  'open-sidebar-idp-admin': 'The sidebar’s IdP admin entry opens the standalone idp admin',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
