@@ -341,13 +341,34 @@ dropping it.
 
 With no project open, the sidebar shows its global sections in the project's sections' place
 (`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
-to no project. Today that is IdP admin (`open-sidebar-idp-admin`, qits-2319), which leaves the app
-(`external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
+to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
+router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
+every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316).
+`kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
+`external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
 no outcome. System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry
-there with their own `outcomes(...)` exit. With a project open the list is empty.
+there with their own `outcomes(...)` exit (a `GlobalPath` of their own). With a project open the
+list is empty.
+
+The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
+`artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
+(`qits` images, `npm`, `maven`, `daemons`, `docs`, `sboms`, `ci-screenshots`, `ci-videos`); `artifacts`
+and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads through
+`qitsResource` over `core/artifacts/artifacts.operations.ts`: `ARTIFACT_REPOSITORIES`
+(`listRepositories`: the header's type and "N items · size", and the switcher's links,
+`switch-artifacts-repository`), then exactly one listing chosen by the type (`listingOf`,
+`artifact-listings.ts`: `listImages`, `listNpmPackages`, `listMavenPackages`, `listDaemons`,
+`listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
+has a name search over the one answer. A row's name leaves for its detail page in the old explorer
+(`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
+`/repositories/<repo>/<images|packages|maven-packages|daemons|docs>/<name>`, the name one segment)
+until the section's detail pages land (qits-2324 to qits-2327); `provideAppRoute()` gives specs that
+origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
+recorded listing by its status only (the shared database the provider verifies on holds other
+suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
 
 The Network access pane (epic qits-1977): `network-access` (`NetworkAccessPage`), under the shell
 with no project open, reached by the top bar's Network access link (beside the bumps menu, from
@@ -391,6 +412,17 @@ only when a filter sets them; built by `projectEventsQuery` in `core/events/proj
 `entities[].projectId` too); none while "until" is set, held while paused. A row names what the
 payload concerns (`eventSubjects`) and links a release request and a work item
 (`open-project-event-subject`); an agent is named, not linked, as no recording names one.
+
+A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
+between Observability and Events) reads qits-artifacts' whole docs catalog through its own
+`qitsResource` over `DOCS_SITES` (`listDocsSites` of the `docs` repository; never
+qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
+`shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
+rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
+A row leaves for the site's reader on the docs app (`open-docs-site`, `external('docs')`,
+`docsReadPath` without a version) until qits-2337 moves it here. The docs store sends no domain
+event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
+empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
 
 ## Backend origins
 
@@ -585,7 +617,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-workspaces-service     | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`     | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon       | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`       | `@qits/workspace-daemon-golden-masters` |
 | qits-system-service         | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`         | `@qits/system-golden-masters`           |
-| qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
+| qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
 | qits-network-access-service | `core/network-access/peers.operations*.ts`                                                   | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 | qits-observability-service  | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json`  | `@qits/observability-golden-masters`    |
 | qits-deployments-service    | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`    | `@qits/deployments-golden-masters`      |

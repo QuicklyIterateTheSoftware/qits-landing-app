@@ -61,6 +61,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
+ * A project's docs are at `projects/<slug>/docs` (`ProjectDocsPage`, qits-2318): every site of
+ * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`.
+ *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
@@ -90,6 +93,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  *
  * The Network access pane (epic qits-1977) is at `network-access` (`NetworkAccessPage`): the
  * platform's peers, nodes and private edge, reached from the top bar with no project open.
+ *
+ * The Artifacts section (qits-2316) is at `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`):
+ * one of qits-artifacts' store repositories (`qits`, `npm`, `maven`, …), reached from the root
+ * sidebar with no project open, as nothing in the store joins to a project. `artifacts` and
+ * `artifacts/repositories` redirect to `artifacts/repositories/qits`, the image store, by a
+ * relative `redirectTo`.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -368,6 +377,11 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'projects/:slug/docs',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
+      },
+      {
         path: 'projects/:slug/events',
         loadComponent: () =>
           import('./routes/projects/[slug]/events/project-events.page').then(
@@ -395,6 +409,22 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/setup/project-setup.page').then(
             (m) => m.ProjectSetupPage,
           ),
+      },
+      {
+        // The Artifacts section (qits-2316): qits-artifacts' store, bound to no project. No front
+        // page of its own yet: `/artifacts` and `/artifacts/repositories` open the image store.
+        path: 'artifacts',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'repositories/qits' },
+          { path: 'repositories', pathMatch: 'full', redirectTo: 'repositories/qits' },
+          {
+            path: 'repositories/:repo',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/artifacts-repository.page').then(
+                (m) => m.ArtifactsRepositoryPage,
+              ),
+          },
+        ],
       },
       {
         // The platform's private network (epic qits-1977): not a project's, so no project opens.

@@ -15,6 +15,7 @@ import {
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { asDatabaseIndex, type DatabaseIndex } from '$core/contracts/database-diagram';
+import { docBlocks } from '$core/docs/doc-sections';
 import { contractsSiteOf, type ContractsSite, type ContractsSites } from './contracts-catalog';
 import { literalDocsPaths } from './docs-paths';
 import {
@@ -896,5 +897,120 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         );
         expect(file).toEqual(masters.body(INDEX, 'getDocsFile'));
       }));
+  });
+}
+
+{
+  /**
+   * qits-landing-app's pact with qits-artifacts-service, the Docs page's part (qits-2318):
+   * `ProjectDocsPage` lists the whole catalog (`DOCS_SITES`) and groups it by section
+   * (`docBlocks`). This spec owns `listDocsSites`' interactions for `show-project-docs` alone.
+   *
+   * Against qits-artifacts' recordings of `a docs catalog of every kind` (a site of every section:
+   * `@apidocs/`, `@userflows/`, `@guides/`, `@contracts/`, `@routes/`, `@changelog/`, and two
+   * Storybook sites, scoped and not) and `an empty docs catalog`. The catalog is bound by its
+   * recorded first element at least the recorded count, so the mock server repeats
+   * `@apidocs/qits-ci`: the page groups that into one API docs block. Both states are recorded from
+   * `@qits/artifacts-golden-masters` releases after 2026.1114.172104; on an older pin the interactions
+   * skip themselves until qits-maintenance bumps it.
+   */
+  const CONSUMER = 'qits-landing-app';
+  const PROVIDER = 'qits-artifacts-service';
+  const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+  const SLUG: InteractionSlug = 'show-project-docs';
+  const OPERATIONS: readonly OwnedOperation[] = [
+    { operationId: 'listDocsSites', interactions: [SLUG] },
+  ];
+
+  const EVERY_KIND = 'a docs catalog of every kind';
+  const EMPTY = 'an empty docs catalog';
+
+  /** Whether the installed golden masters record `listDocsSites` in `state`. */
+  const recorded = (state: string) => {
+    try {
+      masters.operation(state, 'listDocsSites');
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const given = (state: string) =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state,
+      operationId: 'listDocsSites',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: SLUG },
+      consumes: LIST_DOCS_SITES,
+    });
+
+  /** Runs `call` against the mock server at `url`, in an injection context. */
+  function at<T>(url: string, call: () => Promise<T>): Promise<T> {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'server' },
+        provideHttpClient(withFetch()),
+        provideHeyApiClient(artifactsClient),
+      ],
+    });
+    artifactsClient.setConfig({ baseUrl: url });
+    return TestBed.runInInjectionContext(call);
+  }
+
+  /** The catalog's blocks, as the page groups them; null when the read fails. */
+  async function blocksFound() {
+    const { data, error } = await DOCS_SITES.fetch({ path: DOCS });
+    return error !== undefined || !data ? null : docBlocks(data.sites ?? []);
+  }
+
+  let dir = '';
+  let pact: PactV4;
+
+  describe('qits-landing-app → qits-artifacts-service pact: the Docs page', () => {
+    beforeAll(() => {
+      dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-docs-page-pact-'));
+      pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
+    });
+
+    afterAll(() => {
+      artifactsClient.setConfig({ baseUrl: '' });
+      try {
+        // Skipped on an older pin, the run writes no file: nothing of this part to compare yet.
+        if (recorded(EVERY_KIND) || recorded(EMPTY)) {
+          assertPactPart(
+            join(dir, `${CONSUMER}-${PROVIDER}.json`),
+            COMMITTED,
+            OPERATIONS,
+            'QITS_GOLDEN_UPDATE',
+          );
+        }
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    });
+
+    it.skipIf(!recorded(EVERY_KIND))(
+      'show-project-docs: groups the catalog’s sites by section, each with its versions',
+      () =>
+        given(EVERY_KIND).executeTest(async (server) => {
+          const blocks = await at(server.url, () => blocksFound());
+          const first = masters.body<{ sites: DocsSite[] }>(EVERY_KIND, 'listDocsSites').sites[0];
+          // Bound by its recorded first element, `@apidocs/qits-ci`, repeated: one API docs block.
+          expect(blocks?.map((block) => block.section.kind)).toEqual(['apidocs']);
+          expect(blocks?.[0].sites.length).toBeGreaterThan(0);
+          for (const site of blocks?.[0].sites ?? []) {
+            expect(site.name).toBe(first.name);
+            expect(site.latestVersion).toBe(first.latestVersion);
+            expect(site.versionCount).toBe(first.versionCount);
+            expect(site.latestPublishedAt).toEqual(expect.any(String));
+          }
+        }),
+    );
+
+    it.skipIf(!recorded(EMPTY))('show-project-docs: an empty catalog makes no block', () =>
+      given(EMPTY).executeTest(async (server) => {
+        expect(await at(server.url, () => blocksFound())).toEqual([]);
+      }),
+    );
   });
 }
