@@ -1709,7 +1709,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-deployment-requests",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
           }
         }
       },
@@ -2044,7 +2045,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-deployment-requests",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
           }
         }
       },
@@ -2146,7 +2148,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-release-deployment-requests",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
           }
         }
       },
