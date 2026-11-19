@@ -656,6 +656,18 @@
   "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts": [
     {
       "provider": "qits-maintenance-service",
+      "state": "dependencies matching a glob, some behind",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "dependencies matching a glob, some behind",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
       "state": "dependencies of a project, some behind",
       "operationId": "listDependencies",
       "route": "projects/:slug/maintenance/dependencies"
@@ -664,6 +676,12 @@
       "provider": "qits-maintenance-service",
       "state": "dependencies of a project, some behind",
       "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "external dependencies matching a glob, some behind",
+      "operationId": "listDependencies",
       "route": "projects/:slug/maintenance/dependencies"
     },
     {
@@ -686,7 +704,25 @@
     },
     {
       "provider": "qits-maintenance-service",
+      "state": "no dependencies matching a glob",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no dependencies matching a glob",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
       "state": "no external dependencies",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no external dependencies matching a glob",
       "operationId": "listDependencies",
       "route": "projects/:slug/maintenance/dependencies"
     },
