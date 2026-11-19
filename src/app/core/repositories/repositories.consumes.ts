@@ -48,6 +48,18 @@ export const PROJECT_WRAPPER = [
   'wrapper.repositoryId',
 ] as const satisfies readonly (typeof LIST_PROJECT_REPOSITORIES)[number][];
 
+/**
+ * `PROJECT_REPOSITORY_NAMES` (`repositories.operations.ts`, qits-2336), the Docs pages' read of the
+ * project's repositories: each one's name (a repository's Docs page finds the address's name, the
+ * project's Docs page names a site's publisher only when the project holds it), and what
+ * `movesWrapper` reads to follow a commit to the wrapper's main branch. A part of
+ * `LIST_PROJECT_REPOSITORIES`, so its pact interactions bind only these.
+ */
+export const REPOSITORY_NAMES = [
+  ...PROJECT_WRAPPER,
+  'entries[].repository.name',
+] as const satisfies readonly (typeof LIST_PROJECT_REPOSITORIES)[number][];
+
 type Answer = Consumed<ListProjectRepositoriesResponses[200], typeof LIST_PROJECT_REPOSITORIES>;
 
 /** One repository entry, cut to what the store reads. */

@@ -5,9 +5,16 @@
  * It mirrors the Quarkus services (qits-ci-service's `application.properties`, "telemetry"):
  *
  * - The receiver is qits-observability. `QITS_OBSERVABILITY_URL` (scheme, host and port, no path)
- *   names it; without it the address is derived, because every application answers on qits-net
- *   at `<environment>-<application>` and qits-deployments injects `QITS_ENVIRONMENT` into every
- *   container. The fallback environment is `dev`, as in the services.
+ *   names it. Without it, the receiver is its edge host, `https://observability.qits.<domain>`
+ *   (`QITS_DOMAIN`, which qits-deployments injects into every container), as for the private Java
+ *   services (qits-telemetry-core's `qits.telemetry.endpoint`): the landing is private
+ *   (qits-2360), sits on qits-private only and resolves through the private edge, where the
+ *   qits-net alias `<environment>-qits-observability` does not resolve. The edge refuses an
+ *   anonymous POST there, so the exports carry the bearer of this app's idp client
+ *   (`idp-token.ts`).
+ * - Without a domain either (a workstation run of the built server), the address is the qits-net
+ *   alias `http://<environment>-qits-observability:8080`, as it was; the fallback environment is
+ *   `dev`, as in the services.
  * - The ingest path is qits-observability's own: `/observability/api/otel`. The exporters append
  *   `/v1/<signal>`, and the protocol is http/protobuf.
  * - `service.name` is the deployed application, `qits-landing` (`QITS_APPLICATION`, also injected).
@@ -35,6 +42,8 @@ export interface TelemetryTarget {
 export function observabilityUrl(env: Env): string {
   const configured = env['QITS_OBSERVABILITY_URL']?.trim();
   if (configured) return configured.replace(/\/+$/, '');
+  const domain = env['QITS_DOMAIN']?.trim().replace(/^\.+|\.+$/g, '');
+  if (domain) return `https://observability.qits.${domain}`;
   const environment = env['QITS_ENVIRONMENT']?.trim() || 'dev';
   return `http://${environment}-qits-observability:8080`;
 }

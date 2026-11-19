@@ -13,6 +13,7 @@ export type DocsCatalogEntry = {
     versionCount: number;
     latestVersion: string;
     latestPublishedAt: string;
+    latestRepository?: string;
 };
 
 export type DocsVersionList = {
@@ -361,7 +362,7 @@ export type ListDocsSitesData = {
 
 export type ListDocsSitesResponses = {
     /**
-     * The catalog, {sites:[{name, versionCount, latestVersion, latestPublishedAt}]}.
+     * The catalog, {sites:[{name, versionCount, latestVersion, latestPublishedAt, latestRepository?}]}; latestRepository is the git.repository.name the newest version was published with, absent when it carries none.
      */
     200: DocsSiteCatalog;
 };

@@ -6,6 +6,7 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { basename, join } from 'node:path';
+import { idpClient, IdpTokens, NO_AUTH, type AuthHeaders } from './server/idp-token';
 import { telemetryTarget, type TelemetryTarget } from './server/otel-config';
 import { missingAssets } from './server/missing-assets';
 import { otelRoutes } from './server/otel-routes';
@@ -86,10 +87,21 @@ app.use(missingAssets());
  * never start an SDK or export anything, like `%dev`/`%test.quarkus.otel.sdk.disabled=true` in
  * the services. The relay reads it per request, so the browser library is on exactly when the
  * server's own telemetry is.
+ *
+ * `exportHeaders` is decided with it: the bearer of this app's idp client (`resources: idp:client`,
+ * `server/idp-token.ts`) when the deployer injected one, which the receiver's edge host requires
+ * (qits-2360), and no header otherwise.
  */
 let telemetry: TelemetryTarget | null = null;
+let exportHeaders: AuthHeaders = NO_AUTH;
 
-app.use(otelRoutes(() => telemetry));
+app.use(
+  otelRoutes(
+    () => telemetry,
+    fetch,
+    () => exportHeaders,
+  ),
+);
 
 /**
  * Below the health probe, the static files and the telemetry routes: only what reaches the
@@ -126,7 +138,12 @@ async function withTraceMeta(response: Response): Promise<Response> {
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
   telemetry = telemetryTarget(process.env);
-  const stopTelemetry = telemetry ? startTelemetry(telemetry) : async () => undefined;
+  const client = telemetry ? idpClient(process.env) : null;
+  const tokens = client ? new IdpTokens(client) : null;
+  exportHeaders = tokens?.headers ?? NO_AUTH;
+  const stopTelemetry = telemetry
+    ? startTelemetry(telemetry, exportHeaders, tokens ? [tokens.origin] : [])
+    : async () => undefined;
   // Flush what is buffered before the container stops, but never hold the stop for long.
   for (const signal of ['SIGTERM', 'SIGINT'] as const) {
     process.once(signal, () => {
@@ -143,7 +160,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
     console.log(
       `qits-landing listening on http://0.0.0.0:${port} (health at ${HEALTH_PATH}, telemetry ${
-        telemetry ? `to ${telemetry.endpoint}` : 'off'
+        telemetry ? `to ${telemetry.endpoint}${tokens ? ' with a bearer' : ''}` : 'off'
       })`,
     );
   });

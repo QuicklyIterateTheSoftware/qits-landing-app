@@ -19,6 +19,7 @@ const DOCS = 'https://docs.qits.example.test';
 /** The idp's, as `provideAppRoute()` gives it, which this spec's origins replace. */
 const IDP = 'https://idp.qits.example.test';
 
+const REPOSITORIES = 'two projects exist';
 const EVERY_KIND = 'a docs catalog of every kind';
 const EMPTY = 'an empty docs catalog';
 /** A few days after the recorded catalog's newest publication, so "how long ago" is stable. */
@@ -30,10 +31,14 @@ const NOW = new Date('2026-01-20T00:00:00Z');
  * `listDocsSites`: "a docs catalog of every kind" (a site of each scoped section and two Storybook
  * sites, `@qits/ui-components` and `qits-storybook`; `populated`, and `filtered` at
  * `?section=apidocs`) and "an empty docs catalog" (`empty`), and a read still open (`loading`) or
- * failed (`error`).
+ * failed (`error`). The project's repositories are qits-projects' "two projects exist"
+ * (`qits-ci-service`, `qits-ci-frontend` and the wrapper; the two providers' ids are unrelated, so
+ * they answer under the open project's id): the three sites whose newest version
+ * `qits-ci-service` published name it, a link to its Docs page (qits-2336).
  *
- * Its exit (`open-docs-site` `open`), shown by `populated`, is followed once: a row leaves for the
- * site's reader on the docs app, through `QITS_LEAVE_APP` (a spy, so the tab stays).
+ * Its exits, shown by `populated`, are followed once each: a row leaves for the site's reader on
+ * the docs app (`open-docs-site` `open`, through `QITS_LEAVE_APP`, a spy, so the tab stays), and a
+ * row's repository opens that repository's Docs page (`open-repository-docs` `repository`).
  */
 describe('ProjectDocsPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -62,10 +67,18 @@ describe('ProjectDocsPage (screenshots)', () => {
   /** The catalog read. */
   const catalogRead = (): TestRequest => http.expectOne('/artifacts/docs/docs');
 
+  /** The project's repositories, for each row's repository link. */
+  async function answerRepositories(opened: OpenedRoute) {
+    http
+      .expectOne(`/projects/api/projects/${opened.project.id}/repositories`)
+      .flush(await goldenMaster(REPOSITORIES, 'listProjectRepositories'));
+  }
+
   /** The page of the recorded project at `query`, the catalog answered in `state`. */
   async function open(state: string, query = ''): Promise<OpenedRoute> {
     await page.viewport(1140, 900);
     const opened = await openRoute((project) => `/projects/${project.slug}/docs${query}`);
+    await answerRepositories(opened);
     catalogRead().flush(await goldenMaster(state, 'listDocsSites', 'qits-artifacts'));
     await opened.settled();
     return opened;
@@ -86,6 +99,10 @@ describe('ProjectDocsPage (screenshots)', () => {
     await opened.settled();
   }
 
+  /** The repository each row links, in the page's order. */
+  const repositoriesNamed = (opened: OpenedRoute) =>
+    [...opened.page.querySelectorAll('[data-repository]')].map((a) => a.textContent?.trim());
+
   /** The blocks the page shows, each with its sites' short names, in its order. */
   const shown = (opened: OpenedRoute) =>
     [...opened.page.querySelectorAll('section')].map((section) => [
@@ -105,9 +122,9 @@ describe('ProjectDocsPage (screenshots)', () => {
       ['API docs', ['qits-ci']],
       ['Userflows', ['qits-events']],
       ['Guides', ['qits-platform']],
-      ['Contracts', ['qits-projects']],
+      ['Contracts', ['qits-ci']],
       ['Routes', ['qits-landing']],
-      ['Changelogs', ['qits-landing-app']],
+      ['Changelogs', ['qits-ci-service']],
     ]);
     const apidocs = view.getByRole('list', { name: 'API docs' }).getByRole('listitem');
     await expect.element(apidocs).toMatchTextContent('@apidocs/qits-ci');
@@ -117,8 +134,20 @@ describe('ProjectDocsPage (screenshots)', () => {
     const guides = view.getByRole('list', { name: 'Guides' }).getByRole('listitem');
     await expect.element(guides).toMatchTextContent('1 version');
     await expect
-      .element(apidocs.getByRole('link'))
+      .element(apidocs.getByRole('link').first())
       .toHaveAttribute('href', `${DOCS}/${opened.project.slug}/read/@apidocs/qits-ci`);
+    // The project's repository that published it, and none for a publisher the project lacks.
+    expect(repositoriesNamed(opened)).toEqual([
+      'qits-ci-service',
+      'qits-ci-service',
+      'qits-ci-service',
+    ]);
+    await expect
+      .element(apidocs.getByRole('link', { name: 'qits-ci-service', exact: true }))
+      .toHaveAttribute(
+        'href',
+        `/projects/${opened.project.slug}/docs/repositories/qits-ci-service`,
+      );
     await fitWholePage(opened);
     await expect
       .element(page.elementLocator(opened.frame))
@@ -155,10 +184,7 @@ describe('ProjectDocsPage (screenshots)', () => {
     await opened.settled();
     const filtered = `/projects/${opened.project.slug}/docs?q=LANDING`;
     expect(TestBed.inject(Router).url).toBe(filtered);
-    expect(shown(opened)).toEqual([
-      ['Routes', ['qits-landing']],
-      ['Changelogs', ['qits-landing-app']],
-    ]);
+    expect(shown(opened)).toEqual([['Routes', ['qits-landing']]]);
     // Pushed, not replaced: the unfiltered page stays in the history, where Back returns.
     expect(pushed.mock.calls.map(([path]) => path)).toEqual([filtered]);
     expect(replaced).not.toHaveBeenCalled();
@@ -192,6 +218,7 @@ describe('ProjectDocsPage (screenshots)', () => {
   it('marks the page as loading, then says it failed, with Retry', async () => {
     await page.viewport(1140, 900);
     const opened = await openRoute((project) => `/projects/${project.slug}/docs`);
+    await answerRepositories(opened);
     const read = catalogRead();
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('img', { name: 'Loading' })).toBeVisible();
@@ -221,11 +248,36 @@ describe('ProjectDocsPage (screenshots)', () => {
     const opened = await open(EVERY_KIND);
     const href = `${DOCS}/${opened.project.slug}/read/@apidocs/qits-ci`;
     await userEvent.click(
-      page.elementLocator(opened.page).getByRole('list', { name: 'API docs' }).getByRole('link'),
+      page
+        .elementLocator(opened.page)
+        .getByRole('list', { name: 'API docs' })
+        .getByRole('link')
+        .first(),
     );
     expect(reached()).toEqual(['open-docs-site:open']);
     expect(leave).toHaveBeenCalledWith(href);
     // The click left through the spy, not the link: the router stays where it was.
     expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/docs`);
+  });
+
+  it('open-repository-docs repository: a row’s repository opens its Docs page', async () => {
+    const opened = await open(EVERY_KIND);
+    await userEvent.click(
+      page
+        .elementLocator(opened.page)
+        .getByRole('list', { name: 'Contracts' })
+        .getByRole('link', { name: 'qits-ci-service', exact: true }),
+    );
+    // The repository's page reads its own data: answered by its own spec, refused here.
+    for (let round = 0; round < 5; round++) {
+      await opened.idle();
+      for (const request of http.match(() => true).filter((r) => !r.cancelled)) {
+        request.flush(null, { status: 404, statusText: 'Not Found' });
+      }
+    }
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/docs/repositories/qits-ci-service`,
+    );
+    expect(reached()).toEqual(['open-repository-docs:repository']);
   });
 });

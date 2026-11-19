@@ -399,7 +399,7 @@ payload concerns (`eventSubjects`) and links a release request and a work item
 
 A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
 between Observability and Events) reads qits-artifacts' whole docs catalog through its own
-`qitsResource` over `DOCS_SITES` (`listDocsSites` of the `docs` repository; never
+`qitsResource` over `DOCS_CATALOG` (`listDocsSites` of the `docs` repository; never
 qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
 `shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
 rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
@@ -407,6 +407,20 @@ A row leaves for the site's reader on the docs app (`open-docs-site`, `external(
 `docsReadPath` without a version) until qits-2337 moves it here. The docs store sends no domain
 event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
 empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
+
+A repository's Docs page (qits-2336, `projects/<slug>/docs/repositories/<repo>`,
+`RepositoryDocsPage`; a fixed `repositories` segment, so a name never reads as a reader path under
+`docs/`) lists the catalog's sites whose newest version the repository published: the catalog's
+`latestRepository` (the newest version's `git.repository.name`, `publishedBy`), never the site's
+name (`@contracts/qits-ci` is `qits-ci-service`'s) and never one `listDocsVersions` per site. It
+finds the address's name in the project's repositories (`PROJECT_REPOSITORY_NAMES`,
+`repositoryNamed`; an unknown name says so) and keeps `?section=`, which the docs app's old
+repository addresses redirect to. The project's Docs page names a row's repository when the project
+holds it (`projectRepositoryOf`), and every repository card has a `Docs →`; both are
+`open-repository-docs`. `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES` are `listDocsSites` and
+`listProjectRepositories` with consumes of their own (`LIST_DOCS_CATALOG`, `REPOSITORY_NAMES`):
+the states the builder's and the cards' interactions are recorded in hold no `latestRepository`
+or `lastBackup`, and a path the recorded body lacks cannot be bound.
 
 A CI run's page (qits-2321, `projects/<slug>/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
 other CI page) reads the run once through its own `qitsResource` over `RUN` (`getRun`) and joins it
@@ -445,31 +459,19 @@ are `HOST_LABELS`, the one place a hostname is composed; a new application gets 
 (and in `CLIENTS` when it has a generated client). Specs provide `provideTestPlatformOrigins`
 (`src/testing/`); pact specs keep setting each client's `baseUrl` to their mock server.
 
-### Private apps and Chrome's Local Network Access (qits-2297)
+### The door is private, and the service worker leaves cross-origin requests alone
 
-Some platform apps answer on the private network (the tunnel's private edge), the rest publicly,
-and Chrome asks once per site before this public page may call a local address. Three parts:
+The app is served from the private address (`exposure: private`, qits-2360): the door
+`qits.<domain>` resolves to the tunnel, like the private apps the page calls, so none of those
+calls is a Local Network Access call (Firefox reset them, Chrome asked for a permission). qits-2297's
+marking and its notice are gone with that. Off the tunnel the door does not answer; joining is
+through the public network-access page (qits-2361) and the idp.
 
-- **The service worker leaves cross-origin requests alone.** The app registers `sw.js`
-  (`public/sw.js`), not `ngsw-worker.js`: its first `fetch` listener stops every request to another
-  origin before ngsw sees it and does not answer it, then it `importScripts('ngsw-worker.js')`. ngsw
-  answers every request itself, and a worker can neither raise the permission prompt nor use the
-  page's grant, so its fetch failed with a synthetic 504. `sw.js` is served `no-cache`
-  (`UNHASHED`, `src/server.ts`) and kept out of ngsw's asset cache (`ngsw-config.json`);
-  `core/updates/service-worker.spec.ts` runs it against a fake worker scope.
-- **Private calls are marked.** `PrivateApps` (`core/platform/private-apps.ts`, started in
-  `app.config.ts`) reads the edge's `/main-navigation` (`MAIN_NAVIGATION`, the page's own origin,
-  pact state `a signed-in caller and a private app`) once, after the first navigation past the
-  sign-in, and hands the origins of the applications marked `exposure: 'private'` to
-  `core/platform/local-network.ts`, whose `fetch` wrapper (installed in `main.ts` after the
-  telemetry and before the bootstrap, browser only) adds `targetAddressSpace: 'local'` to every call
-  to one of them. A failed read marks nothing.
-- **The shell says why.** `app-local-network-notice` (`patterns/platform/local-network-notice/`)
-  follows `navigator.permissions.query({ name: 'local-network' })` (never the legacy
-  `local-network-access`) while an app is private: `prompt` explains and offers Allow access (one
-  `PROJECT_LIST` call, so the prompt follows a press), `denied` says how to turn it back on, a
-  change to `granted` reloads the page (`PAGE_RELOAD`). A browser without the permission shows
-  nothing. The page and layout specs never start `PrivateApps`, so the notice stays hidden there.
+The app registers `sw.js` (`public/sw.js`), not `ngsw-worker.js`: its first `fetch` listener stops
+every request to another origin before ngsw sees it and does not answer it, then it
+`importScripts('ngsw-worker.js')`, so a cross-origin call is the page's own. `sw.js` is served
+`no-cache` (`UNHASHED`, `src/server.ts`) and kept out of ngsw's asset cache (`ngsw-config.json`);
+`core/updates/service-worker.spec.ts` runs it against a fake worker scope.
 
 ## Signing in: cookie deployed, bearer under `ng serve`
 
@@ -509,8 +511,14 @@ from anywhere else. `npm run build` then `grep -r qits-landing-dev dist/qits-lan
 ## Telemetry
 
 The SSR server exports traces, logs and metrics (OTLP http/protobuf) to qits-observability:
-`$QITS_OBSERVABILITY_URL` or `http://${QITS_ENVIRONMENT:-dev}-qits-observability:8080`, plus
-`/observability/api/otel/v1/<signal>`. `service.name` is `qits-landing`; the rest of the resource
+`$QITS_OBSERVABILITY_URL`, else its edge host `https://observability.qits.$QITS_DOMAIN`, else (no
+domain: a workstation run) `http://${QITS_ENVIRONMENT:-dev}-qits-observability:8080`, plus
+`/observability/api/otel/v1/<signal>`. The app is private (qits-2360), so the qits-net alias does not
+resolve from its container, and the edge refuses an anonymous POST to the receiver: every export,
+the browser's relayed ones included, carries a `client_credentials` bearer of the app's own idp
+client (`resources: idp:client`; `src/server/idp-token.ts` reads `QITS_RESOURCE_IDP_URL`,
+`_CLIENT_ID` and `_CLIENT_SECRET`, caches the token, takes another 30 s before it expires, and on
+failure logs once per change and exports without one). `service.name` is `qits-landing`; the rest of the resource
 comes from `OTEL_RESOURCE_ATTRIBUTES`, which the deployer sets. The code is in `src/server/`. It
 starts only when `server.mjs` runs as the server, never under `ng serve`, the build or the tests;
 `OTEL_SDK_DISABLED=true` turns it off. Nothing patches modules (the bundle holds express): server
@@ -519,7 +527,8 @@ spans come from a middleware, fetch spans from the undici diagnostics channels, 
 
 The browser half is `@qits/angular` (`initQitsIntegration()` in `main.ts`). The server serves its
 contract: `GET /api/config.json` (the relay, `telemetry: null` when the server's telemetry is off)
-and `POST /api/otel/v1/{traces,logs}` (forwarded unchanged to the receiver). Each rendered page
+and `POST /api/otel/v1/{traces,logs}` (the body forwarded unchanged to the receiver, signed with
+the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
