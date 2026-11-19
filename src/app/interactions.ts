@@ -503,6 +503,14 @@ export const INTERACTIONS = {
   'show-project-dependencies':
     'The Dependencies page lists the open project’s internal and external pins, behind ones first',
   /**
+   * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
+   * (qits-2331): a name glob searched on the Dependencies page (`?name=`) reads the INTERNAL and
+   * EXTERNAL dependencies with it (`?kind=…&name=…`), beside the inventory's repositories, and
+   * shows the open project's matching pins.
+   */
+  'search-project-dependencies':
+    'Searching the Dependencies page by a name glob lists the open project’s matching pins',
+  /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
    */

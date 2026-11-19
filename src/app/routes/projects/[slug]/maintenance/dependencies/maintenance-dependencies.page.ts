@@ -89,10 +89,38 @@ function counted(n: number, one: string, many: string): string {
   return `${n} ${n === 1 ? one : many}`;
 }
 
-/** A section heading's count: its dependencies and how many of their pins are behind. */
-export function sectionCount(dependencies: readonly ProjectDependency[]): string {
+/**
+ * A section heading's count: its dependencies and how many of their pins are behind, and, while a
+ * search is set, the glob they matched (`3 dependencies · 1 behind matching "*p*"`).
+ */
+export function sectionCount(dependencies: readonly ProjectDependency[], glob?: string): string {
   const behind = dependencies.reduce((sum, dependency) => sum + dependency.behind, 0);
-  return `${counted(dependencies.length, 'dependency', 'dependencies')} · ${behind} behind`;
+  const count = `${counted(dependencies.length, 'dependency', 'dependencies')} · ${behind} behind`;
+  return glob ? `${count} matching "${glob}"` : count;
+}
+
+/**
+ * What a section says when it lists nothing: `kind` is `internal` or `external`; `glob` the
+ * search, if any; `behindOnly` whether "Only behind" is on.
+ */
+export function sectionEmpty(
+  kind: 'internal' | 'external',
+  glob: string | undefined,
+  behindOnly: boolean,
+): string {
+  if (glob)
+    return behindOnly
+      ? `No ${kind} pin matching "${glob}" is behind.`
+      : `No ${kind} dependency matches "${glob}".`;
+  return behindOnly ? `No ${kind} pin is behind.` : `No ${kind} dependencies.`;
+}
+
+/** The dependencies read of `kind`, with the searched `glob` only when one is set. */
+export function dependenciesQuery(
+  kind: 'INTERNAL' | 'EXTERNAL',
+  glob: string | undefined,
+): { query: { kind: 'INTERNAL' | 'EXTERNAL'; name?: string } } {
+  return { query: glob ? { kind, name: glob } : { kind } };
 }
 
 /** Whether a failed read was refused for the viewer's roles. */
@@ -119,6 +147,16 @@ function refused(read: { status(): string; error(): unknown }): boolean {
  * and a "behind" tag on a `pending` pin. Each heading counts the section's dependencies and its
  * behind pins. "Only behind" (`?behind=true`, replacing the history entry) hides the current pins
  * and the dependencies with none behind.
+ *
+ * Search (qits-2331, replacing qits-maintenance-frontend's `external/dependencies` page): a name
+ * glob, `?name=` (trimmed; a blank search removes it), which a submitted search pushes as a new
+ * history entry, so Back is the previous search, and which fills the box when a link is opened.
+ * qits-maintenance matches it against the whole name, case-sensitively (`*` any run, `?` one
+ * character): with it set, both dependencies reads carry it (`?kind=…&name=…`) and the page
+ * filters no name itself; without it, the reads are exactly the unsearched ones. Each heading's
+ * count then says what it matched, a section with no match says so ("No internal dependency
+ * matches …"), and "nothing has been scanned" is never said while searching: a search that
+ * matched nothing is not an empty inventory. "Only behind" composes with it.
  *
  * The reads run in the browser only (the server has no session), through `qitsResource`. A refusal
  * (403: only qits:admin, admin-agent, desk-admin, desk, system and agent may read the inventory)
@@ -150,6 +188,40 @@ function refused(read: { status(): string; error(): unknown }): boolean {
             Only behind
           </label>
         </div>
+        <form
+          class="mb-4 flex flex-col gap-1"
+          role="search"
+          aria-label="Dependencies"
+          (submit)="$event.preventDefault(); search(nameInput.value)"
+        >
+          <label class="text-sm font-semibold text-fg" for="dependencies-name"
+            >Dependency name</label
+          >
+          <div class="flex flex-wrap items-center gap-2">
+            <input
+              #nameInput
+              id="dependencies-name"
+              type="search"
+              name="name"
+              autocomplete="off"
+              spellcheck="false"
+              class="box-border h-8 min-w-0 flex-1 basis-56 rounded-md border border-line bg-surface px-2 font-mono text-sm text-fg"
+              aria-describedby="dependencies-name-hint"
+              [value]="name() ?? ''"
+            />
+            <button
+              type="submit"
+              class="inline-flex h-8 cursor-pointer items-center rounded-md border border-line-strong bg-surface px-3 text-sm font-semibold whitespace-nowrap text-fg-soft hover:bg-surface-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+            >
+              Search
+            </button>
+          </div>
+          <p class="m-0 text-xs text-fg-muted" id="dependencies-name-hint">
+            Matched against the whole name, case-sensitively: <code>*</code> is any run of
+            characters, <code>?</code> is one. For example <code>&#64;angular/*</code>,
+            <code>*quarkus*</code>, <code>io.quarkus.platform:*</code>.
+          </p>
+        </form>
         <p
           class="m-0 mb-4 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
           role="alert"
@@ -261,7 +333,7 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                 class="m-0 px-3 py-4 text-sm text-fg-muted"
                 [class.hidden]="internalShown().length > 0"
               >
-                {{ behindOnly() ? 'No internal pin is behind.' : 'No internal dependencies.' }}
+                {{ internalEmpty() }}
               </p>
             </section>
             <section aria-labelledby="dependencies-external" [qitsEntityList]="external">
@@ -355,7 +427,7 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                 class="m-0 px-3 py-4 text-sm text-fg-muted"
                 [class.hidden]="externalShown().length > 0"
               >
-                {{ behindOnly() ? 'No external pin is behind.' : 'No external dependencies.' }}
+                {{ externalEmpty() }}
               </p>
             </section>
           </div>
@@ -375,6 +447,9 @@ export class MaintenanceDependenciesPage {
   /** "Only behind", from the URL (`?behind=true`). */
   protected readonly behindOnly = computed(() => this.params()?.get('behind') === 'true');
 
+  /** The searched name glob, from the URL (`?name=`), trimmed; none when blank. */
+  protected readonly name = computed(() => this.params()?.get('name')?.trim() || undefined);
+
   /** The open project's id, in the browser only: the reads wait for it. */
   private readonly projectId = computed(() =>
     this.browser ? this.selected.project()?.id : undefined,
@@ -387,12 +462,12 @@ export class MaintenanceDependenciesPage {
 
   /** The INTERNAL dependencies (our own artifacts) with their pins. */
   protected readonly internal = qitsResource(MAINTENANCE_DEPENDENCIES, () =>
-    this.projectId() ? { query: { kind: 'INTERNAL' } } : undefined,
+    this.projectId() ? dependenciesQuery('INTERNAL', this.name()) : undefined,
   );
 
   /** The EXTERNAL dependencies (everyone else's) with their pins. */
   protected readonly external = qitsResource(MAINTENANCE_DEPENDENCIES, () =>
-    this.projectId() ? { query: { kind: 'EXTERNAL' } } : undefined,
+    this.projectId() ? dependenciesQuery('EXTERNAL', this.name()) : undefined,
   );
 
   /** The names of the open project's repositories. */
@@ -433,8 +508,15 @@ export class MaintenanceDependenciesPage {
     this.behindOnly() ? onlyBehind(this.externalAll()) : this.externalAll(),
   );
 
-  protected readonly internalCount = computed(() => sectionCount(this.internalAll()));
-  protected readonly externalCount = computed(() => sectionCount(this.externalAll()));
+  protected readonly internalCount = computed(() => sectionCount(this.internalAll(), this.name()));
+  protected readonly externalCount = computed(() => sectionCount(this.externalAll(), this.name()));
+
+  protected readonly internalEmpty = computed(() =>
+    sectionEmpty('internal', this.name(), this.behindOnly()),
+  );
+  protected readonly externalEmpty = computed(() =>
+    sectionEmpty('external', this.name(), this.behindOnly()),
+  );
 
   /** All three reads: failed if any failed, loaded once all have answered. */
   protected readonly state = computed((): LoadState => {
@@ -448,10 +530,14 @@ export class MaintenanceDependenciesPage {
     () => refused(this.repositories) || refused(this.internal) || refused(this.external),
   );
 
-  /** Whether nothing of the project has been scanned: none of its repositories pins anything. */
+  /**
+   * Whether nothing of the project has been scanned: none of its repositories pins anything. Never
+   * while searching: a search that matched nothing is not an empty inventory.
+   */
   protected readonly empty = computed(
     () =>
       this.state() === 'loaded' &&
+      !this.name() &&
       this.internalAll().length === 0 &&
       this.externalAll().length === 0,
   );
@@ -469,6 +555,15 @@ export class MaintenanceDependenciesPage {
 
   protected checked(event: Event): boolean {
     return (event.target as HTMLInputElement).checked;
+  }
+
+  /** Puts the searched glob into the URL as a new history entry; a blank search removes it. */
+  protected search(value: string): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { name: value.trim() || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   /** Puts "Only behind" into the URL, in place of the current entry. */

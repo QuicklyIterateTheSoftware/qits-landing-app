@@ -19,6 +19,13 @@ import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
  * some behind" (`rxjs` behind, `left-pad` with no latest and an error, `quarkus-bom` behind only in
  * the other project), and "no dependencies" / "no external dependencies" (an empty inventory). A
  * refusal is a 403 with no body, as the service answers a credential without a staff role.
+ *
+ * The name search (qits-2331) is answered from the states recorded with its globs: `*p*` matches
+ * ("dependencies matching a glob, some behind": the repositories, contract-tooling among the open
+ * project's, and `@qits/ui-components` behind; "external dependencies matching a glob, some
+ * behind": `typescript` behind in contract-tooling, `quarkus-bom` current here and behind only in
+ * the other project, `left-pad` with no latest and an error) and `nothing-matches-*` matches
+ * nothing ("no dependencies matching a glob", "no external dependencies matching a glob").
  */
 describe('MaintenanceDependenciesPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -38,12 +45,20 @@ describe('MaintenanceDependenciesPage (screenshots)', () => {
   const EXTERNAL_SOME_BEHIND = 'external dependencies of a project, some behind';
   const NONE = 'no dependencies';
   const NO_EXTERNAL = 'no external dependencies';
+  const MATCHING = 'dependencies matching a glob, some behind';
+  const EXTERNAL_MATCHING = 'external dependencies matching a glob, some behind';
+  const NONE_MATCHING = 'no dependencies matching a glob';
+  const NO_EXTERNAL_MATCHING = 'no external dependencies matching a glob';
   const REPOSITORIES = '/maintenance/api/repositories';
   const DEPENDENCIES = '/maintenance/api/dependencies';
 
   /** The `kind` a dependencies read asks for: the client writes the query into the URL. */
   const kindOf = (read: TestRequest) =>
     new URL(read.request.urlWithParams, 'http://x').searchParams.get('kind');
+
+  /** The `name` a dependencies read searches for, `null` when it searches nothing. */
+  const nameOf = (read: TestRequest) =>
+    new URL(read.request.urlWithParams, 'http://x').searchParams.get('name');
 
   /**
    * The open reads of the page, taken off the controller (`match` hands each request out once):
@@ -63,14 +78,19 @@ describe('MaintenanceDependenciesPage (screenshots)', () => {
     };
   }
 
-  /** Answers the three open reads with the recorded `repositories`, `internal` and `external`. */
+  /**
+   * Answers the three open reads with the recorded `repositories`, `internal` and `external`, after
+   * checking both dependencies reads search for `name` (`null`, the default: no `name` at all).
+   */
   async function answer(
     opened: { settled(): Promise<void> },
     states: { repositories: string; internal: string; external: string },
+    name: string | null = null,
   ) {
     const open = openReads();
     expect(open.repositories).toHaveLength(1);
     expect(open.kinds).toEqual(['EXTERNAL', 'INTERNAL']);
+    expect(open.dependencies.map(nameOf)).toEqual([name, name]);
     open.repositories[0].flush(
       await goldenMaster(states.repositories, 'listRepositories', 'qits-maintenance'),
     );
@@ -89,6 +109,34 @@ describe('MaintenanceDependenciesPage (screenshots)', () => {
     external: EXTERNAL_SOME_BEHIND,
   };
   const EMPTY = { repositories: NONE, internal: NONE, external: NO_EXTERNAL };
+  const SEARCHED = { repositories: MATCHING, internal: MATCHING, external: EXTERNAL_MATCHING };
+  const NO_MATCH = {
+    repositories: NONE_MATCHING,
+    internal: NONE_MATCHING,
+    external: NO_EXTERNAL_MATCHING,
+  };
+
+  /**
+   * Answers the two open dependencies reads alone (a new search reads no repositories again), after
+   * checking each carries `name` (`null`: no `name` at all).
+   */
+  async function answerDependencies(
+    opened: { settled(): Promise<void> },
+    name: string | null,
+    states: { internal: string; external: string },
+  ) {
+    const open = openReads();
+    expect(open.repositories).toHaveLength(0);
+    expect(open.kinds).toEqual(['EXTERNAL', 'INTERNAL']);
+    expect(open.dependencies.map(nameOf)).toEqual([name, name]);
+    open
+      .ofKind('INTERNAL')[0]
+      .flush(await goldenMaster(states.internal, 'listDependencies', 'qits-maintenance'));
+    open
+      .ofKind('EXTERNAL')[0]
+      .flush(await goldenMaster(states.external, 'listDependencies', 'qits-maintenance'));
+    await opened.settled();
+  }
 
   /** Opens the page at `query`, tall enough for every row (a screenshot shows the viewport only). */
   async function render(query = '') {
@@ -254,5 +302,119 @@ describe('MaintenanceDependenciesPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('refused', { kind: 'ERROR' });
+  });
+
+  const searchbox = (view: ReturnType<typeof page.elementLocator>) =>
+    view.getByRole('searchbox', { name: 'Dependency name' });
+
+  it('opens a searched link with the glob in the box and in both reads, counted with it', async () => {
+    const { opened, view } = await render('?name=*p*');
+    await expect.element(searchbox(view)).toHaveValue('*p*');
+    // Both kinds carry the glob; the repositories read is the unsearched one.
+    await answer(opened, SEARCHED, '*p*');
+
+    await expect
+      .element(section(view, 'Internal').getByRole('heading'))
+      .toMatchTextContent(/Internal\s*1 dependency · 1 behind matching "\*p\*"/);
+    await expect
+      .element(section(view, 'External').getByRole('heading'))
+      .toMatchTextContent(/External\s*3 dependencies · 1 behind matching "\*p\*"/);
+    const internalRows = entries(view, 'Internal');
+    expect(internalRows).toHaveLength(1);
+    await expect.element(internalRows[0]).toMatchTextContent('@qits/ui-components');
+    // Behind first (typescript, in contract-tooling), then by name; the page filters no name
+    // itself: it shows what the service matched.
+    const externalRows = entries(view, 'External');
+    expect(externalRows).toHaveLength(3);
+    await expect.element(externalRows[0]).toMatchTextContent('typescript');
+    await expect.element(externalRows[0]).toMatchTextContent('contract-tooling');
+    await expect.element(externalRows[1]).toMatchTextContent('io.quarkus.platform:quarkus-bom');
+    await expect.element(externalRows[2]).toMatchTextContent('left-pad');
+    await expect.element(externalRows[2]).toMatchTextContent('the packument lists no versions');
+    expect(opened.page.textContent).not.toContain('other-project-service');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('searched', { kind: 'DATA' });
+  });
+
+  it('a search pushes the trimmed glob into the URL and reads both kinds with it', async () => {
+    const { opened, view } = await loaded();
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate');
+    await userEvent.fill(searchbox(view), '  *p*  ');
+    await userEvent.click(view.getByRole('button', { name: 'Search' }));
+    await opened.idle();
+    expect(router.parseUrl(router.url).queryParams).toEqual({ name: '*p*' });
+    // A new history entry, so Back is the previous search.
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { name: '*p*' } }),
+    );
+    expect(navigate.mock.calls.at(-1)?.[1]?.replaceUrl).toBeUndefined();
+    await answerDependencies(opened, '*p*', {
+      internal: MATCHING,
+      external: EXTERNAL_MATCHING,
+    });
+    await expect
+      .element(section(view, 'External').getByRole('heading'))
+      .toMatchTextContent('matching "*p*"');
+  });
+
+  it('a blank search removes the glob and reads both kinds without it', async () => {
+    const { opened, view } = await render('?name=*p*');
+    await answer(opened, SEARCHED, '*p*');
+    await userEvent.fill(searchbox(view), '   ');
+    await userEvent.click(view.getByRole('button', { name: 'Search' }));
+    await opened.idle();
+    expect(TestBed.inject(Router).parseUrl(TestBed.inject(Router).url).queryParams).toEqual({});
+    await answerDependencies(opened, null, {
+      internal: SOME_BEHIND,
+      external: EXTERNAL_SOME_BEHIND,
+    });
+    await expect
+      .element(section(view, 'Internal').getByRole('heading'))
+      .not.toMatchTextContent('matching');
+  });
+
+  it('says what matched nothing per section, never that nothing has been scanned', async () => {
+    const { opened, view } = await render('?name=nothing-matches-*');
+    await answer(opened, NO_MATCH, 'nothing-matches-*');
+    await expect
+      .element(section(view, 'Internal'))
+      .toMatchTextContent('No internal dependency matches "nothing-matches-*".');
+    await expect
+      .element(section(view, 'External'))
+      .toMatchTextContent('No external dependency matches "nothing-matches-*".');
+    await expect
+      .element(section(view, 'External').getByRole('heading'))
+      .toMatchTextContent('0 dependencies · 0 behind matching "nothing-matches-*"');
+    await expect.element(view.getByText(/Nothing of this project/)).not.toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('no-match', { kind: 'NO_DATA' });
+
+    // Only behind composes with the search: it keeps the glob and reads nothing again.
+    await userEvent.click(view.getByRole('checkbox', { name: 'Only behind' }));
+    await opened.idle();
+    const router = TestBed.inject(Router);
+    expect(router.parseUrl(router.url).queryParams).toEqual({
+      name: 'nothing-matches-*',
+      behind: 'true',
+    });
+    expect(openReads().dependencies).toHaveLength(0);
+    await expect
+      .element(section(view, 'Internal'))
+      .toMatchTextContent('No internal pin matching "nothing-matches-*" is behind.');
+  });
+
+  it('opens a searched link with Only behind showing only the matching behind pins', async () => {
+    const { opened, view } = await render('?name=*p*&behind=true');
+    await expect.element(view.getByRole('checkbox', { name: 'Only behind' })).toBeChecked();
+    await answer(opened, SEARCHED, '*p*');
+    expect(entries(view, 'Internal')).toHaveLength(1);
+    const externalRows = entries(view, 'External');
+    expect(externalRows).toHaveLength(1);
+    await expect.element(externalRows[0]).toMatchTextContent('typescript');
+    expect(opened.page.textContent).not.toContain('left-pad');
   });
 });
