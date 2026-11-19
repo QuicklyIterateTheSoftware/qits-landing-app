@@ -56,7 +56,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  *
  * A project's CI is at `projects/<slug>/ci` (`CiRunsPage`, qits-2314): each repository's newest
  * run and newest run on main, filtered by `?repository=` and `?status=`, with the project's
- * running and queued runs above them.
+ * running and queued runs above them. One repository's runs are at `ci/<repository name>`
+ * (`CiRepositoryRunsPage`, qits-2320), newest first, filtered by `?status=`, `?branch=` and
+ * `?trigger=`; qits-2321's run page will be one segment deeper (`ci/runs/<runId>`).
  *
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
@@ -298,6 +300,13 @@ export const routes: Routes = [
         path: 'projects/:slug/ci',
         loadComponent: () =>
           import('./routes/projects/[slug]/ci/ci-runs.page').then((m) => m.CiRunsPage),
+      },
+      {
+        path: 'projects/:slug/ci/:repo',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ci/[repo]/ci-repository-runs.page').then(
+            (m) => m.CiRepositoryRunsPage,
+          ),
       },
       {
         path: 'projects/:slug/desk',

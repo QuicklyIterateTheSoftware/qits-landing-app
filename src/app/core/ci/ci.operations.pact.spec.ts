@@ -29,7 +29,9 @@ import {
  * repositories" lists, and one whose runs are all of repositories outside that project (the page's
  * empty state, by the join). "no runs recorded" is not pacted: its lists are empty, which the pact
  * would bind as exactly empty, and the provider verifies against a database other test classes
- * share.
+ * share. The repository's CI page (qits-2320) reads one repository's newest runs: contract-service
+ * (qits-projects' "a project with 3 repositories") with a run history, and with none, which its
+ * state clears for that one id, so its empty list verifies against the shared database.
  *
  * Moved here from `CiRunsStore`'s and `CiReportsStore`'s pact specs when the stores went
  * (qits-2146), unchanged: the same descriptions, states, requests and bound fields. Each test runs
@@ -44,6 +46,8 @@ const ACTIVE_STATE = 'a commit with a run in flight';
 const REPORTS_STATE = 'a run with reports: failing tests and coverage';
 const PROJECT_STATE = 'a project whose repositories have runs';
 const OUTSIDE_STATE = 'runs only of repositories outside the project';
+const HISTORY_STATE = 'a repository of the project with a run history';
+const NO_RUNS_STATE = 'a repository of the project with no runs';
 const OPERATIONS = [
   'listRuns',
   'listActiveRuns',
@@ -182,6 +186,36 @@ describe('qits-landing-app → qits-ci-service pact', () => {
         recorded.runs.map((run) => [run.id, run.repoId]),
       );
     }));
+
+  it('show-repository-ci: the repository’s CI page reads its run history', () =>
+    given(HISTORY_STATE, REPOSITORY_RUNS, 'show-repository-ci').executeTest(async (server) => {
+      const repositoryId = masters.operation(HISTORY_STATE, 'listRuns').query['repositoryId'];
+      const { data, error } = await at(server.url, () =>
+        REPOSITORY_RUNS.fetch({ query: { repositoryId, limit: RUNS_LIMIT } }),
+      );
+      expect(error).toBeUndefined();
+      // The list is filtered to the state's runs (`listFilteredTo`): the mock answers one run per
+      // recorded shape, each one of the recorded runs.
+      const recorded = masters.body<{ runs: { id: string; status: string }[] }>(
+        HISTORY_STATE,
+        'listRuns',
+      );
+      const runs = recorded.runs.map((run) => [run.id, run.status]);
+      expect(data?.runs?.length).toBeGreaterThan(0);
+      for (const run of data?.runs ?? []) expect(runs).toContainEqual([run.id, run.status]);
+    }));
+
+  it('show-repository-ci-empty: the repository’s CI page reads a repository with no runs', () =>
+    given(NO_RUNS_STATE, REPOSITORY_RUNS, 'show-repository-ci-empty').executeTest(
+      async (server) => {
+        const repositoryId = masters.operation(NO_RUNS_STATE, 'listRuns').query['repositoryId'];
+        const { data, error } = await at(server.url, () =>
+          REPOSITORY_RUNS.fetch({ query: { repositoryId, limit: RUNS_LIMIT } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.runs).toEqual([]);
+      },
+    ));
 
   it('show-release-request-reports: the page reads a run’s reports', () =>
     given(REPORTS_STATE, RUN_REPORTS, 'show-release-request-reports').executeTest(
