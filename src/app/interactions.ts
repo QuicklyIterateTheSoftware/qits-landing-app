@@ -503,6 +503,21 @@ export const INTERACTIONS = {
   'show-project-dependencies':
     'The Dependencies page lists the open project’s internal and external pins, behind ones first',
   /**
+   * `maintenance-artifacts.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_ARTIFACTS`
+   * (qits-2330): the Maintenance section's Artifacts page reads the inventory's repositories and the
+   * released artifacts, and lists the open project's, those with a behind dependent first. Refresh
+   * reads both again.
+   */
+  'show-project-artifacts':
+    'The Artifacts page lists what the open project released, those shipped behind somewhere first',
+  /**
+   * `maintenance-artifacts.page.ts` via `MAINTENANCE_DEPENDENTS` (qits-2330): an artifact's detail
+   * (`?ecosystem=&name=`) reads the released artifacts whose newest release embeds it, each current,
+   * behind or unknown against its latest, the behind ones first. Refresh reads it again.
+   */
+  'show-artifact-dependents':
+    'An artifact on the Artifacts page lists who embeds it, and which of them ship an old copy',
+  /**
    * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
    * (qits-2331): a name glob searched on the Dependencies page (`?name=`) reads the INTERNAL and
    * EXTERNAL dependencies with it (`?kind=…&name=…`), beside the inventory's repositories, and
@@ -1051,7 +1066,7 @@ export const INTERACTIONS = {
     'A Deployments page below Deployments in the sidebar opens that page',
   /**
    * `shell.layout.ts`: a Maintenance page listed below Maintenance in the sidebar opens it, one exit
-   * per page (qits-2317: Dependencies). Navigates only, and names no pact.
+   * per page (qits-2317: Dependencies; qits-2330: Artifacts). Navigates only, and names no pact.
    */
   'open-sidebar-maintenance-page':
     'A Maintenance page below Maintenance in the sidebar opens that page',

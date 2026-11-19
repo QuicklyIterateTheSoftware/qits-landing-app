@@ -1,16 +1,26 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  getMaintenanceApiArtifacts,
   getMaintenanceApiDependencies,
+  getMaintenanceApiDependenciesDependents,
   getMaintenanceApiRepositories,
   listPendingBumps,
 } from '../../api/maintenance';
-import { LIST_DEPENDENCIES, LIST_PENDING_BUMPS, LIST_REPOSITORIES } from './maintenance.consumes';
+import {
+  DEPENDENTS_REFUSAL,
+  LIST_ARTIFACTS,
+  LIST_DEPENDENCIES,
+  LIST_DEPENDENCY_DEPENDENTS,
+  LIST_PENDING_BUMPS,
+  LIST_REPOSITORIES,
+} from './maintenance.consumes';
 
 /**
  * qits-maintenance's reads declared as operations (qits-2145), for the top bar's bumps menu, which
  * reads through `qitsResource` instead of a store (qits-2146), and for the Maintenance section's
- * Dependencies page (qits-2317); `maintenance.operations.pact.spec.ts` binds each with the same
- * provider, operationId and `consumes`.
+ * Dependencies page (qits-2317) and Artifacts page (qits-2330);
+ * `maintenance.operations.pact.spec.ts` binds each with the same provider, operationId and
+ * `consumes`.
  */
 
 /** The newest pending version bumps (`listPendingBumps?limit=`), the bumps menu's list. */
@@ -44,4 +54,32 @@ export const MAINTENANCE_DEPENDENCIES = qitsOperation({
   method: 'GET',
   call: getMaintenanceApiDependencies,
   consumes: LIST_DEPENDENCIES,
+});
+
+/**
+ * Every artifact the platform has released, with its newest release, its SBOM's status and how
+ * many of ours embed it, how many an older copy (`listArtifacts`; the generated client names it
+ * after its path). Only staff roles may read it; anyone else gets a 403.
+ */
+export const MAINTENANCE_ARTIFACTS = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'listArtifacts',
+  method: 'GET',
+  call: getMaintenanceApiArtifacts,
+  consumes: LIST_ARTIFACTS,
+});
+
+/**
+ * One artifact's dependents: every released artifact of ours whose newest release embeds it, read
+ * off the SBOMs (`listDependencyDependents?ecosystem=&name=`; the generated client names it after
+ * its path). Only maven, npm and docker are read: any other ecosystem (a daemon) is a 400 whose
+ * `message` says so. Only staff roles may read it; anyone else gets a 403.
+ */
+export const MAINTENANCE_DEPENDENTS = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'listDependencyDependents',
+  method: 'GET',
+  call: getMaintenanceApiDependenciesDependents,
+  consumes: LIST_DEPENDENCY_DEPENDENTS,
+  errorConsumes: DEPENDENTS_REFUSAL,
 });

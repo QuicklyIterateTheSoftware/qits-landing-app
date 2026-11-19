@@ -653,6 +653,56 @@
       "route": "projects/:slug/ideas"
     }
   ],
+  "src/app/routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listDependencyDependents",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listDependencyDependents",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/artifacts"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/artifacts"
+    }
+  ],
   "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts": [
     {
       "provider": "qits-maintenance-service",

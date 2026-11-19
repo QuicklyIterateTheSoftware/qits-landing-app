@@ -90,6 +90,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'events'
   | 'maintenance'
   | 'maintenance/dependencies'
+  | 'maintenance/artifacts'
   | 'setup'}`>;
 
 /** One entry of the sidebar, or Setup (the gear's section, no entry). */
@@ -469,9 +470,13 @@ export class ShellLayout {
     logs: exit('projects/:slug/observability/logs'),
   });
 
-  /** The Maintenance pages below Maintenance in the sidebar, one exit per page (qits-2317). */
+  /**
+   * The Maintenance pages below Maintenance in the sidebar, one exit per page (qits-2317;
+   * Artifacts, qits-2330).
+   */
   private readonly maintenancePages = outcomes('open-sidebar-maintenance-page', {
     dependencies: exit('projects/:slug/maintenance/dependencies'),
+    artifacts: exit('projects/:slug/maintenance/artifacts'),
   });
 
   /** Each work page's exit, by its segment (`WORK_TABS`). */
@@ -660,6 +665,11 @@ export class ShellLayout {
             label: 'Dependencies',
             exit: this.maintenancePages.dependencies,
             path: this.maintenancePages.dependencies.url(params),
+          },
+          {
+            label: 'Artifacts',
+            exit: this.maintenancePages.artifacts,
+            path: this.maintenancePages.artifacts.url(params),
           },
         ],
       },
