@@ -529,6 +529,17 @@ describe('ReleaseRequestPage (screenshots)', () => {
     );
   });
 
+  it('open-release-adoption release: “Adoption of this release” opens its adoption page', async () => {
+    const { request } = await goldenMaster('a released release request', 'getReleaseRequest');
+    const { opened, view } = await shown('a released release request');
+    await view.getByRole('link', { name: 'Adoption of this release' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-release-adoption:release']);
+    expect(url()).toBe(
+      `/projects/${opened.project.slug}/maintenance/adoption/${request.repoName}/${request.version}`,
+    );
+  });
+
   it('shows the paths a conflicted request could not fold', async () => {
     const recorded = await goldenMaster('a conflicted release request', 'getReleaseRequest');
     const { opened, view } = await shown('a conflicted release request');

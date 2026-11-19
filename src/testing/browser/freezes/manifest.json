@@ -128785,6 +128785,7 @@
         "open-ci-run:run",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-release-adoption:release",
         "open-release-deployment-request:request",
         "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
@@ -129095,6 +129096,7 @@
         "open-ci-run:run",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-release-adoption:release",
         "open-release-deployment-request:request",
         "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
@@ -129400,6 +129402,7 @@
         "leave-release-request:list",
         "open-ci-run:run",
         "open-project-settings:open",
+        "open-release-adoption:release",
         "open-release-deployment-request:request",
         "open-release-deployment-requests:byRelease"
       ],
@@ -129686,6 +129689,7 @@
         "leave-release-request:list",
         "open-ci-run:run",
         "open-project-settings:open",
+        "open-release-adoption:release",
         "open-release-deployment-request:request",
         "open-release-deployment-requests:byRelease"
       ],
@@ -129977,6 +129981,7 @@
         "open-ci-run:run",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-release-adoption:release",
         "open-release-deployment-request:request",
         "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
@@ -130287,6 +130292,7 @@
         "open-ci-run:run",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-release-adoption:release",
         "open-release-deployment-request:request",
         "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
@@ -239602,6 +239608,16 @@
       },
       {
         "route": "projects/:slug/release-requests/:requestId",
+        "interaction": "open-release-adoption",
+        "outcome": "release",
+        "kind": "exit",
+        "to": "projects/:slug/maintenance/adoption/:repository/:version",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.ts"
+      },
+      {
+        "route": "projects/:slug/release-requests/:requestId",
         "interaction": "open-release-deployment-requests",
         "outcome": "byRelease",
         "kind": "exit",
@@ -242099,6 +242115,15 @@
         "route": "projects/:slug/release-requests/:requestId",
         "interaction": "open-related-release-request",
         "outcome": "supersededBy",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
+        "test": "ReleaseRequestPage (screenshots) > open-release-adoption release: “Adoption of this release” opens its adoption page",
+        "route": "projects/:slug/release-requests/:requestId",
+        "interaction": "open-release-adoption",
+        "outcome": "release",
         "kind": "exit",
         "freeze": null
       },

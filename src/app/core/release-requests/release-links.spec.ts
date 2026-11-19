@@ -47,7 +47,7 @@ describe('release links', () => {
     ]);
   });
 
-  it('links the tag, the commit, the deployment only when something deploys, and the train', () => {
+  it('links the tag, the commit, the deployment only when something deploys, and the adoption', () => {
     const base = { slug: 'qits', scope: SCOPE, repoId: 'r1', repoName: 'qits-ci-service' };
     expect(
       releaseLinks({ ...base, version: '2026.1.1', releasedSha: 'abc', deployable: true }).map(
@@ -57,11 +57,11 @@ describe('release links', () => {
       ['githost', `${SCOPE}tags/2026.1.1`],
       ['githost', `${SCOPE}commit/abc`],
       [undefined, '/projects/qits/deployments/requests/by-release/r1/2026.1.1'],
-      ['maintenance', '/qits/trains/by-release/qits-ci-service/2026.1.1'],
+      [undefined, '/projects/qits/maintenance/adoption/qits-ci-service/2026.1.1'],
     ]);
     expect(
       releaseLinks({ ...base, version: '2026.1.1', deployable: false }).map((link) => link.app),
-    ).toEqual(['githost', 'maintenance']);
+    ).toEqual(['githost', undefined]);
     expect(releaseLinks({ ...base, deployable: true })).toEqual([]);
   });
 
@@ -77,6 +77,21 @@ describe('release links', () => {
       label: 'The deployment of this release',
       path: '/projects/qits/deployments/requests/by-release/repo%2F1/2026.1.1%2Bx',
       release: { repoId: 'repo/1', version: '2026.1.1+x' },
+    });
+  });
+
+  it('links the adoption of the release in this app, each segment encoded', () => {
+    const [adoption] = releaseLinks({
+      slug: 'qits',
+      scope: SCOPE,
+      repoName: 'repo/1',
+      version: '2026.1.1+x',
+      deployable: false,
+    }).filter((link) => link.label === 'Adoption of this release');
+    expect(adoption).toEqual({
+      label: 'Adoption of this release',
+      path: '/projects/qits/maintenance/adoption/repo%2F1/2026.1.1%2Bx',
+      adoption: { repository: 'repo/1', version: '2026.1.1+x' },
     });
   });
 });
