@@ -10,9 +10,20 @@ import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { client as deploymentsClient } from '../../api/deployments/client.gen';
 import { provideHeyApiClient } from '../../api/deployments/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { deploymentsGoldenMasters as masters, isRecorded } from '../../../testing/golden-masters';
-import { isCompletedRequest, isHeldForApproval } from './deployment-requests';
-import { PROJECT_DEPLOYMENT_REQUESTS } from './deployments.operations';
+import {
+  deploymentsGoldenMasters as masters,
+  heldBy,
+  isRecorded,
+} from '../../../testing/golden-masters';
+import { isCompletedRequest, isDeclined, isHeldForApproval } from './deployment-requests';
+import {
+  APPROVE_DEPLOYMENT_REQUEST,
+  DECLINE_DEPLOYMENT_REQUEST,
+  DEPLOYMENT_REQUEST,
+  ENVIRONMENTS,
+  PROJECT_DEPLOYMENT_REQUESTS,
+  TIER_DEPLOYMENTS,
+} from './deployments.operations';
 
 /**
  * qits-landing-app's pact with qits-deployments-service (qits-2315), in
@@ -26,6 +37,11 @@ import { PROJECT_DEPLOYMENT_REQUESTS } from './deployments.operations';
  * records both from 2026.1119.842 on: until the pin reaches it, each test skips
  * itself and the committed pact holds no such interaction.
  *
+ * One deployment request's page (qits-2322): the request read in each state that records it (one
+ * that deployed ACTIVE, one held for approval, one held to be declined), Approve and Decline (with
+ * the recorded note) of the held ones, the tier's deployments (`an application deployed in an
+ * environment`) and the tiers (`an environment`).
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
  */
@@ -34,11 +50,18 @@ const PROVIDER = 'qits-deployments-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const WITH_REQUESTS = 'a project with deployment requests';
+const DEPLOYED = 'a deployment request that deployed';
+const HELD = 'a deployment request held for approval';
+const HELD_FOR_DECLINE = 'a deployment request held for decline';
+const IN_TIER = 'an application deployed in an environment';
+const AN_ENVIRONMENT = 'an environment';
 const WITHOUT_REQUESTS = 'a project with no deployment requests';
 const LIST = PROJECT_DEPLOYMENT_REQUESTS.operationId;
-/** Whether the pinned golden masters record either state; until then the spec writes no pact. */
+/** Whether the pinned golden masters record any state; until then the spec writes no pact. */
 const RECORDED =
-  isRecorded(WITH_REQUESTS, LIST, masters) || isRecorded(WITHOUT_REQUESTS, LIST, masters);
+  isRecorded(WITH_REQUESTS, LIST, masters) ||
+  isRecorded(WITHOUT_REQUESTS, LIST, masters) ||
+  isRecorded(DEPLOYED, DEPLOYMENT_REQUEST.operationId, masters);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-deployments-operations-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -68,9 +91,14 @@ const given = (
     state,
     operationId: op.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction },
-    consumes: op.consumes,
+    // A request that queued nothing records `deployment: null`: its fields bind where recorded.
+    consumes: heldBy(masters, state, op.operationId, op.consumes),
   });
 };
+
+/** The request `state` recorded `operationId` for. */
+const requestOf = (state: string, operationId: string): string =>
+  masters.operation(state, operationId).params['id'];
 
 /** The project `state` recorded its requests read for. */
 const projectOf = (state: string): string => masters.operation(state, LIST).params['projectId'];
@@ -122,6 +150,108 @@ describe('qits-landing-app → qits-deployments-service pact: the Deployments se
         );
         expect(error).toBeUndefined();
         expect(data?.deploymentRequests).toEqual([]);
+      }),
+  );
+
+  /** The request read in `state`, by the id it recorded. */
+  const readIn = (state: string) =>
+    given(DEPLOYMENT_REQUEST, state, 'show-deployment-request').executeTest(async (server) => {
+      const id = requestOf(state, DEPLOYMENT_REQUEST.operationId);
+      const { data, error } = await at(server.url, () =>
+        DEPLOYMENT_REQUEST.fetch({ path: { id } }),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.deploymentRequest?.id).toBe(id);
+      return data;
+    });
+
+  it.skipIf(!isRecorded(DEPLOYED, DEPLOYMENT_REQUEST.operationId, masters))(
+    'show-deployment-request: a request that deployed ACTIVE',
+    async () => {
+      const data = await readIn(DEPLOYED);
+      expect(data?.deploymentRequest?.qualityGate).toBe('MET');
+      expect(data?.deployment?.status).toBe('ACTIVE');
+    },
+  );
+
+  it.skipIf(!isRecorded(HELD, DEPLOYMENT_REQUEST.operationId, masters))(
+    'show-deployment-request: a request held for approval',
+    async () => {
+      const data = await readIn(HELD);
+      expect(data?.deploymentRequest && isHeldForApproval(data.deploymentRequest)).toBe(true);
+      expect(data?.deployment ?? null).toBeNull();
+    },
+  );
+
+  it.skipIf(!isRecorded(HELD_FOR_DECLINE, DEPLOYMENT_REQUEST.operationId, masters))(
+    'show-deployment-request: a request held, to be declined',
+    async () => {
+      const data = await readIn(HELD_FOR_DECLINE);
+      expect(data?.deploymentRequest && isHeldForApproval(data.deploymentRequest)).toBe(true);
+    },
+  );
+
+  it.skipIf(!isRecorded(HELD, APPROVE_DEPLOYMENT_REQUEST.operationId, masters))(
+    'approve-deployment-request: approving a held request queues its deployment',
+    () =>
+      given(APPROVE_DEPLOYMENT_REQUEST, HELD, 'approve-deployment-request').executeTest(
+        async (server) => {
+          const id = requestOf(HELD, APPROVE_DEPLOYMENT_REQUEST.operationId);
+          const { data, error } = await at(server.url, () =>
+            APPROVE_DEPLOYMENT_REQUEST.fetch({ path: { id } }),
+          );
+          expect(error).toBeUndefined();
+          expect(data?.deploymentRequest?.qualityGate).toBe('MET');
+          expect(data?.deploymentRequest?.approvedBy).toBeTruthy();
+          expect(data?.deployment?.status).toBe('QUEUED');
+        },
+      ),
+  );
+
+  it.skipIf(!isRecorded(HELD_FOR_DECLINE, DECLINE_DEPLOYMENT_REQUEST.operationId, masters))(
+    'decline-deployment-request: declining a held request, with a note, deploys nothing',
+    () =>
+      given(DECLINE_DEPLOYMENT_REQUEST, HELD_FOR_DECLINE, 'decline-deployment-request').executeTest(
+        async (server) => {
+          const op = masters.operation(HELD_FOR_DECLINE, DECLINE_DEPLOYMENT_REQUEST.operationId);
+          const note = (op.body as { note?: string } | undefined)?.note;
+          const { data, error } = await at(server.url, () =>
+            DECLINE_DEPLOYMENT_REQUEST.fetch({ path: { id: op.params['id'] }, body: { note } }),
+          );
+          expect(error).toBeUndefined();
+          expect(data?.deploymentRequest && isDeclined(data.deploymentRequest)).toBe(true);
+          expect(data?.deployment ?? null).toBeNull();
+        },
+      ),
+  );
+
+  it.skipIf(!isRecorded(IN_TIER, TIER_DEPLOYMENTS.operationId, masters))(
+    'show-deployment-request: the tier’s deployments',
+    () =>
+      given(TIER_DEPLOYMENTS, IN_TIER, 'show-deployment-request').executeTest(async (server) => {
+        const op = masters.operation(IN_TIER, TIER_DEPLOYMENTS.operationId);
+        const environmentId = op.params['environmentId'];
+        const { data, error } = await at(server.url, () =>
+          TIER_DEPLOYMENTS.fetch({ query: { environmentId } }),
+        );
+        expect(error).toBeUndefined();
+        const [deployment] = data?.deployments ?? [];
+        expect(deployment?.status).toBe('ACTIVE');
+        expect(deployment?.applicationName).toBe(op.params['applicationName']);
+      }),
+  );
+
+  it.skipIf(!isRecorded(AN_ENVIRONMENT, ENVIRONMENTS.operationId, masters))(
+    'show-deployment-request: the tiers, for the tier’s name',
+    () =>
+      given(ENVIRONMENTS, AN_ENVIRONMENT, 'show-deployment-request').executeTest(async (server) => {
+        const environmentId = masters.operation(AN_ENVIRONMENT, ENVIRONMENTS.operationId).params[
+          'environmentId'
+        ];
+        const { data, error } = await at(server.url, () => ENVIRONMENTS.fetch({}));
+        expect(error).toBeUndefined();
+        const tier = data?.environments?.find((environment) => environment.id === environmentId);
+        expect(tier?.name).toBeTruthy();
       }),
   );
 });

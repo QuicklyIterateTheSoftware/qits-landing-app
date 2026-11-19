@@ -17,6 +17,7 @@ export type RoutePath =
   | 'projects/:slug/ci/:repo'
   | 'projects/:slug/deployments'
   | 'projects/:slug/deployments/requests'
+  | 'projects/:slug/deployments/requests/:requestId'
   | 'projects/:slug/desk'
   | 'projects/:slug/docs'
   | 'projects/:slug/events'

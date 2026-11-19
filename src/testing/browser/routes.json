@@ -327,6 +327,44 @@
       "route": "projects/:slug/ci"
     }
   ],
+  "src/app/routes/projects/[slug]/deployments/requests/[requestId]/deployment-request.page.browser.spec.ts": [
+    {
+      "provider": "qits-deployments-service",
+      "state": "a deployment request held for approval",
+      "operationId": "getDeploymentRequest",
+      "route": "projects/:slug/deployments/requests/:requestId"
+    },
+    {
+      "provider": "qits-deployments-service",
+      "state": "a deployment request that deployed",
+      "operationId": "getDeploymentRequest",
+      "route": "projects/:slug/deployments/requests/:requestId"
+    },
+    {
+      "provider": "qits-deployments-service",
+      "state": "an application deployed in an environment",
+      "operationId": "listDeployments",
+      "route": "projects/:slug/deployments/requests/:requestId"
+    },
+    {
+      "provider": "qits-deployments-service",
+      "state": "an environment",
+      "operationId": "listEnvironments",
+      "route": "projects/:slug/deployments/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/deployments/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/deployments/requests/:requestId"
+    }
+  ],
   "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts": [
     {
       "provider": "qits-deployments-service",

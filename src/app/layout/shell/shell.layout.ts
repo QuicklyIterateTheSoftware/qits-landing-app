@@ -11,6 +11,11 @@ import {
   type ExitOutcome,
   type ExternalOutcome,
 } from '@qits/angular';
+import { DEPLOYMENT_REQUEST } from '$core/deployments/deployments.operations';
+import {
+  OpenDeploymentRequest,
+  type OpenDeploymentRequestName,
+} from '$core/deployments/open-deployment-request';
 import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { PROJECT_LIST, PROJECT_RELEASE_REQUESTS } from '$core/projects/projects.operations';
 import {
@@ -425,6 +430,7 @@ export class ShellLayout {
   private readonly selected = inject(SelectedProject);
   protected readonly releaseRequests = inject(ProjectReleaseRequests);
   protected readonly activeAgents = inject(ProjectActiveAgents);
+  private readonly openDeploymentRequest = inject(OpenDeploymentRequest);
 
   /** The agents menu's spinner: the agents' read, as the menu's own read was. */
   protected readonly agentsState = computed(() => loadState(this.activeAgents.resource));
@@ -673,8 +679,8 @@ export class ShellLayout {
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
    * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
-   * Work › <item id>, Release Requests › <request id>, Agents › <agent's item id>, Agents ›
-   * ws-<slot id>). The last crumb is the current page and is not a link; each one before it leads
+   * Work › <item id>, Release Requests › <request id>, Deployments › <version> · <application>,
+   * Agents › <agent's item id>, Agents › ws-<slot id>). The last crumb is the current page and is not a link; each one before it leads
    * through its `follow-breadcrumb` exit.
    */
   protected readonly crumbs = computed((): readonly Crumb[] => {
@@ -711,6 +717,7 @@ export class ShellLayout {
     const sub =
       workSubpage(url, `/projects/${slug}`) ??
       releaseRequestSubpage(url, `/projects/${slug}`, requests) ??
+      deploymentRequestSubpage(url, `/projects/${slug}`, this.openDeploymentRequest.shown()) ??
       slotSubpage(url, `/projects/${slug}`) ??
       agentSubpage(url, `/projects/${slug}`, agents);
     return sub
@@ -898,6 +905,41 @@ export function releaseRequestSubpage(
           source: sourceMark(PROJECT_RELEASE_REQUESTS),
           item: itemMark('id', request.id),
           field: 'qualifiedId',
+        }
+      : undefined,
+  };
+}
+
+/** The deployment requests' segment below a project: `/projects/<slug>/deployments/requests`. */
+export const DEPLOYMENT_REQUESTS = 'deployments/requests';
+
+/**
+ * The crumb of one deployment request below the project at `project` (`/projects/<slug>`,
+ * qits-2322): `<project>/deployments/requests/<id>` names the request `<version> · <application>`
+ * once its page shows it (`shown`, `OpenDeploymentRequest`), else by its id's first eight
+ * characters. Undefined for the list itself and anything outside it.
+ */
+export function deploymentRequestSubpage(
+  url: string,
+  project: string,
+  shown?: OpenDeploymentRequestName,
+): NavPage | undefined {
+  const prefix = `${project}/${DEPLOYMENT_REQUESTS}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
+  if (!id) return undefined;
+  const requestId = decodeURIComponent(id);
+  const named = shown?.id === requestId && shown.version ? shown : undefined;
+  return {
+    label: named
+      ? [named.version, named.applicationName].filter(Boolean).join(' · ')
+      : requestId.slice(0, 8),
+    path: `${prefix}${id}`,
+    marks: named
+      ? {
+          source: sourceMark(DEPLOYMENT_REQUEST),
+          item: itemMark('id', requestId),
+          derived: 'version applicationName',
         }
       : undefined,
   };
