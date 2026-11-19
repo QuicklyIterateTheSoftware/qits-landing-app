@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetContentHashData, GetDaemonData, GetDocsFileData, GetDocsFileResponse, GetDocsVersionData, GetDocsVersionResponse, GetGcPlanData, GetGcPlanResponse, GetImageManifestData, GetMavenFileData, GetMavenMetadataData, GetNewestContentHashData, GetNpmPackumentData, GetSbomData, GetStoreSummaryData, GetStoreSummaryResponse, HeadDaemonData, HeadImageManifestData, HeadNpmTarballData, HeadSbomData, ListArtifactRecordsData, ListArtifactRecordsResponse, ListDaemonsData, ListDaemonsResponse2, ListDaemonVersionsData, ListDaemonVersionsResponse2, ListDocsSitesData, ListDocsSitesResponse2, ListDocsSiteSummariesData, ListDocsSiteSummariesResponse, ListDocsVersionsData, ListDocsVersionsResponse, ListImagesData, ListImagesResponse2, ListImageTagsData, ListMavenPackagesData, ListMavenPackagesResponse2, ListNpmPackagesData, ListNpmPackagesResponse2, ListRepositoriesData, ListRepositoriesResponse2, PlanGcRepositoriesWithSuppliedPinsData, PlanGcRepositoriesWithSuppliedPinsResponse, PlanGcRepositoryWithSuppliedPinsData, PlanGcRepositoryWithSuppliedPinsResponse, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsResponse, PurgeApplicationData, PurgeApplicationResponse, PutDaemonData, PutDocsData, PutMavenFileData, PutNpmDistTagData, PutNpmPackageData, PutSbomData, SweepGcData, SweepGcRepositoryData, SweepGcRepositoryResponse, SweepGcResponse } from '../types.gen';
+import type { GetContentHashData, GetDaemonData, GetDocsFileData, GetDocsFileResponse, GetDocsVersionData, GetDocsVersionResponse, GetGcPlanData, GetGcPlanResponse, GetImageManifestData, GetMavenFileData, GetMavenMetadataData, GetNewestContentHashData, GetNpmPackumentData, GetSbomData, GetStoreSummaryData, GetStoreSummaryResponse, HeadDaemonData, HeadImageManifestData, HeadNpmTarballData, HeadSbomData, ListArtifactRecordsData, ListArtifactRecordsResponse, ListDaemonsData, ListDaemonsResponse2, ListDaemonVersionsData, ListDaemonVersionsResponse2, ListDocsSitesData, ListDocsSitesResponse2, ListDocsSiteSummariesData, ListDocsSiteSummariesResponse, ListDocsVersionsData, ListDocsVersionsResponse, ListImageManifestSummariesData, ListImageManifestSummariesResponse, ListImagesData, ListImagesResponse2, ListImageTagsData, ListImageTagSummariesData, ListImageTagSummariesResponse, ListMavenPackagesData, ListMavenPackagesResponse2, ListNpmPackagesData, ListNpmPackagesResponse2, ListRepositoriesData, ListRepositoriesResponse2, PlanGcRepositoriesWithSuppliedPinsData, PlanGcRepositoriesWithSuppliedPinsResponse, PlanGcRepositoryWithSuppliedPinsData, PlanGcRepositoryWithSuppliedPinsResponse, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsResponse, PurgeApplicationData, PurgeApplicationResponse, PutDaemonData, PutDocsData, PutMavenFileData, PutNpmDistTagData, PutNpmPackageData, PutSbomData, SweepGcData, SweepGcRepositoryData, SweepGcRepositoryResponse, SweepGcResponse } from '../types.gen';
 
 /**
  * Every docs site in the repository, with its version count and latest version.
@@ -367,6 +367,26 @@ export const listImagesRequest = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
+ * Manifests
+ */
+export const listImageManifestSummariesRequest = <ThrowOnError extends boolean = false>(options: Options<ListImageManifestSummariesData, ThrowOnError>): HttpRequest<ListImageManifestSummariesResponse> => (options?.client ?? client).requestOptions<ListImageManifestSummariesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/images/{image}/manifests',
+    ...options
+});
+
+/**
+ * Tags
+ */
+export const listImageTagSummariesRequest = <ThrowOnError extends boolean = false>(options: Options<ListImageTagSummariesData, ThrowOnError>): HttpRequest<ListImageTagSummariesResponse> => (options?.client ?? client).requestOptions<ListImageTagSummariesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/images/{image}/tags',
+    ...options
+});
+
+/**
  * Packages
  */
 export const listMavenPackagesRequest = <ThrowOnError extends boolean = false>(options: Options<ListMavenPackagesData, ThrowOnError>): HttpRequest<ListMavenPackagesResponse2> => (options?.client ?? client).requestOptions<ListMavenPackagesResponse2, ThrowOnError>({
@@ -682,6 +702,22 @@ export const listDocsSiteSummariesResource = <ThrowOnError extends boolean = fal
 export const listImagesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListImagesData, ThrowOnError> | undefined) => httpResource<ListImagesResponse2>(() => {
     const opts = options ? options() : undefined;
     return opts ? listImagesRequest(opts) : undefined;
+});
+
+/**
+ * Manifests
+ */
+export const listImageManifestSummariesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListImageManifestSummariesData, ThrowOnError> | undefined) => httpResource<ListImageManifestSummariesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listImageManifestSummariesRequest(opts) : undefined;
+});
+
+/**
+ * Tags
+ */
+export const listImageTagSummariesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListImageTagSummariesData, ThrowOnError> | undefined) => httpResource<ListImageTagSummariesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listImageTagSummariesRequest(opts) : undefined;
 });
 
 /**

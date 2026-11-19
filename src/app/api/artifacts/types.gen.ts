@@ -13,6 +13,7 @@ export type DocsCatalogEntry = {
     versionCount: number;
     latestVersion: string;
     latestPublishedAt: string;
+    latestRepository?: string;
 };
 
 export type DocsVersionList = {
@@ -266,11 +267,28 @@ export type GcUntouchablePool = {
     blobIds?: Array<string>;
 };
 
+export type ImageManifestSummary = {
+    digest?: string;
+    mediaType?: string;
+    sizeBytes?: number;
+    createdAt?: Instant;
+    accessedAt?: Instant;
+    tags?: Array<string>;
+};
+
 export type ImageSummary = {
     name?: string;
     tagCount?: number;
     manifestCount?: number;
     sizeBytes?: number;
+};
+
+export type ImageTagSummary = {
+    tag?: string;
+    digest?: string;
+    sizeBytes?: number;
+    createdAt?: Instant;
+    accessedAt?: Instant;
 };
 
 export type Instant = string;
@@ -295,6 +313,10 @@ export type ListImagesResponse = {
     images?: Array<ImageSummary>;
 };
 
+export type ListManifestsResponse = {
+    manifests?: Array<ImageManifestSummary>;
+};
+
 export type ListMavenPackagesResponse = {
     packages?: Array<MavenPackageSummary>;
 };
@@ -305,6 +327,10 @@ export type ListNpmPackagesResponse = {
 
 export type ListRepositoriesResponse = {
     repositories?: Array<RepositorySummary>;
+};
+
+export type ListTagsResponse = {
+    tags?: Array<ImageTagSummary>;
 };
 
 export type MavenPackageSummary = {
@@ -361,7 +387,7 @@ export type ListDocsSitesData = {
 
 export type ListDocsSitesResponses = {
     /**
-     * The catalog, {sites:[{name, versionCount, latestVersion, latestPublishedAt}]}.
+     * The catalog, {sites:[{name, versionCount, latestVersion, latestPublishedAt, latestRepository?}]}; latestRepository is the git.repository.name the newest version was published with, absent when it carries none.
      */
     200: DocsSiteCatalog;
 };
@@ -1326,6 +1352,82 @@ export type ListImagesResponses = {
 };
 
 export type ListImagesResponse2 = ListImagesResponses[keyof ListImagesResponses];
+
+export type ListImageManifestSummariesData = {
+    body?: never;
+    path: {
+        image: string;
+        repo: string;
+    };
+    query?: {
+        'accessed-after'?: string;
+        'accessed-before'?: string;
+        'created-after'?: string;
+        'created-before'?: string;
+        'max-size'?: string;
+        'min-size'?: string;
+        'never-accessed'?: string;
+    };
+    url: '/artifacts/api/repositories/{repo}/images/{image}/manifests';
+};
+
+export type ListImageManifestSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListImageManifestSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListManifestsResponse;
+};
+
+export type ListImageManifestSummariesResponse = ListImageManifestSummariesResponses[keyof ListImageManifestSummariesResponses];
+
+export type ListImageTagSummariesData = {
+    body?: never;
+    path: {
+        image: string;
+        repo: string;
+    };
+    query?: {
+        'accessed-after'?: string;
+        'accessed-before'?: string;
+        'created-after'?: string;
+        'created-before'?: string;
+        'max-size'?: string;
+        'min-size'?: string;
+        'never-accessed'?: string;
+    };
+    url: '/artifacts/api/repositories/{repo}/images/{image}/tags';
+};
+
+export type ListImageTagSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListImageTagSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListTagsResponse;
+};
+
+export type ListImageTagSummariesResponse = ListImageTagSummariesResponses[keyof ListImageTagSummariesResponses];
 
 export type ListMavenPackagesData = {
     body?: never;
