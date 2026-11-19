@@ -25,6 +25,7 @@ import { ProjectIdeasPage } from './routes/projects/[slug]/ideas/project-ideas.p
 import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-create.page';
 import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
+import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -167,6 +168,27 @@ describe('ideas routes', () => {
     ['ideas/detail/i-1/edit', IdeaEditPage],
   ])('opens %s', async (path, page) => {
     expect(await opened(`/projects/x/${path}`)).toEqual([page]);
+  });
+});
+
+describe('artifacts routes (qits-2316)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens a store repository at artifacts/repositories/<repo>', async () => {
+    expect(await pages('/artifacts/repositories/npm')).toEqual([ArtifactsRepositoryPage]);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/npm');
+  });
+
+  it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {
+    expect(await pages(url)).toEqual([ArtifactsRepositoryPage]);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/qits');
   });
 });
 

@@ -3,6 +3,8 @@
 // prettier-ignore
 export type RoutePath =
   | ''
+  | 'artifacts'
+  | 'artifacts/repositories/:repo'
   | 'network-access'
   | 'projects'
   | 'projects/:slug'
@@ -16,11 +18,14 @@ export type RoutePath =
   | 'projects/:slug/deployments'
   | 'projects/:slug/deployments/requests'
   | 'projects/:slug/desk'
+  | 'projects/:slug/docs'
   | 'projects/:slug/events'
   | 'projects/:slug/ideas'
   | 'projects/:slug/ideas/create'
   | 'projects/:slug/ideas/detail/:ideaId'
   | 'projects/:slug/ideas/detail/:ideaId/edit'
+  | 'projects/:slug/maintenance'
+  | 'projects/:slug/maintenance/dependencies'
   | 'projects/:slug/observability'
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/release-requests'

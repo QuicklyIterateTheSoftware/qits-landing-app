@@ -48,6 +48,18 @@ export type ApplicationPurgeReport = {
     removed?: Array<PurgedPackage>;
 };
 
+export type ArtifactRecordDto = {
+    id?: string;
+    repository?: string;
+    mediatype?: string;
+    size?: number;
+    createdAt?: Instant;
+    accessedAt?: Instant;
+    metadata?: {
+        [key: string]: string;
+    };
+};
+
 export type DaemonSummary = {
     name?: string;
     versionCount?: number;
@@ -62,6 +74,26 @@ export type DaemonVersionSummary = {
     sizeBytes?: number;
     publishedAt?: Instant;
     accessedAt?: Instant;
+};
+
+export type DocsSiteSummary = {
+    name?: string;
+    versionCount?: number;
+    latestVersion?: string;
+    latestPublishedAt?: Instant;
+    sizeBytes?: number;
+};
+
+export type GcDiskReport = {
+    state?: string;
+    blobTablesBytesBefore?: number;
+    blobTablesBytesAfter?: number;
+    databaseBytesBefore?: number;
+    databaseBytesAfter?: number;
+    segmentsDrained?: number;
+    segmentsDropped?: number;
+    segmentsHeld?: number;
+    bytesMoved?: number;
 };
 
 export type GcIdentity = {
@@ -107,6 +139,34 @@ export type GcPlanSummary = {
     types?: Array<string>;
 };
 
+export type GcRepositoriesPlanResponse = {
+    generatedAt?: Instant;
+    executable?: boolean;
+    pinFailures?: Array<string>;
+    graceWindow?: string;
+    repositories?: Array<GcRepositoryPlanSummary>;
+};
+
+export type GcRepositoryPlanReport = {
+    repository?: string;
+    type?: string;
+    generatedAt?: Instant;
+    dryRun?: boolean;
+    graceWindow?: string;
+    executable?: boolean;
+    pinFailures?: Array<string>;
+    pins?: Array<GcPinSource>;
+    configuration?: GcTypeConfiguration;
+    strategy?: string;
+    note?: string;
+    error?: string;
+    dead?: Array<GcIdentity>;
+    kept?: Array<GcIdentity>;
+    sweep?: GcSweepPlan;
+    structural?: GcSweepPlan;
+    untouchable?: GcUntouchablePool;
+};
+
 export type GcRepositoryPlanSummary = {
     repository?: string;
     type?: string;
@@ -119,6 +179,25 @@ export type GcRepositoryPlanSummary = {
     reclaimableBytes?: number;
     withheldByGraceWindow?: number;
     withheldBytes?: number;
+};
+
+export type GcRepositorySweepReport = {
+    repository?: string;
+    type?: string;
+    executedAt?: Instant;
+    dryRun?: boolean;
+    graceWindow?: string;
+    aborted?: string;
+    pins?: Array<GcPinSource>;
+    strategy?: string;
+    note?: string;
+    error?: string;
+    deleted?: Array<GcIdentity>;
+    withheldByGraceWindow?: Array<GcIdentity>;
+    sweep?: GcSweepOutcome;
+    disk?: GcDiskReport;
+    untouchable?: GcUntouchablePool;
+    runId?: string;
 };
 
 export type GcSweepOutcome = {
@@ -147,6 +226,7 @@ export type GcSweepReport = {
     pins?: Array<GcPinSource>;
     types?: Array<GcTypeSweepResult>;
     sweep?: GcSweepOutcome;
+    disk?: GcDiskReport;
     untouchable?: GcUntouchablePool;
     runId?: string;
 };
@@ -186,7 +266,18 @@ export type GcUntouchablePool = {
     blobIds?: Array<string>;
 };
 
+export type ImageSummary = {
+    name?: string;
+    tagCount?: number;
+    manifestCount?: number;
+    sizeBytes?: number;
+};
+
 export type Instant = string;
+
+export type ListBlobsResponse = {
+    records?: Array<ArtifactRecordDto>;
+};
 
 export type ListDaemonVersionsResponse = {
     versions?: Array<DaemonVersionSummary>;
@@ -196,11 +287,51 @@ export type ListDaemonsResponse = {
     daemons?: Array<DaemonSummary>;
 };
 
+export type ListDocsSitesResponse = {
+    sites?: Array<DocsSiteSummary>;
+};
+
+export type ListImagesResponse = {
+    images?: Array<ImageSummary>;
+};
+
+export type ListMavenPackagesResponse = {
+    packages?: Array<MavenPackageSummary>;
+};
+
+export type ListNpmPackagesResponse = {
+    packages?: Array<PackageSummary>;
+};
+
+export type ListRepositoriesResponse = {
+    repositories?: Array<RepositorySummary>;
+};
+
+export type MavenPackageSummary = {
+    name?: string;
+    versionCount?: number;
+    sizeBytes?: number;
+};
+
+export type PackageSummary = {
+    name?: string;
+    versionCount?: number;
+    latest?: string;
+};
+
 export type PurgedPackage = {
     type?: string;
     repository?: string;
     name?: string;
     versions?: Array<string>;
+};
+
+export type RepositorySummary = {
+    name?: string;
+    type?: string;
+    createdAt?: Instant;
+    itemCount?: number;
+    sizeBytes?: number;
 };
 
 export type StoreSummary = {
@@ -235,7 +366,7 @@ export type ListDocsSitesResponses = {
     200: DocsSiteCatalog;
 };
 
-export type ListDocsSitesResponse = ListDocsSitesResponses[keyof ListDocsSitesResponses];
+export type ListDocsSitesResponse2 = ListDocsSitesResponses[keyof ListDocsSitesResponses];
 
 export type ListDocsVersionsData = {
     body?: never;
@@ -879,6 +1010,109 @@ export type PlanGcWithSuppliedPinsResponses = {
 
 export type PlanGcWithSuppliedPinsResponse = PlanGcWithSuppliedPinsResponses[keyof PlanGcWithSuppliedPinsResponses];
 
+export type PlanGcRepositoriesWithSuppliedPinsData = {
+    body?: {
+        [key: string]: unknown;
+    };
+    path?: never;
+    query?: never;
+    url: '/artifacts/api/gc/repositories';
+};
+
+export type PlanGcRepositoriesWithSuppliedPinsErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type PlanGcRepositoriesWithSuppliedPinsResponses = {
+    /**
+     * OK
+     */
+    200: GcRepositoriesPlanResponse;
+};
+
+export type PlanGcRepositoriesWithSuppliedPinsResponse = PlanGcRepositoriesWithSuppliedPinsResponses[keyof PlanGcRepositoriesWithSuppliedPinsResponses];
+
+export type PlanGcRepositoryWithSuppliedPinsData = {
+    body?: {
+        [key: string]: unknown;
+    };
+    path: {
+        repository: string;
+    };
+    query?: never;
+    url: '/artifacts/api/gc/repositories/{repository}/plan';
+};
+
+export type PlanGcRepositoryWithSuppliedPinsErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type PlanGcRepositoryWithSuppliedPinsResponses = {
+    /**
+     * OK
+     */
+    200: GcRepositoryPlanReport;
+};
+
+export type PlanGcRepositoryWithSuppliedPinsResponse = PlanGcRepositoryWithSuppliedPinsResponses[keyof PlanGcRepositoryWithSuppliedPinsResponses];
+
+export type SweepGcRepositoryData = {
+    body?: {
+        [key: string]: unknown;
+    };
+    path: {
+        repository: string;
+    };
+    query?: never;
+    url: '/artifacts/api/gc/repositories/{repository}/sweep';
+};
+
+export type SweepGcRepositoryErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type SweepGcRepositoryResponses = {
+    /**
+     * OK
+     */
+    200: GcRepositorySweepReport;
+};
+
+export type SweepGcRepositoryResponse = SweepGcRepositoryResponses[keyof SweepGcRepositoryResponses];
+
 export type SweepGcData = {
     body?: {
         [key: string]: unknown;
@@ -911,6 +1145,70 @@ export type SweepGcResponses = {
 };
 
 export type SweepGcResponse = SweepGcResponses[keyof SweepGcResponses];
+
+export type ListRepositoriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/artifacts/api/repositories';
+};
+
+export type ListRepositoriesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListRepositoriesResponses = {
+    /**
+     * OK
+     */
+    200: ListRepositoriesResponse;
+};
+
+export type ListRepositoriesResponse2 = ListRepositoriesResponses[keyof ListRepositoriesResponses];
+
+export type ListArtifactRecordsData = {
+    body?: never;
+    path: {
+        repo: string;
+    };
+    query?: {
+        'accessed-after'?: string;
+        'accessed-before'?: string;
+        'created-after'?: string;
+        'created-before'?: string;
+        'max-size'?: string;
+        'min-size'?: string;
+        'never-accessed'?: string;
+    };
+    url: '/artifacts/api/repositories/{repo}/blobs';
+};
+
+export type ListArtifactRecordsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListArtifactRecordsResponses = {
+    /**
+     * OK
+     */
+    200: ListBlobsResponse;
+};
+
+export type ListArtifactRecordsResponse = ListArtifactRecordsResponses[keyof ListArtifactRecordsResponses];
 
 export type ListDaemonsData = {
     body?: never;
@@ -970,6 +1268,122 @@ export type ListDaemonVersionsResponses = {
 };
 
 export type ListDaemonVersionsResponse2 = ListDaemonVersionsResponses[keyof ListDaemonVersionsResponses];
+
+export type ListDocsSiteSummariesData = {
+    body?: never;
+    path: {
+        repo: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/docs';
+};
+
+export type ListDocsSiteSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListDocsSiteSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListDocsSitesResponse;
+};
+
+export type ListDocsSiteSummariesResponse = ListDocsSiteSummariesResponses[keyof ListDocsSiteSummariesResponses];
+
+export type ListImagesData = {
+    body?: never;
+    path: {
+        repo: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/images';
+};
+
+export type ListImagesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListImagesResponses = {
+    /**
+     * OK
+     */
+    200: ListImagesResponse;
+};
+
+export type ListImagesResponse2 = ListImagesResponses[keyof ListImagesResponses];
+
+export type ListMavenPackagesData = {
+    body?: never;
+    path: {
+        repo: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/maven-packages';
+};
+
+export type ListMavenPackagesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListMavenPackagesResponses = {
+    /**
+     * OK
+     */
+    200: ListMavenPackagesResponse;
+};
+
+export type ListMavenPackagesResponse2 = ListMavenPackagesResponses[keyof ListMavenPackagesResponses];
+
+export type ListNpmPackagesData = {
+    body?: never;
+    path: {
+        repo: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/packages';
+};
+
+export type ListNpmPackagesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListNpmPackagesResponses = {
+    /**
+     * OK
+     */
+    200: ListNpmPackagesResponse;
+};
+
+export type ListNpmPackagesResponse2 = ListNpmPackagesResponses[keyof ListNpmPackagesResponses];
 
 export type GetStoreSummaryData = {
     body?: never;

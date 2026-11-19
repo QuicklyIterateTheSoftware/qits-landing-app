@@ -58,7 +58,9 @@ type SectionKey =
   | 'repositories'
   | 'deployments'
   | 'observability'
+  | 'docs'
   | 'events'
+  | 'maintenance'
   | 'setup';
 
 /** A page of the open project the sidebar or the gear leads to: its exit takes the slug alone. */
@@ -79,7 +81,10 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'deployments/requests'
   | 'observability'
   | 'observability/logs'
+  | 'docs'
   | 'events'
+  | 'maintenance'
+  | 'maintenance/dependencies'
   | 'setup'}`>;
 
 /** One entry of the sidebar, or Setup (the gear's section, no entry). */
@@ -98,17 +103,30 @@ export interface NavChild extends NavPage {
   readonly exit: ProjectPageExit;
 }
 
+/** A global section's page in this app: a route that takes no params (qits-2316). */
+export type GlobalPath = 'artifacts';
+
 /**
  * One of the sidebar's global sections, shown while no project is open: a platform page that
- * belongs to no project. It leaves the app for `href`, through its own declared outcome.
+ * belongs to no project. Either a section of this app, opened by its declared exit as a router
+ * link (`kind: 'exit'`, qits-2316: Artifacts), or a site of its own the app leaves for at `href`,
+ * through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
  */
-export interface GlobalLink {
-  readonly label: string;
-  /** Where the entry leads; `''` while it is not known (the server render), and then hidden. */
-  readonly href: string;
-  /** Its `external(...)` outcome, which records and then leaves for `href`. */
-  readonly open: ExternalOutcome;
-}
+export type GlobalLink =
+  | {
+      readonly kind: 'exit';
+      readonly label: string;
+      /** Its `exit(...)` outcome, rendered through `[qitsExit]` and current on its pages. */
+      readonly exit: ExitOutcome<GlobalPath>;
+    }
+  | {
+      readonly kind: 'external';
+      readonly label: string;
+      /** Where the entry leads; `''` while it is not known (the server render), and then hidden. */
+      readonly href: string;
+      /** Its `external(...)` outcome, which records and then leaves for `href`. */
+      readonly open: ExternalOutcome;
+    };
 
 /** The line below a sidebar entry's label. */
 export interface NavNote {
@@ -153,12 +171,13 @@ export interface NavNote {
  * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry) and its Network access entry
- * (`open-sidebar-network-access`), the global sections shown with no project open (IdP admin,
- * `open-sidebar-idp-admin`, which leaves the app for the idp's own admin), the gear
+ * (`open-sidebar-network-access`), the global sections shown with no project open (Artifacts,
+ * `open-sidebar-artifacts`, an in-app section; IdP admin, `open-sidebar-idp-admin`, which leaves
+ * the app for the idp's own admin), the gear
  * (`open-project-settings`), the network icon (`open-network-access`), and the trail's brand and
  * crumbs (`follow-breadcrumb`), handed to `ui-breadcrumbs` as each crumb's exit and params. The
  * agents and release menus declare their own, being patterns (app-wide too). The gear, the network
- * icon, the sidebar's Network access and a work page are marked current by `[qitsExit]`; a section
+ * icon, the sidebar's Network access and Artifacts and a work page are marked current by `[qitsExit]`; a section
  * keeps its own rule (`currentOf`: `true` while one of its pages below it is open, and Agents on a
  * slot's page), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
@@ -290,21 +309,33 @@ export interface NavNote {
         [class.hidden]="!navOpen()"
         aria-label="qits"
       >
-        <!-- With no project open, the global sections in its place (System, Mirror, ... as they
-             come): each leaves the app, so it is a real link that records its outcome first. The
-             list and an entry with no address yet (the server render) are
-             switched by class; such an entry names no outcome, being a trigger nobody can reach. -->
+        <!-- With no project open, the global sections in its place (Artifacts, System, Mirror, ...
+             as they come). A section of this app is a router link through its exit, current on its
+             pages; one that leaves the app is a real link that records its outcome first. The list
+             and a leaving entry with no address yet (the server render) are switched by class; such
+             an entry names no outcome, being a trigger nobody can reach. -->
         <ul class="m-0 list-none px-2 py-3" [class.hidden]="!globalShown()">
           @for (link of globalLinks(); track link.label) {
-            <li [class.hidden]="!link.href">
-              <a
-                class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted"
-                [attr.href]="link.href || null"
-                [qitsTriggers]="link.href ? [link.open] : []"
-                (click)="leave($event, link)"
-                >{{ link.label }}</a
-              >
-            </li>
+            @if (link.kind === 'exit') {
+              <li>
+                <a
+                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                  [qitsExit]="link.exit"
+                  (click)="closeNav()"
+                  >{{ link.label }}</a
+                >
+              </li>
+            } @else {
+              <li [class.hidden]="!link.href">
+                <a
+                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted"
+                  [attr.href]="link.href || null"
+                  [qitsTriggers]="link.href ? [link.open] : []"
+                  (click)="leave($event, link.href, link.open)"
+                  >{{ link.label }}</a
+                >
+              </li>
+            }
           }
         </ul>
         <!-- The open project's sections; switched by class while there are none. -->
@@ -408,7 +439,9 @@ export class ShellLayout {
     repositories: exit('projects/:slug/repositories'),
     deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
+    docs: exit('projects/:slug/docs'),
     events: exit('projects/:slug/events'),
+    maintenance: exit('projects/:slug/maintenance'),
   });
 
   /** The work pages below Work in the sidebar, one exit per page (epic qits-2000). */
@@ -428,6 +461,11 @@ export class ShellLayout {
   /** The Observability pages below Observability in the sidebar, one exit per page (qits-2313). */
   private readonly observabilityPages = outcomes('open-sidebar-observability-page', {
     logs: exit('projects/:slug/observability/logs'),
+  });
+
+  /** The Maintenance pages below Maintenance in the sidebar, one exit per page (qits-2317). */
+  private readonly maintenancePages = outcomes('open-sidebar-maintenance-page', {
+    dependencies: exit('projects/:slug/maintenance/dependencies'),
   });
 
   /** Each work page's exit, by its segment (`WORK_TABS`). */
@@ -458,6 +496,15 @@ export class ShellLayout {
   });
 
   /**
+   * The sidebar's Artifacts (qits-2316): the Artifacts section, qits-artifacts' store, which
+   * belongs to no project. `artifacts` opens the image store (a redirect), and the entry stays
+   * current on every page below it.
+   */
+  protected readonly artifacts = outcomes('open-sidebar-artifacts', {
+    open: exit('artifacts'),
+  });
+
+  /**
    * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
    * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
    * (owner, 2026-11-18). Same tab.
@@ -474,17 +521,23 @@ export class ShellLayout {
 
   /**
    * The sidebar's global sections: where the sections that belong to no project go, shown in the
-   * project's sections' place while no project is open, and not at all while one is. IdP admin
-   * (qits-2319) is the first; System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359)
-   * will each add one entry here, with its own `outcomes(...)` exit.
+   * project's sections' place while no project is open, and not at all while one is: Artifacts
+   * (qits-2316, an in-app section) and IdP admin (qits-2319, leaving the app); System (qits-2344),
+   * Mirror (qits-2357) and Orchestrator (qits-2359) will each add one entry here, with its own
+   * `outcomes(...)` exit (a `GlobalPath`) or external.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
-    return [{ label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open }];
+    return [
+      { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
+      { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
+    ];
   });
 
-  /** Whether any global section has an address, so the list shows. */
-  protected readonly globalShown = computed(() => this.globalLinks().some((link) => link.href));
+  /** Whether any global section can be shown (an in-app one, or one with an address). */
+  protected readonly globalShown = computed(() =>
+    this.globalLinks().some((link) => link.kind === 'exit' || link.href),
+  );
 
   /**
    * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
@@ -592,7 +645,18 @@ export class ShellLayout {
           },
         ],
       },
+      link('docs', 'Docs', sections.docs),
       link('events', 'Events', sections.events),
+      {
+        ...link('maintenance', 'Maintenance', sections.maintenance),
+        children: [
+          {
+            label: 'Dependencies',
+            exit: this.maintenancePages.dependencies,
+            path: this.maintenancePages.dependencies.url(params),
+          },
+        ],
+      },
     ];
   });
 
@@ -704,10 +768,10 @@ export class ShellLayout {
     this.navOpen.set(false);
   }
 
-  /** A global section's click: records its outcome and leaves for its address, in this tab. */
-  protected leave(event: MouseEvent, link: GlobalLink): void {
+  /** A leaving global section's click: records its outcome and leaves for `href`, in this tab. */
+  protected leave(event: MouseEvent, href: string, open: ExternalOutcome): void {
     event.preventDefault();
-    link.open.leave(link.href);
+    open.leave(href);
     this.closeNav();
   }
 }

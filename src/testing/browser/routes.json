@@ -1,4 +1,54 @@
 {
+  "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDaemons",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsSiteSummaries",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listMavenPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listImages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    }
+  ],
   "src/app/routes/network-access/network-access.page.browser.spec.ts": [
     {
       "provider": "qits-network-access-service",
@@ -335,6 +385,32 @@
       "route": "projects/:slug/desk"
     }
   ],
+  "src/app/routes/projects/[slug]/docs/project-docs.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog of every kind",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/docs"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "an empty docs catalog",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/docs"
+    }
+  ],
   "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts": [
     {
       "provider": "qits-events-service",
@@ -487,6 +563,56 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/ideas"
+    }
+  ],
+  "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "dependencies of a project, some behind",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "dependencies of a project, some behind",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "external dependencies of a project, some behind",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no dependencies",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no dependencies",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no external dependencies",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/dependencies"
     }
   ],
   "src/app/routes/projects/[slug]/observability/logs/observability-logs.page.browser.spec.ts": [

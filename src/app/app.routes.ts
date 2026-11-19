@@ -63,6 +63,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
+ * A project's docs are at `projects/<slug>/docs` (`ProjectDocsPage`, qits-2318): every site of
+ * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`.
+ *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
@@ -71,6 +74,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
  * project's deployment requests, pending and completed) by a relative `redirectTo`.
+ *
+ * The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent with no
+ * component, its pages its children; `/maintenance` opens `dependencies`
+ * (`MaintenanceDependenciesPage`, the project's internal and external pins, the behind ones first)
+ * by a relative `redirectTo`, which keeps the query, so `/maintenance?behind=true` lands on the
+ * behind pins only.
  *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
@@ -86,6 +95,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  *
  * The Network access pane (epic qits-1977) is at `network-access` (`NetworkAccessPage`): the
  * platform's peers, nodes and private edge, reached from the top bar with no project open.
+ *
+ * The Artifacts section (qits-2316) is at `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`):
+ * one of qits-artifacts' store repositories (`qits`, `npm`, `maven`, …), reached from the root
+ * sidebar with no project open, as nothing in the store joins to a project. `artifacts` and
+ * `artifacts/repositories` redirect to `artifacts/repositories/qits`, the image store, by a
+ * relative `redirectTo`.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -371,6 +386,11 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'projects/:slug/docs',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
+      },
+      {
         path: 'projects/:slug/events',
         loadComponent: () =>
           import('./routes/projects/[slug]/events/project-events.page').then(
@@ -378,11 +398,42 @@ export const routes: Routes = [
           ),
       },
       {
+        // The Maintenance section (qits-2317): no layout of its own, one page per view.
+        path: 'projects/:slug/maintenance',
+        children: [
+          // Relative, so the query (`?behind=true`) rides along: see "The Maintenance section".
+          { path: '', pathMatch: 'full', redirectTo: 'dependencies' },
+          {
+            path: 'dependencies',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page').then(
+                (m) => m.MaintenanceDependenciesPage,
+              ),
+          },
+        ],
+      },
+      {
         path: 'projects/:slug/setup',
         loadComponent: () =>
           import('./routes/projects/[slug]/setup/project-setup.page').then(
             (m) => m.ProjectSetupPage,
           ),
+      },
+      {
+        // The Artifacts section (qits-2316): qits-artifacts' store, bound to no project. No front
+        // page of its own yet: `/artifacts` and `/artifacts/repositories` open the image store.
+        path: 'artifacts',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'repositories/qits' },
+          { path: 'repositories', pathMatch: 'full', redirectTo: 'repositories/qits' },
+          {
+            path: 'repositories/:repo',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/artifacts-repository.page').then(
+                (m) => m.ArtifactsRepositoryPage,
+              ),
+          },
+        ],
       },
       {
         // The platform's private network (epic qits-1977): not a project's, so no project opens.

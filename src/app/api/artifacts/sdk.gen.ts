@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetContentHashData, GetContentHashErrors, GetContentHashResponses, GetDaemonData, GetDaemonErrors, GetDaemonResponses, GetDocsFileData, GetDocsFileErrors, GetDocsFileResponses, GetDocsVersionData, GetDocsVersionErrors, GetDocsVersionResponses, GetGcPlanData, GetGcPlanErrors, GetGcPlanResponses, GetImageManifestData, GetImageManifestErrors, GetImageManifestResponses, GetMavenFileData, GetMavenFileErrors, GetMavenFileResponses, GetMavenMetadataData, GetMavenMetadataErrors, GetMavenMetadataResponses, GetNewestContentHashData, GetNewestContentHashErrors, GetNewestContentHashResponses, GetNpmPackumentData, GetNpmPackumentErrors, GetNpmPackumentResponses, GetSbomData, GetSbomErrors, GetSbomResponses, GetStoreSummaryData, GetStoreSummaryErrors, GetStoreSummaryResponses, HeadDaemonData, HeadDaemonErrors, HeadDaemonResponses, HeadImageManifestData, HeadImageManifestErrors, HeadImageManifestResponses, HeadNpmTarballData, HeadNpmTarballErrors, HeadNpmTarballResponses, HeadSbomData, HeadSbomErrors, HeadSbomResponses, ListDaemonsData, ListDaemonsErrors, ListDaemonsResponses, ListDaemonVersionsData, ListDaemonVersionsErrors, ListDaemonVersionsResponses, ListDocsSitesData, ListDocsSitesResponses, ListDocsVersionsData, ListDocsVersionsErrors, ListDocsVersionsResponses, ListImageTagsData, ListImageTagsResponses, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsErrors, PlanGcWithSuppliedPinsResponses, PurgeApplicationData, PurgeApplicationErrors, PurgeApplicationResponses, PutDaemonData, PutDaemonErrors, PutDaemonResponses, PutDocsData, PutDocsErrors, PutDocsResponses, PutMavenFileData, PutMavenFileErrors, PutMavenFileResponses, PutNpmDistTagData, PutNpmDistTagErrors, PutNpmDistTagResponses, PutNpmPackageData, PutNpmPackageErrors, PutNpmPackageResponses, PutSbomData, PutSbomResponses, SweepGcData, SweepGcErrors, SweepGcResponses } from './types.gen';
+import type { GetContentHashData, GetContentHashErrors, GetContentHashResponses, GetDaemonData, GetDaemonErrors, GetDaemonResponses, GetDocsFileData, GetDocsFileErrors, GetDocsFileResponses, GetDocsVersionData, GetDocsVersionErrors, GetDocsVersionResponses, GetGcPlanData, GetGcPlanErrors, GetGcPlanResponses, GetImageManifestData, GetImageManifestErrors, GetImageManifestResponses, GetMavenFileData, GetMavenFileErrors, GetMavenFileResponses, GetMavenMetadataData, GetMavenMetadataErrors, GetMavenMetadataResponses, GetNewestContentHashData, GetNewestContentHashErrors, GetNewestContentHashResponses, GetNpmPackumentData, GetNpmPackumentErrors, GetNpmPackumentResponses, GetSbomData, GetSbomErrors, GetSbomResponses, GetStoreSummaryData, GetStoreSummaryErrors, GetStoreSummaryResponses, HeadDaemonData, HeadDaemonErrors, HeadDaemonResponses, HeadImageManifestData, HeadImageManifestErrors, HeadImageManifestResponses, HeadNpmTarballData, HeadNpmTarballErrors, HeadNpmTarballResponses, HeadSbomData, HeadSbomErrors, HeadSbomResponses, ListArtifactRecordsData, ListArtifactRecordsErrors, ListArtifactRecordsResponses, ListDaemonsData, ListDaemonsErrors, ListDaemonsResponses, ListDaemonVersionsData, ListDaemonVersionsErrors, ListDaemonVersionsResponses, ListDocsSitesData, ListDocsSitesResponses, ListDocsSiteSummariesData, ListDocsSiteSummariesErrors, ListDocsSiteSummariesResponses, ListDocsVersionsData, ListDocsVersionsErrors, ListDocsVersionsResponses, ListImagesData, ListImagesErrors, ListImagesResponses, ListImageTagsData, ListImageTagsResponses, ListMavenPackagesData, ListMavenPackagesErrors, ListMavenPackagesResponses, ListNpmPackagesData, ListNpmPackagesErrors, ListNpmPackagesResponses, ListRepositoriesData, ListRepositoriesErrors, ListRepositoriesResponses, PlanGcRepositoriesWithSuppliedPinsData, PlanGcRepositoriesWithSuppliedPinsErrors, PlanGcRepositoriesWithSuppliedPinsResponses, PlanGcRepositoryWithSuppliedPinsData, PlanGcRepositoryWithSuppliedPinsErrors, PlanGcRepositoryWithSuppliedPinsResponses, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsErrors, PlanGcWithSuppliedPinsResponses, PurgeApplicationData, PurgeApplicationErrors, PurgeApplicationResponses, PutDaemonData, PutDaemonErrors, PutDaemonResponses, PutDocsData, PutDocsErrors, PutDocsResponses, PutMavenFileData, PutMavenFileErrors, PutMavenFileResponses, PutNpmDistTagData, PutNpmDistTagErrors, PutNpmDistTagResponses, PutNpmPackageData, PutNpmPackageErrors, PutNpmPackageResponses, PutSbomData, PutSbomResponses, SweepGcData, SweepGcErrors, SweepGcRepositoryData, SweepGcRepositoryErrors, SweepGcRepositoryResponses, SweepGcResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -214,6 +214,45 @@ export const planGcWithSuppliedPins = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
+ * Repositories With Supplied Pins
+ */
+export const planGcRepositoriesWithSuppliedPins = <ThrowOnError extends boolean = false>(options?: Options<PlanGcRepositoriesWithSuppliedPinsData, ThrowOnError>): RequestResult<PlanGcRepositoriesWithSuppliedPinsResponses, PlanGcRepositoriesWithSuppliedPinsErrors, ThrowOnError> => (options?.client ?? client).post<PlanGcRepositoriesWithSuppliedPinsResponses, PlanGcRepositoriesWithSuppliedPinsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/gc/repositories',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+    }
+});
+
+/**
+ * Repository Plan With Supplied Pins
+ */
+export const planGcRepositoryWithSuppliedPins = <ThrowOnError extends boolean = false>(options: Options<PlanGcRepositoryWithSuppliedPinsData, ThrowOnError>): RequestResult<PlanGcRepositoryWithSuppliedPinsResponses, PlanGcRepositoryWithSuppliedPinsErrors, ThrowOnError> => (options.client ?? client).post<PlanGcRepositoryWithSuppliedPinsResponses, PlanGcRepositoryWithSuppliedPinsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/gc/repositories/{repository}/plan',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Repository Sweep
+ */
+export const sweepGcRepository = <ThrowOnError extends boolean = false>(options: Options<SweepGcRepositoryData, ThrowOnError>): RequestResult<SweepGcRepositoryResponses, SweepGcRepositoryErrors, ThrowOnError> => (options.client ?? client).post<SweepGcRepositoryResponses, SweepGcRepositoryErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/gc/repositories/{repository}/sweep',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Sweep
  */
 export const sweepGc = <ThrowOnError extends boolean = false>(options?: Options<SweepGcData, ThrowOnError>): RequestResult<SweepGcResponses, SweepGcErrors, ThrowOnError> => (options?.client ?? client).post<SweepGcResponses, SweepGcErrors, ThrowOnError>({
@@ -224,6 +263,24 @@ export const sweepGc = <ThrowOnError extends boolean = false>(options?: Options<
         'Content-Type': 'application/json',
         ...options?.headers
     }
+});
+
+/**
+ * List
+ */
+export const listRepositories = <ThrowOnError extends boolean = false>(options?: Options<ListRepositoriesData, ThrowOnError>): RequestResult<ListRepositoriesResponses, ListRepositoriesErrors, ThrowOnError> => (options?.client ?? client).get<ListRepositoriesResponses, ListRepositoriesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories',
+    ...options
+});
+
+/**
+ * Query
+ */
+export const listArtifactRecords = <ThrowOnError extends boolean = false>(options: Options<ListArtifactRecordsData, ThrowOnError>): RequestResult<ListArtifactRecordsResponses, ListArtifactRecordsErrors, ThrowOnError> => (options.client ?? client).get<ListArtifactRecordsResponses, ListArtifactRecordsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/blobs',
+    ...options
 });
 
 /**
@@ -241,6 +298,42 @@ export const listDaemons = <ThrowOnError extends boolean = false>(options: Optio
 export const listDaemonVersions = <ThrowOnError extends boolean = false>(options: Options<ListDaemonVersionsData, ThrowOnError>): RequestResult<ListDaemonVersionsResponses, ListDaemonVersionsErrors, ThrowOnError> => (options.client ?? client).get<ListDaemonVersionsResponses, ListDaemonVersionsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/artifacts/api/repositories/{repo}/daemons/{daemon}/versions',
+    ...options
+});
+
+/**
+ * Sites
+ */
+export const listDocsSiteSummaries = <ThrowOnError extends boolean = false>(options: Options<ListDocsSiteSummariesData, ThrowOnError>): RequestResult<ListDocsSiteSummariesResponses, ListDocsSiteSummariesErrors, ThrowOnError> => (options.client ?? client).get<ListDocsSiteSummariesResponses, ListDocsSiteSummariesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/docs',
+    ...options
+});
+
+/**
+ * Images
+ */
+export const listImages = <ThrowOnError extends boolean = false>(options: Options<ListImagesData, ThrowOnError>): RequestResult<ListImagesResponses, ListImagesErrors, ThrowOnError> => (options.client ?? client).get<ListImagesResponses, ListImagesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/images',
+    ...options
+});
+
+/**
+ * Packages
+ */
+export const listMavenPackages = <ThrowOnError extends boolean = false>(options: Options<ListMavenPackagesData, ThrowOnError>): RequestResult<ListMavenPackagesResponses, ListMavenPackagesErrors, ThrowOnError> => (options.client ?? client).get<ListMavenPackagesResponses, ListMavenPackagesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/maven-packages',
+    ...options
+});
+
+/**
+ * Packages
+ */
+export const listNpmPackages = <ThrowOnError extends boolean = false>(options: Options<ListNpmPackagesData, ThrowOnError>): RequestResult<ListNpmPackagesResponses, ListNpmPackagesErrors, ThrowOnError> => (options.client ?? client).get<ListNpmPackagesResponses, ListNpmPackagesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/packages',
     ...options
 });
 

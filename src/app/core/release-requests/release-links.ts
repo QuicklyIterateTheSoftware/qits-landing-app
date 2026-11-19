@@ -71,10 +71,19 @@ export function artifactLinks(artifact: ReleaseArtifact, scope: string): readonl
       ];
     case 'docs':
     case 'userflows':
-      return [{ label: name, app: 'docs', path: `${scope}read/${name}/-/${version}` }];
+      return [{ label: name, app: 'docs', path: docsReadPath(scope, name, version) }];
     default:
       return [{ label: name }];
   }
+}
+
+/**
+ * Where qits-docs reads a docs site, below the docs app's origin: `<scope>read/<site>/-/<version>`,
+ * or the site's newest version without one (`<scope>read/<site>`). The site's name keeps its `/`:
+ * the reader takes every segment after `read` as the name.
+ */
+export function docsReadPath(scope: string, site: string, version?: string): string {
+  return version ? `${scope}read/${site}/-/${version}` : `${scope}read/${site}`;
 }
 
 /**
