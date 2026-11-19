@@ -1,20 +1,27 @@
 import {
+  affectsDeploymentRequest,
   affectsDeploymentRequests,
   deploymentOutcome,
-  deploymentRequestHref,
   formatDayTime,
   gateLabel,
   gateTone,
   isCompletedRequest,
   isHeldForApproval,
+  isDeclined,
   isInFlight,
   isPendingGate,
   isRefused,
   priorityLabel,
   priorityTone,
+  movingWord,
+  newestActive,
+  requestLifecycle,
   statusLabel,
+  stoppedWord,
   statusTone,
   type GatedRequest,
+  type LifecycleFacts,
+  type LifecycleRequest,
   type ShownDeploymentRequests,
 } from './deployment-requests';
 
@@ -133,14 +140,6 @@ describe('deployment requests', () => {
     expect(formatDayTime('not a date')).toBe('—');
   });
 
-  it('addresses a request’s page on the deployments frontend, encoded', () => {
-    expect(deploymentRequestHref('https://deployments.qits.example', 'qits', 'a/b')).toBe(
-      'https://deployments.qits.example/qits/deployment-requests/a%2Fb',
-    );
-    expect(deploymentRequestHref('', 'qits', 'id')).toBeUndefined();
-    expect(deploymentRequestHref('https://deployments.qits.example', 'qits', null)).toBeUndefined();
-  });
-
   describe('affectsDeploymentRequests', () => {
     const event = (name: string, payload: object) => ({ name, payload: JSON.stringify(payload) });
     const settled: ShownDeploymentRequests = {
@@ -180,6 +179,228 @@ describe('deployment requests', () => {
         event('SoftwareRelease', { repository, version: '1', packageType: 'docker' });
       expect(affectsDeploymentRequests(release('qits-ci-service'), settled)).toBe(true);
       expect(affectsDeploymentRequests(release('elsewhere-service'), pending)).toBe(false);
+    });
+  });
+
+  it('tells a declined hold by its declinedAt', () => {
+    expect(isDeclined({ declinedAt: '2026-01-01T00:00:00Z' })).toBe(true);
+    expect(isDeclined({ declinedAt: null })).toBe(false);
+    expect(isDeclined({})).toBe(false);
+  });
+
+  it('says what a moving request waits on, and why a finished one stopped', () => {
+    expect(movingWord(HELD)).toBe('held for manual approval');
+    expect(movingWord(PENDING)).toBe('waiting on the quality gate');
+    expect(movingWord(MET('STARTING'))).toBe('deploying');
+    expect(stoppedWord(REFUSED)).toBe('the gate refused it');
+    expect(stoppedWord(MET('ROLLED_BACK'))).toBe('rolled back to the predecessor');
+    expect(stoppedWord(MET('PAUSED'))).toBe('PAUSED');
+    expect(stoppedWord(MET(null))).toBe('no deployment was recorded');
+  });
+
+  it('finds the newest ACTIVE deployment of the application by its own time', () => {
+    const deployments = [
+      {
+        applicationName: 'qits-ci',
+        version: '1',
+        status: 'ACTIVE',
+        createdAt: '2026-01-01T00:00:00Z',
+      },
+      {
+        applicationName: 'qits-ci',
+        version: '3',
+        status: 'FAILED',
+        createdAt: '2026-01-03T00:00:00Z',
+      },
+      {
+        applicationName: 'qits-ci',
+        version: '2',
+        status: 'ACTIVE',
+        createdAt: '2026-01-02T00:00:00Z',
+      },
+      {
+        applicationName: 'qits-idp',
+        version: '9',
+        status: 'ACTIVE',
+        createdAt: '2026-01-09T00:00:00Z',
+      },
+    ];
+    expect(newestActive(deployments, 'qits-ci')?.version).toBe('2');
+    expect(newestActive(deployments, 'qits-events')).toBeUndefined();
+  });
+
+  describe('requestLifecycle', () => {
+    const request: LifecycleRequest = {
+      ...MET('ACTIVE'),
+      version: '2026.101.120000',
+      applicationName: 'qits-ci',
+      environmentId: 'env-1',
+      repoId: 'qits-ci-service',
+      createdAt: '2026-01-01T00:00:00Z',
+    };
+    const serving = (version: string) => ({
+      status: 'loaded' as const,
+      value: [
+        {
+          applicationName: 'qits-ci',
+          version,
+          status: 'ACTIVE',
+          createdAt: '2026-01-02T00:00:00Z',
+        },
+      ],
+    });
+    const facts = (over: Partial<LifecycleFacts> = {}): LifecycleFacts => ({
+      request,
+      deployments: serving(request.version ?? ''),
+      environments: [{ id: 'env-1', name: 'dev' }],
+      releaseRequests: { status: 'loaded', value: [] },
+      ...over,
+    });
+    const tile = (over: Partial<LifecycleFacts>, id: string) =>
+      requestLifecycle(facts(over)).find((stage) => stage.id === id);
+
+    it('is always released, at the request’s time', () => {
+      expect(requestLifecycle(facts())[0]).toEqual({
+        id: 'released',
+        title: 'Released 2026.101.120000',
+        meta: '1 Jan 2026 00:00:00Z',
+        state: 'reached',
+      });
+    });
+
+    it('runs in the tier when its newest ACTIVE deployment is this version', () => {
+      expect(tile({}, 'tier')).toEqual({
+        id: 'tier',
+        title: 'Running in dev',
+        meta: 'since 2 Jan 2026 00:00:00Z',
+        state: 'reached',
+      });
+    });
+
+    it('stopped once completed and not serving, saying what serves instead', () => {
+      const superseded = { ...request, ...MET('SUPERSEDED') };
+      expect(
+        tile({ request: superseded, deployments: serving('2026.102.0') }, 'tier'),
+      ).toMatchObject({
+        meta: 'dev is running 2026.102.0',
+        state: 'stopped',
+        detail: 'a newer deployment took its place',
+      });
+      const refused = { ...request, ...REFUSED };
+      expect(
+        tile({ request: refused, deployments: { status: 'loaded', value: [] } }, 'tier'),
+      ).toMatchObject({
+        meta: 'nothing is serving dev',
+        state: 'stopped',
+        detail: 'the gate refused it',
+      });
+    });
+
+    it('is pending while held, in the gate or deploying, and names the tier by id unread', () => {
+      const pending = (over: Partial<LifecycleRequest>) =>
+        tile(
+          { request: { ...request, ...over }, deployments: serving('0'), environments: [] },
+          'tier',
+        );
+      expect(pending(HELD)).toMatchObject({
+        title: 'Running in env-1',
+        meta: 'held for manual approval',
+        state: 'pending',
+      });
+      expect(pending(PENDING)?.meta).toBe('waiting on the quality gate');
+      expect(pending(MET('STARTING'))?.meta).toBe('deploying');
+    });
+
+    it('says no environment was recorded, or that the tier’s read is not there', () => {
+      expect(tile({ request: { ...request, environmentId: null } }, 'tier')).toEqual({
+        id: 'tier',
+        title: 'Running',
+        meta: 'no environment recorded',
+        state: 'pending',
+      });
+      expect(tile({ deployments: { status: 'error' } }, 'tier')).toMatchObject({
+        meta: 'the tier’s deployments could not be read',
+        state: 'pending',
+      });
+      expect(tile({ deployments: { status: 'loading' } }, 'tier')?.state).toBe('pending');
+    });
+
+    it('is merged when the repository’s release request of this version merged', () => {
+      const merged = {
+        status: 'loaded' as const,
+        value: [
+          {
+            repoName: 'other-service',
+            version: request.version,
+            mergedToMainAt: '2026-01-05T00:00:00Z',
+          },
+          {
+            repoName: 'qits-ci-service',
+            version: request.version,
+            mergedToMainAt: '2026-01-03T00:00:00Z',
+          },
+        ],
+      };
+      expect(tile({ releaseRequests: merged }, 'merged')).toEqual({
+        id: 'merged',
+        title: 'Merged to main',
+        meta: '3 Jan 2026 00:00:00Z',
+        state: 'reached',
+      });
+      const unmerged = {
+        status: 'loaded' as const,
+        value: [{ repoName: 'qits-ci-service', version: request.version, mergedToMainAt: null }],
+      };
+      expect(tile({ releaseRequests: unmerged }, 'merged')?.meta).toBe('not merged yet');
+      expect(tile({}, 'merged')?.meta).toBe('no release request carries this version');
+    });
+
+    it('keeps the merge tile pending, with why, when it cannot know', () => {
+      expect(tile({ releaseRequests: { status: 'error' } }, 'merged')).toMatchObject({
+        meta: 'the release requests could not be read',
+        state: 'pending',
+      });
+      expect(tile({ request: { ...request, repoId: null } }, 'merged')).toMatchObject({
+        meta: 'this release named no repository',
+        state: 'pending',
+      });
+    });
+  });
+
+  describe('affectsDeploymentRequest', () => {
+    const event = (name: string, payload: object) => ({ name, payload: JSON.stringify(payload) });
+    const shown = { id: 'r1', applicationName: 'qits-ci', repoId: 'qits-ci-service' };
+
+    it('counts a deployment of the request’s application only', () => {
+      expect(
+        affectsDeploymentRequest(event('DeploymentActive', { applicationName: 'qits-ci' }), shown),
+      ).toBe(true);
+      expect(
+        affectsDeploymentRequest(event('DeploymentQueued', { applicationName: 'qits-idp' }), shown),
+      ).toBe(false);
+    });
+
+    it('counts a decline of this request only', () => {
+      const declined = (id: string) =>
+        event('DeploymentRequestDeclined', { deploymentRequestId: id });
+      expect(affectsDeploymentRequest(declined('r1'), shown)).toBe(true);
+      expect(affectsDeploymentRequest(declined('r2'), shown)).toBe(false);
+    });
+
+    it('counts a release of the request’s repository only', () => {
+      const release = (repository: string) =>
+        event('SoftwareRelease', { repository, version: '1', packageType: 'docker' });
+      expect(affectsDeploymentRequest(release('qits-ci-service'), shown)).toBe(true);
+      expect(affectsDeploymentRequest(release('qits-idp-service'), shown)).toBe(false);
+    });
+
+    it('counts nothing before the request is read', () => {
+      expect(
+        affectsDeploymentRequest(
+          event('DeploymentActive', { applicationName: 'qits-ci' }),
+          undefined,
+        ),
+      ).toBe(false);
     });
   });
 });
