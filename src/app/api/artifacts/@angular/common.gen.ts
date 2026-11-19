@@ -4,12 +4,12 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetContentHashData, GetDaemonData, GetDocsFileData, GetDocsFileResponse, GetDocsVersionData, GetDocsVersionResponse, GetGcPlanData, GetGcPlanResponse, GetImageManifestData, GetMavenFileData, GetMavenMetadataData, GetNewestContentHashData, GetNpmPackumentData, GetSbomData, GetStoreSummaryData, GetStoreSummaryResponse, HeadDaemonData, HeadImageManifestData, HeadNpmTarballData, HeadSbomData, ListDaemonsData, ListDaemonsResponse2, ListDaemonVersionsData, ListDaemonVersionsResponse2, ListDocsSitesData, ListDocsSitesResponse, ListDocsVersionsData, ListDocsVersionsResponse, ListImageTagsData, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsResponse, PurgeApplicationData, PurgeApplicationResponse, PutDaemonData, PutDocsData, PutMavenFileData, PutNpmDistTagData, PutNpmPackageData, PutSbomData, SweepGcData, SweepGcResponse } from '../types.gen';
+import type { GetContentHashData, GetDaemonData, GetDocsFileData, GetDocsFileResponse, GetDocsVersionData, GetDocsVersionResponse, GetGcPlanData, GetGcPlanResponse, GetImageManifestData, GetMavenFileData, GetMavenMetadataData, GetNewestContentHashData, GetNpmPackumentData, GetSbomData, GetStoreSummaryData, GetStoreSummaryResponse, HeadDaemonData, HeadImageManifestData, HeadNpmTarballData, HeadSbomData, ListArtifactRecordsData, ListArtifactRecordsResponse, ListDaemonsData, ListDaemonsResponse2, ListDaemonVersionsData, ListDaemonVersionsResponse2, ListDocsSitesData, ListDocsSitesResponse2, ListDocsSiteSummariesData, ListDocsSiteSummariesResponse, ListDocsVersionsData, ListDocsVersionsResponse, ListImagesData, ListImagesResponse2, ListImageTagsData, ListMavenPackagesData, ListMavenPackagesResponse2, ListNpmPackagesData, ListNpmPackagesResponse2, ListRepositoriesData, ListRepositoriesResponse2, PlanGcRepositoriesWithSuppliedPinsData, PlanGcRepositoriesWithSuppliedPinsResponse, PlanGcRepositoryWithSuppliedPinsData, PlanGcRepositoryWithSuppliedPinsResponse, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsResponse, PurgeApplicationData, PurgeApplicationResponse, PutDaemonData, PutDocsData, PutMavenFileData, PutNpmDistTagData, PutNpmPackageData, PutSbomData, SweepGcData, SweepGcRepositoryData, SweepGcRepositoryResponse, SweepGcResponse } from '../types.gen';
 
 /**
  * Every docs site in the repository, with its version count and latest version.
  */
-export const listDocsSitesRequest = <ThrowOnError extends boolean = false>(options: Options<ListDocsSitesData, ThrowOnError>): HttpRequest<ListDocsSitesResponse> => (options?.client ?? client).requestOptions<ListDocsSitesResponse, ThrowOnError>({
+export const listDocsSitesRequest = <ThrowOnError extends boolean = false>(options: Options<ListDocsSitesData, ThrowOnError>): HttpRequest<ListDocsSitesResponse2> => (options?.client ?? client).requestOptions<ListDocsSitesResponse2, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/artifacts/docs/{repository}',
@@ -267,12 +267,62 @@ export const planGcWithSuppliedPinsRequest = <ThrowOnError extends boolean = fal
 });
 
 /**
+ * Repositories With Supplied Pins
+ */
+export const planGcRepositoriesWithSuppliedPinsRequest = <ThrowOnError extends boolean = false>(options?: Options<PlanGcRepositoriesWithSuppliedPinsData, ThrowOnError>): HttpRequest<PlanGcRepositoriesWithSuppliedPinsResponse> => (options?.client ?? client).requestOptions<PlanGcRepositoriesWithSuppliedPinsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/artifacts/api/gc/repositories',
+    ...options
+});
+
+/**
+ * Repository Plan With Supplied Pins
+ */
+export const planGcRepositoryWithSuppliedPinsRequest = <ThrowOnError extends boolean = false>(options: Options<PlanGcRepositoryWithSuppliedPinsData, ThrowOnError>): HttpRequest<PlanGcRepositoryWithSuppliedPinsResponse> => (options?.client ?? client).requestOptions<PlanGcRepositoryWithSuppliedPinsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/artifacts/api/gc/repositories/{repository}/plan',
+    ...options
+});
+
+/**
+ * Repository Sweep
+ */
+export const sweepGcRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<SweepGcRepositoryData, ThrowOnError>): HttpRequest<SweepGcRepositoryResponse> => (options?.client ?? client).requestOptions<SweepGcRepositoryResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/artifacts/api/gc/repositories/{repository}/sweep',
+    ...options
+});
+
+/**
  * Sweep
  */
 export const sweepGcRequest = <ThrowOnError extends boolean = false>(options?: Options<SweepGcData, ThrowOnError>): HttpRequest<SweepGcResponse> => (options?.client ?? client).requestOptions<SweepGcResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/artifacts/api/gc/sweep',
+    ...options
+});
+
+/**
+ * List
+ */
+export const listRepositoriesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListRepositoriesData, ThrowOnError>): HttpRequest<ListRepositoriesResponse2> => (options?.client ?? client).requestOptions<ListRepositoriesResponse2, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories',
+    ...options
+});
+
+/**
+ * Query
+ */
+export const listArtifactRecordsRequest = <ThrowOnError extends boolean = false>(options: Options<ListArtifactRecordsData, ThrowOnError>): HttpRequest<ListArtifactRecordsResponse> => (options?.client ?? client).requestOptions<ListArtifactRecordsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/blobs',
     ...options
 });
 
@@ -297,6 +347,46 @@ export const listDaemonVersionsRequest = <ThrowOnError extends boolean = false>(
 });
 
 /**
+ * Sites
+ */
+export const listDocsSiteSummariesRequest = <ThrowOnError extends boolean = false>(options: Options<ListDocsSiteSummariesData, ThrowOnError>): HttpRequest<ListDocsSiteSummariesResponse> => (options?.client ?? client).requestOptions<ListDocsSiteSummariesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/docs',
+    ...options
+});
+
+/**
+ * Images
+ */
+export const listImagesRequest = <ThrowOnError extends boolean = false>(options: Options<ListImagesData, ThrowOnError>): HttpRequest<ListImagesResponse2> => (options?.client ?? client).requestOptions<ListImagesResponse2, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/images',
+    ...options
+});
+
+/**
+ * Packages
+ */
+export const listMavenPackagesRequest = <ThrowOnError extends boolean = false>(options: Options<ListMavenPackagesData, ThrowOnError>): HttpRequest<ListMavenPackagesResponse2> => (options?.client ?? client).requestOptions<ListMavenPackagesResponse2, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/maven-packages',
+    ...options
+});
+
+/**
+ * Packages
+ */
+export const listNpmPackagesRequest = <ThrowOnError extends boolean = false>(options: Options<ListNpmPackagesData, ThrowOnError>): HttpRequest<ListNpmPackagesResponse2> => (options?.client ?? client).requestOptions<ListNpmPackagesResponse2, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/artifacts/api/repositories/{repo}/packages',
+    ...options
+});
+
+/**
  * Summary
  */
 export const getStoreSummaryRequest = <ThrowOnError extends boolean = false>(options?: Options<GetStoreSummaryData, ThrowOnError>): HttpRequest<GetStoreSummaryResponse> => (options?.client ?? client).requestOptions<GetStoreSummaryResponse, ThrowOnError>({
@@ -309,7 +399,7 @@ export const getStoreSummaryRequest = <ThrowOnError extends boolean = false>(opt
 /**
  * Every docs site in the repository, with its version count and latest version.
  */
-export const listDocsSitesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListDocsSitesData, ThrowOnError> | undefined) => httpResource<ListDocsSitesResponse>(() => {
+export const listDocsSitesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListDocsSitesData, ThrowOnError> | undefined) => httpResource<ListDocsSitesResponse2>(() => {
     const opts = options ? options() : undefined;
     return opts ? listDocsSitesRequest(opts) : undefined;
 });
@@ -515,11 +605,51 @@ export const planGcWithSuppliedPinsResource = <ThrowOnError extends boolean = fa
 });
 
 /**
+ * Repositories With Supplied Pins
+ */
+export const planGcRepositoriesWithSuppliedPinsResource = <ThrowOnError extends boolean = false>(options?: () => Options<PlanGcRepositoriesWithSuppliedPinsData, ThrowOnError> | undefined) => httpResource<PlanGcRepositoriesWithSuppliedPinsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? planGcRepositoriesWithSuppliedPinsRequest(opts) : undefined;
+});
+
+/**
+ * Repository Plan With Supplied Pins
+ */
+export const planGcRepositoryWithSuppliedPinsResource = <ThrowOnError extends boolean = false>(options: () => Options<PlanGcRepositoryWithSuppliedPinsData, ThrowOnError> | undefined) => httpResource<PlanGcRepositoryWithSuppliedPinsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? planGcRepositoryWithSuppliedPinsRequest(opts) : undefined;
+});
+
+/**
+ * Repository Sweep
+ */
+export const sweepGcRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<SweepGcRepositoryData, ThrowOnError> | undefined) => httpResource<SweepGcRepositoryResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? sweepGcRepositoryRequest(opts) : undefined;
+});
+
+/**
  * Sweep
  */
 export const sweepGcResource = <ThrowOnError extends boolean = false>(options?: () => Options<SweepGcData, ThrowOnError> | undefined) => httpResource<SweepGcResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? sweepGcRequest(opts) : undefined;
+});
+
+/**
+ * List
+ */
+export const listRepositoriesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListRepositoriesData, ThrowOnError> | undefined) => httpResource<ListRepositoriesResponse2>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listRepositoriesRequest(opts) : undefined;
+});
+
+/**
+ * Query
+ */
+export const listArtifactRecordsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListArtifactRecordsData, ThrowOnError> | undefined) => httpResource<ListArtifactRecordsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listArtifactRecordsRequest(opts) : undefined;
 });
 
 /**
@@ -536,6 +666,38 @@ export const listDaemonsResource = <ThrowOnError extends boolean = false>(option
 export const listDaemonVersionsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListDaemonVersionsData, ThrowOnError> | undefined) => httpResource<ListDaemonVersionsResponse2>(() => {
     const opts = options ? options() : undefined;
     return opts ? listDaemonVersionsRequest(opts) : undefined;
+});
+
+/**
+ * Sites
+ */
+export const listDocsSiteSummariesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListDocsSiteSummariesData, ThrowOnError> | undefined) => httpResource<ListDocsSiteSummariesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listDocsSiteSummariesRequest(opts) : undefined;
+});
+
+/**
+ * Images
+ */
+export const listImagesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListImagesData, ThrowOnError> | undefined) => httpResource<ListImagesResponse2>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listImagesRequest(opts) : undefined;
+});
+
+/**
+ * Packages
+ */
+export const listMavenPackagesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListMavenPackagesData, ThrowOnError> | undefined) => httpResource<ListMavenPackagesResponse2>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listMavenPackagesRequest(opts) : undefined;
+});
+
+/**
+ * Packages
+ */
+export const listNpmPackagesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListNpmPackagesData, ThrowOnError> | undefined) => httpResource<ListNpmPackagesResponse2>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listNpmPackagesRequest(opts) : undefined;
 });
 
 /**
