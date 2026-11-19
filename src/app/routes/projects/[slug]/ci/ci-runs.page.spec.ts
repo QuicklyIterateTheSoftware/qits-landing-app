@@ -110,8 +110,12 @@ describe('CiRunsPage', () => {
     expect(rows[2].querySelector('[data-last-run]')?.getAttribute('href')).toBe(
       `/projects/${project.slug}/ci/runs/00000000-0000-4000-8000-000000000009`,
     );
+    // A repository's name opens its CI page here (qits-2320), the wrapper's like every other.
     expect(rows[2].querySelector('a')?.getAttribute('href')).toBe(
-      `https://ci.example.test/${project.slug}/contract-frontend/contract-frontend`,
+      `/projects/${project.slug}/ci/contract-frontend`,
+    );
+    expect(rows[0].querySelector('a')?.getAttribute('href')).toBe(
+      `/projects/${project.slug}/ci/contract-00000001-contract-00000001`,
     );
     const running = element.querySelectorAll('[data-active-run]');
     expect(running).toHaveLength(1);

@@ -210,6 +210,27 @@ export const INTERACTIONS = {
   'show-project-ci':
     'A project’s CI page lists each repository’s newest runs and the runs in flight',
   /**
+   * `ci-repository-runs.page.ts` via `REPOSITORY_RUNS` (qits-2320): a repository's CI page lists
+   * its newest runs, again after each build event of that repository.
+   */
+  'show-repository-ci': 'A repository’s CI page lists its newest runs, newest first',
+  /**
+   * `ci-repository-runs.page.ts` via `REPOSITORY_RUNS` (qits-2320): a repository's CI page reads a
+   * repository that has no run yet, and says so.
+   */
+  'show-repository-ci-empty': 'A repository’s CI page says the repository has no run yet',
+  /**
+   * `ci-runs.page.ts`: a repository's name on the project's CI page opens the repository's CI page
+   * (`repository`, qits-2320). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-ci-repository': 'A repository’s name on the project’s CI page opens its CI page',
+  /**
+   * `ci-repository-runs.page.ts`: "← CI" on a repository's CI page (and the link beside an unknown
+   * repository) goes back to the project's CI page (qits-2320). Navigates only, and names no pact
+   * (epic qits-2000).
+   */
+  'leave-ci-repository': '“← CI” on a repository’s CI page goes back to the project’s CI page',
+  /**
    * `commit-changes.ts` via `COMMIT_CHANGES` and `COMMIT_FILE_DIFF` (qits-2146): a commit under
    * "What this release folds in", opened: its changed files and one file's patch.
    */

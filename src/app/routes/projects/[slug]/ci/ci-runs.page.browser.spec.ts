@@ -95,15 +95,15 @@ describe('CiRunsPage (screenshots)', () => {
     const frontend = opened.page.querySelectorAll('[data-ci-row]')[2];
     expect(frontend.textContent).toContain('feature/csv-export');
     expect(frontend.querySelector('[data-main-run]')?.textContent).toContain('success');
-    // A repository's name leads to qits-ci's page: by its component, the wrapper by its id.
+    // A repository's name opens its CI page here (qits-2320), the wrapper's like every other; a
+    // run opens its page here (qits-2321).
     const [wrapper, daemon] = opened.page.querySelectorAll<HTMLAnchorElement>(
       '[data-ci-row] > a:first-child',
     );
-    expect(daemon.getAttribute('href')).toBe(
-      `${CI}/${opened.project.slug}/contract-daemon/contract-daemon`,
+    expect(daemon.getAttribute('href')).toBe(`/projects/${opened.project.slug}/ci/contract-daemon`);
+    expect(wrapper.getAttribute('href')).toBe(
+      `/projects/${opened.project.slug}/ci/contract-00000001-contract-00000001`,
     );
-    expect(wrapper.getAttribute('href')).toBe(`${CI}/?repo=00000000-0000-4000-8000-000000000002`);
-    // A run opens its page here (qits-2321).
     expect(opened.page.querySelector('[data-active-run] a')?.getAttribute('href')).toBe(
       `/projects/${opened.project.slug}/ci/runs/00000000-0000-4000-8000-00000000000c`,
     );

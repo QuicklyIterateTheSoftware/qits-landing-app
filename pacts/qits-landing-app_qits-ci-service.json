@@ -3522,36 +3522,67 @@
             "runs": [
               {
                 "branch": "main",
+                "cancellationReason": null,
                 "commitSha": "0000000000000000000000000000000000000005",
+                "configPath": ".config/qits/ci-event-automation-dependencies.yml",
                 "createdAt": "2026-01-01T00:00:00Z",
                 "finishedAt": "2026-01-01T00:00:00Z",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "phase": null,
                 "releaseRequestId": null,
+                "startedAt": "2026-01-01T00:00:00Z",
                 "status": "SUCCESS",
-                "triggerEventName": "ReleaseRequestAutomation"
+                "supersededByRunId": null,
+                "triggerEventName": "ReleaseRequestAutomation",
+                "triggerType": "EVENT"
               },
               {
                 "branch": "2026.101.120000",
+                "cancellationReason": null,
                 "commitSha": "0000000000000000000000000000000000000004",
+                "configPath": ".config/qits/release.yml",
                 "createdAt": "2026-01-01T00:00:00Z",
                 "finishedAt": null,
                 "id": "00000000-0000-4000-8000-000000000006",
                 "phase": "RELEASE",
                 "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+                "startedAt": "2026-01-01T00:00:00Z",
                 "status": "RUNNING",
-                "triggerEventName": "SCMRelease"
+                "supersededByRunId": null,
+                "triggerEventName": "SCMRelease",
+                "triggerType": "EVENT"
               },
               {
                 "branch": "release/00000000-0000-4000-8000-000000000005",
+                "cancellationReason": null,
                 "commitSha": "0000000000000000000000000000000000000003",
+                "configPath": ".config/qits/release-request.yml",
                 "createdAt": "2026-01-01T00:00:00Z",
                 "finishedAt": "2026-01-01T00:00:00Z",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "phase": "RELEASE_REQUEST",
                 "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+                "startedAt": "2026-01-01T00:00:00Z",
                 "status": "SUCCESS",
-                "triggerEventName": "ReleaseRequestChanged"
+                "supersededByRunId": null,
+                "triggerEventName": "ReleaseRequestChanged",
+                "triggerType": "EVENT"
+              },
+              {
+                "branch": "release/00000000-0000-4000-8000-000000000005",
+                "cancellationReason": "superseded by a newer fold of the request",
+                "commitSha": "0000000000000000000000000000000000000002",
+                "configPath": ".config/qits/release-request.yml",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "phase": "RELEASE_REQUEST",
+                "releaseRequestId": "00000000-0000-4000-8000-000000000005",
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "CANCELLED",
+                "supersededByRunId": null,
+                "triggerEventName": "ReleaseRequestChanged",
+                "triggerType": "EVENT"
               }
             ]
           },
@@ -3590,6 +3621,14 @@
                             }
                           ]
                         },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.createdAt": {
                           "combine": "AND",
                           "matchers": [
@@ -3617,6 +3656,15 @@
                             }
                           ]
                         },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
                         "$.status": {
                           "combine": "AND",
                           "matchers": [
@@ -3626,6 +3674,14 @@
                           ]
                         },
                         "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -3654,6 +3710,14 @@
                             }
                           ]
                         },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
                         "$.createdAt": {
                           "combine": "AND",
                           "matchers": [
@@ -3689,6 +3753,15 @@
                             }
                           ]
                         },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
                         "$.status": {
                           "combine": "AND",
                           "matchers": [
@@ -3698,6 +3771,14 @@
                           ]
                         },
                         "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -3719,6 +3800,14 @@
                           ]
                         },
                         "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.configPath": {
                           "combine": "AND",
                           "matchers": [
                             {
@@ -3770,6 +3859,15 @@
                             }
                           ]
                         },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
                         "$.status": {
                           "combine": "AND",
                           "matchers": [
@@ -3779,6 +3877,696 @@
                           ]
                         },
                         "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 3,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.cancellationReason": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.phase": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.releaseRequestId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "listRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-ci-empty",
+            "kind": "ui",
+            "route": "projects/:slug/ci/:repo"
+          }
+        }
+      },
+      "description": "show-repository-ci-empty: listRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository of the project with no runs",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repository1Id": "00000000-0000-4000-8000-000000000002",
+            "repository2Id": "00000000-0000-4000-8000-000000000003",
+            "repository3Id": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/ci/api/runs",
+        "query": {
+          "limit": [
+            "100"
+          ],
+          "repositoryId": [
+            "00000000-0000-4000-8000-000000000005"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "runs": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-ci-service",
+            "operationId": "listRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-ci",
+            "kind": "ui",
+            "route": "projects/:slug/ci/:repo"
+          }
+        }
+      },
+      "description": "show-repository-ci: listRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository of the project with a run history",
+          "params": {
+            "branchFailedRunId": "00000000-0000-4000-8000-000000000001",
+            "dedupedRunId": "00000000-0000-4000-8000-000000000002",
+            "mainFailedRunId": "00000000-0000-4000-8000-000000000003",
+            "mainSucceededRunId": "00000000-0000-4000-8000-000000000004",
+            "repositoryId": "00000000-0000-4000-8000-000000000005",
+            "runningRunId": "00000000-0000-4000-8000-000000000006",
+            "triggeredByPushRunId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/ci/api/runs",
+        "query": {
+          "limit": [
+            "100"
+          ],
+          "repositoryId": [
+            "00000000-0000-4000-8000-000000000005"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "runs": [
+              {
+                "branch": "main",
+                "cancellationReason": null,
+                "commitSha": "0000000000000000000000000000000000000023",
+                "configPath": ".config/qits/ci-event-build.yml",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": null,
+                "id": "00000000-0000-4000-8000-000000000006",
+                "phase": null,
+                "releaseRequestId": null,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "RUNNING",
+                "supersededByRunId": null,
+                "triggerEventName": "SoftwareRelease",
+                "triggerType": "EVENT"
+              },
+              {
+                "branch": "main",
+                "cancellationReason": null,
+                "commitSha": "0000000000000000000000000000000000000022",
+                "configPath": ".config/qits/ci-event-build.yml",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000004",
+                "phase": null,
+                "releaseRequestId": null,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCESS",
+                "supersededByRunId": null,
+                "triggerEventName": "SoftwareRelease",
+                "triggerType": "EVENT"
+              },
+              {
+                "branch": "main",
+                "cancellationReason": null,
+                "commitSha": "0000000000000000000000000000000000000021",
+                "configPath": ".config/qits/ci-post-receive.yml",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000007",
+                "phase": null,
+                "releaseRequestId": null,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCESS",
+                "supersededByRunId": null,
+                "triggerEventName": null,
+                "triggerType": "POST_RECEIVE"
+              },
+              {
+                "branch": "main",
+                "cancellationReason": "DEDUPED",
+                "commitSha": "000000000000000000000000000000000000001f",
+                "configPath": ".config/qits/ci-event-build.yml",
+                "createdAt": "2026-01-01T00:00:00Z",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000002",
+                "phase": null,
+                "releaseRequestId": null,
+                "startedAt": null,
+                "status": "CANCELLED",
+                "supersededByRunId": "00000000-0000-4000-8000-000000000003",
+                "triggerEventName": "SoftwareRelease",
+                "triggerType": "EVENT"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.runs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 3,
+                      "rules": {
+                        "$.branch": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.cancellationReason": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.commitSha": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.configPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.supersededByRunId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.triggerEventName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.triggerType": {
                           "combine": "AND",
                           "matchers": [
                             {
