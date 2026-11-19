@@ -13,12 +13,12 @@ import {
   type QitsDomainEvent,
 } from '@qits/angular';
 import { BUILD_EVENTS, buildOfRepository } from '$core/ci/build-events';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import type { CiSummaryRun } from '$core/ci/ci-runs.consumes';
 import { ACTIVE_RUNS, REPOSITORY_SUMMARIES } from '$core/ci/ci.operations';
 import {
   CI_RUN_STATUSES,
   ciRows,
-  ciRunHref,
   filterCiRows,
   isRunStatus,
   projectActiveRuns,
@@ -26,7 +26,6 @@ import {
   runStatusTone,
   type CiFilters,
 } from '$core/ci/project-ci';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import {
   formatInstant,
@@ -60,8 +59,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * repository field replaces the entry it started).
  *
  * A repository's name opens its CI page here (`projects/<slug>/ci/<repository>`, qits-2320), the
- * wrapper's like every other; a run links to qits-ci's own page, `/runs/<id>`, until qits-2321
- * brings it here.
+ * wrapper's like every other; a run opens its page here (`projects/<slug>/ci/runs/<id>`,
+ * `CiRunLinks`, qits-2321).
  *
  * States: loading, a failed read with Retry, "No CI runs for this project yet" when no repository
  * of the project has a run, and "No repository matches" with a link that clears the filters.
@@ -122,7 +121,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   />
                   <a
                     class="font-semibold text-accent no-underline hover:underline"
-                    [attr.href]="runHref(run.id)"
+                    [qitsExit]="runs.opening.run"
+                    [exitParams]="runs.params(run.id)"
                     [qitsEntity]="run"
                     entityKey="repoId"
                     [entitySource]="repositories"
@@ -202,8 +202,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 @if (row.lastRun; as run) {
                   <a
                     class="flex min-w-0 flex-wrap items-baseline gap-2 text-fg no-underline hover:underline"
-                    [attr.href]="runHref(run.id)"
-                    [title]="'Open the run in CI'"
+                    [qitsExit]="runs.opening.run"
+                    [exitParams]="runs.params(run.id)"
+                    [title]="'Open the run'"
                     data-last-run
                   >
                     <ui-chip
@@ -236,7 +237,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   @if (row.lastMainRun; as main) {
                     <a
                       class="inline-flex items-baseline gap-1 text-xs text-fg-muted no-underline hover:underline sm:ml-auto"
-                      [attr.href]="runHref(main.id)"
+                      [qitsExit]="runs.opening.run"
+                      [exitParams]="runs.params(main.id)"
                       [title]="mainTitle(main)"
                       data-main-run
                     >
@@ -281,7 +283,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class CiRunsPage {
   private readonly selected = inject(SelectedProject);
-  private readonly origins = inject(PlatformOrigins);
+  protected readonly runs = inject(CiRunLinks);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -421,10 +423,6 @@ export class CiRunsPage {
 
   protected repositoryName(repoId: string | undefined): string {
     return (repoId && this.names().get(repoId)) || (repoId ?? '');
-  }
-
-  protected runHref(runId: string | undefined): string | null {
-    return ciRunHref(this.origins.page('ci'), runId) ?? null;
   }
 
   protected mainTitle(run: CiSummaryRun): string {

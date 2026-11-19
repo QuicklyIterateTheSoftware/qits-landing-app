@@ -13,15 +13,10 @@ import {
   type QitsDomainEvent,
 } from '@qits/angular';
 import { BUILD_EVENTS, buildOfRepository } from '$core/ci/build-events';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import type { CiRun } from '$core/ci/ci-runs.consumes';
 import { REPOSITORY_RUNS, RUNS_LIMIT } from '$core/ci/ci.operations';
-import {
-  CI_RUN_STATUSES,
-  ciRunHref,
-  isRunStatus,
-  runStatusLabel,
-  runStatusTone,
-} from '$core/ci/project-ci';
+import { CI_RUN_STATUSES, isRunStatus, runStatusLabel, runStatusTone } from '$core/ci/project-ci';
 import {
   filterRepositoryRuns,
   isRunTrigger,
@@ -33,7 +28,6 @@ import {
   shortRunId,
   type RepositoryRunFilters,
 } from '$core/ci/repository-ci';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import {
   formatInstant,
@@ -69,7 +63,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * URL, so a filter can be bookmarked and Back undoes it (typing on in the branch field replaces
  * the entry it started).
  *
- * Runs link to qits-ci's own page, `/runs/<id>`, until qits-2321 brings it here.
+ * A run's id, and a cancelled run's "newer run", open the run's page here
+ * (`projects/<slug>/ci/runs/<id>`, `CiRunLinks`, qits-2321).
  *
  * States: loading, a failed read with Retry, the unknown repository, "No CI runs for this
  * repository yet", and "No run matches" with a link that clears the filters.
@@ -186,8 +181,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   />
                   <a
                     class="font-mono text-xs font-semibold text-accent no-underline hover:underline"
-                    [attr.href]="runHref(run.id)"
-                    [title]="'Open the run in CI'"
+                    [qitsExit]="runLinks.opening.run"
+                    [exitParams]="runLinks.params(run.id)"
+                    [title]="'Open the run'"
                     [fieldOf]="run"
                     [qitsField]="marks.id"
                     data-run-link
@@ -250,7 +246,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                       ·
                       <a
                         class="text-accent no-underline hover:underline"
-                        [attr.href]="runHref(run.supersededByRunId)"
+                        [qitsExit]="runLinks.opening.run"
+                        [exitParams]="runLinks.params(run.supersededByRunId)"
                         [fieldOf]="run"
                         [qitsField]="marks.supersededBy"
                         data-superseded-by
@@ -295,7 +292,6 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class CiRepositoryRunsPage {
   private readonly selected = inject(SelectedProject);
-  private readonly origins = inject(PlatformOrigins);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -394,6 +390,9 @@ export class CiRepositoryRunsPage {
   /** The read the rows show, as their data marks name it. */
   protected readonly runsSource = sourceMark(REPOSITORY_RUNS);
 
+  /** Every link to a run: its page here (qits-2321). */
+  protected readonly runLinks = inject(CiRunLinks);
+
   /** Back to the project's CI page (qits-2320). */
   protected readonly leaving = outcomes('leave-ci-repository', {
     ci: exit('projects/:slug/ci'),
@@ -421,10 +420,6 @@ export class CiRepositoryRunsPage {
   /** Whether a build event is about a run of this repository. */
   private ofRepository(event: QitsDomainEvent): boolean {
     return buildOfRepository(event, [this.repositoryId()]);
-  }
-
-  protected runHref(runId: string | null | undefined): string | null {
-    return ciRunHref(this.origins.page('ci'), runId ?? undefined) ?? null;
   }
 
   /** Reads again what failed. */

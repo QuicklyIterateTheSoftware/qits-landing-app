@@ -11,7 +11,7 @@ import {
 import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 import { provideTestPlatformOrigins } from '../../../../../testing/platform-origins';
 
-/** qits-ci's page origin, so the rows and runs link to its pages (configuration, not data). */
+/** qits-ci's page origin (configuration, not data): nothing on the page links it any more. */
 const CI = 'https://ci.example.test';
 
 /**
@@ -73,6 +73,20 @@ describe('CiRunsPage (screenshots)', () => {
     return reads.opened;
   }
 
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's. Answers in rounds,
+   * until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
   /** The repositories the page lists, in its order. */
   const listed = (opened: OpenedRoute) =>
     [...opened.page.querySelectorAll('[data-ci-row] > a:first-child')].map((a) =>
@@ -96,7 +110,7 @@ describe('CiRunsPage (screenshots)', () => {
     expect(frontend.textContent).toContain('feature/csv-export');
     expect(frontend.querySelector('[data-main-run]')?.textContent).toContain('success');
     // A repository's name opens its CI page here (qits-2320), the wrapper's like every other; a
-    // run still leads to qits-ci's page.
+    // run opens its page here (qits-2321).
     const [wrapper, daemon] = opened.page.querySelectorAll<HTMLAnchorElement>(
       '[data-ci-row] > a:first-child',
     );
@@ -105,7 +119,7 @@ describe('CiRunsPage (screenshots)', () => {
       `/projects/${opened.project.slug}/ci/contract-00000001-contract-00000001`,
     );
     expect(opened.page.querySelector('[data-active-run] a')?.getAttribute('href')).toBe(
-      `${CI}/runs/00000000-0000-4000-8000-00000000000c`,
+      `/projects/${opened.project.slug}/ci/runs/00000000-0000-4000-8000-00000000000c`,
     );
     await expect
       .element(page.elementLocator(opened.frame))
@@ -119,6 +133,16 @@ describe('CiRunsPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('filtered', { kind: 'DATA' });
+  });
+
+  it('open-ci-repository repository: a repository’s name opens its CI page', async () => {
+    const opened = await render();
+    await page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-daemon', exact: true })
+      .click();
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/ci/contract-daemon`);
   });
 
   it('writes the repository filter into the URL as it is typed', async () => {

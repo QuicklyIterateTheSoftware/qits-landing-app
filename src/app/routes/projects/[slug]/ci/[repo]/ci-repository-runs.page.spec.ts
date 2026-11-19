@@ -129,8 +129,9 @@ describe('CiRepositoryRunsPage', () => {
     expect(rows[0].querySelector('[data-provenance]')?.textContent?.trim()).toBe(
       'SoftwareRelease · .config/qits/ci-event-build.yml',
     );
+    // A run opens its page here (qits-2321).
     expect(rows[0].querySelector('[data-run-link]')?.getAttribute('href')).toBe(
-      `https://ci.example.test/runs/${'00000000-0000-4000-8000-000000000006'}`,
+      `/projects/${project.slug}/ci/runs/00000000-0000-4000-8000-000000000006`,
     );
     expect(rows[1].querySelector('[data-duration]')?.textContent?.trim()).toBe('0s');
     expect(rows[2].querySelector('[data-trigger]')?.textContent).toContain('push');
@@ -144,7 +145,7 @@ describe('CiRepositoryRunsPage', () => {
     const cancelled = element.querySelectorAll<HTMLElement>('[data-run]')[4];
     expect(cancelled.querySelector('[data-cancelled]')?.textContent).toContain('DEDUPED');
     expect(cancelled.querySelector('[data-superseded-by]')?.getAttribute('href')).toBe(
-      'https://ci.example.test/runs/00000000-0000-4000-8000-000000000003',
+      `/projects/${project.slug}/ci/runs/00000000-0000-4000-8000-000000000003`,
     );
     expect(element.querySelectorAll('[data-cancelled]')).toHaveLength(1);
   });

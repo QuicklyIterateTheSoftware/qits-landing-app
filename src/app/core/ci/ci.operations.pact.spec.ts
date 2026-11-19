@@ -8,12 +8,15 @@ import { join, resolve } from 'node:path';
 import { client as ciClient } from '../../api/ci/client.gen';
 import { provideHeyApiClient } from '../../api/ci/client/client.gen';
 import { addGoldenInteraction } from '@qits/angular/testing';
-import { ciGoldenMasters as masters } from '../../../testing/golden-masters';
+import { ciGoldenMasters as masters, heldBy } from '../../../testing/golden-masters';
 import { assertPactPart } from '../../../testing/pact-part';
 import {
   ACTIVE_RUNS,
+  CANCEL_RUN,
   REPOSITORY_RUNS,
   REPOSITORY_SUMMARIES,
+  RETRY_RUN,
+  RUN,
   RUN_REPORT,
   RUN_REPORTS,
   RUNS_LIMIT,
@@ -31,7 +34,10 @@ import {
  * would bind as exactly empty, and the provider verifies against a database other test classes
  * share. The repository's CI page (qits-2320) reads one repository's newest runs: contract-service
  * (qits-projects' "a project with 3 repositories") with a run history, and with none, which its
- * state clears for that one id, so its empty list verifies against the shared database.
+ * state clears for that one id, so its empty list verifies against the shared database. The run
+ * page (qits-2321) reads one run of contract-service finished, running and queued, and a run
+ * qits-ci does not have (404); cancels the running one, runs the finished one again, and reads the
+ * finished one's reports.
  *
  * Moved here from `CiRunsStore`'s and `CiReportsStore`'s pact specs when the stores went
  * (qits-2146), unchanged: the same descriptions, states, requests and bound fields. Each test runs
@@ -46,6 +52,10 @@ const ACTIVE_STATE = 'a commit with a run in flight';
 const REPORTS_STATE = 'a run with reports: failing tests and coverage';
 const PROJECT_STATE = 'a project whose repositories have runs';
 const OUTSIDE_STATE = 'runs only of repositories outside the project';
+const FINISHED_STATE = 'a finished run of the project';
+const RUNNING_STATE = 'a running run of the project';
+const QUEUED_STATE = 'a queued run of the project';
+const NO_RUN_STATE = 'no run with the given id';
 const HISTORY_STATE = 'a repository of the project with a run history';
 const NO_RUNS_STATE = 'a repository of the project with no runs';
 const OPERATIONS = [
@@ -54,6 +64,9 @@ const OPERATIONS = [
   'listRunReports',
   'getRunReport',
   'listRepositorySummaries',
+  'getRun',
+  'cancelRun',
+  'retryRun',
 ];
 
 /** What an interaction takes of an operation: its provider, operationId and `consumes`. */
@@ -87,7 +100,11 @@ describe('qits-landing-app → qits-ci-service pact', () => {
       state,
       operationId: op.operationId,
       trigger: { kind: 'ui', app: CONSUMER, interaction },
-      consumes: op.consumes,
+      // A field under a recorded `null` (a finished run's `live`, a run without a baseline) is
+      // bound in a state that has it.
+      consumes: op.consumes.length
+        ? heldBy(masters, state, op.operationId, op.consumes)
+        : op.consumes,
     });
   };
 
@@ -185,6 +202,65 @@ describe('qits-landing-app → qits-ci-service pact', () => {
       expect(data?.runs?.map((run) => [run.id, run.repoId])).toEqual(
         recorded.runs.map((run) => [run.id, run.repoId]),
       );
+    }));
+
+  for (const [state, status] of [
+    [FINISHED_STATE, 'FAILED'],
+    [RUNNING_STATE, 'RUNNING'],
+    [QUEUED_STATE, 'QUEUED'],
+  ] as const) {
+    it(`show-ci-run: the run page reads a run of the project, ${status.toLowerCase()}`, () =>
+      given(state, RUN, 'show-ci-run').executeTest(async (server) => {
+        const runId = masters.operation(state, 'getRun').params['runId'];
+        const { data, error } = await at(server.url, () => RUN.fetch({ path: { runId } }));
+        expect(error).toBeUndefined();
+        const recorded = masters.body<{ id: string; repoId: string }>(state, 'getRun');
+        expect([data?.id, data?.repoId, data?.status]).toEqual([
+          recorded.id,
+          recorded.repoId,
+          status,
+        ]);
+      }));
+  }
+
+  it('show-ci-run: the run page reads a run qits-ci does not have', () =>
+    // On an error the operation reads nothing from the body: its `errorConsumes` is empty.
+    given(NO_RUN_STATE, { ...RUN, consumes: [] }, 'show-ci-run').executeTest(async (server) => {
+      const runId = masters.operation(NO_RUN_STATE, 'getRun').params['runId'];
+      const { data, response } = await at(server.url, () => RUN.fetch({ path: { runId } }));
+      expect(response?.status).toBe(404);
+      expect(data).toBeUndefined();
+    }));
+
+  it('show-ci-run: the run page reads a finished run’s reports', () =>
+    given(FINISHED_STATE, RUN_REPORTS, 'show-ci-run').executeTest(async (server) => {
+      const runId = masters.operation(FINISHED_STATE, 'listRunReports').params['runId'];
+      const { data, error } = await at(server.url, () => RUN_REPORTS.fetch({ path: { runId } }));
+      expect(error).toBeUndefined();
+      expect(data?.reports?.map((report) => report.kind)).toEqual(['test-results']);
+    }));
+
+  it('cancel-ci-run: Cancel on the run page stops a running run', () =>
+    given(RUNNING_STATE, CANCEL_RUN, 'cancel-ci-run').executeTest(async (server) => {
+      const { params, body } = masters.operation(RUNNING_STATE, 'cancelRun');
+      const { response, error } = await at(server.url, () =>
+        CANCEL_RUN.fetch({
+          path: { runId: params['runId'] },
+          body: body as { reason: string },
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+      expect(error).toBeUndefined();
+      expect(response?.status).toBe(202);
+    }));
+
+  it('retry-ci-run: Run again on the run page queues a new run of a finished one', () =>
+    given(FINISHED_STATE, RETRY_RUN, 'retry-ci-run').executeTest(async (server) => {
+      const runId = masters.operation(FINISHED_STATE, 'retryRun').params['runId'];
+      const { data, error } = await at(server.url, () => RETRY_RUN.fetch({ path: { runId } }));
+      expect(error).toBeUndefined();
+      const recorded = masters.body<{ runId: string }>(FINISHED_STATE, 'retryRun');
+      expect(data?.runId).toBe(recorded.runId);
     }));
 
   it('show-repository-ci: the repository’s CI page reads its run history', () =>

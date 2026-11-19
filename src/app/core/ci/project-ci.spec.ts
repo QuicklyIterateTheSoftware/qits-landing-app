@@ -3,7 +3,6 @@ import type { RepositoryEntry } from '$core/repositories/repositories.consumes';
 import type { ActiveCiRun, CiRepositorySummary } from './ci-runs.consumes';
 import {
   ciRows,
-  ciRunHref,
   filterCiRows,
   isRunStatus,
   projectActiveRuns,
@@ -136,11 +135,5 @@ describe('the CI page’s helpers', () => {
       '00000000-0000-4000-8000-000000000005',
     ]);
     expect(projectActiveRuns(runs, new Set(['another-repository']))).toEqual([]);
-  });
-
-  it('links a run to qits-ci’s page', () => {
-    const origin = 'https://ci.example';
-    expect(ciRunHref(origin, 'run-1')).toBe('https://ci.example/runs/run-1');
-    expect(ciRunHref(origin, undefined)).toBeUndefined();
   });
 });

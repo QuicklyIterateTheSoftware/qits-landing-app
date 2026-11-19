@@ -204,6 +204,40 @@ export const INTERACTIONS = {
    */
   'show-release-request-active-runs': 'The lightning menu marks the requests with an active CI run',
   /**
+   * `ci-run.page.ts` via `RUN` and, through `app-run-reports`, `RUN_REPORTS` (qits-2321): the run
+   * page reads one run with its steps and the live step's output, again after each build event of
+   * the run and, while it runs, every 10 s; and the run's reports.
+   */
+  'show-ci-run': 'A CI run’s page shows the run, its steps with their output, and its reports',
+  /**
+   * `ci-run.page.ts` via `CANCEL_RUN` (qits-2321): Cancel, confirmed, on a queued or running run;
+   * the page stays, saying the cancel was asked, or why it was refused.
+   */
+  'cancel-ci-run': 'Cancel on a CI run’s page, confirmed, stops the run',
+  /**
+   * `ci-run.page.ts` via `RETRY_RUN` (qits-2321): Run again on a finished run opens the new run's
+   * page, or stays, saying why it was refused.
+   */
+  'retry-ci-run': 'Run again on a finished CI run’s page queues a new run and opens it',
+  /**
+   * `ci-run-links.ts` (`CiRunLinks`, qits-2321): a run anywhere in the app (the project's CI page,
+   * a release request's builds, lifecycle, automations and reports, the active-run chips, the run
+   * page's own links to another run) opens the run's page. Navigates only, and names no pact (epic
+   * qits-2000).
+   */
+  'open-ci-run': 'A CI run, wherever it is linked, opens the run’s page',
+  /**
+   * `ci-run.page.ts`: "← CI" on a run's page (and the link beside a run not in the project) goes
+   * back to the project's CI page; the run's repository opens it filtered to that repository
+   * (qits-2321). Navigates only, and names no pact (epic qits-2000).
+   */
+  'leave-ci-run': '“← CI” or the repository on a CI run’s page goes back to the project’s CI page',
+  /**
+   * `ci-run.page.ts`: the release request a run was for opens the request's page (qits-2321).
+   * Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-ci-run-release-request': 'The release request on a CI run’s page opens the request',
+  /**
    * `ci-runs.page.ts` via `REPOSITORY_SUMMARIES` and `ACTIVE_RUNS` (qits-2314): the project's CI
    * page lists each repository's newest runs, and the project's runs in flight above them.
    */

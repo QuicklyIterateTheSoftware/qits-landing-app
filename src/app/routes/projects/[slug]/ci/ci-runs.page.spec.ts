@@ -108,7 +108,7 @@ describe('CiRunsPage', () => {
     expect(rows[2].querySelector('[data-last-run]')?.textContent).toContain('feature/csv-export');
     expect(rows[2].querySelector('[data-main-run]')?.textContent).toContain('success');
     expect(rows[2].querySelector('[data-last-run]')?.getAttribute('href')).toBe(
-      'https://ci.example.test/runs/00000000-0000-4000-8000-000000000009',
+      `/projects/${project.slug}/ci/runs/00000000-0000-4000-8000-000000000009`,
     );
     // A repository's name opens its CI page here (qits-2320), the wrapper's like every other.
     expect(rows[2].querySelector('a')?.getAttribute('href')).toBe(
