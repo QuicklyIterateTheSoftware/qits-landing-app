@@ -1,5 +1,6 @@
 import type { QitsBadgeTone } from '@qits/ui-components';
 import { payloadField, payloadIds, type WithPayload } from '$core/events/refresh-on';
+import { formatInstant } from '$core/release-requests/release-request-model';
 
 /**
  * A project's deployment requests as the Deployments section draws them (qits-2315): which are
@@ -61,6 +62,14 @@ export function isHeldForApproval(request: GatedRequest): boolean {
   if (!isPendingGate(request)) return false;
   if (typeof request.deployHold === 'boolean') return request.deployHold;
   return (request.gateDetail ?? '').startsWith(HELD_DETAIL);
+}
+
+/**
+ * Whether a person or an agent declined the request's hold (qits-2271): settled UNMET with
+ * `declinedAt`, nothing queued, the release request WITHDRAWN. A decline is final.
+ */
+export function isDeclined(request: { readonly declinedAt?: string | null }): boolean {
+  return request.declinedAt != null;
 }
 
 /**
@@ -194,21 +203,6 @@ export function formatDayTime(iso: string | null | undefined): string {
 }
 
 /**
- * A deployment request's own page, on the deployments frontend:
- * `<origin>/<slug>/deployment-requests/<id>`; undefined without an origin (the server render) or an
- * id. Until qits-2322 moves that page here.
- */
-export function deploymentRequestHref(
-  origin: string,
-  slug: string,
-  id: string | null | undefined,
-): string | undefined {
-  return id && origin
-    ? `${origin}/${slug}/deployment-requests/${encodeURIComponent(id)}`
-    : undefined;
-}
-
-/**
  * The domain events after which a project's deployment requests may have changed: a deployment
  * queued, started, active or failed (a rollback among them), a held request declined, and a
  * release published (`SoftwareRelease`: qits-deployments asks for a deployment of it). A gate that
@@ -257,4 +251,228 @@ export function affectsDeploymentRequests(
   if (shown.requests.some((request) => !isCompletedRequest(request))) return true;
   const application = payloadField(event, 'applicationName');
   return !!application && shown.requests.some((r) => r.applicationName === application);
+}
+
+/** What the request's page narrows the events by (qits-2322): the request on show. */
+export interface ShownDeploymentRequest {
+  readonly id?: string | null;
+  readonly applicationName?: string | null;
+  readonly repoId?: string | null;
+}
+
+/**
+ * Whether `event` may have changed the deployment request on show (qits-2322). A deployment event
+ * counts when its `applicationName` is the request's (its own deployment, or a newer one taking
+ * the tier over); `DeploymentRequestDeclined` when its `deploymentRequestId` is the request's
+ * (a decline settles every held request of the release request, made anywhere); `SoftwareRelease`
+ * when its `repository` is the request's `repoId` (a newer release may take the hold's place).
+ * Nothing counts before the request is read.
+ */
+export function affectsDeploymentRequest(
+  event: WithPayload,
+  shown: ShownDeploymentRequest | undefined,
+): boolean {
+  if (!shown?.id) return false;
+  const name = event.name ?? '';
+  if (name === 'SoftwareRelease') {
+    const repository = payloadIds(event).repositoryId;
+    return !!repository && repository === shown.repoId;
+  }
+  if (name === 'DeploymentRequestDeclined') {
+    return payloadField(event, 'deploymentRequestId') === shown.id;
+  }
+  const application = payloadField(event, 'applicationName');
+  return !!application && application === shown.applicationName;
+}
+
+/**
+ * How far a version got, at one tile of the request's lifecycle: it happened, it has not happened
+ * yet, or it was going to happen and stopped.
+ */
+export type LifecycleState = 'reached' | 'pending' | 'stopped';
+
+/** One tile of the lifecycle: what the step is, its one line, whether it happened. */
+export interface LifecycleStage {
+  readonly id: 'released' | 'tier' | 'merged';
+  readonly title: string;
+  /** The line under the title: a timestamp, a version, or why the tile cannot say more. */
+  readonly meta: string;
+  readonly state: LifecycleState;
+  /** Why a `stopped` tile stopped, in the server's own word. */
+  readonly detail?: string;
+}
+
+/** The request's fields the lifecycle is decided by. */
+export interface LifecycleRequest extends GatedRequest {
+  readonly version?: string | null;
+  readonly applicationName?: string | null;
+  readonly environmentId?: string | null;
+  readonly repoId?: string | null;
+  readonly createdAt?: string | null;
+}
+
+/** One deployment of the tier, as far as the lifecycle reads it. */
+export interface LifecycleDeployment {
+  readonly applicationName?: string | null;
+  readonly version?: string | null;
+  readonly status?: string | null;
+  readonly createdAt?: string | null;
+}
+
+/** One release request, as far as the merge tile reads it. */
+export interface LifecycleReleaseRequest {
+  readonly repoId?: string | null;
+  readonly repoName?: string | null;
+  readonly version?: string | null;
+  readonly mergedToMainAt?: string | null;
+}
+
+/**
+ * A read a tile depends on: its answer, still on its way, or failed. Only the request's own read
+ * can fail the page; each of these degrades its tile alone.
+ */
+export type TileRead<T> =
+  | { readonly status: 'loaded'; readonly value: T }
+  | { readonly status: 'loading' }
+  | { readonly status: 'error' };
+
+/** What the lifecycle is built from: the request and the three reads that decide its tiles. */
+export interface LifecycleFacts {
+  readonly request: LifecycleRequest;
+  /** The tier's deployments (`listDeployments?environmentId=`). */
+  readonly deployments: TileRead<readonly LifecycleDeployment[]>;
+  /** Every tier, for the name of the request's (its id when unread). */
+  readonly environments: readonly { readonly id?: string | null; readonly name?: string | null }[];
+  /** The project's release requests, for whether this version reached main. */
+  readonly releaseRequests: TileRead<readonly LifecycleReleaseRequest[]>;
+}
+
+/** The word a status is drawn with on a stopped tile, where the badge has no room. */
+const STOPPED_WORDS: Readonly<Record<string, string>> = {
+  IMAGE_MISSING: 'no image was published',
+  DECLARATION_REFUSED: 'its configuration declaration was refused',
+  FAILED: 'the deployment failed',
+  ROLLED_BACK: 'rolled back to the predecessor',
+  GONE: 'the container went away',
+  SCALED_TO_ZERO: 'stopped on purpose',
+  SUPERSEDED: 'a newer deployment took its place',
+  DECOMMISSIONED: 'replaced by a newer deployment',
+};
+
+/** Why a finished request never got its version serving, in the server's own vocabulary. */
+export function stoppedWord(request: GatedRequest): string {
+  if (isRefused(request)) return 'the gate refused it';
+  const status = request.deploymentStatus;
+  return status ? (STOPPED_WORDS[status] ?? status) : 'no deployment was recorded';
+}
+
+/** What a still-moving request waits on. */
+export function movingWord(request: GatedRequest): string {
+  if (isHeldForApproval(request)) return 'held for manual approval';
+  return isPendingGate(request) ? 'waiting on the quality gate' : 'deploying';
+}
+
+/**
+ * The newest ACTIVE deployment of `applicationName` among `deployments`, by its own `createdAt`
+ * (the order the list arrives in is not relied on).
+ */
+export function newestActive(
+  deployments: readonly LifecycleDeployment[],
+  applicationName: string | null | undefined,
+): LifecycleDeployment | undefined {
+  const time = (deployment: LifecycleDeployment) => Date.parse(deployment.createdAt ?? '') || 0;
+  return deployments
+    .filter((d) => d.applicationName === applicationName && d.status === 'ACTIVE')
+    .sort((left, right) => time(right) - time(left))[0];
+}
+
+/**
+ * A deployment request's lifecycle, left to right (qits-2322, ported from the retired
+ * qits-deployments-frontend's request page): released → running in the request's tier → merged to
+ * main.
+ *
+ * - **Released** is always reached: a request exists because a release was cut.
+ * - **Running in <tier>** asks the place, not the request's own deployment: reached when the
+ *   tier's newest ACTIVE deployment of the application has this version (a deployment that was
+ *   ACTIVE an hour ago may have been replaced since). A completed request that is not serving
+ *   stopped, with why ({@link stoppedWord}); otherwise it is pending on what it waits for
+ *   ({@link movingWord}). No `environmentId` is pending, "no environment recorded"; a tier read
+ *   still on its way or failed says so.
+ * - **Merged to main** is the one step qits-deployments cannot see: matched by version among the
+ *   project's release requests of the request's repository (`repoId`, a repository's name or id).
+ *   A failed read, or a request naming no repository, is pending with why, never a page error.
+ */
+export function requestLifecycle(facts: LifecycleFacts): readonly LifecycleStage[] {
+  const { request } = facts;
+  return [
+    {
+      id: 'released',
+      title: `Released ${request.version ?? ''}`.trim(),
+      meta: formatInstant(request.createdAt),
+      state: 'reached',
+    },
+    tierStage(facts),
+    mergedStage(facts),
+  ];
+}
+
+function tierStage({ request, deployments, environments }: LifecycleFacts): LifecycleStage {
+  const id = 'tier';
+  if (!request.environmentId) {
+    return { id, title: 'Running', meta: 'no environment recorded', state: 'pending' };
+  }
+  const tier = environments.find((environment) => environment.id === request.environmentId);
+  const name = tier?.name ?? request.environmentId;
+  const title = `Running in ${name}`;
+  if (deployments.status === 'loading') {
+    return { id, title, meta: 'reading the tier’s deployments…', state: 'pending' };
+  }
+  if (deployments.status === 'error') {
+    return { id, title, meta: 'the tier’s deployments could not be read', state: 'pending' };
+  }
+  const serving = newestActive(deployments.value, request.applicationName);
+  if (serving && serving.version === request.version) {
+    return { id, title, meta: `since ${formatInstant(serving.createdAt)}`, state: 'reached' };
+  }
+  if (isCompletedRequest(request)) {
+    return {
+      id,
+      title,
+      meta: serving?.version
+        ? `${name} is running ${serving.version}`
+        : `nothing is serving ${name}`,
+      state: 'stopped',
+      detail: stoppedWord(request),
+    };
+  }
+  return { id, title, meta: movingWord(request), state: 'pending' };
+}
+
+function mergedStage({ request, releaseRequests }: LifecycleFacts): LifecycleStage {
+  const id = 'merged';
+  const title = 'Merged to main';
+  const repository = request.repoId;
+  if (!repository) {
+    return { id, title, meta: 'this release named no repository', state: 'pending' };
+  }
+  if (releaseRequests.status === 'loading') {
+    return { id, title, meta: 'reading the release requests…', state: 'pending' };
+  }
+  if (releaseRequests.status === 'error') {
+    return { id, title, meta: 'the release requests could not be read', state: 'pending' };
+  }
+  const matched = releaseRequests.value.find(
+    (candidate) =>
+      candidate.version === request.version &&
+      (candidate.repoName === repository || candidate.repoId === repository),
+  );
+  if (matched?.mergedToMainAt) {
+    return { id, title, meta: formatInstant(matched.mergedToMainAt), state: 'reached' };
+  }
+  return {
+    id,
+    title,
+    meta: matched ? 'not merged yet' : 'no release request carries this version',
+    state: 'pending',
+  };
 }

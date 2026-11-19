@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { QitsEntity, QitsExit, QitsField, qitsMutation } from '@qits/angular';
+import { exit, outcomes, QitsEntity, QitsExit, QitsField, qitsMutation } from '@qits/angular';
 import { CiRunLinks } from '$core/ci/ci-run-links';
 import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
-import { PlatformOrigins } from '$core/platform/platform-origins';
-import { deploymentRequestHref } from '$core/deployments/deployment-requests';
 import {
   lifecycleSummary,
   releaseLifecycle,
@@ -205,8 +203,11 @@ const RAIL: Readonly<Record<StepState, string>> = {
                         >the run in CI</a
                       >
                     }
-                    @if (deploymentHref(step.deploymentRequestId); as href) {
-                      <a class="text-accent no-underline hover:underline" [href]="href"
+                    @if (step.deploymentRequestId; as requestId) {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="deployment.request"
+                        [exitParams]="{ slug: slug(), requestId }"
                         >the deployment</a
                       >
                     }
@@ -281,11 +282,10 @@ const RAIL: Readonly<Record<StepState, string>> = {
 export class ReleaseLifecycle {
   private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
   private readonly rerunningPhase = qitsMutation(RERUN_PHASE);
-  private readonly origins = inject(PlatformOrigins);
   protected readonly links = inject(CiRunLinks);
 
   readonly request = input.required<ReleaseRequest>();
-  /** The project's slug, for the deployment's address. */
+  /** The project's slug, for the deployment request's page. */
   readonly slug = input.required<string>();
   /**
    * What the viewer may approve (epic qits-1038); `undefined` when it was not read, and then the
@@ -326,9 +326,10 @@ export class ReleaseLifecycle {
     return state === 'not-reported' ? 'not reported' : state;
   }
 
-  protected deploymentHref(id: string | null | undefined): string | undefined {
-    return deploymentRequestHref(this.origins.page('deployments'), this.slug(), id);
-  }
+  /** "the deployment": the deployment request's page in this app (qits-2322). */
+  protected readonly deployment = outcomes('open-release-deployment-request', {
+    request: exit('projects/:slug/deployments/requests/:requestId'),
+  });
 
   /** An upstream override the service found moot (409), on the row of the gate it was for. */
   protected readonly mooted = signal<{ readonly key: string; readonly upstream: string } | null>(

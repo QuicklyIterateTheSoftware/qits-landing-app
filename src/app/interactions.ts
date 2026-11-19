@@ -153,6 +153,40 @@ export const INTERACTIONS = {
   'show-project-deployment-requests':
     'The Deployment requests page lists the project’s deployment requests, pending and completed',
   /**
+   * `deployment-request.page.ts` via `DEPLOYMENT_REQUEST`, `TIER_DEPLOYMENTS` and `ENVIRONMENTS`
+   * (qits-2322): a deployment request's page reads the request and its deployment, the tier's
+   * deployments (is its version what the tier runs) and the tiers (the tier's name).
+   */
+  'show-deployment-request':
+    'A deployment request’s page shows the request, its deployment and how far its version got',
+  /**
+   * `deployment-request.page.ts` via `APPROVE_DEPLOYMENT_REQUEST` (qits-2322): Approve on a
+   * request held for manual approval queues its deployment.
+   */
+  'approve-deployment-request': 'Approve on a held deployment request queues its deployment',
+  /**
+   * `deployment-request.page.ts` via `DECLINE_DEPLOYMENT_REQUEST` (qits-2322): Decline, with an
+   * optional note, on a request held for manual approval; final, the release request ends
+   * WITHDRAWN.
+   */
+  'decline-deployment-request': 'Decline on a held deployment request deploys nothing, for good',
+  /**
+   * `deployment-requests.page.ts` (qits-2322): a row's Open on the Requests page opens that
+   * request's page. Navigates only, and names no pact.
+   */
+  'open-deployment-request': 'Open on a deployment request’s row opens the request’s page',
+  /**
+   * `release-lifecycle.ts` (qits-2322): "the deployment" on a release request's deployment step
+   * opens the deployment request's page. Navigates only, and names no pact.
+   */
+  'open-release-deployment-request':
+    '“the deployment” on a release request’s lifecycle opens its deployment request’s page',
+  /**
+   * `deployment-request.page.ts` (qits-2322): "← Deployment requests" on a request's page goes back
+   * to the list. Navigates only, and names no pact.
+   */
+  'leave-deployment-request': '“← Deployment requests” on a request’s page goes back to the list',
+  /**
    * `release-request.page.ts` via `RELEASE_REQUEST`, `RELEASE_COMMITS`, `COMMIT_BUILDS`,
    * `RELEASE_ARTIFACTS` and `APPROVAL_ELIGIBILITY` (qits-2146): a request's page reads the request,
    * the commits its fold brought in, the CI verdicts on the fold, once released what it published,

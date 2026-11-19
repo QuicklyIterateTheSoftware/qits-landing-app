@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { filter, Subject } from 'rxjs';
 import { client as deploymentsClient } from '../../../../../api/deployments/client.gen';
@@ -15,7 +16,6 @@ import {
   deploymentsGoldenMasters,
   isRecorded,
 } from '../../../../../../testing/golden-masters';
-import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
 import { DeploymentRequestsPage } from './deployment-requests.page';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -56,10 +56,10 @@ describe.skipIf(!isRecorded(WITH_REQUESTS, 'listDeploymentRequests', deployments
       TestBed.configureTestingModule({
         providers: [
           { provide: PLATFORM_ID, useValue: 'browser' },
+          provideRouter([]),
           provideHttpClient(),
           provideHttpClientTesting(),
           provideHeyApiClient(deploymentsClient),
-          provideTestPlatformOrigins({}, { deployments: 'https://deployments.qits.example' }),
           { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
           {
             provide: DomainEvents,
@@ -138,9 +138,7 @@ describe.skipIf(!isRecorded(WITH_REQUESTS, 'listDeploymentRequests', deployments
       expect(pending?.textContent).toContain(held.applicationName);
       expect(completed?.textContent).toContain(deployed.applicationName);
       const open = completed?.querySelector('a') as HTMLAnchorElement;
-      expect(open.getAttribute('href')).toBe(
-        `https://deployments.qits.example/p/deployment-requests/${deployed.id}`,
-      );
+      expect(open.getAttribute('href')).toBe(`/projects/p/deployments/requests/${deployed.id}`);
     });
 
     it('reads again after a decline of a request on screen, never of another', async () => {
