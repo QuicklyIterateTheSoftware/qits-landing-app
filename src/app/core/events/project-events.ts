@@ -218,7 +218,7 @@ export function eventSubjects(
   const branch = textOf(payload['branch']);
   if (branch) subjects.push({ kind: 'branch', label: branch });
   const agent = textOf(payload['agentId']);
-  if (agent) subjects.push({ kind: 'agent', label: `agent ${agent.slice(0, 8)}` });
+  if (agent) subjects.push({ kind: 'agent', label: agent.slice(0, 8) });
   return subjects;
 }
 

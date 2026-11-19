@@ -138,6 +138,10 @@ export type CiRunDto = {
     targetId?: Uuid;
     retryReason?: string;
     autoRetry?: boolean;
+    continuedFromRunId?: string;
+    oomKills?: number;
+    oomScope?: string;
+    autoRetryDeferredUntil?: Instant;
 };
 
 export type CiRunOrderingDto = {
@@ -170,6 +174,7 @@ export type CiStepDto = {
     startedAt?: Instant;
     finishedAt?: Instant;
     output?: string;
+    name?: string;
 };
 
 export type CiStepStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'SKIPPED' | 'TIMED_OUT';
@@ -403,14 +408,14 @@ export type GetCiApiRepositoriesResponses = {
 
 export type GetCiApiRepositoriesResponse = GetCiApiRepositoriesResponses[keyof GetCiApiRepositoriesResponses];
 
-export type GetCiApiRepositoriesSummaryData = {
+export type ListRepositorySummariesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/ci/api/repositories/summary';
 };
 
-export type GetCiApiRepositoriesSummaryErrors = {
+export type ListRepositorySummariesErrors = {
     /**
      * Not Authorized
      */
@@ -421,14 +426,14 @@ export type GetCiApiRepositoriesSummaryErrors = {
     403: unknown;
 };
 
-export type GetCiApiRepositoriesSummaryResponses = {
+export type ListRepositorySummariesResponses = {
     /**
      * One entry per repository, ascending by id
      */
     200: ListRepositorySummariesResponse;
 };
 
-export type GetCiApiRepositoriesSummaryResponse = GetCiApiRepositoriesSummaryResponses[keyof GetCiApiRepositoriesSummaryResponses];
+export type ListRepositorySummariesResponse2 = ListRepositorySummariesResponses[keyof ListRepositorySummariesResponses];
 
 export type GetReleasePhaseData = {
     body?: never;
@@ -832,7 +837,7 @@ export type CancelRunErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * The token covers this run's repository for nobody — no project claim and no platform-wide role, or a project claim this instance cannot place the repository in
      */
     403: unknown;
     /**
@@ -975,7 +980,7 @@ export type RetryRunErrors = {
      */
     404: unknown;
     /**
-     * The run has not finished, so there is nothing to retry yet
+     * The run has not finished, so there is nothing to retry yet; it already has a retry that is queued, running or green, which the message names (qits-2164); or it is a release-request automation's run, which a retry would not count for — run `qits release-request regenerate --kind <kind>` instead
      */
     409: unknown;
     /**

@@ -1,13 +1,24 @@
 import { qitsOperation } from '@qits/angular';
-import { getRunReport, listActiveRuns, listRunReports, listRuns } from '../../api/ci';
+import {
+  getRunReport,
+  listActiveRuns,
+  listRepositorySummaries,
+  listRunReports,
+  listRuns,
+} from '../../api/ci';
 import { GET_RUN_REPORT, LIST_RUN_REPORTS } from './ci-reports.consumes';
-import { LIST_ACTIVE_RUNS, LIST_REPOSITORY_RUNS } from './ci-runs.consumes';
+import {
+  LIST_ACTIVE_RUNS,
+  LIST_REPOSITORY_RUNS,
+  LIST_REPOSITORY_SUMMARIES,
+} from './ci-runs.consumes';
 
 /**
  * qits-ci's run and report reads declared as operations (qits-2145), read through `qitsResource`
  * (qits-2146; `CiRunsStore` and `CiReportsStore` read them before): a repository's newest runs (the
- * release request page), every queued or running run (the lightning menu's chips), and a run's
- * reports (`app-run-reports`). `ci.operations.pact.spec.ts` binds each with the same provider,
+ * release request page), every queued or running run (the lightning menu's chips and the project's
+ * CI page), each repository's newest runs (the project's CI page, qits-2314), and a run's reports
+ * (`app-run-reports`). `ci.operations.pact.spec.ts` binds each with the same provider,
  * operationId and `consumes`. Each reader reads again after `BUILD_EVENTS` (`build-events.ts`)
  * naming its repository or run.
  */
@@ -31,6 +42,18 @@ export const ACTIVE_RUNS = qitsOperation({
   method: 'GET',
   call: listActiveRuns,
   consumes: LIST_ACTIVE_RUNS,
+});
+
+/**
+ * Each repository's newest run and newest run on main, every repository qits-ci knows
+ * (`/ci/api/repositories/summary`, one bounded answer): the project's CI page (qits-2314).
+ */
+export const REPOSITORY_SUMMARIES = qitsOperation({
+  provider: 'qits-ci-service',
+  operationId: 'listRepositorySummaries',
+  method: 'GET',
+  call: listRepositorySummaries,
+  consumes: LIST_REPOSITORY_SUMMARIES,
 });
 
 /** A run's reports with their highlights. */

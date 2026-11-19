@@ -209,7 +209,7 @@ describe('eventSubjects', () => {
     };
     expect(eventSubjects(event, 'qits')).toEqual([
       { kind: 'repository', label: 'qits-landing-app' },
-      { kind: 'agent', label: 'agent 01234567' },
+      { kind: 'agent', label: '01234567' },
     ]);
   });
 
