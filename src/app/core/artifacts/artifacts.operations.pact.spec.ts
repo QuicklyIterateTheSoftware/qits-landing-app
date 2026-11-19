@@ -16,6 +16,8 @@ import { listingOf } from './artifact-listings';
 import {
   ARTIFACT_DAEMONS,
   ARTIFACT_DOCS_SITES,
+  ARTIFACT_IMAGE_MANIFESTS,
+  ARTIFACT_IMAGE_TAGS,
   ARTIFACT_IMAGES,
   ARTIFACT_MAVEN_PACKAGES,
   ARTIFACT_NPM_PACKAGES,
@@ -29,7 +31,8 @@ import {
  * (`core/ui-builder/docs.operations.pact.spec.ts`). This spec owns every interaction of the store
  * repository page's operations (`artifacts.operations.ts`): `listRepositories`, `listImages`,
  * `listNpmPackages`, `listMavenPackages`, `listDaemons`, `listDocsSiteSummaries` and
- * `listArtifactRecords`.
+ * `listArtifactRecords`; and the image page's (qits-2324): `listImageTagSummaries` and
+ * `listImageManifestSummaries`, with `listImages` read again for the image's own row.
  *
  * Against qits-artifacts' recordings of "a store holding one artifact of every kind" (the seeded
  * repositories, and one image, npm package, maven coordinate, daemon and docs site; no ci record)
@@ -44,6 +47,14 @@ import {
  * (`imagesRepository`, …), a provider-state expression in the path; one listing per test, as a
  * path from a provider state matches any path.
  *
+ * The image page's tags and manifests (qits-2324) are one image's (`image` in `imagesRepository`),
+ * which no other suite pushes, so the provider records them unfiltered and a populated list binds
+ * its recorded count exactly: "a store holding one artifact of every kind" (one tag naming the one
+ * manifest) and "an image with a manifest no tag names" (one tag, two manifests, one with no tag;
+ * its `listImages` too, which the image page's header reads). The empty store's answers (an image
+ * nobody pushed: empty lists) follow the empty listings above and bind the status only, though the
+ * provider records them exactly; the page's "no such image" screenshot shows their recorded bodies.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
@@ -56,6 +67,8 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const STORE = 'a store holding one artifact of every kind';
 /** The seeded store with nothing published. */
 const EMPTY = 'a store with nothing published';
+/** One image with a tagged manifest and a manifest no tag names (qits-2324). */
+const UNTAGGED = 'an image with a manifest no tag names';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_REPOSITORIES,
@@ -65,6 +78,8 @@ const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_DAEMONS,
   ARTIFACT_DOCS_SITES,
   ARTIFACT_RECORDS,
+  ARTIFACT_IMAGE_TAGS,
+  ARTIFACT_IMAGE_MANIFESTS,
 ].map((op) => op.operationId);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-store-pact-'));
@@ -106,13 +121,22 @@ const given = (
   });
 };
 
-/** The store repository a state's listing is recorded for (`imagesRepository`, …). */
-const repoOf = (state: string, param: string): string => {
-  const params = masters.operation(state, 'listRepositories').params as Record<string, string>;
-  const repo = params[param];
-  if (!repo) throw new Error(`"${state}" has no ${param}`);
-  return repo;
+/** A state's param (`imagesRepository`, `image`, …), as its `operationId` recording names it. */
+const paramOf = (state: string, operationId: string, param: string): string => {
+  const params = masters.operation(state, operationId).params as Record<string, string>;
+  const value = params[param];
+  if (!value) throw new Error(`"${state}" has no ${param}`);
+  return value;
 };
+
+/** The store repository a state's listing is recorded for (`imagesRepository`, …). */
+const repoOf = (state: string, param: string): string => paramOf(state, 'listRepositories', param);
+
+/** The image repository and image a state's image page reads (qits-2324). */
+const imageOf = (state: string, operationId: string) => ({
+  repo: paramOf(state, operationId, 'imagesRepository'),
+  image: paramOf(state, operationId, 'image'),
+});
 
 describe('qits-landing-app → qits-artifacts-service pact: the store repository page', () => {
   afterAll(() => {
@@ -225,6 +249,75 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
           ARTIFACT_RECORDS.fetch({ path: { repo } }),
         );
         // Status only: no state can fill a ci repository, and other suites' records sit there.
+        expect(error).toBeUndefined();
+        expect(response?.status).toBe(200);
+      },
+    ));
+
+  it('show-artifact-image: an image’s tags, each naming its manifest', () =>
+    given(ARTIFACT_IMAGE_TAGS, STORE, 'show-artifact-image').executeTest(async (server) => {
+      const path = imageOf(STORE, 'listImageTagSummaries');
+      const { data } = await at(server.url, () => ARTIFACT_IMAGE_TAGS.fetch({ path }));
+      const [tag] = data?.tags ?? [];
+      expect(tag?.tag).toBeTruthy();
+      expect(tag?.digest).toMatch(/^sha256:/);
+      expect(typeof tag?.sizeBytes).toBe('number');
+      expect(tag?.createdAt).toBeTruthy();
+      expect(tag?.accessedAt).toBeNull();
+    }));
+
+  it('show-artifact-image: an image’s manifests, each with the tags naming it', () =>
+    given(ARTIFACT_IMAGE_MANIFESTS, STORE, 'show-artifact-image').executeTest(async (server) => {
+      const path = imageOf(STORE, 'listImageManifestSummaries');
+      const { data } = await at(server.url, () => ARTIFACT_IMAGE_MANIFESTS.fetch({ path }));
+      const [manifest] = data?.manifests ?? [];
+      expect(manifest?.digest).toMatch(/^sha256:/);
+      expect(manifest?.mediaType).toBeTruthy();
+      expect(manifest?.tags?.length).toBe(1);
+    }));
+
+  it('show-artifact-image: an image with a manifest no tag names, in the repository’s images', () =>
+    given(ARTIFACT_IMAGES, UNTAGGED, 'show-artifact-image').executeTest(async (server) => {
+      const { repo, image } = imageOf(UNTAGGED, 'listImages');
+      const { data } = await at(server.url, () => ARTIFACT_IMAGES.fetch({ path: { repo } }));
+      const row = (data?.images ?? []).find((entry) => entry.name === image);
+      expect(row?.manifestCount).toBeGreaterThan(row?.tagCount ?? 0);
+    }));
+
+  it('show-artifact-image: the tags of an image with a manifest no tag names', () =>
+    given(ARTIFACT_IMAGE_TAGS, UNTAGGED, 'show-artifact-image').executeTest(async (server) => {
+      const path = imageOf(UNTAGGED, 'listImageTagSummaries');
+      const { data } = await at(server.url, () => ARTIFACT_IMAGE_TAGS.fetch({ path }));
+      expect(data?.tags?.length).toBe(1);
+    }));
+
+  it('show-artifact-image: the manifests of an image, one no tag names', () =>
+    given(ARTIFACT_IMAGE_MANIFESTS, UNTAGGED, 'show-artifact-image').executeTest(async (server) => {
+      const path = imageOf(UNTAGGED, 'listImageManifestSummaries');
+      const { data } = await at(server.url, () => ARTIFACT_IMAGE_MANIFESTS.fetch({ path }));
+      const manifests = data?.manifests ?? [];
+      expect(manifests.length).toBe(2);
+      expect(manifests.filter((manifest) => (manifest.tags ?? []).length === 0)).toHaveLength(1);
+    }));
+
+  // Status only, as for the empty listings above.
+  it('show-artifact-image: the tags of an image nobody pushed', () =>
+    given(ARTIFACT_IMAGE_TAGS, EMPTY, 'show-artifact-image', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = imageOf(EMPTY, 'listImageTagSummaries');
+        const { response, error } = await at(server.url, () => ARTIFACT_IMAGE_TAGS.fetch({ path }));
+        expect(error).toBeUndefined();
+        expect(response?.status).toBe(200);
+      },
+    ));
+
+  it('show-artifact-image: the manifests of an image nobody pushed', () =>
+    given(ARTIFACT_IMAGE_MANIFESTS, EMPTY, 'show-artifact-image', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = imageOf(EMPTY, 'listImageManifestSummaries');
+        const { response, error } = await at(server.url, () =>
+          ARTIFACT_IMAGE_MANIFESTS.fetch({ path }),
+        );
         expect(error).toBeUndefined();
         expect(response?.status).toBe(200);
       },

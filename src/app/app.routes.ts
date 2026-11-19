@@ -114,6 +114,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * sidebar with no project open, as nothing in the store joins to a project. `artifacts` and
  * `artifacts/repositories` redirect to `artifacts/repositories/qits`, the image store, by a
  * relative `redirectTo`.
+ * `artifacts/repositories/<repo>/images/<image>` (`ArtifactsImagePage`, qits-2324) is one image of
+ * an image store, its tags and manifests; the image name is one segment (`%2F` for a slash).
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -480,6 +482,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/artifacts-repository.page').then(
                 (m) => m.ArtifactsRepositoryPage,
+              ),
+          },
+          {
+            // One image of an image store (qits-2324): its tags and manifests. `:image` is one
+            // segment; a slashed name rides as %2F, which the router decodes into the param.
+            path: 'repositories/:repo/images/:image',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page').then(
+                (m) => m.ArtifactsImagePage,
               ),
           },
         ],

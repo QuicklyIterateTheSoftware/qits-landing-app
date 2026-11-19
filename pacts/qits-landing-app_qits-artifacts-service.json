@@ -310,13 +310,892 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "listImageManifestSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImageManifestSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store holding one artifact of every kind",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images/${image}/manifests",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images/contract-image/manifests"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "manifests": [
+              {
+                "accessedAt": null,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "digest": "sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+                "mediaType": "application/vnd.oci.image.manifest.v1+json",
+                "sizeBytes": 2636,
+                "tags": [
+                  "2100.1.0"
+                ]
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.manifests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.manifests[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.manifests[*].digest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.manifests[*].mediaType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.manifests[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.manifests[*].tags": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.manifests[*].tags[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listImageManifestSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImageManifestSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store with nothing published",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images/${image}/manifests",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images/contract-image/manifests"
+      },
+      "response": {
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listImageManifestSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImageManifestSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an image with a manifest no tag names",
+          "params": {
+            "image": "contract-image",
+            "imagesRepository": "qits"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images/${image}/manifests",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images/contract-image/manifests"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "manifests": [
+              {
+                "accessedAt": null,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "digest": "sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+                "mediaType": "application/vnd.oci.image.manifest.v1+json",
+                "sizeBytes": 2636,
+                "tags": [
+                  "2100.1.0"
+                ]
+              },
+              {
+                "accessedAt": null,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "digest": "sha256:570c2d49cb04b6bd13c788e386a5fac7f82e145d1cf0b27e79140af114e3c9e9",
+                "mediaType": "application/vnd.oci.image.manifest.v1+json",
+                "sizeBytes": 2636,
+                "tags": []
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.manifests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.digest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.mediaType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sizeBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.tags": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.tags[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.digest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.mediaType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sizeBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listImageTagSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImageTagSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store holding one artifact of every kind",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images/${image}/tags",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images/contract-image/tags"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "tags": [
+              {
+                "accessedAt": null,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "digest": "sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+                "sizeBytes": 2636,
+                "tag": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.tags": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.tags[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.tags[*].digest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.tags[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.tags[*].tag": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listImageTagSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImageTagSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store with nothing published",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images/${image}/tags",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images/contract-image/tags"
+      },
+      "response": {
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listImageTagSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImageTagSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an image with a manifest no tag names",
+          "params": {
+            "image": "contract-image",
+            "imagesRepository": "qits"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images/${image}/tags",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images/contract-image/tags"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "tags": [
+              {
+                "accessedAt": null,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "digest": "sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2",
+                "sizeBytes": 2636,
+                "tag": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.tags": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.tags[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.tags[*].digest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.tags[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.tags[*].tag": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listImages"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-image",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/images/:image"
+          }
+        }
+      },
+      "description": "show-artifact-image: listImages",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an image with a manifest no tag names",
+          "params": {
+            "image": "contract-image",
+            "imagesRepository": "qits"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${imagesRepository}/images",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/qits/images"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "images": [
+              {
+                "manifestCount": 2,
+                "name": "contract-image",
+                "sizeBytes": 5272,
+                "tagCount": 1
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.images": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.manifestCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sizeBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.tagCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "listImages"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-artifact-images",
             "kind": "ui",
-            "route": "artifacts/repositories/:repo"
+            "route": "artifacts/repositories/:repo, artifacts/repositories/:repo/images/:image"
           }
         }
       },
@@ -457,7 +1336,7 @@
             "app": "qits-landing-app",
             "interaction": "show-artifact-images",
             "kind": "ui",
-            "route": "artifacts/repositories/:repo"
+            "route": "artifacts/repositories/:repo, artifacts/repositories/:repo/images/:image"
           }
         }
       },

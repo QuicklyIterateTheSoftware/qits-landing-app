@@ -3,7 +3,9 @@ import {
   listArtifactRecords,
   listDaemons,
   listDocsSiteSummaries,
+  listImageManifestSummaries,
   listImages,
+  listImageTagSummaries,
   listMavenPackages,
   listNpmPackages,
   listRepositories,
@@ -11,6 +13,8 @@ import {
 import {
   LIST_ARTIFACT_DAEMONS,
   LIST_ARTIFACT_DOCS_SITES,
+  LIST_ARTIFACT_IMAGE_MANIFESTS,
+  LIST_ARTIFACT_IMAGE_TAGS,
   LIST_ARTIFACT_IMAGES,
   LIST_ARTIFACT_MAVEN_PACKAGES,
   LIST_ARTIFACT_NPM_PACKAGES,
@@ -22,8 +26,10 @@ import {
  * qits-artifacts' store explorer reads declared as operations (qits-2316), for the Artifacts
  * section's store repository page (`ArtifactsRepositoryPage`), which reads them through
  * `qitsResource`: the store's repositories, then exactly one listing, chosen by the repository's
- * type (`listingOf`, `artifact-listings.ts`). `artifacts.operations.pact.spec.ts` binds each with
- * the same provider, operationId and `consumes`.
+ * type (`listingOf`, `artifact-listings.ts`); and the image page's (`ArtifactsImagePage`,
+ * qits-2324), which reads `ARTIFACT_IMAGES` for its headline row and one image's tags and
+ * manifests. `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
+ * `consumes`.
  */
 
 /** Every store repository with its type, count and size (`listRepositories`). */
@@ -42,6 +48,27 @@ export const ARTIFACT_IMAGES = qitsOperation({
   method: 'GET',
   call: listImages,
   consumes: LIST_ARTIFACT_IMAGES,
+});
+
+/**
+ * One image's tags (`listImageTagSummaries`, qits-2324): 404 for an unknown repository, 400 for one
+ * that holds no images, an empty list for an image it does not hold.
+ */
+export const ARTIFACT_IMAGE_TAGS = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listImageTagSummaries',
+  method: 'GET',
+  call: listImageTagSummaries,
+  consumes: LIST_ARTIFACT_IMAGE_TAGS,
+});
+
+/** One image's manifests (`listImageManifestSummaries`, qits-2324), answering as the tags do. */
+export const ARTIFACT_IMAGE_MANIFESTS = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listImageManifestSummaries',
+  method: 'GET',
+  call: listImageManifestSummaries,
+  consumes: LIST_ARTIFACT_IMAGE_MANIFESTS,
 });
 
 /** An `npm-packages` repository's packages (`listNpmPackages`). */

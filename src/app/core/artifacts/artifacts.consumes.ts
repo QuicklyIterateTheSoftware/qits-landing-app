@@ -3,7 +3,9 @@ import type {
   ListArtifactRecordsResponses,
   ListDaemonsResponses,
   ListDocsSiteSummariesResponses,
+  ListImageManifestSummariesResponses,
   ListImagesResponses,
+  ListImageTagSummariesResponses,
   ListMavenPackagesResponses,
   ListNpmPackagesResponses,
   ListRepositoriesResponses,
@@ -11,9 +13,10 @@ import type {
 
 /**
  * What the app reads from qits-artifacts' store explorer doors (qits-2316): the store's
- * repositories, and one repository's listing by its type. `artifacts.operations.ts` declares each
- * read with these lists, so nothing can read any other field, and
- * `artifacts.operations.pact.spec.ts` binds the same. To read another field, add it here.
+ * repositories, and one repository's listing by its type; and one image's tags and manifests
+ * (qits-2324). `artifacts.operations.ts` declares each read with these lists, so nothing can read
+ * any other field, and `artifacts.operations.pact.spec.ts` binds the same. To read another field,
+ * add it here.
  */
 
 /**
@@ -47,6 +50,45 @@ export const LIST_ARTIFACT_IMAGES = [
 
 export type ArtifactImages = Consumed<ListImagesResponses[200], typeof LIST_ARTIFACT_IMAGES>;
 export type ArtifactImage = NonNullable<ArtifactImages['images']>[number];
+
+/**
+ * `ARTIFACT_IMAGE_TAGS` (`listImageTagSummaries`, qits-2324): one image's tags, each with the
+ * manifest it names and the bytes that manifest references (not additive across tags: builds share
+ * layers), when it was pushed and last pulled (`null`: never).
+ */
+export const LIST_ARTIFACT_IMAGE_TAGS = [
+  'tags[].tag',
+  'tags[].digest',
+  'tags[].sizeBytes',
+  'tags[].createdAt',
+  'tags[].accessedAt',
+] as const;
+
+export type ArtifactImageTags = Consumed<
+  ListImageTagSummariesResponses[200],
+  typeof LIST_ARTIFACT_IMAGE_TAGS
+>;
+export type ArtifactImageTag = NonNullable<ArtifactImageTags['tags']>[number];
+
+/**
+ * `ARTIFACT_IMAGE_MANIFESTS` (`listImageManifestSummaries`, qits-2324): one image's manifests,
+ * each with the tags naming it (none: untagged), its media type, referenced bytes, when it was
+ * created and last pulled (`null`: never).
+ */
+export const LIST_ARTIFACT_IMAGE_MANIFESTS = [
+  'manifests[].digest',
+  'manifests[].mediaType',
+  'manifests[].sizeBytes',
+  'manifests[].createdAt',
+  'manifests[].accessedAt',
+  'manifests[].tags',
+] as const;
+
+export type ArtifactImageManifests = Consumed<
+  ListImageManifestSummariesResponses[200],
+  typeof LIST_ARTIFACT_IMAGE_MANIFESTS
+>;
+export type ArtifactImageManifest = NonNullable<ArtifactImageManifests['manifests']>[number];
 
 /** `ARTIFACT_NPM_PACKAGES` (`listNpmPackages`): an npm repository's packages. */
 export const LIST_ARTIFACT_NPM_PACKAGES = [

@@ -39,7 +39,8 @@ type Listed = keyof typeof LISTINGS;
  * (`error`).
  *
  * Its exits (epic qits-2000) are each followed once: a store repository in the switcher
- * (`switch-artifacts-repository`), and each kind's row, which leaves for the old explorer
+ * (`switch-artifacts-repository`), an image row, which opens the image's page here
+ * (`open-artifact-image`, qits-2324), and each other kind's row, which leaves for the old explorer
  * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays).
  */
 describe('ArtifactsRepositoryPage (screenshots)', () => {
@@ -242,8 +243,32 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
       .toMatchTextContent('contract-package');
   });
 
+  it('open-artifact-image image: an image row opens the image’s page here', async () => {
+    const opened = await open('qits');
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-image', exact: true });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', '/artifacts/repositories/qits/images/contract-image');
+    await userEvent.click(link);
+    await opened.settled();
+    expect(reached()).toEqual(['open-artifact-image:image']);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/qits/images/contract-image');
+    expect(leave).not.toHaveBeenCalled();
+    // The image page's reads, answered as its own spec does.
+    const at = '/artifacts/api/repositories/qits/images';
+    http.expectOne(at).flush(await goldenMaster(STORE, 'listImages', ARTIFACTS));
+    http
+      .expectOne(`${at}/contract-image/tags`)
+      .flush(await goldenMaster(STORE, 'listImageTagSummaries', ARTIFACTS));
+    http
+      .expectOne(`${at}/contract-image/manifests`)
+      .flush(await goldenMaster(STORE, 'listImageManifestSummaries', ARTIFACTS));
+    await opened.settled();
+  });
+
   for (const [repo, outcome, name, path] of [
-    ['qits', 'image', 'contract-image', 'images/contract-image'],
     ['npm', 'npmPackage', 'contract-package', 'packages/contract-package'],
     [
       'maven',

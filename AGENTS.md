@@ -364,13 +364,33 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 `switch-artifacts-repository`), then exactly one listing chosen by the type (`listingOf`,
 `artifact-listings.ts`: `listImages`, `listNpmPackages`, `listMavenPackages`, `listDaemons`,
 `listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
-has a name search over the one answer. A row's name leaves for its detail page in the old explorer
+has a name search over the one answer. An image row's name opens the image's page here
+(`open-artifact-image`, below); any other row's name leaves for its detail page in the old explorer
 (`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/<images|packages|maven-packages|daemons|docs>/<name>`, the name one segment)
-until the section's detail pages land (qits-2324 to qits-2327); `provideAppRoute()` gives specs that
+`/repositories/<repo>/<packages|maven-packages|daemons|docs>/<name>`, the name one segment)
+until the section's detail pages land (qits-2325 to qits-2327); `provideAppRoute()` gives specs that
 origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
+
+`artifacts/repositories/<repo>/images/<image>` (`ArtifactsImagePage`, qits-2324) is one image of an
+image store; `<image>` is one segment (a slashed name rides as `%2F`, which the router decodes and
+the client encodes again). Three reads, nothing per row: `ARTIFACT_IMAGE_TAGS`
+(`listImageTagSummaries`), `ARTIFACT_IMAGE_MANIFESTS` (`listImageManifestSummaries`) and
+`ARTIFACT_IMAGES` (`listImages`, for the image's own row: "N tags · M manifests · <size> (union over
+this image's blobs)"; when it fails the header says the size is unknown and the page stays up). The
+tags newest push first (`newestPushFirst`), each with its manifest digest, referenced bytes (not
+additive, which the caption says), pushed and last accessed ("Never" for null); the manifest
+inventory with its tags ("Untagged" when none), media type, bytes, created and last accessed, and a
+count of the untagged ones when there are some. Digests are shortened (`shortDigest`) until "Show
+full digests" (`toggle-image-digests`, a stay: a page-local signal). "← <repo>" and a non-image
+repository's note lead back (`leave-artifact-image`). A 404 on any read is "There is no repository
+called <repo> in this store", a 400 "<repo> is not an image repository", and an image missing from
+`listImages` with no tag and no manifest (the doors answer it with empty lists) "There is no image
+called <image> in this repository". No event, no polling: Refresh reads all three again. The pact
+reads both doors in "a store holding one artifact of every kind" and "an image with a manifest no
+tag names" (with its `listImages`), each list at its recorded count (one image's, which no other
+suite pushes), and in "a store with nothing published" by status only, as the empty listings above.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
