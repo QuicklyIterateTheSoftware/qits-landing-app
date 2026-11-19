@@ -1,15 +1,22 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { Subject } from 'rxjs';
 import { client as edgeClient } from '../../../api/edge/client.gen';
 import { client as maintenanceClient } from '../../../api/maintenance/client.gen';
+import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/maintenance/client/client.gen';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { PENDING_BUMPS } from '$core/maintenance/maintenance.consumes';
 import type { UpstreamPoolEntry } from '$core/edge/edge.consumes';
-import { edgeGoldenMaster, maintenanceGoldenMaster } from '../../../../testing/golden-masters';
+import {
+  edgeGoldenMaster,
+  goldenMaster,
+  maintenanceGoldenMaster,
+} from '../../../../testing/golden-masters';
 import { BUMP_EVENTS, BumpsMenu, REFRESH_DEBOUNCE_MS } from './bumps-menu';
 
 /** The generated client builds its request after a few awaits; let them run. */
@@ -34,6 +41,10 @@ const BOTH_POOLS: readonly UpstreamPoolEntry[] = [
   { ...RECORDED[0], pool: 'stream', open: 0 },
 ];
 
+/** Where a bump's link leads, and the open project's page: they render nothing. */
+@Component({ template: '' })
+class Stub {}
+
 describe('BumpsMenu', () => {
   let http: HttpTestingController;
   let events: Subject<DomainEvent>;
@@ -46,8 +57,13 @@ describe('BumpsMenu', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([
+          { path: 'projects/:slug', component: Stub },
+          { path: 'projects/:slug/maintenance/bumps/:bumpId', component: Stub },
+        ]),
         provideHeyApiClient(maintenanceClient),
         provideHeyApiClient(edgeClient),
+        provideHeyApiClient(projectsClient),
         {
           provide: DomainEvents,
           useValue: {
@@ -124,6 +140,39 @@ describe('BumpsMenu', () => {
     expect(rows[0]).toContain('qits/build-images/ci-base 2026.1.1 → 2026.2.1 docker');
     expect(rows[2]).toContain('RELEASE OWED');
     expect(rows[3]).toContain('PENDING');
+  });
+
+  it('links no row while no project is open', async () => {
+    const { panel } = await opened();
+    expect(panel.querySelectorAll('ui-spinner > ul > li')).toHaveLength(4);
+    expect(panel.querySelectorAll('ui-spinner > ul > li a')).toHaveLength(0);
+  });
+
+  it('open-menu-bump bump: links each row’s repository to the bump’s page in the open project', async () => {
+    const project = goldenMaster('a project exists', 'listProjects').entries[0].project;
+    await TestBed.inject(Router).navigateByUrl(`/projects/${project.slug}`);
+    const { panel, fixture } = await opened();
+    // `SelectedProject` reads the project list once the URL names a project; the slug is enough.
+    for (const read of http.match('/projects/api/projects')) {
+      read.flush(goldenMaster('a project exists', 'listProjects'));
+    }
+    const bumps = maintenanceGoldenMaster('pending bumps', 'listPendingBumps').bumps;
+    const links = [...panel.querySelectorAll<HTMLAnchorElement>('ui-spinner > ul > li a')];
+    expect(links.map((a) => a.textContent?.trim())).toEqual(
+      bumps.map((bump: { repository: string }) => bump.repository),
+    );
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(
+      bumps.map((bump: { id: string }) => `/projects/${project.slug}/maintenance/bumps/${bump.id}`),
+    );
+    expect(links[0].getAttribute('data-qits-outcome')).toBe('open-menu-bump:bump');
+    links[0].click();
+    await settle();
+    fixture.detectChanges();
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${project.slug}/maintenance/bumps/${bumps[0].id}`,
+    );
+    // Following a row closes the menu.
+    expect(panel.classList.contains('hidden')).toBe(true);
   });
 
   it('fetches again, once, after a burst of events that move bumps', async () => {

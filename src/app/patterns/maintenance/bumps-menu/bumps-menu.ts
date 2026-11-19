@@ -1,27 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
+import { BUMP_EVENTS } from '$core/maintenance/bump-events';
 import type { UpstreamPoolEntry } from '$core/edge/edge.consumes';
 import { UPSTREAM_POOLS } from '$core/edge/edge.operations';
 import { PENDING_BUMPS, type BumpEntry } from '$core/maintenance/maintenance.consumes';
 import { PENDING_BUMPS_LIST } from '$core/maintenance/maintenance.operations';
+import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
-/**
- * The domain events after which bumps may have moved: a release or an artifact that makes a bump
- * owed, a build that ends a bump's run, and a release request that changes or moves a bump's
- * release (`ReleaseRequestStateChanged` is the only event a release's READY → RELEASED →
- * FINALIZED sends for a repository with no deployment).
- */
-export const BUMP_EVENTS = [
-  'SoftwareRelease',
-  'SCMRelease',
-  'BuildSuccessful',
-  'BuildFailed',
-  'ReleaseRequestChanged',
-  'ReleaseRequestStateChanged',
-] as const;
+/** The domain events after which bumps may have moved (`$core/maintenance/bump-events.ts`). */
+export { BUMP_EVENTS } from '$core/maintenance/bump-events';
 
 /** How long a burst of domain events waits before the bumps are read again. */
 export { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
@@ -61,6 +59,11 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
  * (`qitsEntityList`), each row its bump (`qitsEntity`, by `id`), each value its field or the fields
  * it is derived from (`qitsField`); each change line its change, by the dependency's `name`.
  *
+ * Each row's repository opens the bump's page in the open project (`open-menu-bump`,
+ * `projects/<slug>/maintenance/bumps/<id>`, qits-2332), closing the menu. Bumps are the
+ * platform's, so a bump of another project's repository is linked in the open one too: its page
+ * reads the bump by id alone. With no project open, the rows are not links.
+ *
  * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): its own
  * `qitsResource` over `UPSTREAM_POOLS` (the edge's `getUpstreamPools`, on the page's own origin;
  * qits-2220, pacted with qits-edge-service), read on the first opening and again on every later
@@ -73,10 +76,11 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
 @Component({
   selector: 'app-bumps-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Dropdown, QitsEntity, QitsEntityList, QitsField, Spinner],
+  imports: [Dropdown, QitsEntity, QitsEntityList, QitsExit, QitsField, Spinner],
   host: { class: 'inline-flex' },
   template: `
     <ui-dropdown
+      #menu
       label="Version bumps"
       panelLabel="Pending version bumps"
       panelId="bumps-menu"
@@ -109,12 +113,25 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
                 entityKey="id"
               >
                 <div class="flex items-baseline justify-between gap-2">
-                  <span
-                    class="truncate text-sm font-semibold text-fg"
-                    [fieldOf]="bump"
-                    qitsField="repository"
-                    >{{ bump.repository }}</span
-                  >
+                  @if (slug()) {
+                    <a
+                      class="truncate text-sm font-semibold text-accent no-underline hover:underline"
+                      [qitsExit]="opening.bump"
+                      [exitParams]="{ slug: slug(), bumpId: bump.id ?? '' }"
+                      [title]="'The bump of ' + (bump.repository ?? '')"
+                      (click)="menu.close()"
+                      [fieldOf]="bump"
+                      qitsField="repository"
+                      >{{ bump.repository }}</a
+                    >
+                  } @else {
+                    <span
+                      class="truncate text-sm font-semibold text-fg"
+                      [fieldOf]="bump"
+                      qitsField="repository"
+                      >{{ bump.repository }}</span
+                    >
+                  }
                   <span class="flex shrink-0 gap-1">
                     <span
                       class="rounded bg-surface-muted px-1.5 text-[0.6875rem] leading-4 text-fg-soft"
@@ -200,6 +217,16 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
   `,
 })
 export class BumpsMenu {
+  private readonly selected = inject(SelectedProject);
+
+  /** A bump's page in the open project (qits-2332). */
+  protected readonly opening = outcomes('open-menu-bump', {
+    bump: exit('projects/:slug/maintenance/bumps/:bumpId'),
+  });
+
+  /** The open project's slug; `''` with no project open, when no row is a link. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
   /** Whether the menu has been opened: nothing is read before. */
   private readonly asked = signal(false);
 
