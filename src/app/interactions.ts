@@ -353,6 +353,13 @@ export const INTERACTIONS = {
   'open-project-event-subject':
     'A release request or work item an event names on the Events page opens its page',
   /**
+   * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
+   * on its first opening.
+   */
+  'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
+  /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
+  'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
+  /**
    * `project-docs.page.ts` via `DOCS_SITES` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section.
    */
@@ -362,13 +369,6 @@ export const INTERACTIONS = {
    * moves it here), same tab. Leaves the app, and names no pact.
    */
   'open-docs-site': 'A docs site’s row on the Docs page opens its reader',
-  /**
-   * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
-   * on its first opening.
-   */
-  'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
-  /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
-  'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspaceActivity`
    * (`OPEN_WORKSPACES`, qits-2146): the ACTIVE workspaces bound to work items, one request per
