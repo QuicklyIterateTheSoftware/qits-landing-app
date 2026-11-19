@@ -10,11 +10,7 @@ import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { client as maintenanceClient } from '../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../api/maintenance/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import {
-  heldBy,
-  isRecorded,
-  maintenanceGoldenMasters as masters,
-} from '../../../testing/golden-masters';
+import { heldBy, maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
 import { PENDING_BUMPS } from './maintenance.consumes';
 import {
   MAINTENANCE_ADOPTION,
@@ -68,9 +64,8 @@ import {
  * release whose two downstream repositories are both still PENDING ("a repository with downstream
  * components", at its fixed version 2026.905.1), one some consumers ADOPTED, with a repository two
  * parents reach ("a release some consumers adopted"), and one nobody consumes ("a release nobody
- * consumes", `adopters: []`). The last two are recorded from a later qits-maintenance release than
- * the pinned `@qits/maintenance-golden-masters`: their interactions skip themselves until the pin
- * reaches them. A field under a recorded `null` (a PENDING adopter's `adoptedVersion` and
+ * consumes", `adopters: []`; both from `@qits/maintenance-golden-masters` 2026.1119.183438 on). A
+ * field under a recorded `null` (a PENDING adopter's `adoptedVersion` and
  * `adoptedAt`) is bound as that `null` (`heldBy` keeps a path the recording holds).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
@@ -395,34 +390,28 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(adopters.every((a) => a.adoptedVersion === null && a.adoptedAt === null)).toBe(true);
     }));
 
-  it.skipIf(!isRecorded(ADOPTED, MAINTENANCE_ADOPTION.operationId, masters))(
-    'show-adoption: a release some consumers adopted, one repository two parents reach',
-    () =>
-      given(MAINTENANCE_ADOPTION, ADOPTED, 'show-adoption').executeTest(async (server) => {
-        const { data, error } = await at(server.url, () =>
-          MAINTENANCE_ADOPTION.fetch(releaseOf(ADOPTED)),
-        );
-        expect(error).toBeUndefined();
-        // The mock answers each row with the recorded first one (a type match per element).
-        const adopters = data?.adopters ?? [];
-        expect(adopters).toHaveLength(3);
-        expect(adopters.every((a) => !!a.repository && !!a.state)).toBe(true);
-        expect(adopters.every((a) => (a.via ?? []).length > 0)).toBe(true);
-      }),
-  );
+  it('show-adoption: a release some consumers adopted, one repository two parents reach', () =>
+    given(MAINTENANCE_ADOPTION, ADOPTED, 'show-adoption').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_ADOPTION.fetch(releaseOf(ADOPTED)),
+      );
+      expect(error).toBeUndefined();
+      // The mock answers each row with the recorded first one (a type match per element).
+      const adopters = data?.adopters ?? [];
+      expect(adopters).toHaveLength(3);
+      expect(adopters.every((a) => !!a.repository && !!a.state)).toBe(true);
+      expect(adopters.every((a) => (a.via ?? []).length > 0)).toBe(true);
+    }));
 
-  it.skipIf(!isRecorded(NOBODY, MAINTENANCE_ADOPTION.operationId, masters))(
-    'show-adoption: a release nobody consumes',
-    () =>
-      given(MAINTENANCE_ADOPTION, NOBODY, 'show-adoption').executeTest(async (server) => {
-        const { data, error } = await at(server.url, () =>
-          MAINTENANCE_ADOPTION.fetch(releaseOf(NOBODY)),
-        );
-        expect(error).toBeUndefined();
-        expect(data?.packages?.length).toBeGreaterThan(0);
-        expect(data?.adopters).toEqual([]);
-      }),
-  );
+  it('show-adoption: a release nobody consumes', () =>
+    given(MAINTENANCE_ADOPTION, NOBODY, 'show-adoption').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_ADOPTION.fetch(releaseOf(NOBODY)),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.packages?.length).toBeGreaterThan(0);
+      expect(data?.adopters).toEqual([]);
+    }));
 
   it('search-project-dependencies: the inventory’s repositories, beside a matching search', () =>
     given(MAINTENANCE_REPOSITORIES, MATCHING, 'search-project-dependencies').executeTest(

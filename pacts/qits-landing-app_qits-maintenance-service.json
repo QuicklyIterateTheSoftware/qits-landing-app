@@ -1241,6 +1241,567 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a release nobody consumes",
+          "params": {
+            "repoName": "contract-ui-jslib",
+            "version": "2026.905.1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "repository": {
+              "expression": "${repoName}",
+              "type": "ProviderState"
+            },
+            "version": {
+              "expression": "${version}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/adoption/by-release",
+        "query": {
+          "repository": [
+            "contract-ui-jslib"
+          ],
+          "version": [
+            "2026.905.1"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "adopters": [],
+            "packages": [
+              {
+                "ecosystem": "npm",
+                "name": "@qits/contract-ui"
+              }
+            ],
+            "repository": "contract-ui-jslib",
+            "version": "2026.905.1"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.packages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getAdoptionByRelease"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-adoption",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/adoption/:repository/:version"
+          }
+        }
+      },
+      "description": "show-adoption: getAdoptionByRelease",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a release some consumers adopted",
+          "params": {
+            "repoName": "contract-ui-jslib",
+            "version": "2026.905.1"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "repository": {
+              "expression": "${repoName}",
+              "type": "ProviderState"
+            },
+            "version": {
+              "expression": "${version}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/adoption/by-release",
+        "query": {
+          "repository": [
+            "contract-ui-jslib"
+          ],
+          "version": [
+            "2026.905.1"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "adopters": [
+              {
+                "adoptedAt": null,
+                "adoptedVersion": null,
+                "archetype": "FRONTEND",
+                "depth": 1,
+                "repository": "contract-admin-frontend",
+                "repositoryStatus": "OK",
+                "state": "PENDING",
+                "via": [
+                  "contract-ui-jslib"
+                ]
+              },
+              {
+                "adoptedAt": "2026-01-01T00:00:00Z",
+                "adoptedVersion": "2026.905.2",
+                "archetype": "FRONTEND",
+                "depth": 1,
+                "repository": "contract-frontend",
+                "repositoryStatus": "OK",
+                "state": "ADOPTED",
+                "via": [
+                  "contract-ui-jslib"
+                ]
+              },
+              {
+                "adoptedAt": null,
+                "adoptedVersion": null,
+                "archetype": "SERVICE",
+                "depth": 2,
+                "repository": "contract-service",
+                "repositoryStatus": "OK",
+                "state": "PENDING",
+                "via": [
+                  "contract-admin-frontend",
+                  "contract-admin-frontend"
+                ]
+              }
+            ],
+            "packages": [
+              {
+                "ecosystem": "npm",
+                "name": "@qits/contract-ui"
+              }
+            ],
+            "repository": "contract-ui-jslib",
+            "version": "2026.905.1"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.adopters": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.depth": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repositoryStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.via": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.via[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.adoptedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.adoptedVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.depth": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repositoryStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.via": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.via[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.archetype": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.depth": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.repositoryStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.via": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.via[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.packages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getAdoptionByRelease"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-adoption",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/adoption/:repository/:version"
+          }
+        }
+      },
+      "description": "show-adoption: getAdoptionByRelease",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a repository with downstream components",
           "params": {
             "repoName": "contract-ui-jslib",

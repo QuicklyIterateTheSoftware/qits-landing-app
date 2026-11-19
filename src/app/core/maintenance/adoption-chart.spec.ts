@@ -17,8 +17,9 @@ import type { Adopter, AdoptionJourney } from './maintenance.consumes';
  * `adoption-page.spec.ts` layout cases. The cases the chart exists for: one card per repository
  * however many paths reach it, a column per hop, edges only to drawn parents, depth 1 always off
  * the release, and a column ordered by where its parents sit rather than by name. The adopters
- * here are hand-built shapes (a pure function's inputs, not a backend answer), the last case
- * qits-maintenance's recording of "a repository with downstream components".
+ * here are hand-built shapes (a pure function's inputs, not a backend answer), the last cases
+ * qits-maintenance's recordings of "a repository with downstream components" and "a release some
+ * consumers adopted".
  */
 const ROOT = 'qits-eventstream';
 const ADDRESS = { repository: ROOT, version: '2026.905.1' };
@@ -260,5 +261,23 @@ describe('adoptionChart', () => {
       'contract-frontend->contract-service',
     ]);
     expect(chart.columns.map((c) => c.summary)).toEqual(['', '0/1 carrying it', '0/1 carrying it']);
+  });
+
+  it('draws the recorded journey of "a release some consumers adopted", one card two parents reach', () => {
+    const journey = maintenanceGoldenMaster<AdoptionJourney>(
+      'a release some consumers adopted',
+      'getAdoptionByRelease',
+    );
+    const chart = adoptionChart(journey, { repository: '', version: '' });
+    expect(column(chart, 1)).toEqual(['contract-admin-frontend', 'contract-frontend']);
+    expect(column(chart, 2)).toEqual(['contract-service']);
+    expect(node(chart, 'contract-service')?.row).toBe(0);
+    expect(node(chart, 'contract-service')?.reachedFrom).toBe(
+      'contract-admin-frontend, contract-frontend',
+    );
+    expect(chart.edges.filter((edge) => edge.adopted).map((edge) => edge.to)).toEqual([
+      'contract-frontend',
+    ]);
+    expect(chart.columns.map((c) => c.summary)).toEqual(['', '1/2 carrying it', '0/1 carrying it']);
   });
 });

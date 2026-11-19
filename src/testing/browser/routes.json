@@ -662,6 +662,18 @@
   "src/app/routes/projects/[slug]/maintenance/adoption/[repository]/[version]/maintenance-adoption.page.browser.spec.ts": [
     {
       "provider": "qits-maintenance-service",
+      "state": "a release nobody consumes",
+      "operationId": "getAdoptionByRelease",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a release some consumers adopted",
+      "operationId": "getAdoptionByRelease",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-maintenance-service",
       "state": "a repository with downstream components",
       "operationId": "getAdoptionByRelease",
       "route": "projects/:slug/maintenance/adoption/:repository/:version"

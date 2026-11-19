@@ -686,9 +686,8 @@ reached no repository."; no package a notice that the service holds no bill of m
 "Adoption of this release" leads here (`open-release-adoption`, an in-app exit; `releaseLinks` gives
 it no `app`), in place of the retired release train link. The pact reads it in "a repository with
 downstream components" (both adopters PENDING, the fixed version 2026.905.1), "a release some
-consumers adopted" and "a release nobody consumes"; the last two, and their browser tests, skip
-themselves until the `@qits/maintenance-golden-masters` pin records them. A release with no package
-is no recording's: the plain spec derives it.
+consumers adopted" and "a release nobody consumes" (from `@qits/maintenance-golden-masters`
+2026.1119.183438 on). A release with no package is no recording's: the plain spec derives it.
 
 ## Styling
 

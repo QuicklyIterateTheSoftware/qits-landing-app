@@ -17,9 +17,8 @@ import { provideTestPlatformOrigins } from '../../../../../../../../testing/plat
  * downstream components" (`pending`: contract-frontend one hop out, contract-service two, both
  * PENDING), "a release some consumers adopted" (`populated`: contract-admin-frontend PENDING and
  * contract-frontend ADOPTED at 2026.905.2 one hop out, contract-service two hops out reached from
- * both) and "a release nobody consumes" (`empty`). The last two are recorded from a later
- * qits-maintenance release than the pinned one: until the pin reaches them (and the pact holds
- * them), the reader refuses them and their tests skip themselves. A refusal is a 403 with no body,
+ * both) and "a release nobody consumes" (`empty`), the last two from
+ * `@qits/maintenance-golden-masters` 2026.1119.183438 on. A refusal is a 403 with no body,
  * as the service answers a credential without a staff role; a failure a 500. A release with no
  * package is no recording's: the plain spec covers it.
  *
@@ -87,13 +86,6 @@ describe('MaintenanceAdoptionPage (screenshots)', () => {
     return { opened, view: page.elementLocator(opened.page) };
   }
 
-  /** Whether `state` is recorded in the pinned golden masters (and held by the pact). */
-  const recorded = (state: string) =>
-    goldenMaster(state, 'getAdoptionByRelease', 'qits-maintenance').then(
-      () => true,
-      () => false,
-    );
-
   const card = (root: Element, repository: string) =>
     root.querySelector<HTMLElement>(`[data-card][data-repository="${repository}"]`);
 
@@ -125,8 +117,7 @@ describe('MaintenanceAdoptionPage (screenshots)', () => {
     await shootShellMenus(opened, 'pending');
   });
 
-  it('shows a release some consumers adopted, one repository reached from two', async (context) => {
-    if (!(await recorded(ADOPTED))) context.skip();
+  it('shows a release some consumers adopted, one repository reached from two', async () => {
     const { opened, view } = await render(ADOPTED);
     await expect
       .element(view.getByText('3 repositories downstream of this release, 1 carrying it.'))
@@ -152,8 +143,7 @@ describe('MaintenanceAdoptionPage (screenshots)', () => {
     expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   });
 
-  it('says a release nobody consumes reached no repository', async (context) => {
-    if (!(await recorded(NOBODY))) context.skip();
+  it('says a release nobody consumes reached no repository', async () => {
     const { opened, view } = await render(NOBODY);
     await expect.element(view.getByText('This release reached no repository.')).toBeVisible();
     expect(opened.page.querySelector('[data-chart]')).toBeNull();

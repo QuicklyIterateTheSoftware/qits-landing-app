@@ -20,11 +20,15 @@ import { MaintenanceAdoptionPage, packagesLine } from './maintenance-adoption.pa
 /**
  * The adoption page (qits-2333), its one read answered with qits-maintenance's recording of "a
  * repository with downstream components" (contract-ui-jslib@2026.905.1, publishing npm
- * `@qits/contract-ui`; contract-frontend one hop out and contract-service two, both PENDING). The
- * cases no recording in the pinned golden masters holds are derived from it, each saying how: one
- * adopter ADOPTED, no adopter at all, no package. The open project is qits-projects' recorded one.
+ * `@qits/contract-ui`; contract-frontend one hop out and contract-service two, both PENDING), "a
+ * release some consumers adopted" (contract-frontend ADOPTED at 2026.905.2, contract-service reached
+ * from both frontends) and "a release nobody consumes" (no adopter), all of the same release. The
+ * cases no recording holds are derived from the first, each saying how: an adopter ABSENT or not
+ * in the inventory, no package. The open project is qits-projects' recorded one.
  */
 const DOWNSTREAM = 'a repository with downstream components';
+const ADOPTED = 'a release some consumers adopted';
+const NOBODY = 'a release nobody consumes';
 
 /** The old maintenance app's page origin, so an adopter links its page (configuration). */
 const MAINTENANCE = 'https://maintenance.qits.example.test';
@@ -160,20 +164,7 @@ describe('MaintenanceAdoptionPage', () => {
   });
 
   it('names the version an adopted card carries and when', async () => {
-    // One adopter ADOPTED, derived from the recording: the pinned golden masters record none.
-    const recorded = journey();
-    const adopted = {
-      ...recorded,
-      adopters: [
-        {
-          ...recorded.adopters[0],
-          state: 'ADOPTED',
-          adoptedVersion: '2026.905.2',
-          adoptedAt: '2026-01-01T00:00:00Z',
-        },
-        recorded.adopters[1],
-      ],
-    };
+    const adopted = maintenanceGoldenMaster(ADOPTED, 'getAdoptionByRelease');
     const { element } = await render({ body: adopted });
     const frontend = card(element, 'contract-frontend')!;
     expect(text(frontend.querySelector('[data-state]'))).toBe('ADOPTED');
@@ -181,8 +172,13 @@ describe('MaintenanceAdoptionPage', () => {
     expect(text(frontend)).toContain('2026.905.2');
     expect(text(frontend)).toContain('1 Jan 2026');
     expect(text(element.querySelector('[data-caption]'))).toBe(
-      '2 repositories downstream of this release, 1 carrying it.',
+      '3 repositories downstream of this release, 1 carrying it.',
     );
+    // contract-service is one card, reached from both frontends.
+    expect(
+      element.querySelectorAll('[data-card][data-repository="contract-service"]'),
+    ).toHaveLength(1);
+    expect(element.querySelectorAll('path[data-to="contract-service"]')).toHaveLength(2);
     expect(
       element.querySelector('path[data-to="contract-frontend"]')?.getAttribute('class'),
     ).toContain('stroke-accent');
@@ -216,8 +212,9 @@ describe('MaintenanceAdoptionPage', () => {
   });
 
   it('says a release reached no repository rather than drawing one card', async () => {
-    // No adopter, derived from the recording (as "a release nobody consumes" records it).
-    const { element } = await render({ body: { ...journey(), adopters: [] } });
+    const { element } = await render({
+      body: maintenanceGoldenMaster(NOBODY, 'getAdoptionByRelease'),
+    });
     expect(text(element.querySelector('[data-empty]'))).toBe('This release reached no repository.');
     expect(element.querySelector('[data-chart]')).toBeNull();
   });
