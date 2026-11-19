@@ -140,10 +140,15 @@ describe('MaintenanceArtifactsPage (screenshots)', () => {
     const href = decodeURIComponent(core.element().getAttribute('href') ?? '');
     expect(href).toContain('ecosystem=maven');
     expect(href).toContain('name=eu.wohlben.qits:contract-core');
-    await expect.element(view.getByText('contract-daemon', { exact: true }).first()).toBeVisible();
-    await expect
-      .element(view.getByRole('link', { name: 'contract-daemon' }))
-      .not.toBeInTheDocument();
+    // The daemon's name is plain; its producing repository (contract-daemon too) is a link to the
+    // repository's page (qits-2334), not to a detail.
+    const daemon = rows(view, 'Released artifacts').find(
+      (row) => row.element().querySelector('.font-mono')?.textContent === 'contract-daemon',
+    )!;
+    expect(daemon.element().querySelector('.font-mono')?.tagName).toBe('SPAN');
+    expect(
+      daemon.element().querySelector('a[href*="/maintenance/repositories/contract-daemon"]'),
+    ).not.toBeNull();
 
     await userEvent.click(core);
     await opened.idle();

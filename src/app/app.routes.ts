@@ -459,6 +459,14 @@ export const routes: Routes = [
                 (m) => m.MaintenanceBumpPage,
               ),
           },
+          {
+            // A detail page (qits-2334): no sidebar entry; the sidebar keeps Maintenance open.
+            path: 'repositories/:name',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/maintenance/repositories/[name]/maintenance-repository.page').then(
+                (m) => m.MaintenanceRepositoryPage,
+              ),
+          },
         ],
       },
       {

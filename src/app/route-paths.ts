@@ -30,6 +30,7 @@ export type RoutePath =
   | 'projects/:slug/maintenance/artifacts'
   | 'projects/:slug/maintenance/bumps/:bumpId'
   | 'projects/:slug/maintenance/dependencies'
+  | 'projects/:slug/maintenance/repositories/:name'
   | 'projects/:slug/observability'
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/release-requests'

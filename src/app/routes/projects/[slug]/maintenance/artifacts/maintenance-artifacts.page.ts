@@ -2,7 +2,15 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  QitsApiError,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
+import { currencyOf, type Currency } from '$core/maintenance/currency';
 import type { ArtifactDependents, ArtifactEntry } from '$core/maintenance/maintenance.consumes';
 import {
   MAINTENANCE_ARTIFACTS,
@@ -10,6 +18,7 @@ import {
   MAINTENANCE_REPOSITORIES,
 } from '$core/maintenance/maintenance.operations';
 import { projectRepositories } from '$core/maintenance/project-repositories';
+import { MaintenanceRepositoryLinks } from '$core/maintenance/repository-links';
 import { SelectedProject } from '$core/projects/selected-project';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
@@ -19,6 +28,9 @@ import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
+// Moved to `$core/maintenance/currency` (qits-2334, shared with the repository page).
+export { currencyOf, type Currency };
+
 /** A released artifact of the open project, keyed by its ecosystem and name. */
 export interface ProjectArtifact extends ArtifactEntry {
   /** `<ecosystem>:<name>`, the entity's key: a name alone may be in two ecosystems. */
@@ -27,9 +39,6 @@ export interface ProjectArtifact extends ArtifactEntry {
 
 /** One dependent of an artifact, as the detail reads it. */
 export type ArtifactDependent = NonNullable<ArtifactDependents['dependents']>[number];
-
-/** How a dependent's embedded copy stands against the artifact's latest version. */
-export type Currency = 'current' | 'behind' | 'unknown';
 
 /** A dependent with its currency, keyed by the artifact it is. */
 export interface ShownDependent extends ArtifactDependent {
@@ -101,15 +110,6 @@ export function artifactsCount(artifacts: readonly ProjectArtifact[]): string {
   );
 }
 
-/**
- * How `embedded` stands against `latest`: current when equal, behind when not, unknown when the
- * latest is (the old frontend's `currencyOf`, `dependents-table.ts`).
- */
-export function currencyOf(embedded: string | undefined, latest: string | undefined): Currency {
-  if (!latest) return 'unknown';
-  return embedded === latest ? 'current' : 'behind';
-}
-
 /** The dependents with their currency, the behind ones first, then by repository and artifact. */
 export function shownDependents(answer: ArtifactDependents): readonly ShownDependent[] {
   const rank: Readonly<Record<Currency, number>> = { behind: 0, unknown: 1, current: 1 };
@@ -173,8 +173,9 @@ function badRequest(read: { status(): string; error(): unknown }): string | unde
  * `listRepositories`) and every released artifact (`MAINTENANCE_ARTIFACTS`, `listArtifacts`). The
  * doors take no project, so the page keeps the artifacts whose `repository` is one of the open
  * project's. Artifacts with a behind dependent come first, then by name; each row shows the name,
- * ecosystem, producing repository (plain text until it has a page, qits-2334), the newest released
- * version and how long ago it was built, the latest (unknown when the service has none), the SBOM
+ * ecosystem, producing repository (linked to its maintenance page, `open-maintenance-repository`,
+ * qits-2334), the newest released version and how long ago it was built, the latest (unknown when
+ * the service has none), the SBOM
  * status, and how many newest releases of ours embed it and how many of those an older copy. The
  * heading counts the artifacts, those shipped behind and those whose SBOM is missing or failed (a
  * release whose contents are unknown is absent from every dependents list). "Only behind"
@@ -185,8 +186,8 @@ function badRequest(read: { status(): string; error(): unknown }): string | unde
  * `listDependencyDependents`), keeping the listing's reads for the artifact's own row (its newest
  * release, when it was built, its SBOM status). Every released artifact whose newest release embeds
  * it, wherever it is (not filtered by project: the counts match the listing's), with its
- * repository, its name and ecosystem, the embedded version, direct or transitive, when it was built,
- * and current, behind or unknown against the latest; the behind ones first, then by repository. A
+ * repository (linked to its maintenance page), its name and ecosystem, the embedded version,
+ * direct or transitive, when it was built, and current, behind or unknown against the latest; the behind ones first, then by repository. A
  * back link returns to the listing, keeping `behind`. A 400 (a hand-typed daemon link) shows the
  * service's reason.
  *
@@ -209,6 +210,7 @@ function badRequest(read: { status(): string; error(): unknown }): string | unde
     PageLayoutComponent,
     QitsEntity,
     QitsEntityList,
+    QitsExit,
     QitsField,
     RouterLink,
     Spinner,
@@ -315,11 +317,13 @@ function badRequest(read: { status(): string; error(): unknown }): string | unde
                         >{{ artifact.ecosystem }}</span
                       >
                     </span>
-                    <span
-                      class="truncate text-fg-soft"
+                    <a
+                      class="truncate text-accent no-underline hover:underline"
+                      [qitsExit]="repositoryLinks.opening.repository"
+                      [exitParams]="repositoryLinks.params(artifact.repository)"
                       [fieldOf]="artifact"
                       qitsField="repository"
-                      >{{ artifact.repository }}</span
+                      >{{ artifact.repository }}</a
                     >
                     <span class="flex flex-wrap items-baseline gap-x-2 text-xs">
                       <span
@@ -457,9 +461,14 @@ function badRequest(read: { status(): string; error(): unknown }): string | unde
                   [qitsEntity]="dependent"
                   entityKey="key"
                 >
-                  <span class="truncate text-fg" [fieldOf]="dependent" qitsField="repository">{{
-                    dependent.repository
-                  }}</span>
+                  <a
+                    class="truncate text-accent no-underline hover:underline"
+                    [qitsExit]="repositoryLinks.opening.repository"
+                    [exitParams]="repositoryLinks.params(dependent.repository)"
+                    [fieldOf]="dependent"
+                    qitsField="repository"
+                    >{{ dependent.repository }}</a
+                  >
                   <span class="flex min-w-0 flex-wrap items-baseline gap-x-2 max-md:col-start-1">
                     <span
                       class="font-mono break-all text-fg-soft"
@@ -519,6 +528,8 @@ function badRequest(read: { status(): string; error(): unknown }): string | unde
 })
 export class MaintenanceArtifactsPage {
   private readonly selected = inject(SelectedProject);
+  /** The producing repository and each dependent's link their maintenance pages. */
+  protected readonly repositoryLinks = inject(MaintenanceRepositoryLinks);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
