@@ -606,9 +606,9 @@ one deployment request" (the last two, and their browser tests, skip themselves 
 records them).
 
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
-component whose pages are its children (`artifacts`, qits-2330; `bumps/:bumpId`, qits-2332; the
-external, adoption, repository and trains pages come as their own children later: qits-2331,
-qits-2333 to qits-2335); its own
+component whose pages are its children (`artifacts`, qits-2330; `bumps/:bumpId`, qits-2332;
+`repositories/:name`, qits-2334; the external, adoption and trains pages come as their own children
+later: qits-2331, qits-2333, qits-2335); its own
 address redirects to `dependencies` by a relative `redirectTo`, which keeps the query. The
 sidebar's Maintenance entry lists the section's pages below it while one is open
 (`open-sidebar-maintenance-page`).
@@ -619,7 +619,7 @@ with `kind=INTERNAL` and `kind=EXTERNAL`, never the bare listing, which mixes in
 REACTOR modules). The doors take no project, so the page keeps the pins of the repositories whose
 `project` is `SelectedProject`'s id and drops a dependency left with none. Two sections, Internal
 and External, each headed by its count of dependencies and behind pins; within one, dependencies
-with a behind (`pending`) pin first, then by name, each pin with its repository (plain text),
+with a behind (`pending`) pin first, then by name, each pin with its repository (linked to its repository page, `open-maintenance-repository`),
 version, manifest and a "behind" tag; a null `latest` shows as unknown with the `error` beside it.
 "Only behind" is `?behind=true` (written with `replaceUrl`). The name search (qits-2331, which
 replaces qits-maintenance-frontend's `external/dependencies` page) is `?name=<glob>`, pushed (Back
@@ -636,14 +636,15 @@ and who still ships an old copy, read off the SBOMs; it is not the global `/arti
 artifact store, qits-2316). The listing reads `MAINTENANCE_REPOSITORIES` and
 `MAINTENANCE_ARTIFACTS` (`listArtifacts`) and keeps the artifacts whose `repository` is one of the
 project's: artifacts with a behind dependent (`behindCount > 0`) first, then by name, each with its
-ecosystem, repository (plain text), newest version and build time, latest (unknown when null), SBOM
+ecosystem, repository (linked to its repository page), newest version and build time, latest (unknown when null), SBOM
 status, dependents and behind counts; the heading counts the artifacts, those shipped behind and
 those whose SBOM is MISSING or FAILED. "Only behind" is `?behind=true`, as on Dependencies. A name
 links to the detail on the same page (`?ecosystem=&name=`, `MAINTENANCE_DEPENDENTS`,
 `listDependencyDependents`), except a `daemon` row's: the door reads maven, npm and docker only and
 answers anything else with a 400, whose `message` (`errorConsumes`) the detail shows. The detail
 keeps the listing's reads for the artifact's own row, and lists every dependent, not filtered by
-project, as current, behind or unknown (`currencyOf`: `embeddedVersion` against `latest`), the
+project, each repository linked to its repository page, as current, behind or unknown
+(`currencyOf`, `core/maintenance/currency.ts`: `embeddedVersion` against `latest`), the
 behind ones first, then by repository; its back link drops `ecosystem` and `name` and keeps
 `behind`. A 403 on any read says so; Refresh reads the open view's reads again.
 
@@ -651,7 +652,7 @@ behind ones first, then by repository; its back link drops `ecosystem` and `name
 sidebar entry (the sidebar keeps Maintenance open). It reads only `MAINTENANCE_BUMP` (`getBump`,
 no project filter: the id is the whole address), again after `BUMP_EVENTS`
 (`core/maintenance/bump-events.ts`, shared with the bumps menu) only while the bump is REQUESTED
-or RUNNING. It shows the group and repository with the status as a chip (any status, SUPERSEDED
+or RUNNING. It shows the group and repository (linked to its repository page) with the status as a chip (any status, SUPERSEDED
 or unknown, as its word), the facts, the release request (a uuid links
 `projects/<slug>/release-requests/<id>`, `open-bump-release-request`; the sentinels `converged`
 and `refused` are words with what they mean; null is none), `releaseState` and `releaseDetail`
@@ -664,6 +665,35 @@ a refusal. The bumps menu's rows link the page in the open project (`open-menu-b
 project open they are plain. The pact reads `getBump` in "pending bumps" (`releasedBumpId`), "a
 bump that changed nothing", "a failed bump" (`bumpId`) and "no such bump" (404, status only); a
 field under a recorded `null` (`failure`) is bound only where the recording holds it (`heldBy`).
+
+`maintenance/repositories/<name>` (`MaintenanceRepositoryPage`, qits-2334) is one repository's
+maintenance, a detail page with no sidebar entry, keyed by the repository's name (`qits-ci-service`,
+never the application), no project filter. It reads `MAINTENANCE_REPOSITORY` (`getRepository`),
+`MAINTENANCE_REPOSITORY_BUMPS` (`listBumps?repository=&limit=20`),
+`MAINTENANCE_REPOSITORY_DEPENDENTS` (`listRepositoryDependents`) and
+`MAINTENANCE_REPOSITORY_DOWNSTREAM` (`getRepositoryDownstream`); the first two again after
+`BUMP_EVENTS` naming the repository (`namesRepository`: its payload's `repository`,
+`repositoryName` or `repoName` is the name, or it names none by name), never on a timer; the other
+two once; Refresh reads all four. The heading is the name, the status as a chip (any word), the last
+scan and `message` as plain text; no Groups panel (every group is NONE or RETIRED since qits-1133).
+Pins: Internal and External tables (`patterns/maintenance/pin-table/`, `pinTables`), pending first
+by the service's `pending`, and REACTOR and UNRESOLVED pins in a collapsed `<details>` with their
+count; under each table only its behind transitives (by `via`), captioned with the total
+("817 transitives, 11 behind"). Recent bumps: the status chip links the bump page
+(`open-repository-bump`), kind (`group`), trigger, started, changes count, the release request (a
+uuid links its page, `open-repository-bump-release-request`; the sentinels are words; null is
+none) and the message. Dependents: one group per published artifact (name, ecosystem, latest),
+each dependent's repository linked, embedded version, direct or transitive, current or behind
+(`currencyOf`). Downstream: depth, repository (linked), archetype and `via`, counted in the caption,
+every row as the inventory gives it. Each section has its own one-line empty text. A 404 on
+`getRepository` is "No repository <name> in the inventory." and nothing else (the other three answer
+empty for an unknown name); a 403 on any read a refusal. Every repository name in Maintenance (the
+Dependencies, Artifacts, bump and repository pages) links here through `MaintenanceRepositoryLinks`
+(`core/maintenance/repository-links.ts`, `open-maintenance-repository`); `core/maintenance/bump-model.ts`
+holds the bump status and release-request helpers both bump-showing pages share. The pact reads all
+four in "a repository with pins and bumps" (`contract-javalib`), "a repository with nothing pinned"
+(`contract-service`) and "no such repository" (`contract-unknown-service`, `getRepository` a 404
+binding the status only).
 
 ## Styling
 
