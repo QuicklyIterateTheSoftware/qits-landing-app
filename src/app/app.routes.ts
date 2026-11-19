@@ -69,7 +69,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * epic qits-1604).
  *
  * A project's docs are at `projects/<slug>/docs` (`ProjectDocsPage`, qits-2318): every site of
- * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`.
+ * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`. One repository's are at
+ * `docs/repositories/<repository name>` (`RepositoryDocsPage`, qits-2336): the sites whose newest
+ * version it published, narrowed by `?section=`. The fixed `repositories` segment keeps a
+ * repository's name from ever meaning a reader path under `docs/` (qits-2337); the sidebar keeps
+ * Docs current below it.
  *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
@@ -423,6 +427,13 @@ export const routes: Routes = [
         path: 'projects/:slug/docs',
         loadComponent: () =>
           import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
+      },
+      {
+        path: 'projects/:slug/docs/repositories/:repo',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page').then(
+            (m) => m.RepositoryDocsPage,
+          ),
       },
       {
         path: 'projects/:slug/events',

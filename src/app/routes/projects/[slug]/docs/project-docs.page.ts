@@ -3,19 +3,24 @@ import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } fro
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
+  exit,
   external,
   outcomes,
   QitsEntity,
   QitsEntityList,
+  QitsExit,
   QitsField,
   qitsResource,
   QitsTriggers,
+  type QitsDomainEvent,
 } from '@qits/angular';
-import { docBlocks, sectionOf, shortNameOf } from '$core/docs/doc-sections';
+import { docBlocks, projectRepositoryOf, sectionOf, shortNameOf } from '$core/docs/doc-sections';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { docsReadPath } from '$core/release-requests/release-links';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
+import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
+import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { loadState } from '$core/resources/load-state';
 import { DOCS_REPOSITORY, type DocsSite, type DocsSites } from '$core/ui-builder/docs.consumes';
 import { DOCS_SITES } from '$core/ui-builder/docs.operations';
@@ -44,13 +49,19 @@ const NO_SITES: DocsSites = { sites: [] };
  * A row opens the site's reader, which still lives on the docs app until qits-2337 moves it here:
  * `open-docs-site` `open` leaves for `PlatformOrigins.page('docs')` + `/<slug>/read/<site>`
  * (`docsReadPath`, the release page's docs links without the version, so the newest), same tab.
+ * A row whose newest version one of the project's repositories published (`latestRepository`,
+ * `projectRepositoryOf`) names that repository beside it, a link to the repository's Docs page
+ * (`open-repository-docs` `repository`, qits-2336); any other row names no repository.
  *
- * It reads through its own `qitsResource`, in the browser only (the server render has no session),
- * and marks what it shows (qits-2141): the blocks are that read, each row a site by its name.
+ * It reads through its own `qitsResource`s, in the browser only (the server render has no
+ * session): the catalog, which the spinner follows, and the project's repositories
+ * (`PROJECT_REPOSITORIES`), for those links alone (a failed read shows none). It marks what it
+ * shows (qits-2141): the blocks are the catalog's read, each row a site by its name.
  *
- * Staleness (qits-1270): none followed. The docs store emits no domain event when a release
- * publishes a site, so nothing on the stream could say the catalog moved, and the rule forbids a
- * timer: Refresh reads the catalog again.
+ * Staleness (qits-1270): `SCMPublishCommit` to the wrapper's main branch (`movesWrapper`) → the
+ * project's repositories. The docs store emits no domain event when a release publishes a site, so
+ * nothing on the stream could say the catalog moved, and the rule forbids a timer: Refresh reads
+ * both again.
  */
 @Component({
   selector: 'app-project-docs-page',
@@ -60,6 +71,7 @@ const NO_SITES: DocsSites = { sites: [] };
     PageLayoutComponent,
     QitsEntity,
     QitsEntityList,
+    QitsExit,
     QitsField,
     QitsTriggers,
     RouterLink,
@@ -143,9 +155,13 @@ const NO_SITES: DocsSites = { sites: [] };
                   [attr.aria-label]="block.section.label"
                 >
                   @for (site of block.sites; track site.name) {
-                    <li [qitsEntity]="site" entityKey="name">
+                    <li
+                      class="flex flex-wrap items-baseline hover:bg-surface-muted"
+                      [qitsEntity]="site"
+                      entityKey="name"
+                    >
                       <a
-                        class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 px-3 py-2 no-underline hover:bg-surface-muted"
+                        class="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5 px-3 py-2 no-underline"
                         [attr.href]="href(site) || null"
                         [qitsTriggers]="href(site) ? [opening.open] : []"
                         (click)="open($event, site)"
@@ -184,6 +200,18 @@ const NO_SITES: DocsSites = { sites: [] };
                           >
                         </span>
                       </a>
+                      @if (repositoryOf(site); as repository) {
+                        <a
+                          class="px-3 py-2 font-mono text-xs break-all text-accent no-underline hover:underline"
+                          [qitsExit]="toRepository.repository"
+                          [exitParams]="{ slug: slug(), repo: repository }"
+                          [title]="'Docs of ' + repository"
+                          [fieldOf]="site"
+                          [qitsField]="marks.repository"
+                          data-repository
+                          >{{ repository }}</a
+                        >
+                      }
                     </li>
                   }
                 </ul>
@@ -227,6 +255,16 @@ export class ProjectDocsPage {
   /** A row: the site's reader on the docs app, until qits-2337 moves it here. Same tab. */
   protected readonly opening = outcomes('open-docs-site', { open: external('docs') });
 
+  /** A row's repository: that repository's Docs page (qits-2336). */
+  protected readonly toRepository = outcomes('open-repository-docs', {
+    repository: exit('projects/:slug/docs/repositories/:repo'),
+  });
+
+  /** The open project's slug, for the links to its repositories' Docs pages. */
+  protected readonly slug = computed(
+    () => this.selected.slug() ?? this.route.snapshot.paramMap.get('slug') ?? '',
+  );
+
   /** The marks over values a helper derives from the site (class constants, which the rule trusts). */
   protected readonly marks = {
     /** A section's heading and count: which sections show, and how full, is the sites' names. */
@@ -234,6 +272,8 @@ export class ProjectDocsPage {
     shortName: { derived: ['name'] },
     versionCount: { derived: ['versionCount'] },
     publishedAt: { derived: ['latestPublishedAt'] },
+    /** A row's repository: its publisher, when the project holds it. */
+    repository: { derived: ['latestRepository'] },
   } as const;
 
   /** The section filter's chosen and unchosen looks. */
@@ -274,10 +314,62 @@ export class ProjectDocsPage {
 
   protected readonly state = computed((): LoadState => loadState(this.sites));
 
-  /** Refresh: reads the catalog again (no domain event says it moved). */
+  /** The open project's id, in the browser only: the repositories' read waits for it. */
+  private readonly projectId = computed(() =>
+    this.browser ? this.selected.project()?.id : undefined,
+  );
+
+  /** The open project's repositories, read again after a commit to its wrapper's main branch. */
+  protected readonly repositories = qitsResource(
+    PROJECT_REPOSITORIES,
+    () => {
+      const projectId = this.projectId();
+      return projectId ? { path: { projectId } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: ['SCMPublishCommit'],
+        when: (event) => this.commitsToWrapper(event),
+      },
+    },
+  );
+
+  /** The repositories' answer, once there. */
+  private readonly repositoryAnswer = computed(() =>
+    this.repositories.hasValue() ? this.repositories.value() : undefined,
+  );
+
+  /** The project's repositories' names: a row links its publisher only when it is one of them. */
+  private readonly repositoryNames = computed(
+    () =>
+      new Set(
+        (this.repositoryAnswer()?.entries ?? []).flatMap((entry) =>
+          entry.repository?.name ? [entry.repository.name] : [],
+        ),
+      ),
+  );
+
+  /** Refresh: reads the catalog and the repositories again (no domain event says the catalog moved). */
   protected readonly actions: readonly Action[] = [
-    { label: 'Refresh', variant: 'muted', callback: () => this.sites.reload() },
+    {
+      label: 'Refresh',
+      variant: 'muted',
+      callback: () => {
+        this.sites.reload();
+        this.repositories.reload();
+      },
+    },
   ];
+
+  /** The project's repository that published the site's newest version, if any. */
+  protected repositoryOf(site: DocsSite): string | undefined {
+    return projectRepositoryOf(site, this.repositoryNames());
+  }
+
+  /** Whether a commit is to the wrapper's main branch, as the repositories read names them. */
+  private commitsToWrapper(event: QitsDomainEvent): boolean {
+    return movesWrapper(event, this.repositoryAnswer());
+  }
 
   /** The site's reader on the docs app, at its newest version; `''` while the origin is unknown. */
   protected href(site: DocsSite): string {

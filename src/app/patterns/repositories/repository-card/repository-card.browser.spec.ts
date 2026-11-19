@@ -21,8 +21,9 @@ const LINKED = ['contract-frontend', 'contract-service'];
  * card links its UI builder, and `contract-service` (SERVICE), whose card links its contracts and
  * entities. The slug is the recorded project's ("a project exists").
  *
- * Each link is a declared exit (`open-repository-pages`, epic qits-2000), shown by `linked` and
- * followed once, to a stub of the page it opens.
+ * Each link is a declared exit (`open-repository-pages`, epic qits-2000; every card's `Docs →`,
+ * `open-repository-docs`, qits-2336), shown by `linked` and followed once, to a stub of the page it
+ * opens.
  */
 @Component({
   imports: [RepositoryCard],
@@ -49,6 +50,7 @@ describe('RepositoryCard (screenshots)', () => {
           { path: 'projects/:slug/repositories/:repo/ui-builder', children: [] },
           { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
           { path: 'projects/:slug/repositories/:repo/entities', children: [] },
+          { path: 'projects/:slug/docs/repositories/:repo', children: [] },
         ]),
       ],
     });
@@ -76,6 +78,7 @@ describe('RepositoryCard (screenshots)', () => {
     await expect.element(locator.getByRole('link', { name: 'UI builder →' })).toBeVisible();
     await expect.element(locator.getByRole('link', { name: 'Contracts →' })).toBeVisible();
     await expect.element(locator.getByRole('link', { name: 'Entities →' })).toBeVisible();
+    expect(locator.getByRole('link', { name: 'Docs →' }).elements()).toHaveLength(2);
     await commands.parkPointer();
     await expect.element(locator).toMatchScreenshot('linked', { kind: 'DATA' });
   });
@@ -108,5 +111,13 @@ describe('RepositoryCard (screenshots)', () => {
       `/projects/${slug}/repositories/contract-service/entities`,
     );
     expect(fired()).toEqual(['open-repository-pages:entities']);
+  });
+
+  it('open-repository-docs repository: every card opens its repository’s Docs page', async () => {
+    const locator = await shown();
+    await userEvent.click(locator.getByRole('link', { name: 'Docs →' }).last());
+    await settle();
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/docs/repositories/contract-service`);
+    expect(fired()).toEqual(['open-repository-docs:repository']);
   });
 });

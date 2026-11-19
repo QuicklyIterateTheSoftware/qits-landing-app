@@ -15,7 +15,7 @@ import {
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { asDatabaseIndex, type DatabaseIndex } from '$core/contracts/database-diagram';
-import { docBlocks } from '$core/docs/doc-sections';
+import { docBlocks, publishedBy } from '$core/docs/doc-sections';
 import { contractsSiteOf, type ContractsSite, type ContractsSites } from './contracts-catalog';
 import { literalDocsPaths } from './docs-paths';
 import {
@@ -1010,6 +1010,133 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
     it.skipIf(!recorded(EMPTY))('show-project-docs: an empty catalog makes no block', () =>
       given(EMPTY).executeTest(async (server) => {
         expect(await at(server.url, () => blocksFound())).toEqual([]);
+      }),
+    );
+  });
+}
+
+{
+  /**
+   * qits-landing-app's pact with qits-artifacts-service, a repository's Docs page's part
+   * (qits-2336): `RepositoryDocsPage` lists the catalog's sites whose newest version the repository
+   * published (`latestRepository`, `publishedBy`) and groups them by section (`docBlocks`). This
+   * spec owns `listDocsSites`' interactions for `show-repository-docs` alone.
+   *
+   * Against qits-artifacts' recordings of `a docs catalog of every kind`, where each site's newest
+   * version names its repository (`qits-ci-service` published `@apidocs/qits-ci`,
+   * `@contracts/qits-ci` and `@changelog/qits-ci-service`; `qits-storybook` names none), and `an
+   * empty docs catalog`. The catalog is bound by its recorded first element at least the recorded
+   * count, so the mock server repeats `@apidocs/qits-ci`, `qits-ci-service`'s: the page keeps every
+   * one in one API docs block. The states record `latestRepository` from the
+   * `@qits/artifacts-golden-masters` release after qits-2336 on; on an older pin the interactions
+   * skip themselves until qits-maintenance bumps it.
+   */
+  const CONSUMER = 'qits-landing-app';
+  const PROVIDER = 'qits-artifacts-service';
+  const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+  const SLUG: InteractionSlug = 'show-repository-docs';
+  const OPERATIONS: readonly OwnedOperation[] = [
+    { operationId: 'listDocsSites', interactions: [SLUG] },
+  ];
+
+  const EVERY_KIND = 'a docs catalog of every kind';
+  const EMPTY = 'an empty docs catalog';
+
+  /**
+   * Whether the installed golden masters record the catalog's publishers (`latestRepository` in
+   * `a docs catalog of every kind`): the pin both interactions wait for.
+   */
+  const current = (() => {
+    try {
+      const sites = masters.body<{ sites: DocsSite[] }>(EVERY_KIND, 'listDocsSites').sites;
+      return sites.some((site) => !!site.latestRepository);
+    } catch {
+      return false;
+    }
+  })();
+
+  const given = (state: string) =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state,
+      operationId: 'listDocsSites',
+      trigger: { kind: 'ui', app: CONSUMER, interaction: SLUG },
+      consumes: LIST_DOCS_SITES,
+    });
+
+  /** Runs `call` against the mock server at `url`, in an injection context. */
+  function at<T>(url: string, call: () => Promise<T>): Promise<T> {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'server' },
+        provideHttpClient(withFetch()),
+        provideHeyApiClient(artifactsClient),
+      ],
+    });
+    artifactsClient.setConfig({ baseUrl: url });
+    return TestBed.runInInjectionContext(call);
+  }
+
+  /** `repository`'s blocks, as the page groups them; null when the read fails. */
+  async function blocksOf(repository: string) {
+    const { data, error } = await DOCS_SITES.fetch({ path: DOCS });
+    return error !== undefined || !data
+      ? null
+      : docBlocks(publishedBy(data.sites ?? [], repository));
+  }
+
+  let dir = '';
+  let pact: PactV4;
+
+  describe('qits-landing-app → qits-artifacts-service pact: a repository’s Docs page', () => {
+    beforeAll(() => {
+      dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-repository-docs-pact-'));
+      pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
+    });
+
+    afterAll(() => {
+      artifactsClient.setConfig({ baseUrl: '' });
+      try {
+        // Skipped on an older pin, the run writes no file: nothing of this part to compare yet.
+        if (current) {
+          assertPactPart(
+            join(dir, `${CONSUMER}-${PROVIDER}.json`),
+            COMMITTED,
+            OPERATIONS,
+            'QITS_GOLDEN_UPDATE',
+          );
+        }
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    });
+
+    it.skipIf(!current)(
+      'show-repository-docs: keeps the sites the repository published, by section',
+      () =>
+        given(EVERY_KIND).executeTest(async (server) => {
+          const first = masters.body<{ sites: DocsSite[] }>(EVERY_KIND, 'listDocsSites').sites[0];
+          const repository = first.latestRepository ?? '';
+          expect(repository).toBeTruthy();
+          const blocks = await at(server.url, () => blocksOf(repository));
+          // Bound by its recorded first element, `@apidocs/qits-ci`, repeated: one API docs block.
+          expect(blocks?.map((block) => block.section.kind)).toEqual(['apidocs']);
+          expect(blocks?.[0].sites.length).toBeGreaterThan(0);
+          for (const site of blocks?.[0].sites ?? []) {
+            expect(site.name).toBe(first.name);
+            expect(site.latestRepository).toBe(repository);
+            expect(site.latestVersion).toBe(first.latestVersion);
+            expect(site.versionCount).toBe(first.versionCount);
+            expect(site.latestPublishedAt).toEqual(expect.any(String));
+          }
+          // A repository that published none of them keeps no block.
+          expect(await at(server.url, () => blocksOf('qits-ci-frontend'))).toEqual([]);
+        }),
+    );
+
+    it.skipIf(!current)('show-repository-docs: an empty catalog makes no block', () =>
+      given(EMPTY).executeTest(async (server) => {
+        expect(await at(server.url, () => blocksOf('qits-ci-service'))).toEqual([]);
       }),
     );
   });

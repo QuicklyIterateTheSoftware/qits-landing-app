@@ -21,6 +21,7 @@ export type RoutePath =
   | 'projects/:slug/deployments/requests/by-release/:repoId/:version'
   | 'projects/:slug/desk'
   | 'projects/:slug/docs'
+  | 'projects/:slug/docs/repositories/:repo'
   | 'projects/:slug/events'
   | 'projects/:slug/ideas'
   | 'projects/:slug/ideas/create'

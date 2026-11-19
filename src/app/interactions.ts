@@ -574,14 +574,33 @@ export const INTERACTIONS = {
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
    * `project-docs.page.ts` via `DOCS_SITES` (qits-2318): the Docs page lists every docs site the
-   * platform publishes, grouped by section.
+   * platform publishes, grouped by section; via `PROJECT_REPOSITORIES` (qits-2336) it names the
+   * project's repository that published each site's newest version.
    */
   'show-project-docs': 'The Docs page lists every published docs site, by section',
   /**
-   * `project-docs.page.ts`: a docs site's row opens its reader on the docs app (until qits-2337
-   * moves it here), same tab. Leaves the app, and names no pact.
+   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader on the
+   * docs app (until qits-2337 moves it here), same tab. Leaves the app, and names no pact.
    */
-  'open-docs-site': 'A docs site’s row on the Docs page opens its reader',
+  'open-docs-site': 'A docs site’s row on a Docs page opens its reader',
+  /**
+   * `repository-docs.page.ts` via `PROJECT_REPOSITORIES` and `DOCS_SITES` (qits-2336): a
+   * repository's Docs page finds the repository in the project and lists the docs sites whose
+   * newest version it published (`latestRepository`), by section.
+   */
+  'show-repository-docs': 'A repository’s Docs page lists the docs sites it published, by section',
+  /**
+   * `project-docs.page.ts` (a row's repository) and `repository-card.ts` (“Docs →”): opens a
+   * repository's Docs page (qits-2336). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-docs': 'A repository’s name on the Docs page, or its card, opens its Docs page',
+  /**
+   * `repository-docs.page.ts`: “← Docs” on a repository's Docs page (and the link beside an
+   * unknown repository) goes back to the project's Docs page (qits-2336). Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'leave-repository-docs':
+    '“← Docs” on a repository’s Docs page goes back to the project’s Docs page',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspaceActivity`
    * (`OPEN_WORKSPACES`, qits-2146): the ACTIVE workspaces bound to work items, one request per
