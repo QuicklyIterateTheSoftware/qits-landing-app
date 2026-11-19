@@ -683,15 +683,15 @@ frontend's `adoption/…`) is how far one release got downstream, a detail page 
 page stitches nothing). The header names the release and its packages (`ecosystem name`,
 comma-joined); the caption counts the repositories downstream and those carrying it. The chart is a
 DAG drawn left to right by the pure `adoptionChart` (`core/maintenance/adoption-chart.ts`, its own
-spec): one column per distinct depth, one fixed 240x116 card per repository however many parents reach
-it, rows at the mean row of the parents (ties by name), an edge only to a parent that is drawn, every
-depth-1 card off the release; the SVG edges come from the same arithmetic, and the chart scrolls
-sideways inside its own box, never the page. A card's chip is ADOPTED (with `adoptedVersion` and when)
-or PENDING, quiet and neutral, never an error. An adopter whose `repositoryStatus` is `OK` links its
-page in the old maintenance app (`open-adoption-repository`, `external('maintenance')`,
-`/<slug>/repositories/<name>`) until qits-2334; `ABSENT` says "absent". No adopter is "This release
-reached no repository."; no package a notice that the service holds no bill of materials for it. A
-403 is a refusal, else Retry. Staleness: `ADOPTION_EVENTS` (`SCMRelease`, `SoftwareRelease`,
+spec): one column per distinct depth, one fixed 240x116 card per repository however many parents
+reach it, rows at the mean row of the parents (ties by name), an edge only to a parent that is
+drawn, every depth-1 card off the release; the SVG edges come from the same arithmetic, and the
+chart scrolls sideways inside its own box, never the page. A card's chip is ADOPTED (with
+`adoptedVersion` and when) or PENDING, quiet and neutral, never an error. An adopter whose
+`repositoryStatus` is `OK` links its repository page (`maintenance/repositories/<name>`, qits-2334,
+through `MaintenanceRepositoryLinks`); `ABSENT` says "absent". No adopter is "This release reached
+no repository."; no package a notice that the service holds no bill of materials for it. A 403 is a
+refusal, else Retry. Staleness: `ADOPTION_EVENTS` (`SCMRelease`, `SoftwareRelease`,
 `core/maintenance/adoption-events.ts`), debounced 1 s; Refresh reads again. A release request's
 "Adoption of this release" leads here (`open-release-adoption`, an in-app exit; `releaseLinks` gives
 it no `app`), in place of the retired release train link. The pact reads it in "a repository with
@@ -721,7 +721,7 @@ each dependent's repository linked, embedded version, direct or transitive, curr
 every row as the inventory gives it. Each section has its own one-line empty text. A 404 on
 `getRepository` is "No repository <name> in the inventory." and nothing else (the other three answer
 empty for an unknown name); a 403 on any read a refusal. Every repository name in Maintenance (the
-Dependencies, Artifacts, bump and repository pages) links here through `MaintenanceRepositoryLinks`
+Dependencies, Artifacts, bump, adoption and repository pages) links here through `MaintenanceRepositoryLinks`
 (`core/maintenance/repository-links.ts`, `open-maintenance-repository`); `core/maintenance/bump-model.ts`
 holds the bump status and release-request helpers both bump-showing pages share. The pact reads all
 four in "a repository with pins and bumps" (`contract-javalib`), "a repository with nothing pinned"

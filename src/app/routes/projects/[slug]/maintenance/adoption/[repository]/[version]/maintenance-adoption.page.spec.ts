@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { QITS_DOMAIN_EVENTS, QITS_LEAVE_APP } from '@qits/angular';
+import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { filter, Subject } from 'rxjs';
 import { client as maintenanceClient } from '../../../../../../../api/maintenance/client.gen';
 import { client as projectsClient } from '../../../../../../../api/projects/client.gen';
@@ -12,7 +12,6 @@ import {
   goldenMaster,
   maintenanceGoldenMaster,
 } from '../../../../../../../../testing/golden-masters';
-import { provideTestPlatformOrigins } from '../../../../../../../../testing/platform-origins';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { MaintenanceAdoptionPage, packagesLine } from './maintenance-adoption.page';
@@ -30,16 +29,12 @@ const DOWNSTREAM = 'a repository with downstream components';
 const ADOPTED = 'a release some consumers adopted';
 const NOBODY = 'a release nobody consumes';
 
-/** The old maintenance app's page origin, so an adopter links its page (configuration). */
-const MAINTENANCE = 'https://maintenance.qits.example.test';
-
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 describe('MaintenanceAdoptionPage', () => {
   let http: HttpTestingController;
   let events: Subject<DomainEvent>;
-  const leave = vi.fn<(href: string) => void>();
   const list = goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
   const journey = () => maintenanceGoldenMaster(DOWNSTREAM, 'getAdoptionByRelease');
@@ -47,7 +42,6 @@ describe('MaintenanceAdoptionPage', () => {
 
   beforeEach(() => {
     events = new Subject<DomainEvent>();
-    leave.mockReset();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
@@ -60,8 +54,6 @@ describe('MaintenanceAdoptionPage', () => {
         provideHttpClientTesting(),
         provideHeyApiClient(projectsClient),
         provideHeyApiClient(maintenanceClient),
-        provideTestPlatformOrigins({}, { maintenance: MAINTENANCE }),
-        { provide: QITS_LEAVE_APP, useValue: leave },
         { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
         {
           provide: DomainEvents,
@@ -184,15 +176,14 @@ describe('MaintenanceAdoptionPage', () => {
     ).toContain('stroke-accent');
   });
 
-  it('links each adopter the inventory holds to its page in the maintenance app', async () => {
+  it('links each adopter the inventory holds to its repository page', async () => {
     const { element } = await render();
     const link = card(element, 'contract-frontend')!.querySelector<HTMLAnchorElement>('a')!;
-    const href = `${MAINTENANCE}/${project.slug}/repositories/contract-frontend`;
-    expect(link.getAttribute('href')).toBe(href);
+    expect(link.getAttribute('href')).toBe(
+      `/projects/${project.slug}/maintenance/repositories/contract-frontend`,
+    );
     expect(link.getAttribute('title')).toBe('contract-frontend');
     expect(card(element, 'contract-ui-jslib')!.querySelector('a')).toBeNull();
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }));
-    expect(leave).toHaveBeenCalledWith(href);
   });
 
   it('draws an adopter the inventory does not hold, or that left the catalog, unlinked', async () => {

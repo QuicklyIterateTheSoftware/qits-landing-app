@@ -6,8 +6,8 @@ import { SelectedProject } from '$core/projects/selected-project';
  * Every in-app link to a repository's maintenance page (qits-2334): the repository page in the
  * open project, `/projects/<slug>/maintenance/repositories/<name>`, as the exit
  * `open-maintenance-repository:repository`. The Dependencies page's pins, the Artifacts page's
- * producing repository and dependents, the bump page's repository and the repository page's own
- * dependents and downstream lead there through it, rendered with `QitsExit`
+ * producing repository and dependents, the bump page's repository, the adoption page's adopters
+ * (qits-2333) and the repository page's own dependents and downstream lead there through it, rendered with `QitsExit`
  * (`[qitsExit]="repositoryLinks.opening.repository"` and
  * `[exitParams]="repositoryLinks.params(name)"`), so each link has a real `href`, a plain click
  * records the outcome and navigates through the router, and the trigger carries

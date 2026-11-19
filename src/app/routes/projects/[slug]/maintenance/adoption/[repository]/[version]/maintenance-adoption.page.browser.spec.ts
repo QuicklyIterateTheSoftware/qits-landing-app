@@ -1,13 +1,15 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { QITS_LEAVE_APP } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
-import { page, userEvent } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../../../testing/browser/golden-master';
-import { openRoute, provideAppRoute } from '../../../../../../../../testing/browser/app-route';
+import {
+  openRoute,
+  provideAppRoute,
+  type OpenedRoute,
+} from '../../../../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../../../../testing/browser/shell-menus';
-import { provideTestPlatformOrigins } from '../../../../../../../../testing/platform-origins';
 
 /**
  * Screenshots of a release's adoption page inside the shell (`openRoute`, qits-2333), at the
@@ -22,9 +24,8 @@ import { provideTestPlatformOrigins } from '../../../../../../../../testing/plat
  * as the service answers a credential without a staff role; a failure a 500. A release with no
  * package is no recording's: the plain spec covers it.
  *
- * Its exit (`open-adoption-repository` `open`) is followed once: an adopter's card leaves for the
- * repository's page in qits-maintenance-frontend, through `QITS_LEAVE_APP` (a spy, so the tab
- * stays).
+ * Its exit (`open-maintenance-repository` `repository`, qits-2334) is followed once: an adopter's
+ * card opens the repository's maintenance page in this app.
  */
 const PENDING = 'a repository with downstream components';
 const ADOPTED = 'a release some consumers adopted';
@@ -34,31 +35,11 @@ const NOBODY = 'a release nobody consumes';
 const RELEASE = { repository: 'contract-ui-jslib', version: '2026.905.1' };
 const ADOPTION_URL = `/maintenance/api/adoption/by-release?repository=${RELEASE.repository}&version=${RELEASE.version}`;
 
-/** The old maintenance app's page origin, so an adopter links its page (configuration, not data). */
-const MAINTENANCE = 'https://maintenance.qits.example.test';
-
 describe('MaintenanceAdoptionPage (screenshots)', () => {
   let http: HttpTestingController;
-  const leave = vi.fn<(href: string) => void>();
 
   beforeEach(() => {
-    leave.mockReset();
-    TestBed.configureTestingModule({
-      providers: [
-        provideAppRoute(),
-        // `provideAppRoute()`'s page origins, and the maintenance app's.
-        provideTestPlatformOrigins(
-          {},
-          {
-            idp: 'https://idp.qits.example.test',
-            artifacts: 'https://registry.qits.example.test',
-            'network-access': 'https://network-access.qits.example.test',
-            maintenance: MAINTENANCE,
-          },
-        ),
-        { provide: QITS_LEAVE_APP, useValue: leave },
-      ],
-    });
+    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -186,18 +167,28 @@ describe('MaintenanceAdoptionPage (screenshots)', () => {
     await expect.element(view.getByRole('link', { name: 'contract-frontend' })).toBeVisible();
   });
 
-  it('open-adoption-repository open: an adopter’s card leaves for its page in the maintenance app', async () => {
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
+  it('open-maintenance-repository repository: an adopter’s card opens its repository page', async () => {
     const { opened, view } = await render(PENDING);
-    await userEvent.click(view.getByRole('link', { name: 'contract-frontend' }));
+    await view.getByRole('link', { name: 'contract-frontend' }).click();
     expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
-      'open-adoption-repository:open',
+      'open-maintenance-repository:repository',
     ]);
-    expect(leave).toHaveBeenCalledWith(
-      `${MAINTENANCE}/${opened.project.slug}/repositories/contract-frontend`,
-    );
-    // The click left through the spy, not the link: the router stays where it was.
+    await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/maintenance/adoption/${RELEASE.repository}/${RELEASE.version}`,
+      `/projects/${opened.project.slug}/maintenance/repositories/contract-frontend`,
     );
   });
 });

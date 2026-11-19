@@ -580,8 +580,9 @@ export const INTERACTIONS = {
   /**
    * `repository-links.ts` (`MaintenanceRepositoryLinks`, qits-2334): a repository name on the
    * Dependencies page (a pin's), the Artifacts page (the producing repository, a dependent's), the
-   * bump page and the repository page (a dependent's, a downstream one's) opens that repository's
-   * maintenance page in the open project. Navigates only, and names no pact.
+   * bump page, the adoption page (an adopter's card the inventory holds) and the repository page (a
+   * dependent's, a downstream one's) opens that repository's maintenance page in the open project.
+   * Navigates only, and names no pact.
    */
   'open-maintenance-repository': 'A repository name in Maintenance opens the repository’s page',
   /**
@@ -591,12 +592,6 @@ export const INTERACTIONS = {
    * an `SCMRelease` or `SoftwareRelease`.
    */
   'show-adoption': 'A release’s adoption page draws every repository downstream and who carries it',
-  /**
-   * `maintenance-adoption.page.ts`: an adopter's card opens that repository's page in
-   * qits-maintenance-frontend (`/<slug>/repositories/<name>`), same tab, until qits-2334 moves it
-   * here. Leaves the app, and names no pact.
-   */
-  'open-adoption-repository': 'A repository’s card on a release’s adoption page opens its page',
   /**
    * `release-request.page.ts`: “Adoption of this release” on a released request opens the
    * release's adoption page in this app's Maintenance section (qits-2333). Navigates only, and

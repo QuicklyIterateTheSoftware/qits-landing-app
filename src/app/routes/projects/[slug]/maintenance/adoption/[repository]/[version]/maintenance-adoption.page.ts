@@ -2,15 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import {
-  external,
-  outcomes,
-  QitsApiError,
-  QitsEntity,
-  QitsField,
-  qitsResource,
-  QitsTriggers,
-} from '@qits/angular';
+import { QitsApiError, QitsEntity, QitsExit, QitsField, qitsResource } from '@qits/angular';
 import {
   adoptionCaption,
   adoptionChart,
@@ -21,8 +13,7 @@ import {
 import { ADOPTION_EVENTS } from '$core/maintenance/adoption-events';
 import type { AdoptionJourney } from '$core/maintenance/maintenance.consumes';
 import { MAINTENANCE_ADOPTION } from '$core/maintenance/maintenance.operations';
-import { PlatformOrigins } from '$core/platform/platform-origins';
-import { SelectedProject } from '$core/projects/selected-project';
+import { MaintenanceRepositoryLinks } from '$core/maintenance/repository-links';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -66,10 +57,9 @@ function refused(read: { status(): string; error(): unknown }): boolean {
  *   caption counts the repositories downstream and those carrying it. No adopter is "This release
  *   reached no repository."; no package is a notice that the service holds no bill of materials
  *   for the release, so nothing downstream can match (the closure below is still drawn).
- * - An adopter the inventory holds (`repositoryStatus` `OK`) links that repository's page in
- *   qits-maintenance-frontend (`open-adoption-repository`, `external('maintenance')`,
- *   `PlatformOrigins.page('maintenance')` + `/<slug>/repositories/<name>`, same tab) until
- *   qits-2334 moves it here; one that left the catalog (`ABSENT`) says so.
+ * - An adopter the inventory holds (`repositoryStatus` `OK`) links that repository's maintenance
+ *   page in this app (`MaintenanceRepositoryLinks`, `open-maintenance-repository`, qits-2334), as
+ *   every repository name in Maintenance does; one that left the catalog (`ABSENT`) says so.
  *
  * States: loading; a 403 a refusal (only qits:admin, admin-agent, desk-admin, desk, system and
  * agent may read it); any other failure offers Retry. Marks (qits-2141): the journey is an entity
@@ -83,7 +73,7 @@ function refused(read: { status(): string; error(): unknown }): boolean {
 @Component({
   selector: 'app-maintenance-adoption-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsField, QitsTriggers, Spinner],
+  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsExit, QitsField, Spinner],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -224,13 +214,12 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                           data-card
                         >
                           <p class="m-0 mb-0.5 flex min-w-0 items-center gap-1.5 font-semibold">
-                            @if (repositoryHref(node); as href) {
+                            @if (!node.root && node.linkable) {
                               <a
                                 class="truncate text-accent no-underline hover:underline"
-                                [href]="href"
+                                [qitsExit]="repositoryLinks.opening.repository"
+                                [exitParams]="repositoryLinks.params(node.repository)"
                                 [title]="node.repository"
-                                [qitsTriggers]="[opening.open]"
-                                (click)="open($event, href)"
                                 >{{ node.repository }}</a
                               >
                             } @else {
@@ -295,15 +284,11 @@ function refused(read: { status(): string; error(): unknown }): boolean {
   `,
 })
 export class MaintenanceAdoptionPage {
-  private readonly selected = inject(SelectedProject);
   private readonly route = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly maintenanceOrigin = inject(PlatformOrigins).page('maintenance');
 
-  /** An adopter's repository page in qits-maintenance-frontend, until qits-2334 moves it here. */
-  protected readonly opening = outcomes('open-adoption-repository', {
-    open: external('maintenance'),
-  });
+  /** An adopter's repository page in this app's Maintenance section (qits-2334). */
+  protected readonly repositoryLinks = inject(MaintenanceRepositoryLinks);
 
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
@@ -367,20 +352,6 @@ export class MaintenanceAdoptionPage {
   protected cardClass(node: ChartNode): string {
     if (node.root) return 'border-accent-line bg-accent-soft text-fg';
     return node.adopted ? 'border-line bg-surface text-fg' : 'border-line bg-surface text-fg-muted';
-  }
-
-  /** The repository's page in qits-maintenance-frontend; `''` when it has none or no origin. */
-  protected repositoryHref(node: ChartNode): string {
-    const slug = this.selected.slug();
-    if (node.root || !node.linkable || !this.maintenanceOrigin || !slug) return '';
-    return `${this.maintenanceOrigin}/${slug}/repositories/${encodeURIComponent(node.repository)}`;
-  }
-
-  /** Leaves for the repository's page through `open-adoption-repository`, which records it. */
-  protected open(event: MouseEvent, href: string): void {
-    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    event.preventDefault();
-    this.opening.open.leave(href);
   }
 }
 
