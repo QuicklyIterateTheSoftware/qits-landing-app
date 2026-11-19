@@ -588,6 +588,23 @@ Refresh reads all four again. The pact adds "a deployment request that deployed"
 approval" (with `approveDeploymentRequest`), "… held for decline" (with `declineDeploymentRequest`
 and its recorded note), "an application deployed in an environment" and "an environment".
 
+`deployments/requests/by-release/<repoId>/<version>` (`DeploymentRequestsByReleasePage`, qits-2323,
+the retired frontend's `deployment-requests/by-release/…` resolver, declared before
+`requests/:requestId`) is the requests one release produced, where the release request page's "The
+deployment of this release" leads (`open-release-deployment-requests`, an in-app exit; `releaseLinks`
+gives it no `app`). One read, `RELEASE_DEPLOYMENT_REQUESTS` (`listDeploymentRequests` with
+`repoId`, `version` and always `includeVariants: true`, so variants' requests and redeploys show):
+exactly one opens its page in the URL's place (`follow-release-deployment-request`, `replaceUrl`);
+several are a table, newest first, with the Requests page's columns and a Variant column, a main
+row naming each declared variant no row deploys yet as still to come (`variantsToCome`); none says
+the release may deploy nothing or has not reached qits-deployments yet, with Look again. The heading
+is `<repository>@<version>`, named from `PROJECT_REPOSITORIES` (by id, else by name), else the
+`repoId`. The trail ends `release <version>`. 403 names the roles, else Retry. Staleness: the
+list's rule (`affectsDeploymentRequests`, the release's `repoId` the one repository). The pact adds
+"a release with a variant deployed" and "a release with no deployment requests" (the latter skips
+itself until the pin records it). No recording holds a release with one request, so the redirect is
+the plain spec's.
+
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
 component whose pages are its children (`artifacts`, qits-2330; the external, bump, adoption,
 repository and trains pages come as their own children later: qits-2331 to qits-2335); its own
