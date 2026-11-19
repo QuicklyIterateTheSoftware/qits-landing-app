@@ -827,6 +827,86 @@
       "route": "projects/:slug/maintenance/dependencies"
     }
   ],
+  "src/app/routes/projects/[slug]/maintenance/repositories/[name]/maintenance-repository.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "getRepository",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "getRepositoryDownstream",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "listBumps",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "listRepositoryDependents",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "getRepository",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "getRepositoryDownstream",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "listBumps",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "listRepositoryDependents",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no such repository",
+      "operationId": "getRepositoryDownstream",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no such repository",
+      "operationId": "listBumps",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no such repository",
+      "operationId": "listRepositoryDependents",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    }
+  ],
   "src/app/routes/projects/[slug]/observability/logs/observability-logs.page.browser.spec.ts": [
     {
       "provider": "qits-observability-service",
