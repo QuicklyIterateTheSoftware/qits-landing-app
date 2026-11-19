@@ -43,7 +43,6 @@ import { client as deploymentsClient } from '../../app/api/deployments/client.ge
 import { client as eventsClient } from '../../app/api/events/client.gen';
 import { client as githostClient } from '../../app/api/githost/client.gen';
 import { client as maintenanceClient } from '../../app/api/maintenance/client.gen';
-import { client as networkAccessClient } from '../../app/api/network-access/client.gen';
 import { client as observabilityClient } from '../../app/api/observability/client.gen';
 import { client as projectsClient } from '../../app/api/projects/client.gen';
 import { provideHeyApiClient } from '../../app/api/projects/client/client.gen';
@@ -90,16 +89,20 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(ciClient),
     provideHeyApiClient(systemClient),
     provideHeyApiClient(artifactsClient),
-    provideHeyApiClient(networkAccessClient),
     provideHeyApiClient(observabilityClient),
     provideHeyApiClient(deploymentsClient),
     provideHeyApiClient(edgeClient),
     // The idp's page origin, so the root sidebar's IdP admin (qits-2319) shows on the routes
     // without a project, as it does deployed; the old artifacts explorer's, so the store
-    // repository page's rows link their detail pages there (qits-2316).
+    // repository page's rows link their detail pages there (qits-2316); qits-network-access' own
+    // frontend's, which the shell's Network access links lead to (qits-2361).
     provideTestPlatformOrigins(
       {},
-      { idp: 'https://idp.qits.example.test', artifacts: 'https://registry.qits.example.test' },
+      {
+        idp: 'https://idp.qits.example.test',
+        artifacts: 'https://registry.qits.example.test',
+        'network-access': 'https://network-access.qits.example.test',
+      },
     ),
     // The live stream never connects: no event reaches a screenshot.
     {
