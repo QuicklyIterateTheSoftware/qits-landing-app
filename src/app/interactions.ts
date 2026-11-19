@@ -558,6 +558,26 @@ export const INTERACTIONS = {
    */
   'open-bump-release-request': 'The release request on a bump’s page opens the request',
   /**
+   * `maintenance-adoption.page.ts` via `MAINTENANCE_ADOPTION` (qits-2333): a release's adoption
+   * page reads how far it got (`getAdoptionByRelease?repository=&version=`), every repository
+   * downstream of it and whether it carries the release yet. Refresh reads it again, and so does
+   * an `SCMRelease` or `SoftwareRelease`.
+   */
+  'show-adoption': 'A release’s adoption page draws every repository downstream and who carries it',
+  /**
+   * `maintenance-adoption.page.ts`: an adopter's card opens that repository's page in
+   * qits-maintenance-frontend (`/<slug>/repositories/<name>`), same tab, until qits-2334 moves it
+   * here. Leaves the app, and names no pact.
+   */
+  'open-adoption-repository': 'A repository’s card on a release’s adoption page opens its page',
+  /**
+   * `release-request.page.ts`: “Adoption of this release” on a released request opens the
+   * release's adoption page in this app's Maintenance section (qits-2333). Navigates only, and
+   * names no pact.
+   */
+  'open-release-adoption':
+    '“Adoption of this release” on a release request opens its adoption page',
+  /**
    * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
    * (qits-2331): a name glob searched on the Dependencies page (`?name=`) reads the INTERNAL and
    * EXTERNAL dependencies with it (`?kind=…&name=…`), beside the inventory's repositories, and

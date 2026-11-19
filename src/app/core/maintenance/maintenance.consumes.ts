@@ -1,4 +1,5 @@
 import type {
+  GetAdoptionByReleaseResponses,
   GetBumpResponses,
   ListArtifactsResponses,
   ListDependencyDependentsResponses,
@@ -178,3 +179,33 @@ export type BumpDetail = Consumed<GetBumpResponses[200], typeof BUMP>;
 
 /** One change a bump sent, as the bump page's table reads it. */
 export type BumpChange = NonNullable<BumpDetail['changes']>[number];
+
+/**
+ * `MAINTENANCE_ADOPTION` (qits-2333): how far one release got, as the adoption page draws it. The
+ * release (`repository`, `version`) and what it published (each package's `ecosystem` and
+ * `name`), and every repository downstream of it: its name, whether the inventory holds it
+ * (`repositoryStatus`: `OK`, `ABSENT`, or none), its archetype, how many hops out it is
+ * (`depth`), every parent one hop nearer the release (`via`), and whether it carries the release
+ * (`state`: ADOPTED, PENDING), with which of its own releases first did (`adoptedVersion`) and
+ * when (`adoptedAt`).
+ */
+export const ADOPTION = [
+  'repository',
+  'version',
+  'packages[].ecosystem',
+  'packages[].name',
+  'adopters[].repository',
+  'adopters[].repositoryStatus',
+  'adopters[].archetype',
+  'adopters[].depth',
+  'adopters[].via',
+  'adopters[].state',
+  'adopters[].adoptedVersion',
+  'adopters[].adoptedAt',
+] as const;
+
+/** One release's adoption journey, cut to what the adoption page reads. */
+export type AdoptionJourney = Consumed<GetAdoptionByReleaseResponses[200], typeof ADOPTION>;
+
+/** One repository downstream of the release, as the adoption page draws its card. */
+export type Adopter = NonNullable<AdoptionJourney['adopters']>[number];
