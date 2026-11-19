@@ -223,6 +223,10 @@
           "fullPath": "projects/:slug/docs"
         },
         {
+          "path": "projects/:slug/docs/repositories/:repo",
+          "fullPath": "projects/:slug/docs/repositories/:repo"
+        },
+        {
           "path": "projects/:slug/events",
           "fullPath": "projects/:slug/events"
         },
@@ -10741,6 +10745,7 @@
       "route": null,
       "records": [],
       "triggers": [
+        "open-repository-docs:repository",
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
@@ -10818,6 +10823,7 @@
       "route": null,
       "records": [],
       "triggers": [
+        "open-repository-docs:repository",
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
@@ -82464,6 +82470,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82520,6 +82531,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82576,6 +82592,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82615,6 +82636,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82654,6 +82680,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82710,6 +82741,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82761,6 +82797,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82812,6 +82853,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82863,6 +82909,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82897,6 +82948,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82931,6 +82987,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -82982,6 +83043,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83038,6 +83104,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83047,6 +83118,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -83088,6 +83160,14 @@
           "field": null,
           "derived": [
             "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
           ]
         },
         {
@@ -83151,6 +83231,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83160,6 +83245,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -83201,6 +83287,14 @@
           "field": null,
           "derived": [
             "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
           ]
         },
         {
@@ -83264,11 +83358,17 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
         "open-docs-site:open",
-        "open-project-settings:open"
+        "open-project-settings:open",
+        "open-repository-docs:repository"
       ],
       "dataMarks": [
         {
@@ -83297,6 +83397,14 @@
           "field": null,
           "derived": [
             "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
           ]
         },
         {
@@ -83360,11 +83468,17 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
         "open-docs-site:open",
-        "open-project-settings:open"
+        "open-project-settings:open",
+        "open-repository-docs:repository"
       ],
       "dataMarks": [
         {
@@ -83393,6 +83507,14 @@
           "field": null,
           "derived": [
             "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
           ]
         },
         {
@@ -83456,6 +83578,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83465,6 +83592,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -83506,6 +83634,14 @@
           "field": null,
           "derived": [
             "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
           ]
         },
         {
@@ -83569,6 +83705,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83578,6 +83719,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -83619,6 +83761,14 @@
           "field": null,
           "derived": [
             "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
           ]
         },
         {
@@ -83677,6 +83827,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83728,6 +83883,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83779,6 +83939,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83813,6 +83978,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83847,6 +84017,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83898,6 +84073,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83954,6 +84134,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -83963,6 +84148,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -84011,6 +84197,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -84036,13 +84230,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -84050,7 +84244,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -84058,7 +84260,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -84066,25 +84268,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -84092,7 +84294,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -84100,7 +84310,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -84108,13 +84318,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -84361,6 +84571,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -84370,6 +84585,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -84418,6 +84634,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -84443,13 +84667,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -84457,7 +84681,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -84465,7 +84697,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -84473,25 +84705,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -84499,7 +84731,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -84507,7 +84747,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -84515,13 +84755,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -84768,6 +85008,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -84778,6 +85023,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -84826,6 +85072,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -84851,13 +85105,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -84865,7 +85119,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -84873,7 +85135,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -84881,25 +85143,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -84907,7 +85169,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -84915,7 +85185,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -84923,13 +85193,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -85176,6 +85446,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -85186,6 +85461,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -85234,6 +85510,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -85259,13 +85543,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -85273,7 +85557,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -85281,7 +85573,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -85289,25 +85581,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -85315,7 +85607,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -85323,7 +85623,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -85331,13 +85631,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -85584,11 +85884,17 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
         "open-docs-site:open",
-        "open-project-settings:open"
+        "open-project-settings:open",
+        "open-repository-docs:repository"
       ],
       "dataMarks": [
         {
@@ -85624,6 +85930,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -85649,13 +85963,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -85663,7 +85977,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -85671,7 +85993,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -85679,25 +86001,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -85705,7 +86027,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -85713,7 +86043,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -85721,13 +86051,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -85974,11 +86304,17 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
         "open-docs-site:open",
-        "open-project-settings:open"
+        "open-project-settings:open",
+        "open-repository-docs:repository"
       ],
       "dataMarks": [
         {
@@ -86014,6 +86350,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -86039,13 +86383,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86053,7 +86397,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -86061,7 +86413,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -86069,25 +86421,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86095,7 +86447,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -86103,7 +86463,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -86111,13 +86471,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -86364,6 +86724,11 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
@@ -86373,6 +86738,7 @@
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -86421,6 +86787,14 @@
           "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
             "name"
           ]
         },
@@ -86446,13 +86820,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86460,7 +86834,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -86468,7 +86850,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -86476,25 +86858,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86502,7 +86884,15 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -86510,7 +86900,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -86518,13 +86908,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
@@ -86771,12 +87161,2059 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-repository-docs:repository",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@guides/qits-platform",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@guides/qits-platform",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@guides/qits-platform",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@guides/qits-platform",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@guides/qits-platform",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@guides/qits-platform",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@qits/ui-components",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@routes/qits-landing",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@routes/qits-landing",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@routes/qits-landing",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@routes/qits-landing",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@routes/qits-landing",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@routes/qits-landing",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@userflows/qits-events",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@userflows/qits-events",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@userflows/qits-events",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@userflows/qits-events",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@userflows/qits-events",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@userflows/qits-events",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=qits-storybook",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=qits-storybook",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=qits-storybook",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=qits-storybook",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=qits-storybook",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=qits-storybook",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says a repository that published no site has none yet",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says a repository that published no site has none yet",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says a repository that published no site has none yet",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says a repository that published no site has none yet",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says a repository that published no site has none yet",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says a repository that published no site has none yet",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > keeps one section alone at ?section=",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > keeps one section alone at ?section=",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > keeps one section alone at ?section=",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > keeps one section alone at ?section=",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > keeps one section alone at ?section=",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > keeps one section alone at ?section=",
+      "name": "filtered",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
         "open-docs-site:open",
         "open-network-access:open",
         "open-project-settings:open",
@@ -86853,13 +89290,13 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86867,7 +89304,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -86875,7 +89312,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -86883,25 +89320,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@changelog/qits-landing-app",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86909,7 +89346,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -86917,7 +89354,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -86925,25 +89362,102 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@contracts/qits-projects",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
         {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@guides/qits-platform",
+          "item": null,
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@guides/qits-platform",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86951,7 +89465,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@guides/qits-platform",
+          "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -86959,7 +89473,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@guides/qits-platform",
+          "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -86967,25 +89481,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@guides/qits-platform",
+          "item": "name=@apidocs/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@guides/qits-platform",
+          "item": "name=@apidocs/qits-ci",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@qits/ui-components",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@qits/ui-components",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -86993,7 +89507,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@qits/ui-components",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -87001,7 +89515,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@qits/ui-components",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -87009,25 +89523,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@qits/ui-components",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@qits/ui-components",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@routes/qits-landing",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@routes/qits-landing",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -87035,7 +89549,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@routes/qits-landing",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -87043,7 +89557,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@routes/qits-landing",
+          "item": "name=@contracts/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -87051,25 +89565,103 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@routes/qits-landing",
+          "item": "name=@contracts/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@routes/qits-landing",
+          "item": "name=@contracts/qits-ci",
           "field": "name",
           "derived": []
         },
         {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-all-agents:agents",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@userflows/qits-events",
+          "item": null,
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@userflows/qits-events",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -87077,7 +89669,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@userflows/qits-events",
+          "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
             "name"
@@ -87085,7 +89677,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@userflows/qits-events",
+          "item": "name=@apidocs/qits-ci",
           "field": null,
           "derived": [
             "versionCount"
@@ -87093,25 +89685,25 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@userflows/qits-events",
+          "item": "name=@apidocs/qits-ci",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=@userflows/qits-events",
+          "item": "name=@apidocs/qits-ci",
           "field": "name",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=qits-storybook",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=qits-storybook",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "latestPublishedAt"
@@ -87119,7 +89711,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=qits-storybook",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "name"
@@ -87127,7 +89719,7 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=qits-storybook",
+          "item": "name=@changelog/qits-ci-service",
           "field": null,
           "derived": [
             "versionCount"
@@ -87135,16 +89727,1378 @@
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=qits-storybook",
+          "item": "name=@changelog/qits-ci-service",
           "field": "latestVersion",
           "derived": []
         },
         {
           "source": "qits-artifacts-service#listDocsSites",
-          "item": "name=qits-storybook",
+          "item": "name=@changelog/qits-ci-service",
           "field": "name",
           "derived": []
         },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-all-agents:agents",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > lists the sites the repository published, by section, whatever their names",
+      "name": "populated",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-docs-site:open",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sites"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@apidocs/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@changelog/qits-ci-service",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "latestPublishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "name"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": null,
+          "derived": [
+            "versionCount"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "latestVersion",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": "name=@contracts/qits-ci",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says the project has no repository of an unknown name, and shows no site",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says the project has no repository of an unknown name, and shows no site",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says the project has no repository of an unknown name, and shows no site",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says the project has no repository of an unknown name, and shows no site",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "leave-repository-docs:docs",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says the project has no repository of an unknown name, and shows no site",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+      "test": "RepositoryDocsPage (screenshots) > says the project has no repository of an unknown name, and shows no site",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/repositories/:repo",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog of every kind",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "two projects exist",
+          "operationId": "listProjectRepositories"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-repository-docs:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -168558,7 +172512,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -168794,7 +172748,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -169026,6 +172980,7 @@
       ],
       "triggers": [
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
@@ -169245,6 +173200,7 @@
       ],
       "triggers": [
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
@@ -169468,7 +173424,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -169704,7 +173660,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -169940,7 +173896,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -170158,7 +174114,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -170377,7 +174333,7 @@
         "open-all-agents:agents",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -170596,7 +174552,7 @@
         "open-all-agents:agents",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -170810,6 +174766,7 @@
       ],
       "triggers": [
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
@@ -171011,6 +174968,7 @@
       ],
       "triggers": [
         "open-project-settings:open",
+        "open-repository-docs:repository",
         "open-repository-pages:contracts",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder"
@@ -171216,7 +175174,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -171434,7 +175392,7 @@
         "follow-breadcrumb:projects",
         "open-network-access:open",
         "open-project-settings:open",
-        "open-repository-pages:contracts",
+        "open-repository-docs:repository",
         "open-repository-pages:entities",
         "open-repository-pages:uiBuilder",
         "open-sidebar-network-access:networkAccess",
@@ -238961,6 +242919,46 @@
       "src/app/routes/projects/[slug]/docs/project-docs.page.browser.spec.ts/populated-tablet-dark.html",
       "src/app/routes/projects/[slug]/docs/project-docs.page.browser.spec.ts/populated-tablet-light.html"
     ],
+    "projects/:slug/docs/repositories/:repo": [
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/error-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/filtered-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/populated-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/unknown-tablet-light.html"
+    ],
     "projects/:slug/events": [
       "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts/empty-desktop-light.html",
@@ -240379,6 +244377,36 @@
         "file": "src/app/routes/projects/[slug]/docs/project-docs.page.ts"
       },
       {
+        "route": "projects/:slug/docs",
+        "interaction": "open-repository-docs",
+        "outcome": "repository",
+        "kind": "exit",
+        "to": "projects/:slug/docs/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/docs/project-docs.page.ts"
+      },
+      {
+        "route": "projects/:slug/docs/repositories/:repo",
+        "interaction": "leave-repository-docs",
+        "outcome": "docs",
+        "kind": "exit",
+        "to": "projects/:slug/docs",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.ts"
+      },
+      {
+        "route": "projects/:slug/docs/repositories/:repo",
+        "interaction": "open-docs-site",
+        "outcome": "open",
+        "kind": "external",
+        "to": "docs",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.ts"
+      },
+      {
         "route": "projects/:slug/events",
         "interaction": "open-project-event-subject",
         "outcome": "releaseRequest",
@@ -241390,6 +245418,16 @@
       },
       {
         "route": null,
+        "interaction": "open-repository-docs",
+        "outcome": "repository",
+        "kind": "exit",
+        "to": "projects/:slug/docs/repositories/:repo",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/repositories/repository-card/repository-card.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-repository-pages",
         "outcome": "contracts",
         "kind": "exit",
@@ -242314,6 +246352,15 @@
       },
       {
         "spec": "src/app/patterns/repositories/repository-card/repository-card.browser.spec.ts",
+        "test": "RepositoryCard (screenshots) > open-repository-docs repository: every card opens its repository’s Docs page",
+        "route": null,
+        "interaction": "open-repository-docs",
+        "outcome": "repository",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/repositories/repository-card/repository-card.browser.spec.ts",
         "test": "RepositoryCard (screenshots) > open-repository-pages contracts: a service’s card opens its contracts",
         "route": null,
         "interaction": "open-repository-pages",
@@ -242901,6 +246948,33 @@
         "spec": "src/app/routes/projects/[slug]/docs/project-docs.page.browser.spec.ts",
         "test": "ProjectDocsPage (screenshots) > open-docs-site open: a row leaves for the site’s reader on the docs app, in this tab",
         "route": "projects/:slug/docs",
+        "interaction": "open-docs-site",
+        "outcome": "open",
+        "kind": "external",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/docs/project-docs.page.browser.spec.ts",
+        "test": "ProjectDocsPage (screenshots) > open-repository-docs repository: a row’s repository opens its Docs page",
+        "route": "projects/:slug/docs",
+        "interaction": "open-repository-docs",
+        "outcome": "repository",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+        "test": "RepositoryDocsPage (screenshots) > leave-repository-docs docs: “← Docs” opens the project’s Docs page",
+        "route": "projects/:slug/docs/repositories/:repo",
+        "interaction": "leave-repository-docs",
+        "outcome": "docs",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts",
+        "test": "RepositoryDocsPage (screenshots) > open-docs-site open: a row leaves for the site’s reader on the docs app, in this tab",
+        "route": "projects/:slug/docs/repositories/:repo",
         "interaction": "open-docs-site",
         "outcome": "open",
         "kind": "external",
