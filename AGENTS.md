@@ -546,8 +546,8 @@ host: every request the platform has not finished with and the ten newest settle
 `isCompletedRequest` (`core/deployments/deployment-requests.ts`, the server's `RequestLifecycle`
 rule, with `isPendingGate`, `isRefused`, `isHeldForApproval` and `isInFlight`) into Pending and
 Completed, one "No deployment requests yet" when there are none. Each row's Open leads to the
-request's page on the deployments frontend (`deploymentRequestHref`, which the release request
-page's lifecycle uses too) until qits-2322 moves it here. Only `qits:admin`, `qits:admin-agent`,
+request's own page (`open-deployment-request`), as the release request page's lifecycle's "the
+deployment" does (`open-release-deployment-request`). Only `qits:admin`, `qits:admin-agent`,
 `qits:desk-admin`, `qits:desk`, `qits:agent` and `qits:system` may read the requests; a 403 says
 so. Staleness: the resource's `refreshOn` (`DEPLOYMENT_REQUEST_EVENTS`, narrowed by
 `affectsDeploymentRequests`): a deployment event (`DeploymentQueued`, `DeploymentStarted`,
@@ -558,6 +558,32 @@ of the project's release requests (`ProjectReleaseRequests`). A gate that settle
 hold sends no event: Refresh reads again. The pact (`@qits/deployments-golden-masters`, states "a
 project with deployment requests" and "a project with no deployment requests") skips itself on an
 older pin.
+
+`deployments/requests/<id>` (`DeploymentRequestPage`, qits-2322, the retired frontend's
+`deployment-requests/<id>` page) is one request end to end; the sidebar keeps Deployments ›
+Requests current, and the trail ends with `<version> · <applicationName>`
+(`deploymentRequestSubpage` in the shell, named from `OpenDeploymentRequest`, a root signal the page
+sets with what it shows: nothing is read twice). Its doors: `DEPLOYMENT_REQUEST`
+(`getDeploymentRequest`, the request and its deployment, `null` when none was queued), which alone
+can fail the page (403 names the roles, 404 says "No deployment request <id>.", else Retry);
+`TIER_DEPLOYMENTS` (`listDeployments?environmentId=`) and `ENVIRONMENTS` (`listEnvironments`), which
+decide the lifecycle's middle tile only; and the shell's `ProjectReleaseRequests` (no new
+qits-projects interaction), which decides the merge tile only. The lifecycle is `requestLifecycle`
+(`core/deployments/deployment-requests.ts`): Released (always), Running in <tier> (the tier's newest
+ACTIVE deployment of the application by `createdAt`, not the request's own; stopped with why once
+the request is completed and not serving), Merged to main (by version among the release requests of
+its `repoId`); a side read that failed or is still on its way says so on its tile. Writes: while
+held, Approve (`APPROVE_DEPLOYMENT_REQUEST`, no body) and Decline with an optional note
+(`DECLINE_DEPLOYMENT_REQUEST`, `{ note }`; final, the release request ends WITHDRAWN), each
+confirmed on a second press through `qitsMutation`; the answer is the read's envelope and takes the
+shown one's place (`read.set`), a refusal (409, 404, 502) is said beside the buttons, and a 409
+(somebody settled it first) reads the request again. Staleness: the request's and the tier's
+`refreshOn`, `DEPLOYMENT_REQUEST_EVENTS` narrowed by `affectsDeploymentRequest` (a deployment event
+of its `applicationName`, a `DeploymentRequestDeclined` of its id, a `SoftwareRelease` of its
+`repoId`), debounced 1 s; the same gap: a gate settling as a refusal or a hold sends no event, and
+Refresh reads all four again. The pact adds "a deployment request that deployed", "… held for
+approval" (with `approveDeploymentRequest`), "… held for decline" (with `declineDeploymentRequest`
+and its recorded note), "an application deployed in an environment" and "an environment".
 
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
 component whose pages are its children (the internal, external, bump, adoption, repository and
