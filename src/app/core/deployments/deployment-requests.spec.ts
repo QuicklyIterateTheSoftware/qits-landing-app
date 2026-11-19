@@ -19,6 +19,7 @@ import {
   statusLabel,
   stoppedWord,
   statusTone,
+  variantsToCome,
   type GatedRequest,
   type LifecycleFacts,
   type LifecycleRequest,
@@ -402,5 +403,20 @@ describe('deployment requests', () => {
         ),
       ).toBe(false);
     });
+  });
+});
+
+describe('variantsToCome', () => {
+  const main = { variant: null, variants: ['private', 'public'] };
+
+  it('names the declared variants no request of the release deploys yet, in order', () => {
+    expect(variantsToCome(main, [main, { variant: 'private' }])).toEqual(['public']);
+    expect(variantsToCome(main, [main])).toEqual(['private', 'public']);
+    expect(variantsToCome(main, [main, { variant: 'public' }, { variant: 'private' }])).toEqual([]);
+  });
+
+  it('names none for a variant’s own request or a release declaring none', () => {
+    expect(variantsToCome({ variant: 'private', variants: ['x'] }, [])).toEqual([]);
+    expect(variantsToCome({ variant: null, variants: null }, [])).toEqual([]);
   });
 });

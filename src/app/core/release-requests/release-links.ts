@@ -7,11 +7,16 @@ import type { ReleaseArtifact } from './release-request.consumes';
  * its origin; the page joins them with `PlatformOrigins.page(app)`.
  */
 
-/** A link to another application: its label, and where, when it can be spelled. */
+/**
+ * A link to another application: its label, and where, when it can be spelled. One with no `app`
+ * and a `path` is a page of this app (`path` is its address from the root); `release` then names
+ * the release whose deployment requests it opens (qits-2323), for the page's exit.
+ */
 export interface AppLink {
   readonly label: string;
   readonly app?: PlatformApp;
   readonly path?: string;
+  readonly release?: { readonly repoId: string; readonly version: string };
 }
 
 /**
@@ -87,8 +92,9 @@ export function docsReadPath(scope: string, site: string, version?: string): str
 }
 
 /**
- * The release's own links: its tag and released commit in qits-githost, its deployment in
- * qits-deployments (only when something deploys it), and its release train in qits-maintenance.
+ * The release's own links: its tag and released commit in qits-githost, its deployment requests in
+ * this app's Deployments section (only when something deploys it, qits-2323), and its release train
+ * in qits-maintenance.
  */
 export function releaseLinks(input: {
   readonly slug: string;
@@ -118,10 +124,10 @@ export function releaseLinks(input: {
   if (version && input.deployable && input.repoId) {
     links.push({
       label: 'The deployment of this release',
-      app: 'deployments',
       path:
-        `/${input.slug}/deployment-requests/by-release/${encodeURIComponent(input.repoId)}/` +
-        encodeURIComponent(version),
+        `/projects/${encodeURIComponent(input.slug)}/deployments/requests/by-release/` +
+        `${encodeURIComponent(input.repoId)}/${encodeURIComponent(version)}`,
+      release: { repoId: input.repoId, version },
     });
   }
   if (version && input.repoName) {

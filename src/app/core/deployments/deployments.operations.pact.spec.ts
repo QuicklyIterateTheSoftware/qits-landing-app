@@ -15,13 +15,19 @@ import {
   heldBy,
   isRecorded,
 } from '../../../testing/golden-masters';
-import { isCompletedRequest, isDeclined, isHeldForApproval } from './deployment-requests';
+import {
+  isCompletedRequest,
+  isDeclined,
+  isHeldForApproval,
+  variantsToCome,
+} from './deployment-requests';
 import {
   APPROVE_DEPLOYMENT_REQUEST,
   DECLINE_DEPLOYMENT_REQUEST,
   DEPLOYMENT_REQUEST,
   ENVIRONMENTS,
   PROJECT_DEPLOYMENT_REQUESTS,
+  RELEASE_DEPLOYMENT_REQUESTS,
   TIER_DEPLOYMENTS,
 } from './deployments.operations';
 
@@ -42,6 +48,14 @@ import {
  * the recorded note) of the held ones, the tier's deployments (`an application deployed in an
  * environment`) and the tiers (`an environment`).
  *
+ * One release's deployment requests (qits-2323, `?repoId=&version=&includeVariants=true`): a
+ * release whose main application and its `private` variant both deployed (`a release with a
+ * variant deployed`), and a release none was asked for (`a release with no deployment requests`,
+ * recorded by qits-deployments from a later release than the first: until the pin reaches it, its
+ * test skips itself and the committed pact holds no such interaction), and a release that produced
+ * exactly one request (`a release with one deployment request`, recorded later still, skipped the
+ * same way), which the page opens in its own place.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
  */
@@ -56,6 +70,9 @@ const HELD_FOR_DECLINE = 'a deployment request held for decline';
 const IN_TIER = 'an application deployed in an environment';
 const AN_ENVIRONMENT = 'an environment';
 const WITHOUT_REQUESTS = 'a project with no deployment requests';
+const RELEASE_WITH_VARIANT = 'a release with a variant deployed';
+const RELEASE_WITHOUT_REQUESTS = 'a release with no deployment requests';
+const RELEASE_WITH_ONE = 'a release with one deployment request';
 const LIST = PROJECT_DEPLOYMENT_REQUESTS.operationId;
 /** Whether the pinned golden masters record any state; until then the spec writes no pact. */
 const RECORDED =
@@ -99,6 +116,12 @@ const given = (
 /** The request `state` recorded `operationId` for. */
 const requestOf = (state: string, operationId: string): string =>
   masters.operation(state, operationId).params['id'];
+
+/** The release (`repoId`, `version`) `state` recorded its requests read for, variants included. */
+const releaseOf = (state: string) => {
+  const { params } = masters.operation(state, LIST);
+  return { repoId: params['repoId'], version: params['version'], includeVariants: true };
+};
 
 /** The project `state` recorded its requests read for. */
 const projectOf = (state: string): string => masters.operation(state, LIST).params['projectId'];
@@ -150,6 +173,66 @@ describe('qits-landing-app → qits-deployments-service pact: the Deployments se
         );
         expect(error).toBeUndefined();
         expect(data?.deploymentRequests).toEqual([]);
+      }),
+  );
+
+  it.skipIf(!isRecorded(RELEASE_WITH_VARIANT, LIST, masters))(
+    'show-release-deployment-requests: a release whose main application and variant deployed',
+    () =>
+      given(
+        RELEASE_DEPLOYMENT_REQUESTS,
+        RELEASE_WITH_VARIANT,
+        'show-release-deployment-requests',
+      ).executeTest(async (server) => {
+        const query = releaseOf(RELEASE_WITH_VARIANT);
+        const { data, error } = await at(server.url, () =>
+          RELEASE_DEPLOYMENT_REQUESTS.fetch({ query }),
+        );
+        expect(error).toBeUndefined();
+        const rows = data?.deploymentRequests ?? [];
+        expect(rows).toHaveLength(2);
+        expect(rows.every((row) => row.repoId === query.repoId)).toBe(true);
+        expect(rows.every((row) => row.version === query.version)).toBe(true);
+        const variant = rows.find((row) => row.variant);
+        const main = rows.find((row) => !row.variant);
+        expect(main?.variants).toContain(variant?.variant);
+        expect(main && variantsToCome(main, rows)).toEqual([]);
+      }),
+  );
+
+  it.skipIf(!isRecorded(RELEASE_WITHOUT_REQUESTS, LIST, masters))(
+    'show-release-deployment-requests: a release none was asked for',
+    () =>
+      given(
+        RELEASE_DEPLOYMENT_REQUESTS,
+        RELEASE_WITHOUT_REQUESTS,
+        'show-release-deployment-requests',
+      ).executeTest(async (server) => {
+        const { data, error } = await at(server.url, () =>
+          RELEASE_DEPLOYMENT_REQUESTS.fetch({ query: releaseOf(RELEASE_WITHOUT_REQUESTS) }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.deploymentRequests).toEqual([]);
+      }),
+  );
+
+  it.skipIf(!isRecorded(RELEASE_WITH_ONE, LIST, masters))(
+    'show-release-deployment-requests: a release that produced one request',
+    () =>
+      given(
+        RELEASE_DEPLOYMENT_REQUESTS,
+        RELEASE_WITH_ONE,
+        'show-release-deployment-requests',
+      ).executeTest(async (server) => {
+        const { data, error } = await at(server.url, () =>
+          RELEASE_DEPLOYMENT_REQUESTS.fetch({ query: releaseOf(RELEASE_WITH_ONE) }),
+        );
+        expect(error).toBeUndefined();
+        const rows = data?.deploymentRequests ?? [];
+        expect(rows.map((row) => row.id)).toEqual([
+          masters.operation(RELEASE_WITH_ONE, LIST).params['deploymentRequestId'],
+        ]);
+        expect(rows[0]?.variant ?? null).toBeNull();
       }),
   );
 

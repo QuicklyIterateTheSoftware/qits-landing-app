@@ -18,6 +18,7 @@ export type RoutePath =
   | 'projects/:slug/deployments'
   | 'projects/:slug/deployments/requests'
   | 'projects/:slug/deployments/requests/:requestId'
+  | 'projects/:slug/deployments/requests/by-release/:repoId/:version'
   | 'projects/:slug/desk'
   | 'projects/:slug/docs'
   | 'projects/:slug/events'

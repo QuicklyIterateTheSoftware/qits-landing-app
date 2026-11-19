@@ -165,6 +165,16 @@ describe('deploymentRequestSubpage', () => {
     );
   });
 
+  it('names one release’s requests by the release’s version', () => {
+    expect(
+      deploymentRequestSubpage(`${list}/by-release/r%2F1/2026.101.120000?x=1`, project, shown),
+    ).toEqual({
+      label: 'release 2026.101.120000',
+      path: `${list}/by-release/r%2F1/2026.101.120000`,
+    });
+    expect(deploymentRequestSubpage(`${list}/by-release/r1`, project)).toBeUndefined();
+  });
+
   it('has no crumb for the list itself or for other pages', () => {
     expect(deploymentRequestSubpage(list, project, shown)).toBeUndefined();
     expect(deploymentRequestSubpage(`${list}/`, project, shown)).toBeUndefined();

@@ -253,6 +253,20 @@ export function affectsDeploymentRequests(
   return !!application && shown.requests.some((r) => r.applicationName === application);
 }
 
+/**
+ * The variants a main application's request declares (`variants`) that no request of the same
+ * release deploys yet (`variant`), in declared order (qits-2323): their requests are still to
+ * come. A variant's own request (`variant` set) declares none.
+ */
+export function variantsToCome(
+  request: { readonly variant?: string | null; readonly variants?: readonly string[] | null },
+  release: readonly { readonly variant?: string | null }[],
+): readonly string[] {
+  if (request.variant) return [];
+  const deployed = new Set(release.map((other) => other.variant).filter(Boolean));
+  return (request.variants ?? []).filter((variant) => !deployed.has(variant));
+}
+
 /** What the request's page narrows the events by (qits-2322): the request on show. */
 export interface ShownDeploymentRequest {
   readonly id?: string | null;

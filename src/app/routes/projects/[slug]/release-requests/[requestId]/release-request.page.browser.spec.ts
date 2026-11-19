@@ -512,10 +512,21 @@ describe('ReleaseRequestPage (screenshots)', () => {
       (phase: { phase: string }) => phase.phase === 'DEPLOY',
     );
     const { opened, view } = await shown('a released release request');
-    await view.getByRole('link', { name: 'the deployment' }).click();
+    await view.getByRole('link', { name: 'the deployment', exact: true }).click();
     await leftFor(opened);
     expect(fired()).toEqual(['open-release-deployment-request:request']);
     expect(url()).toBe(`/projects/${opened.project.slug}/deployments/requests/${deploy.runId}`);
+  });
+
+  it('open-release-deployment-requests byRelease: “The deployment of this release” opens its deployment requests', async () => {
+    const { request } = await goldenMaster('a released release request', 'getReleaseRequest');
+    const { opened, view } = await shown('a released release request');
+    await view.getByRole('link', { name: 'The deployment of this release' }).click();
+    await leftFor(opened);
+    expect(fired()).toEqual(['open-release-deployment-requests:byRelease']);
+    expect(url()).toBe(
+      `/projects/${opened.project.slug}/deployments/requests/by-release/${request.repoId}/${request.version}`,
+    );
   });
 
   it('shows the paths a conflicted request could not fold', async () => {

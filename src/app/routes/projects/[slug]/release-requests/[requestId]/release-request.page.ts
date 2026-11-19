@@ -652,12 +652,25 @@ const UNATTENDED_TITLE =
                     >
                       @for (link of releaseLinks(); track link.label) {
                         <li>
-                          <a class="text-accent no-underline hover:underline" [href]="link.href"
-                            >{{ link.label }}
-                            @if (link.label === 'The released commit') {
-                              <span class="font-mono">{{ short(request.releasedSha) }}</span>
-                            }
-                          </a>
+                          @if (link.release; as release) {
+                            <a
+                              class="text-accent no-underline hover:underline"
+                              [qitsExit]="deployments.byRelease"
+                              [exitParams]="{
+                                slug: slug(),
+                                repoId: release.repoId,
+                                version: release.version,
+                              }"
+                              >{{ link.label }}</a
+                            >
+                          } @else {
+                            <a class="text-accent no-underline hover:underline" [href]="link.href"
+                              >{{ link.label }}
+                              @if (link.label === 'The released commit') {
+                                <span class="font-mono">{{ short(request.releasedSha) }}</span>
+                              }
+                            </a>
+                          }
                         </li>
                       }
                     </ul>
@@ -980,6 +993,11 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
     gateTicket: exit('projects/:slug/work'),
   });
 
+  /** "The deployment of this release": its deployment requests in this app (qits-2323). */
+  protected readonly deployments = outcomes('open-release-deployment-requests', {
+    byRelease: exit('projects/:slug/deployments/requests/by-release/:repoId/:version'),
+  });
+
   /** "← Release requests": back to the project's release requests (epic qits-2000). */
   protected readonly leaving = outcomes('leave-release-request', {
     list: exit('projects/:slug/release-requests'),
@@ -1097,9 +1115,13 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
 
   private readonly origins = inject(PlatformOrigins);
 
-  /** A link with its address joined to its application's origin; no href when none is known. */
+  /**
+   * A link with its address joined to its application's origin; no href when none is known. A page
+   * of this app (no `app`, a `path` from the root) keeps its path as the href.
+   */
   private linked(link: AppLink): AppLink & { readonly href?: string } {
-    const origin = link.app ? this.origins.page(link.app) : '';
+    if (!link.app) return { ...link, href: link.path?.startsWith('/') ? link.path : undefined };
+    const origin = this.origins.page(link.app);
     return { ...link, href: origin && link.path ? `${origin}${link.path}` : undefined };
   }
 

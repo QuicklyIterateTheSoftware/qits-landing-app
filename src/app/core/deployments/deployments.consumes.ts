@@ -41,6 +41,27 @@ export type DeploymentRequestRow = NonNullable<
 >[number];
 
 /**
+ * `listDeploymentRequests?repoId=&version=&includeVariants=true` (qits-2323): the requests one
+ * release produced, the main application's and its variants', each row as the Requests page draws
+ * it, plus the variant a row deploys (`null` for the main application) and the variants the release
+ * declares (on the main application's row), so a variant whose request has not arrived yet can be
+ * named.
+ */
+export const LIST_RELEASE_DEPLOYMENT_REQUESTS = [
+  ...LIST_PROJECT_DEPLOYMENT_REQUESTS,
+  'deploymentRequests[].variant',
+  'deploymentRequests[].variants[]',
+] as const;
+
+/** One deployment request of a release, cut to what the by-release page reads. */
+export type ReleaseDeploymentRequestRow = NonNullable<
+  Consumed<
+    ListDeploymentRequestsResponses[200],
+    typeof LIST_RELEASE_DEPLOYMENT_REQUESTS
+  >['deploymentRequests']
+>[number];
+
+/**
  * `getDeploymentRequest` (qits-2322): one request and the deployment it handed off to, as the
  * request's own page draws them: the head and the lifecycle (version, application, the tier it
  * was asked for, the repository its merge is looked up by), the request's facts (the gate, the
