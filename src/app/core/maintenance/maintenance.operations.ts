@@ -1,11 +1,15 @@
 import { qitsOperation } from '@qits/angular';
 import {
   getBump,
+  getRepository,
+  getRepositoryDownstream,
   listArtifacts,
+  listBumps,
   listDependencies,
   listDependencyDependents,
   listRepositories,
   listPendingBumps,
+  listRepositoryDependents,
 } from '../../api/maintenance';
 import {
   BUMP,
@@ -15,14 +19,18 @@ import {
   LIST_DEPENDENCY_DEPENDENTS,
   LIST_PENDING_BUMPS,
   LIST_REPOSITORIES,
+  REPOSITORY,
+  REPOSITORY_BUMPS,
+  REPOSITORY_DEPENDENTS,
+  REPOSITORY_DOWNSTREAM,
 } from './maintenance.consumes';
 
 /**
  * qits-maintenance's reads declared as operations (qits-2145), for the top bar's bumps menu, which
  * reads through `qitsResource` instead of a store (qits-2146), and for the Maintenance section's
- * Dependencies page (qits-2317), Artifacts page (qits-2330) and bump page (qits-2332);
- * `maintenance.operations.pact.spec.ts` binds each with the same provider, operationId and
- * `consumes`.
+ * Dependencies page (qits-2317), Artifacts page (qits-2330), bump page (qits-2332) and repository
+ * page (qits-2334); `maintenance.operations.pact.spec.ts` binds each with the same provider,
+ * operationId and `consumes`.
  */
 
 /** The newest pending version bumps (`listPendingBumps?limit=`), the bumps menu's list. */
@@ -95,4 +103,60 @@ export const MAINTENANCE_BUMP = qitsOperation({
   method: 'GET',
   call: getBump,
   consumes: BUMP,
+});
+
+/**
+ * One repository of the inventory with its pins and transitives (`getRepository`,
+ * `/maintenance/api/repositories/{name}`), the repository page's main read (qits-2334): keyed by
+ * the repository's name (`qits-ci-service`, never the application `qits-ci`). A name the inventory
+ * does not hold is a 404, which the page says as "No repository <name> in the inventory." (status
+ * only: the page reads nothing of the body). Only staff roles may read it; anyone else gets a 403.
+ */
+export const MAINTENANCE_REPOSITORY = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'getRepository',
+  method: 'GET',
+  call: getRepository,
+  consumes: REPOSITORY,
+});
+
+/**
+ * The newest bumps of one repository (`listBumps?repository=&limit=20`), the repository page's
+ * recent bumps (qits-2334). An unknown repository answers an empty list. Only staff roles may read
+ * it; anyone else gets a 403.
+ */
+export const MAINTENANCE_REPOSITORY_BUMPS = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'listBumps',
+  method: 'GET',
+  call: listBumps,
+  consumes: REPOSITORY_BUMPS,
+});
+
+/**
+ * Who embeds what one repository publishes, per published artifact
+ * (`listRepositoryDependents`, `/maintenance/api/repositories/{name}/dependents`), the repository
+ * page's dependents (qits-2334). An unknown repository answers no artifacts. Only staff roles may
+ * read it; anyone else gets a 403.
+ */
+export const MAINTENANCE_REPOSITORY_DEPENDENTS = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'listRepositoryDependents',
+  method: 'GET',
+  call: listRepositoryDependents,
+  consumes: REPOSITORY_DEPENDENTS,
+});
+
+/**
+ * Everything downstream of one repository, upstream first (`getRepositoryDownstream`,
+ * `/maintenance/api/repositories/{name}/downstream`), the repository page's downstream closure
+ * (qits-2334). An unknown repository answers an empty closure. Only staff roles may read it; anyone
+ * else gets a 403.
+ */
+export const MAINTENANCE_REPOSITORY_DOWNSTREAM = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'getRepositoryDownstream',
+  method: 'GET',
+  call: getRepositoryDownstream,
+  consumes: REPOSITORY_DOWNSTREAM,
 });

@@ -558,6 +558,33 @@ export const INTERACTIONS = {
    */
   'open-bump-release-request': 'The release request on a bump’s page opens the request',
   /**
+   * `maintenance-repository.page.ts` via `MAINTENANCE_REPOSITORY`, `MAINTENANCE_REPOSITORY_BUMPS`,
+   * `MAINTENANCE_REPOSITORY_DEPENDENTS` and `MAINTENANCE_REPOSITORY_DOWNSTREAM` (qits-2334): the
+   * repository page reads one repository by its name with its pins and transitives, its newest 20
+   * bumps, who embeds what it publishes and its downstream closure; the repository and its bumps
+   * again after `BUMP_EVENTS` naming it. Refresh reads all four again.
+   */
+  'show-maintenance-repository':
+    'A repository’s maintenance page shows its pins, its recent bumps, its dependents and what is downstream',
+  /**
+   * `maintenance-repository.page.ts`: a bump in a repository's recent bumps opens the bump's page
+   * (qits-2334). Navigates only, and names no pact.
+   */
+  'open-repository-bump': 'A bump on a repository’s maintenance page opens the bump’s page',
+  /**
+   * `maintenance-repository.page.ts`: the release request a recent bump belongs to opens the
+   * request's page (qits-2334). Navigates only, and names no pact.
+   */
+  'open-repository-bump-release-request':
+    'The release request of a bump on a repository’s maintenance page opens the request',
+  /**
+   * `repository-links.ts` (`MaintenanceRepositoryLinks`, qits-2334): a repository name on the
+   * Dependencies page (a pin's), the Artifacts page (the producing repository, a dependent's), the
+   * bump page and the repository page (a dependent's, a downstream one's) opens that repository's
+   * maintenance page in the open project. Navigates only, and names no pact.
+   */
+  'open-maintenance-repository': 'A repository name in Maintenance opens the repository’s page',
+  /**
    * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
    * (qits-2331): a name glob searched on the Dependencies page (`?name=`) reads the INTERNAL and
    * EXTERNAL dependencies with it (`?kind=…&name=…`), beside the inventory's repositories, and

@@ -1,10 +1,14 @@
 import type {
   GetBumpResponses,
+  GetRepositoryDownstreamResponses,
+  GetRepositoryResponses,
   ListArtifactsResponses,
+  ListBumpsResponses,
   ListDependencyDependentsResponses,
   ListDependenciesResponses,
   ListRepositoriesResponses,
   ListPendingBumpsResponses,
+  ListRepositoryDependentsResponses,
 } from '../../api/maintenance';
 import type { Consumed } from '@qits/angular';
 
@@ -178,3 +182,108 @@ export type BumpDetail = Consumed<GetBumpResponses[200], typeof BUMP>;
 
 /** One change a bump sent, as the bump page's table reads it. */
 export type BumpChange = NonNullable<BumpDetail['changes']>[number];
+
+/**
+ * `MAINTENANCE_REPOSITORY` (qits-2334): one repository of the inventory by its name, as the
+ * repository page shows it. Its name, its status (`OK`, `ABSENT`, `UNDECLARED` or any other word),
+ * when it was last scanned and the scan's `message`; every pin (where, `manifestPath`; what,
+ * `ecosystem` and `name`; the version it pins, the latest one, its `kind`: INTERNAL, EXTERNAL,
+ * REACTOR or UNRESOLVED, and whether it is behind, the service's `pending`); and the transitives
+ * the pins bring in (what, which version, through which pin, `via`, and whether it is `behind`).
+ * Not the groups: the page shows none (qits-1133 retired them).
+ */
+export const REPOSITORY = [
+  'name',
+  'status',
+  'lastScanAt',
+  'message',
+  'pins[].manifestPath',
+  'pins[].ecosystem',
+  'pins[].name',
+  'pins[].version',
+  'pins[].latest',
+  'pins[].kind',
+  'pins[].pending',
+  'transitives[].ecosystem',
+  'transitives[].name',
+  'transitives[].version',
+  'transitives[].via',
+  'transitives[].behind',
+] as const;
+
+/** One repository, cut to what the repository page reads. */
+export type RepositoryDetail = Consumed<GetRepositoryResponses[200], typeof REPOSITORY>;
+
+/** One pin of a repository, as the repository page's tables read it. */
+export type RepositoryPin = NonNullable<RepositoryDetail['pins']>[number];
+
+/** One transitive of a repository, as the repository page reads it. */
+export type RepositoryTransitive = NonNullable<RepositoryDetail['transitives']>[number];
+
+/** How many bumps the repository page asks for: the newest, one page. */
+export const REPOSITORY_BUMPS_LIMIT = 20;
+
+/**
+ * `MAINTENANCE_REPOSITORY_BUMPS` (qits-2334): the newest bumps of one repository
+ * (`?repository=&limit=20`), each with its status, its kind (`group`: the automation kind, or a
+ * maintenance group), its trigger, when it started, how many changes it sent, the release request
+ * it belongs to (a uuid, or the sentinels `converged` and `refused`) and its `message`.
+ */
+export const REPOSITORY_BUMPS = [
+  '[].id',
+  '[].group',
+  '[].trigger',
+  '[].status',
+  '[].startedAt',
+  '[].releaseRequestId',
+  '[].message',
+  '[].changes[].name',
+] as const;
+
+/** One bump of a repository, cut to what the repository page reads. */
+export type RepositoryBump = Consumed<ListBumpsResponses[200], typeof REPOSITORY_BUMPS>[number];
+
+/**
+ * `MAINTENANCE_REPOSITORY_DEPENDENTS` (qits-2334): who embeds what one repository publishes, per
+ * published artifact (its ecosystem, name and latest version): each released artifact of ours whose
+ * newest release embeds it (`artifactEcosystem`, `artifactName`, `artifactVersion`), its repository,
+ * the version it embeds, and whether directly.
+ */
+export const REPOSITORY_DEPENDENTS = [
+  'artifacts[].ecosystem',
+  'artifacts[].name',
+  'artifacts[].latest',
+  'artifacts[].dependents[].artifactEcosystem',
+  'artifacts[].dependents[].artifactName',
+  'artifacts[].dependents[].artifactVersion',
+  'artifacts[].dependents[].repository',
+  'artifacts[].dependents[].embeddedVersion',
+  'artifacts[].dependents[].direct',
+] as const;
+
+/** One repository's dependents, cut to what the repository page reads. */
+export type RepositoryDependents = Consumed<
+  ListRepositoryDependentsResponses[200],
+  typeof REPOSITORY_DEPENDENTS
+>;
+
+/** One published artifact with its dependents, as the repository page reads it. */
+export type PublishedArtifact = NonNullable<RepositoryDependents['artifacts']>[number];
+
+/**
+ * `MAINTENANCE_REPOSITORY_DOWNSTREAM` (qits-2334): every repository downstream of one, upstream
+ * first: its name, archetype, how far down it is (`depth`) and the repositories it depends on
+ * through (`via`).
+ */
+export const REPOSITORY_DOWNSTREAM = [
+  'downstream[].repository',
+  'downstream[].archetype',
+  'downstream[].depth',
+  'downstream[].via',
+] as const;
+
+/** One repository's downstream closure, cut to what the repository page reads. */
+export type RepositoryDownstream = Consumed<
+  GetRepositoryDownstreamResponses[200],
+  typeof REPOSITORY_DOWNSTREAM
+>;

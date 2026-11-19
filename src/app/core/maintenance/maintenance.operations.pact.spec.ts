@@ -11,13 +11,17 @@ import { client as maintenanceClient } from '../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../api/maintenance/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { heldBy, maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
-import { PENDING_BUMPS } from './maintenance.consumes';
+import { PENDING_BUMPS, REPOSITORY_BUMPS_LIMIT } from './maintenance.consumes';
 import {
   MAINTENANCE_ARTIFACTS,
   MAINTENANCE_BUMP,
   MAINTENANCE_DEPENDENCIES,
   MAINTENANCE_DEPENDENTS,
   MAINTENANCE_REPOSITORIES,
+  MAINTENANCE_REPOSITORY,
+  MAINTENANCE_REPOSITORY_BUMPS,
+  MAINTENANCE_REPOSITORY_DEPENDENTS,
+  MAINTENANCE_REPOSITORY_DOWNSTREAM,
   PENDING_BUMPS_LIST,
 } from './maintenance.operations';
 
@@ -50,6 +54,17 @@ import {
  * that changed nothing ("a bump that changed nothing"), a FAILED automation bump with its failure
  * and two CI runs ("a failed bump"), and an id the service does not know ("no such bump", a 404
  * binding the status only: the page reads nothing of the body).
+ *
+ * Its repository page (qits-2334) reads one repository by its name (`repoName`) four ways: the
+ * repository with its pins and transitives (`getRepository`), its newest 20 bumps
+ * (`listBumps?repository=&limit=20`, which the golden master records and the interaction
+ * requires), who embeds what it publishes (`listRepositoryDependents`) and its downstream closure
+ * (`getRepositoryDownstream`). Each in three states: internal, external, REACTOR and UNRESOLVED
+ * pins, some pending, a behind transitive, a RUNNING, a SUCCEEDED and a NOTHING_TO_DO bump, one
+ * published artifact with a current and a behind dependent, a two-level downstream ("a repository
+ * with pins and bumps"); an OK repository with nothing at all ("a repository with nothing
+ * pinned"); and a name the inventory does not hold ("no such repository": `getRepository` a 404
+ * binding the status only, the other three empty answers).
  *
  * Its name search (qits-2331) reads the same dependencies of each kind with the searched glob
  * (`?kind=…&name=…`): a glob some of the project's dependencies match (`*p*`: "dependencies
@@ -136,6 +151,22 @@ const dependentsOf = (state: string) => {
 /** The bump `state` recorded under the provider-state param `param`, as the page asks for it. */
 const bumpOf = (state: string, param: string) => ({
   path: { id: masters.operation(state, 'getBump').params[param] },
+});
+
+const PINS_AND_BUMPS = 'a repository with pins and bumps';
+const NOTHING_PINNED = 'a repository with nothing pinned';
+const NO_SUCH_REPOSITORY = 'no such repository';
+
+/** The repository `state` recorded (its `repoName`), as the page addresses it. */
+const repoOf = (state: string): string =>
+  masters.operation(state, 'getRepository').params['repoName'];
+
+/** The page's path for the repository `state` recorded. */
+const named = (state: string) => ({ path: { name: repoOf(state) } });
+
+/** The page's request for the newest bumps of the repository `state` recorded. */
+const bumpsOf = (state: string) => ({
+  query: { repository: repoOf(state), limit: REPOSITORY_BUMPS_LIMIT },
 });
 
 /** The project the recorded states' repositories belong to. */
@@ -347,6 +378,170 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
         expect(response?.status).toBe(404);
       },
     ));
+
+  it('show-maintenance-repository: a repository with pins of every kind and transitives', () =>
+    given(MAINTENANCE_REPOSITORY, PINS_AND_BUMPS, 'show-maintenance-repository').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_REPOSITORY.fetch(named(PINS_AND_BUMPS)),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.name).toBe(repoOf(PINS_AND_BUMPS));
+        expect(data?.status).toBe('OK');
+        // The mock answers each row with the recorded first one (a type match per element).
+        const pins = data?.pins ?? [];
+        expect(pins.length).toBeGreaterThan(0);
+        expect(pins.every((pin) => !!pin.name && !!pin.kind && !!pin.manifestPath)).toBe(true);
+        expect(typeof pins[0]?.pending).toBe('boolean');
+        expect(typeof data?.transitives?.[0]?.behind).toBe('boolean');
+      },
+    ));
+
+  it('show-maintenance-repository: a repository with nothing pinned', () =>
+    given(MAINTENANCE_REPOSITORY, NOTHING_PINNED, 'show-maintenance-repository').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_REPOSITORY.fetch(named(NOTHING_PINNED)),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.status).toBe('OK');
+        expect(data?.pins).toEqual([]);
+        expect(data?.transitives).toEqual([]);
+      },
+    ));
+
+  it('show-maintenance-repository: a repository the inventory does not hold is a 404', () =>
+    // The page reads nothing of a 404's body: the interaction binds the status only.
+    given(
+      { ...MAINTENANCE_REPOSITORY, consumes: [] },
+      NO_SUCH_REPOSITORY,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data, response } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY.fetch(named(NO_SUCH_REPOSITORY)),
+      );
+      expect(data).toBeUndefined();
+      expect(response?.status).toBe(404);
+    }));
+
+  it('show-maintenance-repository: a repository’s newest bumps', () =>
+    given(MAINTENANCE_REPOSITORY_BUMPS, PINS_AND_BUMPS, 'show-maintenance-repository').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_REPOSITORY_BUMPS.fetch(bumpsOf(PINS_AND_BUMPS)),
+        );
+        expect(error).toBeUndefined();
+        const bumps = data ?? [];
+        expect(bumps.length).toBeGreaterThan(0);
+        expect(bumps.every((bump) => !!bump.id && !!bump.status && !!bump.group)).toBe(true);
+      },
+    ));
+
+  it('show-maintenance-repository: no bumps of a repository with nothing pinned', () =>
+    given(MAINTENANCE_REPOSITORY_BUMPS, NOTHING_PINNED, 'show-maintenance-repository').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () =>
+          MAINTENANCE_REPOSITORY_BUMPS.fetch(bumpsOf(NOTHING_PINNED)),
+        );
+        expect(data).toEqual([]);
+      },
+    ));
+
+  it('show-maintenance-repository: no bumps of a repository the inventory does not hold', () =>
+    given(
+      MAINTENANCE_REPOSITORY_BUMPS,
+      NO_SUCH_REPOSITORY,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_BUMPS.fetch(bumpsOf(NO_SUCH_REPOSITORY)),
+      );
+      expect(data).toEqual([]);
+    }));
+
+  it('show-maintenance-repository: who embeds what a repository publishes', () =>
+    given(
+      MAINTENANCE_REPOSITORY_DEPENDENTS,
+      PINS_AND_BUMPS,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_DEPENDENTS.fetch(named(PINS_AND_BUMPS)),
+      );
+      expect(error).toBeUndefined();
+      const artifacts = data?.artifacts ?? [];
+      expect(artifacts.length).toBeGreaterThan(0);
+      expect(artifacts[0]?.latest).toBeTruthy();
+      const dependents = artifacts[0]?.dependents ?? [];
+      expect(dependents.length).toBeGreaterThan(0);
+      expect(dependents.every((d) => !!d.repository && !!d.embeddedVersion)).toBe(true);
+    }));
+
+  it('show-maintenance-repository: nothing published by a repository with nothing pinned', () =>
+    given(
+      MAINTENANCE_REPOSITORY_DEPENDENTS,
+      NOTHING_PINNED,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_DEPENDENTS.fetch(named(NOTHING_PINNED)),
+      );
+      expect(data?.artifacts).toEqual([]);
+    }));
+
+  it('show-maintenance-repository: nothing published by a repository the inventory does not hold', () =>
+    given(
+      MAINTENANCE_REPOSITORY_DEPENDENTS,
+      NO_SUCH_REPOSITORY,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_DEPENDENTS.fetch(named(NO_SUCH_REPOSITORY)),
+      );
+      expect(data?.artifacts).toEqual([]);
+    }));
+
+  it('show-maintenance-repository: what is downstream of a repository', () =>
+    given(
+      MAINTENANCE_REPOSITORY_DOWNSTREAM,
+      PINS_AND_BUMPS,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(PINS_AND_BUMPS)),
+      );
+      expect(error).toBeUndefined();
+      const downstream = data?.downstream ?? [];
+      expect(downstream.length).toBeGreaterThan(0);
+      expect(
+        downstream.every((entry) => !!entry.repository && typeof entry.depth === 'number'),
+      ).toBe(true);
+      expect((downstream[0]?.via ?? []).length).toBeGreaterThan(0);
+    }));
+
+  it('show-maintenance-repository: nothing downstream of a repository with nothing pinned', () =>
+    given(
+      MAINTENANCE_REPOSITORY_DOWNSTREAM,
+      NOTHING_PINNED,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(NOTHING_PINNED)),
+      );
+      expect(data?.downstream).toEqual([]);
+    }));
+
+  it('show-maintenance-repository: nothing downstream of a repository the inventory does not hold', () =>
+    given(
+      MAINTENANCE_REPOSITORY_DOWNSTREAM,
+      NO_SUCH_REPOSITORY,
+      'show-maintenance-repository',
+    ).executeTest(async (server) => {
+      const { data } = await at(server.url, () =>
+        MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(NO_SUCH_REPOSITORY)),
+      );
+      expect(data?.downstream).toEqual([]);
+    }));
 
   it('search-project-dependencies: the inventory’s repositories, beside a matching search', () =>
     given(MAINTENANCE_REPOSITORIES, MATCHING, 'search-project-dependencies').executeTest(

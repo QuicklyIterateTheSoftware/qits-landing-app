@@ -2397,6 +2397,1612 @@
         "references": {
           "qits-call": {
             "app": "qits-maintenance-service",
+            "operationId": "getRepository"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: getRepository",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with nothing pinned",
+          "params": {
+            "repoName": "contract-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-service"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "lastScanAt": "2026-01-01T00:00:00Z",
+            "message": null,
+            "name": "contract-service",
+            "pins": [],
+            "status": "OK",
+            "transitives": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.lastScanAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getRepository"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: getRepository",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with pins and bumps",
+          "params": {
+            "repoName": "contract-javalib"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-javalib"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "lastScanAt": "2026-01-01T00:00:00Z",
+            "message": null,
+            "name": "contract-javalib",
+            "pins": [
+              {
+                "ecosystem": "maven",
+                "kind": "REACTOR",
+                "latest": null,
+                "manifestPath": "pom.xml",
+                "name": "eu.wohlben.qits:contract-api",
+                "pending": false,
+                "version": "${project.version}"
+              },
+              {
+                "ecosystem": "maven",
+                "kind": "INTERNAL",
+                "latest": "2026.1101.1",
+                "manifestPath": "pom.xml",
+                "name": "eu.wohlben.qits:qits-arch-rules",
+                "pending": false,
+                "version": "2026.1101.1"
+              }
+            ],
+            "status": "OK",
+            "transitives": [
+              {
+                "behind": true,
+                "ecosystem": "maven",
+                "name": "com.fasterxml.jackson.core:jackson-databind",
+                "version": "2.18.2",
+                "via": "eu.wohlben.qits:qits-eventstream"
+              },
+              {
+                "behind": true,
+                "ecosystem": "maven",
+                "name": "com.fasterxml.jackson.core:jackson-databind",
+                "version": "2.18.2",
+                "via": "eu.wohlben.qits:qits-eventstream"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.lastScanAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.pins": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.manifestPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.kind": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.manifestPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.transitives": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.transitives[*].behind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.transitives[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.transitives[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.transitives[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.transitives[*].via": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getRepository"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: getRepository",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no such repository",
+          "params": {
+            "repoName": "contract-unknown-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-unknown-service"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getRepositoryDownstream"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: getRepositoryDownstream",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with nothing pinned",
+          "params": {
+            "repoName": "contract-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}/downstream",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-service/downstream"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "downstream": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getRepositoryDownstream"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: getRepositoryDownstream",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with pins and bumps",
+          "params": {
+            "repoName": "contract-javalib"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}/downstream",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-javalib/downstream"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "downstream": [
+              {
+                "archetype": "DAEMON",
+                "depth": 1,
+                "repository": "contract-daemon",
+                "via": [
+                  "contract-javalib"
+                ]
+              },
+              {
+                "archetype": "DAEMON",
+                "depth": 1,
+                "repository": "contract-daemon",
+                "via": [
+                  "contract-javalib"
+                ]
+              },
+              {
+                "archetype": "DAEMON",
+                "depth": 1,
+                "repository": "contract-daemon",
+                "via": [
+                  "contract-javalib"
+                ]
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.downstream": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.downstream[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.downstream[*].depth": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.downstream[*].repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.downstream[*].via": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                },
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                },
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.downstream[*].via[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getRepositoryDownstream"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: getRepositoryDownstream",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no such repository",
+          "params": {
+            "repoName": "contract-unknown-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}/downstream",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-unknown-service/downstream"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "downstream": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listBumps"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: listBumps",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with nothing pinned",
+          "params": {
+            "repoName": "contract-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "repository": {
+              "expression": "${repoName}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps",
+        "query": {
+          "limit": [
+            "20"
+          ],
+          "repository": [
+            "contract-service"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listBumps"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: listBumps",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with pins and bumps",
+          "params": {
+            "repoName": "contract-javalib"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "repository": {
+              "expression": "${repoName}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps",
+        "query": {
+          "limit": [
+            "20"
+          ],
+          "repository": [
+            "contract-javalib"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "changes": [
+                {
+                  "name": "io.quarkus.platform:quarkus-bom"
+                }
+              ],
+              "group": "dependencies",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "message": null,
+              "releaseRequestId": null,
+              "startedAt": "2026-01-01T00:00:00Z",
+              "status": "RUNNING",
+              "trigger": "SCHEDULED"
+            },
+            {
+              "changes": [],
+              "group": "dependency-bump",
+              "id": "00000000-0000-4000-8000-000000000002",
+              "message": "committed the dependency bump",
+              "releaseRequestId": "00000000-0000-4000-8000-000000000003",
+              "startedAt": "2026-01-01T00:00:00Z",
+              "status": "SUCCEEDED",
+              "trigger": "FOLD"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.changes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.changes[*].name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.group": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.trigger": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.group": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.message": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.releaseRequestId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.trigger": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listBumps"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: listBumps",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no such repository",
+          "params": {
+            "repoName": "contract-unknown-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "repository": {
+              "expression": "${repoName}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps",
+        "query": {
+          "limit": [
+            "20"
+          ],
+          "repository": [
+            "contract-unknown-service"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositoryDependents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: listRepositoryDependents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with nothing pinned",
+          "params": {
+            "repoName": "contract-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}/dependents",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-service/dependents"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "artifacts": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositoryDependents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: listRepositoryDependents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with pins and bumps",
+          "params": {
+            "repoName": "contract-javalib"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}/dependents",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-javalib/dependents"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "artifacts": [
+              {
+                "dependents": [
+                  {
+                    "artifactEcosystem": "daemon",
+                    "artifactName": "contract-daemon",
+                    "artifactVersion": "2026.1104.1",
+                    "direct": true,
+                    "embeddedVersion": "2026.1101.1",
+                    "repository": "contract-daemon"
+                  },
+                  {
+                    "artifactEcosystem": "daemon",
+                    "artifactName": "contract-daemon",
+                    "artifactVersion": "2026.1104.1",
+                    "direct": true,
+                    "embeddedVersion": "2026.1101.1",
+                    "repository": "contract-daemon"
+                  }
+                ],
+                "ecosystem": "maven",
+                "latest": "2026.1101.2",
+                "name": "eu.wohlben.qits:contract-core"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.artifacts": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.artifacts[*].dependents": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.artifacts[*].dependents[*].artifactEcosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].dependents[*].artifactName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].dependents[*].artifactVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].dependents[*].direct": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].dependents[*].embeddedVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].dependents[*].repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].latest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.artifacts[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositoryDependents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maintenance-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/repositories/:name"
+          }
+        }
+      },
+      "description": "show-maintenance-repository: listRepositoryDependents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no such repository",
+          "params": {
+            "repoName": "contract-unknown-service"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/repositories/${repoName}/dependents",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/repositories/contract-unknown-service/dependents"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "artifacts": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
             "operationId": "listArtifacts"
           },
           "qits-trigger": {
