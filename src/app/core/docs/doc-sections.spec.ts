@@ -1,4 +1,12 @@
-import { DOC_SECTIONS, docBlocks, kindOf, sectionOf, shortNameOf } from './doc-sections';
+import {
+  DOC_SECTIONS,
+  docBlocks,
+  kindOf,
+  projectRepositoryOf,
+  publishedBy,
+  sectionOf,
+  shortNameOf,
+} from './doc-sections';
 
 describe('DOC_SECTIONS', () => {
   it('lists the docs app’s sections in its order, with its labels, segments and scopes', () => {
@@ -89,5 +97,44 @@ describe('docBlocks', () => {
     ]);
     expect(docBlocks(sites, { only: 'guides' })).toEqual([]);
     expect(docBlocks([])).toEqual([]);
+  });
+});
+
+describe('publishedBy', () => {
+  const sites = [
+    { name: '@contracts/qits-ci', latestRepository: 'qits-ci-service' },
+    { name: '@apidocs/qits-ci', latestRepository: 'qits-ci-service' },
+    { name: '@changelog/qits-ci-frontend', latestRepository: 'qits-ci-frontend' },
+    { name: 'qits-storybook' },
+  ];
+
+  it('keeps the sites whose newest version the repository published, never by name', () => {
+    expect(publishedBy(sites, 'qits-ci-service').map((s) => s.name)).toEqual([
+      '@contracts/qits-ci',
+      '@apidocs/qits-ci',
+    ]);
+    expect(publishedBy(sites, 'qits-ci')).toEqual([]);
+  });
+
+  it('keeps nothing for a repository that published none, or no name', () => {
+    expect(publishedBy(sites, 'qits-events-service')).toEqual([]);
+    expect(publishedBy(sites, '')).toEqual([]);
+  });
+});
+
+describe('projectRepositoryOf', () => {
+  const project = new Set(['qits-ci-service', 'qits-ci-frontend']);
+
+  it('names the project’s repository that published the newest version', () => {
+    expect(projectRepositoryOf({ latestRepository: 'qits-ci-service' }, project)).toBe(
+      'qits-ci-service',
+    );
+  });
+
+  it('names none for another repository, or a site that names none', () => {
+    expect(projectRepositoryOf({ latestRepository: 'qits-workspaces-frontend' }, project)).toBe(
+      undefined,
+    );
+    expect(projectRepositoryOf({}, project)).toBeUndefined();
   });
 });

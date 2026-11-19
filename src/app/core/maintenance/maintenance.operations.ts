@@ -1,5 +1,6 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  getAdoptionByRelease,
   getBump,
   getRepository,
   getRepositoryDownstream,
@@ -12,6 +13,7 @@ import {
   listRepositoryDependents,
 } from '../../api/maintenance';
 import {
+  ADOPTION,
   BUMP,
   DEPENDENTS_REFUSAL,
   LIST_ARTIFACTS,
@@ -28,9 +30,9 @@ import {
 /**
  * qits-maintenance's reads declared as operations (qits-2145), for the top bar's bumps menu, which
  * reads through `qitsResource` instead of a store (qits-2146), and for the Maintenance section's
- * Dependencies page (qits-2317), Artifacts page (qits-2330), bump page (qits-2332) and repository
- * page (qits-2334); `maintenance.operations.pact.spec.ts` binds each with the same provider,
- * operationId and `consumes`.
+ * Dependencies page (qits-2317), Artifacts page (qits-2330), bump page (qits-2332), adoption page
+ * (qits-2333) and repository page (qits-2334); `maintenance.operations.pact.spec.ts` binds each
+ * with the same provider, operationId and `consumes`.
  */
 
 /** The newest pending version bumps (`listPendingBumps?limit=`), the bumps menu's list. */
@@ -159,4 +161,19 @@ export const MAINTENANCE_REPOSITORY_DOWNSTREAM = qitsOperation({
   method: 'GET',
   call: getRepositoryDownstream,
   consumes: REPOSITORY_DOWNSTREAM,
+});
+
+/**
+ * How far one release got (`getAdoptionByRelease`, `/maintenance/api/adoption/by-release?repository=&version=`),
+ * the adoption page's one read (qits-2333): the release, what it published, and every repository
+ * downstream of it with whether it carries the release yet. The service traces the whole closure
+ * per request, so this one answer is the whole journey. No project filter: the release is the
+ * whole address. Only staff roles may read it; anyone else gets a 403.
+ */
+export const MAINTENANCE_ADOPTION = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'getAdoptionByRelease',
+  method: 'GET',
+  call: getAdoptionByRelease,
+  consumes: ADOPTION,
 });

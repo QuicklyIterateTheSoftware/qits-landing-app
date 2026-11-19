@@ -663,6 +663,17 @@ const UNATTENDED_TITLE =
                               }"
                               >{{ link.label }}</a
                             >
+                          } @else if (link.adoption; as adoption) {
+                            <a
+                              class="text-accent no-underline hover:underline"
+                              [qitsExit]="adoptions.release"
+                              [exitParams]="{
+                                slug: slug(),
+                                repository: adoption.repository,
+                                version: adoption.version,
+                              }"
+                              >{{ link.label }}</a
+                            >
                           } @else {
                             <a class="text-accent no-underline hover:underline" [href]="link.href"
                               >{{ link.label }}
@@ -998,6 +1009,11 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
     byRelease: exit('projects/:slug/deployments/requests/by-release/:repoId/:version'),
   });
 
+  /** "Adoption of this release": how far it got downstream, in this app (qits-2333). */
+  protected readonly adoptions = outcomes('open-release-adoption', {
+    release: exit('projects/:slug/maintenance/adoption/:repository/:version'),
+  });
+
   /** "← Release requests": back to the project's release requests (epic qits-2000). */
   protected readonly leaving = outcomes('leave-release-request', {
     list: exit('projects/:slug/release-requests'),
@@ -1132,7 +1148,7 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
     return repositoryScope(this.slug(), path, this.row()?.repoName);
   });
 
-  /** The release's tag, commit, deployment and train, where they can be addressed. */
+  /** The release's tag, commit, deployment and adoption, where they can be addressed. */
   protected readonly releaseLinks = computed(() => {
     const request = this.row();
     if (!request) return [];

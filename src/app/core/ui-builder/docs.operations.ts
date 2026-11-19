@@ -3,6 +3,7 @@ import { getDocsFile, getDocsVersion, listDocsSites, listDocsVersions } from '..
 import {
   GET_DOCS_FILE,
   GET_DOCS_VERSION,
+  LIST_DOCS_CATALOG,
   LIST_DOCS_SITES,
   LIST_DOCS_VERSIONS,
 } from './docs.consumes';
@@ -25,6 +26,18 @@ export const DOCS_SITES = qitsOperation({
   method: 'GET',
   call: listDocsSites,
   consumes: LIST_DOCS_SITES,
+});
+
+/**
+ * The same read for the Docs pages (qits-2336), with each site's publisher (`LIST_DOCS_CATALOG`):
+ * the project's Docs page and a repository's.
+ */
+export const DOCS_CATALOG = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listDocsSites',
+  method: 'GET',
+  call: listDocsSites,
+  consumes: LIST_DOCS_CATALOG,
 });
 
 /** A site's versions, newest first, each with its metadata (`listDocsVersions`). */

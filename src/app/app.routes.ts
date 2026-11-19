@@ -69,7 +69,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * epic qits-1604).
  *
  * A project's docs are at `projects/<slug>/docs` (`ProjectDocsPage`, qits-2318): every site of
- * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`.
+ * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`. One repository's are at
+ * `docs/repositories/<repository name>` (`RepositoryDocsPage`, qits-2336): the sites whose newest
+ * version it published, narrowed by `?section=`. The fixed `repositories` segment keeps a
+ * repository's name from ever meaning a reader path under `docs/` (qits-2337); the sidebar keeps
+ * Docs current below it.
  *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
@@ -92,7 +96,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `maintenance/artifacts` (`MaintenanceArtifactsPage`, qits-2330) is what the project has
  * released and who still ships an old copy: the listing, and one artifact's dependents at
  * `?ecosystem=&name=` on the same page. It is not the global `/artifacts` (the artifact store,
- * qits-2316).
+ * qits-2316). `maintenance/bumps/<bumpId>` (`MaintenanceBumpPage`, qits-2332) is one bump,
+ * `maintenance/adoption/<repository>/<version>` (`MaintenanceAdoptionPage`, qits-2333) how far
+ * one release got, and `maintenance/repositories/<name>` (`MaintenanceRepositoryPage`, qits-2334)
+ * one repository's pins, bumps, dependents and downstream: detail pages with no sidebar entry of
+ * their own.
  *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
@@ -425,6 +433,13 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
       },
       {
+        path: 'projects/:slug/docs/repositories/:repo',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page').then(
+            (m) => m.RepositoryDocsPage,
+          ),
+      },
+      {
         path: 'projects/:slug/events',
         loadComponent: () =>
           import('./routes/projects/[slug]/events/project-events.page').then(
@@ -465,6 +480,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/maintenance/repositories/[name]/maintenance-repository.page').then(
                 (m) => m.MaintenanceRepositoryPage,
+              ),
+          },
+          {
+            // A detail page (qits-2333): no sidebar entry; the sidebar keeps Maintenance open.
+            path: 'adoption/:repository/:version',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/maintenance/adoption/[repository]/[version]/maintenance-adoption.page').then(
+                (m) => m.MaintenanceAdoptionPage,
               ),
           },
         ],

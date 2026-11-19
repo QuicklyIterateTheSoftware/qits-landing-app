@@ -13,6 +13,7 @@ import type { InteractionSlug } from '../../interactions';
 import { heldBy, maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
 import { PENDING_BUMPS, REPOSITORY_BUMPS_LIMIT } from './maintenance.consumes';
 import {
+  MAINTENANCE_ADOPTION,
   MAINTENANCE_ARTIFACTS,
   MAINTENANCE_BUMP,
   MAINTENANCE_DEPENDENCIES,
@@ -72,6 +73,15 @@ import {
  * nothing matches (`nothing-matches-*`: "no dependencies matching a glob", "no external
  * dependencies matching a glob"), the inventory's repositories read beside each in the internal
  * state, as the page's searched screenshots show them.
+ *
+ * Its adoption page (qits-2333) reads how far one release got (`getAdoptionByRelease`,
+ * `?repository=&version=`, which the golden masters record and the interactions require): a
+ * release whose two downstream repositories are both still PENDING ("a repository with downstream
+ * components", at its fixed version 2026.905.1), one some consumers ADOPTED, with a repository two
+ * parents reach ("a release some consumers adopted"), and one nobody consumes ("a release nobody
+ * consumes", `adopters: []`; both from `@qits/maintenance-golden-masters` 2026.1119.183438 on). A
+ * field under a recorded `null` (a PENDING adopter's `adoptedVersion` and
+ * `adoptedAt`) is bound as that `null` (`heldBy` keeps a path the recording holds).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
@@ -168,6 +178,19 @@ const named = (state: string) => ({ path: { name: repoOf(state) } });
 const bumpsOf = (state: string) => ({
   query: { repository: repoOf(state), limit: REPOSITORY_BUMPS_LIMIT },
 });
+
+const DOWNSTREAM = 'a repository with downstream components';
+const ADOPTED = 'a release some consumers adopted';
+const NOBODY = 'a release nobody consumes';
+
+/** The release `state` recorded its adoption for (its `repoName`, and `version` or the fixed one). */
+const releaseOf = (state: string) => {
+  const { query, params } = masters.operation(state, MAINTENANCE_ADOPTION.operationId);
+  const resolved = (value: string) => value.replace(/\{(\w+)}/g, (_, name: string) => params[name]);
+  return {
+    query: { repository: resolved(query['repository']), version: resolved(query['version']) },
+  };
+};
 
 /** The project the recorded states' repositories belong to. */
 const projectOf = (state: string): string =>
@@ -541,6 +564,48 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
         MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(NO_SUCH_REPOSITORY)),
       );
       expect(data?.downstream).toEqual([]);
+    }));
+
+  it('show-adoption: a release both its downstream repositories are still waiting for', () =>
+    given(MAINTENANCE_ADOPTION, DOWNSTREAM, 'show-adoption').executeTest(async (server) => {
+      const request = releaseOf(DOWNSTREAM);
+      expect(request.query).toEqual({ repository: 'contract-ui-jslib', version: '2026.905.1' });
+      const { data, error } = await at(server.url, () => MAINTENANCE_ADOPTION.fetch(request));
+      expect(error).toBeUndefined();
+      expect(data?.repository).toBe(request.query.repository);
+      expect(data?.version).toBe(request.query.version);
+      expect(data?.packages?.[0]?.ecosystem).toBe('npm');
+      // The mock answers each row with the recorded first one (a type match per element).
+      const adopters = data?.adopters ?? [];
+      expect(adopters).toHaveLength(2);
+      expect(adopters.every((a) => a.state === 'PENDING' && typeof a.depth === 'number')).toBe(
+        true,
+      );
+      expect(adopters.every((a) => (a.via ?? []).length > 0)).toBe(true);
+      expect(adopters.every((a) => a.adoptedVersion === null && a.adoptedAt === null)).toBe(true);
+    }));
+
+  it('show-adoption: a release some consumers adopted, one repository two parents reach', () =>
+    given(MAINTENANCE_ADOPTION, ADOPTED, 'show-adoption').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_ADOPTION.fetch(releaseOf(ADOPTED)),
+      );
+      expect(error).toBeUndefined();
+      // The mock answers each row with the recorded first one (a type match per element).
+      const adopters = data?.adopters ?? [];
+      expect(adopters).toHaveLength(3);
+      expect(adopters.every((a) => !!a.repository && !!a.state)).toBe(true);
+      expect(adopters.every((a) => (a.via ?? []).length > 0)).toBe(true);
+    }));
+
+  it('show-adoption: a release nobody consumes', () =>
+    given(MAINTENANCE_ADOPTION, NOBODY, 'show-adoption').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_ADOPTION.fetch(releaseOf(NOBODY)),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.packages?.length).toBeGreaterThan(0);
+      expect(data?.adopters).toEqual([]);
     }));
 
   it('search-project-dependencies: the inventory’s repositories, beside a matching search', () =>

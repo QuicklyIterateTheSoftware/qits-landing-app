@@ -585,6 +585,26 @@ export const INTERACTIONS = {
    */
   'open-maintenance-repository': 'A repository name in Maintenance opens the repository’s page',
   /**
+   * `maintenance-adoption.page.ts` via `MAINTENANCE_ADOPTION` (qits-2333): a release's adoption
+   * page reads how far it got (`getAdoptionByRelease?repository=&version=`), every repository
+   * downstream of it and whether it carries the release yet. Refresh reads it again, and so does
+   * an `SCMRelease` or `SoftwareRelease`.
+   */
+  'show-adoption': 'A release’s adoption page draws every repository downstream and who carries it',
+  /**
+   * `maintenance-adoption.page.ts`: an adopter's card opens that repository's page in
+   * qits-maintenance-frontend (`/<slug>/repositories/<name>`), same tab, until qits-2334 moves it
+   * here. Leaves the app, and names no pact.
+   */
+  'open-adoption-repository': 'A repository’s card on a release’s adoption page opens its page',
+  /**
+   * `release-request.page.ts`: “Adoption of this release” on a released request opens the
+   * release's adoption page in this app's Maintenance section (qits-2333). Navigates only, and
+   * names no pact.
+   */
+  'open-release-adoption':
+    '“Adoption of this release” on a release request opens its adoption page',
+  /**
    * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
    * (qits-2331): a name glob searched on the Dependencies page (`?name=`) reads the INTERNAL and
    * EXTERNAL dependencies with it (`?kind=…&name=…`), beside the inventory's repositories, and
@@ -600,15 +620,34 @@ export const INTERACTIONS = {
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
-   * `project-docs.page.ts` via `DOCS_SITES` (qits-2318): the Docs page lists every docs site the
-   * platform publishes, grouped by section.
+   * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
+   * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
+   * project's repository that published each site's newest version.
    */
   'show-project-docs': 'The Docs page lists every published docs site, by section',
   /**
-   * `project-docs.page.ts`: a docs site's row opens its reader on the docs app (until qits-2337
-   * moves it here), same tab. Leaves the app, and names no pact.
+   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader on the
+   * docs app (until qits-2337 moves it here), same tab. Leaves the app, and names no pact.
    */
-  'open-docs-site': 'A docs site’s row on the Docs page opens its reader',
+  'open-docs-site': 'A docs site’s row on a Docs page opens its reader',
+  /**
+   * `repository-docs.page.ts` via `PROJECT_REPOSITORY_NAMES` and `DOCS_CATALOG` (qits-2336): a
+   * repository's Docs page finds the repository in the project and lists the docs sites whose
+   * newest version it published (`latestRepository`), by section.
+   */
+  'show-repository-docs': 'A repository’s Docs page lists the docs sites it published, by section',
+  /**
+   * `project-docs.page.ts` (a row's repository) and `repository-card.ts` (“Docs →”): opens a
+   * repository's Docs page (qits-2336). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-docs': 'A repository’s name on the Docs page, or its card, opens its Docs page',
+  /**
+   * `repository-docs.page.ts`: “← Docs” on a repository's Docs page (and the link beside an
+   * unknown repository) goes back to the project's Docs page (qits-2336). Navigates only, and
+   * names no pact (epic qits-2000).
+   */
+  'leave-repository-docs':
+    '“← Docs” on a repository’s Docs page goes back to the project’s Docs page',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspaceActivity`
    * (`OPEN_WORKSPACES`, qits-2146): the ACTIVE workspaces bound to work items, one request per
@@ -1068,20 +1107,6 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact (epic qits-2000).
    */
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
-  /**
-   * `private-apps.ts` via `MAIN_NAVIGATION` (qits-2297): once signed in, the app reads the edge's
-   * navigation for the platform apps on the private network, whose calls it marks for Chrome's
-   * Local Network Access and about which the shell's notice speaks.
-   */
-  'find-private-apps': 'Signing in finds which platform apps are on the private network',
-  /**
-   * `local-network-notice.ts` via `PROJECT_LIST` (qits-2297): the notice's Allow access sends one
-   * call to a private app, so Chrome's Local Network Access prompt follows the press. It is the
-   * project list's own call, whose pact interaction `list-projects` names, so no pact interaction
-   * names this slug.
-   */
-  'allow-local-network-access':
-    'Allow access on the local network notice makes the browser ask for local network access',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
    * Agents, Release Requests, CI, Desk, Repositories, Deployments, Observability, Events,
