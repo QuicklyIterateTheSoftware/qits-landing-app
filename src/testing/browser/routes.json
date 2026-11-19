@@ -703,6 +703,38 @@
       "route": "projects/:slug/maintenance/artifacts"
     }
   ],
+  "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a bump that changed nothing",
+      "operationId": "getBump",
+      "route": "projects/:slug/maintenance/bumps/:bumpId"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a failed bump",
+      "operationId": "getBump",
+      "route": "projects/:slug/maintenance/bumps/:bumpId"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "pending bumps",
+      "operationId": "getBump",
+      "route": "projects/:slug/maintenance/bumps/:bumpId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/bumps/:bumpId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/bumps/:bumpId"
+    }
+  ],
   "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts": [
     {
       "provider": "qits-maintenance-service",

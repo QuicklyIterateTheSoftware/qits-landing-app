@@ -238,6 +238,10 @@
             {
               "path": "artifacts",
               "fullPath": "projects/:slug/maintenance/artifacts"
+            },
+            {
+              "path": "bumps/:bumpId",
+              "fullPath": "projects/:slug/maintenance/bumps/:bumpId"
             }
           ]
         },
@@ -2081,6 +2085,7 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:work",
+        "open-menu-bump:bump",
         "open-network-access:open",
         "open-project-settings:open",
         "open-sidebar-network-access:networkAccess",
@@ -2349,6 +2354,7 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:work",
+        "open-menu-bump:bump",
         "open-network-access:open",
         "open-project-settings:open",
         "open-sidebar-network-access:networkAccess",
@@ -2613,6 +2619,7 @@
         }
       ],
       "triggers": [
+        "open-menu-bump:bump",
         "open-project-settings:open"
       ],
       "dataMarks": [
@@ -2852,6 +2859,7 @@
         }
       ],
       "triggers": [
+        "open-menu-bump:bump",
         "open-project-settings:open"
       ],
       "dataMarks": [
@@ -8725,6 +8733,458 @@
           "field": "open",
           "derived": []
         },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=@qits/angular",
+          "field": null,
+          "derived": [
+            "ecosystem"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=@qits/angular",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=@qits/angular",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=eu.wohlben.qits:qits-arch-rules",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=eu.wohlben.qits:qits-arch-rules",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "ecosystem"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=qits/build-images/ci-base",
+          "field": null,
+          "derived": [
+            "ecosystem"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=qits/build-images/ci-base",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=qits/build-images/ci-base",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/open-in-project-dark.html",
+      "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
+      "test": "BumpsMenu (screenshots) > open-menu-bump bump: links each bump to its page in the open project",
+      "name": "open-in-project",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "listPendingBumps"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        }
+      ],
+      "triggers": [
+        "open-menu-bump:bump"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000006",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": null,
+          "derived": [
+            "status",
+            "releaseState"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "id=00000000-0000-4000-8000-000000000007",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=@qits/angular",
+          "field": null,
+          "derived": [
+            "ecosystem"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=@qits/angular",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=@qits/angular",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=eu.wohlben.qits:qits-arch-rules",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=eu.wohlben.qits:qits-arch-rules",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "ecosystem"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=io.quarkus.platform:quarkus-bom",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=io.quarkus.platform:quarkus-bom",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=qits/build-images/ci-base",
+          "field": null,
+          "derived": [
+            "ecosystem"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=qits/build-images/ci-base",
+          "field": null,
+          "derived": [
+            "from",
+            "to"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listPendingBumps",
+          "item": "name=qits/build-images/ci-base",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts/open-in-project-light.html",
+      "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
+      "test": "BumpsMenu (screenshots) > open-menu-bump bump: links each bump to its page in the open project",
+      "name": "open-in-project",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "listPendingBumps"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        }
+      ],
+      "triggers": [
+        "open-menu-bump:bump"
+      ],
+      "dataMarks": [
         {
           "source": "qits-maintenance-service#listPendingBumps",
           "item": null,
@@ -103739,6 +104199,4618 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that changed nothing: its sentence plain, no changes, its run",
+      "name": "changed-nothing",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a bump that changed nothing",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that changed nothing: its sentence plain, no changes, its run",
+      "name": "changed-nothing",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a bump that changed nothing",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that changed nothing: its sentence plain, no changes, its run",
+      "name": "changed-nothing",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a bump that changed nothing",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that changed nothing: its sentence plain, no changes, its run",
+      "name": "changed-nothing",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a bump that changed nothing",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that changed nothing: its sentence plain, no changes, its run",
+      "name": "changed-nothing",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a bump that changed nothing",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that changed nothing: its sentence plain, no changes, its run",
+      "name": "changed-nothing",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a bump that changed nothing",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a failed bump: its message as an alert, its failure and both runs",
+      "name": "failed",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a failed bump",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.excerpt",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.exitCode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.stepIndex",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "message",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a failed bump: its message as an alert, its failure and both runs",
+      "name": "failed",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a failed bump",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.excerpt",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.exitCode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.stepIndex",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "message",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a failed bump: its message as an alert, its failure and both runs",
+      "name": "failed",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a failed bump",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.excerpt",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.exitCode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.stepIndex",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "message",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a failed bump: its message as an alert, its failure and both runs",
+      "name": "failed",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a failed bump",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.excerpt",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.exitCode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.stepIndex",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "message",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a failed bump: its message as an alert, its failure and both runs",
+      "name": "failed",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a failed bump",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.excerpt",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.exitCode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.stepIndex",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "message",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a failed bump: its message as an alert, its failure and both runs",
+      "name": "failed",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "a failed bump",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-ci-run:run",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "changes",
+            "message"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.excerpt",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.exitCode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "failure.stepIndex",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "message",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > says there is no such bump",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > says there is no such bump",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > says there is no such bump",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > says there is no such bump",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > says there is no such bump",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > says there is no such bump",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > marks the page as loading, then says a refusal needs a staff role",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-all-agents:agents",
+        "open-bump-release-request:request",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-all-agents:agents",
+        "open-bump-release-request:request",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-bump-release-request:request",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-bump-release-request:request",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+      "test": "MaintenanceBumpPage (screenshots) > shows a bump that sent a change and was released",
+      "name": "released",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/maintenance/bumps/:bumpId",
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "pending bumps",
+          "operationId": "getBump"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-bump-release-request:request",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-maintenance-page:artifacts",
+        "open-sidebar-maintenance-page:dependencies",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "ciRunIds",
+            "ciRunId",
+            "ciRunStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "finishedAt",
+            "startedAt",
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseRequestId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "releaseState",
+            "releaseDetail",
+            "releaseStateAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "resultSha"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "startedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "branch",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "configPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "group",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "repository",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000005",
+          "field": "trigger",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "ecosystem",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "from",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "manifestPath",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "name=@qits/ui-components",
+          "field": "to",
+          "derived": []
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -230849,6 +235921,46 @@
       "src/app/routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page.browser.spec.ts/refused-tablet-dark.html",
       "src/app/routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page.browser.spec.ts/refused-tablet-light.html"
     ],
+    "projects/:slug/maintenance/bumps/:bumpId": [
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/changed-nothing-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/failed-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/not-found-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/refused-tablet-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-phone-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-phone-light.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-tablet-dark.html",
+      "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts/released-tablet-light.html"
+    ],
     "projects/:slug/maintenance/dependencies": [
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts/empty-desktop-light.html",
@@ -232159,6 +237271,16 @@
         "file": "src/app/routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page.ts"
       },
       {
+        "route": "projects/:slug/maintenance/bumps/:bumpId",
+        "interaction": "open-bump-release-request",
+        "outcome": "request",
+        "kind": "exit",
+        "to": "projects/:slug/release-requests/:requestId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.ts"
+      },
+      {
         "route": "projects/:slug/release-requests/:requestId",
         "interaction": "leave-release-request",
         "outcome": "list",
@@ -232887,6 +238009,16 @@
         "global": true,
         "triggered": true,
         "file": "src/app/patterns/agents/agents-menu/agents-menu.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-menu-bump",
+        "outcome": "bump",
+        "kind": "exit",
+        "to": "projects/:slug/maintenance/bumps/:bumpId",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/maintenance/bumps-menu/bumps-menu.ts"
       },
       {
         "route": null,
@@ -233846,6 +238978,15 @@
         "freeze": null
       },
       {
+        "spec": "src/app/patterns/maintenance/bumps-menu/bumps-menu.browser.spec.ts",
+        "test": "BumpsMenu (screenshots) > open-menu-bump bump: links each bump to its page in the open project",
+        "route": null,
+        "interaction": "open-menu-bump",
+        "outcome": "bump",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
         "spec": "src/app/patterns/projects/project-card/project-card.browser.spec.ts",
         "test": "ProjectCard (screenshots) > open-project-card project: the card’s name opens the project",
         "route": null,
@@ -234580,6 +239721,24 @@
         "route": "projects/:slug/ideas",
         "interaction": "open-listed-idea",
         "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+        "test": "MaintenanceBumpPage (screenshots) > opens a run of the bump on its page",
+        "route": "projects/:slug/maintenance/bumps/:bumpId",
+        "interaction": "open-ci-run",
+        "outcome": "run",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page.browser.spec.ts",
+        "test": "MaintenanceBumpPage (screenshots) > opens the release request the bump belongs to",
+        "route": "projects/:slug/maintenance/bumps/:bumpId",
+        "interaction": "open-bump-release-request",
+        "outcome": "request",
         "kind": "exit",
         "freeze": null
       },

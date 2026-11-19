@@ -690,7 +690,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-bump",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/bumps/:bumpId"
           }
         }
       },
@@ -921,7 +922,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-bump",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/bumps/:bumpId"
           }
         }
       },
@@ -1243,7 +1245,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-bump",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/bumps/:bumpId"
           }
         }
       },
