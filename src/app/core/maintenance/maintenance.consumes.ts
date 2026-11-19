@@ -1,8 +1,9 @@
 import type {
-  GetMaintenanceApiArtifactsResponses,
-  GetMaintenanceApiDependenciesDependentsResponses,
-  GetMaintenanceApiDependenciesResponses,
-  GetMaintenanceApiRepositoriesResponses,
+  GetBumpResponses,
+  ListArtifactsResponses,
+  ListDependencyDependentsResponses,
+  ListDependenciesResponses,
+  ListRepositoriesResponses,
   ListPendingBumpsResponses,
 } from '../../api/maintenance';
 import type { Consumed } from '@qits/angular';
@@ -66,13 +67,13 @@ export const LIST_DEPENDENCIES = [
 
 /** One repository of the inventory, cut to what the Dependencies page reads. */
 export type MaintenanceRepository = Consumed<
-  GetMaintenanceApiRepositoriesResponses[200],
+  ListRepositoriesResponses[200],
   typeof LIST_REPOSITORIES
 >[number];
 
 /** One dependency with its pins, cut to what the Dependencies page reads. */
 export type DependencyEntry = Consumed<
-  GetMaintenanceApiDependenciesResponses[200],
+  ListDependenciesResponses[200],
   typeof LIST_DEPENDENCIES
 >[number];
 
@@ -123,13 +124,57 @@ export const LIST_DEPENDENCY_DEPENDENTS = [
 export const DEPENDENTS_REFUSAL = ['message'] as const;
 
 /** One released artifact, cut to what the Artifacts page reads. */
-export type ArtifactEntry = Consumed<
-  GetMaintenanceApiArtifactsResponses[200],
-  typeof LIST_ARTIFACTS
->[number];
+export type ArtifactEntry = Consumed<ListArtifactsResponses[200], typeof LIST_ARTIFACTS>[number];
 
 /** One artifact's dependents, cut to what the Artifacts page's detail reads. */
 export type ArtifactDependents = Consumed<
-  GetMaintenanceApiDependenciesDependentsResponses[200],
+  ListDependencyDependentsResponses[200],
   typeof LIST_DEPENDENCY_DEPENDENTS
 >;
+
+/**
+ * `MAINTENANCE_BUMP` (qits-2332): one bump, as the bump page shows it. Its group (the automation
+ * kind) and repository, its status, mode, trigger and branch; when it started and finished; the
+ * commit it produced (`resultSha`) and the pipeline it ran (`configPath`); the release request it
+ * belongs to (a uuid, or the sentinels `converged` and `refused`) and how that release stands
+ * (`releaseState`, `releaseDetail`, as of `releaseStateAt`); its CI runs (`ciRunIds`, else the
+ * comma-joined `ciRunId`) and their status; its `message`; a failed run's `failure` (the failing
+ * step, its image and exit code, the log excerpt); and every change it sent.
+ */
+export const BUMP = [
+  'id',
+  'repository',
+  'group',
+  'mode',
+  'trigger',
+  'branch',
+  'status',
+  'startedAt',
+  'finishedAt',
+  'resultSha',
+  'configPath',
+  'releaseRequestId',
+  'releaseState',
+  'releaseDetail',
+  'releaseStateAt',
+  'ciRunId',
+  'ciRunIds',
+  'ciRunStatus',
+  'message',
+  'failure.stepIndex',
+  'failure.image',
+  'failure.exitCode',
+  'failure.excerpt',
+  'changes[].ecosystem',
+  'changes[].manifestPath',
+  'changes[].name',
+  'changes[].from',
+  'changes[].to',
+  'changes[].location',
+] as const;
+
+/** One bump, cut to what the bump page reads. */
+export type BumpDetail = Consumed<GetBumpResponses[200], typeof BUMP>;
+
+/** One change a bump sent, as the bump page's table reads it. */
+export type BumpChange = NonNullable<BumpDetail['changes']>[number];

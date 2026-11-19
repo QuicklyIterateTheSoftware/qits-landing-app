@@ -518,6 +518,16 @@ export const INTERACTIONS = {
   'show-artifact-dependents':
     'An artifact on the Artifacts page lists who embeds it, and which of them ship an old copy',
   /**
+   * `maintenance-bump.page.ts` via `MAINTENANCE_BUMP` (qits-2332): the bump page reads one bump by
+   * its id, and again after `BUMP_EVENTS` while it is REQUESTED or RUNNING. Refresh reads it again.
+   */
+  'show-bump': 'A bump’s page shows how it ran, its release, its CI runs and the changes it sent',
+  /**
+   * `maintenance-bump.page.ts`: the release request a bump belongs to opens the request's page
+   * (qits-2332). Navigates only, and names no pact.
+   */
+  'open-bump-release-request': 'The release request on a bump’s page opens the request',
+  /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
    */
@@ -1100,6 +1110,11 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact (epic qits-2000).
    */
   'open-menu-agent': 'An agent in the agents menu opens the agent’s page',
+  /**
+   * `bumps-menu.ts`: a bump's repository in the top bar's bumps menu opens the bump's page in the
+   * open project (qits-2332). Navigates only, and names no pact.
+   */
+  'open-menu-bump': 'A bump in the bumps menu opens the bump’s page',
   /**
    * `agents-menu.ts`: a wait's subject in the agents menu opens its page, one exit per kind: the
    * release request, the work item, or the item whose comments it waits on. A CI run is qits-ci's

@@ -685,6 +685,836 @@
         "references": {
           "qits-call": {
             "app": "qits-maintenance-service",
+            "operationId": "getBump"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-bump",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-bump: getBump",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a bump that changed nothing",
+          "params": {
+            "bumpId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/bumps/${bumpId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps/00000000-0000-4000-8000-000000000001"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "branch": "maintenance/automations/entity-diagram/00000000-0000-4000-8000-000000000002",
+            "changes": [],
+            "ciRunId": "run-contract-1",
+            "ciRunIds": [
+              "run-contract-1"
+            ],
+            "ciRunStatus": "SUCCESS",
+            "configPath": "ci/src/main/resources/platform-pipelines/automations/entity-diagram.yml",
+            "finishedAt": "2026-01-01T00:00:00Z",
+            "group": "entity-diagram",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "message": "unchanged: the run passed and maintenance/automations/entity-diagram/00000000-0000-4000-8000-000000000002 did not move, so entity diagram are fresh at 0123456789ab",
+            "mode": "AUTOMATION",
+            "releaseDetail": null,
+            "releaseRequestId": "00000000-0000-4000-8000-000000000002",
+            "releaseState": null,
+            "releaseStateAt": null,
+            "repository": "contract-service",
+            "resultSha": null,
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "NOTHING_TO_DO",
+            "trigger": "FOLD"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ciRunId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ciRunIds": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.ciRunIds[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ciRunStatus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.configPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.group": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.mode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.releaseRequestId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.trigger": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getBump"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-bump",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-bump: getBump",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a failed bump",
+          "params": {
+            "bumpId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/bumps/${bumpId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps/00000000-0000-4000-8000-000000000001"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "branch": "maintenance/automations/golden-recordings-maven/00000000-0000-4000-8000-000000000002",
+            "changes": [],
+            "ciRunId": "run-contract-1,run-contract-2",
+            "ciRunIds": [
+              "run-contract-1",
+              "run-contract-1"
+            ],
+            "ciRunStatus": "FAILED",
+            "configPath": "ci/src/main/resources/platform-pipelines/automations/golden-recordings-maven.yml",
+            "failure": {
+              "excerpt": "[ERROR] Tests run: 42, Failures: 1, Errors: 0, Skipped: 0\n[ERROR] GoldenMasterRecordingTest.goldenMastersMatchTheProvider:118 golden-masters/pending-bumps/getBump.json differs\n[ERROR] BUILD FAILURE",
+              "exitCode": 1,
+              "image": "qits/build-images/ci-slot:latest",
+              "stepIndex": 0
+            },
+            "finishedAt": "2026-01-01T00:00:00Z",
+            "group": "golden-recordings-maven",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "message": "the golden recordings (maven) run ended FAILED at step 0 (exit 1): [ERROR] Tests run: 42, Failures: 1, Errors: 0, Skipped: 0",
+            "mode": "AUTOMATION",
+            "releaseDetail": null,
+            "releaseRequestId": "00000000-0000-4000-8000-000000000002",
+            "releaseState": null,
+            "releaseStateAt": null,
+            "repository": "contract-service",
+            "resultSha": null,
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "FAILED",
+            "trigger": "FOLD"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ciRunId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ciRunIds": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.ciRunIds[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ciRunStatus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.configPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.failure.excerpt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.failure.exitCode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.failure.image": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.failure.stepIndex": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.group": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.mode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.releaseRequestId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.trigger": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getBump"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-bump",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-bump: getBump",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no such bump",
+          "params": {
+            "bumpId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/bumps/${bumpId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps/00000000-0000-4000-8000-000000000001"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "getBump"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-bump",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-bump: getBump",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "pending bumps",
+          "params": {
+            "awaitingReleaseBumpId": "00000000-0000-4000-8000-000000000001",
+            "convergedBumpId": "00000000-0000-4000-8000-000000000002",
+            "failedBumpId": "00000000-0000-4000-8000-000000000003",
+            "releaseOwedBumpId": "00000000-0000-4000-8000-000000000004",
+            "releasedBumpId": "00000000-0000-4000-8000-000000000005",
+            "requestedBumpId": "00000000-0000-4000-8000-000000000006",
+            "runningBumpId": "00000000-0000-4000-8000-000000000007"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/maintenance/api/bumps/${releasedBumpId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/maintenance/api/bumps/00000000-0000-4000-8000-000000000005"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "branch": "maintenance/dependencies",
+            "changes": [
+              {
+                "ecosystem": "NPM",
+                "from": "2026.1.1",
+                "location": null,
+                "manifestPath": "package.json",
+                "name": "@qits/ui-components",
+                "to": "2026.2.1"
+              }
+            ],
+            "ciRunId": null,
+            "ciRunIds": [],
+            "ciRunStatus": null,
+            "configPath": "ci/src/main/resources/platform-pipelines/maintenance-bump.yml",
+            "finishedAt": "2026-01-01T00:00:00Z",
+            "group": "dependencies",
+            "id": "00000000-0000-4000-8000-000000000005",
+            "message": null,
+            "mode": "GROUP",
+            "releaseDetail": null,
+            "releaseRequestId": "00000000-0000-4000-8000-000000000008",
+            "releaseState": "RELEASED",
+            "releaseStateAt": "2026-01-01T00:00:00Z",
+            "repository": "contract-frontend",
+            "resultSha": "0123456789abcdef0123456789abcdef01234567",
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "SUCCEEDED",
+            "trigger": "SCHEDULED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.branch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.changes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.changes[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.changes[*].from": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.changes[*].manifestPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.changes[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.changes[*].to": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.configPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.group": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.mode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.releaseRequestId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.releaseState": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.releaseStateAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.resultSha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.trigger": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
             "operationId": "listArtifacts"
           },
           "qits-trigger": {

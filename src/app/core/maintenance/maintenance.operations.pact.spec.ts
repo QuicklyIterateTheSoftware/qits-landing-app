@@ -10,10 +10,11 @@ import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { client as maintenanceClient } from '../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../api/maintenance/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
+import { heldBy, maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
 import { PENDING_BUMPS } from './maintenance.consumes';
 import {
   MAINTENANCE_ARTIFACTS,
+  MAINTENANCE_BUMP,
   MAINTENANCE_DEPENDENCIES,
   MAINTENANCE_DEPENDENTS,
   MAINTENANCE_REPOSITORIES,
@@ -43,6 +44,12 @@ import {
  * requires), the released artifacts embedding it: a project that has released artifacts, one with
  * dependents current, behind and transitive ("released artifacts, some behind"), and none ("no
  * released artifacts"), each as the page's screenshots show it.
+ *
+ * Its bump page (qits-2332) reads one bump by its id (`getBump`): a GROUP bump that succeeded,
+ * sent one change and was RELEASED ("pending bumps", its `releasedBumpId`), an automation bump
+ * that changed nothing ("a bump that changed nothing"), a FAILED automation bump with its failure
+ * and two CI runs ("a failed bump"), and an id the service does not know ("no such bump", a 404
+ * binding the status only: the page reads nothing of the body).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
@@ -80,7 +87,11 @@ const given = (
     state,
     operationId: op.operationId,
     trigger: { kind: 'ui', app: CONSUMER, interaction },
-    consumes: op.consumes,
+    // A field under a recorded `null` (a bump's `failure` but a failed one's) is bound in a state
+    // that has it.
+    consumes: op.consumes.length
+      ? heldBy(masters, state, op.operationId, op.consumes)
+      : op.consumes,
   });
 };
 
@@ -103,6 +114,11 @@ const dependentsOf = (state: string) => {
   const { ecosystem, name } = masters.operation(state, 'listDependencyDependents').query;
   return { query: { ecosystem, name } };
 };
+
+/** The bump `state` recorded under the provider-state param `param`, as the page asks for it. */
+const bumpOf = (state: string, param: string) => ({
+  path: { id: masters.operation(state, 'getBump').params[param] },
+});
 
 /** The project the recorded states' repositories belong to. */
 const projectOf = (state: string): string =>
@@ -262,6 +278,55 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
           MAINTENANCE_DEPENDENTS.fetch(dependentsOf(NOTHING_RELEASED)),
         );
         expect(data?.dependents).toEqual([]);
+      },
+    ));
+  it('show-bump: a bump that sent a change and was released', () =>
+    given(MAINTENANCE_BUMP, 'pending bumps', 'show-bump').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_BUMP.fetch(bumpOf('pending bumps', 'releasedBumpId')),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.status).toBe('SUCCEEDED');
+      expect(data?.releaseState).toBe('RELEASED');
+      expect(data?.changes?.length).toBe(1);
+      expect(data?.changes?.[0]?.name).toBeTruthy();
+    }));
+
+  it('show-bump: an automation bump that changed nothing', () =>
+    given(MAINTENANCE_BUMP, 'a bump that changed nothing', 'show-bump').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_BUMP.fetch(bumpOf('a bump that changed nothing', 'bumpId')),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.status).toBe('NOTHING_TO_DO');
+        expect(data?.changes).toEqual([]);
+        expect(data?.message).toBeTruthy();
+        expect(data?.failure ?? null).toBeNull();
+      },
+    ));
+
+  it('show-bump: a failed bump, with its failure and its two runs', () =>
+    given(MAINTENANCE_BUMP, 'a failed bump', 'show-bump').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        MAINTENANCE_BUMP.fetch(bumpOf('a failed bump', 'bumpId')),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.status).toBe('FAILED');
+      expect(data?.ciRunIds).toHaveLength(2);
+      expect(data?.failure?.excerpt).toBeTruthy();
+      expect(typeof data?.failure?.exitCode).toBe('number');
+    }));
+
+  it('show-bump: a bump the service does not know is a 404', () =>
+    // The page reads nothing of a 404's body: the interaction binds the status only.
+    given({ ...MAINTENANCE_BUMP, consumes: [] }, 'no such bump', 'show-bump').executeTest(
+      async (server) => {
+        const { data, response } = await at(server.url, () =>
+          MAINTENANCE_BUMP.fetch(bumpOf('no such bump', 'bumpId')),
+        );
+        expect(data).toBeUndefined();
+        expect(response?.status).toBe(404);
       },
     ));
 });

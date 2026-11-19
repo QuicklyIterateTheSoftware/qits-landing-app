@@ -52,8 +52,22 @@ export type ArtifactPinDto = {
     via?: string;
 };
 
-export type BaselinesRequest = {
-    workItem?: string;
+export type AutomationDto = {
+    kind?: string;
+    label?: string;
+    state?: string;
+    detail?: string;
+    bumpId?: string;
+    runIds?: Array<string>;
+    branch?: string;
+    resultSha?: string;
+    updatedAt?: Instant;
+    failure?: FailureDto;
+    reason?: string;
+};
+
+export type AutomationKindsDto = {
+    kinds?: Array<KindDto>;
 };
 
 export type BumpDto = {
@@ -78,23 +92,23 @@ export type BumpDto = {
     releaseState?: string;
     releaseDetail?: string;
     releaseStateAt?: Instant;
+    baseRef?: string;
+    replaceHead?: string;
     changes?: Array<Change>;
+    failure?: FailureDto;
 };
 
-export type BumpWindowDto = {
-    openedAt?: Instant;
-    closesAt?: Instant;
-    open?: boolean;
+export type BumpStandingDto = {
     outcome?: string;
     summary?: string;
-    inFlight?: number;
-    allowed?: number;
-    ciActive?: number;
+    capacity?: number;
+    free?: number;
+    ciQueued?: number;
     owed?: number;
     held?: number;
-    stalled?: Array<StalledBumpDto>;
-    queue?: Array<OwedBumpDto>;
-    next?: string;
+    picks?: Array<StandingPickDto>;
+    standing?: Array<StandingEntryDto>;
+    refused?: Array<string>;
 };
 
 export type Change = {
@@ -140,6 +154,19 @@ export type DependentsDto = {
     dependents?: Array<DependentDto>;
 };
 
+export type DeployedPactDto = {
+    consumerRepository?: string;
+    groupId?: string;
+    artifactId?: string;
+    pactVersion?: string;
+    deployedVersions?: Array<string>;
+};
+
+export type DeployedPactsDto = {
+    provider?: string;
+    pacts?: Array<DeployedPactDto>;
+};
+
 export type DownstreamDto = {
     repository?: string;
     catalogId?: string;
@@ -163,6 +190,13 @@ export type EntryDto1 = {
     reason?: string;
 };
 
+export type FailureDto = {
+    stepIndex?: number;
+    image?: string;
+    exitCode?: number;
+    excerpt?: string;
+};
+
 export type GroupDto = {
     name?: string;
     source?: string;
@@ -173,6 +207,11 @@ export type GroupDto = {
     pending?: number;
 };
 
+export type ImagePinDto = {
+    name?: string;
+    version?: string;
+};
+
 export type IngestRequest = {
     ecosystem?: string;
     name?: string;
@@ -181,12 +220,11 @@ export type IngestRequest = {
 
 export type Instant = string;
 
-export type OwedBumpDto = {
-    repository?: string;
-    group?: string;
-    changes?: number;
-    reason?: string;
-    detail?: string;
+export type KindDto = {
+    kind?: string;
+    label?: string;
+    committablePaths?: Array<string>;
+    approvalRoles?: Array<string>;
 };
 
 export type PackageDto = {
@@ -217,6 +255,30 @@ export type PinSourceDto = {
     generatedAt?: Instant;
     repositories?: Array<RepositoryStateDto>;
     pins?: Array<ArtifactPinDto>;
+};
+
+export type ReleaseRequestAutomationsDto = {
+    requestId?: string;
+    foldSha?: string;
+    automations?: Array<AutomationDto>;
+};
+
+export type ReleaseRequestMemoryDto = {
+    requestId?: string;
+    repository?: string;
+    opened?: boolean;
+    purpose?: string;
+    branch?: string;
+    changes?: Array<{
+        [key: string]: unknown;
+    }>;
+    openedAt?: Instant;
+    upstreamRestarts?: number;
+    upstreamRestartedAt?: Instant;
+    starved?: boolean;
+    withdrawnAt?: Instant;
+    withdrawnReason?: string;
+    updatedAt?: Instant;
 };
 
 export type RepositoryDependentsDto = {
@@ -257,6 +319,11 @@ export type RepositoryStateDto = {
     headSha?: string;
 };
 
+export type RunRequest = {
+    workItem?: string;
+    repository?: string;
+};
+
 export type SbomCheckReportDto = {
     ranAt?: Instant;
     filed?: boolean;
@@ -276,22 +343,30 @@ export type ScanDto = {
     message?: string;
 };
 
-export type StalledBumpDto = {
+export type StandingChangeDto = {
+    ecosystem?: string;
+    name?: string;
+    from?: string;
+    to?: string;
+};
+
+export type StandingEntryDto = {
     repository?: string;
-    group?: string;
-    releaseRequestId?: string;
-    state?: string;
     reason?: string;
+    blockedBy?: Array<string>;
+    changes?: Array<StandingChangeDto>;
+    owedSince?: Instant;
+};
+
+export type StandingPickDto = {
+    repository?: string;
+    cycleBroken?: boolean;
+    blockedBy?: Array<string>;
 };
 
 export type StartScanRequest = {
     scope?: string;
     repository?: string;
-};
-
-export type TargetedBumpRequest = {
-    branch?: string;
-    changes?: Array<Change>;
 };
 
 export type TicketDto = {
@@ -310,9 +385,21 @@ export type TransitiveDto = {
     behind?: boolean;
 };
 
+export type TriggerRequest = {
+    repository?: string;
+    foldSha?: string;
+    previousFoldSha?: string;
+    changedSincePrevious?: Array<string>;
+    sourceBranches?: Array<string>;
+    workItem?: string;
+    accepts?: Array<string>;
+    backingBranch?: string;
+    qualifiedId?: string;
+};
+
 export type Uuid = string;
 
-export type GetMaintenanceApiAdoptionByReleaseData = {
+export type GetAdoptionByReleaseData = {
     body?: never;
     path?: never;
     query?: {
@@ -322,7 +409,7 @@ export type GetMaintenanceApiAdoptionByReleaseData = {
     url: '/maintenance/api/adoption/by-release';
 };
 
-export type GetMaintenanceApiAdoptionByReleaseErrors = {
+export type GetAdoptionByReleaseErrors = {
     /**
      * Both repository and version are required
      */
@@ -337,23 +424,23 @@ export type GetMaintenanceApiAdoptionByReleaseErrors = {
     403: unknown;
 };
 
-export type GetMaintenanceApiAdoptionByReleaseResponses = {
+export type GetAdoptionByReleaseResponses = {
     /**
      * The journey
      */
     200: AdoptionJourneyDto;
 };
 
-export type GetMaintenanceApiAdoptionByReleaseResponse = GetMaintenanceApiAdoptionByReleaseResponses[keyof GetMaintenanceApiAdoptionByReleaseResponses];
+export type GetAdoptionByReleaseResponse = GetAdoptionByReleaseResponses[keyof GetAdoptionByReleaseResponses];
 
-export type GetMaintenanceApiArtifactsData = {
+export type ListArtifactsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/maintenance/api/artifacts';
 };
 
-export type GetMaintenanceApiArtifactsErrors = {
+export type ListArtifactsErrors = {
     /**
      * Not Authorized
      */
@@ -364,23 +451,23 @@ export type GetMaintenanceApiArtifactsErrors = {
     403: unknown;
 };
 
-export type GetMaintenanceApiArtifactsResponses = {
+export type ListArtifactsResponses = {
     /**
      * The artifacts
      */
     200: Array<ArtifactDto>;
 };
 
-export type GetMaintenanceApiArtifactsResponse = GetMaintenanceApiArtifactsResponses[keyof GetMaintenanceApiArtifactsResponses];
+export type ListArtifactsResponse = ListArtifactsResponses[keyof ListArtifactsResponses];
 
-export type PostMaintenanceApiArtifactsIngestData = {
+export type IngestArtifactSbomData = {
     body: IngestRequest;
     path?: never;
     query?: never;
     url: '/maintenance/api/artifacts/ingest';
 };
 
-export type PostMaintenanceApiArtifactsIngestErrors = {
+export type IngestArtifactSbomErrors = {
     /**
      * Unknown ecosystem, or no name or version
      */
@@ -395,12 +482,39 @@ export type PostMaintenanceApiArtifactsIngestErrors = {
     403: unknown;
 };
 
-export type PostMaintenanceApiArtifactsIngestResponses = {
+export type IngestArtifactSbomResponses = {
     /**
      * Queued; the id is the artifact row
      */
     202: unknown;
 };
+
+export type ListAutomationKindsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/maintenance/api/automations/kinds';
+};
+
+export type ListAutomationKindsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListAutomationKindsResponses = {
+    /**
+     * Every registered, switched-on kind, by id
+     */
+    200: AutomationKindsDto;
+};
+
+export type ListAutomationKindsResponse = ListAutomationKindsResponses[keyof ListAutomationKindsResponses];
 
 export type ListBumpsData = {
     body?: never;
@@ -461,14 +575,14 @@ export type ListPendingBumpsResponses = {
 
 export type ListPendingBumpsResponse = ListPendingBumpsResponses[keyof ListPendingBumpsResponses];
 
-export type DeleteMaintenanceApiBumpsWindowData = {
+export type GetBumpStandingData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/maintenance/api/bumps/window';
+    url: '/maintenance/api/bumps/standing';
 };
 
-export type DeleteMaintenanceApiBumpsWindowErrors = {
+export type GetBumpStandingErrors = {
     /**
      * Not Authorized
      */
@@ -479,68 +593,14 @@ export type DeleteMaintenanceApiBumpsWindowErrors = {
     403: unknown;
 };
 
-export type DeleteMaintenanceApiBumpsWindowResponses = {
+export type GetBumpStandingResponses = {
     /**
-     * There is no window now
+     * The dispatcher's decision and the owed set
      */
-    204: void;
+    200: BumpStandingDto;
 };
 
-export type DeleteMaintenanceApiBumpsWindowResponse = DeleteMaintenanceApiBumpsWindowResponses[keyof DeleteMaintenanceApiBumpsWindowResponses];
-
-export type GetBumpWindowData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/maintenance/api/bumps/window';
-};
-
-export type GetBumpWindowErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetBumpWindowResponses = {
-    /**
-     * The window, or the reason there is none
-     */
-    200: BumpWindowDto;
-};
-
-export type GetBumpWindowResponse = GetBumpWindowResponses[keyof GetBumpWindowResponses];
-
-export type PostMaintenanceApiBumpsWindowData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/maintenance/api/bumps/window';
-};
-
-export type PostMaintenanceApiBumpsWindowErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type PostMaintenanceApiBumpsWindowResponses = {
-    /**
-     * The window that is now open
-     */
-    200: BumpWindowDto;
-};
-
-export type PostMaintenanceApiBumpsWindowResponse = PostMaintenanceApiBumpsWindowResponses[keyof PostMaintenanceApiBumpsWindowResponses];
+export type GetBumpStandingResponse = GetBumpStandingResponses[keyof GetBumpStandingResponses];
 
 export type GetBumpData = {
     body?: never;
@@ -575,7 +635,7 @@ export type GetBumpResponses = {
 
 export type GetBumpResponse = GetBumpResponses[keyof GetBumpResponses];
 
-export type GetMaintenanceApiDependenciesData = {
+export type ListDependenciesData = {
     body?: never;
     path?: never;
     query?: {
@@ -585,7 +645,7 @@ export type GetMaintenanceApiDependenciesData = {
     url: '/maintenance/api/dependencies';
 };
 
-export type GetMaintenanceApiDependenciesErrors = {
+export type ListDependenciesErrors = {
     /**
      * kind is neither INTERNAL nor EXTERNAL
      */
@@ -600,16 +660,16 @@ export type GetMaintenanceApiDependenciesErrors = {
     403: unknown;
 };
 
-export type GetMaintenanceApiDependenciesResponses = {
+export type ListDependenciesResponses = {
     /**
      * The dependencies
      */
     200: Array<DependencyDto>;
 };
 
-export type GetMaintenanceApiDependenciesResponse = GetMaintenanceApiDependenciesResponses[keyof GetMaintenanceApiDependenciesResponses];
+export type ListDependenciesResponse = ListDependenciesResponses[keyof ListDependenciesResponses];
 
-export type GetMaintenanceApiDependenciesDependentsData = {
+export type ListDependencyDependentsData = {
     body?: never;
     path?: never;
     query?: {
@@ -620,7 +680,7 @@ export type GetMaintenanceApiDependenciesDependentsData = {
     url: '/maintenance/api/dependencies/dependents';
 };
 
-export type GetMaintenanceApiDependenciesDependentsErrors = {
+export type ListDependencyDependentsErrors = {
     /**
      * Unknown ecosystem, or no name
      */
@@ -635,118 +695,27 @@ export type GetMaintenanceApiDependenciesDependentsErrors = {
     403: unknown;
 };
 
-export type GetMaintenanceApiDependenciesDependentsResponses = {
+export type ListDependencyDependentsResponses = {
     /**
      * The dependents
      */
     200: DependentsDto;
 };
 
-export type GetMaintenanceApiDependenciesDependentsResponse = GetMaintenanceApiDependenciesDependentsResponses[keyof GetMaintenanceApiDependenciesDependentsResponses];
+export type ListDependencyDependentsResponse = ListDependencyDependentsResponses[keyof ListDependencyDependentsResponses];
 
-export type GetMaintenanceApiPinsData = {
+export type ListDeployedPactsData = {
     body?: never;
     path?: never;
-    query?: never;
-    url: '/maintenance/api/pins';
-};
-
-export type GetMaintenanceApiPinsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * The inventory holds no repository at all
-     */
-    503: unknown;
-};
-
-export type GetMaintenanceApiPinsResponses = {
-    /**
-     * The pins, with the inventory's freshness
-     */
-    200: PinSourceDto;
-};
-
-export type GetMaintenanceApiPinsResponse = GetMaintenanceApiPinsResponses[keyof GetMaintenanceApiPinsResponses];
-
-export type GetMaintenanceApiRepositoriesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/maintenance/api/repositories';
-};
-
-export type GetMaintenanceApiRepositoriesErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetMaintenanceApiRepositoriesResponses = {
-    /**
-     * The repositories
-     */
-    200: Array<RepositoryDto>;
-};
-
-export type GetMaintenanceApiRepositoriesResponse = GetMaintenanceApiRepositoriesResponses[keyof GetMaintenanceApiRepositoriesResponses];
-
-export type GetMaintenanceApiRepositoriesByNameData = {
-    body?: never;
-    path: {
-        name: string;
+    query?: {
+        provider?: string;
     };
-    query?: never;
-    url: '/maintenance/api/repositories/{name}';
+    url: '/maintenance/api/deployed-pacts';
 };
 
-export type GetMaintenanceApiRepositoriesByNameErrors = {
+export type ListDeployedPactsErrors = {
     /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * No such repository in the inventory
-     */
-    404: unknown;
-};
-
-export type GetMaintenanceApiRepositoriesByNameResponses = {
-    /**
-     * The repository
-     */
-    200: RepositoryDetailDto;
-};
-
-export type GetMaintenanceApiRepositoriesByNameResponse = GetMaintenanceApiRepositoriesByNameResponses[keyof GetMaintenanceApiRepositoriesByNameResponses];
-
-export type PostMaintenanceApiRepositoriesByNameBranchesBumpsData = {
-    body: TargetedBumpRequest;
-    path: {
-        name: string;
-    };
-    query?: never;
-    url: '/maintenance/api/repositories/{name}/branches/bumps';
-};
-
-export type PostMaintenanceApiRepositoriesByNameBranchesBumpsErrors = {
-    /**
-     * The branch or a change is not a valid payload
+     * No provider named
      */
     400: unknown;
     /**
@@ -758,91 +727,28 @@ export type PostMaintenanceApiRepositoriesByNameBranchesBumpsErrors = {
      */
     403: unknown;
     /**
-     * No such repository in the inventory
+     * The deployed versions could not be read from qits-deployments
      */
-    404: unknown;
-    /**
-     * One is already active on that branch, or bumping is disabled
-     */
-    409: unknown;
+    503: unknown;
 };
 
-export type PostMaintenanceApiRepositoriesByNameBranchesBumpsResponses = {
+export type ListDeployedPactsResponses = {
     /**
-     * Requested; poll GET /bumps/{id} for resultSha
+     * The pacts; empty for an unknown provider
      */
-    202: unknown;
+    200: DeployedPactsDto;
 };
 
-export type GetMaintenanceApiRepositoriesByNameDependentsData = {
+export type ListDeployedPactsResponse = ListDeployedPactsResponses[keyof ListDeployedPactsResponses];
+
+export type ListDependencyPinsData = {
     body?: never;
-    path: {
-        name: string;
-    };
+    path?: never;
     query?: never;
-    url: '/maintenance/api/repositories/{name}/dependents';
+    url: '/maintenance/api/pins';
 };
 
-export type GetMaintenanceApiRepositoriesByNameDependentsErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetMaintenanceApiRepositoriesByNameDependentsResponses = {
-    /**
-     * The dependents, per published artifact
-     */
-    200: RepositoryDependentsDto;
-};
-
-export type GetMaintenanceApiRepositoriesByNameDependentsResponse = GetMaintenanceApiRepositoriesByNameDependentsResponses[keyof GetMaintenanceApiRepositoriesByNameDependentsResponses];
-
-export type GetMaintenanceApiRepositoriesByNameDownstreamData = {
-    body?: never;
-    path: {
-        name: string;
-    };
-    query?: never;
-    url: '/maintenance/api/repositories/{name}/downstream';
-};
-
-export type GetMaintenanceApiRepositoriesByNameDownstreamErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-};
-
-export type GetMaintenanceApiRepositoriesByNameDownstreamResponses = {
-    /**
-     * The closure, depth ascending then name
-     */
-    200: DownstreamDto;
-};
-
-export type GetMaintenanceApiRepositoriesByNameDownstreamResponse = GetMaintenanceApiRepositoriesByNameDownstreamResponses[keyof GetMaintenanceApiRepositoriesByNameDownstreamResponses];
-
-export type PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsData = {
-    body?: never;
-    path: {
-        group: string;
-        name: string;
-    };
-    query?: never;
-    url: '/maintenance/api/repositories/{name}/groups/{group}/bumps';
-};
-
-export type PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsErrors = {
+export type ListDependencyPinsErrors = {
     /**
      * Not Authorized
      */
@@ -852,33 +758,171 @@ export type PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsErrors = {
      */
     403: unknown;
     /**
-     * No such repository, or no such group
+     * The answer would not be complete: the inventory holds no repository at all, the deployed versions could not be read, or a deployed or rollback release of a repository this inventory holds is not in the release ledger
      */
-    404: unknown;
-    /**
-     * One is already active, or bumping is disabled
-     */
-    409: unknown;
+    503: unknown;
 };
 
-export type PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsResponses = {
+export type ListDependencyPinsResponses = {
     /**
-     * Requested; poll GET /bumps/{id}
+     * The pins, with the inventory's freshness
      */
-    202: unknown;
+    200: PinSourceDto;
 };
 
-export type PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesData = {
-    body: BaselinesRequest;
+export type ListDependencyPinsResponse = ListDependencyPinsResponses[keyof ListDependencyPinsResponses];
+
+export type ListImagePinsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/maintenance/api/pins/images';
+};
+
+export type ListImagePinsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * The answer would not be complete: every case listDependencyPins refuses, and an empty set, which would evict every mirrored tag
+     */
+    503: unknown;
+};
+
+export type ListImagePinsResponses = {
+    /**
+     * The image tags, one per (name, version), ordered by name then version
+     */
+    200: Array<ImagePinDto>;
+};
+
+export type ListImagePinsResponse = ListImagePinsResponses[keyof ListImagePinsResponses];
+
+export type GetReleaseRequestMemoryData = {
+    body?: never;
     path: {
-        name: string;
         requestId: string;
     };
     query?: never;
-    url: '/maintenance/api/repositories/{name}/release-requests/{requestId}/screenshot-baselines';
+    url: '/maintenance/api/release-requests/{requestId}';
 };
 
-export type PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesErrors = {
+export type GetReleaseRequestMemoryErrors = {
+    /**
+     * Not a request id
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * Nothing remembered about the request: never opened, restarted or withdrawn here
+     */
+    404: unknown;
+};
+
+export type GetReleaseRequestMemoryResponses = {
+    /**
+     * Whether it opened the request and why, its upstream restarts, its withdrawal
+     */
+    200: ReleaseRequestMemoryDto;
+};
+
+export type GetReleaseRequestMemoryResponse = GetReleaseRequestMemoryResponses[keyof GetReleaseRequestMemoryResponses];
+
+export type ListReleaseRequestAutomationsData = {
+    body?: never;
+    path: {
+        requestId: string;
+    };
+    query?: {
+        foldSha?: string;
+    };
+    url: '/maintenance/api/release-requests/{requestId}/automations';
+};
+
+export type ListReleaseRequestAutomationsErrors = {
+    /**
+     * Not a request id, or not a sha
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListReleaseRequestAutomationsResponses = {
+    /**
+     * Every kind with a row or a deferral at the fold
+     */
+    200: ReleaseRequestAutomationsDto;
+};
+
+export type ListReleaseRequestAutomationsResponse = ListReleaseRequestAutomationsResponses[keyof ListReleaseRequestAutomationsResponses];
+
+export type TriggerReleaseRequestAutomationsData = {
+    body: TriggerRequest;
+    path: {
+        requestId: string;
+    };
+    query?: never;
+    url: '/maintenance/api/release-requests/{requestId}/automations';
+};
+
+export type TriggerReleaseRequestAutomationsErrors = {
+    /**
+     * Not a request id, not a sha, or not a work item
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such repository in the inventory yet; a scan of it is queued
+     */
+    404: unknown;
+};
+
+export type TriggerReleaseRequestAutomationsResponses = {
+    /**
+     * Every applicable kind's state at the fold; UNKNOWN "settling" for a kind still being decided when the settle outlasts its budget
+     */
+    200: ReleaseRequestAutomationsDto;
+};
+
+export type TriggerReleaseRequestAutomationsResponse = TriggerReleaseRequestAutomationsResponses[keyof TriggerReleaseRequestAutomationsResponses];
+
+export type RunReleaseRequestAutomationData = {
+    body: RunRequest;
+    path: {
+        kind: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/maintenance/api/release-requests/{requestId}/automations/{kind}/runs';
+};
+
+export type RunReleaseRequestAutomationErrors = {
     /**
      * Not a request id, or not a work item
      */
@@ -892,30 +936,148 @@ export type PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreen
      */
     403: unknown;
     /**
-     * No such repository in the inventory
+     * No such kind, or no such repository
      */
     404: unknown;
     /**
-     * The request takes no branch, one is already running for it, or bumping is disabled
+     * The request takes no branch or has no fold, one is already active for (request, kind), or bumping is disabled
      */
     409: unknown;
 };
 
-export type PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesResponses = {
+export type RunReleaseRequestAutomationResponses = {
     /**
      * Requested; poll GET /bumps/{id}
      */
     202: unknown;
 };
 
-export type GetMaintenanceApiSbomCheckData = {
+export type ListRepositoriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/maintenance/api/repositories';
+};
+
+export type ListRepositoriesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListRepositoriesResponses = {
+    /**
+     * The repositories
+     */
+    200: Array<RepositoryDto>;
+};
+
+export type ListRepositoriesResponse = ListRepositoriesResponses[keyof ListRepositoriesResponses];
+
+export type GetRepositoryData = {
+    body?: never;
+    path: {
+        name: string;
+    };
+    query?: never;
+    url: '/maintenance/api/repositories/{name}';
+};
+
+export type GetRepositoryErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such repository in the inventory
+     */
+    404: unknown;
+};
+
+export type GetRepositoryResponses = {
+    /**
+     * The repository
+     */
+    200: RepositoryDetailDto;
+};
+
+export type GetRepositoryResponse = GetRepositoryResponses[keyof GetRepositoryResponses];
+
+export type ListRepositoryDependentsData = {
+    body?: never;
+    path: {
+        name: string;
+    };
+    query?: never;
+    url: '/maintenance/api/repositories/{name}/dependents';
+};
+
+export type ListRepositoryDependentsErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListRepositoryDependentsResponses = {
+    /**
+     * The dependents, per published artifact
+     */
+    200: RepositoryDependentsDto;
+};
+
+export type ListRepositoryDependentsResponse = ListRepositoryDependentsResponses[keyof ListRepositoryDependentsResponses];
+
+export type GetRepositoryDownstreamData = {
+    body?: never;
+    path: {
+        name: string;
+    };
+    query?: never;
+    url: '/maintenance/api/repositories/{name}/downstream';
+};
+
+export type GetRepositoryDownstreamErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetRepositoryDownstreamResponses = {
+    /**
+     * The closure, depth ascending then name
+     */
+    200: DownstreamDto;
+};
+
+export type GetRepositoryDownstreamResponse = GetRepositoryDownstreamResponses[keyof GetRepositoryDownstreamResponses];
+
+export type GetSbomCheckReportData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/maintenance/api/sbom-check';
 };
 
-export type GetMaintenanceApiSbomCheckErrors = {
+export type GetSbomCheckReportErrors = {
     /**
      * Not Authorized
      */
@@ -930,23 +1092,23 @@ export type GetMaintenanceApiSbomCheckErrors = {
     404: unknown;
 };
 
-export type GetMaintenanceApiSbomCheckResponses = {
+export type GetSbomCheckReportResponses = {
     /**
      * The report
      */
     200: SbomCheckReportDto;
 };
 
-export type GetMaintenanceApiSbomCheckResponse = GetMaintenanceApiSbomCheckResponses[keyof GetMaintenanceApiSbomCheckResponses];
+export type GetSbomCheckReportResponse = GetSbomCheckReportResponses[keyof GetSbomCheckReportResponses];
 
-export type PostMaintenanceApiSbomCheckRunsData = {
+export type RunSbomCheckData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/maintenance/api/sbom-check/runs';
 };
 
-export type PostMaintenanceApiSbomCheckRunsErrors = {
+export type RunSbomCheckErrors = {
     /**
      * Not Authorized
      */
@@ -961,21 +1123,21 @@ export type PostMaintenanceApiSbomCheckRunsErrors = {
     502: unknown;
 };
 
-export type PostMaintenanceApiSbomCheckRunsResponses = {
+export type RunSbomCheckResponses = {
     /**
      * Ran; the body is the report it stored
      */
     202: unknown;
 };
 
-export type PostMaintenanceApiScansData = {
+export type RequestScanData = {
     body: StartScanRequest;
     path?: never;
     query?: never;
     url: '/maintenance/api/scans';
 };
 
-export type PostMaintenanceApiScansErrors = {
+export type RequestScanErrors = {
     /**
      * Unknown scope
      */
@@ -990,14 +1152,14 @@ export type PostMaintenanceApiScansErrors = {
     403: unknown;
 };
 
-export type PostMaintenanceApiScansResponses = {
+export type RequestScanResponses = {
     /**
      * Queued
      */
     202: unknown;
 };
 
-export type GetMaintenanceApiScansByIdData = {
+export type GetScanData = {
     body?: never;
     path: {
         id: string;
@@ -1006,7 +1168,7 @@ export type GetMaintenanceApiScansByIdData = {
     url: '/maintenance/api/scans/{id}';
 };
 
-export type GetMaintenanceApiScansByIdErrors = {
+export type GetScanErrors = {
     /**
      * Not Authorized
      */
@@ -1021,11 +1183,11 @@ export type GetMaintenanceApiScansByIdErrors = {
     404: unknown;
 };
 
-export type GetMaintenanceApiScansByIdResponses = {
+export type GetScanResponses = {
     /**
      * The scan
      */
     200: ScanDto;
 };
 
-export type GetMaintenanceApiScansByIdResponse = GetMaintenanceApiScansByIdResponses[keyof GetMaintenanceApiScansByIdResponses];
+export type GetScanResponse = GetScanResponses[keyof GetScanResponses];

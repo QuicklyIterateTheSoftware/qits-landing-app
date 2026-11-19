@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteMaintenanceApiBumpsWindowData, DeleteMaintenanceApiBumpsWindowErrors, DeleteMaintenanceApiBumpsWindowResponses, GetBumpData, GetBumpErrors, GetBumpResponses, GetBumpWindowData, GetBumpWindowErrors, GetBumpWindowResponses, GetMaintenanceApiAdoptionByReleaseData, GetMaintenanceApiAdoptionByReleaseErrors, GetMaintenanceApiAdoptionByReleaseResponses, GetMaintenanceApiArtifactsData, GetMaintenanceApiArtifactsErrors, GetMaintenanceApiArtifactsResponses, GetMaintenanceApiDependenciesData, GetMaintenanceApiDependenciesDependentsData, GetMaintenanceApiDependenciesDependentsErrors, GetMaintenanceApiDependenciesDependentsResponses, GetMaintenanceApiDependenciesErrors, GetMaintenanceApiDependenciesResponses, GetMaintenanceApiPinsData, GetMaintenanceApiPinsErrors, GetMaintenanceApiPinsResponses, GetMaintenanceApiRepositoriesByNameData, GetMaintenanceApiRepositoriesByNameDependentsData, GetMaintenanceApiRepositoriesByNameDependentsErrors, GetMaintenanceApiRepositoriesByNameDependentsResponses, GetMaintenanceApiRepositoriesByNameDownstreamData, GetMaintenanceApiRepositoriesByNameDownstreamErrors, GetMaintenanceApiRepositoriesByNameDownstreamResponses, GetMaintenanceApiRepositoriesByNameErrors, GetMaintenanceApiRepositoriesByNameResponses, GetMaintenanceApiRepositoriesData, GetMaintenanceApiRepositoriesErrors, GetMaintenanceApiRepositoriesResponses, GetMaintenanceApiSbomCheckData, GetMaintenanceApiSbomCheckErrors, GetMaintenanceApiSbomCheckResponses, GetMaintenanceApiScansByIdData, GetMaintenanceApiScansByIdErrors, GetMaintenanceApiScansByIdResponses, ListBumpsData, ListBumpsErrors, ListBumpsResponses, ListPendingBumpsData, ListPendingBumpsErrors, ListPendingBumpsResponses, PostMaintenanceApiArtifactsIngestData, PostMaintenanceApiArtifactsIngestErrors, PostMaintenanceApiArtifactsIngestResponses, PostMaintenanceApiBumpsWindowData, PostMaintenanceApiBumpsWindowErrors, PostMaintenanceApiBumpsWindowResponses, PostMaintenanceApiRepositoriesByNameBranchesBumpsData, PostMaintenanceApiRepositoriesByNameBranchesBumpsErrors, PostMaintenanceApiRepositoriesByNameBranchesBumpsResponses, PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsData, PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsErrors, PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsResponses, PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesData, PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesErrors, PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesResponses, PostMaintenanceApiSbomCheckRunsData, PostMaintenanceApiSbomCheckRunsErrors, PostMaintenanceApiSbomCheckRunsResponses, PostMaintenanceApiScansData, PostMaintenanceApiScansErrors, PostMaintenanceApiScansResponses } from './types.gen';
+import type { GetAdoptionByReleaseData, GetAdoptionByReleaseErrors, GetAdoptionByReleaseResponses, GetBumpData, GetBumpErrors, GetBumpResponses, GetBumpStandingData, GetBumpStandingErrors, GetBumpStandingResponses, GetReleaseRequestMemoryData, GetReleaseRequestMemoryErrors, GetReleaseRequestMemoryResponses, GetRepositoryData, GetRepositoryDownstreamData, GetRepositoryDownstreamErrors, GetRepositoryDownstreamResponses, GetRepositoryErrors, GetRepositoryResponses, GetSbomCheckReportData, GetSbomCheckReportErrors, GetSbomCheckReportResponses, GetScanData, GetScanErrors, GetScanResponses, IngestArtifactSbomData, IngestArtifactSbomErrors, IngestArtifactSbomResponses, ListArtifactsData, ListArtifactsErrors, ListArtifactsResponses, ListAutomationKindsData, ListAutomationKindsErrors, ListAutomationKindsResponses, ListBumpsData, ListBumpsErrors, ListBumpsResponses, ListDependenciesData, ListDependenciesErrors, ListDependenciesResponses, ListDependencyDependentsData, ListDependencyDependentsErrors, ListDependencyDependentsResponses, ListDependencyPinsData, ListDependencyPinsErrors, ListDependencyPinsResponses, ListDeployedPactsData, ListDeployedPactsErrors, ListDeployedPactsResponses, ListImagePinsData, ListImagePinsErrors, ListImagePinsResponses, ListPendingBumpsData, ListPendingBumpsErrors, ListPendingBumpsResponses, ListReleaseRequestAutomationsData, ListReleaseRequestAutomationsErrors, ListReleaseRequestAutomationsResponses, ListRepositoriesData, ListRepositoriesErrors, ListRepositoriesResponses, ListRepositoryDependentsData, ListRepositoryDependentsErrors, ListRepositoryDependentsResponses, RequestScanData, RequestScanErrors, RequestScanResponses, RunReleaseRequestAutomationData, RunReleaseRequestAutomationErrors, RunReleaseRequestAutomationResponses, RunSbomCheckData, RunSbomCheckErrors, RunSbomCheckResponses, TriggerReleaseRequestAutomationsData, TriggerReleaseRequestAutomationsErrors, TriggerReleaseRequestAutomationsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -21,7 +21,7 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * How far one released repository and version got
  */
-export const getMaintenanceApiAdoptionByRelease = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiAdoptionByReleaseData, ThrowOnError>): RequestResult<GetMaintenanceApiAdoptionByReleaseResponses, GetMaintenanceApiAdoptionByReleaseErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiAdoptionByReleaseResponses, GetMaintenanceApiAdoptionByReleaseErrors, ThrowOnError>({
+export const getAdoptionByRelease = <ThrowOnError extends boolean = false>(options?: Options<GetAdoptionByReleaseData, ThrowOnError>): RequestResult<GetAdoptionByReleaseResponses, GetAdoptionByReleaseErrors, ThrowOnError> => (options?.client ?? client).get<GetAdoptionByReleaseResponses, GetAdoptionByReleaseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/adoption/by-release',
     ...options
@@ -30,7 +30,7 @@ export const getMaintenanceApiAdoptionByRelease = <ThrowOnError extends boolean 
 /**
  * Every artifact this platform publishes, with its reach
  */
-export const getMaintenanceApiArtifacts = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiArtifactsData, ThrowOnError>): RequestResult<GetMaintenanceApiArtifactsResponses, GetMaintenanceApiArtifactsErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiArtifactsResponses, GetMaintenanceApiArtifactsErrors, ThrowOnError>({
+export const listArtifacts = <ThrowOnError extends boolean = false>(options?: Options<ListArtifactsData, ThrowOnError>): RequestResult<ListArtifactsResponses, ListArtifactsErrors, ThrowOnError> => (options?.client ?? client).get<ListArtifactsResponses, ListArtifactsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/artifacts',
     ...options
@@ -39,7 +39,7 @@ export const getMaintenanceApiArtifacts = <ThrowOnError extends boolean = false>
 /**
  * Read one released artifact's sbom now
  */
-export const postMaintenanceApiArtifactsIngest = <ThrowOnError extends boolean = false>(options: Options<PostMaintenanceApiArtifactsIngestData, ThrowOnError>): RequestResult<PostMaintenanceApiArtifactsIngestResponses, PostMaintenanceApiArtifactsIngestErrors, ThrowOnError> => (options.client ?? client).post<PostMaintenanceApiArtifactsIngestResponses, PostMaintenanceApiArtifactsIngestErrors, ThrowOnError>({
+export const ingestArtifactSbom = <ThrowOnError extends boolean = false>(options: Options<IngestArtifactSbomData, ThrowOnError>): RequestResult<IngestArtifactSbomResponses, IngestArtifactSbomErrors, ThrowOnError> => (options.client ?? client).post<IngestArtifactSbomResponses, IngestArtifactSbomErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/artifacts/ingest',
     ...options,
@@ -47,6 +47,15 @@ export const postMaintenanceApiArtifactsIngest = <ThrowOnError extends boolean =
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * Every release-request automation kind this build offers
+ */
+export const listAutomationKinds = <ThrowOnError extends boolean = false>(options?: Options<ListAutomationKindsData, ThrowOnError>): RequestResult<ListAutomationKindsResponses, ListAutomationKindsErrors, ThrowOnError> => (options?.client ?? client).get<ListAutomationKindsResponses, ListAutomationKindsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/automations/kinds',
+    ...options
 });
 
 /**
@@ -68,29 +77,11 @@ export const listPendingBumps = <ThrowOnError extends boolean = false>(options?:
 });
 
 /**
- * Close the bump dispatch window
+ * Where every owed bump stands, and what the dispatcher would send now
  */
-export const deleteMaintenanceApiBumpsWindow = <ThrowOnError extends boolean = false>(options?: Options<DeleteMaintenanceApiBumpsWindowData, ThrowOnError>): RequestResult<DeleteMaintenanceApiBumpsWindowResponses, DeleteMaintenanceApiBumpsWindowErrors, ThrowOnError> => (options?.client ?? client).delete<DeleteMaintenanceApiBumpsWindowResponses, DeleteMaintenanceApiBumpsWindowErrors, ThrowOnError>({
+export const getBumpStanding = <ThrowOnError extends boolean = false>(options?: Options<GetBumpStandingData, ThrowOnError>): RequestResult<GetBumpStandingResponses, GetBumpStandingErrors, ThrowOnError> => (options?.client ?? client).get<GetBumpStandingResponses, GetBumpStandingErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/maintenance/api/bumps/window',
-    ...options
-});
-
-/**
- * The bump dispatch window and everything owed a bump
- */
-export const getBumpWindow = <ThrowOnError extends boolean = false>(options?: Options<GetBumpWindowData, ThrowOnError>): RequestResult<GetBumpWindowResponses, GetBumpWindowErrors, ThrowOnError> => (options?.client ?? client).get<GetBumpWindowResponses, GetBumpWindowErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/maintenance/api/bumps/window',
-    ...options
-});
-
-/**
- * Open a bump dispatch window now
- */
-export const postMaintenanceApiBumpsWindow = <ThrowOnError extends boolean = false>(options?: Options<PostMaintenanceApiBumpsWindowData, ThrowOnError>): RequestResult<PostMaintenanceApiBumpsWindowResponses, PostMaintenanceApiBumpsWindowErrors, ThrowOnError> => (options?.client ?? client).post<PostMaintenanceApiBumpsWindowResponses, PostMaintenanceApiBumpsWindowErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/maintenance/api/bumps/window',
+    url: '/maintenance/api/bumps/standing',
     ...options
 });
 
@@ -106,7 +97,7 @@ export const getBump = <ThrowOnError extends boolean = false>(options: Options<G
 /**
  * Dependencies matching a glob, with every pin of each
  */
-export const getMaintenanceApiDependencies = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiDependenciesData, ThrowOnError>): RequestResult<GetMaintenanceApiDependenciesResponses, GetMaintenanceApiDependenciesErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiDependenciesResponses, GetMaintenanceApiDependenciesErrors, ThrowOnError>({
+export const listDependencies = <ThrowOnError extends boolean = false>(options?: Options<ListDependenciesData, ThrowOnError>): RequestResult<ListDependenciesResponses, ListDependenciesErrors, ThrowOnError> => (options?.client ?? client).get<ListDependenciesResponses, ListDependenciesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/dependencies',
     ...options
@@ -115,25 +106,87 @@ export const getMaintenanceApiDependencies = <ThrowOnError extends boolean = fal
 /**
  * Every released artifact of ours that embeds this dependency
  */
-export const getMaintenanceApiDependenciesDependents = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiDependenciesDependentsData, ThrowOnError>): RequestResult<GetMaintenanceApiDependenciesDependentsResponses, GetMaintenanceApiDependenciesDependentsErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiDependenciesDependentsResponses, GetMaintenanceApiDependenciesDependentsErrors, ThrowOnError>({
+export const listDependencyDependents = <ThrowOnError extends boolean = false>(options?: Options<ListDependencyDependentsData, ThrowOnError>): RequestResult<ListDependencyDependentsResponses, ListDependencyDependentsErrors, ThrowOnError> => (options?.client ?? client).get<ListDependencyDependentsResponses, ListDependencyDependentsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/dependencies/dependents',
     ...options
 });
 
 /**
+ * The consumer pact versions a provider's deployed consumers were built against
+ */
+export const listDeployedPacts = <ThrowOnError extends boolean = false>(options?: Options<ListDeployedPactsData, ThrowOnError>): RequestResult<ListDeployedPactsResponses, ListDeployedPactsErrors, ThrowOnError> => (options?.client ?? client).get<ListDeployedPactsResponses, ListDeployedPactsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/deployed-pacts',
+    ...options
+});
+
+/**
  * Every internal artifact version the platform's manifests still pin
  */
-export const getMaintenanceApiPins = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiPinsData, ThrowOnError>): RequestResult<GetMaintenanceApiPinsResponses, GetMaintenanceApiPinsErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiPinsResponses, GetMaintenanceApiPinsErrors, ThrowOnError>({
+export const listDependencyPins = <ThrowOnError extends boolean = false>(options?: Options<ListDependencyPinsData, ThrowOnError>): RequestResult<ListDependencyPinsResponses, ListDependencyPinsErrors, ThrowOnError> => (options?.client ?? client).get<ListDependencyPinsResponses, ListDependencyPinsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/pins',
     ...options
 });
 
 /**
+ * Every external docker image tag the platform's manifests still pin
+ */
+export const listImagePins = <ThrowOnError extends boolean = false>(options?: Options<ListImagePinsData, ThrowOnError>): RequestResult<ListImagePinsResponses, ListImagePinsErrors, ThrowOnError> => (options?.client ?? client).get<ListImagePinsResponses, ListImagePinsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/pins/images',
+    ...options
+});
+
+/**
+ * What qits-maintenance remembers about one release request
+ */
+export const getReleaseRequestMemory = <ThrowOnError extends boolean = false>(options: Options<GetReleaseRequestMemoryData, ThrowOnError>): RequestResult<GetReleaseRequestMemoryResponses, GetReleaseRequestMemoryErrors, ThrowOnError> => (options.client ?? client).get<GetReleaseRequestMemoryResponses, GetReleaseRequestMemoryErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/release-requests/{requestId}',
+    ...options
+});
+
+/**
+ * A release request's automations at one fold
+ */
+export const listReleaseRequestAutomations = <ThrowOnError extends boolean = false>(options: Options<ListReleaseRequestAutomationsData, ThrowOnError>): RequestResult<ListReleaseRequestAutomationsResponses, ListReleaseRequestAutomationsErrors, ThrowOnError> => (options.client ?? client).get<ListReleaseRequestAutomationsResponses, ListReleaseRequestAutomationsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/release-requests/{requestId}/automations',
+    ...options
+});
+
+/**
+ * Settle a release request's automations at one fold
+ */
+export const triggerReleaseRequestAutomations = <ThrowOnError extends boolean = false>(options: Options<TriggerReleaseRequestAutomationsData, ThrowOnError>): RequestResult<TriggerReleaseRequestAutomationsResponses, TriggerReleaseRequestAutomationsErrors, ThrowOnError> => (options.client ?? client).post<TriggerReleaseRequestAutomationsResponses, TriggerReleaseRequestAutomationsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/release-requests/{requestId}/automations',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Re-run one automation on a release request's current fold
+ */
+export const runReleaseRequestAutomation = <ThrowOnError extends boolean = false>(options: Options<RunReleaseRequestAutomationData, ThrowOnError>): RequestResult<RunReleaseRequestAutomationResponses, RunReleaseRequestAutomationErrors, ThrowOnError> => (options.client ?? client).post<RunReleaseRequestAutomationResponses, RunReleaseRequestAutomationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/maintenance/api/release-requests/{requestId}/automations/{kind}/runs',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Every repository in the inventory, with its groups and what is pending
  */
-export const getMaintenanceApiRepositories = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiRepositoriesData, ThrowOnError>): RequestResult<GetMaintenanceApiRepositoriesResponses, GetMaintenanceApiRepositoriesErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiRepositoriesResponses, GetMaintenanceApiRepositoriesErrors, ThrowOnError>({
+export const listRepositories = <ThrowOnError extends boolean = false>(options?: Options<ListRepositoriesData, ThrowOnError>): RequestResult<ListRepositoriesResponses, ListRepositoriesErrors, ThrowOnError> => (options?.client ?? client).get<ListRepositoriesResponses, ListRepositoriesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/repositories',
     ...options
@@ -142,29 +195,16 @@ export const getMaintenanceApiRepositories = <ThrowOnError extends boolean = fal
 /**
  * One repository with every pin it holds
  */
-export const getMaintenanceApiRepositoriesByName = <ThrowOnError extends boolean = false>(options: Options<GetMaintenanceApiRepositoriesByNameData, ThrowOnError>): RequestResult<GetMaintenanceApiRepositoriesByNameResponses, GetMaintenanceApiRepositoriesByNameErrors, ThrowOnError> => (options.client ?? client).get<GetMaintenanceApiRepositoriesByNameResponses, GetMaintenanceApiRepositoriesByNameErrors, ThrowOnError>({
+export const getRepository = <ThrowOnError extends boolean = false>(options: Options<GetRepositoryData, ThrowOnError>): RequestResult<GetRepositoryResponses, GetRepositoryErrors, ThrowOnError> => (options.client ?? client).get<GetRepositoryResponses, GetRepositoryErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/repositories/{name}',
     ...options
 });
 
 /**
- * Write the named changes onto a branch the caller owns
- */
-export const postMaintenanceApiRepositoriesByNameBranchesBumps = <ThrowOnError extends boolean = false>(options: Options<PostMaintenanceApiRepositoriesByNameBranchesBumpsData, ThrowOnError>): RequestResult<PostMaintenanceApiRepositoriesByNameBranchesBumpsResponses, PostMaintenanceApiRepositoriesByNameBranchesBumpsErrors, ThrowOnError> => (options.client ?? client).post<PostMaintenanceApiRepositoriesByNameBranchesBumpsResponses, PostMaintenanceApiRepositoriesByNameBranchesBumpsErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/maintenance/api/repositories/{name}/branches/bumps',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
  * Who embeds the artifacts this repository publishes
  */
-export const getMaintenanceApiRepositoriesByNameDependents = <ThrowOnError extends boolean = false>(options: Options<GetMaintenanceApiRepositoriesByNameDependentsData, ThrowOnError>): RequestResult<GetMaintenanceApiRepositoriesByNameDependentsResponses, GetMaintenanceApiRepositoriesByNameDependentsErrors, ThrowOnError> => (options.client ?? client).get<GetMaintenanceApiRepositoriesByNameDependentsResponses, GetMaintenanceApiRepositoriesByNameDependentsErrors, ThrowOnError>({
+export const listRepositoryDependents = <ThrowOnError extends boolean = false>(options: Options<ListRepositoryDependentsData, ThrowOnError>): RequestResult<ListRepositoryDependentsResponses, ListRepositoryDependentsErrors, ThrowOnError> => (options.client ?? client).get<ListRepositoryDependentsResponses, ListRepositoryDependentsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/repositories/{name}/dependents',
     ...options
@@ -173,38 +213,16 @@ export const getMaintenanceApiRepositoriesByNameDependents = <ThrowOnError exten
 /**
  * Everything downstream of this repository, ordered upstream first
  */
-export const getMaintenanceApiRepositoriesByNameDownstream = <ThrowOnError extends boolean = false>(options: Options<GetMaintenanceApiRepositoriesByNameDownstreamData, ThrowOnError>): RequestResult<GetMaintenanceApiRepositoriesByNameDownstreamResponses, GetMaintenanceApiRepositoriesByNameDownstreamErrors, ThrowOnError> => (options.client ?? client).get<GetMaintenanceApiRepositoriesByNameDownstreamResponses, GetMaintenanceApiRepositoriesByNameDownstreamErrors, ThrowOnError>({
+export const getRepositoryDownstream = <ThrowOnError extends boolean = false>(options: Options<GetRepositoryDownstreamData, ThrowOnError>): RequestResult<GetRepositoryDownstreamResponses, GetRepositoryDownstreamErrors, ThrowOnError> => (options.client ?? client).get<GetRepositoryDownstreamResponses, GetRepositoryDownstreamErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/repositories/{name}/downstream',
     ...options
 });
 
 /**
- * Put this group's pending changes on its maintenance branch
- */
-export const postMaintenanceApiRepositoriesByNameGroupsByGroupBumps = <ThrowOnError extends boolean = false>(options: Options<PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsData, ThrowOnError>): RequestResult<PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsResponses, PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsErrors, ThrowOnError> => (options.client ?? client).post<PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsResponses, PostMaintenanceApiRepositoriesByNameGroupsByGroupBumpsErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/maintenance/api/repositories/{name}/groups/{group}/bumps',
-    ...options
-});
-
-/**
- * Update a release request's screenshot baselines in the CI image
- */
-export const postMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselines = <ThrowOnError extends boolean = false>(options: Options<PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesData, ThrowOnError>): RequestResult<PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesResponses, PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesErrors, ThrowOnError> => (options.client ?? client).post<PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesResponses, PostMaintenanceApiRepositoriesByNameReleaseRequestsByRequestIdScreenshotBaselinesErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/maintenance/api/repositories/{name}/release-requests/{requestId}/screenshot-baselines',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
  * The last SBOM check's report
  */
-export const getMaintenanceApiSbomCheck = <ThrowOnError extends boolean = false>(options?: Options<GetMaintenanceApiSbomCheckData, ThrowOnError>): RequestResult<GetMaintenanceApiSbomCheckResponses, GetMaintenanceApiSbomCheckErrors, ThrowOnError> => (options?.client ?? client).get<GetMaintenanceApiSbomCheckResponses, GetMaintenanceApiSbomCheckErrors, ThrowOnError>({
+export const getSbomCheckReport = <ThrowOnError extends boolean = false>(options?: Options<GetSbomCheckReportData, ThrowOnError>): RequestResult<GetSbomCheckReportResponses, GetSbomCheckReportErrors, ThrowOnError> => (options?.client ?? client).get<GetSbomCheckReportResponses, GetSbomCheckReportErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/sbom-check',
     ...options
@@ -213,7 +231,7 @@ export const getMaintenanceApiSbomCheck = <ThrowOnError extends boolean = false>
 /**
  * Run the SBOM check now
  */
-export const postMaintenanceApiSbomCheckRuns = <ThrowOnError extends boolean = false>(options?: Options<PostMaintenanceApiSbomCheckRunsData, ThrowOnError>): RequestResult<PostMaintenanceApiSbomCheckRunsResponses, PostMaintenanceApiSbomCheckRunsErrors, ThrowOnError> => (options?.client ?? client).post<PostMaintenanceApiSbomCheckRunsResponses, PostMaintenanceApiSbomCheckRunsErrors, ThrowOnError>({
+export const runSbomCheck = <ThrowOnError extends boolean = false>(options?: Options<RunSbomCheckData, ThrowOnError>): RequestResult<RunSbomCheckResponses, RunSbomCheckErrors, ThrowOnError> => (options?.client ?? client).post<RunSbomCheckResponses, RunSbomCheckErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/sbom-check/runs',
     ...options
@@ -222,7 +240,7 @@ export const postMaintenanceApiSbomCheckRuns = <ThrowOnError extends boolean = f
 /**
  * Re-scan the manifests and refresh the latest versions
  */
-export const postMaintenanceApiScans = <ThrowOnError extends boolean = false>(options: Options<PostMaintenanceApiScansData, ThrowOnError>): RequestResult<PostMaintenanceApiScansResponses, PostMaintenanceApiScansErrors, ThrowOnError> => (options.client ?? client).post<PostMaintenanceApiScansResponses, PostMaintenanceApiScansErrors, ThrowOnError>({
+export const requestScan = <ThrowOnError extends boolean = false>(options: Options<RequestScanData, ThrowOnError>): RequestResult<RequestScanResponses, RequestScanErrors, ThrowOnError> => (options.client ?? client).post<RequestScanResponses, RequestScanErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/scans',
     ...options,
@@ -235,7 +253,7 @@ export const postMaintenanceApiScans = <ThrowOnError extends boolean = false>(op
 /**
  * One scan and its status
  */
-export const getMaintenanceApiScansById = <ThrowOnError extends boolean = false>(options: Options<GetMaintenanceApiScansByIdData, ThrowOnError>): RequestResult<GetMaintenanceApiScansByIdResponses, GetMaintenanceApiScansByIdErrors, ThrowOnError> => (options.client ?? client).get<GetMaintenanceApiScansByIdResponses, GetMaintenanceApiScansByIdErrors, ThrowOnError>({
+export const getScan = <ThrowOnError extends boolean = false>(options: Options<GetScanData, ThrowOnError>): RequestResult<GetScanResponses, GetScanErrors, ThrowOnError> => (options.client ?? client).get<GetScanResponses, GetScanErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/maintenance/api/scans/{id}',
     ...options
