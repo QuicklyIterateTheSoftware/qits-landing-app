@@ -1,6 +1,6 @@
 {
   "name": "qits-landing-app",
-  "version": "2026.1119.15430",
+  "version": "2026.1119.34936",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
