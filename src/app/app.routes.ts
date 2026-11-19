@@ -62,6 +62,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
  * `/observability?source=_service/qits-ci` lands on that source's logs.
  *
+ * The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent with no
+ * component, its pages its children; `/maintenance` opens `dependencies`
+ * (`MaintenanceDependenciesPage`, the project's internal and external pins, the behind ones first)
+ * by a relative `redirectTo`, which keeps the query, so `/maintenance?behind=true` lands on the
+ * behind pins only.
+ *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
  * (`ProjectAgentsPage`); `agents/<agent id>` is one agent (`AgentLayout`): a layout, whose
@@ -339,6 +345,21 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/events/project-events.page').then(
             (m) => m.ProjectEventsPage,
           ),
+      },
+      {
+        // The Maintenance section (qits-2317): no layout of its own, one page per view.
+        path: 'projects/:slug/maintenance',
+        children: [
+          // Relative, so the query (`?behind=true`) rides along: see "The Maintenance section".
+          { path: '', pathMatch: 'full', redirectTo: 'dependencies' },
+          {
+            path: 'dependencies',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page').then(
+                (m) => m.MaintenanceDependenciesPage,
+              ),
+          },
+        ],
       },
       {
         path: 'projects/:slug/setup',

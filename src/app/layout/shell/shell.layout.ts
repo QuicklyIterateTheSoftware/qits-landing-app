@@ -57,6 +57,7 @@ type SectionKey =
   | 'repositories'
   | 'observability'
   | 'events'
+  | 'maintenance'
   | 'setup';
 
 /** A page of the open project the sidebar or the gear leads to: its exit takes the slug alone. */
@@ -75,6 +76,8 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'observability'
   | 'observability/logs'
   | 'events'
+  | 'maintenance'
+  | 'maintenance/dependencies'
   | 'setup'}`>;
 
 /** One entry of the sidebar, or Setup (the gear's section, no entry). */
@@ -402,6 +405,7 @@ export class ShellLayout {
     repositories: exit('projects/:slug/repositories'),
     observability: exit('projects/:slug/observability'),
     events: exit('projects/:slug/events'),
+    maintenance: exit('projects/:slug/maintenance'),
   });
 
   /** The work pages below Work in the sidebar, one exit per page (epic qits-2000). */
@@ -416,6 +420,11 @@ export class ShellLayout {
   /** The Observability pages below Observability in the sidebar, one exit per page (qits-2313). */
   private readonly observabilityPages = outcomes('open-sidebar-observability-page', {
     logs: exit('projects/:slug/observability/logs'),
+  });
+
+  /** The Maintenance pages below Maintenance in the sidebar, one exit per page (qits-2317). */
+  private readonly maintenancePages = outcomes('open-sidebar-maintenance-page', {
+    dependencies: exit('projects/:slug/maintenance/dependencies'),
   });
 
   /** Each work page's exit, by its segment (`WORK_TABS`). */
@@ -570,6 +579,16 @@ export class ShellLayout {
         ],
       },
       link('events', 'Events', sections.events),
+      {
+        ...link('maintenance', 'Maintenance', sections.maintenance),
+        children: [
+          {
+            label: 'Dependencies',
+            exit: this.maintenancePages.dependencies,
+            path: this.maintenancePages.dependencies.url(params),
+          },
+        ],
+      },
     ];
   });
 

@@ -17,6 +17,8 @@ export type RoutePath =
   | 'projects/:slug/ideas/create'
   | 'projects/:slug/ideas/detail/:ideaId'
   | 'projects/:slug/ideas/detail/:ideaId/edit'
+  | 'projects/:slug/maintenance'
+  | 'projects/:slug/maintenance/dependencies'
   | 'projects/:slug/observability'
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/release-requests'

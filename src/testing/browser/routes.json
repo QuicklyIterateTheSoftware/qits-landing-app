@@ -387,6 +387,56 @@
       "route": "projects/:slug/ideas"
     }
   ],
+  "src/app/routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "dependencies of a project, some behind",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "dependencies of a project, some behind",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "external dependencies of a project, some behind",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no dependencies",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no dependencies",
+      "operationId": "listRepositories",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no external dependencies",
+      "operationId": "listDependencies",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/dependencies"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/dependencies"
+    }
+  ],
   "src/app/routes/projects/[slug]/observability/logs/observability-logs.page.browser.spec.ts": [
     {
       "provider": "qits-observability-service",

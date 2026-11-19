@@ -503,6 +503,23 @@ absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-
 `qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
 again.
 
+The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
+component whose pages are its children (the internal, external, bump, adoption, repository and
+trains pages come as their own children later: qits-2330 to qits-2335); its own address redirects
+to `dependencies` by a relative `redirectTo`, which keeps the query. The sidebar's Maintenance
+entry lists the section's pages below it while one is open (`open-sidebar-maintenance-page`).
+`maintenance/dependencies` (`MaintenanceDependenciesPage`) reads qits-maintenance's inventory
+through `qitsResource` over `core/maintenance/maintenance.operations.ts`
+(`MAINTENANCE_REPOSITORIES`, `listRepositories`; `MAINTENANCE_DEPENDENCIES`, `listDependencies`
+with `kind=INTERNAL` and `kind=EXTERNAL`, never the bare listing, which mixes in a repository's own
+REACTOR modules). The doors take no project, so the page keeps the pins of the repositories whose
+`project` is `SelectedProject`'s id and drops a dependency left with none. Two sections, Internal
+and External, each headed by its count of dependencies and behind pins; within one, dependencies
+with a behind (`pending`) pin first, then by name, each pin with its repository (plain text),
+version, manifest and a "behind" tag; a null `latest` shows as unknown with the `error` beside it.
+"Only behind" is `?behind=true` (written with `replaceUrl`). Only staff roles may read the
+inventory; a 403 says so. No domain event follows the inventory: Refresh reads all three again.
+
 ## Styling
 
 Styling uses Tailwind (v4, set up in `src/styles.css` and `.postcssrc.json`): utility classes in
@@ -547,6 +564,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
 | qits-network-access-service | `core/network-access/peers.operations*.ts`                                                   | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 | qits-observability-service  | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json`  | `@qits/observability-golden-masters`    |
+| qits-maintenance-service    | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`    | `@qits/maintenance-golden-masters`      |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
