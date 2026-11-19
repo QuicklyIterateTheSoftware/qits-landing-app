@@ -874,7 +874,7 @@ export const INTERACTIONS = {
     'Allow access on the local network notice makes the browser ask for local network access',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
-   * Agents, Release Requests, Desk, Repositories, Observability, Events, Maintenance). Navigates
+   * Agents, Release Requests, CI, Desk, Repositories, Observability, Events, Maintenance). Navigates
    * only, and names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
