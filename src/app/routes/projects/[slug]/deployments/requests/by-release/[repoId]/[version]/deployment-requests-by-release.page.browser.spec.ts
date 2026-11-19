@@ -152,7 +152,7 @@ describe('DeploymentRequestsByReleasePage (screenshots)', () => {
     await expect
       .element(view)
       .toMatchTextContent(`No deployment request exists for ${release.repoId}@${release.version}`);
-    await expect.element(view.getByRole('table')).not.toBeVisible();
+    await expect.element(view.getByRole('table')).not.toBeInTheDocument();
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('empty', { kind: 'NO_DATA' });

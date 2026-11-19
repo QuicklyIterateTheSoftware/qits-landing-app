@@ -37,7 +37,6 @@ import {
 } from '$core/deployments/deployment-requests';
 import type { ReleaseDeploymentRequestRow } from '$core/deployments/deployments.consumes';
 import { RELEASE_DEPLOYMENT_REQUESTS } from '$core/deployments/deployments.operations';
-import { valueMarks } from '$core/marks/value-marks';
 import { SelectedProject } from '$core/projects/selected-project';
 import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
@@ -108,7 +107,17 @@ function newestFirst(
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout [title]="title()" [titleMarks]="titleMarks()" [actions]="actions">
+      <app-page-layout [actions]="actions">
+        <!-- The release, repository and version; it may break anywhere (a phone is narrow). -->
+        <h1 slot="header" class="m-0 min-w-0 text-3xl leading-[1.1] font-bold wrap-anywhere">
+          @if (repository(); as repository) {
+            <span [qitsEntity]="repository" entityKey="id" [entitySource]="repositories"
+              ><span [fieldOf]="repository" qitsField="name">{{ repository.name }}</span></span
+            >&#64;{{ version() }}
+          } @else {
+            {{ repoId() }}&#64;{{ version() }}
+          }
+        </h1>
         <p class="mt-0 mb-4 text-sm">
           <a
             class="text-accent no-underline hover:underline"
@@ -333,20 +342,6 @@ export class DeploymentRequestsByReleasePage {
       repositories.find((repository) => repository.id === repoId) ??
       repositories.find((repository) => repository.name === repoId)
     );
-  });
-
-  /** The release as the page names it: `<repository>@<version>`. */
-  protected readonly release = computed(
-    () => `${this.repository()?.name ?? this.repoId()}@${this.version()}`,
-  );
-
-  protected readonly title = this.release;
-
-  protected readonly titleMarks = computed(() => {
-    const repository = this.repository();
-    return repository?.name
-      ? valueMarks(PROJECT_REPOSITORIES, repository, 'id', { derived: ['name'] })
-      : undefined;
   });
 
   protected readonly state = computed((): LoadState => loadState(this.requests));
