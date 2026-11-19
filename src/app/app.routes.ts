@@ -79,6 +79,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
  * project's deployment requests, pending and completed) by a relative `redirectTo`.
+ * `requests/by-release/<repoId>/<version>` (`DeploymentRequestsByReleasePage`, qits-2323) is the
+ * requests one release produced, its variants' included: one opens its page in its place, several
+ * are a table, none says why. It is declared before `requests/<requestId>`
+ * (`DeploymentRequestPage`, qits-2322, one request); the sidebar keeps Requests current below both.
  *
  * The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent with no
  * component, its pages its children; `/maintenance` opens `dependencies`
@@ -380,6 +384,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/deployments/requests/deployment-requests.page').then(
                 (m) => m.DeploymentRequestsPage,
+              ),
+          },
+          {
+            // One release's requests (qits-2323), before `requests/:requestId`.
+            path: 'requests/by-release/:repoId/:version',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page').then(
+                (m) => m.DeploymentRequestsByReleasePage,
               ),
           },
           {

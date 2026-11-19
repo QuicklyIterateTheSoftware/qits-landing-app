@@ -187,6 +187,36 @@ export const INTERACTIONS = {
    */
   'leave-deployment-request': '“← Deployment requests” on a request’s page goes back to the list',
   /**
+   * `deployment-requests-by-release.page.ts` via `RELEASE_DEPLOYMENT_REQUESTS` (qits-2323): the
+   * page of one release's deployment requests reads them, its variants' included.
+   */
+  'show-release-deployment-requests':
+    'A release’s deployment requests page lists every request the release produced, variants too',
+  /**
+   * `deployment-requests-by-release.page.ts` (qits-2323): a release with exactly one deployment
+   * request opens that request's page in its place. Navigates only, and names no pact.
+   */
+  'follow-release-deployment-request':
+    'A release with one deployment request opens that request’s page in its place',
+  /**
+   * `deployment-requests-by-release.page.ts` (qits-2323): a row's Open on a release's deployment
+   * requests opens that request's page. Navigates only, and names no pact.
+   */
+  'open-release-deployment-requests-row':
+    'Open on a release’s deployment request row opens the request’s page',
+  /**
+   * `deployment-requests-by-release.page.ts` (qits-2323): "← Deployment requests" on a release's
+   * deployment requests goes back to the list. Navigates only, and names no pact.
+   */
+  'leave-release-deployment-requests':
+    '“← Deployment requests” on a release’s deployment requests goes back to the list',
+  /**
+   * `release-request.page.ts` (qits-2323): "The deployment of this release" opens the release's
+   * deployment requests in this app. Navigates only, and names no pact.
+   */
+  'open-release-deployment-requests':
+    '“The deployment of this release” on a release request opens its deployment requests',
+  /**
    * `release-request.page.ts` via `RELEASE_REQUEST`, `RELEASE_COMMITS`, `COMMIT_BUILDS`,
    * `RELEASE_ARTIFACTS` and `APPROVAL_ELIGIBILITY` (qits-2146): a request's page reads the request,
    * the commits its fold brought in, the CI verdicts on the fold, once released what it published,

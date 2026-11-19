@@ -947,11 +947,16 @@ export function releaseRequestSubpage(
 /** The deployment requests' segment below a project: `/projects/<slug>/deployments/requests`. */
 export const DEPLOYMENT_REQUESTS = 'deployments/requests';
 
+/** One release's requests below the deployment requests (qits-2323): `by-release/<repo>/<v>`. */
+const BY_RELEASE = 'by-release';
+
 /**
  * The crumb of one deployment request below the project at `project` (`/projects/<slug>`,
  * qits-2322): `<project>/deployments/requests/<id>` names the request `<version> · <application>`
  * once its page shows it (`shown`, `OpenDeploymentRequest`), else by its id's first eight
- * characters. Undefined for the list itself and anything outside it.
+ * characters. One release's requests (qits-2323), `<project>/deployments/requests/by-release/
+ * <repoId>/<version>`, is `release <version>`. Undefined for the list itself and anything outside
+ * it.
  */
 export function deploymentRequestSubpage(
   url: string,
@@ -960,8 +965,17 @@ export function deploymentRequestSubpage(
 ): NavPage | undefined {
   const prefix = `${project}/${DEPLOYMENT_REQUESTS}/`;
   if (!url.startsWith(prefix)) return undefined;
-  const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
+  const segments = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  const id = segments[0];
   if (!id) return undefined;
+  if (id === BY_RELEASE) {
+    const [, repoId, version] = segments;
+    if (!repoId || !version) return undefined;
+    return {
+      label: `release ${decodeURIComponent(version)}`,
+      path: `${prefix}${BY_RELEASE}/${repoId}/${version}`,
+    };
+  }
   const requestId = decodeURIComponent(id);
   const named = shown?.id === requestId && shown.version ? shown : undefined;
   return {
