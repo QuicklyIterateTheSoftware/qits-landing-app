@@ -503,6 +503,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/docs"
+    }
+  ],
+  "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog of every kind",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/docs/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/docs/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/docs/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/docs/repositories/:repo"
     }
   ],
   "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts": [
