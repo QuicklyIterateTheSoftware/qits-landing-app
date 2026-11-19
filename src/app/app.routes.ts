@@ -337,6 +337,11 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'projects/:slug/docs',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
+      },
+      {
         path: 'projects/:slug/events',
         loadComponent: () =>
           import('./routes/projects/[slug]/events/project-events.page').then(
@@ -349,11 +354,6 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/setup/project-setup.page').then(
             (m) => m.ProjectSetupPage,
           ),
-      },
-      {
-        path: 'projects/:slug/docs',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
       },
       {
         // The platform's private network (epic qits-1977): not a project's, so no project opens.
