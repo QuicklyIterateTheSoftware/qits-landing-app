@@ -348,811 +348,6 @@
         "references": {
           "qits-call": {
             "app": "qits-maintenance-service",
-            "operationId": "listDependencyDependents"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-artifact-dependents",
-            "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
-          }
-        }
-      },
-      "description": "show-artifact-dependents: listDependencyDependents",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "no released artifacts"
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/maintenance/api/dependencies/dependents",
-        "query": {
-          "ecosystem": [
-            "maven"
-          ],
-          "name": [
-            "eu.wohlben.qits:contract-core"
-          ]
-        }
-      },
-      "response": {
-        "body": {
-          "content": {
-            "dependents": [],
-            "ecosystem": "maven",
-            "latest": null,
-            "name": "eu.wohlben.qits:contract-core"
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.ecosystem": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-maintenance-service",
-            "operationId": "listDependencyDependents"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-artifact-dependents",
-            "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
-          }
-        }
-      },
-      "description": "show-artifact-dependents: listDependencyDependents",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "released artifacts, some behind",
-          "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/maintenance/api/dependencies/dependents",
-        "query": {
-          "ecosystem": [
-            "maven"
-          ],
-          "name": [
-            "eu.wohlben.qits:contract-core"
-          ]
-        }
-      },
-      "response": {
-        "body": {
-          "content": {
-            "dependents": [
-              {
-                "artifactEcosystem": "daemon",
-                "artifactName": "contract-daemon",
-                "artifactVersion": "2026.1104.1",
-                "direct": true,
-                "embeddedVersion": "2026.1101.1",
-                "occurredAt": "2026-01-01T00:00:00Z",
-                "repository": "contract-daemon",
-                "sbomStatus": "INGESTED"
-              },
-              {
-                "artifactEcosystem": "daemon",
-                "artifactName": "contract-daemon",
-                "artifactVersion": "2026.1104.1",
-                "direct": true,
-                "embeddedVersion": "2026.1101.1",
-                "occurredAt": "2026-01-01T00:00:00Z",
-                "repository": "contract-daemon",
-                "sbomStatus": "INGESTED"
-              },
-              {
-                "artifactEcosystem": "daemon",
-                "artifactName": "contract-daemon",
-                "artifactVersion": "2026.1104.1",
-                "direct": true,
-                "embeddedVersion": "2026.1101.1",
-                "occurredAt": "2026-01-01T00:00:00Z",
-                "repository": "contract-daemon",
-                "sbomStatus": "INGESTED"
-              }
-            ],
-            "ecosystem": "maven",
-            "latest": "2026.1101.2",
-            "name": "eu.wohlben.qits:contract-core"
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.dependents": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 3,
-                  "min": 3
-                }
-              ]
-            },
-            "$.dependents[*].artifactEcosystem": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.dependents[*].artifactName": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.dependents[*].artifactVersion": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.dependents[*].direct": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.dependents[*].embeddedVersion": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.dependents[*].occurredAt": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                }
-              ]
-            },
-            "$.dependents[*].repository": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.dependents[*].sbomStatus": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.ecosystem": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.latest": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-maintenance-service",
-            "operationId": "listArtifacts"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-artifacts",
-            "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
-          }
-        }
-      },
-      "description": "show-project-artifacts: listArtifacts",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "no released artifacts"
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/maintenance/api/artifacts"
-      },
-      "response": {
-        "body": {
-          "content": [],
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-maintenance-service",
-            "operationId": "listArtifacts"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-artifacts",
-            "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
-          }
-        }
-      },
-      "description": "show-project-artifacts: listArtifacts",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "released artifacts, some behind",
-          "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/maintenance/api/artifacts"
-      },
-      "response": {
-        "body": {
-          "content": [
-            {
-              "behindCount": 0,
-              "dependentCount": 0,
-              "ecosystem": "npm",
-              "latest": null,
-              "name": "@qits/contract-ui",
-              "occurredAt": "2026-01-01T00:00:00Z",
-              "repository": "contract-frontend",
-              "sbomStatus": "MISSING",
-              "version": "2026.1103.1"
-            },
-            {
-              "behindCount": 1,
-              "dependentCount": 3,
-              "ecosystem": "maven",
-              "latest": "2026.1101.2",
-              "name": "eu.wohlben.qits:contract-core",
-              "occurredAt": "2026-01-01T00:00:00Z",
-              "repository": "contract-javalib",
-              "sbomStatus": "INGESTED",
-              "version": "2026.1101.2"
-            }
-          ],
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "arrayContains",
-                  "variants": [
-                    {
-                      "index": 0,
-                      "rules": {
-                        "$.behindCount": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "number"
-                            }
-                          ]
-                        },
-                        "$.dependentCount": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "number"
-                            }
-                          ]
-                        },
-                        "$.ecosystem": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.name": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.occurredAt": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                            }
-                          ]
-                        },
-                        "$.repository": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.sbomStatus": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.version": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    {
-                      "index": 1,
-                      "rules": {
-                        "$.behindCount": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "number"
-                            }
-                          ]
-                        },
-                        "$.dependentCount": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "number"
-                            }
-                          ]
-                        },
-                        "$.ecosystem": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.latest": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.name": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.occurredAt": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
-                            }
-                          ]
-                        },
-                        "$.repository": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.sbomStatus": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.version": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-maintenance-service",
-            "operationId": "listRepositories"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-artifacts",
-            "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
-          }
-        }
-      },
-      "description": "show-project-artifacts: listRepositories",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "no released artifacts"
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/maintenance/api/repositories"
-      },
-      "response": {
-        "body": {
-          "content": [],
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-maintenance-service",
-            "operationId": "listRepositories"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-artifacts",
-            "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
-          }
-        }
-      },
-      "description": "show-project-artifacts: listRepositories",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "released artifacts, some behind",
-          "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "path": "/maintenance/api/repositories"
-      },
-      "response": {
-        "body": {
-          "content": [
-            {
-              "name": "contract-daemon",
-              "project": "00000000-0000-4000-8000-000000000001"
-            },
-            {
-              "name": "contract-daemon",
-              "project": "00000000-0000-4000-8000-000000000001"
-            },
-            {
-              "name": "contract-daemon",
-              "project": "00000000-0000-4000-8000-000000000001"
-            },
-            {
-              "name": "contract-daemon",
-              "project": "00000000-0000-4000-8000-000000000001"
-            }
-          ],
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 4,
-                  "min": 4
-                }
-              ]
-            },
-            "$[*].name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$[*].project": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-maintenance-service",
             "operationId": "listDependencies"
           },
           "qits-trigger": {
@@ -1953,6 +1148,811 @@
             },
             {
               "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].project": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencyDependents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-dependents",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts"
+          }
+        }
+      },
+      "description": "show-artifact-dependents: listDependencyDependents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no released artifacts"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies/dependents",
+        "query": {
+          "ecosystem": [
+            "maven"
+          ],
+          "name": [
+            "eu.wohlben.qits:contract-core"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dependents": [],
+            "ecosystem": "maven",
+            "latest": null,
+            "name": "eu.wohlben.qits:contract-core"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencyDependents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-dependents",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts"
+          }
+        }
+      },
+      "description": "show-artifact-dependents: listDependencyDependents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "released artifacts, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies/dependents",
+        "query": {
+          "ecosystem": [
+            "maven"
+          ],
+          "name": [
+            "eu.wohlben.qits:contract-core"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dependents": [
+              {
+                "artifactEcosystem": "daemon",
+                "artifactName": "contract-daemon",
+                "artifactVersion": "2026.1104.1",
+                "direct": true,
+                "embeddedVersion": "2026.1101.1",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "repository": "contract-daemon",
+                "sbomStatus": "INGESTED"
+              },
+              {
+                "artifactEcosystem": "daemon",
+                "artifactName": "contract-daemon",
+                "artifactVersion": "2026.1104.1",
+                "direct": true,
+                "embeddedVersion": "2026.1101.1",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "repository": "contract-daemon",
+                "sbomStatus": "INGESTED"
+              },
+              {
+                "artifactEcosystem": "daemon",
+                "artifactName": "contract-daemon",
+                "artifactVersion": "2026.1104.1",
+                "direct": true,
+                "embeddedVersion": "2026.1101.1",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "repository": "contract-daemon",
+                "sbomStatus": "INGESTED"
+              }
+            ],
+            "ecosystem": "maven",
+            "latest": "2026.1101.2",
+            "name": "eu.wohlben.qits:contract-core"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dependents": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.dependents[*].artifactEcosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].artifactName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].artifactVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].direct": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].embeddedVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].occurredAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.dependents[*].repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].sbomStatus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.latest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listArtifacts"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-artifacts",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts"
+          }
+        }
+      },
+      "description": "show-project-artifacts: listArtifacts",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no released artifacts"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/artifacts"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listArtifacts"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-artifacts",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts"
+          }
+        }
+      },
+      "description": "show-project-artifacts: listArtifacts",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "released artifacts, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/artifacts"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "behindCount": 0,
+              "dependentCount": 0,
+              "ecosystem": "npm",
+              "latest": null,
+              "name": "@qits/contract-ui",
+              "occurredAt": "2026-01-01T00:00:00Z",
+              "repository": "contract-frontend",
+              "sbomStatus": "MISSING",
+              "version": "2026.1103.1"
+            },
+            {
+              "behindCount": 1,
+              "dependentCount": 3,
+              "ecosystem": "maven",
+              "latest": "2026.1101.2",
+              "name": "eu.wohlben.qits:contract-core",
+              "occurredAt": "2026-01-01T00:00:00Z",
+              "repository": "contract-javalib",
+              "sbomStatus": "INGESTED",
+              "version": "2026.1101.2"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.behindCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.dependentCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sbomStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.behindCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.dependentCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sbomStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-artifacts",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts"
+          }
+        }
+      },
+      "description": "show-project-artifacts: listRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no released artifacts"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/repositories"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-artifacts",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts"
+          }
+        }
+      },
+      "description": "show-project-artifacts: listRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "released artifacts, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/repositories"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "name": "contract-daemon",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-daemon",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-daemon",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-daemon",
               "project": "00000000-0000-4000-8000-000000000001"
             }
           ],
