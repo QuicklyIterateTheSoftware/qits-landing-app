@@ -6,7 +6,16 @@ import {
 } from './otel-config';
 
 describe('observabilityUrl', () => {
-  it('derives the receiver from QITS_ENVIRONMENT', () => {
+  it('is the receiver’s edge host when the platform domain is known (qits-2360)', () => {
+    expect(observabilityUrl({ QITS_DOMAIN: 'wohlben.eu', QITS_ENVIRONMENT: 'dev' })).toBe(
+      'https://observability.qits.wohlben.eu',
+    );
+    expect(observabilityUrl({ QITS_DOMAIN: ' example.com. ' })).toBe(
+      'https://observability.qits.example.com',
+    );
+  });
+
+  it('without a domain, derives the qits-net alias from QITS_ENVIRONMENT', () => {
     expect(observabilityUrl({ QITS_ENVIRONMENT: 'prod' })).toBe(
       'http://prod-qits-observability:8080',
     );
@@ -15,11 +24,16 @@ describe('observabilityUrl', () => {
   it('falls back to the dev environment', () => {
     expect(observabilityUrl({})).toBe('http://dev-qits-observability:8080');
     expect(observabilityUrl({ QITS_ENVIRONMENT: ' ' })).toBe('http://dev-qits-observability:8080');
+    expect(observabilityUrl({ QITS_DOMAIN: ' ' })).toBe('http://dev-qits-observability:8080');
   });
 
   it('takes QITS_OBSERVABILITY_URL as given, without a trailing slash', () => {
     expect(
-      observabilityUrl({ QITS_OBSERVABILITY_URL: 'http://localhost:4318/', QITS_ENVIRONMENT: 'x' }),
+      observabilityUrl({
+        QITS_OBSERVABILITY_URL: 'http://localhost:4318/',
+        QITS_ENVIRONMENT: 'x',
+        QITS_DOMAIN: 'example.com',
+      }),
     ).toBe('http://localhost:4318');
   });
 });
@@ -56,6 +70,12 @@ describe('telemetryTarget', () => {
       serviceName: 'qits-landing',
       resourceAttributes: { 'service.version': 'abc', 'service.name': 'qits-landing' },
     });
+  });
+
+  it('is the edge host’s ingest path when deployed', () => {
+    expect(telemetryTarget({ QITS_DOMAIN: 'example.com' })?.endpoint).toBe(
+      'https://observability.qits.example.com/observability/api/otel',
+    );
   });
 
   it('defaults the service name to qits-landing', () => {

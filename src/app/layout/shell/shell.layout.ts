@@ -33,7 +33,6 @@ import { WORK_DETAIL, WORK_TABS } from '$core/work/work-tabs';
 import { LIST_PROJECT_ACTIVE_AGENTS } from '$core/workspaces/agents.operations';
 import { ProjectActiveAgents } from '$core/workspaces/project-active-agents';
 import { FinishToasts } from '$patterns/work/finish-toasts/finish-toasts';
-import { LocalNetworkNotice } from '$patterns/platform/local-network-notice/local-network-notice';
 import { NotificationsMenu } from '$patterns/events/notifications-menu/notifications-menu';
 import { BumpsMenu } from '$patterns/maintenance/bumps-menu/bumps-menu';
 import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-menu';
@@ -201,9 +200,6 @@ export interface NavNote {
  * service). What it shows of them is data the template cannot trace to a resource of its own, so
  * it carries its data marks (qits-2141) as plain attributes: the trail's crumbs (`CrumbMarks`) and
  * the sidebar's line (`data-qits-source`, `data-qits-item`, `data-qits-derived`).
- *
- * At the bottom left, `app-local-network-notice` says why the browser asks for local network
- * access while a platform app is on the private network, and how to allow it again (qits-2297).
  */
 @Component({
   selector: 'app-shell-layout',
@@ -216,7 +212,6 @@ export interface NavNote {
     RouterOutlet,
     BumpsMenu,
     FinishToasts,
-    LocalNetworkNotice,
     NotificationsMenu,
     ReleaseMenu,
     ThemeChoices,
@@ -432,8 +427,6 @@ export interface NavNote {
     </div>
     <!-- The board's finishes and their Undo, kept while the user moves between pages. -->
     <app-finish-toasts />
-    <!-- Why the browser asks for local network access, and how to allow it again (qits-2297). -->
-    <app-local-network-notice />
   `,
 })
 export class ShellLayout {

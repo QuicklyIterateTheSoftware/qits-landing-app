@@ -93,9 +93,9 @@ export class AppUpdates {
  * (`isDevMode()` is false), once the app is stable or after 30 s.
  *
  * The script registered is `sw.js` (`public/sw.js`, qits-2297), not `ngsw-worker.js` itself: it
- * keeps every cross-origin request out of the worker, so a call to a platform app on the private
- * network is made by the page, which may ask for Chrome's Local Network Access permission, and then
- * imports `ngsw-worker.js` for everything else.
+ * keeps every cross-origin request out of the worker, so a call to another platform app is made by
+ * the page itself (it once needed that for Chrome's Local Network Access, before the page moved to
+ * the private address in qits-2360), and then imports `ngsw-worker.js` for everything else.
  */
 export function provideAppUpdates() {
   return [

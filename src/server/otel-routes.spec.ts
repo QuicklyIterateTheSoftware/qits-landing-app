@@ -1,6 +1,7 @@
 import express from 'express';
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
+import { NO_AUTH, type AuthHeaders } from './idp-token';
 import { telemetryTarget, type TelemetryTarget } from './otel-config';
 import { otelRoutes } from './otel-routes';
 
@@ -11,12 +12,20 @@ describe('otelRoutes', () => {
   let base: string;
   let target: TelemetryTarget | null;
   let upstream: ReturnType<typeof vi.fn>;
+  let headers: AuthHeaders;
 
   beforeEach(async () => {
     target = TARGET;
+    headers = NO_AUTH;
     upstream = vi.fn(async () => new Response(new Uint8Array([7]), { status: 200 }));
     const app = express();
-    app.use(otelRoutes(() => target, upstream as unknown as typeof fetch));
+    app.use(
+      otelRoutes(
+        () => target,
+        upstream as unknown as typeof fetch,
+        () => headers,
+      ),
+    );
     server = await new Promise<Server>((resolve) => {
       const s = app.listen(0, '127.0.0.1', () => resolve(s));
     });
@@ -78,6 +87,28 @@ describe('otelRoutes', () => {
       404,
     );
     expect(upstream).not.toHaveBeenCalled();
+  });
+
+  it('signs the forward with the server’s bearer, which the browser never sends (qits-2360)', async () => {
+    headers = async () => ({ Authorization: 'Bearer server-token' });
+    await fetch(`${base}/api/otel/v1/logs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-protobuf', Authorization: 'Bearer browser' },
+      body: 'x',
+    });
+    const [, init] = upstream.mock.calls[0] as [string, RequestInit];
+    expect(init.headers).toEqual({
+      Authorization: 'Bearer server-token',
+      'Content-Type': 'application/x-protobuf',
+    });
+  });
+
+  it('forwards unsigned while the server has no token', async () => {
+    headers = async () => ({});
+    const response = await fetch(`${base}/api/otel/v1/traces`, { method: 'POST', body: 'x' });
+    expect(response.status).toBe(200);
+    const [, init] = upstream.mock.calls[0] as [string, RequestInit];
+    expect(init.headers).not.toHaveProperty('Authorization');
   });
 
   it('answers 502 when the receiver cannot be reached', async () => {

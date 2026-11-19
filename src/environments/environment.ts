@@ -13,7 +13,9 @@ export const environment = {
    * `@qits/angular`'s bearer sign-in (`provideQitsBearerSignIn`, epic qits-543): the idp's public
    * PKCE client. Deployed, `qits-spa`, whose redirect is `https://<a name under the platform
    * domain>/auth/callback`; the platform domain and the idp are read from this page's hostname
-   * (the apex, `qits.<domain>`).
+   * (the apex, `qits.<domain>`). The apex is the project's door, served from the private address
+   * (`exposure: private`, qits-2360): it answers on the tunnel only, while the idp it signs in with
+   * stays public.
    */
   signInClientId: 'qits-spa',
 };
