@@ -146,7 +146,7 @@ describe('CiRunPage', () => {
     const run = element.querySelector('[data-run]')!;
     expect(run.querySelector('[data-repository]')?.textContent?.trim()).toBe('contract-service');
     expect(run.querySelector('[data-repository]')?.getAttribute('href')).toBe(
-      `/projects/${project.slug}/ci?repository=contract-service`,
+      `/projects/${project.slug}/ci/contract-service`,
     );
     expect(run.querySelector('[data-branch]')?.textContent).toContain(
       'release/contract-service-rr-7',

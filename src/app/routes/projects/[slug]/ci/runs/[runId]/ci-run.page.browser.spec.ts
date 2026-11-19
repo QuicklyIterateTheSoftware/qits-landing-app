@@ -258,16 +258,14 @@ describe('CiRunPage (screenshots)', () => {
       .toMatchScreenshot('retry-refused', { kind: 'ERROR' });
   });
 
-  it('opens the run’s repository on the project’s CI page', async () => {
+  it('opens the run’s repository’s CI page', async () => {
     const opened = await render(QUEUED);
     await page
       .elementLocator(opened.page)
       .getByRole('link', { name: 'contract-service', exact: true })
       .click();
     await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/ci?repository=contract-service`,
-    );
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/ci/contract-service`);
   });
 
   it('goes back to the project’s CI page from “← CI”', async () => {

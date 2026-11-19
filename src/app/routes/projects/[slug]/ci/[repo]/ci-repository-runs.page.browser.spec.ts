@@ -11,7 +11,7 @@ import {
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 import { provideTestPlatformOrigins } from '../../../../../../testing/platform-origins';
 
-/** qits-ci's page origin, so the runs link to its pages (configuration, not data). */
+/** qits-ci's page origin (configuration, not data): nothing on the page links it any more. */
 const CI = 'https://ci.example.test';
 
 /**
@@ -68,6 +68,20 @@ describe('CiRepositoryRunsPage (screenshots)', () => {
     return reads.opened;
   }
 
+  /**
+   * Lets the navigation an exit started finish, and answers every read the page it left for makes
+   * with a 404 (an error answer is only a status): that page is its own spec's. Answers in rounds,
+   * until a round leaves nothing open.
+   */
+  async function leftFor(opened: OpenedRoute) {
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+  }
+
   /** How many runs the page lists. */
   const listed = (opened: OpenedRoute) => opened.page.querySelectorAll('[data-run]').length;
 
@@ -81,7 +95,7 @@ describe('CiRepositoryRunsPage (screenshots)', () => {
     const rows = opened.page.querySelectorAll<HTMLElement>('[data-run]');
     expect(rows[0].querySelector('[data-duration]')?.textContent?.trim()).toBe('running');
     expect(rows[4].querySelector('[data-superseded-by]')?.getAttribute('href')).toBe(
-      `${CI}/runs/00000000-0000-4000-8000-000000000003`,
+      `/projects/${opened.project.slug}/ci/runs/00000000-0000-4000-8000-000000000003`,
     );
     expect(rows[5].textContent).toContain('feature/csv-export');
     // The sidebar's CI entry stays current below it.
@@ -153,6 +167,13 @@ describe('CiRepositoryRunsPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(reads.opened.frame))
       .toMatchScreenshot('unknown-repository', { kind: 'NO_DATA' });
+  });
+
+  it('leave-ci-repository ci: “← CI” opens the project’s CI page', async () => {
+    const opened = await render();
+    await page.elementLocator(opened.page).getByRole('link', { name: '← CI' }).click();
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/ci`);
   });
 
   it('marks the page as loading, then says it failed, with Retry', async () => {

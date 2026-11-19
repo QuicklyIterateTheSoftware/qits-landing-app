@@ -130,8 +130,3 @@ export function projectActiveRuns(
 ): readonly ActiveCiRun[] {
   return runs.filter((run) => !!run.repoId && repoIds.has(run.repoId));
 }
-
-/** A run's page in qits-ci (until qits-2321 gives it one here): `/runs/<id>`. */
-export function ciRunHref(origin: string, runId: string | undefined): string | undefined {
-  return origin && runId ? `${origin}/runs/${encodeURIComponent(runId)}` : undefined;
-}

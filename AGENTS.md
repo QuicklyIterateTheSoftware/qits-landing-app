@@ -438,7 +438,9 @@ pushed), else the first FAILED/TIMED_OUT step, the live step or the last (`openS
 (confirmed, `CANCEL_RUN`) and Run again (`RETRY_RUN`, then the new run's page) are its outcomes
 `cancel-ci-run` and `retry-ci-run`. Every in-app link to a run goes through `CiRunLinks`
 (`core/ci/ci-run-links.ts`, the one app-wide exit `open-ci-run:run`): the project's CI page, a
-release request's builds, lifecycle, automations, reports and active-run chips. It follows
+repository's CI page (rows and "newer run"), a release request's builds, lifecycle, automations,
+reports and active-run chips. Its repository name opens that repository's CI page
+(`projects/<slug>/ci/<repository>`, qits-2320). It follows
 `BUILD_EVENTS` naming the run (`buildOfRun`), and, the one poll qits-1270 allows, reads a RUNNING
 run again every 10 s while the document is visible (`pollWhile` in `core/events/poll-while.ts`):
 the live step's output has no event. A queued or finished run is never polled.

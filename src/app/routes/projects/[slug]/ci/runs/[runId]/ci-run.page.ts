@@ -70,9 +70,10 @@ const CANCEL_REASON = 'Cancelled from the run page';
  * qits-ci-frontend's `runs/:runId`): the run read once and kept current by its events, its step
  * output in colour, the open step in the URL, and the fields the old page dropped.
  *
- * - Header: the status, the repository (the project's CI page filtered to it), branch, short
- *   commit and run id, "← CI", and the page's two writes: Cancel (a queued or running run, behind
- *   a confirm step) and Run again (a finished run, which then opens the new run).
+ * - Header: the status, the repository (its CI page, `projects/<slug>/ci/<repository>`,
+ *   qits-2320), branch, short commit and run id, "← CI", and the page's two writes: Cancel (a
+ *   queued or running run, behind a confirm step) and Run again (a finished run, which then opens
+ *   the new run).
  * - Facts: queued, started and finished (relative, the instant in the title) and the duration;
  *   while QUEUED its place in the queue and expected start, while RUNNING its expected finish; the
  *   trigger (`push`, or `event` with `triggerEventName · configPath`), the archetype and version,
@@ -175,10 +176,8 @@ const CANCEL_REASON = 'Cancelled from the run page';
                 <a
                   class="font-semibold wrap-anywhere text-accent no-underline hover:underline"
                   [qitsExit]="leaving.repository"
-                  [exitParams]="{ slug: slug() }"
-                  [exitQueryParams]="{ repository: run.repoName ?? null }"
-                  [exitCurrent]="null"
-                  [title]="'This project’s CI runs of ' + (run.repoName ?? '')"
+                  [exitParams]="{ slug: slug(), repo: run.repoName ?? '' }"
+                  [title]="'The CI runs of ' + (run.repoName ?? '')"
                   [fieldOf]="run"
                   qitsField="repoName"
                   data-repository
@@ -574,10 +573,10 @@ export class CiRunPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly runs = inject(CiRunLinks);
 
-  /** "← CI", and the repository (the project's CI page filtered to it). */
+  /** "← CI", and the repository (its CI page, qits-2320). */
   protected readonly leaving = outcomes('leave-ci-run', {
     back: exit('projects/:slug/ci'),
-    repository: exit('projects/:slug/ci'),
+    repository: exit('projects/:slug/ci/:repo'),
   });
   /** The release request the run was for. */
   protected readonly requesting = outcomes('open-ci-run-release-request', {
