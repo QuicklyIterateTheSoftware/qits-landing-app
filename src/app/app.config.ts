@@ -17,6 +17,7 @@ import { provideQitsMermaid } from '@qits/ui-components/mermaid';
 import { client as artifactsClient } from './api/artifacts/client.gen';
 import { client as ciClient } from './api/ci/client.gen';
 import { client as edgeClient } from './api/edge/client.gen';
+import { client as deploymentsClient } from './api/deployments/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
@@ -56,6 +57,7 @@ const CLIENTS = [
   [artifactsClient, 'artifacts'],
   [networkAccessClient, 'network-access'],
   [observabilityClient, 'observability'],
+  [deploymentsClient, 'deployments'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -107,6 +109,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(networkAccessClient),
     provideHeyApiClient(observabilityClient),
+    provideHeyApiClient(deploymentsClient),
     provideHeyApiClient(edgeClient),
     provideBackendOrigins(),
     // Which platform apps are on the private network, read from the edge once signed in, so their

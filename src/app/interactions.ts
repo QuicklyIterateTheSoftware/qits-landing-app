@@ -147,6 +147,12 @@ export const INTERACTIONS = {
    */
   'show-telemetry-logs': 'The Logs page shows a source’s buffered log lines, newest first',
   /**
+   * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
+   * section's Requests page lists the open project's deployment requests, pending and completed.
+   */
+  'show-project-deployment-requests':
+    'The Deployment requests page lists the project’s deployment requests, pending and completed',
+  /**
    * `release-request.page.ts` via `RELEASE_REQUEST`, `RELEASE_COMMITS`, `COMMIT_BUILDS`,
    * `RELEASE_ARTIFACTS` and `APPROVAL_ELIGIBILITY` (qits-2146): a request's page reads the request,
    * the commits its fold brought in, the CI verdicts on the fold, once released what it published,
@@ -874,8 +880,8 @@ export const INTERACTIONS = {
     'Allow access on the local network notice makes the browser ask for local network access',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
-   * Agents, Release Requests, CI, Desk, Repositories, Observability, Events, Maintenance). Navigates
-   * only, and names no pact (epic qits-2000).
+   * Agents, Release Requests, CI, Desk, Repositories, Deployments, Observability, Events,
+   * Maintenance). Navigates only, and names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
   /**
@@ -889,6 +895,12 @@ export const INTERACTIONS = {
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',
+  /**
+   * `shell.layout.ts`: a Deployments page listed below Deployments in the sidebar opens it, one
+   * exit per page (qits-2315: Requests). Navigates only, and names no pact.
+   */
+  'open-sidebar-deployments-page':
+    'A Deployments page below Deployments in the sidebar opens that page',
   /**
    * `shell.layout.ts`: a Maintenance page listed below Maintenance in the sidebar opens it, one exit
    * per page (qits-2317: Dependencies). Navigates only, and names no pact.

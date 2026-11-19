@@ -66,6 +66,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
  * `/observability?source=_service/qits-ci` lands on that source's logs.
  *
+ * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
+ * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
+ * project's deployment requests, pending and completed) by a relative `redirectTo`.
+ *
  * The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent with no
  * component, its pages its children; `/maintenance` opens `dependencies`
  * (`MaintenanceDependenciesPage`, the project's internal and external pins, the behind ones first)
@@ -332,6 +336,21 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page').then(
             (m) => m.EntityPage,
           ),
+      },
+      {
+        // The Deployments section (qits-2315): no layout of its own, one page per view.
+        path: 'projects/:slug/deployments',
+        children: [
+          // Relative, as the Observability section's: see "The Deployments section".
+          { path: '', pathMatch: 'full', redirectTo: 'requests' },
+          {
+            path: 'requests',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/deployments/requests/deployment-requests.page').then(
+                (m) => m.DeploymentRequestsPage,
+              ),
+          },
+        ],
       },
       {
         // The Observability section (qits-2313): no layout of its own, one page per view.

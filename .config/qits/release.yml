@@ -61,3 +61,4 @@ contracts:
     qits-network-access-service: { packages: [maven] }
     qits-edge-service: { packages: [maven] }
     qits-observability-service: { packages: [maven] }
+    qits-deployments-service: { packages: [maven] }

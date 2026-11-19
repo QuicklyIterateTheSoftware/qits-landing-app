@@ -503,6 +503,30 @@ absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-
 `qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
 again.
 
+The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
+component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,
+and the sidebar's Deployments entry (between Repositories and Observability) lists its pages below
+it while one is open (`open-sidebar-deployments-page`). `deployments/requests`
+(`DeploymentRequestsPage`, the retired qits-deployments-frontend's `deployment-requests` page)
+reads qits-deployments' `listDeploymentRequests?projectId=` through `qitsResource` over
+`PROJECT_DEPLOYMENT_REQUESTS` (`core/deployments/deployments.operations.ts`), on the `deployments`
+host: every request the platform has not finished with and the ten newest settled ones, split by
+`isCompletedRequest` (`core/deployments/deployment-requests.ts`, the server's `RequestLifecycle`
+rule, with `isPendingGate`, `isRefused`, `isHeldForApproval` and `isInFlight`) into Pending and
+Completed, one "No deployment requests yet" when there are none. Each row's Open leads to the
+request's page on the deployments frontend (`deploymentRequestHref`, which the release request
+page's lifecycle uses too) until qits-2322 moves it here. Only `qits:admin`, `qits:admin-agent`,
+`qits:desk-admin`, `qits:desk`, `qits:agent` and `qits:system` may read the requests; a 403 says
+so. Staleness: the resource's `refreshOn` (`DEPLOYMENT_REQUEST_EVENTS`, narrowed by
+`affectsDeploymentRequests`): a deployment event (`DeploymentQueued`, `DeploymentStarted`,
+`DeploymentActive`, `DeploymentFailed`), which names no project, when its `applicationName` is on
+screen or a request is pending; `DeploymentRequestDeclined` when its `deploymentRequestId` is on
+screen; `SoftwareRelease` when its `repository` is a request's `repoId` on screen or a repository
+of the project's release requests (`ProjectReleaseRequests`). A gate that settles as a refusal or a
+hold sends no event: Refresh reads again. The pact (`@qits/deployments-golden-masters`, states "a
+project with deployment requests" and "a project with no deployment requests") skips itself on an
+older pin.
+
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
 component whose pages are its children (the internal, external, bump, adoption, repository and
 trains pages come as their own children later: qits-2330 to qits-2335); its own address redirects
@@ -564,6 +588,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-artifacts-service      | `core/ui-builder/docs.operations*.ts`                                                        | `pacts/qits-landing-app_qits-artifacts-service.json`      | `@qits/artifacts-golden-masters`        |
 | qits-network-access-service | `core/network-access/peers.operations*.ts`                                                   | `pacts/qits-landing-app_qits-network-access-service.json` | `@qits/network-access-golden-masters`   |
 | qits-observability-service  | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json`  | `@qits/observability-golden-masters`    |
+| qits-deployments-service    | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`    | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service    | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`    | `@qits/maintenance-golden-masters`      |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider

@@ -88,6 +88,12 @@ export const observabilityGoldenMasters = goldenMasters(
   'qits-observability',
 );
 
+/** qits-deployments' golden masters (qits-2315: a project's deployment requests), from npm. */
+export const deploymentsGoldenMasters = goldenMasters(
+  '@qits/deployments-golden-masters',
+  'qits-deployments',
+);
+
 /**
  * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
  * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this
@@ -96,13 +102,18 @@ export const observabilityGoldenMasters = goldenMasters(
 export const idpGoldenMasters = goldenMasters('@qits/idp-golden-masters', 'qits-idp');
 
 /**
- * Whether the installed `@qits/projects-golden-masters` records `operationId` in `state`. A spec of
- * a case the provider records from a later release than the pinned one skips itself until
- * qits-maintenance bumps the pin (`it.skipIf(!isRecorded(…))`), as the pact specs' interactions do.
+ * Whether the installed golden masters of `masters` (`@qits/projects-golden-masters` unless given)
+ * record `operationId` in `state`. A spec of a case the provider records from a later release than
+ * the pinned one skips itself until qits-maintenance bumps the pin (`it.skipIf(!isRecorded(…))`),
+ * as the pact specs' interactions do.
  */
-export function isRecorded(state: string, operationId: string): boolean {
+export function isRecorded(
+  state: string,
+  operationId: string,
+  masters: GoldenMasters = projectsGoldenMasters,
+): boolean {
   try {
-    projectsGoldenMasters.operation(state, operationId);
+    masters.operation(state, operationId);
     return true;
   } catch {
     return false;
@@ -158,6 +169,10 @@ export const networkAccessGoldenMaster = <T = any>(state: string, operationId: s
 /** The body qits-edge recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const edgeGoldenMaster = <T = any>(state: string, operationId: string): T =>
   edgeGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-deployments recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const deploymentsGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  deploymentsGoldenMasters.body<T>(state, operationId);
 
 /** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
 import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import { PlatformOrigins } from '$core/platform/platform-origins';
+import { deploymentRequestHref } from '$core/deployments/deployment-requests';
 import {
   lifecycleSummary,
   releaseLifecycle,
@@ -325,10 +326,7 @@ export class ReleaseLifecycle {
   }
 
   protected deploymentHref(id: string | null | undefined): string | undefined {
-    const origin = this.origins.page('deployments');
-    return id && origin
-      ? `${origin}/${this.slug()}/deployment-requests/${encodeURIComponent(id)}`
-      : undefined;
+    return deploymentRequestHref(this.origins.page('deployments'), this.slug(), id);
   }
 
   /** An upstream override the service found moot (409), on the row of the gate it was for. */
