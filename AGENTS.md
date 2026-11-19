@@ -606,9 +606,10 @@ one deployment request" (the last two, and their browser tests, skip themselves 
 records them).
 
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
-component whose pages are its children (`artifacts`, qits-2330; `bumps/:bumpId`, qits-2332; the
-external, adoption, repository and trains pages come as their own children later: qits-2331,
-qits-2333 to qits-2335); its own
+component whose pages are its children (`artifacts`, qits-2330; `bumps/:bumpId`, qits-2332;
+`adoption/:repository/:version`, qits-2333; the external dependencies search is the Dependencies
+page's, qits-2331; the repository and trains pages come as their own children later: qits-2334,
+qits-2335); its own
 address redirects to `dependencies` by a relative `redirectTo`, which keeps the query. The
 sidebar's Maintenance entry lists the section's pages below it while one is open
 (`open-sidebar-maintenance-page`).
@@ -664,6 +665,30 @@ a refusal. The bumps menu's rows link the page in the open project (`open-menu-b
 project open they are plain. The pact reads `getBump` in "pending bumps" (`releasedBumpId`), "a
 bump that changed nothing", "a failed bump" (`bumpId`) and "no such bump" (404, status only); a
 field under a recorded `null` (`failure`) is bound only where the recording holds it (`heldBy`).
+
+`maintenance/adoption/<repository>/<version>` (`MaintenanceAdoptionPage`, qits-2333, the retired
+frontend's `adoption/…`) is how far one release got downstream, a detail page with no sidebar entry
+(the sidebar keeps Maintenance open). One read, `MAINTENANCE_ADOPTION` (`getAdoptionByRelease`,
+`?repository=&version=`, no project filter: the service traces the whole closure per request, so the
+page stitches nothing). The header names the release and its packages (`ecosystem name`,
+comma-joined); the caption counts the repositories downstream and those carrying it. The chart is a
+DAG drawn left to right by the pure `adoptionChart` (`core/maintenance/adoption-chart.ts`, its own
+spec): one column per distinct depth, one fixed 240x116 card per repository however many parents reach
+it, rows at the mean row of the parents (ties by name), an edge only to a parent that is drawn, every
+depth-1 card off the release; the SVG edges come from the same arithmetic, and the chart scrolls
+sideways inside its own box, never the page. A card's chip is ADOPTED (with `adoptedVersion` and when)
+or PENDING, quiet and neutral, never an error. An adopter whose `repositoryStatus` is `OK` links its
+page in the old maintenance app (`open-adoption-repository`, `external('maintenance')`,
+`/<slug>/repositories/<name>`) until qits-2334; `ABSENT` says "absent". No adopter is "This release
+reached no repository."; no package a notice that the service holds no bill of materials for it. A
+403 is a refusal, else Retry. Staleness: `ADOPTION_EVENTS` (`SCMRelease`, `SoftwareRelease`,
+`core/maintenance/adoption-events.ts`), debounced 1 s; Refresh reads again. A release request's
+"Adoption of this release" leads here (`open-release-adoption`, an in-app exit; `releaseLinks` gives
+it no `app`), in place of the retired release train link. The pact reads it in "a repository with
+downstream components" (both adopters PENDING, the fixed version 2026.905.1), "a release some
+consumers adopted" and "a release nobody consumes"; the last two, and their browser tests, skip
+themselves until the `@qits/maintenance-golden-masters` pin records them. A release with no package
+is no recording's: the plain spec derives it.
 
 ## Styling
 
