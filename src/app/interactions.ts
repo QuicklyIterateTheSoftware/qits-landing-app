@@ -353,6 +353,14 @@ export const INTERACTIONS = {
   'open-project-event-subject':
     'A release request or work item an event names on the Events page opens its page',
   /**
+   * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
+   * (qits-2317): the Maintenance section's Dependencies page reads the inventory's repositories and
+   * the INTERNAL and EXTERNAL dependencies, and shows the pins of the open project's repositories,
+   * the behind ones first. Refresh reads all three again.
+   */
+  'show-project-dependencies':
+    'The Dependencies page lists the open project’s internal and external pins, behind ones first',
+  /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
    */
@@ -860,8 +868,8 @@ export const INTERACTIONS = {
     'Allow access on the local network notice makes the browser ask for local network access',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
-   * Agents, Release Requests, Desk, Repositories, Observability, Events). Navigates only, and
-   * names no pact (epic qits-2000).
+   * Agents, Release Requests, Desk, Repositories, Observability, Events, Maintenance). Navigates
+   * only, and names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
   /**
@@ -875,6 +883,12 @@ export const INTERACTIONS = {
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',
+  /**
+   * `shell.layout.ts`: a Maintenance page listed below Maintenance in the sidebar opens it, one exit
+   * per page (qits-2317: Dependencies). Navigates only, and names no pact.
+   */
+  'open-sidebar-maintenance-page':
+    'A Maintenance page below Maintenance in the sidebar opens that page',
   /**
    * `shell.layout.ts`: the top bar's gear opens the open project's settings (`setup`). Navigates
    * only, and names no pact (epic qits-2000).
