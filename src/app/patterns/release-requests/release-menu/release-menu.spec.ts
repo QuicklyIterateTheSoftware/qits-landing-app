@@ -269,7 +269,7 @@ describe('ReleaseMenu', () => {
       fixture.detectChanges();
       const chips = Array.from(panel.querySelectorAll<HTMLAnchorElement>('a[data-active-run]'));
       expect(chips.map((a) => a.textContent?.trim())).toEqual(['CI running', 'Automation queued']);
-      expect(chips[0].getAttribute('href')).toBe(`https://ci.example/runs/${run.id}`);
+      expect(chips[0].getAttribute('href')).toBe(`/projects/${recorded.slug}/ci/runs/${run.id}`);
       const row = chips[0].closest('li')!;
       expect(row.querySelector('a span')?.textContent?.trim()).toBe(target.qualifiedId);
       expect(panel.querySelectorAll('li a[data-active-run]').length).toBe(2);

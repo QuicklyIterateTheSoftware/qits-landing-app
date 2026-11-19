@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
+import { QitsEntity, QitsExit, QitsField, qitsMutation } from '@qits/angular';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { deploymentRequestHref } from '$core/deployments/deployment-requests';
@@ -91,6 +92,7 @@ const RAIL: Readonly<Record<StepState, string>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     QitsEntity,
+    QitsExit,
     QitsField,
     RouterLink,
     ActionButton,
@@ -195,8 +197,11 @@ const RAIL: Readonly<Record<StepState, string>> = {
                     @if (step.word) {
                       <ui-chip [label]="step.word" [tone]="tone(step.state)" />
                     }
-                    @if (runHref(step.runId); as href) {
-                      <a class="text-accent no-underline hover:underline" [href]="href"
+                    @if (step.runId && slug()) {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="links.opening.run"
+                        [exitParams]="{ slug: slug(), runId: step.runId }"
                         >the run in CI</a
                       >
                     }
@@ -277,6 +282,7 @@ export class ReleaseLifecycle {
   private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
   private readonly rerunningPhase = qitsMutation(RERUN_PHASE);
   private readonly origins = inject(PlatformOrigins);
+  protected readonly links = inject(CiRunLinks);
 
   readonly request = input.required<ReleaseRequest>();
   /** The project's slug, for the deployment's address. */
@@ -318,11 +324,6 @@ export class ReleaseLifecycle {
 
   protected stageWord(state: StepState): string {
     return state === 'not-reported' ? 'not reported' : state;
-  }
-
-  protected runHref(runId: string | null): string | undefined {
-    const origin = this.origins.page('ci');
-    return runId && origin ? `${origin}/runs/${encodeURIComponent(runId)}` : undefined;
   }
 
   protected deploymentHref(id: string | null | undefined): string | undefined {

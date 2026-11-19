@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { QitsEntity, QitsField, qitsMutation } from '@qits/angular';
-import { PlatformOrigins } from '$core/platform/platform-origins';
+import { QitsEntity, QitsExit, QitsField, qitsMutation } from '@qits/angular';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import { OPEN_RELEASE_REQUEST } from '$core/release-requests/open-release-request';
 import { requestTitle } from '$core/projects/release-requests';
 import type {
@@ -53,7 +53,7 @@ export const ASKED =
 @Component({
   selector: 'app-release-automations',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionButton, QitsEntity, QitsField],
+  imports: [ActionButton, QitsEntity, QitsExit, QitsField],
   host: { class: 'block' },
   template: `
     @if (rows().length === 0) {
@@ -81,8 +81,13 @@ export const ASKED =
                 [qitsField]="{ derived: ['state', 'detail'] }"
                 >{{ sentence(row) }}</span
               >
-              @if (runHref(row); as href) {
-                <a class="text-accent no-underline hover:underline" [href]="href">the run in CI</a>
+              @if (row.runId && links.slug()) {
+                <a
+                  class="text-accent no-underline hover:underline"
+                  [qitsExit]="links.opening.run"
+                  [exitParams]="links.params(row.runId)"
+                  >the run in CI</a
+                >
               }
               @if (rerunnable(row)) {
                 <ui-action-button
@@ -164,7 +169,7 @@ export class ReleaseAutomations {
   private readonly open = inject(OPEN_RELEASE_REQUEST, { optional: true });
   private readonly rerunning_ = qitsMutation(RERUN_AUTOMATION);
   private readonly waiver = qitsMutation(WAIVE_AUTOMATIONS);
-  private readonly origins = inject(PlatformOrigins);
+  protected readonly links = inject(CiRunLinks);
 
   readonly request = input.required<ReleaseRequest>();
 
@@ -185,11 +190,6 @@ export class ReleaseAutomations {
 
   /** What a re-run of each automation answered, by kind. */
   protected readonly messages = signal<Readonly<Record<string, string>>>({});
-
-  protected runHref(row: ReleaseAutomation): string | undefined {
-    const origin = this.origins.page('ci');
-    return row.runId && origin ? `${origin}/runs/${encodeURIComponent(row.runId)}` : undefined;
-  }
 
   protected rerunAction(row: ReleaseAutomation): Action {
     return {

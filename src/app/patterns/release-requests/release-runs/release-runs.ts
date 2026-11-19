@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { QitsEntity, QitsField } from '@qits/angular';
+import { QitsEntity, QitsExit, QitsField } from '@qits/angular';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import type { CiRun } from '$core/ci/ci-runs.consumes';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import type { CommitBuild, ReleaseRequest } from '$core/release-requests/release-request.consumes';
@@ -23,8 +24,8 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
 };
 
 /**
- * The CI runs of a release request, newest first, each a link to its page in qits-ci
- * (`<ci origin>/runs/<id>`): the runs that name the request (its QA runs, one per fold, and the
+ * The CI runs of a release request, newest first, each a link to its page (`CiRunLinks`,
+ * qits-2321): the runs that name the request (its QA runs, one per fold, and the
  * release run of its tag), its CI verdicts, and its automations' runs (`requestRuns`). Each shows
  * what it was for, its status, branch, commit and when it started. A run only the request names
  * (older than the repository's newest runs, or in another repository) shows its id alone.
@@ -38,7 +39,7 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
 @Component({
   selector: 'app-release-runs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, QitsEntity, QitsField, Spinner],
+  imports: [Chip, QitsEntity, QitsExit, QitsField, Spinner],
   host: { class: 'block' },
   template: `
     <section class="rounded-md border border-line bg-surface px-3 py-2">
@@ -58,10 +59,11 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
                 [fieldOf]="entry"
                 [qitsField]="{ derived: ['run.status', 'run'] }"
               />
-              @if (href(entry.id); as link) {
+              @if (links.slug()) {
                 <a
                   class="text-accent no-underline hover:underline"
-                  [href]="link"
+                  [qitsExit]="links.opening.run"
+                  [exitParams]="links.params(entry.id)"
                   [fieldOf]="entry"
                   [qitsField]="marks.label"
                   >{{ entry.label }}</a
@@ -121,6 +123,7 @@ const STATUS_TONES: Readonly<Record<string, ChipTone>> = {
 })
 export class ReleaseRuns {
   private readonly origins = inject(PlatformOrigins);
+  protected readonly links = inject(CiRunLinks);
 
   readonly request = input.required<ReleaseRequest>();
   /** The CI verdicts on the fold. */
@@ -140,11 +143,6 @@ export class ReleaseRuns {
 
   protected tone(run: CiRun | undefined): ChipTone {
     return STATUS_TONES[run?.status ?? ''] ?? 'neutral';
-  }
-
-  protected href(runId: string): string | undefined {
-    const origin = this.origins.page('ci');
-    return origin ? `${origin}/runs/${encodeURIComponent(runId)}` : undefined;
   }
 
   protected readonly repositoryHref = computed(() => {

@@ -16,7 +16,6 @@ import {
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { ciGoldenMaster, goldenMaster } from '../../../../../../testing/golden-masters';
 import { type AttributionFields, requestItems } from '$core/projects/release-requests';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ReleaseRequestPage } from './release-request.page';
 
 /** Runs the effects a read starts on, then the generated client's few awaits. */
@@ -674,9 +673,8 @@ describe('ReleaseRequestPage', () => {
       ).runId;
       const chips = Array.from(element.querySelectorAll<HTMLAnchorElement>('a[data-active-run]'));
       expect(chips.map((a) => a.textContent?.trim())).toEqual(['CI running']);
-      const ci = TestBed.inject(PlatformOrigins).page('ci');
-      expect(ci).not.toBe('');
-      expect(chips[0].getAttribute('href')).toBe(`${ci}/runs/${qa}`);
+      // The run's page in this app (qits-2321).
+      expect(chips[0].getAttribute('href')).toBe(`/projects/${project.slug}/ci/runs/${qa}`);
     });
 
     it('shows no chip while none of its runs is active', async () => {

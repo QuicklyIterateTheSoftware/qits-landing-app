@@ -4,19 +4,20 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   QitsEntity,
+  QitsExit,
   QitsField,
   qitsResource,
   sourceMark,
   type QitsDomainEvent,
 } from '@qits/angular';
 import { BUILD_EVENTS, buildOfRepository } from '$core/ci/build-events';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import type { CiSummaryRun } from '$core/ci/ci-runs.consumes';
 import { ACTIVE_RUNS, REPOSITORY_SUMMARIES } from '$core/ci/ci.operations';
 import {
   CI_RUN_STATUSES,
   ciRepositoryHref,
   ciRows,
-  ciRunHref,
   filterCiRows,
   isRunStatus,
   projectActiveRuns,
@@ -58,9 +59,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * A change writes the URL, so a filter can be bookmarked and Back undoes it (typing on in the
  * repository field replaces the entry it started).
  *
- * Links lead to qits-ci's own pages until qits-2320 and qits-2321 bring them here: a repository's
- * name to `/<slug>/<group>/<repository>` (its component, else its archetype's category; the
- * wrapper, which has neither, to qits-ci's tree with it expanded), a run to `/runs/<id>`.
+ * A repository's name leads to qits-ci's own page until qits-2320 brings it here:
+ * `/<slug>/<group>/<repository>` (its component, else its archetype's category; the wrapper, which
+ * has neither, to qits-ci's tree with it expanded). A run opens its page here
+ * (`projects/<slug>/ci/runs/<id>`, `CiRunLinks`, qits-2321).
  *
  * States: loading, a failed read with Retry, "No CI runs for this project yet" when no repository
  * of the project has a run, and "No repository matches" with a link that clears the filters.
@@ -74,7 +76,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-ci-runs-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsField, RouterLink, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsExit,
+    QitsField,
+    RouterLink,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -112,7 +123,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   />
                   <a
                     class="font-semibold text-accent no-underline hover:underline"
-                    [attr.href]="runHref(run.id)"
+                    [qitsExit]="runs.opening.run"
+                    [exitParams]="runs.params(run.id)"
                     [qitsEntity]="run"
                     entityKey="repoId"
                     [entitySource]="repositories"
@@ -191,8 +203,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 @if (row.lastRun; as run) {
                   <a
                     class="flex min-w-0 flex-wrap items-baseline gap-2 text-fg no-underline hover:underline"
-                    [attr.href]="runHref(run.id)"
-                    [title]="'Open the run in CI'"
+                    [qitsExit]="runs.opening.run"
+                    [exitParams]="runs.params(run.id)"
+                    [title]="'Open the run'"
                     data-last-run
                   >
                     <ui-chip
@@ -225,7 +238,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                   @if (row.lastMainRun; as main) {
                     <a
                       class="inline-flex items-baseline gap-1 text-xs text-fg-muted no-underline hover:underline sm:ml-auto"
-                      [attr.href]="runHref(main.id)"
+                      [qitsExit]="runs.opening.run"
+                      [exitParams]="runs.params(main.id)"
                       [title]="mainTitle(main)"
                       data-main-run
                     >
@@ -271,6 +285,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 export class CiRunsPage {
   private readonly selected = inject(SelectedProject);
   private readonly origins = inject(PlatformOrigins);
+  protected readonly runs = inject(CiRunLinks);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -406,10 +421,6 @@ export class CiRunsPage {
 
   protected repositoryHref(row: CiRepositoryRow): string | null {
     return ciRepositoryHref(this.origins.page('ci'), this.selected.slug() ?? '', row) ?? null;
-  }
-
-  protected runHref(runId: string | undefined): string | null {
-    return ciRunHref(this.origins.page('ci'), runId) ?? null;
   }
 
   protected mainTitle(run: CiSummaryRun): string {
