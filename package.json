@@ -53,7 +53,7 @@
     "@angular/compiler-cli": "^22.2.2",
     "@hey-api/openapi-ts": "0.99.0",
     "@pact-foundation/pact": "17.1.4",
-    "@qits/artifacts-golden-masters": "2026.1119.190120",
+    "@qits/artifacts-golden-masters": "2026.1119.211817",
     "@qits/ci-golden-masters": "2026.1119.60052",
     "@qits/deployments-golden-masters": "2026.1119.141022",
     "@qits/edge-golden-masters": "2026.1115.212737",
