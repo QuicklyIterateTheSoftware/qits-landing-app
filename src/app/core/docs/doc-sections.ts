@@ -129,3 +129,34 @@ export function docBlocks<T extends { readonly name?: string }>(
     }))
     .filter((block) => block.sites.length > 0);
 }
+
+/** A catalog site as far as its publisher goes: the repository its newest version names. */
+interface PublishedSite {
+  /** The newest version's `git.repository.name` (qits-2336); absent when it names none. */
+  readonly latestRepository?: string;
+}
+
+/**
+ * The sites whose newest version `repository` published (`latestRepository`, exactly), for a
+ * repository's Docs page (qits-2336). Never by the site's name: `@contracts/qits-ci` is named after
+ * the application, and published by `qits-ci-service`. No name, no site.
+ */
+export function publishedBy<T extends PublishedSite>(
+  sites: readonly T[],
+  repository: string,
+): readonly T[] {
+  return repository ? sites.filter((site) => site.latestRepository === repository) : [];
+}
+
+/**
+ * The repository of `repositories` (the open project's names) that published the site's newest
+ * version, for the project Docs page's link to it (qits-2336); undefined for a site whose newest
+ * version names none, or one the project does not hold (a retired repository, another project's).
+ */
+export function projectRepositoryOf(
+  site: PublishedSite,
+  repositories: ReadonlySet<string>,
+): string | undefined {
+  const repository = site.latestRepository;
+  return repository && repositories.has(repository) ? repository : undefined;
+}

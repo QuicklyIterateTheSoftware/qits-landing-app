@@ -7,6 +7,7 @@ import {
   BACKUP_SYNC_PROJECT,
   LIST_PROJECT_REPOSITORIES,
   PROJECT_WRAPPER,
+  REPOSITORY_NAMES,
 } from './repositories.consumes';
 
 /**
@@ -39,6 +40,18 @@ export const PROJECT_REPOSITORIES = qitsOperation({
   method: 'GET',
   call: listProjectRepositories,
   consumes: LIST_PROJECT_REPOSITORIES,
+});
+
+/**
+ * The project's repositories (`listProjectRepositories`), as far as the Docs pages read them
+ * (`REPOSITORY_NAMES`, qits-2336): each one's name, and the wrapper and its main branch.
+ */
+export const PROJECT_REPOSITORY_NAMES = qitsOperation({
+  provider: 'qits-projects-service',
+  operationId: 'listProjectRepositories',
+  method: 'GET',
+  call: listProjectRepositories,
+  consumes: REPOSITORY_NAMES,
 });
 
 /**

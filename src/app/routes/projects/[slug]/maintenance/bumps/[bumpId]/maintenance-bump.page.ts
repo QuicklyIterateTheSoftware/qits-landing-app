@@ -14,8 +14,16 @@ import {
 import { durationBetween, elapsedSince } from '$core/ci/ci-run';
 import { CiRunLinks } from '$core/ci/ci-run-links';
 import { BUMP_EVENTS } from '$core/maintenance/bump-events';
+import {
+  bumpStatusLabel,
+  bumpStatusTone,
+  isUnderWay,
+  releaseRequestRef,
+  type ReleaseRequestRef,
+} from '$core/maintenance/bump-model';
 import type { BumpDetail } from '$core/maintenance/maintenance.consumes';
 import { MAINTENANCE_BUMP } from '$core/maintenance/maintenance.operations';
+import { MaintenanceRepositoryLinks } from '$core/maintenance/repository-links';
 import { SelectedProject } from '$core/projects/selected-project';
 import {
   formatInstant,
@@ -26,26 +34,12 @@ import { isMissing } from '$core/resources/resource-family';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
-import { Chip, type ChipTone } from '$ui/components/chip/chip';
+import { Chip } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
-/** A bump still under way: read again after `BUMP_EVENTS`. Any other status is settled. */
-export function isUnderWay(status: string | null | undefined): boolean {
-  return status === 'REQUESTED' || status === 'RUNNING';
-}
-
-/** A status's chip tone; SUPERSEDED, NOTHING_TO_DO and any status the page does not know: neutral. */
-export function bumpStatusTone(status: string | null | undefined): ChipTone {
-  if (status === 'SUCCEEDED') return 'ok';
-  if (status === 'FAILED') return 'failed';
-  return isUnderWay(status) ? 'waiting' : 'neutral';
-}
-
-/** A status as a word: `NOTHING_TO_DO` is "nothing to do", any other its own word, lowercased. */
-export function bumpStatusLabel(status: string | null | undefined): string {
-  return status ? status.toLowerCase().replaceAll('_', ' ') : 'unknown';
-}
+// Moved to `$core/maintenance/bump-model` (qits-2334, shared with the repository page).
+export { bumpStatusLabel, bumpStatusTone, isUnderWay, releaseRequestRef, type ReleaseRequestRef };
 
 /** The release states that say the bump's release is not coming: the request will never land. */
 const RELEASE_NOT_COMING: ReadonlySet<string> = new Set(['REJECTED', 'FAILED', 'CONFLICTED']);
@@ -57,40 +51,6 @@ const RELEASE_NOT_COMING: ReadonlySet<string> = new Set(['REJECTED', 'FAILED', '
  */
 export function releaseNotComing(state: string | null | undefined): boolean {
   return !!state && RELEASE_NOT_COMING.has(state);
-}
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-/** What a bump's `releaseRequestId` is: a request to link, a sentinel to explain, or none. */
-export type ReleaseRequestRef =
-  | { readonly kind: 'request'; readonly id: string }
-  | { readonly kind: 'sentinel'; readonly word: string; readonly explanation: string }
-  | { readonly kind: 'none' };
-
-/**
- * A bump's release request: a uuid is a request, linked to its page; `converged` and `refused`
- * are sentinels qits-maintenance writes into the same column (the old frontend's
- * `releaseSentinel`), said as words with what they mean; anything else is shown as it is, with no
- * link, and null is none.
- */
-export function releaseRequestRef(value: string | null | undefined): ReleaseRequestRef {
-  if (!value) return { kind: 'none' };
-  if (UUID.test(value)) return { kind: 'request', id: value };
-  if (value === 'converged') {
-    return {
-      kind: 'sentinel',
-      word: 'converged',
-      explanation: 'there was nothing left to ask for: no request came back',
-    };
-  }
-  if (value === 'refused') {
-    return {
-      kind: 'sentinel',
-      word: 'refused',
-      explanation: 'the release request was refused; the message says why',
-    };
-  }
-  return { kind: 'sentinel', word: value, explanation: '' };
 }
 
 /** The bump's CI runs: every id in `ciRunIds`, else the comma-joined `ciRunId`'s; none if neither. */
@@ -129,13 +89,14 @@ function refused(read: { status(): string; error(): unknown }): boolean {
  * One version bump, at `/projects/<slug>/maintenance/bumps/<bumpId>` (qits-2332; replaces
  * qits-maintenance-frontend's `bumps/:id`), the path mirroring `GET /maintenance/api/bumps/{id}`.
  * A detail page of the Maintenance section: no sidebar entry of its own. Reached from the top
- * bar's bumps menu (and the repository page, qits-2334).
+ * bar's bumps menu and the repository page's recent bumps (qits-2334).
  *
  * Reads only the bump (`MAINTENANCE_BUMP`, `getBump`), in the browser only (the server has no
  * session), through `qitsResource`; no project filter, the id is the whole address.
  *
- * - Heading: the bump's group (its automation kind) and repository, its status as a chip (any
- *   status, SUPERSEDED or one the page does not know, as its word).
+ * - Heading: the bump's group (its automation kind) and repository (linked to its maintenance
+ *   page, `open-maintenance-repository`, qits-2334), its status as a chip (any status, SUPERSEDED
+ *   or one the page does not know, as its word).
  * - Facts: repository, group, mode, trigger, branch, started, finished with the duration (or how
  *   long it has run while under way), the result commit (short) and the pipeline's config path.
  * - Release: the release request, linked to its page when it is a request id; the sentinels
@@ -194,7 +155,14 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                 <h2 class="m-0 text-lg font-semibold break-all text-fg">
                   <span [fieldOf]="bump" qitsField="group">{{ bump.group }}</span>
                   <span class="text-fg-muted"> · </span>
-                  <span [fieldOf]="bump" qitsField="repository">{{ bump.repository }}</span>
+                  <a
+                    class="text-accent no-underline hover:underline"
+                    [qitsExit]="repositoryLinks.opening.repository"
+                    [exitParams]="repositoryLinks.params(bump.repository)"
+                    [fieldOf]="bump"
+                    qitsField="repository"
+                    >{{ bump.repository }}</a
+                  >
                 </h2>
                 <ui-chip
                   [label]="statusLabel(bump.status)"
@@ -232,8 +200,15 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                 data-facts
               >
                 <dt class="text-fg-muted">Repository</dt>
-                <dd class="m-0 wrap-anywhere" [fieldOf]="bump" qitsField="repository">
-                  {{ bump.repository }}
+                <dd class="m-0 wrap-anywhere">
+                  <a
+                    class="text-accent no-underline hover:underline"
+                    [qitsExit]="repositoryLinks.opening.repository"
+                    [exitParams]="repositoryLinks.params(bump.repository)"
+                    [fieldOf]="bump"
+                    qitsField="repository"
+                    >{{ bump.repository }}</a
+                  >
                 </dd>
                 <dt class="text-fg-muted">Group</dt>
                 <dd class="m-0 wrap-anywhere" [fieldOf]="bump" qitsField="group">
@@ -495,6 +470,8 @@ export class MaintenanceBumpPage {
   private readonly route = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly runs = inject(CiRunLinks);
+  /** The bump's repository links its maintenance page (qits-2334). */
+  protected readonly repositoryLinks = inject(MaintenanceRepositoryLinks);
 
   /** The release request the bump belongs to. */
   protected readonly requesting = outcomes('open-bump-release-request', {

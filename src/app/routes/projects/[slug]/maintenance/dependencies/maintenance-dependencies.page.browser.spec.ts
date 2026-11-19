@@ -256,6 +256,25 @@ describe('MaintenanceDependenciesPage (screenshots)', () => {
     expect(entries(view, 'External')).toHaveLength(1);
   });
 
+  it('opens a pin’s repository on its maintenance page', async () => {
+    const { opened, view } = await loaded();
+    const link = section(view, 'Internal')
+      .element()
+      .querySelector<HTMLAnchorElement>('a[href*="/maintenance/repositories/"]')!;
+    const name = link.textContent?.trim();
+    await userEvent.click(page.elementLocator(link));
+    // The repository page's reads are its own spec's: answer each with a 404.
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const open = http.match(() => true).filter((request) => !request.cancelled);
+      for (const request of open) request.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = open.length ? 0 : quiet + 1;
+    }
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/maintenance/repositories/${name}`,
+    );
+  });
+
   it('Refresh reads the repositories and both kinds again', async () => {
     const { opened, view } = await loaded();
     await userEvent.click(view.getByRole('button', { name: 'Refresh' }));

@@ -595,6 +595,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/docs"
+    }
+  ],
+  "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog of every kind",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/docs/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/docs/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/docs/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/docs/repositories/:repo"
     }
   ],
   "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts": [
@@ -749,6 +781,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/ideas"
+    }
+  ],
+  "src/app/routes/projects/[slug]/maintenance/adoption/[repository]/[version]/maintenance-adoption.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a release nobody consumes",
+      "operationId": "getAdoptionByRelease",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a release some consumers adopted",
+      "operationId": "getAdoptionByRelease",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with downstream components",
+      "operationId": "getAdoptionByRelease",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
     }
   ],
   "src/app/routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page.browser.spec.ts": [
@@ -917,6 +981,86 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/maintenance/dependencies"
+    }
+  ],
+  "src/app/routes/projects/[slug]/maintenance/repositories/[name]/maintenance-repository.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "getRepository",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "getRepositoryDownstream",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "listBumps",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with nothing pinned",
+      "operationId": "listRepositoryDependents",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "getRepository",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "getRepositoryDownstream",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "listBumps",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with pins and bumps",
+      "operationId": "listRepositoryDependents",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no such repository",
+      "operationId": "getRepositoryDownstream",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no such repository",
+      "operationId": "listBumps",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no such repository",
+      "operationId": "listRepositoryDependents",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/repositories/:name"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/repositories/:name"
     }
   ],
   "src/app/routes/projects/[slug]/observability/logs/observability-logs.page.browser.spec.ts": [

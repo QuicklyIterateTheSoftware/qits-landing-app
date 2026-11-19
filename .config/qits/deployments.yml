@@ -37,11 +37,35 @@ routes: /landing
 # load-bearing line of this file.
 #
 # It is the value the DERIVATION would have produced anyway (`qits-landing` minus the `qits-`
-# prefix), and it is stated all the same, because a later epic reserves this label as the project's
-# ROOT. A derived label is a consequence of a name; a stated one is a claim, and this file is where
-# the claim has to be readable. It also survives a change to the derivation rule, which a default
-# would not.
+# prefix), and it is stated all the same, because the label is reserved as the project's ROOT: the
+# edge serves `landing` at the door, `qits.<domain>`, not at `landing.qits.<domain>`. A derived label
+# is a consequence of a name; a stated one is a claim, and this file is where the claim has to be
+# readable. It also survives a change to the derivation rule, which a default would not.
 host: landing
+
+# PRIVATE (qits-2360): the door is served by qits-edge-private only, reached through the WireGuard
+# tunnel or the qits-private overlay.
+#
+# 1. THE PAGE HAS TO LOAD FROM THE PRIVATE ADDRESS. Everything it reads — projects, workspaces, ci,
+#    maintenance, deployments — is private and resolves to the tunnel address. A page from the public
+#    address calling those is a Local Network Access call: Firefox resets it (NS_ERROR_NET_RESET, no
+#    prompt, no opt-in header) and Chrome asks for a permission on every device. Private to private,
+#    and private to public (idp, events, network-access), neither browser checks.
+# 2. NO NEW NAME FOLLOWS FROM IT. `host: landing` above stays the door: the edge reads which
+#    environments have a landing from its own route table, so this line moves `qits.<domain>` onto the
+#    private edge, and HostRecords writes the door as `A` to the tunnel address, with no public CNAME
+#    beside it. Every link to the door — the CLI's, the agents' work links, this app's own
+#    `HostPlatformOrigins` — stays valid, because the origin does not change.
+# 3. OFF THE TUNNEL THE DOOR DOES NOT ANSWER: public DNS names the tunnel address, so no edge can
+#    even redirect. Joining is through qits-network-access' own page,
+#    `https://network-access.qits.<domain>/` (qits-2361), and qits-idp; both stay
+#    public.
+# 4. THERE IS NO PUBLIC COPY, because there cannot be one: `exposure: both` is refused (qits-2174),
+#    and a second, public deployment claiming the door would lose to the private `A` record anyway.
+#
+# Revert: delete this line. The door goes back to the public edge and its public CNAME, and the
+# private apps' calls become Local Network Access calls again.
+exposure: private
 
 # HEALTH_PATH, NOT HEALTH_CMD, and a path this server actually serves.
 #
@@ -66,8 +90,8 @@ health_path: /landing/health
 # drift from the other three buys nothing. The scaffold's own default is 4000 — that is what was
 # changed, and this comment is why.
 
-# NO `navigation-entries:` and no `navigation:`. This application is the front door itself, not a
-# row in somebody else's sidebar: an entry would put "Landing" in the chrome of every application
+# NO `navigation-entries:` and no `navigation:`. This application is the project's door itself, not
+# a row in somebody else's sidebar: an entry would put "Landing" in the chrome of every application
 # the shell draws navigation for.
 
 # NO `update_order:`, so the default `start-first` stands — the successor comes up beside the
@@ -75,5 +99,19 @@ health_path: /landing/health
 # so because they bind a host port or hold a single-writer store, and this application does neither:
 # it publishes no port of its own, writes nothing, and is reached through the edge on the overlay.
 
-# NO `resources:` and no `volumes:`. The page is static text compiled into the bundle; there is no
-# database to provision and nothing to keep between deployments.
+# idp:client ASKS QITS-DEPLOYMENTS TO PROVISION THIS APPLICATION'S OWN QITS-IDP SERVICE CLIENT, for
+# one reason: the server's telemetry (qits-2360).
+#
+# A private container sits on qits-private only and resolves through the private edge, so the
+# qits-net alias `<env>-qits-observability` it used to export to no longer resolves. It exports to
+# `https://observability.qits.<domain>` instead, the way the private Java services do, and the edge
+# refuses an anonymous POST there. So the server takes a client_credentials token for this client
+# and sends it as the bearer of every export, its own and the browser's it relays
+# (`src/server/idp-token.ts`). The deployer stores the secret the way it stores a database password,
+# and injects QITS_RESOURCE_IDP_URL (the idp's edge host, `https://idp.qits.<domain>/idp`, which a
+# private container reaches like any public name), QITS_RESOURCE_IDP_CLIENT_ID and
+# QITS_RESOURCE_IDP_CLIENT_SECRET. The page and the renderer never see the token.
+resources: idp:client
+
+# NO `volumes:`. The page is static text compiled into the bundle; there is nothing to keep
+# between deployments.

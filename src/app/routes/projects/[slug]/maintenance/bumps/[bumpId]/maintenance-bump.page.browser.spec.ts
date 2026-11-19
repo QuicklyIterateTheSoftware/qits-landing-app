@@ -167,6 +167,15 @@ describe('MaintenanceBumpPage (screenshots)', () => {
     );
   });
 
+  it('opens the bump’s repository on its maintenance page', async () => {
+    const { opened, view } = await render(RELEASED, RELEASED_ID);
+    await view.getByRole('link', { name: 'contract-frontend' }).first().click();
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/maintenance/repositories/contract-frontend`,
+    );
+  });
+
   it('opens a run of the bump on its page', async () => {
     const { opened, view } = await render(FAILED, AUTOMATION_ID);
     await view.getByRole('link', { name: 'run-contract-2' }).click();

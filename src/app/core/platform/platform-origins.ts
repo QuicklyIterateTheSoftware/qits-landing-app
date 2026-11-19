@@ -69,9 +69,12 @@ export abstract class PlatformOrigins {
 }
 
 /**
- * Deployed: the app is served at the platform's apex, so every application is a name under this
- * page's hostname. On the server both answers are `''`: the server never calls a backend (it has
- * no token), and its request host need not be the public one.
+ * Deployed: the app is served at the platform's apex, the project's door `qits.<domain>`, so every
+ * application is a name under this page's hostname. The door is private (`exposure: private`,
+ * qits-2360): the edge serves it from the private address, so the page and the private apps it
+ * calls share one address space, and the public apps (idp, events, network-access) are reached
+ * from it as before. On the server both answers are `''`: the server never calls a backend (it
+ * has no token), and its request host need not be the door's.
  */
 @Injectable()
 export class HostPlatformOrigins extends PlatformOrigins {

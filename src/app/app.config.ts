@@ -30,7 +30,6 @@ import { provideHeyApiClient } from './api/projects/client/client.gen';
 import { routes } from './app.routes';
 import { DomainEvents } from '$core/events/domain-events';
 import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origins';
-import { providePrivateApps } from '$core/platform/private-apps';
 import { provideAppUpdates } from '$core/updates/app-updates';
 import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
@@ -109,9 +108,6 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(deploymentsClient),
     provideHeyApiClient(edgeClient),
     provideBackendOrigins(),
-    // Which platform apps are on the private network, read from the edge once signed in, so their
-    // calls are marked for Chrome's Local Network Access and the shell can say why (qits-2297).
-    providePrivateApps(),
     // A `qitsResource`'s `refreshOn` (qits-2145) reads the app's one live stream (qits-1270): the
     // library opens none of its own.
     { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },

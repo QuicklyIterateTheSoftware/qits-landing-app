@@ -10,13 +10,15 @@ import type { ReleaseArtifact } from './release-request.consumes';
 /**
  * A link to another application: its label, and where, when it can be spelled. One with no `app`
  * and a `path` is a page of this app (`path` is its address from the root); `release` then names
- * the release whose deployment requests it opens (qits-2323), for the page's exit.
+ * the release whose deployment requests it opens (qits-2323), and `adoption` the release whose
+ * adoption page it opens (qits-2333), for the page's exit.
  */
 export interface AppLink {
   readonly label: string;
   readonly app?: PlatformApp;
   readonly path?: string;
   readonly release?: { readonly repoId: string; readonly version: string };
+  readonly adoption?: { readonly repository: string; readonly version: string };
 }
 
 /**
@@ -93,8 +95,9 @@ export function docsReadPath(scope: string, site: string, version?: string): str
 
 /**
  * The release's own links: its tag and released commit in qits-githost, its deployment requests in
- * this app's Deployments section (only when something deploys it, qits-2323), and its release train
- * in qits-maintenance.
+ * this app's Deployments section (only when something deploys it, qits-2323), and its adoption
+ * (how far it got downstream) in this app's Maintenance section (qits-2333; it replaces the
+ * retired release train in qits-maintenance-frontend).
  */
 export function releaseLinks(input: {
   readonly slug: string;
@@ -132,11 +135,11 @@ export function releaseLinks(input: {
   }
   if (version && input.repoName) {
     links.push({
-      label: 'The release train of this version',
-      app: 'maintenance',
+      label: 'Adoption of this release',
       path:
-        `/${input.slug}/trains/by-release/${encodeURIComponent(input.repoName)}/` +
-        encodeURIComponent(version),
+        `/projects/${encodeURIComponent(input.slug)}/maintenance/adoption/` +
+        `${encodeURIComponent(input.repoName)}/${encodeURIComponent(version)}`,
+      adoption: { repository: input.repoName, version },
     });
   }
   return links;

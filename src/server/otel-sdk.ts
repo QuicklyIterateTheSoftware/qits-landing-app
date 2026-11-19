@@ -20,6 +20,7 @@ import { BatchSpanProcessor, NodeTracerProvider } from '@opentelemetry/sdk-trace
 import type { RequestHandler } from 'express';
 import { hostname } from 'node:os';
 import { format } from 'node:util';
+import { NO_AUTH, type AuthHeaders } from './idp-token';
 import type { TelemetryTarget } from './otel-config';
 
 /**
@@ -35,6 +36,10 @@ import type { TelemetryTarget } from './otel-config';
  *   channels and patches nothing;
  * - logs: every `console` call is also an OTLP log record, correlated to the active span. The
  *   console output stays, as the fallback when the receiver is down.
+ *
+ * EVERY EXPORT CARRIES `headers()` (qits-2360): the bearer of this app's idp client when the
+ * server has one (`idp-token.ts`), because the receiver's edge host refuses an anonymous POST. The
+ * exporters ask for it per export, so a token taken again is used from the next batch on.
  */
 
 const SCOPE = 'qits-landing-server';
@@ -48,8 +53,15 @@ const SEVERITIES = {
   error: [SeverityNumber.ERROR, 'ERROR'],
 } as const;
 
-/** Starts the SDK. Returns the function that flushes and stops it. */
-export function startTelemetry(target: TelemetryTarget): () => Promise<void> {
+/**
+ * Starts the SDK. Returns the function that flushes and stops it. `untraced` names origins whose
+ * calls get no span, besides the receiver's: the token endpoint, which the exports themselves call.
+ */
+export function startTelemetry(
+  target: TelemetryTarget,
+  headers: AuthHeaders = NO_AUTH,
+  untraced: readonly string[] = [],
+): () => Promise<void> {
   const resource = defaultResource().merge(
     resourceFromAttributes({ 'host.name': hostname(), ...target.resourceAttributes }),
   );
@@ -57,7 +69,9 @@ export function startTelemetry(target: TelemetryTarget): () => Promise<void> {
 
   const tracerProvider = new NodeTracerProvider({
     resource,
-    spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter({ url: url('traces') }))],
+    spanProcessors: [
+      new BatchSpanProcessor(new OTLPTraceExporter({ url: url('traces'), headers })),
+    ],
   });
   // AsyncLocalStorage context and the W3C trace-context + baggage propagators.
   tracerProvider.register();
@@ -65,7 +79,7 @@ export function startTelemetry(target: TelemetryTarget): () => Promise<void> {
   const loggerProvider = new LoggerProvider({
     resource,
     processors: [
-      new BatchLogRecordProcessor({ exporter: new OTLPLogExporter({ url: url('logs') }) }),
+      new BatchLogRecordProcessor({ exporter: new OTLPLogExporter({ url: url('logs'), headers }) }),
     ],
   });
   logs.setGlobalLoggerProvider(loggerProvider);
@@ -74,19 +88,20 @@ export function startTelemetry(target: TelemetryTarget): () => Promise<void> {
     resource,
     readers: [
       new PeriodicExportingMetricReader({
-        exporter: new OTLPMetricExporter({ url: url('metrics') }),
+        exporter: new OTLPMetricExporter({ url: url('metrics'), headers }),
         exportIntervalMillis: 60_000,
       }),
     ],
   });
   metrics.setGlobalMeterProvider(meterProvider);
 
-  const receiver = new URL(target.endpoint).origin;
+  const ignored = new Set([new URL(target.endpoint).origin, ...untraced]);
   const undici = new UndiciInstrumentation({
     // Only calls made while serving a request. The passthrough's forward to qits-observability
-    // has no parent, and a span for it would be exported through the receiver it describes.
+    // has no parent, and a span for it would be exported through the receiver it describes; the
+    // same goes for the token the exports carry.
     requireParentforSpans: true,
-    ignoreRequestHook: (request) => request.origin === receiver,
+    ignoreRequestHook: (request) => ignored.has(request.origin),
   });
 
   const restoreConsole = bridgeConsole();

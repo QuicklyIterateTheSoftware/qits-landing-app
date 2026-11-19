@@ -29,8 +29,10 @@ interface Backup {
  *
  * A repository whose declared archetype is FRONTEND or APP (never judged by its name) links its UI
  * builder at the bottom of the body (qits-1951). A SERVICE links its contracts (provider states)
- * and its entity map there instead (qits-1994). Each link is a declared exit of the open project
- * (`slug`): `open-repository-pages` `uiBuilder`, `contracts` and `entities` (epic qits-2000).
+ * and its entity map there instead (qits-1994). Every card links its Docs page last there (the
+ * docs sites it published, qits-2336). Each link is a declared exit of the open project (`slug`):
+ * `open-repository-pages` `uiBuilder`, `contracts` and `entities` (epic qits-2000), and
+ * `open-repository-docs` `repository`.
  *
  * It marks what it shows (qits-2146): the card is the repository (`qitsEntity`, by `id`), its
  * name, clone URL, backup URL and main branch are fields, and the backup state and the archetype
@@ -87,18 +89,16 @@ interface Backup {
             }}</span>
           </ui-stat>
         </div>
-        @if (frontend()) {
-          <div class="flex justify-end border-t-[0.5px] border-line-strong px-2 py-1">
+        <div class="flex justify-end gap-3 border-t-[0.5px] border-line-strong px-2 py-1">
+          @if (frontend()) {
             <a
               class="ui-builder text-xs font-semibold text-fg no-underline hover:underline"
               [qitsExit]="pages.uiBuilder"
               [exitParams]="params()"
               >UI builder →</a
             >
-          </div>
-        }
-        @if (service()) {
-          <div class="flex justify-end gap-3 border-t-[0.5px] border-line-strong px-2 py-1">
+          }
+          @if (service()) {
             <a
               class="contracts text-xs font-semibold text-fg no-underline hover:underline"
               [qitsExit]="pages.contracts"
@@ -111,8 +111,14 @@ interface Backup {
               [exitParams]="params()"
               >Entities →</a
             >
-          </div>
-        }
+          }
+          <a
+            class="docs text-xs font-semibold text-fg no-underline hover:underline"
+            [qitsExit]="docs.repository"
+            [exitParams]="params()"
+            >Docs →</a
+          >
+        </div>
       </card-body>
       <card-expandable>
         <dl class="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pt-2 text-[0.8125rem]">
@@ -160,6 +166,11 @@ export class RepositoryCard {
     uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
     contracts: exit('projects/:slug/repositories/:repo/contracts'),
     entities: exit('projects/:slug/repositories/:repo/entities'),
+  });
+
+  /** Every card: the repository's Docs page (qits-2336). */
+  protected readonly docs = outcomes('open-repository-docs', {
+    repository: exit('projects/:slug/docs/repositories/:repo'),
   });
 
   /** The repository's pages' exit params. */

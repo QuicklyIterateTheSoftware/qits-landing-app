@@ -2,13 +2,21 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  QitsApiError,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import type { DependencyEntry } from '$core/maintenance/maintenance.consumes';
 import {
   MAINTENANCE_DEPENDENCIES,
   MAINTENANCE_REPOSITORIES,
 } from '$core/maintenance/maintenance.operations';
 import { projectRepositories } from '$core/maintenance/project-repositories';
+import { MaintenanceRepositoryLinks } from '$core/maintenance/repository-links';
 import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -127,8 +135,8 @@ function refused(read: { status(): string; error(): unknown }): boolean {
  * repositories whose `project` is the open project's id, and drops a dependency left with none.
  * Within a section the dependencies with a behind pin come first, then by name; each shows its
  * ecosystem and latest version (unknown when the service has none, with its `error` beside it), and
- * its pins: the repository (plain text until it has a page, qits-2334), the version, the manifest
- * and a "behind" tag on a `pending` pin. Each heading counts the section's dependencies and its
+ * its pins: the repository (linked to its maintenance page, `open-maintenance-repository`,
+ * qits-2334), the version, the manifest and a "behind" tag on a `pending` pin. Each heading counts the section's dependencies and its
  * behind pins. "Only behind" (`?behind=true`, replacing the history entry) hides the current pins
  * and the dependencies with none behind.
  *
@@ -154,7 +162,16 @@ function refused(read: { status(): string; error(): unknown }): boolean {
 @Component({
   selector: 'app-maintenance-dependencies-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsEntityList, QitsField, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -284,9 +301,14 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                         <li
                           class="grid grid-cols-[minmax(0,16rem)_minmax(0,10rem)_1fr_auto] items-baseline gap-x-3 px-3 py-1.5 max-md:grid-cols-[1fr_auto]"
                         >
-                          <span class="truncate text-fg" [fieldOf]="pin" qitsField="repository">{{
-                            pin.repository
-                          }}</span>
+                          <a
+                            class="truncate text-accent no-underline hover:underline"
+                            [qitsExit]="repositoryLinks.opening.repository"
+                            [exitParams]="repositoryLinks.params(pin.repository)"
+                            [fieldOf]="pin"
+                            qitsField="repository"
+                            >{{ pin.repository }}</a
+                          >
                           <span
                             class="font-mono text-xs text-fg-soft max-md:col-start-1"
                             [fieldOf]="pin"
@@ -378,9 +400,14 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                         <li
                           class="grid grid-cols-[minmax(0,16rem)_minmax(0,10rem)_1fr_auto] items-baseline gap-x-3 px-3 py-1.5 max-md:grid-cols-[1fr_auto]"
                         >
-                          <span class="truncate text-fg" [fieldOf]="pin" qitsField="repository">{{
-                            pin.repository
-                          }}</span>
+                          <a
+                            class="truncate text-accent no-underline hover:underline"
+                            [qitsExit]="repositoryLinks.opening.repository"
+                            [exitParams]="repositoryLinks.params(pin.repository)"
+                            [fieldOf]="pin"
+                            qitsField="repository"
+                            >{{ pin.repository }}</a
+                          >
                           <span
                             class="font-mono text-xs text-fg-soft max-md:col-start-1"
                             [fieldOf]="pin"
@@ -422,6 +449,8 @@ function refused(read: { status(): string; error(): unknown }): boolean {
 })
 export class MaintenanceDependenciesPage {
   private readonly selected = inject(SelectedProject);
+  /** Each pin's repository links its maintenance page. */
+  protected readonly repositoryLinks = inject(MaintenanceRepositoryLinks);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
