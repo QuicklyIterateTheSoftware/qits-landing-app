@@ -201,6 +201,32 @@
       "route": "projects/:slug/agents"
     }
   ],
+  "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts": [
+    {
+      "provider": "qits-deployments-service",
+      "state": "a project with deployment requests",
+      "operationId": "listDeploymentRequests",
+      "route": "projects/:slug/deployments/requests"
+    },
+    {
+      "provider": "qits-deployments-service",
+      "state": "a project with no deployment requests",
+      "operationId": "listDeploymentRequests",
+      "route": "projects/:slug/deployments/requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/deployments/requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/deployments/requests"
+    }
+  ],
   "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",

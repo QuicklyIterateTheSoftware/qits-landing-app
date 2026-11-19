@@ -56,7 +56,7 @@
     "@pact-foundation/pact": "17.1.4",
     "@qits/artifacts-golden-masters": "2026.1114.172104",
     "@qits/ci-golden-masters": "2026.1113.31502",
-    "@qits/deployments-golden-masters": "2026.1117.72018",
+    "@qits/deployments-golden-masters": "2026.1119.842",
     "@qits/edge-golden-masters": "2026.1115.212737",
     "@qits/events-golden-masters": "2026.1118.203913",
     "@qits/githost-golden-masters": "2026.1109.41303",

@@ -36,7 +36,7 @@ interface Recorded {
  * screenshot cannot show: which domain events read the list again. The open project is the
  * recorded one ("a project with deployment requests"' `projectId`), and its release requests name
  * one repository, `billing-service`, which no deployment request names. qits-deployments records
- * the state from the release after 2026.1117.72018 on: until the pin reaches it, the spec skips
+ * the state from 2026.1119.842 on: until the pin reaches it, the spec skips
  * itself.
  */
 describe.skipIf(!isRecorded(WITH_REQUESTS, 'listDeploymentRequests', deploymentsGoldenMasters))(

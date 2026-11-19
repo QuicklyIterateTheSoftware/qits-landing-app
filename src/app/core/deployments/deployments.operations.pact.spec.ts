@@ -23,7 +23,7 @@ import { PROJECT_DEPLOYMENT_REQUESTS } from './deployments.operations';
  * One project's deployment requests (`?projectId=`), in a project with one request held at the
  * gate and one deployed ACTIVE through a met gate (`a project with deployment requests`), and in a
  * project none was ever asked for (`a project with no deployment requests`). qits-deployments
- * records both from the release after 2026.1117.72018 on: until the pin reaches it, each test skips
+ * records both from 2026.1119.842 on: until the pin reaches it, each test skips
  * itself and the committed pact holds no such interaction.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
