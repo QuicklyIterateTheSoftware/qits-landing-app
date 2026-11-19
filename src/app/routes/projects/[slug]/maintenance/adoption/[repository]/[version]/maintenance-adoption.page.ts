@@ -193,7 +193,7 @@ function refused(read: { status(): string; error(): unknown }): boolean {
 
                       @for (column of chart().columns; track column.key) {
                         <div
-                          class="absolute top-0 flex flex-col overflow-hidden rounded bg-accent-soft px-2 py-0.5 text-xs leading-snug whitespace-nowrap"
+                          class="absolute top-0 flex flex-col overflow-hidden rounded bg-accent-soft px-2 py-0.5 text-xs leading-normal whitespace-nowrap"
                           [style.left.px]="column.x"
                           [style.width.px]="cardWidth"
                           [attr.data-depth]="column.depth"
