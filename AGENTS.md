@@ -601,9 +601,9 @@ the release may deploy nothing or has not reached qits-deployments yet, with Loo
 is `<repository>@<version>`, named from `PROJECT_REPOSITORIES` (by id, else by name), else the
 `repoId`. The trail ends `release <version>`. 403 names the roles, else Retry. Staleness: the
 list's rule (`affectsDeploymentRequests`, the release's `repoId` the one repository). The pact adds
-"a release with a variant deployed" and "a release with no deployment requests" (the latter skips
-itself until the pin records it). No recording holds a release with one request, so the redirect is
-the plain spec's.
+"a release with a variant deployed", "a release with no deployment requests" and "a release with
+one deployment request" (the last two, and their browser tests, skip themselves until the pin
+records them).
 
 The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
 component whose pages are its children (`artifacts`, qits-2330; the external, bump, adoption,

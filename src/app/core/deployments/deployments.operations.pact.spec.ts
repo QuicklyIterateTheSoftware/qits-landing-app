@@ -52,7 +52,9 @@ import {
  * release whose main application and its `private` variant both deployed (`a release with a
  * variant deployed`), and a release none was asked for (`a release with no deployment requests`,
  * recorded by qits-deployments from a later release than the first: until the pin reaches it, its
- * test skips itself and the committed pact holds no such interaction).
+ * test skips itself and the committed pact holds no such interaction), and a release that produced
+ * exactly one request (`a release with one deployment request`, recorded later still, skipped the
+ * same way), which the page opens in its own place.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -70,6 +72,7 @@ const AN_ENVIRONMENT = 'an environment';
 const WITHOUT_REQUESTS = 'a project with no deployment requests';
 const RELEASE_WITH_VARIANT = 'a release with a variant deployed';
 const RELEASE_WITHOUT_REQUESTS = 'a release with no deployment requests';
+const RELEASE_WITH_ONE = 'a release with one deployment request';
 const LIST = PROJECT_DEPLOYMENT_REQUESTS.operationId;
 /** Whether the pinned golden masters record any state; until then the spec writes no pact. */
 const RECORDED =
@@ -210,6 +213,26 @@ describe('qits-landing-app → qits-deployments-service pact: the Deployments se
         );
         expect(error).toBeUndefined();
         expect(data?.deploymentRequests).toEqual([]);
+      }),
+  );
+
+  it.skipIf(!isRecorded(RELEASE_WITH_ONE, LIST, masters))(
+    'show-release-deployment-requests: a release that produced one request',
+    () =>
+      given(
+        RELEASE_DEPLOYMENT_REQUESTS,
+        RELEASE_WITH_ONE,
+        'show-release-deployment-requests',
+      ).executeTest(async (server) => {
+        const { data, error } = await at(server.url, () =>
+          RELEASE_DEPLOYMENT_REQUESTS.fetch({ query: releaseOf(RELEASE_WITH_ONE) }),
+        );
+        expect(error).toBeUndefined();
+        const rows = data?.deploymentRequests ?? [];
+        expect(rows.map((row) => row.id)).toEqual([
+          masters.operation(RELEASE_WITH_ONE, LIST).params['deploymentRequestId'],
+        ]);
+        expect(rows[0]?.variant ?? null).toBeNull();
       }),
   );
 

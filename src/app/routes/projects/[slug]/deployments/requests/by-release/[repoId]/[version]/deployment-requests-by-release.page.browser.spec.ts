@@ -16,6 +16,7 @@ import { provideTestPlatformOrigins } from '../../../../../../../../../testing/p
 
 const WITH_VARIANT = 'a release with a variant deployed';
 const WITHOUT_REQUESTS = 'a release with no deployment requests';
+const WITH_ONE = 'a release with one deployment request';
 const REPOSITORIES = 'a project with 3 repositories';
 const LIST = '/deployments/api/deployment-requests';
 
@@ -30,8 +31,9 @@ const LIST = '/deployments/api/deployment-requests';
  * the pin reaches it). The project's repositories are qits-projects' "a project with 3
  * repositories", none of which is the recorded release's, so the heading names it by its `repoId`.
  * A refusal is a 403 with no body, as the service answers a credential without a deployments role.
- * A release with exactly one request opens that request's page in its place; no recording holds
- * one, so the plain spec covers it.
+ * A release with exactly one request ("a release with one deployment request", recorded from a
+ * later qits-deployments release, so its test skips itself until the pin reaches it) opens that
+ * request's page in its place.
  */
 describe('DeploymentRequestsByReleasePage (screenshots)', () => {
   let http: HttpTestingController;
@@ -70,6 +72,7 @@ describe('DeploymentRequestsByReleasePage (screenshots)', () => {
   const RELEASES: Readonly<Record<string, { repoId: string; version: string }>> = {
     [WITH_VARIANT]: { repoId: 'contract-app-00000001', version: '2026.101.120000' },
     [WITHOUT_REQUESTS]: { repoId: 'contract-app-no-requests', version: '2026.104.120000' },
+    [WITH_ONE]: { repoId: 'contract-app-00000001', version: '2026.101.120000' },
   };
   const releaseOf = (state: string) => RELEASES[state];
 
@@ -162,6 +165,28 @@ describe('DeploymentRequestsByReleasePage (screenshots)', () => {
       await goldenMaster(WITHOUT_REQUESTS, 'listDeploymentRequests', 'qits-deployments'),
     );
     await opened.settled();
+  });
+
+  it('follow-release-deployment-request request: one request opens its page in this one’s place', async (context) => {
+    // Recorded from a later qits-deployments release than the pinned one: until the pin reaches it
+    // (and the pact holds it), the reader refuses it and the test skips itself.
+    const recorded = await goldenMaster(
+      WITH_ONE,
+      'listDeploymentRequests',
+      'qits-deployments',
+    ).catch(() => undefined);
+    if (!recorded) context.skip();
+    const [only] = (recorded as { deploymentRequests: { id: string }[] }).deploymentRequests;
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    const { opened } = await answered(WITH_ONE);
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'follow-release-deployment-request:request',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/deployments/requests/${only.id}`,
+    );
+    expect(navigate.mock.calls.at(-1)?.[1]).toMatchObject({ replaceUrl: true });
   });
 
   it('marks the page as loading, then says who may read deployment requests', async () => {
