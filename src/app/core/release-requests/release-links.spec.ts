@@ -56,12 +56,27 @@ describe('release links', () => {
     ).toEqual([
       ['githost', `${SCOPE}tags/2026.1.1`],
       ['githost', `${SCOPE}commit/abc`],
-      ['deployments', '/qits/deployment-requests/by-release/r1/2026.1.1'],
+      [undefined, '/projects/qits/deployments/requests/by-release/r1/2026.1.1'],
       ['maintenance', '/qits/trains/by-release/qits-ci-service/2026.1.1'],
     ]);
     expect(
       releaseLinks({ ...base, version: '2026.1.1', deployable: false }).map((link) => link.app),
     ).toEqual(['githost', 'maintenance']);
     expect(releaseLinks({ ...base, deployable: true })).toEqual([]);
+  });
+
+  it('links the deployment requests of the release in this app, each segment encoded', () => {
+    const [deployment] = releaseLinks({
+      slug: 'qits',
+      scope: SCOPE,
+      repoId: 'repo/1',
+      version: '2026.1.1+x',
+      deployable: true,
+    }).filter((link) => link.label === 'The deployment of this release');
+    expect(deployment).toEqual({
+      label: 'The deployment of this release',
+      path: '/projects/qits/deployments/requests/by-release/repo%2F1/2026.1.1%2Bx',
+      release: { repoId: 'repo/1', version: '2026.1.1+x' },
+    });
   });
 });
