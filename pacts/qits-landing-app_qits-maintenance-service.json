@@ -348,6 +348,885 @@
         "references": {
           "qits-call": {
             "app": "qits-maintenance-service",
+            "operationId": "listDependencies"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "search-project-dependencies",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/dependencies"
+          }
+        }
+      },
+      "description": "search-project-dependencies: listDependencies",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "dependencies matching a glob, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies",
+        "query": {
+          "kind": [
+            "INTERNAL"
+          ],
+          "name": [
+            "*p*"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "ecosystem": "npm",
+              "error": null,
+              "latest": "2026.9.1",
+              "name": "@qits/ui-components",
+              "pins": [
+                {
+                  "manifestPath": "package.json",
+                  "pending": true,
+                  "repository": "contract-frontend",
+                  "version": "2026.8.1"
+                }
+              ]
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].latest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].pins[*].manifestPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins[*].pending": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins[*].repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencies"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "search-project-dependencies",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/dependencies"
+          }
+        }
+      },
+      "description": "search-project-dependencies: listDependencies",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "external dependencies matching a glob, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies",
+        "query": {
+          "kind": [
+            "EXTERNAL"
+          ],
+          "name": [
+            "*p*"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "ecosystem": "maven",
+              "error": null,
+              "latest": "3.40.1",
+              "name": "io.quarkus.platform:quarkus-bom",
+              "pins": [
+                {
+                  "manifestPath": "pom.xml",
+                  "pending": false,
+                  "repository": "contract-service",
+                  "version": "3.40.1"
+                },
+                {
+                  "manifestPath": "pom.xml",
+                  "pending": false,
+                  "repository": "contract-service",
+                  "version": "3.40.1"
+                }
+              ]
+            },
+            {
+              "ecosystem": "npm",
+              "error": "the packument lists no versions",
+              "latest": null,
+              "name": "left-pad",
+              "pins": [
+                {
+                  "manifestPath": "package.json",
+                  "pending": false,
+                  "repository": "contract-frontend",
+                  "version": "1.3.0"
+                }
+              ]
+            },
+            {
+              "ecosystem": "npm",
+              "error": null,
+              "latest": "5.9.3",
+              "name": "typescript",
+              "pins": [
+                {
+                  "manifestPath": "package.json",
+                  "pending": true,
+                  "repository": "contract-tooling",
+                  "version": "5.9.2"
+                }
+              ]
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.pins[*].manifestPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].pending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.error": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.pins[*].manifestPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].pending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.pins[*].manifestPath": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].pending": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.pins[*].version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencies"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "search-project-dependencies",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/dependencies"
+          }
+        }
+      },
+      "description": "search-project-dependencies: listDependencies",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no dependencies matching a glob",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies",
+        "query": {
+          "kind": [
+            "INTERNAL"
+          ],
+          "name": [
+            "nothing-matches-*"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencies"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "search-project-dependencies",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/dependencies"
+          }
+        }
+      },
+      "description": "search-project-dependencies: listDependencies",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no external dependencies matching a glob",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies",
+        "query": {
+          "kind": [
+            "EXTERNAL"
+          ],
+          "name": [
+            "nothing-matches-*"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "search-project-dependencies",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/dependencies"
+          }
+        }
+      },
+      "description": "search-project-dependencies: listRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "dependencies matching a glob, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/repositories"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].project": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "search-project-dependencies",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/dependencies"
+          }
+        }
+      },
+      "description": "search-project-dependencies: listRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no dependencies matching a glob",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/repositories"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            },
+            {
+              "name": "contract-frontend",
+              "project": "00000000-0000-4000-8000-000000000001"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].project": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
             "operationId": "listDependencyDependents"
           },
           "qits-trigger": {

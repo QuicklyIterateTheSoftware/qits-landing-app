@@ -604,8 +604,13 @@ REACTOR modules). The doors take no project, so the page keeps the pins of the r
 and External, each headed by its count of dependencies and behind pins; within one, dependencies
 with a behind (`pending`) pin first, then by name, each pin with its repository (plain text),
 version, manifest and a "behind" tag; a null `latest` shows as unknown with the `error` beside it.
-"Only behind" is `?behind=true` (written with `replaceUrl`). Only staff roles may read the
-inventory; a 403 says so. No domain event follows the inventory: Refresh reads all three again.
+"Only behind" is `?behind=true` (written with `replaceUrl`). The name search (qits-2331, which
+replaces qits-maintenance-frontend's `external/dependencies` page) is `?name=<glob>`, pushed (Back
+is the previous search), trimmed, removed when blank: both dependencies reads then carry it
+(`kind=…&name=…`), the service matches the whole name case-sensitively (`*`, `?`), the page filters
+no name itself; without it the reads are exactly the unsearched ones. While searching, each heading
+says `matching "<glob>"`, a section with no match says so, and "nothing has been scanned" is not
+said. Only staff roles may read the inventory; a 403 says so. No domain event follows the inventory: Refresh reads all three again.
 `projectRepositories` (`core/maintenance/project-repositories.ts`) is that project filter, shared by
 the section's pages.
 
