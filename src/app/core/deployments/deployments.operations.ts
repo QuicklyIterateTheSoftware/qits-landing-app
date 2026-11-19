@@ -12,12 +12,13 @@ import {
   GET_DEPLOYMENT_REQUEST,
   LIST_ENVIRONMENTS,
   LIST_PROJECT_DEPLOYMENT_REQUESTS,
+  LIST_RELEASE_DEPLOYMENT_REQUESTS,
   LIST_TIER_DEPLOYMENTS,
 } from './deployments.consumes';
 
 /**
- * qits-deployments' reads and writes declared as operations (qits-2315, qits-2322), for the
- * Deployments section's pages, which read them through `qitsResource` and write through
+ * qits-deployments' reads and writes declared as operations (qits-2315, qits-2322, qits-2323),
+ * for the Deployments section's pages, which read them through `qitsResource` and write through
  * `qitsMutation`; `deployments.operations.pact.spec.ts` binds each with the same provider,
  * operationId and `consumes`. The deployment request doors answer `qits:admin`,
  * `qits:admin-agent`, `qits:desk-admin`, `qits:desk`, `qits:agent` and `qits:system` only; anyone
@@ -34,6 +35,20 @@ export const PROJECT_DEPLOYMENT_REQUESTS = qitsOperation({
   method: 'GET',
   call: listDeploymentRequests,
   consumes: LIST_PROJECT_DEPLOYMENT_REQUESTS,
+});
+
+/**
+ * The deployment requests one release produced (`?repoId=&version=&includeVariants=true`,
+ * qits-2323), newest first: the main application's and its variants' (redeploys among them). The
+ * page always asks with `includeVariants: true`; without it the service answers the main
+ * application's rows alone.
+ */
+export const RELEASE_DEPLOYMENT_REQUESTS = qitsOperation({
+  provider: 'qits-deployments-service',
+  operationId: 'listDeploymentRequests',
+  method: 'GET',
+  call: listDeploymentRequests,
+  consumes: LIST_RELEASE_DEPLOYMENT_REQUESTS,
 });
 
 /**
