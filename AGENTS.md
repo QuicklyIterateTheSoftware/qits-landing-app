@@ -399,7 +399,7 @@ payload concerns (`eventSubjects`) and links a release request and a work item
 
 A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
 between Observability and Events) reads qits-artifacts' whole docs catalog through its own
-`qitsResource` over `DOCS_SITES` (`listDocsSites` of the `docs` repository; never
+`qitsResource` over `DOCS_CATALOG` (`listDocsSites` of the `docs` repository; never
 qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
 `shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
 rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
@@ -407,6 +407,20 @@ A row leaves for the site's reader on the docs app (`open-docs-site`, `external(
 `docsReadPath` without a version) until qits-2337 moves it here. The docs store sends no domain
 event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
 empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
+
+A repository's Docs page (qits-2336, `projects/<slug>/docs/repositories/<repo>`,
+`RepositoryDocsPage`; a fixed `repositories` segment, so a name never reads as a reader path under
+`docs/`) lists the catalog's sites whose newest version the repository published: the catalog's
+`latestRepository` (the newest version's `git.repository.name`, `publishedBy`), never the site's
+name (`@contracts/qits-ci` is `qits-ci-service`'s) and never one `listDocsVersions` per site. It
+finds the address's name in the project's repositories (`PROJECT_REPOSITORY_NAMES`,
+`repositoryNamed`; an unknown name says so) and keeps `?section=`, which the docs app's old
+repository addresses redirect to. The project's Docs page names a row's repository when the project
+holds it (`projectRepositoryOf`), and every repository card has a `Docs →`; both are
+`open-repository-docs`. `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES` are `listDocsSites` and
+`listProjectRepositories` with consumes of their own (`LIST_DOCS_CATALOG`, `REPOSITORY_NAMES`):
+the states the builder's and the cards' interactions are recorded in hold no `latestRepository`
+or `lastBackup`, and a path the recorded body lacks cannot be bound.
 
 A CI run's page (qits-2321, `projects/<slug>/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
 other CI page) reads the run once through its own `qitsResource` over `RUN` (`getRun`) and joins it

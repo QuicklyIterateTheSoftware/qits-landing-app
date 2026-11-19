@@ -22,12 +22,20 @@ import {
   DOCS_REPOSITORY,
   GET_DOCS_FILE,
   GET_DOCS_VERSION,
+  LIST_DOCS_CATALOG,
   LIST_DOCS_SITES,
   LIST_DOCS_VERSIONS,
+  type DocsCatalogSite,
   type DocsSite,
   type DocsVersions,
 } from './docs.consumes';
-import { DOCS_FILE, DOCS_SITES, DOCS_VERSION, DOCS_VERSIONS } from './docs.operations';
+import {
+  DOCS_CATALOG,
+  DOCS_FILE,
+  DOCS_SITES,
+  DOCS_VERSION,
+  DOCS_VERSIONS,
+} from './docs.operations';
 import { asEntityMap, type EntityMap } from './entity-map';
 import { safeRecordedFile } from './golden-masters';
 import { blobDataUrl, routesSiteOf, type BundleVersion } from './routes-bundles';
@@ -51,7 +59,7 @@ if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
 }
 
 it('declares the provider these parts bind', () => {
-  for (const op of [DOCS_SITES, DOCS_VERSIONS, DOCS_VERSION, DOCS_FILE]) {
+  for (const op of [DOCS_SITES, DOCS_CATALOG, DOCS_VERSIONS, DOCS_VERSION, DOCS_FILE]) {
     expect(op.provider).toBe('qits-artifacts-service');
   }
 });
@@ -902,167 +910,45 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
 
 {
   /**
-   * qits-landing-app's pact with qits-artifacts-service, the Docs page's part (qits-2318):
-   * `ProjectDocsPage` lists the whole catalog (`DOCS_SITES`) and groups it by section
-   * (`docBlocks`). This spec owns `listDocsSites`' interactions for `show-project-docs` alone.
+   * qits-landing-app's pact with qits-artifacts-service, the Docs pages' parts: `ProjectDocsPage`
+   * (qits-2318) lists the whole catalog (`DOCS_CATALOG`) and groups it by section (`docBlocks`),
+   * naming each site's publisher when the project holds it; `RepositoryDocsPage` (qits-2336) keeps
+   * the sites whose newest version the repository published (`latestRepository`, `publishedBy`).
+   * Each part owns `listDocsSites`' interactions for its own trigger alone: `show-project-docs`,
+   * `show-repository-docs`.
    *
    * Against qits-artifacts' recordings of `a docs catalog of every kind` (a site of every section:
    * `@apidocs/`, `@userflows/`, `@guides/`, `@contracts/`, `@routes/`, `@changelog/`, and two
-   * Storybook sites, scoped and not) and `an empty docs catalog`. The catalog is bound by its
-   * recorded first element at least the recorded count, so the mock server repeats
-   * `@apidocs/qits-ci`: the page groups that into one API docs block. Both states are recorded from
-   * `@qits/artifacts-golden-masters` releases after 2026.1114.172104; on an older pin the interactions
-   * skip themselves until qits-maintenance bumps it.
+   * Storybook sites, scoped and not; each newest version names its repository, `qits-ci-service`
+   * three of them, but `qits-storybook`'s names none) and `an empty docs catalog`. The sites are
+   * bound by type, one variant per shape (with and without `latestRepository`), so the mock server
+   * answers recorded sites, not every one: each test holds what it gets to the recording. Both
+   * states record `latestRepository` from the `@qits/artifacts-golden-masters` release after
+   * qits-2336 on; on an older pin the interactions skip themselves until qits-maintenance bumps it.
    */
   const CONSUMER = 'qits-landing-app';
   const PROVIDER = 'qits-artifacts-service';
   const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-  const SLUG: InteractionSlug = 'show-project-docs';
-  const OPERATIONS: readonly OwnedOperation[] = [
-    { operationId: 'listDocsSites', interactions: [SLUG] },
-  ];
-
-  const EVERY_KIND = 'a docs catalog of every kind';
-  const EMPTY = 'an empty docs catalog';
-
-  /** Whether the installed golden masters record `listDocsSites` in `state`. */
-  const recorded = (state: string) => {
-    try {
-      masters.operation(state, 'listDocsSites');
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const given = (state: string) =>
-    addGoldenInteraction(pact, masters, {
-      provider: PROVIDER,
-      state,
-      operationId: 'listDocsSites',
-      trigger: { kind: 'ui', app: CONSUMER, interaction: SLUG },
-      consumes: LIST_DOCS_SITES,
-    });
-
-  /** Runs `call` against the mock server at `url`, in an injection context. */
-  function at<T>(url: string, call: () => Promise<T>): Promise<T> {
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: PLATFORM_ID, useValue: 'server' },
-        provideHttpClient(withFetch()),
-        provideHeyApiClient(artifactsClient),
-      ],
-    });
-    artifactsClient.setConfig({ baseUrl: url });
-    return TestBed.runInInjectionContext(call);
-  }
-
-  /** The catalog's blocks, as the page groups them; null when the read fails. */
-  async function blocksFound() {
-    const { data, error } = await DOCS_SITES.fetch({ path: DOCS });
-    return error !== undefined || !data ? null : docBlocks(data.sites ?? []);
-  }
-
-  let dir = '';
-  let pact: PactV4;
-
-  describe('qits-landing-app → qits-artifacts-service pact: the Docs page', () => {
-    beforeAll(() => {
-      dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-docs-page-pact-'));
-      pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
-    });
-
-    afterAll(() => {
-      artifactsClient.setConfig({ baseUrl: '' });
-      try {
-        // Skipped on an older pin, the run writes no file: nothing of this part to compare yet.
-        if (recorded(EVERY_KIND) || recorded(EMPTY)) {
-          assertPactPart(
-            join(dir, `${CONSUMER}-${PROVIDER}.json`),
-            COMMITTED,
-            OPERATIONS,
-            'QITS_GOLDEN_UPDATE',
-          );
-        }
-      } finally {
-        rmSync(dir, { recursive: true, force: true });
-      }
-    });
-
-    it.skipIf(!recorded(EVERY_KIND))(
-      'show-project-docs: groups the catalog’s sites by section, each with its versions',
-      () =>
-        given(EVERY_KIND).executeTest(async (server) => {
-          const blocks = await at(server.url, () => blocksFound());
-          const first = masters.body<{ sites: DocsSite[] }>(EVERY_KIND, 'listDocsSites').sites[0];
-          // Bound by its recorded first element, `@apidocs/qits-ci`, repeated: one API docs block.
-          expect(blocks?.map((block) => block.section.kind)).toEqual(['apidocs']);
-          expect(blocks?.[0].sites.length).toBeGreaterThan(0);
-          for (const site of blocks?.[0].sites ?? []) {
-            expect(site.name).toBe(first.name);
-            expect(site.latestVersion).toBe(first.latestVersion);
-            expect(site.versionCount).toBe(first.versionCount);
-            expect(site.latestPublishedAt).toEqual(expect.any(String));
-          }
-        }),
-    );
-
-    it.skipIf(!recorded(EMPTY))('show-project-docs: an empty catalog makes no block', () =>
-      given(EMPTY).executeTest(async (server) => {
-        expect(await at(server.url, () => blocksFound())).toEqual([]);
-      }),
-    );
-  });
-}
-
-{
-  /**
-   * qits-landing-app's pact with qits-artifacts-service, a repository's Docs page's part
-   * (qits-2336): `RepositoryDocsPage` lists the catalog's sites whose newest version the repository
-   * published (`latestRepository`, `publishedBy`) and groups them by section (`docBlocks`). This
-   * spec owns `listDocsSites`' interactions for `show-repository-docs` alone.
-   *
-   * Against qits-artifacts' recordings of `a docs catalog of every kind`, where each site's newest
-   * version names its repository (`qits-ci-service` published `@apidocs/qits-ci`,
-   * `@contracts/qits-ci` and `@changelog/qits-ci-service`; `qits-storybook` names none), and `an
-   * empty docs catalog`. The catalog is bound by its recorded first element at least the recorded
-   * count, so the mock server repeats `@apidocs/qits-ci`, `qits-ci-service`'s: the page keeps every
-   * one in one API docs block. The states record `latestRepository` from the
-   * `@qits/artifacts-golden-masters` release after qits-2336 on; on an older pin the interactions
-   * skip themselves until qits-maintenance bumps it.
-   */
-  const CONSUMER = 'qits-landing-app';
-  const PROVIDER = 'qits-artifacts-service';
-  const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
-  const SLUG: InteractionSlug = 'show-repository-docs';
-  const OPERATIONS: readonly OwnedOperation[] = [
-    { operationId: 'listDocsSites', interactions: [SLUG] },
-  ];
 
   const EVERY_KIND = 'a docs catalog of every kind';
   const EMPTY = 'an empty docs catalog';
 
   /**
    * Whether the installed golden masters record the catalog's publishers (`latestRepository` in
-   * `a docs catalog of every kind`): the pin both interactions wait for.
+   * `a docs catalog of every kind`): the pin the interactions wait for.
    */
   const current = (() => {
     try {
-      const sites = masters.body<{ sites: DocsSite[] }>(EVERY_KIND, 'listDocsSites').sites;
+      const sites = masters.body<{ sites: DocsCatalogSite[] }>(EVERY_KIND, 'listDocsSites').sites;
       return sites.some((site) => !!site.latestRepository);
     } catch {
       return false;
     }
   })();
 
-  const given = (state: string) =>
-    addGoldenInteraction(pact, masters, {
-      provider: PROVIDER,
-      state,
-      operationId: 'listDocsSites',
-      trigger: { kind: 'ui', app: CONSUMER, interaction: SLUG },
-      consumes: LIST_DOCS_SITES,
-    });
+  /** The recorded catalog of `state`. */
+  const recordedSites = (state: string) =>
+    masters.body<{ sites: DocsCatalogSite[] }>(state, 'listDocsSites').sites;
 
   /** Runs `call` against the mock server at `url`, in an injection context. */
   function at<T>(url: string, call: () => Promise<T>): Promise<T> {
@@ -1077,66 +963,114 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
     return TestBed.runInInjectionContext(call);
   }
 
-  /** `repository`'s blocks, as the page groups them; null when the read fails. */
-  async function blocksOf(repository: string) {
-    const { data, error } = await DOCS_SITES.fetch({ path: DOCS });
-    return error !== undefined || !data
-      ? null
-      : docBlocks(publishedBy(data.sites ?? [], repository));
+  /** The catalog's sites, as the pages read them; null when the read fails. */
+  async function catalogRead(): Promise<readonly DocsCatalogSite[] | null> {
+    const { data, error } = await DOCS_CATALOG.fetch({ path: DOCS });
+    return error !== undefined || !data ? null : (data.sites ?? []);
   }
 
-  let dir = '';
-  let pact: PactV4;
+  /** Holds each site answered to the recorded site of its name, field by field. */
+  function expectRecorded(sites: readonly DocsCatalogSite[], state: string) {
+    const recorded = recordedSites(state);
+    for (const site of sites) {
+      const named = recorded.find((r) => r.name === site.name);
+      expect(named, site.name).toBeDefined();
+      expect(site.latestVersion).toBe(named?.latestVersion);
+      expect(site.versionCount).toBe(named?.versionCount);
+      expect(site.latestRepository).toBe(named?.latestRepository);
+      expect(site.latestPublishedAt).toEqual(expect.any(String));
+    }
+  }
 
-  describe('qits-landing-app → qits-artifacts-service pact: a repository’s Docs page', () => {
-    beforeAll(() => {
-      dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-repository-docs-pact-'));
-      pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
-    });
+  /** One part of the file: its own pact, owning `slug`'s `listDocsSites` interactions. */
+  function part(
+    slug: InteractionSlug,
+    title: string,
+    tests: (given: (state: string) => ReturnType<typeof addGoldenInteraction>) => void,
+  ) {
+    let dir = '';
+    let pact: PactV4;
+    const given = (state: string) =>
+      addGoldenInteraction(pact, masters, {
+        provider: PROVIDER,
+        state,
+        operationId: 'listDocsSites',
+        trigger: { kind: 'ui', app: CONSUMER, interaction: slug },
+        consumes: LIST_DOCS_CATALOG,
+      });
 
-    afterAll(() => {
-      artifactsClient.setConfig({ baseUrl: '' });
-      try {
-        // Skipped on an older pin, the run writes no file: nothing of this part to compare yet.
-        if (current) {
-          assertPactPart(
-            join(dir, `${CONSUMER}-${PROVIDER}.json`),
-            COMMITTED,
-            OPERATIONS,
-            'QITS_GOLDEN_UPDATE',
-          );
+    describe(`qits-landing-app → qits-artifacts-service pact: ${title}`, () => {
+      beforeAll(() => {
+        dir = mkdtempSync(join(tmpdir(), `qits-landing-artifacts-${slug}-pact-`));
+        pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
+      });
+
+      afterAll(() => {
+        artifactsClient.setConfig({ baseUrl: '' });
+        try {
+          // Skipped on an older pin, the run writes no file: nothing of this part to compare yet.
+          if (current) {
+            assertPactPart(
+              join(dir, `${CONSUMER}-${PROVIDER}.json`),
+              COMMITTED,
+              [{ operationId: 'listDocsSites', interactions: [slug] }],
+              'QITS_GOLDEN_UPDATE',
+            );
+          }
+        } finally {
+          rmSync(dir, { recursive: true, force: true });
         }
-      } finally {
-        rmSync(dir, { recursive: true, force: true });
-      }
-    });
+      });
 
+      tests(given);
+    });
+  }
+
+  part('show-project-docs', 'the Docs page', (given) => {
+    it.skipIf(!current)(
+      'show-project-docs: groups the catalog’s sites by section, each with its versions and publisher',
+      () =>
+        given(EVERY_KIND).executeTest(async (server) => {
+          const sites = (await at(server.url, () => catalogRead())) ?? [];
+          const blocks = docBlocks(sites);
+          expect(blocks.length).toBeGreaterThan(0);
+          expectRecorded(sites, EVERY_KIND);
+          // A site with a publisher, and one without (`qits-storybook`): the page links the first only.
+          expect(sites.some((site) => !!site.latestRepository)).toBe(true);
+          expect(sites.some((site) => !site.latestRepository)).toBe(true);
+        }),
+    );
+
+    it.skipIf(!current)('show-project-docs: an empty catalog makes no block', () =>
+      given(EMPTY).executeTest(async (server) => {
+        expect(docBlocks((await at(server.url, () => catalogRead())) ?? [])).toEqual([]);
+      }),
+    );
+  });
+
+  part('show-repository-docs', 'a repository’s Docs page', (given) => {
     it.skipIf(!current)(
       'show-repository-docs: keeps the sites the repository published, by section',
       () =>
         given(EVERY_KIND).executeTest(async (server) => {
-          const first = masters.body<{ sites: DocsSite[] }>(EVERY_KIND, 'listDocsSites').sites[0];
-          const repository = first.latestRepository ?? '';
-          expect(repository).toBeTruthy();
-          const blocks = await at(server.url, () => blocksOf(repository));
-          // Bound by its recorded first element, `@apidocs/qits-ci`, repeated: one API docs block.
-          expect(blocks?.map((block) => block.section.kind)).toEqual(['apidocs']);
-          expect(blocks?.[0].sites.length).toBeGreaterThan(0);
-          for (const site of blocks?.[0].sites ?? []) {
-            expect(site.name).toBe(first.name);
-            expect(site.latestRepository).toBe(repository);
-            expect(site.latestVersion).toBe(first.latestVersion);
-            expect(site.versionCount).toBe(first.versionCount);
-            expect(site.latestPublishedAt).toEqual(expect.any(String));
+          const sites = (await at(server.url, () => catalogRead())) ?? [];
+          expectRecorded(sites, EVERY_KIND);
+          const publisher = sites.find((site) => !!site.latestRepository)?.latestRepository ?? '';
+          expect(publisher).toBeTruthy();
+          const blocks = docBlocks(publishedBy(sites, publisher));
+          expect(blocks.length).toBeGreaterThan(0);
+          for (const block of blocks) {
+            for (const site of block.sites) expect(site.latestRepository).toBe(publisher);
           }
           // A repository that published none of them keeps no block.
-          expect(await at(server.url, () => blocksOf('qits-ci-frontend'))).toEqual([]);
+          expect(docBlocks(publishedBy(sites, 'no-such-repository'))).toEqual([]);
         }),
     );
 
     it.skipIf(!current)('show-repository-docs: an empty catalog makes no block', () =>
       given(EMPTY).executeTest(async (server) => {
-        expect(await at(server.url, () => blocksOf('qits-ci-service'))).toEqual([]);
+        const sites = (await at(server.url, () => catalogRead())) ?? [];
+        expect(docBlocks(publishedBy(sites, 'qits-ci-service'))).toEqual([]);
       }),
     );
   });

@@ -20,18 +20,22 @@ import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { docsReadPath } from '$core/release-requests/release-links';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
-import { PROJECT_REPOSITORIES } from '$core/repositories/repositories.operations';
+import { PROJECT_REPOSITORY_NAMES } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { loadState } from '$core/resources/load-state';
-import { DOCS_REPOSITORY, type DocsSite, type DocsSites } from '$core/ui-builder/docs.consumes';
-import { DOCS_SITES } from '$core/ui-builder/docs.operations';
+import {
+  DOCS_REPOSITORY,
+  type DocsCatalog,
+  type DocsCatalogSite,
+} from '$core/ui-builder/docs.consumes';
+import { DOCS_CATALOG } from '$core/ui-builder/docs.operations';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** No sites yet. */
-const NO_SITES: DocsSites = { sites: [] };
+const NO_SITES: DocsCatalog = { sites: [] };
 
 /**
  * One repository's docs, at `/projects/<slug>/docs/repositories/<repository name>` (qits-2336):
@@ -42,8 +46,8 @@ const NO_SITES: DocsSites = { sites: [] };
  * newest was published (the instant on hover), as on the project's page.
  *
  * Two reads, each its own `qitsResource`, in the browser only (the server render has no session):
- * the project's repositories (`PROJECT_REPOSITORIES`), where the address's name is found
- * (`repositoryNamed`), and qits-artifacts' docs catalog (`DOCS_SITES`, `listDocsSites` of the
+ * the project's repositories (`PROJECT_REPOSITORY_NAMES`), where the address's name is found
+ * (`repositoryNamed`), and qits-artifacts' docs catalog (`DOCS_CATALOG`, `listDocsSites` of the
  * `docs` repository), whose sites are kept by the repository their newest version names
  * (`latestRepository`, `publishedBy`): never by the site's name (`@contracts/qits-ci` is
  * `qits-ci-service`'s), never one read per site, never qits-docs-service.
@@ -301,7 +305,7 @@ export class RepositoryDocsPage {
 
   /** The open project's repositories, read again after a commit to its wrapper's main branch. */
   protected readonly repositories = qitsResource(
-    PROJECT_REPOSITORIES,
+    PROJECT_REPOSITORY_NAMES,
     () => {
       const projectId = this.projectId();
       return projectId ? { path: { projectId } } : undefined;
@@ -315,7 +319,7 @@ export class RepositoryDocsPage {
   );
 
   /** Every docs site, in the browser only (the server render has no session). */
-  protected readonly sites = qitsResource(DOCS_SITES, () =>
+  protected readonly sites = qitsResource(DOCS_CATALOG, () =>
     this.browser ? { path: { repository: DOCS_REPOSITORY } } : undefined,
   );
 
@@ -333,11 +337,11 @@ export class RepositoryDocsPage {
 
   /** The catalog as read; no sites until it answered. */
   protected readonly catalog = computed(
-    (): DocsSites => (this.sites.hasValue() ? this.sites.value() : undefined) ?? NO_SITES,
+    (): DocsCatalog => (this.sites.hasValue() ? this.sites.value() : undefined) ?? NO_SITES,
   );
 
   /** The sites whose newest version this repository published. */
-  protected readonly mine = computed((): readonly DocsSite[] =>
+  protected readonly mine = computed((): readonly DocsCatalogSite[] =>
     publishedBy(this.catalog().sites ?? [], this.repo()),
   );
 
@@ -380,21 +384,21 @@ export class RepositoryDocsPage {
   }
 
   /** The site's reader on the docs app, at its newest version; `''` while the origin is unknown. */
-  protected href(site: DocsSite): string {
+  protected href(site: DocsCatalogSite): string {
     const slug = this.slug();
     if (!this.docsOrigin || !slug || !site.name) return '';
     return `${this.docsOrigin}${docsReadPath(`/${slug}/`, site.name)}`;
   }
 
   /** Leaves for the site's reader through `open-docs-site`, which records the outcome. */
-  protected open(event: MouseEvent, site: DocsSite): void {
+  protected open(event: MouseEvent, site: DocsCatalogSite): void {
     const href = this.href(site);
     if (!href || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
     event.preventDefault();
     this.opening.open.leave(href);
   }
 
-  protected short(site: DocsSite): string {
+  protected short(site: DocsCatalogSite): string {
     return shortNameOf(site.name ?? '');
   }
 

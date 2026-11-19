@@ -10,18 +10,23 @@ import type { ListDocsSitesResponses, ListDocsVersionsResponses } from '../../ap
 
 /**
  * Every docs site, to keep the `@routes/` or `@contracts/` ones and their newest version, and for
- * the Docs page (qits-2318) how many versions each holds and when its newest was published. The
- * Docs pages (qits-2336) also read which repository published the newest version
- * (`latestRepository`, its `git.repository.name`; absent when it names none), to list a
- * repository's sites and link each site to its repository.
+ * the Docs page (qits-2318) how many versions each holds and when its newest was published.
  */
 export const LIST_DOCS_SITES = [
   'sites[].name',
   'sites[].latestVersion',
   'sites[].versionCount',
   'sites[].latestPublishedAt',
-  'sites[].latestRepository',
 ] as const;
+
+/**
+ * The whole catalog as the Docs pages read it (qits-2336): {@link LIST_DOCS_SITES} and which
+ * repository published each site's newest version (`latestRepository`, its `git.repository.name`;
+ * absent when it names none), to list a repository's sites and link each site to its repository.
+ * A list of its own, because the states the UI builder's and the contracts pages' interactions are
+ * recorded in publish no repository name: a path the recorded body does not hold cannot be bound.
+ */
+export const LIST_DOCS_CATALOG = [...LIST_DOCS_SITES, 'sites[].latestRepository'] as const;
 
 /**
  * A site's versions, to learn which repository its newest version names (`git.repository.name`).
@@ -46,6 +51,12 @@ export type DocsSites = Consumed<ListDocsSitesResponses[200], typeof LIST_DOCS_S
 
 /** One site of the catalog, cut to what the app reads. */
 export type DocsSite = NonNullable<DocsSites['sites']>[number];
+
+/** The catalog as the Docs pages read it, with each site's publisher. */
+export type DocsCatalog = Consumed<ListDocsSitesResponses[200], typeof LIST_DOCS_CATALOG>;
+
+/** One site of the Docs pages' catalog. */
+export type DocsCatalogSite = NonNullable<DocsCatalog['sites']>[number];
 
 /** A site's versions, cut to what the app reads. */
 export type DocsVersions = Consumed<ListDocsVersionsResponses[200], typeof LIST_DOCS_VERSIONS>;

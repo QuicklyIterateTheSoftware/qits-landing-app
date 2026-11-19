@@ -573,8 +573,8 @@ export const INTERACTIONS = {
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
-   * `project-docs.page.ts` via `DOCS_SITES` (qits-2318): the Docs page lists every docs site the
-   * platform publishes, grouped by section; via `PROJECT_REPOSITORIES` (qits-2336) it names the
+   * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
+   * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.
    */
   'show-project-docs': 'The Docs page lists every published docs site, by section',
@@ -584,7 +584,7 @@ export const INTERACTIONS = {
    */
   'open-docs-site': 'A docs site’s row on a Docs page opens its reader',
   /**
-   * `repository-docs.page.ts` via `PROJECT_REPOSITORIES` and `DOCS_SITES` (qits-2336): a
+   * `repository-docs.page.ts` via `PROJECT_REPOSITORY_NAMES` and `DOCS_CATALOG` (qits-2336): a
    * repository's Docs page finds the repository in the project and lists the docs sites whose
    * newest version it published (`latestRepository`), by section.
    */

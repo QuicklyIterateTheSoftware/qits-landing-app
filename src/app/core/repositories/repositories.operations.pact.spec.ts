@@ -13,7 +13,12 @@ import type { InteractionSlug } from '../../interactions';
 import { projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { repositoryNamed } from '$core/ci/repository-ci';
-import { BACKUP_SYNC, LIST_PROJECT_WRAPPER, PROJECT_REPOSITORIES } from './repositories.operations';
+import {
+  BACKUP_SYNC,
+  LIST_PROJECT_WRAPPER,
+  PROJECT_REPOSITORIES,
+  PROJECT_REPOSITORY_NAMES,
+} from './repositories.operations';
 
 /**
  * The repository operations' part of qits-landing-app's pact with qits-projects-service
@@ -31,7 +36,7 @@ import { BACKUP_SYNC, LIST_PROJECT_WRAPPER, PROJECT_REPOSITORIES } from './repos
  *   whole list (the UI builder and the release request page read the same);
  * - `sync-backups-after-sign-in` (`BACKUP_SYNC`): the nudge after the backup sign-in, and a
  *   project qits-projects does not know (a 404, binding the status only);
- * - `show-repository-docs` and `show-project-docs` (`PROJECT_REPOSITORIES`, qits-2336): a
+ * - `show-repository-docs` and `show-project-docs` (`PROJECT_REPOSITORY_NAMES`, qits-2336): a
  *   repository's Docs page finds the address's repository by name, and the project's Docs page
  *   names the project's repository that published a site, in "two projects exist" (whose
  *   repositories are `qits-ci-service` and `qits-ci-frontend`, the publishers qits-artifacts'
@@ -104,7 +109,7 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
   });
 
   it('declares the provider this spec binds', () => {
-    for (const op of [LIST_PROJECT_WRAPPER, PROJECT_REPOSITORIES]) {
+    for (const op of [LIST_PROJECT_WRAPPER, PROJECT_REPOSITORIES, PROJECT_REPOSITORY_NAMES]) {
       expect(op.provider).toBe(PROVIDER);
     }
     expect(BACKUP_SYNC.provider).toBe(PROVIDER);
@@ -175,19 +180,21 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
   it.each(['show-repository-docs', 'show-project-docs'] as const)(
     '%s: the project’s repositories, found by name',
     (interaction) =>
-      given(PROJECT_REPOSITORIES, 'two projects exist', interaction).executeTest(async (server) => {
-        const state = 'two projects exist';
-        const { data } = await at(server.url, () =>
-          PROJECT_REPOSITORIES.fetch({ path: { projectId: projectOf(state) } }),
-        );
-        const entries = data?.entries ?? [];
-        expect(entries.length).toBeGreaterThan(0);
-        // Each entry is bound by type, so the mock answers the recorded examples' names.
-        const name = entries[0].repository?.name ?? '';
-        expect(name).toBeTruthy();
-        expect(repositoryNamed(entries, name)?.name).toBe(name);
-        expect(repositoryNamed(entries, 'no-such-repository')).toBeUndefined();
-      }),
+      given(PROJECT_REPOSITORY_NAMES, 'two projects exist', interaction).executeTest(
+        async (server) => {
+          const state = 'two projects exist';
+          const { data } = await at(server.url, () =>
+            PROJECT_REPOSITORY_NAMES.fetch({ path: { projectId: projectOf(state) } }),
+          );
+          const entries = data?.entries ?? [];
+          expect(entries.length).toBeGreaterThan(0);
+          // Each entry is bound by type, so the mock answers the recorded examples' names.
+          const name = entries[0].repository?.name ?? '';
+          expect(name).toBeTruthy();
+          expect(repositoryNamed(entries, name)?.name).toBe(name);
+          expect(repositoryNamed(entries, 'no-such-repository')).toBeUndefined();
+        },
+      ),
   );
 
   it('sync-backups-after-sign-in: the store schedules every repository’s backup', () =>
