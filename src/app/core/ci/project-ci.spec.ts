@@ -2,8 +2,6 @@ import { ciGoldenMaster, goldenMaster } from '../../../testing/golden-masters';
 import type { RepositoryEntry } from '$core/repositories/repositories.consumes';
 import type { ActiveCiRun, CiRepositorySummary } from './ci-runs.consumes';
 import {
-  ciRepositoryGroup,
-  ciRepositoryHref,
   ciRows,
   ciRunHref,
   filterCiRows,
@@ -140,21 +138,8 @@ describe('the CI page’s helpers', () => {
     expect(projectActiveRuns(runs, new Set(['another-repository']))).toEqual([]);
   });
 
-  it('groups a repository by its component, else its archetype’s category', () => {
-    expect(ciRepositoryGroup({ component: 'qits-ci', archetype: 'SERVICE' })).toBe('qits-ci');
-    expect(ciRepositoryGroup({ component: null, archetype: 'LIBRARY' })).toBe('libs');
-    expect(ciRepositoryGroup({ component: null, archetype: 'PROJECT' })).toBeUndefined();
-  });
-
-  it('links a repository and a run to qits-ci’s pages', () => {
+  it('links a run to qits-ci’s page', () => {
     const origin = 'https://ci.example';
-    expect(
-      ciRepositoryHref(origin, 'qits', { id: 'r1', name: 'qits-ci-service', group: 'qits-ci' }),
-    ).toBe('https://ci.example/qits/qits-ci/qits-ci-service');
-    expect(ciRepositoryHref(origin, 'qits', { id: 'r 1', name: 'qits', group: undefined })).toBe(
-      'https://ci.example/?repo=r%201',
-    );
-    expect(ciRepositoryHref('', 'qits', { id: 'r1', name: 'x', group: 'g' })).toBeUndefined();
     expect(ciRunHref(origin, 'run-1')).toBe('https://ci.example/runs/run-1');
     expect(ciRunHref(origin, undefined)).toBeUndefined();
   });

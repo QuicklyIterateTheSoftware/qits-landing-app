@@ -201,6 +201,38 @@
       "route": "projects/:slug/agents"
     }
   ],
+  "src/app/routes/projects/[slug]/ci/[repo]/ci-repository-runs.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a repository of the project with a run history",
+      "operationId": "listRuns",
+      "route": "projects/:slug/ci/:repo"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a repository of the project with no runs",
+      "operationId": "listRuns",
+      "route": "projects/:slug/ci/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/ci/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/ci/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/ci/:repo"
+    }
+  ],
   "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts": [
     {
       "provider": "qits-ci-service",

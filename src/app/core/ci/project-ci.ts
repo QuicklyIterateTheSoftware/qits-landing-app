@@ -51,39 +51,10 @@ export interface CiRepositoryRow {
   /** The repository's id, which the summaries are joined on. */
   readonly id: string;
   readonly name: string;
-  /** Its component, else its archetype's category (`ciRepositoryGroup`); none for the wrapper. */
-  readonly group: string | undefined;
   /** Its newest run, on any branch. */
   readonly lastRun: CiSummaryRun | undefined;
   /** Its newest run on its main branch. */
   readonly lastMainRun: CiSummaryRun | undefined;
-}
-
-/**
- * The archetype qits-projects records, mapped to the category qits-ci's chrome groups a
- * repository without a component by (`@qits/ui-components`' `repositories.ts`, `CATEGORY_OF`): the
- * middle segment of qits-ci's `/<project>/<group>/<repository>` address.
- */
-const CATEGORY_OF: Readonly<Record<string, string>> = {
-  SERVICE: 'services',
-  DAEMON: 'daemons',
-  LIBRARY: 'libs',
-  APP: 'apps',
-  FRONTEND: 'frontends',
-  CLI: 'cli',
-  IMAGE: 'images',
-};
-
-/**
- * A repository's group in qits-ci's addresses: its component where qits-projects records one,
- * else its archetype's category, as qits-ci's chrome groups it. None for a repository with
- * neither (the wrapper, whose archetype is `PROJECT`).
- */
-export function ciRepositoryGroup(repository: {
-  readonly component?: string | null;
-  readonly archetype?: string | null;
-}): string | undefined {
-  return repository.component || CATEGORY_OF[repository.archetype ?? ''] || undefined;
 }
 
 /** Milliseconds since the epoch of `iso`; `-Infinity` for none, so it sorts last. */
@@ -117,7 +88,6 @@ export function ciRows(
     rows.push({
       id: repository.id,
       name: repository.name ?? repository.id,
-      group: ciRepositoryGroup(repository),
       lastRun: summary?.lastRun ?? undefined,
       lastMainRun: summary?.lastMainRun ?? undefined,
     });
@@ -159,22 +129,6 @@ export function projectActiveRuns(
   repoIds: ReadonlySet<string>,
 ): readonly ActiveCiRun[] {
   return runs.filter((run) => !!run.repoId && repoIds.has(run.repoId));
-}
-
-/**
- * A repository's page in qits-ci (until qits-2320 gives it one here): `/<slug>/<group>/<name>`,
- * or, for a repository without a group (the wrapper), qits-ci's tree with it expanded
- * (`/?repo=<id>`, as the release request page links a repository's runs). Undefined without
- * qits-ci's origin.
- */
-export function ciRepositoryHref(
-  origin: string,
-  slug: string,
-  row: Pick<CiRepositoryRow, 'id' | 'name' | 'group'>,
-): string | undefined {
-  if (!origin) return undefined;
-  if (!row.group || !slug) return `${origin}/?repo=${encodeURIComponent(row.id)}`;
-  return `${origin}/${[slug, row.group, row.name].map(encodeURIComponent).join('/')}`;
 }
 
 /** A run's page in qits-ci (until qits-2321 gives it one here): `/runs/<id>`. */

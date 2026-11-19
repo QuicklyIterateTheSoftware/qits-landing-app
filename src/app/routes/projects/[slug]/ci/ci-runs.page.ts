@@ -3,7 +3,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } fro
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
+  exit,
+  outcomes,
   QitsEntity,
+  QitsExit,
   QitsField,
   qitsResource,
   sourceMark,
@@ -14,7 +17,6 @@ import type { CiSummaryRun } from '$core/ci/ci-runs.consumes';
 import { ACTIVE_RUNS, REPOSITORY_SUMMARIES } from '$core/ci/ci.operations';
 import {
   CI_RUN_STATUSES,
-  ciRepositoryHref,
   ciRows,
   ciRunHref,
   filterCiRows,
@@ -23,7 +25,6 @@ import {
   runStatusLabel,
   runStatusTone,
   type CiFilters,
-  type CiRepositoryRow,
 } from '$core/ci/project-ci';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
@@ -58,9 +59,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * A change writes the URL, so a filter can be bookmarked and Back undoes it (typing on in the
  * repository field replaces the entry it started).
  *
- * Links lead to qits-ci's own pages until qits-2320 and qits-2321 bring them here: a repository's
- * name to `/<slug>/<group>/<repository>` (its component, else its archetype's category; the
- * wrapper, which has neither, to qits-ci's tree with it expanded), a run to `/runs/<id>`.
+ * A repository's name opens its CI page here (`projects/<slug>/ci/<repository>`, qits-2320), the
+ * wrapper's like every other; a run links to qits-ci's own page, `/runs/<id>`, until qits-2321
+ * brings it here.
  *
  * States: loading, a failed read with Retry, "No CI runs for this project yet" when no repository
  * of the project has a run, and "No repository matches" with a link that clears the filters.
@@ -74,7 +75,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-ci-runs-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsField, RouterLink, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsExit,
+    QitsField,
+    RouterLink,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -180,7 +190,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               >
                 <a
                   class="min-w-0 font-semibold wrap-anywhere text-accent no-underline hover:underline sm:w-64"
-                  [attr.href]="repositoryHref(row)"
+                  [qitsExit]="opening.repository"
+                  [exitParams]="{ slug: slug(), repo: row.name }"
                   [qitsEntity]="row"
                   entityKey="id"
                   [entitySource]="repositories"
@@ -382,6 +393,14 @@ export class CiRunsPage {
   protected readonly summarySource = sourceMark(REPOSITORY_SUMMARIES);
   protected readonly activeSource = sourceMark(ACTIVE_RUNS);
 
+  /** A repository's CI page, from its name (qits-2320). */
+  protected readonly opening = outcomes('open-ci-repository', {
+    repository: exit('projects/:slug/ci/:repo'),
+  });
+
+  /** The open project's slug, for the repositories' links. */
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
   protected readonly marks = MARKS;
   protected readonly statuses = CI_RUN_STATUSES;
   protected readonly statusLabel = runStatusLabel;
@@ -402,10 +421,6 @@ export class CiRunsPage {
 
   protected repositoryName(repoId: string | undefined): string {
     return (repoId && this.names().get(repoId)) || (repoId ?? '');
-  }
-
-  protected repositoryHref(row: CiRepositoryRow): string | null {
-    return ciRepositoryHref(this.origins.page('ci'), this.selected.slug() ?? '', row) ?? null;
   }
 
   protected runHref(runId: string | undefined): string | null {

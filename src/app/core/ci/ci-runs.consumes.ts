@@ -13,7 +13,10 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * A repository's newest runs: the release request page links the runs of the request (by
- * `releaseRequestId`, or by an id the request names) and says what each one is.
+ * `releaseRequestId`, or by an id the request names) and says what each one is. The repository's
+ * CI page (qits-2320) lists them all: how each was triggered (`triggerType`; an `EVENT` run's
+ * `triggerEventName` and `configPath`), when it started (`startedAt`, for its duration), and why a
+ * cancelled one was cancelled (`cancellationReason`) and by which run (`supersededByRunId`).
  */
 export const LIST_REPOSITORY_RUNS = [
   'runs[].id',
@@ -21,13 +24,18 @@ export const LIST_REPOSITORY_RUNS = [
   'runs[].commitSha',
   'runs[].status',
   'runs[].createdAt',
+  'runs[].startedAt',
   'runs[].finishedAt',
   'runs[].releaseRequestId',
   'runs[].phase',
+  'runs[].triggerType',
   'runs[].triggerEventName',
+  'runs[].configPath',
+  'runs[].cancellationReason',
+  'runs[].supersededByRunId',
 ] as const;
 
-/** One run, cut to what the page reads. */
+/** One run, cut to what the release request page and the repository's CI page read. */
 export type CiRun = NonNullable<
   Consumed<ListRunsResponses[200], typeof LIST_REPOSITORY_RUNS>['runs']
 >[number];
