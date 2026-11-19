@@ -18,7 +18,6 @@ import {
   githostGoldenMasters,
   idpGoldenMasters,
   maintenanceGoldenMasters,
-  networkAccessGoldenMasters,
   observabilityGoldenMasters,
   projectsGoldenMasters,
   systemGoldenMasters,
@@ -53,10 +52,6 @@ const READERS = {
   ),
   'qits-system': pactedGoldenMasters(systemGoldenMasters, pactWith('qits-system-service')),
   'qits-artifacts': pactedGoldenMasters(artifactsGoldenMasters, pactWith('qits-artifacts-service')),
-  'qits-network-access': pactedGoldenMasters(
-    networkAccessGoldenMasters,
-    pactWith('qits-network-access-service'),
-  ),
   'qits-edge': pactedGoldenMasters(edgeGoldenMasters, pactWith('qits-edge-service')),
   'qits-observability': pactedGoldenMasters(
     observabilityGoldenMasters,

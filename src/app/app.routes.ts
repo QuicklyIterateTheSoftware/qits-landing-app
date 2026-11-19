@@ -102,8 +102,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * the execution targets a slot is placed on are qits-system's, at its own Targets page, which the
  * Agents page links to directly rather than routing through here.
  *
- * The Network access pane (epic qits-1977) is at `network-access` (`NetworkAccessPage`): the
- * platform's peers, nodes and private edge, reached from the top bar with no project open.
+ * The Network access pane (epic qits-1977) is no route of this app any more (qits-2361): it is
+ * qits-network-access' own frontend at `https://network-access.<domain>/`, which the shell links to.
  *
  * The Artifacts section (qits-2316) is at `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`):
  * one of qits-artifacts' store repositories (`qits`, `npm`, `maven`, …), reached from the root
@@ -463,12 +463,6 @@ export const routes: Routes = [
               ),
           },
         ],
-      },
-      {
-        // The platform's private network (epic qits-1977): not a project's, so no project opens.
-        path: 'network-access',
-        loadComponent: () =>
-          import('./routes/network-access/network-access.page').then((m) => m.NetworkAccessPage),
       },
       {
         path: '**',

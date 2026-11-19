@@ -13,8 +13,9 @@ import { goldenMaster } from './golden-master';
 
 /**
  * The colour contrast of the app in both schemes (qits-2086): the shell around one page of each
- * kind (a work board in both its views, a release request, the UI builder, network access, an agent's conversation),
- * opened through the app's routes (`openRoute`) and answered from the same golden masters as each
+ * kind (a work board in both its views, a release request, the UI builder, an agent's conversation
+ * with the top bar's theme menu open), opened through the app's routes (`openRoute`) and answered
+ * from the same golden masters as each
  * page's own screenshot spec. With `data-theme` set to `light`, then `dark`, on `<html>`, axe's
  * `color-contrast` rule (WCAG AA) must find nothing. The page specs show the pixels; this spec shows
  * that the tokens each class names are read by their role.
@@ -267,37 +268,9 @@ const CASES: Case[] = [
     },
   },
   {
-    // As network-access.page.browser.spec.ts's `loaded`, with the top bar's theme menu open.
-    name: 'network access, the theme menu open',
-    async show(http) {
-      await page.viewport(1140, 900);
-      const opened = await openRoute('/network-access');
-      http
-        .expectOne('/network-access/api/peers')
-        .flush(
-          await goldenMaster(
-            'a device peer behind an announced private edge',
-            'getPeers',
-            'qits-network-access',
-          ),
-        );
-      http
-        .expectOne('/network-access/api/nodes')
-        .flush(await goldenMaster('a joined node', 'getNodes', 'qits-network-access'));
-      http
-        .expectOne('/network-access/api/private-edge')
-        .flush(
-          await goldenMaster('an announced private edge', 'getPrivateEdge', 'qits-network-access'),
-        );
-      await opened.settled();
-      await page.getByRole('button', { name: 'Theme', exact: true }).click();
-      await expect.element(page.getByRole('radio', { name: 'System' })).toBeVisible();
-      return opened;
-    },
-  },
-  {
-    // As agent-chat.page.browser.spec.ts's `transcript`: the agent's turns and its prompt draft.
-    name: 'an agent’s conversation',
+    // As agent-chat.page.browser.spec.ts's `transcript`: the agent's turns and its prompt draft,
+    // with the top bar's theme menu open.
+    name: 'an agent’s conversation, the theme menu open',
     clock: true,
     providers: [
       provideTestPlatformOrigins({ workspaces: 'https://workspaces.test' }),
@@ -346,6 +319,8 @@ const CASES: Case[] = [
       await expect
         .element(page.elementLocator(opened.page).getByText('Fixed: the user name is trimmed'))
         .toBeVisible();
+      await page.getByRole('button', { name: 'Theme', exact: true }).click();
+      await expect.element(page.getByRole('radio', { name: 'System' })).toBeVisible();
       return opened;
     },
   },

@@ -1001,32 +1001,6 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact (epic qits-2000).
    */
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
-  /** `network-access.page.ts` via `PEER_LIST`: the Network access pane's peers table. */
-  'show-network-peers': 'The Network access page lists every peer of the platform network',
-  /**
-   * `network-access.page.ts` via `PEER_LIST` with `owner=me`: the "mine" filter. No
-   * recording holds that query yet, so no pact interaction names this slug.
-   */
-  'show-my-network-peers': 'The Network access page’s Mine filter lists the visitor’s own peers',
-  /** `network-access.page.ts` via `NODE_LIST`: the nodes, naming a NODE peer's target. */
-  'show-network-nodes': 'The Network access page names each node peer by its joined node',
-  /** `network-access.page.ts` via `PRIVATE_EDGE`: the private edge card. */
-  'show-private-edge': 'The Network access page shows the announced private edge',
-  /** `network-access.page.ts` via `PEER_REVOKE`: Revoke on an ACTIVE row, confirmed. */
-  'revoke-network-peer': 'Revoking a peer on the Network access page',
-  /** `network-access.page.ts` via `PEER_CONFIG`: a DEVICE row's WireGuard config download. */
-  'download-wireguard-config': 'Downloading a device peer’s WireGuard config',
-  /**
-   * `network-access.page.ts` via `PEER_CREATE`: Add device sends the name and the public key the
-   * browser made (qits-2262).
-   */
-  'add-network-device': 'Adding a device on the Network access page',
-  /**
-   * `network-access.page.ts` via `PEER_APP_CONFIG`: the new device's config for the WireGuard
-   * apps, read once after Add device and shown once with its private key (qits-2262).
-   */
-  'show-device-app-config':
-    'The Network access page shows a new device’s config once, as a QR code',
   /**
    * `private-apps.ts` via `MAIN_NAVIGATION` (qits-2297): once signed in, the app reads the edge's
    * navigation for the platform apps on the private network, whose calls it marks for Chrome's
@@ -1076,15 +1050,17 @@ export const INTERACTIONS = {
    */
   'open-project-settings': 'The top bar’s gear opens the project’s settings',
   /**
-   * `shell.layout.ts`: the top bar's network icon opens the Network access page. Navigates only,
-   * and names no pact (epic qits-2000).
+   * `shell.layout.ts`: the top bar's network icon leaves for qits-network-access' own frontend,
+   * `https://network-access.<domain>/` (qits-2361). Leaves the app only, and names no pact.
    */
-  'open-network-access': 'The top bar’s network icon opens the Network access page',
+  'open-network-access': 'The top bar’s network icon opens the Network access frontend',
   /**
    * `shell.layout.ts`: the sidebar's Network access entry, shown with or without a project open,
-   * opens the Network access page (qits-2262). Navigates only, and names no pact.
+   * leaves for qits-network-access' own frontend (qits-2262, qits-2361). Leaves the app only, and
+   * names no pact.
    */
-  'open-sidebar-network-access': 'The sidebar’s Network access entry opens the Network access page',
+  'open-sidebar-network-access':
+    'The sidebar’s Network access entry opens the Network access frontend',
   /**
    * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, leaves
    * the app for the idp's own admin (qits-2319). Leaves only, and names no pact.
