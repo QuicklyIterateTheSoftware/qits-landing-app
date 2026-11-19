@@ -194,6 +194,10 @@
               "fullPath": "projects/:slug/deployments/requests"
             },
             {
+              "path": "requests/by-release/:repoId/:version",
+              "fullPath": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+            },
+            {
               "path": "requests/:requestId",
               "fullPath": "projects/:slug/deployments/requests/:requestId"
             }
@@ -75714,6 +75718,2094 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > says why a release has none, and offers to look again",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with no deployment requests",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > says why a release has none, and offers to look again",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with no deployment requests",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > says why a release has none, and offers to look again",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with no deployment requests",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > says why a release has none, and offers to look again",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with no deployment requests",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > says why a release has none, and offers to look again",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with no deployment requests",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > says why a release has none, and offers to look again",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with no deployment requests",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-release-deployment-requests-row:request",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-release-deployment-requests-row:request",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-release-deployment-requests-row:request",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-release-deployment-requests-row:request",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > lists the main application’s request and its variant’s, each with its gate and deployment",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-deployments-service",
+          "state": "a release with a variant deployed",
+          "operationId": "listDeploymentRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "variant",
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "deploymentStatus"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": null,
+          "derived": [
+            "qualityGate",
+            "gateSettledAt",
+            "deployHold",
+            "gateDetail"
+          ]
+        },
+        {
+          "source": "qits-deployments-service#listDeploymentRequests",
+          "item": "id=00000000-0000-4000-8000-000000000004",
+          "field": "applicationName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-release-deployment-requests:list",
+        "open-project-settings:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+      "test": "DeploymentRequestsByReleasePage (screenshots) > marks the page as loading, then says who may read deployment requests",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-release-deployment-requests:list",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-deployments-page:requests",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts/empty-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts",
       "test": "DeploymentRequestsPage (screenshots) > says once that there are none when the project has no deployment requests",
@@ -125072,6 +127164,7 @@
         "open-network-access:open",
         "open-project-settings:open",
         "open-release-deployment-request:request",
+        "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -125181,6 +127274,17 @@
           "item": "id=00000000-0000-4000-8000-000000000003",
           "field": null,
           "derived": [
+            "releasedSha"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getProjectReleaseRequest",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "repoId",
+            "repoName",
+            "version",
             "releasedSha"
           ]
         },
@@ -125370,6 +127474,7 @@
         "open-network-access:open",
         "open-project-settings:open",
         "open-release-deployment-request:request",
+        "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -125479,6 +127584,17 @@
           "item": "id=00000000-0000-4000-8000-000000000003",
           "field": null,
           "derived": [
+            "releasedSha"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getProjectReleaseRequest",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "repoId",
+            "repoName",
+            "version",
             "releasedSha"
           ]
         },
@@ -125662,7 +127778,8 @@
         "leave-release-request:list",
         "open-ci-run:run",
         "open-project-settings:open",
-        "open-release-deployment-request:request"
+        "open-release-deployment-request:request",
+        "open-release-deployment-requests:byRelease"
       ],
       "dataMarks": [
         {
@@ -125759,6 +127876,17 @@
           "item": "id=00000000-0000-4000-8000-000000000003",
           "field": null,
           "derived": [
+            "releasedSha"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getProjectReleaseRequest",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "repoId",
+            "repoName",
+            "version",
             "releasedSha"
           ]
         },
@@ -125936,7 +128064,8 @@
         "leave-release-request:list",
         "open-ci-run:run",
         "open-project-settings:open",
-        "open-release-deployment-request:request"
+        "open-release-deployment-request:request",
+        "open-release-deployment-requests:byRelease"
       ],
       "dataMarks": [
         {
@@ -126033,6 +128162,17 @@
           "item": "id=00000000-0000-4000-8000-000000000003",
           "field": null,
           "derived": [
+            "releasedSha"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getProjectReleaseRequest",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "repoId",
+            "repoName",
+            "version",
             "releasedSha"
           ]
         },
@@ -126216,6 +128356,7 @@
         "open-network-access:open",
         "open-project-settings:open",
         "open-release-deployment-request:request",
+        "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -126325,6 +128466,17 @@
           "item": "id=00000000-0000-4000-8000-000000000003",
           "field": null,
           "derived": [
+            "releasedSha"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getProjectReleaseRequest",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "repoId",
+            "repoName",
+            "version",
             "releasedSha"
           ]
         },
@@ -126514,6 +128666,7 @@
         "open-network-access:open",
         "open-project-settings:open",
         "open-release-deployment-request:request",
+        "open-release-deployment-requests:byRelease",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
@@ -126623,6 +128776,17 @@
           "item": "id=00000000-0000-4000-8000-000000000003",
           "field": null,
           "derived": [
+            "releasedSha"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getProjectReleaseRequest",
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "repoId",
+            "repoName",
+            "version",
             "releasedSha"
           ]
         },
@@ -234069,6 +236233,34 @@
       "src/app/routes/projects/[slug]/deployments/requests/[requestId]/deployment-request.page.browser.spec.ts/refused-tablet-dark.html",
       "src/app/routes/projects/[slug]/deployments/requests/[requestId]/deployment-request.page.browser.spec.ts/refused-tablet-light.html"
     ],
+    "projects/:slug/deployments/requests/by-release/:repoId/:version": [
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-desktop-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-desktop-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-phone-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-phone-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-tablet-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loaded-tablet-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-desktop-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-desktop-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-phone-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-phone-light.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-tablet-dark.html",
+      "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts/refused-tablet-light.html"
+    ],
     "projects/:slug/desk": [
       "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/commented-desktop-dark.html",
       "src/app/routes/projects/[slug]/desk/project-desk.page.browser.spec.ts/commented-desktop-light.html",
@@ -235449,6 +237641,36 @@
         "file": "src/app/routes/projects/[slug]/deployments/requests/[requestId]/deployment-request.page.ts"
       },
       {
+        "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+        "interaction": "follow-release-deployment-request",
+        "outcome": "request",
+        "kind": "exit",
+        "to": "projects/:slug/deployments/requests/:requestId",
+        "global": false,
+        "triggered": false,
+        "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.ts"
+      },
+      {
+        "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+        "interaction": "leave-release-deployment-requests",
+        "outcome": "list",
+        "kind": "exit",
+        "to": "projects/:slug/deployments/requests",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.ts"
+      },
+      {
+        "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+        "interaction": "open-release-deployment-requests-row",
+        "outcome": "request",
+        "kind": "exit",
+        "to": "projects/:slug/deployments/requests/:requestId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.ts"
+      },
+      {
         "route": "projects/:slug/desk",
         "interaction": "open-desk-line",
         "outcome": "releaseRequest",
@@ -235714,6 +237936,16 @@
         "outcome": "supersededBy",
         "kind": "exit",
         "to": "projects/:slug/release-requests/:requestId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.ts"
+      },
+      {
+        "route": "projects/:slug/release-requests/:requestId",
+        "interaction": "open-release-deployment-requests",
+        "outcome": "byRelease",
+        "kind": "exit",
+        "to": "projects/:slug/deployments/requests/by-release/:repoId/:version",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.ts"
@@ -237905,6 +240137,33 @@
         "freeze": null
       },
       {
+        "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+        "test": "DeploymentRequestsByReleasePage (screenshots) > follow-release-deployment-request request: one request opens its page in this one’s place",
+        "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+        "interaction": "follow-release-deployment-request",
+        "outcome": "request",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+        "test": "DeploymentRequestsByReleasePage (screenshots) > leave-release-deployment-requests list: “← Deployment requests” goes back to the list",
+        "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+        "interaction": "leave-release-deployment-requests",
+        "outcome": "list",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts",
+        "test": "DeploymentRequestsByReleasePage (screenshots) > open-release-deployment-requests-row request: a row’s Open opens the request’s page",
+        "route": "projects/:slug/deployments/requests/by-release/:repoId/:version",
+        "interaction": "open-release-deployment-requests-row",
+        "outcome": "request",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
         "spec": "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts",
         "test": "DeploymentRequestsPage (screenshots) > open-deployment-request request: a row’s Open opens the request’s page",
         "route": "projects/:slug/deployments/requests",
@@ -238180,6 +240439,15 @@
         "route": "projects/:slug/release-requests/:requestId",
         "interaction": "open-release-deployment-request",
         "outcome": "request",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts",
+        "test": "ReleaseRequestPage (screenshots) > open-release-deployment-requests byRelease: “The deployment of this release” opens its deployment requests",
+        "route": "projects/:slug/release-requests/:requestId",
+        "interaction": "open-release-deployment-requests",
+        "outcome": "byRelease",
         "kind": "exit",
         "freeze": null
       },

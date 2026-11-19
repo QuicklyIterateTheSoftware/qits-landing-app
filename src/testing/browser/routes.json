@@ -383,6 +383,44 @@
       "route": "projects/:slug/deployments/requests/:requestId"
     }
   ],
+  "src/app/routes/projects/[slug]/deployments/requests/by-release/[repoId]/[version]/deployment-requests-by-release.page.browser.spec.ts": [
+    {
+      "provider": "qits-deployments-service",
+      "state": "a release with a variant deployed",
+      "operationId": "listDeploymentRequests",
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+    },
+    {
+      "provider": "qits-deployments-service",
+      "state": "a release with no deployment requests",
+      "operationId": "listDeploymentRequests",
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+    },
+    {
+      "provider": "qits-deployments-service",
+      "state": "a release with one deployment request",
+      "operationId": "listDeploymentRequests",
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/deployments/requests/by-release/:repoId/:version"
+    }
+  ],
   "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts": [
     {
       "provider": "qits-deployments-service",
