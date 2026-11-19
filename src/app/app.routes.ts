@@ -359,6 +359,14 @@ export const routes: Routes = [
                 (m) => m.DeploymentRequestsPage,
               ),
           },
+          {
+            // One request (qits-2322); the sidebar keeps Requests current below it.
+            path: 'requests/:requestId',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/deployments/requests/[requestId]/deployment-request.page').then(
+                (m) => m.DeploymentRequestPage,
+              ),
+          },
         ],
       },
       {

@@ -1,4 +1,10 @@
-import { agentSubpage, releaseRequestSubpage, slotSubpage, workSubpage } from './shell.layout';
+import {
+  agentSubpage,
+  deploymentRequestSubpage,
+  releaseRequestSubpage,
+  slotSubpage,
+  workSubpage,
+} from './shell.layout';
 
 describe('slotSubpage', () => {
   const project = '/projects/qits';
@@ -127,5 +133,41 @@ describe('releaseRequestSubpage', () => {
     expect(releaseRequestSubpage(list, project)).toBeUndefined();
     expect(releaseRequestSubpage(`${list}/`, project)).toBeUndefined();
     expect(releaseRequestSubpage(`${project}/work/detail/${id}`, project)).toBeUndefined();
+  });
+});
+
+describe('deploymentRequestSubpage', () => {
+  const project = '/projects/qits';
+  const list = `${project}/deployments/requests`;
+  const id = '00000000-0000-4000-8000-000000000002';
+  const shown = { id, version: '2026.101.120000', applicationName: 'contract-app' };
+
+  it('names the request on show by its version and application', () => {
+    expect(deploymentRequestSubpage(`${list}/${id}?x=1`, project, shown)).toEqual({
+      label: '2026.101.120000 · contract-app',
+      path: `${list}/${id}`,
+      marks: {
+        source: 'qits-deployments-service#getDeploymentRequest',
+        item: `id=${id}`,
+        derived: 'version applicationName',
+      },
+    });
+  });
+
+  it('names a request its page has not shown by the start of its id', () => {
+    expect(deploymentRequestSubpage(`${list}/${id}`, project)).toEqual({
+      label: '00000000',
+      path: `${list}/${id}`,
+      marks: undefined,
+    });
+    expect(deploymentRequestSubpage(`${list}/${id.slice(0, -1)}3`, project, shown)?.label).toBe(
+      '00000000',
+    );
+  });
+
+  it('has no crumb for the list itself or for other pages', () => {
+    expect(deploymentRequestSubpage(list, project, shown)).toBeUndefined();
+    expect(deploymentRequestSubpage(`${list}/`, project, shown)).toBeUndefined();
+    expect(deploymentRequestSubpage(`${project}/release-requests/${id}`, project)).toBeUndefined();
   });
 });

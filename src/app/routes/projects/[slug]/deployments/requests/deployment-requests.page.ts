@@ -1,13 +1,21 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsApiError,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import { QitsBadge } from '@qits/ui-components';
 import {
   affectsDeploymentRequests,
   COMPLETED_SHOWN,
   DEPLOYMENT_REQUEST_EVENTS,
   deploymentOutcome,
-  deploymentRequestHref,
   formatDayTime,
   gateLabel,
   gateTone,
@@ -20,7 +28,6 @@ import {
 } from '$core/deployments/deployment-requests';
 import type { DeploymentRequestRow } from '$core/deployments/deployments.consumes';
 import { PROJECT_DEPLOYMENT_REQUESTS } from '$core/deployments/deployments.operations';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
@@ -51,8 +58,7 @@ interface RequestGroup {
  * Each row: the version, the priority the release announced (blank when none), the application,
  * when it was asked (day and time in UTC, and how long ago), the gate's word, the status of the
  * deployment it handed off to (or what became of it when there is none), and Open, the request's
- * page on the deployments frontend (`deploymentRequestHref`, as the release request page's
- * lifecycle links it) until qits-2322 moves that page here.
+ * own page (`deployments/requests/<id>`, qits-2322) through the exit `open-deployment-request`.
  *
  * The read runs in the browser only (the server has no session), through `qitsResource`. A refusal
  * (403: only `qits:admin`, `qits:admin-agent`, `qits:desk-admin`, `qits:desk`, `qits:agent` and
@@ -78,6 +84,7 @@ interface RequestGroup {
     QitsBadge,
     QitsEntity,
     QitsEntityList,
+    QitsExit,
     QitsField,
     Spinner,
   ],
@@ -229,10 +236,11 @@ interface RequestGroup {
                               }
                             </td>
                             <td class="px-3 py-2 text-right">
-                              @if (href(request.id); as link) {
+                              @if (request.id; as id) {
                                 <a
                                   class="text-accent no-underline hover:underline"
-                                  [href]="link"
+                                  [qitsExit]="opening.request"
+                                  [exitParams]="{ slug: slug(), requestId: id }"
                                   [fieldOf]="request"
                                   [qitsField]="{ derived: ['id'] }"
                                   >Open</a
@@ -257,7 +265,6 @@ export class DeploymentRequestsPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly selected = inject(SelectedProject);
   private readonly releaseRequests = inject(ProjectReleaseRequests);
-  private readonly origin = inject(PlatformOrigins).page('deployments');
 
   /** The open project's id, in the browser only: the read waits for it. */
   private readonly projectId = computed(() =>
@@ -346,8 +353,10 @@ export class DeploymentRequestsPage {
     return deploymentOutcome(request);
   }
 
-  /** The request's page on the deployments frontend, until qits-2322 moves it here. */
-  protected href(id: string | undefined): string | undefined {
-    return deploymentRequestHref(this.origin, this.selected.slug() ?? '', id);
-  }
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /** A row's Open: the request's own page (qits-2322), a declared exit (epic qits-2000). */
+  protected readonly opening = outcomes('open-deployment-request', {
+    request: exit('projects/:slug/deployments/requests/:requestId'),
+  });
 }
