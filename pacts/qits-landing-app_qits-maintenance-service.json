@@ -1232,7 +1232,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-adoption",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/adoption/:repository/:version"
           }
         }
       },

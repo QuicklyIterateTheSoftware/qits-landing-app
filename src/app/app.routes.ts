@@ -92,7 +92,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `maintenance/artifacts` (`MaintenanceArtifactsPage`, qits-2330) is what the project has
  * released and who still ships an old copy: the listing, and one artifact's dependents at
  * `?ecosystem=&name=` on the same page. It is not the global `/artifacts` (the artifact store,
- * qits-2316).
+ * qits-2316). `maintenance/bumps/<bumpId>` (`MaintenanceBumpPage`, qits-2332) is one bump, and
+ * `maintenance/adoption/<repository>/<version>` (`MaintenanceAdoptionPage`, qits-2333) how far
+ * one release got: detail pages with no sidebar entry of their own.
  *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
@@ -457,6 +459,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page').then(
                 (m) => m.MaintenanceBumpPage,
+              ),
+          },
+          {
+            // A detail page (qits-2333): no sidebar entry; the sidebar keeps Maintenance open.
+            path: 'adoption/:repository/:version',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/maintenance/adoption/[repository]/[version]/maintenance-adoption.page').then(
+                (m) => m.MaintenanceAdoptionPage,
               ),
           },
         ],

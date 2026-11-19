@@ -659,6 +659,26 @@
       "route": "projects/:slug/ideas"
     }
   ],
+  "src/app/routes/projects/[slug]/maintenance/adoption/[repository]/[version]/maintenance-adoption.page.browser.spec.ts": [
+    {
+      "provider": "qits-maintenance-service",
+      "state": "a repository with downstream components",
+      "operationId": "getAdoptionByRelease",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/maintenance/adoption/:repository/:version"
+    }
+  ],
   "src/app/routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page.browser.spec.ts": [
     {
       "provider": "qits-maintenance-service",
