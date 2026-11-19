@@ -80,7 +80,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "retry-ci-run",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci/runs/:runId"
           }
         }
       },
@@ -171,7 +172,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci/runs/:runId"
           }
         }
       },
@@ -653,7 +655,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci/runs/:runId"
           }
         }
       },
@@ -923,7 +926,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci/runs/:runId"
           }
         }
       },
@@ -1387,7 +1391,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/ci/runs/:runId"
           }
         }
       },

@@ -295,6 +295,56 @@
       "route": "projects/:slug/ci"
     }
   ],
+  "src/app/routes/projects/[slug]/ci/runs/[runId]/ci-run.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a finished run of the project",
+      "operationId": "getRun",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a finished run of the project",
+      "operationId": "listRunReports",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a finished run of the project",
+      "operationId": "retryRun",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a queued run of the project",
+      "operationId": "getRun",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a running run of the project",
+      "operationId": "getRun",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/ci/runs/:runId"
+    }
+  ],
   "src/app/routes/projects/[slug]/deployments/requests/deployment-requests.page.browser.spec.ts": [
     {
       "provider": "qits-deployments-service",

@@ -54,6 +54,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`),
  * one request at `release-requests/<requestId>` (`ReleaseRequestPage`).
  *
+ * One CI run is at `projects/<slug>/ci/runs/<runId>` (`CiRunPage`, qits-2321), declared ahead of
+ * every other CI page: its header and facts, its steps with their coloured output (`?step=`),
+ * Cancel and Run again, and its reports.
+ *
  * A project's CI is at `projects/<slug>/ci` (`CiRunsPage`, qits-2314): each repository's newest
  * run and newest run on main, filtered by `?repository=` and `?status=`, with the project's
  * running and queued runs above them.
@@ -293,6 +297,11 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/release-requests/[requestId]/release-request.page').then(
             (m) => m.ReleaseRequestPage,
           ),
+      },
+      {
+        path: 'projects/:slug/ci/runs/:runId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/ci/runs/[runId]/ci-run.page').then((m) => m.CiRunPage),
       },
       {
         path: 'projects/:slug/ci',

@@ -8,8 +8,9 @@ import {
   input,
   untracked,
 } from '@angular/core';
-import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import { QitsEntity, QitsEntityList, QitsExit, QitsField, qitsResource } from '@qits/angular';
 import { buildOfRun, BUILD_EVENTS } from '$core/ci/build-events';
+import { CiRunLinks } from '$core/ci/ci-run-links';
 import type { ReportHighlight, ReportSummary } from '$core/ci/ci-reports.consumes';
 import { RUN_REPORT, RUN_REPORTS } from '$core/ci/ci.operations';
 import { loadState } from '$core/resources/load-state';
@@ -21,7 +22,6 @@ import {
   TEST_RESULTS_KIND,
   testResultsOf,
 } from '$core/ci/reports';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { CoverageSummary } from '$ui/components/coverage-summary/coverage-summary';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import { TestResultsView } from '$ui/components/test-results/test-results';
@@ -43,6 +43,9 @@ const SEVERITY_CLASSES: Readonly<Record<string, string>> = {
  * first (the section is `#failed-tests` when the tests failed); the coverage in full; any other
  * kind by its highlights, so a kind the backend adds shows without a change here.
  *
+ * The header links the run's page (`CiRunLinks`, qits-2321), and so does each failing test, unless
+ * the section sits on that page already (`linkRun` false).
+ *
  * Marks (qits-2141): the section lists the run's reports (`qitsEntityList`), each report is an
  * entity by its id, its title derived from its kind, each highlight its text.
  *
@@ -53,14 +56,25 @@ const SEVERITY_CLASSES: Readonly<Record<string, string>> = {
 @Component({
   selector: 'app-run-reports',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CoverageSummary, QitsEntity, QitsEntityList, QitsField, Spinner, TestResultsView],
+  imports: [
+    CoverageSummary,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    Spinner,
+    TestResultsView,
+  ],
   host: { class: 'block' },
   template: `
     <section class="rounded-md border border-line bg-surface px-3 py-2">
       <header class="mb-1 flex flex-wrap items-baseline gap-2">
         <h2 class="m-0 text-base font-semibold">{{ title() }}</h2>
-        @if (runHref(); as href) {
-          <a class="text-sm text-accent no-underline hover:underline" [href]="href"
+        @if (linkRun() && runs.slug()) {
+          <a
+            class="text-sm text-accent no-underline hover:underline"
+            [qitsExit]="runs.opening.run"
+            [exitParams]="runs.params(runId())"
             >the run in CI</a
           >
         }
@@ -139,12 +153,14 @@ const SEVERITY_CLASSES: Readonly<Record<string, string>> = {
   `,
 })
 export class RunReports {
-  private readonly origins = inject(PlatformOrigins);
+  protected readonly runs = inject(CiRunLinks);
   private readonly injector = inject(Injector);
 
   readonly runId = input.required<string>();
   /** The section's title: "Test run reports", say. */
   readonly title = input('Reports');
+  /** Whether the section links the run's page: not on that page itself. */
+  readonly linkRun = input(true);
 
   protected readonly tests = testResultsOf;
   protected readonly coverage = coverageOf;
@@ -165,10 +181,10 @@ export class RunReports {
 
   protected readonly state = computed(() => loadState(this.reports));
 
-  protected readonly runHref = computed(() => {
-    const origin = this.origins.page('ci');
-    return origin ? `${origin}/runs/${encodeURIComponent(this.runId())}` : undefined;
-  });
+  /** The run's page, for each failing test's link; none on that page itself. */
+  protected readonly runHref = computed(() =>
+    this.linkRun() ? this.runs.href(this.runId()) : undefined,
+  );
 
   /** The listed reports, once read. */
   private readonly listed = computed(

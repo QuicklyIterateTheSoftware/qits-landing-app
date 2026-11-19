@@ -40,7 +40,9 @@ its shape is bound by the list's pact (`LIST_EVENTS`, which reads `payload` for 
 
 It is also the app's one basis for staleness (qits-1270). The rule: one stream. Every store, menu
 or page holding platform state reads it again after the domain events that can change it, through
-`DomainEvents`; no polling, no timers, no second stream for staleness. A subscriber narrows by
+`DomainEvents`; no polling, no timers, no second stream for staleness. The one exception is what no
+event can announce: a running CI run's live output, read again every 10 s while the run is
+RUNNING and the page visible (`pollWhile`, `core/events/poll-while.ts`, qits-2321). A subscriber narrows by
 event name and by the ids the payload names (`payloadIds`: project, repository, request, run, work
 item, agent, slot; `payload` is a JSON string), and reads again only what the event can change:
 the one row it names, or the whole list when it can move the list (`changesReleaseRequestList`,
@@ -423,6 +425,23 @@ A row leaves for the site's reader on the docs app (`open-docs-site`, `external(
 `docsReadPath` without a version) until qits-2337 moves it here. The docs store sends no domain
 event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
 empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
+
+A CI run's page (qits-2321, `projects/<slug>/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
+other CI page) reads the run once through its own `qitsResource` over `RUN` (`getRun`) and joins it
+to the project by `run.repoId` among `PROJECT_REPOSITORIES`' ids (never `projectId`); a run of
+another project, or a 404, is "No run <id> in this project". Step output keeps its colour:
+`core/ci/ansi.ts` (`ansiSegments`) turns SGR bold, the 16 colours and reset into text in spans with
+theme-token classes and drops every other escape, never HTML and no xterm; a step qits-ci cut to
+its tail (`[... output truncated ...]`) says so instead of showing the marker (`stepOutput`). The
+open rows are `?step=` (repeatable, `live` for the live step, an empty value for none; replaced, not
+pushed), else the first FAILED/TIMED_OUT step, the live step or the last (`openSteps`). Cancel
+(confirmed, `CANCEL_RUN`) and Run again (`RETRY_RUN`, then the new run's page) are its outcomes
+`cancel-ci-run` and `retry-ci-run`. Every in-app link to a run goes through `CiRunLinks`
+(`core/ci/ci-run-links.ts`, the one app-wide exit `open-ci-run:run`): the project's CI page, a
+release request's builds, lifecycle, automations, reports and active-run chips. It follows
+`BUILD_EVENTS` naming the run (`buildOfRun`), and, the one poll qits-1270 allows, reads a RUNNING
+run again every 10 s while the document is visible (`pollWhile` in `core/events/poll-while.ts`):
+the live step's output has no event. A queued or finished run is never polled.
 
 ## Backend origins
 
