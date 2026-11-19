@@ -10,13 +10,17 @@ import type { ListDocsSitesResponses, ListDocsVersionsResponses } from '../../ap
 
 /**
  * Every docs site, to keep the `@routes/` or `@contracts/` ones and their newest version, and for
- * the Docs page (qits-2318) how many versions each holds and when its newest was published.
+ * the Docs page (qits-2318) how many versions each holds and when its newest was published. The
+ * Docs pages (qits-2336) also read which repository published the newest version
+ * (`latestRepository`, its `git.repository.name`; absent when it names none), to list a
+ * repository's sites and link each site to its repository.
  */
 export const LIST_DOCS_SITES = [
   'sites[].name',
   'sites[].latestVersion',
   'sites[].versionCount',
   'sites[].latestPublishedAt',
+  'sites[].latestRepository',
 ] as const;
 
 /**
