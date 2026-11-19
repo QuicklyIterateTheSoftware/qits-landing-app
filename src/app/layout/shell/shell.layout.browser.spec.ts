@@ -91,8 +91,9 @@ class PinnedPage {}
  * open and with one, qits-2262), the gear (`open-project-settings`), the network icon
  * (`open-network-access`), and the trail's brand and crumbs (`follow-breadcrumb`). The agents and
  * release menus' own exits are followed in their own specs. The global sections shown with no
- * project open leave the app (IdP admin, `open-sidebar-idp-admin`, qits-2319): the idp's page origin
- * is under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
+ * project open open a section of this app (Artifacts, `open-sidebar-artifacts`, qits-2316, to a
+ * stand-in route) or leave the app (IdP admin, `open-sidebar-idp-admin`, qits-2319): the idp's page
+ * origin is under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
  */
 describe('ShellLayout (screenshots)', () => {
   const PLATFORM_DOMAIN = 'qits.example.test';
@@ -106,6 +107,7 @@ describe('ShellLayout (screenshots)', () => {
         provideRouter([
           { path: '', component: TestPage },
           { path: 'network-access', component: TestPage },
+          { path: 'artifacts', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -198,10 +200,12 @@ describe('ShellLayout (screenshots)', () => {
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
-    // At the root the navigation holds no project's sections: the global sections (IdP admin,
-    // qits-2319), then Network access, the phone's way there (qits-2262); the "qits" brand leads home.
+    // At the root the navigation holds no project's sections: the global sections (Artifacts,
+    // qits-2316; IdP admin, qits-2319), then Network access, the phone's way there (qits-2262); the
+    // "qits" brand leads home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
+      'Artifacts',
       'IdP admin',
       'Network access',
     ]);
@@ -647,8 +651,21 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels).toEqual(['IdP admin', 'Network access']);
+    expect(labels).toEqual(['Artifacts', 'IdP admin', 'Network access']);
     await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
+  });
+
+  it('open-sidebar-artifacts open: the sidebar’s Artifacts opens the Artifacts section, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render();
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Artifacts' });
+    await expect.element(entry).toHaveAttribute('href', '/artifacts');
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/artifacts');
+    expect(reached()).toEqual(['open-sidebar-artifacts:open']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
   it('open-sidebar-idp-admin open: the sidebar’s IdP admin leaves for the idp’s admin, in this tab', async () => {
@@ -673,6 +690,9 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(navigation.getByRole('link', { name: 'Work', exact: true })).toBeVisible();
     await expect
       .element(navigation.getByRole('link', { name: 'IdP admin', includeHidden: true }))
+      .not.toBeInTheDocument();
+    await expect
+      .element(navigation.getByRole('link', { name: 'Artifacts', includeHidden: true }))
       .not.toBeInTheDocument();
   });
 

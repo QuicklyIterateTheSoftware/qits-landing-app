@@ -332,6 +332,47 @@ export const INTERACTIONS = {
    */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /**
+   * `artifacts-repository.page.ts` via `ARTIFACT_REPOSITORIES` (qits-2316): the store repository
+   * page reads every store repository, to learn the open one's type, count and size, and to list
+   * them all in its switcher.
+   */
+  'show-artifact-repositories':
+    'The store repository page lists qits-artifacts’ repositories, with each one’s type, count and size',
+  /** `artifacts-repository.page.ts` via `ARTIFACT_IMAGES` (qits-2316): an image repository's images. */
+  'show-artifact-images':
+    'An image repository’s page lists its images, with tags, manifests and size',
+  /** `artifacts-repository.page.ts` via `ARTIFACT_NPM_PACKAGES` (qits-2316): an npm repository's packages. */
+  'show-artifact-npm-packages':
+    'An npm repository’s page lists its packages, with versions and the latest',
+  /**
+   * `artifacts-repository.page.ts` via `ARTIFACT_MAVEN_PACKAGES` (qits-2316): a maven repository's
+   * coordinates.
+   */
+  'show-artifact-maven-packages':
+    'A maven repository’s page lists its coordinates, with versions and size',
+  /** `artifacts-repository.page.ts` via `ARTIFACT_DAEMONS` (qits-2316): a daemon repository's daemons. */
+  'show-artifact-daemons':
+    'A daemon repository’s page lists its daemons, with versions, the latest and size',
+  /** `artifacts-repository.page.ts` via `ARTIFACT_DOCS_SITES` (qits-2316): a docs repository's sites. */
+  'show-artifact-docs-sites':
+    'A docs repository’s page lists its documentation sites, with versions, the latest and size',
+  /**
+   * `artifacts-repository.page.ts` via `ARTIFACT_RECORDS` (qits-2316): a ci repository's records,
+   * unfiltered.
+   */
+  'show-artifact-records': 'A ci repository’s page lists its records',
+  /**
+   * `artifacts-repository.page.ts`: a store repository in the page's switcher opens that
+   * repository's page (qits-2316). Navigates only, and names no pact.
+   */
+  'switch-artifacts-repository': 'A store repository in the switcher opens its page',
+  /**
+   * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
+   * qits-artifacts explorer (an image, a package, a coordinate, a daemon or a docs site), until the
+   * Artifacts section's own detail pages land (qits-2316). Leaves only, and names no pact.
+   */
+  'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
+  /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).
    */
@@ -895,6 +936,12 @@ export const INTERACTIONS = {
    * the app for the idp's own admin (qits-2319). Leaves only, and names no pact.
    */
   'open-sidebar-idp-admin': 'The sidebar’s IdP admin entry opens the standalone idp admin',
+  /**
+   * `shell.layout.ts`: the sidebar's Artifacts, a global section shown with no project open, opens
+   * the Artifacts section (`artifacts`, which opens the image store; qits-2316). Navigates only,
+   * and names no pact.
+   */
+  'open-sidebar-artifacts': 'The sidebar’s Artifacts entry opens the Artifacts section',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and

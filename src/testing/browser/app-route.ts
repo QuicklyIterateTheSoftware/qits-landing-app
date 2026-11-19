@@ -93,8 +93,12 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(observabilityClient),
     provideHeyApiClient(edgeClient),
     // The idp's page origin, so the root sidebar's IdP admin (qits-2319) shows on the routes
-    // without a project, as it does deployed.
-    provideTestPlatformOrigins({}, { idp: 'https://idp.qits.example.test' }),
+    // without a project, as it does deployed; the old artifacts explorer's, so the store
+    // repository page's rows link their detail pages there (qits-2316).
+    provideTestPlatformOrigins(
+      {},
+      { idp: 'https://idp.qits.example.test', artifacts: 'https://registry.qits.example.test' },
+    ),
     // The live stream never connects: no event reaches a screenshot.
     {
       provide: EVENT_SOURCE,
