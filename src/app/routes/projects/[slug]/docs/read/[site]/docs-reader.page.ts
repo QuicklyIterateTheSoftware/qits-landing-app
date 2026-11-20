@@ -132,9 +132,10 @@ interface ShownStory {
  *   chips, no legend.
  * - apidocs: swagger-ui (`swagger-ui-dist`, imported lazily in the browser only, its stylesheet a
  *   non-injected global style), on the bundle's `openapi.*` (`openapiPathOf`) read as text and handed
- *   over as a `blob:` URL, so the library parses the YAML and never needs the bearer;
- *   `supportedSubmitMethods: []`, as the reader documents and calls nothing; the document's own
- *   address (a `blob:` URL, meaningless to a reader) is hidden. Its box stays light in
+ *   over as a `blob:` URL, so the library parses the YAML and never needs the bearer. It is told
+ *   the document's docs store address and reads the `blob:` behind it (`requestInterceptor`), so
+ *   what it renders is the same every run; `supportedSubmitMethods: []`, as the reader documents
+ *   and calls nothing; that address, which needs the bearer to open, is hidden. Its box stays light in
  *   both schemes: swagger-ui paints for itself and has no dark theme.
  * - contracts and routes: no renderer, a hand-off (`open-docs-handoff`) to the repository the
  *   site's newest version names (the catalog's `latestRepository`, `DOCS_CATALOG`), its Contracts
@@ -778,12 +779,19 @@ export class DocsReaderPage {
         revoke();
         const url = URL.createObjectURL(new Blob([text], { type: 'text/yaml' }));
         objectUrl = url;
+        // swagger-ui is told the document's docs store address, which it shows and which stays
+        // the same run after run (a freeze holds it), and reads the `blob:` behind it instead.
+        const shown = this.resolverFor('')(this.openapiPath() ?? '');
         this.loadSwaggerStyles();
         void import('swagger-ui-dist/swagger-ui-es-bundle.js').then(({ default: SwaggerUI }) => {
           if (objectUrl !== url) return;
           host.replaceChildren();
           SwaggerUI({
-            url,
+            url: shown,
+            requestInterceptor: (request: { url: string }) => {
+              if (request.url === shown) request.url = url;
+              return request;
+            },
             domNode: host,
             presets: [SwaggerUI.presets.apis],
             supportedSubmitMethods: [],

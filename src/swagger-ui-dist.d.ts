@@ -5,6 +5,8 @@
 declare module 'swagger-ui-dist/swagger-ui-es-bundle.js' {
   interface SwaggerUIOptions {
     url: string;
+    /** Each request swagger-ui is about to send, which may be rewritten (its `url` included). */
+    requestInterceptor?: (request: { url: string }) => { url: string };
     domNode: HTMLElement;
     presets?: unknown[];
     /** The methods "Try it out" may send; `[]` hides it. */
