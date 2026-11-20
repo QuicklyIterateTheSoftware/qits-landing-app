@@ -39,6 +39,7 @@ import {
 } from '$core/docs/bundle-files';
 import { kindOf, shortNameOf } from '$core/docs/doc-sections';
 import { docsAppReadPath, parseReadPath } from '$core/docs/doc-url';
+import { newestVersionOutcomes } from '$core/docs/reader-links';
 import {
   branchOf,
   defaultVersion,
@@ -122,16 +123,21 @@ interface ShownStory {
  *   page or its UI builder, when it is one of the project's (`PROJECT_REPOSITORY_NAMES`); else it
  *   says the site names no repository of this project.
  * - storybook: a notice that the docs app serves it whole on the private network, linking there
- *   (`PlatformOrigins.page('docs')`, the one place this app still links the docs app). No iframe:
+ *   (`PlatformOrigins.page('docs')` + `/<slug>/read/<site>[/-/<version>]`, the one place this app
+ *   still links the docs app). No iframe:
  *   a frame cannot send the bearer.
  *
+ * The hand-offs (contracts, routes, Storybook) read the catalog only, never a version: whether
+ * the site exists, and its publisher; Storybook links the docs app at the URL's version, else the
+ * newest. They show no Version select.
+ *
  * States: loading; a failed read with Retry (each read's own); an unknown site (`listDocsVersions`
- * 404, or no version at all) and an unknown version (`getDocsVersion` 404), each saying so with a
- * link (back to Docs; to the newest).
+ * 404 or no version at all; a hand-off's site missing from the catalog) and an unknown version
+ * (`getDocsVersion` 404), each saying so with a link (back to Docs; to the newest).
  *
  * Staleness (qits-1270): published versions are immutable and the docs store emits no domain
  * event, so nothing on the stream could say a site moved, and the rule forbids a timer: no polling;
- * Refresh reads the version list again (and the catalog when a hand-off shows). Only the
+ * Refresh reads the version list again (the catalog, for a hand-off). Only the
  * hand-offs' project repositories follow `SCMPublishCommit` to the wrapper's main branch
  * (`movesWrapper`).
  */
@@ -175,6 +181,7 @@ interface ShownStory {
               <label class="flex flex-col gap-0.5 text-xs text-fg-muted">
                 Branch
                 <select
+                  aria-label="Branch"
                   class="h-8 max-w-64 rounded-md border border-line bg-surface px-2 text-sm text-fg"
                   [qitsTriggers]="[picking.version]"
                   [fieldOf]="versionList()"
@@ -190,6 +197,7 @@ interface ShownStory {
             <label class="flex flex-col gap-0.5 text-xs text-fg-muted">
               Version
               <select
+                aria-label="Version"
                 class="h-8 max-w-64 rounded-md border border-line bg-surface px-2 font-mono text-sm text-fg"
                 [qitsTriggers]="[picking.version]"
                 [fieldOf]="versionList()"
@@ -227,7 +235,7 @@ interface ShownStory {
             {{ site() }} has no version {{ urlVersion() }}.
             <a
               class="text-accent no-underline hover:underline"
-              [qitsExit]="leaving.newest"
+              [qitsExit]="toNewest.newest"
               [exitParams]="{ slug: slug(), site: site() }"
               >Read the newest</a
             >
@@ -355,7 +363,7 @@ interface ShownStory {
             @case ('storybook') {
               <div
                 class="rounded-md border border-line bg-surface px-4 py-6 text-sm text-fg"
-                [qitsEntityList]="versions"
+                [qitsEntityList]="catalog"
                 data-storybook
               >
                 <p class="m-0 mb-2">
@@ -366,10 +374,10 @@ interface ShownStory {
                     class="font-semibold text-accent no-underline hover:underline"
                     [href]="href"
                     [qitsTriggers]="[handingOff.storybook]"
-                    [fieldOf]="versionList()"
-                    [qitsField]="marks.versions"
+                    [fieldOf]="catalogSite()"
+                    qitsField="name"
                     (click)="openStorybook($event, href)"
-                    >Open {{ short() }} {{ label(version() ?? '') }} in the docs app</a
+                    >Open {{ short() }} {{ label(urlVersion() ?? '') }} in the docs app</a
                   >
                 }
               </div>
@@ -428,10 +436,10 @@ export class DocsReaderPage {
   private readonly origins = inject(PlatformOrigins);
 
   /** Back to the project's Docs page (the back link, an unknown site's), or the newest version. */
-  protected readonly leaving = outcomes('leave-docs-site', {
-    docs: exit('projects/:slug/docs'),
-    newest: exit('projects/:slug/docs/read/:site'),
-  });
+  protected readonly leaving = outcomes('leave-docs-site', { docs: exit('projects/:slug/docs') });
+
+  /** An unknown version's link to the newest (app-wide: it shows on the versioned addresses only). */
+  protected readonly toNewest = newestVersionOutcomes();
 
   /** The Version and Branch selects: a pick reads that version, keeping `?category=`. */
   protected readonly picking = outcomes('pick-docs-version', {
@@ -505,10 +513,20 @@ export class DocsReaderPage {
     return asked && this.categories().includes(asked) ? asked : undefined;
   });
 
-  /** The site's versions, newest first, in the browser only (the server render has no session). */
+  /** Whether the body reads the version's file list (Markdown and OpenAPI bundles). */
+  private readonly readsFiles = computed(
+    () => this.body() === 'markdown' || this.body() === 'swagger',
+  );
+
+  /**
+   * The site's versions, newest first, for the bodies drawn here, in the browser only (the server
+   * render has no session). A hand-off needs no version: the page it hands off to reads its own.
+   */
   protected readonly versions = qitsResource(DOCS_VERSIONS, () => {
     const site = this.site();
-    return this.browser && site ? { path: { repository: DOCS_REPOSITORY, site } } : undefined;
+    return this.browser && site && this.readsFiles()
+      ? { path: { repository: DOCS_REPOSITORY, site } }
+      : undefined;
   });
 
   protected readonly versionList = computed(() =>
@@ -518,11 +536,6 @@ export class DocsReaderPage {
 
   /** The version read: the URL's, else the newest of `main`, else the newest. */
   protected readonly version = computed(() => this.urlVersion() ?? defaultVersion(this.all()));
-
-  /** Whether the body reads the version's file list (Markdown and OpenAPI bundles). */
-  private readonly readsFiles = computed(
-    () => this.body() === 'markdown' || this.body() === 'swagger',
-  );
 
   /** The version's file list, for the bodies drawn here. */
   protected readonly detail = qitsResource(DOCS_VERSION, () => {
@@ -537,19 +550,22 @@ export class DocsReaderPage {
     this.detail.hasValue() ? this.detail.value() : undefined,
   );
 
-  /** Whether a hand-off shows: only then the catalog and the project's repositories are read. */
-  private readonly handsOff = computed(
+  /** Whether a hand-off shows: only then the catalog is read, for the site and its publisher. */
+  private readonly handsOff = computed(() => !this.readsFiles());
+
+  /** Whether the hand-off goes to a repository of the project (contracts, routes). */
+  private readonly toRepository = computed(
     () => this.body() === 'contracts' || this.body() === 'routes',
   );
 
-  /** The catalog, for the site's publisher (`latestRepository`), when a hand-off shows. */
+  /** The catalog, for the site and its publisher (`latestRepository`), when a hand-off shows. */
   protected readonly catalog = qitsResource(DOCS_CATALOG, () =>
     this.browser && this.handsOff() ? { path: { repository: DOCS_REPOSITORY } } : undefined,
   );
 
   /** The open project's id, in the browser only: the repositories' read waits for it. */
   private readonly projectId = computed(() =>
-    this.browser && this.handsOff() ? this.selected.project()?.id : undefined,
+    this.browser && this.toRepository() ? this.selected.project()?.id : undefined,
   );
 
   /** The open project's repositories, to hand off only to one of them. */
@@ -642,6 +658,7 @@ export class DocsReaderPage {
    * version on screen put first when the narrowing lost it, so the select never misreports it.
    */
   protected readonly versionOptions = computed(() => {
+    if (!this.readsFiles()) return [];
     const narrowed =
       this.kind() === 'userflows' ? versionsOnBranch(this.all(), this.branch_()) : [...this.all()];
     const names = narrowed.flatMap((v) => (v.version ? [v.version] : []));
@@ -650,22 +667,25 @@ export class DocsReaderPage {
     return names.map((version) => ({ version, label: versionLabel(version) }));
   });
 
-  /** Whether the site is unknown: its versions are missing (404), or it has none. */
-  protected readonly unknownSite = computed(
-    () =>
-      isMissing(this.versions) ||
-      (!!this.browser && !this.site()) ||
-      (this.versions.hasValue() && this.all().length === 0),
-  );
+  /**
+   * Whether the site is unknown: no name; its versions missing (404) or none; for a hand-off, a
+   * catalog that does not list it.
+   */
+  protected readonly unknownSite = computed(() => {
+    if (!this.site()) return this.browser;
+    if (!this.readsFiles()) return this.catalog.hasValue() && !this.catalogSite();
+    return isMissing(this.versions) || (this.versions.hasValue() && this.all().length === 0);
+  });
 
   /** Whether the version the URL names is missing (404). */
   protected readonly unknownVersion = computed(() => !this.unknownSite() && isMissing(this.detail));
 
   /** The reads the body needs, as one state. */
   protected readonly state = computed((): LoadState => {
-    const reads: LoadState[] = [loadState(this.versions)];
-    if (this.readsFiles()) reads.push(loadState(this.detail));
-    if (this.handsOff()) reads.push(loadState(this.catalog), loadState(this.repositories));
+    const reads: LoadState[] = [];
+    if (this.readsFiles()) reads.push(loadState(this.versions), loadState(this.detail));
+    if (this.handsOff()) reads.push(loadState(this.catalog));
+    if (this.toRepository()) reads.push(loadState(this.repositories));
     if (this.openapi.status() !== 'idle') reads.push(loadState(this.openapi));
     if (reads.includes('error')) return 'error';
     return reads.every((read) => read === 'loaded') ? 'loaded' : 'loading';
@@ -676,16 +696,16 @@ export class DocsReaderPage {
     if (this.versions.status() === 'error') return 'This site’s versions could not be read.';
     if (this.detail.status() === 'error') return 'This version’s files could not be read.';
     if (this.openapi.status() === 'error') return 'The OpenAPI document could not be read.';
-    return 'The site’s repository could not be found.';
+    if (this.catalog.status() === 'error') return 'The docs catalog could not be read.';
+    return 'This project’s repositories could not be read.';
   });
 
-  /** The docs app's reader of a Storybook site, at the version read. */
+  /** The docs app's reader of a Storybook site, at the URL's version, else its newest. */
   protected readonly storybookHref = computed(() => {
     const origin = this.origins.page('docs');
     const slug = this.slug();
-    const version = this.version();
-    return origin && slug && this.site() && version
-      ? `${origin}${docsAppReadPath(`/${slug}/`, this.site(), version)}`
+    return origin && slug && this.site()
+      ? `${origin}${docsAppReadPath(`/${slug}/`, this.site(), this.urlVersion())}`
       : '';
   });
 
@@ -695,11 +715,9 @@ export class DocsReaderPage {
       label: 'Refresh',
       variant: 'muted',
       callback: () => {
-        this.versions.reload();
-        if (this.handsOff()) {
-          this.catalog.reload();
-          this.repositories.reload();
-        }
+        if (this.readsFiles()) this.versions.reload();
+        if (this.handsOff()) this.catalog.reload();
+        if (this.toRepository()) this.repositories.reload();
       },
     },
   ];
