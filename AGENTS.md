@@ -623,8 +623,8 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the errors, metrics, slow spans and
-traces pages come as their own children later); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (the metrics, slow spans and traces
+pages come as their own children later); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
@@ -636,7 +636,19 @@ qits-observability-frontend's names so its bookmarks forward as they are: `sourc
 `level` (→ `minSeverity`, absent: all), `q` (→ `query`) and `since` (minutes → `sinceMinutes`,
 absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
 `qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
-again.
+again. The source picker is one pattern both pages show (`app-telemetry-source-picker`,
+`patterns/observability/source-picker/`, the page's sources read as its input); what the pages
+share of a record (time ranges, a line's time and level, a refusal, `service.version`) is
+`core/observability/telemetry.ts`. `observability/errors` (`ObservabilityErrorsPage`, qits-2339,
+the retired frontend's `errors`) reads `TELEMETRY_ERRORS` (`listTelemetryErrors`) by `source` and
+`since` (→ `sinceMinutes`) only, never before a source is chosen (a sourceless read answers an
+empty list, which would claim "no errors" about nothing): one row per group, in the service's
+order with the uncorrelated group (empty `traceId`) last, headed by its exception (`type:
+message`), else a span's status message, else a log's body (`core/observability/error-groups.ts`,
+ported from the old `error-group.ts`), expanding to its spans (stack trace included) and logs. Each
+row's Error logs opens `observability/logs?source=…&level=ERROR` (`open-telemetry-error-logs`); the
+trace id is text until a trace page exists. No recording holds an uncorrelated group, an empty
+list or a truncated answer, so those are the page's plain spec's, derived from the recorded group.
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,

@@ -147,6 +147,18 @@ export const INTERACTIONS = {
    */
   'show-telemetry-logs': 'The Logs page shows a source’s buffered log lines, newest first',
   /**
+   * `observability-errors.page.ts` via `TELEMETRY_ERRORS` (qits-2339): the Errors page shows the
+   * chosen source's buffered error spans and logs, grouped by trace, narrowed by age.
+   */
+  'show-telemetry-errors':
+    'The Errors page shows a source’s buffered error spans and logs, grouped by trace',
+  /**
+   * `observability-errors.page.ts` (qits-2339): a group's Error logs on the Errors page opens the
+   * Logs page at the same source from ERROR up. Navigates only, and names no pact.
+   */
+  'open-telemetry-error-logs':
+    'Error logs on an error group opens the Logs page at that source’s ERROR lines',
+  /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.
    */
@@ -1221,7 +1233,7 @@ export const INTERACTIONS = {
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
    * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
-   * one exit per page (qits-2313: Logs). Navigates only, and names no pact.
+   * one exit per page (qits-2313: Logs; qits-2339: Errors). Navigates only, and names no pact.
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',

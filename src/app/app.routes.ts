@@ -78,7 +78,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
- * `/observability?source=_service/qits-ci` lands on that source's logs.
+ * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
+ * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -432,6 +433,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/observability/logs/observability-logs.page').then(
                 (m) => m.ObservabilityLogsPage,
+              ),
+          },
+          {
+            path: 'errors',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/errors/observability-errors.page').then(
+                (m) => m.ObservabilityErrorsPage,
               ),
           },
         ],
