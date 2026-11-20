@@ -808,7 +808,8 @@ else `rootName`, else `(unnamed span)`; groups and members in the door's order, 
 its path, trace count, slowest duration, newest start, services, an "N errored" chip and an
 exception marker, expanding (a signal, not the URL) to its traces. A trace's row: its duration,
 root name ("(root not buffered)" when `rootMissing`), an error count chip and an exception marker,
-root service, span count, services, start and its trace id as text (the trace page is qits-2343).
+root service, span count, services, start and its trace id, which opens its trace page at the same
+source (`open-telemetry-trace`, qits-2343).
 A truncated answer says "Showing the newest (slowest) N of T matching traces". An empty one says
 why, in order (`core/observability/traces.ts`, with the lens parsing and the query): no source
 chosen, the source holds no spans, the service is not one of the source row's (offering All

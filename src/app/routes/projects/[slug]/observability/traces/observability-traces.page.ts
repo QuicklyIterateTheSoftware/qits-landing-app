@@ -9,7 +9,15 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import type { TelemetryTraceSummary } from '$core/observability/observability.consumes';
 import { TELEMETRY_SOURCES, TELEMETRY_TRACES } from '$core/observability/observability.operations';
 import { floorText, formatSpanDuration, thresholdLabel } from '$core/observability/slow-spans';
@@ -33,6 +41,7 @@ import {
   type TracesSort,
   type TracesView,
 } from '$core/observability/traces';
+import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { TelemetrySourcePicker } from '$patterns/observability/source-picker/source-picker';
@@ -84,8 +93,8 @@ function plural(count: number, word: string): string {
  * A group's row: its path, how many traces, the slowest, the newest start, the services, an
  * "N errored" chip and an exception marker. A trace's row: its duration, its root span's name
  * ("(root not buffered)" when the buffer lost it), an error count chip and an exception marker,
- * its root service, its span count and services, its start (UTC) and its trace id as text (the
- * trace page is its own ticket).
+ * its root service, its span count and services, its start (UTC) and its trace id, a link to the
+ * trace's page at the same source (`open-telemetry-trace`, qits-2343).
  *
  * Both reads run in the browser only (the server has no session), through `qitsResource`. A refusal
  * (403) is said as such; any other failure offers Retry. Empty states, in order (`traces.ts`): no
@@ -105,6 +114,7 @@ function plural(count: number, word: string): string {
     PageLayoutComponent,
     QitsEntity,
     QitsEntityList,
+    QitsExit,
     QitsField,
     Spinner,
     TelemetrySourcePicker,
@@ -381,12 +391,18 @@ function plural(count: number, word: string): string {
                                   >{{ time(trace.startEpochNanos) }}</span
                                 >
                                 <span aria-hidden="true">·</span>
-                                <span
-                                  class="font-mono break-all"
-                                  [fieldOf]="trace"
-                                  qitsField="traceId"
-                                  >trace {{ trace.traceId }}</span
-                                >
+                                @if (trace.traceId) {
+                                  <a
+                                    class="font-mono break-all text-accent no-underline hover:underline"
+                                    [qitsExit]="opening.trace"
+                                    [exitParams]="{ slug: slug(), traceId: trace.traceId }"
+                                    [exitQueryParams]="{ source: query().source }"
+                                    [fieldOf]="trace"
+                                    qitsField="traceId"
+                                    data-trace-link
+                                    >trace {{ trace.traceId }}</a
+                                  >
+                                }
                               </p>
                             </div>
                           </li>
@@ -479,9 +495,18 @@ function plural(count: number, word: string): string {
                           >{{ time(trace.startEpochNanos) }}</span
                         >
                         <span aria-hidden="true">·</span>
-                        <span class="font-mono break-all" [fieldOf]="trace" qitsField="traceId"
-                          >trace {{ trace.traceId }}</span
-                        >
+                        @if (trace.traceId) {
+                          <a
+                            class="font-mono break-all text-accent no-underline hover:underline"
+                            [qitsExit]="opening.trace"
+                            [exitParams]="{ slug: slug(), traceId: trace.traceId }"
+                            [exitQueryParams]="{ source: query().source }"
+                            [fieldOf]="trace"
+                            qitsField="traceId"
+                            data-trace-link
+                            >trace {{ trace.traceId }}</a
+                          >
+                        }
                       </p>
                     </div>
                   </li>
@@ -559,6 +584,7 @@ export class ObservabilityTracesPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly selected = inject(SelectedProject);
 
   protected readonly thresholdLabel = thresholdLabel;
   protected readonly sinceMinutes = SINCE_MINUTES;
@@ -590,6 +616,13 @@ export class ObservabilityTracesPage {
         a.view === b.view,
     },
   );
+
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /** A trace's id: the trace's page at the same source, a declared exit (qits-2343). */
+  protected readonly opening = outcomes('open-telemetry-trace', {
+    trace: exit('projects/:slug/observability/traces/:traceId'),
+  });
 
   /** The buffer's sources, in the browser only (the server has no session). */
   protected readonly sources = qitsResource(TELEMETRY_SOURCES, () =>

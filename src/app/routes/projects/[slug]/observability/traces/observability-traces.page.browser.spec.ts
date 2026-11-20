@@ -2,9 +2,11 @@ import type { TestRequest } from '@angular/common/http/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { leftFor } from '../../../../../../testing/browser/contracts-bundles';
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
@@ -14,8 +16,9 @@ import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
  * `listTelemetrySources` and `listTelemetryTraces` are answered from qits-observability's golden
  * masters: "telemetry from one platform service" (one SERVICE source, `_service/qits-example`, its
  * one service the same, and its traces newest first: `GET /health`, route `/health`, 5 ms, 1 span,
- * then `GET /invoices`, route `/invoices`, 750 ms, 2 spans, 1 error span and an exception) and "an
- * empty telemetry buffer" (no source). The recording answers the default read only (the source
+ * then `GET /invoices`, route `/invoices`, 750 ms, 2 spans, 1 error span and an exception; each
+ * trace id links the trace page, `open-telemetry-trace`) and "an empty telemetry buffer" (no
+ * source). The recording answers the default read only (the source
  * alone), so the other lenses, the flat view, a truncated answer and the empty reasons are the
  * plain spec's (`observability-traces.page.spec.ts`) and `traces.spec.ts`'s; a screenshot shows
  * only a recorded body, so the empty state is the empty buffer's. A refusal is a 403 with no body,
@@ -109,12 +112,37 @@ describe('ObservabilityTracesPage (screenshots)', () => {
     await expect.element(trace).toMatchTextContent('750 ms');
     await expect.element(trace).toMatchTextContent('1 error');
     await expect.element(trace).toMatchTextContent('2 spans');
-    await expect.element(trace).toMatchTextContent('trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01');
+    await expect
+      .element(trace.getByRole('link', { name: 'trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01' }))
+      .toHaveAttribute(
+        'href',
+        `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=${encodeURIComponent(await recordedSource())}`,
+      );
     await opened.settled();
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
     await shootShellMenus(opened, 'loaded');
+  });
+
+  it('open-telemetry-trace trace: a trace’s id opens the trace at the same source', async () => {
+    const { opened, traces, source } = await loaded();
+    const invoices = traces
+      .getByRole('list', { name: 'Paths' })
+      .getByRole('listitem', { name: '/invoices' });
+    await invoices.getByRole('button', { name: '/invoices' }).click();
+    await opened.idle();
+    await invoices
+      .getByRole('listitem', { name: 'GET /invoices' })
+      .getByRole('link', { name: /^trace / })
+      .click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-telemetry-trace:trace',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=${encodeURIComponent(source)}`,
+    );
   });
 
   it('reads no traces before a source is chosen, then the chosen one’s', async () => {

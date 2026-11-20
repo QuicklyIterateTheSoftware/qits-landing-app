@@ -183,9 +183,9 @@ export const INTERACTIONS = {
   'show-telemetry-trace':
     'The trace page shows a trace’s buffered spans as a waterfall, with its correlated logs',
   /**
-   * `observability-slow-spans.page.ts` (a span's trace id) and `observability-errors.page.ts` (a
-   * correlated group's trace id) (qits-2343): a trace id opens the trace page at the same source.
-   * Navigates only, and names no pact.
+   * `observability-slow-spans.page.ts` (a span's trace id), `observability-errors.page.ts` (a
+   * correlated group's trace id) and `observability-traces.page.ts` (a trace row's id) (qits-2343):
+   * a trace id opens the trace page at the same source. Navigates only, and names no pact.
    */
   'open-telemetry-trace': 'A trace id on an Observability page opens that trace’s page',
   /**

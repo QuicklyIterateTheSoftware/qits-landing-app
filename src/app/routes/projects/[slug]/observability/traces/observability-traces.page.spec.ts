@@ -1,12 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import type { TestRequest } from '@angular/common/http/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { client as observabilityClient } from '../../../../../api/observability/client.gen';
 import { provideHeyApiClient } from '../../../../../api/observability/client/client.gen';
 import type { TelemetrySources, TelemetryTraces } from '$core/observability/observability.consumes';
+import { SelectedProject } from '$core/projects/selected-project';
 import { observabilityGoldenMasters } from '../../../../../../testing/golden-masters';
 import { ObservabilityTracesPage } from './observability-traces.page';
 
@@ -47,6 +48,7 @@ describe('ObservabilityTracesPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(observabilityClient),
+        { provide: SelectedProject, useValue: { slug: signal('p') } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -264,13 +266,16 @@ describe('ObservabilityTracesPage', () => {
       expect(router.url).toBe(before);
       const rows = traceRows(invoices);
       expect(rows.map((row) => row.getAttribute('aria-label'))).toEqual(['GET /invoices']);
+      expect(rows[0].querySelector('[data-trace-link]')?.getAttribute('href')).toBe(
+        '/projects/p/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=_service%2Fqits-example',
+      );
       button.click();
       fixture.detectChanges();
       expect(traceRows(element)).toHaveLength(0);
     });
   });
 
-  it('draws one row per trace with view=flat: duration, root, errors, service, spans, start, trace', async () => {
+  it('draws one row per trace with view=flat: duration, root, errors, service, spans, start, trace link', async () => {
     const { element } = await shown(recorded(), '&view=flat');
     expect(groupRows(element)).toHaveLength(0);
     const rows = traceRows(element);
@@ -291,7 +296,9 @@ describe('ObservabilityTracesPage', () => {
     expect(text(invoices)).toContain('2 spans');
     expect(text(invoices)).toContain('2026-01-01 00:00:00.000');
     expect(text(invoices)).toContain('trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01');
-    expect(invoices.querySelector('a')).toBeNull();
+    expect(invoices.querySelector('[data-trace-link]')?.getAttribute('href')).toBe(
+      '/projects/p/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=_service%2Fqits-example',
+    );
   });
 
   it('says a root the buffer lost, and names an unnamed one', async () => {
