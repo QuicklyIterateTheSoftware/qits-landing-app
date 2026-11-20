@@ -9,6 +9,8 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
+import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
+import { literalSbomPaths } from '$core/artifacts/sbom-paths';
 import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
 const STORE = 'a store holding one artifact of every kind';
@@ -19,6 +21,11 @@ const ARTIFACTS = 'qits-artifacts';
 /** The coordinate every state records (`mavenPackage` in `mavenRepository`). */
 const REPO = 'maven';
 const COORDINATE = 'eu.wohlben.qits:contract-maven';
+
+// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325).
+if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
+  artifactsClient.interceptors.request.use(literalSbomPaths);
+}
 
 /**
  * Screenshots of the Artifacts section's maven package page (qits-2325) inside the shell
@@ -52,12 +59,15 @@ describe('ArtifactsMavenPackagePage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  /** The page's two reads, and one version's SBOM, by URL (the coordinate one segment). */
+  /**
+   * The page's two reads, and one version's SBOM, by URL as the wire carries it: the versions
+   * door (JAX-RS) takes the coordinate encoded, one segment; the SBOM store (a regex route over
+   * the raw path) only with its `:` literal, so these must match exactly (`literalSbomPaths`).
+   */
   const urls = (repo: string, coordinate: string) => ({
     versions: `/artifacts/api/repositories/${encodeURIComponent(repo)}/maven-packages/${encodeURIComponent(coordinate)}/versions`,
-    sboms: `/artifacts/sboms/maven/${encodeURIComponent(coordinate)}`,
-    sbom: (version: string) =>
-      `/artifacts/sboms/maven/${encodeURIComponent(coordinate)}/-/${version}`,
+    sboms: `/artifacts/sboms/maven/${coordinate}`,
+    sbom: (version: string) => `/artifacts/sboms/maven/${coordinate}/-/${version}`,
   });
 
   /** Opens the coordinate's page, its reads still open. */

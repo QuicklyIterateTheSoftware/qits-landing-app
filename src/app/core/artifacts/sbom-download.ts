@@ -5,7 +5,8 @@ import { ARTIFACT_SBOM } from './artifacts.operations';
  * package page's (qits-2326), so nothing here knows a package type. The store answers 401 without
  * the bearer, so a bare `<a href>` cannot fetch it: the document comes through the app's generated
  * client (`ARTIFACT_SBOM`, `getSbom`), which signs the call like every other, and is handed to the
- * browser as a Blob.
+ * browser as a Blob. The package name reaches the store with its `:`, `@` and `/` literal through
+ * `literalSbomPaths` (`sbom-paths.ts`) on that client; without it the store answers 404.
  */
 
 /** The media type a saved SBOM carries: CycloneDX's JSON. */

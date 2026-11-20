@@ -34,6 +34,7 @@ import { PlatformOrigins, type PlatformApp } from '$core/platform/platform-origi
 import { provideAppUpdates } from '$core/updates/app-updates';
 import { provideChunkReloadReset, reloadOnFailedImport } from '$core/updates/chunk-reload';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
+import { literalSbomPaths } from '$core/artifacts/sbom-paths';
 import { provideWorkReferences } from '$core/work/work-briefs';
 import { environment } from '../environments/environment';
 
@@ -72,6 +73,11 @@ function provideBackendOrigins() {
     // encodes (qits-1951, `docs-paths.ts`).
     if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
       artifactsClient.interceptors.request.use(literalDocsPaths);
+    }
+    // The SBOM store reads `packageName` with `:`, `@` and `/` literal, which the generated client
+    // encodes (qits-2325, `sbom-paths.ts`).
+    if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
+      artifactsClient.interceptors.request.use(literalSbomPaths);
     }
   });
 }

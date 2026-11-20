@@ -32,6 +32,7 @@ import {
   daemonDownloadParams,
 } from './artifacts.operations';
 import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
+import { literalSbomPaths } from './sbom-paths';
 
 /**
  * qits-landing-app's pact with qits-artifacts-service, the store explorer's part (qits-2316):
@@ -91,6 +92,11 @@ import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
  */
+// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325).
+if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
+  artifactsClient.interceptors.request.use(literalSbomPaths);
+}
+
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);

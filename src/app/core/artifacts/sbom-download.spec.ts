@@ -5,6 +5,7 @@ import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../api/artifacts/client.gen';
 import { artifactsGoldenMasters } from '../../../testing/golden-masters';
 import { fetchSbomFile, saveFile, SBOM_MEDIA_TYPE, sbomFileName } from './sbom-download';
+import { literalSbomPaths } from './sbom-paths';
 
 /** qits-artifacts' coordinate with an SBOM on its newer version, and that SBOM's document. */
 const STATE = 'a maven coordinate with an sbom on one of two versions';
@@ -12,6 +13,11 @@ const { params } = artifactsGoldenMasters.operation(STATE, 'getSbom');
 const COORDINATE = params['packageName'];
 const VERSION = params['version'];
 const DOCUMENT = artifactsGoldenMasters.text(STATE, 'getSbom');
+
+// As `app.config.ts` does: the SBOM store's paths, with `:` literal.
+if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
+  artifactsClient.interceptors.request.use(literalSbomPaths);
+}
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -32,12 +38,13 @@ describe('sbom download (qits-2325)', () => {
 
   afterEach(() => http.verify());
 
-  /** The one SBOM read in flight, checked for its address and its text response type. */
+  /**
+   * The one SBOM read in flight, checked for its address (the coordinate's `:` literal, as the
+   * store's raw-path route needs it) and its text response type.
+   */
   async function pending() {
     await settle();
-    const request = http.expectOne(
-      `/artifacts/sboms/maven/${encodeURIComponent(COORDINATE)}/-/${VERSION}`,
-    );
+    const request = http.expectOne(`/artifacts/sboms/maven/${COORDINATE}/-/${VERSION}`);
     expect(request.request.responseType).toBe('text');
     return request;
   }

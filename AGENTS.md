@@ -455,7 +455,12 @@ package type and name and the page's two stays as inputs), "CycloneDX <specVersi
 Download, or "—". Download (`download-maven-sbom`, `saved` / `failed` stays, a failure said on its
 row) reads `ARTIFACT_SBOM` (`getSbom`) as text through the generated client (the store wants the
 bearer, so no bare link) and saves it as `<artifactId>-<version>.cdx.json`,
-`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). SBOMs of
+`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). The SBOM store
+is a regex route over the raw path and 404s an encoded name (`eu.wohlben.qits%3Acontract-maven`,
+`%40qits%2Fangular`), so `app.config.ts` also puts `literalSbomPaths` (`core/artifacts/sbom-paths.ts`)
+on the artifacts client: `:`, `@` and `/` literal in `/artifacts/sboms/` wire URLs only (the
+`/artifacts/api/` versions door takes the coordinate encoded). The specs that read SBOMs register
+it as well and expect the literal URL, so an encoded one fails them. SBOMs of
 versions the store no longer holds are counted under the table. A 404 is "There is no repository
 called <repo> in this store", a 400 "<repo> is not a Maven repository" (linking its store page), an
 empty list "There is no Maven coordinate called <coordinate> in this repository"; "← <repo>" and the

@@ -196,7 +196,9 @@ export const ARTIFACT_MAVEN_VERSIONS = qitsOperation({
 
 /**
  * One package's stored SBOMs (`listSbomVersions`, qits-2325), newest first, for any package type
- * (`maven`, `npm`): 404 when it has none.
+ * (`maven`, `npm`): 404 when it has none. The store reads `packageName` with `:`, `@` and `/`
+ * literal, which the generated client encodes: `literalSbomPaths` (`sbom-paths.ts`), which
+ * `app.config.ts` puts on the artifacts client, turns them back.
  */
 export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
   provider: 'qits-artifacts-service',
@@ -208,7 +210,8 @@ export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
 
 /**
  * One release's CycloneDX document (`getSbom`, qits-2325), read on a press and saved as a file
- * (`sbom-download.ts`); 404 when none is stored.
+ * (`sbom-download.ts`); 404 when none is stored. Its `packageName` goes out literal, as the
+ * list's (`literalSbomPaths`).
  */
 export const ARTIFACT_SBOM = qitsOperation({
   provider: 'qits-artifacts-service',
