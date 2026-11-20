@@ -96,6 +96,8 @@ describe('ArtifactsCleanupPage', () => {
 
   it('draws no Run when the plan condemns nothing, and says there is nothing to run', async () => {
     // Derived: the recorded plan with no dead identity and its sweep figures at zero (they are).
+    // The browser spec shoots the same case from its own recording ("a repository the cleanup has
+    // nothing to delete in").
     const plan = recorded();
     plan.dead = [];
     plan.sweep = { ...plan.sweep, blobCount: 0, reclaimableBytes: 0 };

@@ -27,7 +27,9 @@ import { ARTIFACTS_CLEANUP_PLAN, ARTIFACTS_CLEANUP_SWEEP } from './cleanup.opera
  * `repository` param, `daemons`): the provider serves qits-artifacts' recording of a plan over
  * supplied pins, one daemon version condemned and two kept, the sweep figures zeroed; and the
  * sweep's receipt, which withholds that version whole as younger than the grace window, so nothing
- * is deleted. The recordings carry exactly those entries (no `listFilteredTo`), so each list binds
+ * is deleted. And the plan in "a repository the cleanup has nothing to delete in" (`daemons` with
+ * only its two kept versions: the dead list empty, so the page draws no Run), which skips itself
+ * until the pin records it. The recordings carry exactly those entries (no `listFilteredTo`), so each list binds
  * its recorded count. A plan without the dead list (qits-orchestrator's recordings before
  * qits-2329) skips the spec and writes no pact.
  *
@@ -39,6 +41,7 @@ const PROVIDER = 'qits-orchestrator-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 const PLANNABLE = 'a repository the cleanup can plan';
+const NOTHING_TO_DELETE = 'a repository the cleanup has nothing to delete in';
 const PLAN = ARTIFACTS_CLEANUP_PLAN.operationId;
 
 /** Whether the pinned recording holds the dead list; until then the spec writes no pact. */
@@ -113,6 +116,24 @@ describe('qits-landing-app → qits-orchestrator-service pact: the cleanup page'
           expect(typeof data?.sweep?.reclaimableBytes).toBe('number');
           expect(typeof data?.structural?.blobCount).toBe('number');
           expect((data?.pins ?? []).length).toBeGreaterThan(0);
+        },
+      ),
+  );
+
+  it.skipIf(!RECORDED || !isRecorded(NOTHING_TO_DELETE, PLAN, masters))(
+    'show-artifacts-cleanup-plan: a plan that condemns nothing, every identity kept by a rule',
+    () =>
+      given(ARTIFACTS_CLEANUP_PLAN, NOTHING_TO_DELETE, 'show-artifacts-cleanup-plan').executeTest(
+        async (server) => {
+          const repository = repositoryOf(NOTHING_TO_DELETE, PLAN);
+          const { data } = await at(server.url, () =>
+            ARTIFACTS_CLEANUP_PLAN.fetch({ path: { repository } }),
+          );
+          expect(data?.executable).toBe(true);
+          expect(data?.error).toBeNull();
+          expect(data?.dead).toEqual([]);
+          expect((data?.kept ?? []).length).toBeGreaterThan(0);
+          expect(data?.sweep?.reclaimableBytes).toBe(0);
         },
       ),
   );

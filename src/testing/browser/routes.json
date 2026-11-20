@@ -97,6 +97,12 @@
       "state": "a repository the cleanup can plan",
       "operationId": "sweepArtifactsCleanupRepository",
       "route": "artifacts/repositories/:repo/cleanup"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a repository the cleanup has nothing to delete in",
+      "operationId": "planArtifactsCleanupRepository",
+      "route": "artifacts/repositories/:repo/cleanup"
     }
   ],
   "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts": [

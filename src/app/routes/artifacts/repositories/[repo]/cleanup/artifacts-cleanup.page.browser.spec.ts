@@ -12,6 +12,7 @@ import {
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 const PLANNABLE = 'a repository the cleanup can plan';
+const NOTHING_TO_DELETE = 'a repository the cleanup has nothing to delete in';
 const ORCHESTRATOR = 'qits-orchestrator';
 const ARTIFACTS = 'qits-artifacts';
 const STORE = 'a store holding one artifact of every kind';
@@ -28,12 +29,12 @@ const SWEEP = `/orchestrator/api/artifacts/repositories/${REPO}/sweep`;
  * the cleanup can plan" (`daemons`: one daemon version condemned, two kept, the figures zeroed;
  * the sweep withholds the condemned version whole, so nothing is deleted): the plan (`plan`), the
  * kept list open (`kept`), the second press asked (`confirm`) and the receipt in the plan's place
- * (`receipt`). A 404 (`unknown-repository`), a 403 (`refused`), a read still open (`loading`), a
+ * (`receipt`); and "a repository the cleanup has nothing to delete in" (the same repository with
+ * only its two kept versions: no Run; `nothing-to-delete`). A 404 (`unknown-repository`), a 403 (`refused`), a read still open (`loading`), a
  * failed read (`error`), a refused sweep (`run-refused`, 409) and a sweep with no receipt
  * (`run-lost`, 502) are statuses only (an error answer may carry the service's `message`).
  *
- * The plan as no recording holds it (nothing to delete, the live pins unread, a type with no
- * collector) is the plain spec's (`artifacts-cleanup.page.spec.ts`), which derives each answer
+ * The plan as no recording holds it (the live pins unread, a type with no collector) is the plain spec's (`artifacts-cleanup.page.spec.ts`), which derives each answer
  * from the recording and says how: the golden-master guard admits no derived body here.
  *
  * Its outcomes (epic qits-2000) are each reached once: the back link (`leave-artifacts-cleanup`),
@@ -129,6 +130,29 @@ describe('ArtifactsCleanupPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('plan', { kind: 'DATA' });
     await shootShellMenus(opened, 'plan');
+  });
+
+  it('says there is nothing to delete, and draws no Run, when the plan condemns nothing', async () => {
+    const opened = await open();
+    http
+      .expectOne(PLAN)
+      .flush(await goldenMaster(NOTHING_TO_DELETE, 'planArtifactsCleanupRepository', ORCHESTRATOR));
+    await opened.settled();
+    const view = page.elementLocator(opened.page);
+    await expect
+      .element(view)
+      .toMatchTextContent(
+        'Nothing. Every identity in this repository is kept by a rule, and the rules are listed below.',
+      );
+    await expect.element(view).toMatchTextContent('There is nothing to run');
+    expect(view.getByRole('list', { name: 'Would be deleted' }).elements()).toHaveLength(0);
+    expect(view.getByRole('button', { name: /^Run:/ }).elements()).toHaveLength(0);
+    await expect
+      .element(view.getByRole('button', { name: /kept identities/ }))
+      .toMatchTextContent('Show the 2 kept identities');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('nothing-to-delete', { kind: 'NO_DATA' });
   });
 
   it('toggle-artifacts-cleanup-kept toggled: shows the kept identities, each with its rule', async () => {

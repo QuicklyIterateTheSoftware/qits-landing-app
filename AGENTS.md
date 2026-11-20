@@ -414,8 +414,9 @@ answer brought no receipt, so re-read the plan. Re-read the plan (header, or und
 `reread-artifacts-cleanup-plan`) drops the receipt and reads again. A 404 is "There is no repository
 called <repo> in this store", a 403 names the gc roles. No event follows the store. The pact reads
 both doors in "a repository the cleanup can plan" (`daemons`: one identity condemned, two kept, the
-figures zeroed; its sweep withholds it, deleting nothing); the plans no recording holds (nothing to
-delete, pins unread, not collected, failed closed, withheld figures) are the plain spec's, derived.
+figures zeroed; its sweep withholds it, deleting nothing) and the plan in "a repository the cleanup
+has nothing to delete in" (the dead list empty: no Run); the plans no recording holds (pins unread,
+not collected, failed closed, withheld figures) are the plain spec's, derived.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
