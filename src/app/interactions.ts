@@ -845,6 +845,12 @@ export const INTERACTIONS = {
    */
   'show-swarm-services': 'The swarm services page lists the swarm’s services with their state',
   /**
+   * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
+   * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
+   * engine version, the one qits-system runs on marked. Refresh reads them again.
+   */
+  'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
+  /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.

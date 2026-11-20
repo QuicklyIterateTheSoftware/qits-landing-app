@@ -537,6 +537,22 @@ replicated services, `1/1`) and "a swarm running no services" (`[]`; the interac
 `empty` screenshot skip themselves until the `@qits/system-golden-masters` pin records it), in its
 own part of the system pact (`swarm.operations.pact.spec.ts`, `assertPactPart`).
 
+`system/swarm/nodes` (`SwarmNodesPage`, qits-2346, replacing qits-system-frontend's `swarm/nodes`,
+an entry point too) is the same swarm's nodes: `SWARM_NODE_LIST` (`listSwarmNodes`, `docker node
+ls` on the manager), one table in the server's order: hostname (plain text until a node's page
+lands, qits-2347) with a neutral "this node" chip on the one qits-system runs on (`self`), docker's
+12-character id (`shortSwarmId`, the whole id in `title`), role, status and availability (docker's
+own words, each on a chip), manager status and engine version ("—" when empty: a worker has no
+manager status). No Address column and no `address` in `LIST_SWARM_NODES`: the list door always
+answers it `null`. The chips' tones are `core/system/swarm-node-tones.ts`, case-insensitive:
+status Ready ok, Down failed, Unknown / Disconnected waiting, else neutral; availability Active ok,
+Pause waiting, Drain and else neutral. An empty listing is one sentence ("The swarm manager lists
+no nodes."), a 503 and a 403 as the services page. Staleness: no `refreshOn`. No event names a
+node change (a join, a leave, a drain, a node going Down), so the page is not followed at all:
+Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a single-node swarm"
+(one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
+the interaction and the `empty` screenshot skip themselves until the pin records it).
+
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
 (qits-network-access-frontend), served at `https://network-access.<domain>/` by
