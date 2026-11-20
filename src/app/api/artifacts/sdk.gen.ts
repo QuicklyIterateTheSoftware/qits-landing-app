@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetContentHashData, GetContentHashErrors, GetContentHashResponses, GetDaemonData, GetDaemonErrors, GetDaemonResponses, GetDocsFileData, GetDocsFileErrors, GetDocsFileResponses, GetDocsVersionData, GetDocsVersionErrors, GetDocsVersionResponses, GetGcPlanData, GetGcPlanErrors, GetGcPlanResponses, GetImageManifestData, GetImageManifestErrors, GetImageManifestResponses, GetMavenFileData, GetMavenFileErrors, GetMavenFileResponses, GetMavenMetadataData, GetMavenMetadataErrors, GetMavenMetadataResponses, GetNewestContentHashData, GetNewestContentHashErrors, GetNewestContentHashResponses, GetNpmPackumentData, GetNpmPackumentErrors, GetNpmPackumentResponses, GetSbomData, GetSbomErrors, GetSbomResponses, GetStoreSummaryData, GetStoreSummaryErrors, GetStoreSummaryResponses, HeadDaemonData, HeadDaemonErrors, HeadDaemonResponses, HeadImageManifestData, HeadImageManifestErrors, HeadImageManifestResponses, HeadNpmTarballData, HeadNpmTarballErrors, HeadNpmTarballResponses, HeadSbomData, HeadSbomErrors, HeadSbomResponses, ListArtifactRecordsData, ListArtifactRecordsErrors, ListArtifactRecordsResponses, ListDaemonsData, ListDaemonsErrors, ListDaemonsResponses, ListDaemonVersionsData, ListDaemonVersionsErrors, ListDaemonVersionsResponses, ListDocsSitesData, ListDocsSitesResponses, ListDocsSiteSummariesData, ListDocsSiteSummariesErrors, ListDocsSiteSummariesResponses, ListDocsVersionsData, ListDocsVersionsErrors, ListDocsVersionsResponses, ListImageManifestSummariesData, ListImageManifestSummariesErrors, ListImageManifestSummariesResponses, ListImagesData, ListImagesErrors, ListImagesResponses, ListImageTagsData, ListImageTagsResponses, ListImageTagSummariesData, ListImageTagSummariesErrors, ListImageTagSummariesResponses, ListMavenPackagesData, ListMavenPackagesErrors, ListMavenPackagesResponses, ListNpmPackagesData, ListNpmPackagesErrors, ListNpmPackagesResponses, ListRepositoriesData, ListRepositoriesErrors, ListRepositoriesResponses, PlanGcRepositoriesWithSuppliedPinsData, PlanGcRepositoriesWithSuppliedPinsErrors, PlanGcRepositoriesWithSuppliedPinsResponses, PlanGcRepositoryWithSuppliedPinsData, PlanGcRepositoryWithSuppliedPinsErrors, PlanGcRepositoryWithSuppliedPinsResponses, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsErrors, PlanGcWithSuppliedPinsResponses, PurgeApplicationData, PurgeApplicationErrors, PurgeApplicationResponses, PutDaemonData, PutDaemonErrors, PutDaemonResponses, PutDocsData, PutDocsErrors, PutDocsResponses, PutMavenFileData, PutMavenFileErrors, PutMavenFileResponses, PutNpmDistTagData, PutNpmDistTagErrors, PutNpmDistTagResponses, PutNpmPackageData, PutNpmPackageErrors, PutNpmPackageResponses, PutSbomData, PutSbomResponses, SweepGcData, SweepGcErrors, SweepGcRepositoryData, SweepGcRepositoryErrors, SweepGcRepositoryResponses, SweepGcResponses } from './types.gen';
+import type { GetContentHashData, GetContentHashErrors, GetContentHashResponses, GetDaemonData, GetDaemonErrors, GetDaemonResponses, GetDocsFileData, GetDocsFileErrors, GetDocsFileResponses, GetDocsVersionData, GetDocsVersionErrors, GetDocsVersionResponses, GetGcPlanData, GetGcPlanErrors, GetGcPlanResponses, GetImageManifestData, GetImageManifestErrors, GetImageManifestResponses, GetMavenFileData, GetMavenFileErrors, GetMavenFileResponses, GetMavenMetadataData, GetMavenMetadataErrors, GetMavenMetadataResponses, GetNewestContentHashData, GetNewestContentHashErrors, GetNewestContentHashResponses, GetNpmPackumentData, GetNpmPackumentErrors, GetNpmPackumentResponses, GetSbomData, GetSbomErrors, GetSbomResponses, GetStoreSummaryData, GetStoreSummaryErrors, GetStoreSummaryResponses, HeadDaemonData, HeadDaemonErrors, HeadDaemonResponses, HeadImageManifestData, HeadImageManifestErrors, HeadImageManifestResponses, HeadNpmTarballData, HeadNpmTarballErrors, HeadNpmTarballResponses, HeadSbomData, HeadSbomErrors, HeadSbomResponses, ListArtifactRecordsData, ListArtifactRecordsErrors, ListArtifactRecordsResponses, ListDaemonsData, ListDaemonsErrors, ListDaemonsResponses, ListDaemonVersionsData, ListDaemonVersionsErrors, ListDaemonVersionsResponses, ListDocsSitesData, ListDocsSitesResponses, ListDocsSiteSummariesData, ListDocsSiteSummariesErrors, ListDocsSiteSummariesResponses, ListDocsVersionsData, ListDocsVersionsErrors, ListDocsVersionsResponses, ListDocsVersionSummariesData, ListDocsVersionSummariesErrors, ListDocsVersionSummariesResponses, ListImageManifestSummariesData, ListImageManifestSummariesErrors, ListImageManifestSummariesResponses, ListImagesData, ListImagesErrors, ListImagesResponses, ListImageTagsData, ListImageTagsResponses, ListImageTagSummariesData, ListImageTagSummariesErrors, ListImageTagSummariesResponses, ListMavenPackagesData, ListMavenPackagesErrors, ListMavenPackagesResponses, ListMavenVersionSummariesData, ListMavenVersionSummariesErrors, ListMavenVersionSummariesResponses, ListNpmPackagesData, ListNpmPackagesErrors, ListNpmPackagesResponses, ListRepositoriesData, ListRepositoriesErrors, ListRepositoriesResponses, ListSbomVersionsData, ListSbomVersionsErrors, ListSbomVersionsResponses, PlanGcRepositoriesWithSuppliedPinsData, PlanGcRepositoriesWithSuppliedPinsErrors, PlanGcRepositoriesWithSuppliedPinsResponses, PlanGcRepositoryWithSuppliedPinsData, PlanGcRepositoryWithSuppliedPinsErrors, PlanGcRepositoryWithSuppliedPinsResponses, PlanGcWithSuppliedPinsData, PlanGcWithSuppliedPinsErrors, PlanGcWithSuppliedPinsResponses, PurgeApplicationData, PurgeApplicationErrors, PurgeApplicationResponses, PutDaemonData, PutDaemonErrors, PutDaemonResponses, PutDocsData, PutDocsErrors, PutDocsResponses, PutMavenFileData, PutMavenFileErrors, PutMavenFileResponses, PutNpmDistTagData, PutNpmDistTagErrors, PutNpmDistTagResponses, PutNpmPackageData, PutNpmPackageErrors, PutNpmPackageResponses, PutSbomData, PutSbomResponses, SweepGcData, SweepGcErrors, SweepGcRepositoryData, SweepGcRepositoryErrors, SweepGcRepositoryResponses, SweepGcResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -50,6 +50,11 @@ export const putDocs = <ThrowOnError extends boolean = false>(options: Options<P
  * One file of a docs version, as stored, with its media type and ETag.
  */
 export const getDocsFile = <ThrowOnError extends boolean = false>(options: Options<GetDocsFileData, ThrowOnError>): RequestResult<GetDocsFileResponses, GetDocsFileErrors, ThrowOnError> => (options.client ?? client).get<GetDocsFileResponses, GetDocsFileErrors, ThrowOnError>({ url: '/artifacts/docs/{repository}/{site}/-/{version}/{path}', ...options });
+
+/**
+ * Every stored SBOM version of one package, newest first.
+ */
+export const listSbomVersions = <ThrowOnError extends boolean = false>(options: Options<ListSbomVersionsData, ThrowOnError>): RequestResult<ListSbomVersionsResponses, ListSbomVersionsErrors, ThrowOnError> => (options.client ?? client).get<ListSbomVersionsResponses, ListSbomVersionsErrors, ThrowOnError>({ url: '/artifacts/sboms/{packageType}/{packageName}', ...options });
 
 /**
  * The CycloneDX document published for one release, byte for byte.
@@ -311,6 +316,15 @@ export const listDocsSiteSummaries = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
+ * Versions
+ */
+export const listDocsVersionSummaries = <ThrowOnError extends boolean = false>(options: Options<ListDocsVersionSummariesData, ThrowOnError>): RequestResult<ListDocsVersionSummariesResponses, ListDocsVersionSummariesErrors, ThrowOnError> => (options.client ?? client).get<ListDocsVersionSummariesResponses, ListDocsVersionSummariesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/docs/{site}/versions',
+    ...options
+});
+
+/**
  * Images
  */
 export const listImages = <ThrowOnError extends boolean = false>(options: Options<ListImagesData, ThrowOnError>): RequestResult<ListImagesResponses, ListImagesErrors, ThrowOnError> => (options.client ?? client).get<ListImagesResponses, ListImagesErrors, ThrowOnError>({
@@ -343,6 +357,15 @@ export const listImageTagSummaries = <ThrowOnError extends boolean = false>(opti
 export const listMavenPackages = <ThrowOnError extends boolean = false>(options: Options<ListMavenPackagesData, ThrowOnError>): RequestResult<ListMavenPackagesResponses, ListMavenPackagesErrors, ThrowOnError> => (options.client ?? client).get<ListMavenPackagesResponses, ListMavenPackagesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/artifacts/api/repositories/{repo}/maven-packages',
+    ...options
+});
+
+/**
+ * Versions
+ */
+export const listMavenVersionSummaries = <ThrowOnError extends boolean = false>(options: Options<ListMavenVersionSummariesData, ThrowOnError>): RequestResult<ListMavenVersionSummariesResponses, ListMavenVersionSummariesErrors, ThrowOnError> => (options.client ?? client).get<ListMavenVersionSummariesResponses, ListMavenVersionSummariesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/artifacts/api/repositories/{repo}/maven-packages/{coordinate}/versions',
     ...options
 });
 

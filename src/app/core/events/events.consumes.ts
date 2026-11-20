@@ -1,4 +1,8 @@
-import type { ListEventNamesResponses, ListEventsResponses } from '../../api/events';
+import type {
+  GetEventResponses,
+  ListEventNamesResponses,
+  ListEventsResponses,
+} from '../../api/events';
 import type { Consumed } from '@qits/angular';
 
 /**
@@ -61,3 +65,47 @@ export const LIST_EVENT_NAMES = ['names'] as const;
 
 /** The names' answer, cut to what the type filter reads. */
 export type EventNames = Consumed<ListEventNamesResponses[200], typeof LIST_EVENT_NAMES>;
+
+/**
+ * `PROJECT_EVENT`: one event by its id (`getEvent`), an event's page (qits-2338) and each hop its
+ * chain walks up by `parentId`. The page shows the whole envelope: its name, when it happened, was
+ * recorded and last updated, its publisher, environment and description, its cause (`parentId`)
+ * and its payload (whose `projectId`s also say whether it is the project's).
+ */
+export const GET_PROJECT_EVENT = [
+  'event.id',
+  'event.name',
+  'event.occurredAt',
+  'event.payload',
+  'event.description',
+  'event.parentId',
+  'event.environment',
+  'event.createdAt',
+  'event.updatedAt',
+  'event.publisher',
+] as const;
+
+/** One event, cut to what its page reads. */
+export type ProjectEventDetail = NonNullable<
+  Consumed<GetEventResponses[200], typeof GET_PROJECT_EVENT>['event']
+>;
+
+/**
+ * `EVENT_CHILDREN`: the events one event caused (`listEvents?parentId=`), each level of an event's
+ * chain walking down (qits-2338). A row shows its time, name, repository and gist (read from its
+ * `payload`, else its `description`), and links its own page when it is the project's. Not paged:
+ * an event causes a handful at most.
+ */
+export const LIST_EVENT_CHILDREN = [
+  'events[].id',
+  'events[].name',
+  'events[].occurredAt',
+  'events[].payload',
+  'events[].description',
+  'events[].parentId',
+] as const;
+
+/** One event another caused, cut to what the chain reads. */
+export type EventChild = NonNullable<
+  Consumed<ListEventsResponses[200], typeof LIST_EVENT_CHILDREN>['events']
+>[number];

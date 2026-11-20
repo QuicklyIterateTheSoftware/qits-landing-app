@@ -3,11 +3,17 @@ import {
   itemNoun,
   listingOf,
   metadataLine,
+  newestPublishFirst,
   newestPushFirst,
   oldDetailHref,
+  orphanSbomCount,
   plural,
+  publishedFrom,
+  sbomsByVersion,
   searched,
   shortDigest,
+  sortedFiles,
+  splitCoordinate,
   untaggedCount,
 } from './artifact-listings';
 
@@ -26,22 +32,21 @@ describe('artifact listings (qits-2316)', () => {
     expect(listingOf(type)).toBe(kind);
   });
 
+  // Only an npm package still opens the old explorer (until qits-2326).
   it('links a row to its page in the old explorer, the name one segment', () => {
     const origin = 'https://registry.example.test';
     expect(oldDetailHref(origin, 'npm', 'npm', '@qits/angular')).toBe(
       'https://registry.example.test/repositories/npm/packages/%40qits%2Fangular',
     );
-    expect(oldDetailHref(origin, 'maven', 'maven', 'eu.wohlben.qits:x')).toBe(
-      'https://registry.example.test/repositories/maven/maven-packages/eu.wohlben.qits%3Ax',
-    );
-    expect(oldDetailHref(origin, 'docs', 'docs', '@routes/qits-landing')).toBe(
-      'https://registry.example.test/repositories/docs/docs/%40routes%2Fqits-landing',
-    );
     expect(oldDetailHref('', 'qits', 'images', 'x')).toBe('');
     // An image opens this app's own image page (qits-2324), not the old explorer's.
     expect(oldDetailHref(origin, 'qits', 'images', 'x')).toBe('');
+    // A maven coordinate opens this app's own maven package page (qits-2325).
+    expect(oldDetailHref(origin, 'maven', 'maven', 'eu.wohlben.qits:x')).toBe('');
     // A daemon opens this app's own daemon page (qits-2327), not the old explorer's.
     expect(oldDetailHref(origin, 'daemons', 'daemons', 'x')).toBe('');
+    // A docs site opens this app's own docs site page (qits-2328), not the old explorer's.
+    expect(oldDetailHref(origin, 'docs', 'docs', '@routes/qits-landing')).toBe('');
     expect(oldDetailHref(origin, 'ci-videos', 'records', 'x')).toBe('');
   });
 
@@ -66,6 +71,26 @@ describe('artifact listings (qits-2316)', () => {
     expect(metadataLine(undefined)).toBe('—');
   });
 
+  it('says where a docs version came from, with the keys it carries (qits-2328)', () => {
+    expect(
+      publishedFrom({
+        'git.repository.name': 'qits-projects-service',
+        'git.commit.hash': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        'release.request.qualified-id': 'qits-projects-service-rr-535',
+      }),
+    ).toBe('qits-projects-service · aaaaaaa · qits-projects-service-rr-535');
+    expect(
+      publishedFrom({
+        'git.repository.name': 'qits-qits',
+        'git.branch.name': 'main',
+        'git.commit.hash': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+        'content.hash': 'x',
+      }),
+    ).toBe('qits-qits · main · bbbbbbb');
+    expect(publishedFrom({ 'content.hash': 'x' })).toBe('—');
+    expect(publishedFrom(undefined)).toBe('—');
+  });
+
   it('shortens a digest to its algorithm and 12 hex characters (qits-2324)', () => {
     expect(
       shortDigest('sha256:1b91a3dfff59dad5c1d9c7e557ca94e67e96aabad34050385263cffe926ed7a2'),
@@ -88,5 +113,43 @@ describe('artifact listings (qits-2316)', () => {
   it('counts the manifests no tag names', () => {
     expect(untaggedCount([{ tags: ['2100.1.0'] }, { tags: [] }, {}])).toBe(2);
     expect(untaggedCount([])).toBe(0);
+  });
+
+  it('splits a coordinate into its groupId and artifactId (qits-2325)', () => {
+    expect(splitCoordinate('eu.wohlben.qits:contract-maven')).toEqual({
+      groupId: 'eu.wohlben.qits',
+      artifactId: 'contract-maven',
+    });
+    expect(splitCoordinate('bare')).toEqual({ groupId: '', artifactId: 'bare' });
+  });
+
+  it('orders versions newest publish first, then the higher version, one without a publish last', () => {
+    const versions = [
+      { version: '2100.9.0', publishedAt: '2026-01-01T00:00:00Z' },
+      { version: 'old' },
+      { version: '2100.1.0', publishedAt: '2026-02-01T00:00:00Z' },
+      { version: '2100.10.0', publishedAt: '2026-01-01T00:00:00Z' },
+    ];
+    expect(newestPublishFirst(versions).map((v) => v.version)).toEqual([
+      '2100.1.0',
+      '2100.10.0',
+      '2100.9.0',
+      'old',
+    ]);
+    expect(versions[0].version).toBe('2100.9.0');
+  });
+
+  it('sorts file names, whichever order the store answers them in', () => {
+    const files = ['x-1.pom', 'x-1.jar'];
+    expect(sortedFiles(files)).toEqual(['x-1.jar', 'x-1.pom']);
+    expect(files[0]).toBe('x-1.pom');
+    expect(sortedFiles(undefined)).toEqual([]);
+  });
+
+  it('joins SBOMs to versions, and counts those whose version is gone', () => {
+    const sboms = [{ version: '3' }, { version: '2' }, {}];
+    expect([...sbomsByVersion(sboms).keys()]).toEqual(['3', '2']);
+    expect(orphanSbomCount(sboms.slice(0, 2), [{ version: '2' }, { version: '1' }])).toBe(1);
+    expect(orphanSbomCount([], [{ version: '1' }])).toBe(0);
   });
 });

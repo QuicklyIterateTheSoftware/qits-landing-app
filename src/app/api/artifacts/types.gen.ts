@@ -44,6 +44,20 @@ export type DocsVersionDetail = {
     files: Array<string>;
 };
 
+export type SbomVersionList = {
+    packageType: string;
+    packageName: string;
+    versions: Array<SbomVersionEntry>;
+};
+
+export type SbomVersionEntry = {
+    version: string;
+    createdAt: string;
+    sizeBytes: number;
+    specVersion: string;
+    digest: string;
+};
+
 export type ApplicationPurgeReport = {
     application?: string;
     removed?: Array<PurgedPackage>;
@@ -83,6 +97,17 @@ export type DocsSiteSummary = {
     latestVersion?: string;
     latestPublishedAt?: Instant;
     sizeBytes?: number;
+};
+
+export type DocsVersionSummary = {
+    version?: string;
+    fileCount?: number;
+    sizeBytes?: number;
+    publishedAt?: Instant;
+    accessedAt?: Instant;
+    metadata?: {
+        [key: string]: string;
+    };
 };
 
 export type GcDiskReport = {
@@ -309,6 +334,10 @@ export type ListDocsSitesResponse = {
     sites?: Array<DocsSiteSummary>;
 };
 
+export type ListDocsVersionsResponse = {
+    versions?: Array<DocsVersionSummary>;
+};
+
 export type ListImagesResponse = {
     images?: Array<ImageSummary>;
 };
@@ -319,6 +348,10 @@ export type ListManifestsResponse = {
 
 export type ListMavenPackagesResponse = {
     packages?: Array<MavenPackageSummary>;
+};
+
+export type ListMavenVersionsResponse = {
+    versions?: Array<MavenVersionSummary>;
 };
 
 export type ListNpmPackagesResponse = {
@@ -337,6 +370,13 @@ export type MavenPackageSummary = {
     name?: string;
     versionCount?: number;
     sizeBytes?: number;
+};
+
+export type MavenVersionSummary = {
+    version?: string;
+    files?: Array<string>;
+    sizeBytes?: number;
+    publishedAt?: Instant;
 };
 
 export type PackageSummary = {
@@ -418,7 +458,7 @@ export type ListDocsVersionsResponses = {
     200: DocsVersionList;
 };
 
-export type ListDocsVersionsResponse = ListDocsVersionsResponses[keyof ListDocsVersionsResponses];
+export type ListDocsVersionsResponse2 = ListDocsVersionsResponses[keyof ListDocsVersionsResponses];
 
 export type GetDocsVersionData = {
     body?: never;
@@ -499,6 +539,32 @@ export type GetDocsFileResponses = {
 };
 
 export type GetDocsFileResponse = GetDocsFileResponses[keyof GetDocsFileResponses];
+
+export type ListSbomVersionsData = {
+    body?: never;
+    path: {
+        packageType: string;
+        packageName: string;
+    };
+    query?: never;
+    url: '/artifacts/sboms/{packageType}/{packageName}';
+};
+
+export type ListSbomVersionsErrors = {
+    /**
+     * No SBOM for the package.
+     */
+    404: unknown;
+};
+
+export type ListSbomVersionsResponses = {
+    /**
+     * {packageType, packageName, versions:[{version, createdAt, sizeBytes, specVersion, digest}]}; never an empty list — a package is known only by a stored document.
+     */
+    200: SbomVersionList;
+};
+
+export type ListSbomVersionsResponse = ListSbomVersionsResponses[keyof ListSbomVersionsResponses];
 
 export type GetSbomData = {
     body?: never;
@@ -1324,6 +1390,36 @@ export type ListDocsSiteSummariesResponses = {
 
 export type ListDocsSiteSummariesResponse = ListDocsSiteSummariesResponses[keyof ListDocsSiteSummariesResponses];
 
+export type ListDocsVersionSummariesData = {
+    body?: never;
+    path: {
+        repo: string;
+        site: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/docs/{site}/versions';
+};
+
+export type ListDocsVersionSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListDocsVersionSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListDocsVersionsResponse;
+};
+
+export type ListDocsVersionSummariesResponse = ListDocsVersionSummariesResponses[keyof ListDocsVersionSummariesResponses];
+
 export type ListImagesData = {
     body?: never;
     path: {
@@ -1457,6 +1553,36 @@ export type ListMavenPackagesResponses = {
 };
 
 export type ListMavenPackagesResponse2 = ListMavenPackagesResponses[keyof ListMavenPackagesResponses];
+
+export type ListMavenVersionSummariesData = {
+    body?: never;
+    path: {
+        coordinate: string;
+        repo: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/maven-packages/{coordinate}/versions';
+};
+
+export type ListMavenVersionSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListMavenVersionSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListMavenVersionsResponse;
+};
+
+export type ListMavenVersionSummariesResponse = ListMavenVersionSummariesResponses[keyof ListMavenVersionSummariesResponses];
 
 export type ListNpmPackagesData = {
     body?: never;

@@ -365,11 +365,13 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 `artifact-listings.ts`: `listImages`, `listNpmPackages`, `listMavenPackages`, `listDaemons`,
 `listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
 has a name search over the one answer. An image row's name opens the image's page here
-(`open-artifact-image`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
-below); any other row's name leaves for its detail page in the old explorer
+(`open-artifact-image`, below), a maven row's coordinate the coordinate's page
+(`open-maven-package`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
+below), a docs site row's name the site's page (`open-artifact-docs-site`, below); only an npm
+row's name still leaves for its detail page in the old explorer
 (`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/<packages|maven-packages|docs>/<name>`, the name one segment)
-until the section's detail pages land (qits-2325, qits-2326); `provideAppRoute()` gives specs that
+`/repositories/<repo>/packages/<name>`, the name one segment)
+until the section's npm package page lands (qits-2326); `provideAppRoute()` gives specs that
 origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
@@ -440,6 +442,51 @@ in "a daemon with two versions" and "a daemon nothing has published" (`contract-
 answer is bytes). No recording holds those bytes, so the browser spec answers the download with a
 failure (`download-failed`), a status only, after checking its request.
 
+`artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
+qits-2325) is one maven coordinate; `<coordinate>` is `groupId:artifactId`, one segment. Two reads
+in parallel, nothing per row: `ARTIFACT_MAVEN_VERSIONS` (`listMavenVersionSummaries`) and
+`ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `maven` and the coordinate; its 404 means "no SBOMs",
+not a failure, and any other failure keeps the table with its SBOM column "unknown" and a Retry).
+The header shows the coordinate, its groupId and artifactId apart, and "N versions · M with an
+SBOM"; the versions newest publish first (`newestPublishFirst`; the store answers oldest first),
+their files sorted (`sortedFiles`) and wrapped, size, published and SBOM: `app-sbom-cell`
+(`patterns/artifacts/sbom-cell/`, shared with the npm package page of qits-2326, so it takes the
+package type and name and the page's two stays as inputs), "CycloneDX <specVersion> · <size>" with
+Download, or "—". Download (`download-maven-sbom`, `saved` / `failed` stays, a failure said on its
+row) reads `ARTIFACT_SBOM` (`getSbom`) as text through the generated client (the store wants the
+bearer, so no bare link) and saves it as `<artifactId>-<version>.cdx.json`,
+`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). SBOMs of
+versions the store no longer holds are counted under the table. A 404 is "There is no repository
+called <repo> in this store", a 400 "<repo> is not a Maven repository" (linking its store page), an
+empty list "There is no Maven coordinate called <coordinate> in this repository"; "← <repo>" and the
+note's link lead back (`leave-maven-package`). No event, no polling: Refresh reads both again. The
+pact reads the versions and the SBOM list in "a store holding one artifact of every kind" (one
+version, the SBOM list a 404) and "a maven coordinate with an sbom on one of two versions" (two
+versions, one SBOM, and its document by status and media type), and in "a store with nothing
+published" by status only; every SBOM list's 404 by status only.
+
+`artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site of
+a docs store. Every site name is scoped and slashed (`@changelog/qits-qits`), and `<site>` is one
+segment: `@changelog%2Fqits-qits` in the URL (the router keeps `@` literal), sent to the door as
+`%40changelog%2Fqits-qits` (`literalDocsPaths` rewrites only `/artifacts/docs/` wire URLs, never
+this `/artifacts/api/` door). One read, nothing per row: `ARTIFACT_DOCS_VERSIONS`
+(`listDocsVersionSummaries`), "N versions · newest first" from its answer, the table in the wire's
+order: the version, its file count, its size (the union of the version's own blobs; one caption
+says the sizes do not add up), published, last accessed ("Never" for null), published from
+(`publishedFrom`: `git.repository.name` · `git.branch.name` when present · the commit's 7
+characters · `release.request.qualified-id` when present; "—" for none; plain text, the store
+joins to no project) and Read (`read-artifact-docs-version`, `external('docs')`, same tab:
+`PlatformOrigins.page('docs')` + `docsReadPath('/', site, version)`, qits-docs' reader, which
+renders a changelog or an `openapi.yml` the old page's raw `index.html` link could not, until
+qits-2337 moves the reader here). "← <repo>" and a non-docs repository's note lead back
+(`leave-artifact-docs-site`). A 404 is "There is no repository called <repo> in this store", a 400
+"<repo> is not a docs repository", and an empty list "There is no site called <site> in this
+repository" (the door answers an unknown site 200 with no versions). No event, no polling: Refresh
+reads again. The pact binds `listDocsVersionSummaries` exactly in "a store holding one artifact of
+every kind" (`contract-docs-site`, one version on `main`) and "a docs site published by two
+releases" (two versions whose metadata differ, the newer never read), and in "a store with nothing
+published" by status only, as the empty listings above.
+
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
 (qits-network-access-frontend), served at `https://network-access.<domain>/` by
@@ -463,7 +510,23 @@ only when a filter sets them; built by `projectEventsQuery` in `core/events/proj
 `matchesProjectEvents` lets them through (the project by `payloadIds().projectIds`, which reads
 `entities[].projectId` too); none while "until" is set, held while paused. A row names what the
 payload concerns (`eventSubjects`) and links a release request and a work item
-(`open-project-event-subject`); an agent is named, not linked, as no recording names one.
+(`open-project-event-subject`); an agent is named, not linked, as no recording names one. A row's
+Open link leads to the event's own page (`open-project-event`); the inline JSON stays.
+
+One event (qits-2338, `projects/<slug>/events/<id>`, `ProjectEventPage`, ported from
+qits-events-frontend's event page) reads the event through its own `qitsResource` over
+`PROJECT_EVENT` (`getEvent`) and shows it only when its payload names the project
+(`belongsToProject`, `payloadIds().projectIds`); a 404 or another project's event is "No event <id>
+in this project.". It shows the header (name, badge, `eventGist`'s repository · gist, the
+`eventSubjects` with a release request linked), the facts (cause linked,
+`open-related-project-event` `cause`), the payload (`renderPayload`: sorted keys, raw when not
+JSON) and the chain: `walkChain` (`core/events/event-chain.ts`, the old `ChainWalker`) walks up by
+`parentId` through `PROJECT_EVENT`'s `fetch` (a 404 cause is the chain's start) and down from the
+start through `EVENT_CHILDREN` (`listEvents?parentId=`), capped at 32 hops up, 8 levels down and 200
+events, and `app-event-chain` (`patterns/events/event-chain/`) draws it, each other event of the
+project linking its page (`open-related-project-event` `chain`). The walk is an Angular `resource()`
+of its own, so its failure (with Retry) leaves the event on screen. A work item the event names is
+not linked here: no recording this page reads names one.
 
 A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
 between Observability and Events) reads qits-artifacts' whole docs catalog through its own
@@ -626,8 +689,8 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the errors, metrics, slow spans and
-traces pages come as their own children later); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (the slow spans and traces pages
+come as their own children later); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
@@ -639,7 +702,31 @@ qits-observability-frontend's names so its bookmarks forward as they are: `sourc
 `level` (→ `minSeverity`, absent: all), `q` (→ `query`) and `since` (minutes → `sinceMinutes`,
 absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
 `qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
-again.
+again. The source picker is one pattern both pages show (`app-telemetry-source-picker`,
+`patterns/observability/source-picker/`, the page's sources read as its input); what the pages
+share of a record (time ranges, a line's time and level, a refusal, `service.version`) is
+`core/observability/telemetry.ts`. `observability/errors` (`ObservabilityErrorsPage`, qits-2339,
+the retired frontend's `errors`) reads `TELEMETRY_ERRORS` (`listTelemetryErrors`) by `source` and
+`since` (→ `sinceMinutes`) only, never before a source is chosen (a sourceless read answers an
+empty list, which would claim "no errors" about nothing): one row per group, in the service's
+order with the uncorrelated group (empty `traceId`) last, headed by its exception (`type:
+message`), else a span's status message, else a log's body (`core/observability/error-groups.ts`,
+ported from the old `error-group.ts`), expanding to its spans (stack trace included) and logs. Each
+row's Error logs opens `observability/logs?source=…&level=ERROR` (`open-telemetry-error-logs`); the
+trace id is text until a trace page exists. No recording holds an uncorrelated group, an empty
+list or a truncated answer, so those are the page's plain spec's, derived from the recorded group.
+`observability/metrics` (`ObservabilityMetricsPage`, qits-2340, the retired frontend's `metrics`)
+reads `TELEMETRY_METRICS` (`listTelemetryMetrics`) by `source` alone, never before a source is
+chosen: one latest point per series and no history, which the page says, so nothing is charted over
+time and no points are gathered across reads. One card per metric name, sorted by name; a name with
+two or more series is a bar per series (sorted by the series key `name|k=v|k=v`, labelled by its
+attributes and value, its length the value over the card's largest; series are never summed), one
+series is its value as a large figure; the type (GAUGE, COUNTER) is shown, never drawn by. The
+grouping, bar geometry and value formatting (`By` in binary units, integers as integers, six
+significant digits, exponential under 1e-4; `unitGloss`) are `core/observability/metric-series.ts`,
+ported from the old `metric-series.ts`. `?name=` narrows the cards by a case-insensitive substring
+in the browser; the door's own exact `name` is never sent. No recording holds a name with several
+series, so the bars are the page's plain spec's, derived from the recorded series.
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,

@@ -1,10 +1,20 @@
 import { qitsOperation } from '@qits/angular';
-import { listTelemetrySources, searchTelemetryLogs } from '../../api/observability';
-import { LIST_TELEMETRY_SOURCES, SEARCH_TELEMETRY_LOGS } from './observability.consumes';
+import {
+  listTelemetryErrors,
+  listTelemetryMetrics,
+  listTelemetrySources,
+  searchTelemetryLogs,
+} from '../../api/observability';
+import {
+  LIST_TELEMETRY_ERRORS,
+  LIST_TELEMETRY_METRICS,
+  LIST_TELEMETRY_SOURCES,
+  SEARCH_TELEMETRY_LOGS,
+} from './observability.consumes';
 
 /**
- * qits-observability's telemetry buffer reads declared as operations (qits-2313), for the
- * Observability section's pages, which read them through `qitsResource`;
+ * qits-observability's telemetry buffer reads declared as operations (qits-2313; the errors,
+ * qits-2339; the metrics, qits-2340), for the Observability section's pages, which read them through `qitsResource`;
  * `observability.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`. Every door answers `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
  * `qits:agent` only; anyone else gets a 403.
@@ -26,4 +36,28 @@ export const TELEMETRY_LOGS = qitsOperation({
   method: 'GET',
   call: searchTelemetryLogs,
   consumes: SEARCH_TELEMETRY_LOGS,
+});
+
+/**
+ * A source's error spans and ERROR-or-worse logs, grouped by trace (the uncorrelated rest under an
+ * empty trace id), narrowed by age (qits-2339).
+ */
+export const TELEMETRY_ERRORS = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'listTelemetryErrors',
+  method: 'GET',
+  call: listTelemetryErrors,
+  consumes: LIST_TELEMETRY_ERRORS,
+});
+
+/**
+ * A source's metric series, the latest point of each (qits-2340): the buffer keeps no history, so
+ * this is a snapshot, not a time series.
+ */
+export const TELEMETRY_METRICS = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'listTelemetryMetrics',
+  method: 'GET',
+  call: listTelemetryMetrics,
+  consumes: LIST_TELEMETRY_METRICS,
 });

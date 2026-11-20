@@ -1,8 +1,9 @@
 /**
  * The Artifacts section's pure steps (qits-2316): which listing a store repository's type has, how
  * a count and a size read, the name search, and the old explorer's address of a row's detail page;
- * and the image page's (qits-2324): a digest shortened, the tags newest push first, the untagged
- * manifests counted. Mirrors qits-artifacts-frontend's `repository-type.ts` and `format.ts`, whose
+ * the image page's (qits-2324): a digest shortened, the tags newest push first, the untagged
+ * manifests counted; and the maven package page's (qits-2325): a coordinate split, the versions
+ * newest publish first, the files sorted, the SBOMs joined to the versions. Mirrors qits-artifacts-frontend's `repository-type.ts` and `format.ts`, whose
  * `repositories/:repo` page this section replaces.
  */
 
@@ -48,22 +49,23 @@ export const LISTING_NOUNS: Readonly<Record<ListingKind, string>> = {
 
 /**
  * The old explorer's segment for a row's detail page below `repositories/<repo>/`; none for the ci
- * records, which have no detail page, and none for the images and the daemons, whose pages are
- * this app's own (`artifacts/repositories/:repo/images/:image`, `ArtifactsImagePage`, qits-2324;
- * `artifacts/repositories/:repo/daemons/:daemon`, `ArtifactsDaemonPage`, qits-2327).
+ * records, which have no detail page, and none for the images, the maven coordinates, the daemons
+ * and the docs sites, whose pages are this app's own (`artifacts/repositories/:repo/images/:image`,
+ * `ArtifactsImagePage`, qits-2324; `artifacts/repositories/:repo/maven-packages/:coordinate`,
+ * `ArtifactsMavenPackagePage`, qits-2325; `artifacts/repositories/:repo/daemons/:daemon`,
+ * `ArtifactsDaemonPage`, qits-2327; `artifacts/repositories/:repo/docs/:site`,
+ * `ArtifactsDocsSitePage`, qits-2328). Only an npm package still opens the old explorer (qits-2326).
  */
 const DETAIL_SEGMENTS: Readonly<Partial<Record<ListingKind, string>>> = {
   npm: 'packages',
-  maven: 'maven-packages',
-  docs: 'docs',
 };
 
 /**
  * The address of a row's detail page in the old explorer (qits-artifacts-frontend), until its
  * landing page exists: `<origin>/repositories/<repo>/<segment>/<name>`, the repository and the name
  * each one segment (`@qits/angular` is `%40qits%2Fangular`). `''` while the origin is not known
- * (the server render) or for a listing without detail pages there (the ci records; the images
- * and the daemons, which open this app's own pages instead).
+ * (the server render) or for a listing without detail pages there (the ci records; the images,
+ * the maven coordinates, the daemons and the docs sites, which open this app's own pages instead).
  */
 export function oldDetailHref(
   origin: string,
@@ -141,6 +143,25 @@ export function metadataLine(metadata: Readonly<Record<string, string>> | undefi
   return entries.length ? entries.map(([key, value]) => `${key}=${value}`).join(' · ') : '—';
 }
 
+/** The length a commit hash is shortened to. */
+const SHORT_COMMIT = 7;
+
+/**
+ * Where a docs version came from (qits-2328), from the metadata keys sites carry: the repository, the branch (only
+ * `@userflows/*` sites name one), the commit shortened, and the release request (changelogs name
+ * one), joined by ` · `; `—` when none is present. Plain text: the store joins to no project.
+ */
+export function publishedFrom(metadata: Readonly<Record<string, string>> | undefined): string {
+  const held = metadata ?? {};
+  const parts = [
+    held['git.repository.name'],
+    held['git.branch.name'],
+    held['git.commit.hash']?.slice(0, SHORT_COMMIT),
+    held['release.request.qualified-id'],
+  ].filter((part): part is string => !!part);
+  return parts.length ? parts.join(' · ') : '—';
+}
+
 /**
  * `sha256:1b91a3dfff59`: a digest's algorithm and the first 12 characters of its hex, as the old
  * explorer shortened them; a digest without an algorithm is cut the same; `—` for none.
@@ -171,4 +192,60 @@ export function newestPushFirst<T extends { readonly tag?: string; readonly crea
 /** How many manifests no tag names (their `tags` empty or absent). */
 export function untaggedCount(manifests: readonly { readonly tags?: readonly string[] }[]): number {
   return manifests.filter((manifest) => (manifest.tags ?? []).length === 0).length;
+}
+
+/**
+ * A maven coordinate, `groupId:artifactId`, split at its last colon; a name without one is all
+ * artifactId.
+ */
+export function splitCoordinate(coordinate: string): {
+  readonly groupId: string;
+  readonly artifactId: string;
+} {
+  const colon = coordinate.lastIndexOf(':');
+  return colon < 0
+    ? { groupId: '', artifactId: coordinate }
+    : { groupId: coordinate.slice(0, colon), artifactId: coordinate.slice(colon + 1) };
+}
+
+/** Two versions compared as people read them: `2100.10.0` after `2100.9.0`. */
+const byVersion = (a: string, b: string): number =>
+  a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+
+/**
+ * The versions newest publish first (`publishedAt`), a version without one last, then the higher
+ * version first; never mutates `versions`. The store answers in its own order (oldest first).
+ */
+export function newestPublishFirst<
+  T extends { readonly version?: string; readonly publishedAt?: string },
+>(versions: readonly T[]): readonly T[] {
+  return [...versions].sort(
+    (a, b) =>
+      epochOf(b.publishedAt) - epochOf(a.publishedAt) ||
+      byVersion(b.version ?? '', a.version ?? ''),
+  );
+}
+
+/** A version's file names in order (the store answers them in either order); never mutates. */
+export function sortedFiles(files: readonly string[] | undefined): readonly string[] {
+  return [...(files ?? [])].sort((a, b) => a.localeCompare(b));
+}
+
+/** The SBOMs by the release version each documents. */
+export function sbomsByVersion<T extends { readonly version?: string }>(
+  sboms: readonly T[],
+): ReadonlyMap<string, T> {
+  return new Map(sboms.flatMap((sbom) => (sbom.version ? [[sbom.version, sbom] as const] : [])));
+}
+
+/**
+ * How many SBOMs document a version the store no longer holds (its files were swept, the SBOM
+ * kept).
+ */
+export function orphanSbomCount(
+  sboms: readonly { readonly version?: string }[],
+  versions: readonly { readonly version?: string }[],
+): number {
+  const stored = new Set(versions.map((version) => version.version));
+  return sboms.filter((sbom) => !stored.has(sbom.version)).length;
 }

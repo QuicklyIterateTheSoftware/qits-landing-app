@@ -27,8 +27,10 @@ import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.pa
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
+import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
 import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
 import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page';
+import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -200,6 +202,16 @@ describe('artifacts routes (qits-2316)', () => {
     expect(router.url).toBe('/artifacts/repositories/qits/images/team%2Fapp');
   });
 
+  it('opens a maven coordinate at artifacts/repositories/<repo>/maven-packages/<coordinate> (qits-2325)', async () => {
+    expect(
+      await pages('/artifacts/repositories/maven/maven-packages/eu.wohlben.qits%3Acontract-maven'),
+    ).toEqual([ArtifactsMavenPackagePage]);
+    const router = TestBed.inject(Router);
+    let leaf = router.routerState.snapshot.root;
+    while (leaf.firstChild) leaf = leaf.firstChild;
+    expect(leaf.paramMap.get('coordinate')).toBe('eu.wohlben.qits:contract-maven');
+  });
+
   it('opens a repository’s cleanup at artifacts/repositories/<repo>/cleanup (qits-2329)', async () => {
     expect(await pages('/artifacts/repositories/daemons/cleanup')).toEqual([ArtifactsCleanupPage]);
     expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/daemons/cleanup');
@@ -214,6 +226,19 @@ describe('artifacts routes (qits-2316)', () => {
     while (leaf.firstChild) leaf = leaf.firstChild;
     expect(leaf.paramMap.get('repo')).toBe('daemons');
     expect(leaf.paramMap.get('daemon')).toBe('contract-daemon');
+  });
+
+  it('opens a docs site at artifacts/repositories/<repo>/docs/<site>, the site one segment (qits-2328)', async () => {
+    expect(await pages('/artifacts/repositories/docs/docs/%40changelog%2Fqits-qits')).toEqual([
+      ArtifactsDocsSitePage,
+    ]);
+    const router = TestBed.inject(Router);
+    // The router writes `@` literal in a segment (it needs no escape there); the `/` stays `%2F`.
+    expect(router.url).toBe('/artifacts/repositories/docs/docs/@changelog%2Fqits-qits');
+    let leaf = router.routerState.snapshot.root;
+    while (leaf.firstChild) leaf = leaf.firstChild;
+    expect(leaf.paramMap.get('repo')).toBe('docs');
+    expect(leaf.paramMap.get('site')).toBe('@changelog/qits-qits');
   });
 
   it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {

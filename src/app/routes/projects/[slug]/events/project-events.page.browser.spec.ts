@@ -28,8 +28,9 @@ const NOW = new Date('2026-01-01T00:04:00Z');
  * stored names are "events of two names"'. The recordings' project is not "a project exists"', so
  * the page asks for its own project's id; the answer is the recording all the same.
  *
- * Its exits (epic qits-2000), shown by `populated`, are each followed once: a release request a
- * row names (`open-project-event-subject` `releaseRequest`) and a work item (`workItem`). The page
+ * Its exits (epic qits-2000), shown by `populated`, are each followed once: a row's own page
+ * (`open-project-event` `event`, qits-2338), a release request a row names
+ * (`open-project-event-subject` `releaseRequest`) and a work item (`workItem`). The page
  * each leaves for is its own spec's: its reads are answered with an error (`leftFor`).
  */
 describe('ProjectEventsPage (screenshots)', () => {
@@ -169,6 +170,19 @@ describe('ProjectEventsPage (screenshots)', () => {
 
   /** The outcomes the test reached, as their marks name them. */
   const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
+
+  it('open-project-event event: a row’s Open link opens the event’s page', async () => {
+    const opened = await open(RECENT);
+    const list = await goldenMaster(RECENT, 'listEvents', 'qits-events');
+    const first = list.events[0].id;
+    await page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: `Open event ${first}` })
+      .click();
+    await leftFor(opened);
+    expect(reached()).toEqual(['open-project-event:event']);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/events/${first}`);
+  });
 
   it('open-project-event-subject releaseRequest: a request a row names opens its page', async () => {
     const opened = await open(RECENT);
