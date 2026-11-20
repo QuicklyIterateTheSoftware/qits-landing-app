@@ -54,7 +54,11 @@ import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { loadState } from '$core/resources/load-state';
 import { isMissing, ResourceFamily } from '$core/resources/resource-family';
 import { literalDocsUrl } from '$core/ui-builder/docs-paths';
-import { DOCS_REPOSITORY } from '$core/ui-builder/docs.consumes';
+import {
+  DOCS_REPOSITORY,
+  type DocsCatalogSite,
+  type DocsVersions,
+} from '$core/ui-builder/docs.consumes';
 import {
   DOCS_CATALOG,
   DOCS_FILE,
@@ -75,6 +79,20 @@ const AS_TEXT = { responseType: 'text' } as const;
 
 /** Where swagger-ui's stylesheet is served: a non-injected global style (`angular.json`). */
 const SWAGGER_CSS = '/swagger-ui.css';
+
+/** No versions yet. */
+const NO_VERSIONS: DocsVersions = { versions: [] };
+
+/** No catalog entry yet (the marks' stand-in; a hand-off shows nothing of it). */
+const NO_SITE: DocsCatalogSite = {
+  name: '',
+  versionCount: 0,
+  latestVersion: '',
+  latestPublishedAt: '',
+};
+
+/** No files yet. */
+const NO_FILES = { files: [] as string[] };
 
 /** One story of a Markdown bundle as the body draws it. */
 interface ShownStory {
@@ -116,7 +134,8 @@ interface ShownStory {
  * - apidocs: swagger-ui (`swagger-ui-dist`, imported lazily in the browser only, its stylesheet a
  *   non-injected global style), on the bundle's `openapi.*` (`openapiPathOf`) read as text and handed
  *   over as a `blob:` URL, so the library parses the YAML and never needs the bearer;
- *   `supportedSubmitMethods: []`, as the reader documents and calls nothing. Its box stays light in
+ *   `supportedSubmitMethods: []`, as the reader documents and calls nothing; the document's own
+ *   address (a `blob:` URL, meaningless to a reader) is hidden. Its box stays light in
  *   both schemes: swagger-ui paints for itself and has no dark theme.
  * - contracts and routes: no renderer, a hand-off (`open-docs-handoff`) to the repository the
  *   site's newest version names (the catalog's `latestRepository`, `DOCS_CATALOG`), its Contracts
@@ -184,7 +203,7 @@ interface ShownStory {
                   aria-label="Branch"
                   class="h-8 max-w-64 rounded-md border border-line bg-surface px-2 text-sm text-fg"
                   [qitsTriggers]="[picking.version]"
-                  [fieldOf]="versionList()"
+                  [fieldOf]="versionMarks()"
                   [qitsField]="marks.branches"
                   (change)="pickBranch(selectValue($event))"
                 >
@@ -200,7 +219,7 @@ interface ShownStory {
                 aria-label="Version"
                 class="h-8 max-w-64 rounded-md border border-line bg-surface px-2 font-mono text-sm text-fg"
                 [qitsTriggers]="[picking.version]"
-                [fieldOf]="versionList()"
+                [fieldOf]="versionMarks()"
                 [qitsField]="marks.versions"
                 (change)="pickVersion(selectValue($event))"
               >
@@ -254,7 +273,7 @@ interface ShownStory {
                   class="mb-4 flex-wrap gap-1"
                   [class]="categories().length ? 'flex' : 'hidden'"
                   aria-label="Categories"
-                  [fieldOf]="detailValue()"
+                  [fieldOf]="detailMarks()"
                   [qitsField]="marks.files"
                 >
                   <a
@@ -282,7 +301,7 @@ interface ShownStory {
                   <nav
                     class="mb-6 flex flex-col gap-0.5 rounded-md border border-line bg-surface px-3 py-2"
                     aria-label="Stories"
-                    [fieldOf]="detailValue()"
+                    [fieldOf]="detailMarks()"
                     [qitsField]="marks.files"
                   >
                     <span class="text-xs text-fg-muted">Stories</span>
@@ -302,7 +321,7 @@ interface ShownStory {
                       class="scroll-mt-16 py-6 first:pt-0"
                       [id]="story.anchor"
                       [attr.data-story]="story.page.path"
-                      [fieldOf]="detailValue()"
+                      [fieldOf]="detailMarks()"
                       [qitsField]="marks.body"
                     >
                       @if (story.state === 'error') {
@@ -341,8 +360,8 @@ interface ShownStory {
               <div [qitsEntityList]="detail">
                 @if (openapiPath()) {
                   <div
-                    class="min-h-48 rounded-md border border-line bg-[Canvas] [color-scheme:light]"
-                    [fieldOf]="detailValue()"
+                    class="min-h-48 rounded-md border border-line bg-[Canvas] [color-scheme:light] [&_.info_a:has(>.url)]:hidden"
+                    [fieldOf]="detailMarks()"
                     [qitsField]="marks.body"
                     data-swagger
                     #swagger
@@ -351,7 +370,7 @@ interface ShownStory {
                   <p
                     class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
                     [class.hidden]="!detailValue()"
-                    [fieldOf]="detailValue()"
+                    [fieldOf]="detailMarks()"
                     [qitsField]="marks.files"
                     data-no-openapi
                   >
@@ -374,7 +393,7 @@ interface ShownStory {
                     class="font-semibold text-accent no-underline hover:underline"
                     [href]="href"
                     [qitsTriggers]="[handingOff.storybook]"
-                    [fieldOf]="catalogSite()"
+                    [fieldOf]="siteMarks()"
                     qitsField="name"
                     (click)="openStorybook($event, href)"
                     >Open {{ short() }} {{ label(urlVersion() ?? '') }} in the docs app</a
@@ -390,25 +409,25 @@ interface ShownStory {
               >
                 @if (handoffRepository(); as repo) {
                   @if (body() === 'contracts') {
-                    <p class="m-0" [fieldOf]="catalogSite()" [qitsField]="marks.repository">
+                    <p class="m-0" [fieldOf]="siteMarks()" [qitsField]="marks.repository">
                       Contracts are read on {{ repo }}’s Contracts page.
                       <a
                         class="font-semibold text-accent no-underline hover:underline"
                         [qitsExit]="handingOff.contracts"
                         [exitParams]="{ slug: slug(), repo }"
-                        [fieldOf]="catalogSite()"
+                        [fieldOf]="siteMarks()"
                         [qitsField]="marks.repository"
                         >Open the Contracts page</a
                       >
                     </p>
                   } @else {
-                    <p class="m-0" [fieldOf]="catalogSite()" [qitsField]="marks.repository">
+                    <p class="m-0" [fieldOf]="siteMarks()" [qitsField]="marks.repository">
                       Routes are explored in {{ repo }}’s UI builder.
                       <a
                         class="font-semibold text-accent no-underline hover:underline"
                         [qitsExit]="handingOff.builder"
                         [exitParams]="{ slug: slug(), repo }"
-                        [fieldOf]="catalogSite()"
+                        [fieldOf]="siteMarks()"
                         [qitsField]="marks.repository"
                         >Open in the UI builder</a
                       >
@@ -452,6 +471,14 @@ export class DocsReaderPage {
     builder: exit('projects/:slug/repositories/:repo/ui-builder'),
     storybook: external('docs'),
   });
+
+  /**
+   * The reads as the marks take them: an answer, or an empty one of the same shape until it is in
+   * (`[fieldOf]` takes an object).
+   */
+  protected readonly versionMarks = computed((): DocsVersions => this.versionList() ?? NO_VERSIONS);
+  protected readonly detailMarks = computed(() => this.detailValue() ?? NO_FILES);
+  protected readonly siteMarks = computed((): DocsCatalogSite => this.catalogSite() ?? NO_SITE);
 
   /** The marks over values a helper derives (class constants, which the rule trusts). */
   protected readonly marks = {

@@ -1096,8 +1096,11 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
    * versions on `main` and another branch; the newest holds two categories, an uncategorized story,
    * a `README.md`, a `mermaid` fence and a relative `screenshot.png`), `a published markdown docs
    * bundle image` (that png), `a published apidocs bundle` (`openapi.yml`, which the store labels
-   * `application/octet-stream`), `a repository with published changelogs` (`CHANGELOG.md`) and `no
-   * docs bundle published for the coordinate` (the 404s of an unknown site and version). A file
+   * `application/octet-stream`), `a repository with published changelogs` (`CHANGELOG.md`), `no
+   * docs bundle published for the coordinate` (the 404s of an unknown site and version), and the
+   * hand-offs' catalog (`listDocsSites`, publishers bound): `a docs catalog of every kind`
+   * (`@contracts/qits-ci`, Storybook's `@qits/ui-components`) and `a docs catalog naming contract
+   * repositories` (`@routes/contract-frontend`). A file
    * binds its status and media type only (`NonJsonResponse`): Pact sniffs Markdown and YAML as
    * `text/plain`, so a bound body would fail at the provider. A path from a provider state matches
    * any path, so each test adds one interaction. A state the installed golden masters do not hold
@@ -1108,6 +1111,7 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
   const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
   const SLUG: InteractionSlug = 'show-docs-site';
   const OPERATIONS: readonly OwnedOperation[] = [
+    'listDocsSites',
     'listDocsVersions',
     'getDocsVersion',
     'getDocsFile',
@@ -1118,6 +1122,9 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
   const APIDOCS = 'a published apidocs bundle';
   const CHANGELOG = 'a repository with published changelogs';
   const MISSING = 'no docs bundle published for the coordinate';
+  /** The contracts and Storybook hand-offs' catalog, and the routes hand-off's. */
+  const EVERY_KIND = 'a docs catalog of every kind';
+  const HANDOFFS = 'a docs catalog naming contract repositories';
 
   /** Whether the installed golden masters record `operationId` in `state`. */
   const recorded = (state: string, operationId: string) => {
@@ -1158,11 +1165,13 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
       consumes:
         state === MISSING
           ? []
-          : operationId === 'listDocsVersions'
-            ? LIST_DOCS_VERSIONS
-            : operationId === 'getDocsVersion'
-              ? GET_DOCS_VERSION
-              : GET_DOCS_FILE,
+          : operationId === 'listDocsSites'
+            ? LIST_DOCS_CATALOG
+            : operationId === 'listDocsVersions'
+              ? LIST_DOCS_VERSIONS
+              : operationId === 'getDocsVersion'
+                ? GET_DOCS_VERSION
+                : GET_DOCS_FILE,
       response,
     });
 
@@ -1226,11 +1235,11 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         given(MARKDOWN, 'listDocsVersions').executeTest(async (server) => {
           const { site } = siteOf(MARKDOWN, 'listDocsVersions');
           const read = await at(server.url, () => versionsRead(site));
-          const versions = read.data?.versions ?? [];
-          expect(versions).toEqual(
-            masters.body<DocsVersions>(MARKDOWN, 'listDocsVersions').versions,
-          );
-          expect(defaultVersion(versions)).toBe(versions[0]?.version);
+          // The list is bound by its recorded first element at the recorded length (the mock
+          // server repeats it); the picking is held to the recording.
+          const versions = masters.body<DocsVersions>(MARKDOWN, 'listDocsVersions').versions ?? [];
+          expect(read.data?.versions).toHaveLength(versions.length);
+          expect(defaultVersion(read.data?.versions ?? [])).toBe(versions[0]?.version);
           const branches = distinctBranches(versions);
           expect(branches).toContain('main');
           expect(branches.length).toBeGreaterThan(1);
@@ -1244,7 +1253,11 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         given(MARKDOWN, 'getDocsVersion').executeTest(async (server) => {
           const { site, version } = siteOf(MARKDOWN, 'getDocsVersion');
           const read = await at(server.url, () => versionRead(site, version));
-          const pages = storyPages(read.data?.files ?? []);
+          // The list is bound by its recorded first element at the recorded length (the mock
+          // server repeats it); what the reader makes of the files is held to the recording.
+          const recordedFiles = masters.body<{ files: string[] }>(MARKDOWN, 'getDocsVersion').files;
+          expect(read.data?.files).toHaveLength(recordedFiles.length);
+          const pages = storyPages(recordedFiles);
           expect(pages.length).toBeGreaterThan(1);
           expect(categoriesOf(pages).length).toBeGreaterThan(1);
           expect(pages.some((page) => !page.category)).toBe(true);
@@ -1350,6 +1363,26 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
             expect(storyPages([path])).toHaveLength(1);
           },
         ),
+    );
+
+    /** Whether `state`'s catalog records its publishers (`latestRepository`). */
+    const publishes = (state: string) =>
+      recorded(state, 'listDocsSites') &&
+      masters
+        .body<{ sites: DocsCatalogSite[] }>(state, 'listDocsSites')
+        .sites.some((site) => !!site.latestRepository);
+
+    it.each([EVERY_KIND, HANDOFFS].filter(publishes))(
+      'show-docs-site: a hand-off finds its site and its publisher in the catalog (%s)',
+      (state) =>
+        given(state, 'listDocsSites').executeTest(async (server) => {
+          const { data } = await at(server.url, () => DOCS_CATALOG.fetch({ path: DOCS }));
+          const sites = data?.sites ?? [];
+          expect(sites.length).toBeGreaterThan(0);
+          // Bound by type: the mock answers recorded examples, each with a name and a publisher.
+          expect(sites.every((site) => !!site.name)).toBe(true);
+          expect(sites.some((site) => !!site.latestRepository)).toBe(true);
+        }),
     );
 
     it.skipIf(!recorded(MISSING, 'listDocsVersions'))(
