@@ -227,19 +227,6 @@
           "fullPath": "projects/:slug/docs/repositories/:repo"
         },
         {
-          "path": "projects/:slug/docs/read/:site",
-          "fullPath": "projects/:slug/docs/read/:site"
-        },
-        {
-          "path": "projects/:slug/docs/read/:site/-/:version",
-          "fullPath": "projects/:slug/docs/read/:site/-/:version"
-        },
-        {
-          "path": "projects/:slug/docs/read/**",
-          "fullPath": "projects/:slug/docs/read/**",
-          "entry": true
-        },
-        {
           "path": "projects/:slug/events",
           "fullPath": "projects/:slug/events"
         },
@@ -267203,8 +267190,8 @@
         "route": "projects/:slug/docs",
         "interaction": "open-docs-site",
         "outcome": "open",
-        "kind": "exit",
-        "to": "projects/:slug/docs/read/:site",
+        "kind": "external",
+        "to": "docs",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/docs/project-docs.page.ts"
@@ -267220,56 +267207,6 @@
         "file": "src/app/routes/projects/[slug]/docs/project-docs.page.ts"
       },
       {
-        "route": "projects/:slug/docs/read/:site",
-        "interaction": "leave-docs-site",
-        "outcome": "docs",
-        "kind": "exit",
-        "to": "projects/:slug/docs",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.ts"
-      },
-      {
-        "route": "projects/:slug/docs/read/:site",
-        "interaction": "open-docs-handoff",
-        "outcome": "builder",
-        "kind": "exit",
-        "to": "projects/:slug/repositories/:repo/ui-builder",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.ts"
-      },
-      {
-        "route": "projects/:slug/docs/read/:site",
-        "interaction": "open-docs-handoff",
-        "outcome": "contracts",
-        "kind": "exit",
-        "to": "projects/:slug/repositories/:repo/contracts",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.ts"
-      },
-      {
-        "route": "projects/:slug/docs/read/:site",
-        "interaction": "open-docs-handoff",
-        "outcome": "storybook",
-        "kind": "external",
-        "to": "docs",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.ts"
-      },
-      {
-        "route": "projects/:slug/docs/read/:site",
-        "interaction": "pick-docs-version",
-        "outcome": "version",
-        "kind": "exit",
-        "to": "projects/:slug/docs/read/:site/-/:version",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.ts"
-      },
-      {
         "route": "projects/:slug/docs/repositories/:repo",
         "interaction": "leave-repository-docs",
         "outcome": "docs",
@@ -267283,8 +267220,8 @@
         "route": "projects/:slug/docs/repositories/:repo",
         "interaction": "open-docs-site",
         "outcome": "open",
-        "kind": "exit",
-        "to": "projects/:slug/docs/read/:site",
+        "kind": "external",
+        "to": "docs",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.ts"
@@ -267971,16 +267908,6 @@
       },
       {
         "route": null,
-        "interaction": "leave-docs-site",
-        "outcome": "newest",
-        "kind": "exit",
-        "to": "projects/:slug/docs/read/:site",
-        "global": true,
-        "triggered": true,
-        "file": "src/app/core/docs/reader-links.ts"
-      },
-      {
-        "route": null,
         "interaction": "open-agent-row",
         "outcome": "open",
         "kind": "exit",
@@ -268028,16 +267955,6 @@
         "global": true,
         "triggered": true,
         "file": "src/app/patterns/agents/agents-menu/agents-menu.ts"
-      },
-      {
-        "route": null,
-        "interaction": "open-call-contract",
-        "outcome": "contracts",
-        "kind": "exit",
-        "to": "projects/:slug/repositories/:repo/contracts",
-        "global": true,
-        "triggered": true,
-        "file": "src/app/core/contracts/contracts-links.ts"
       },
       {
         "route": null,
