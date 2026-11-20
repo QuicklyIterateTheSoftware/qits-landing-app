@@ -704,10 +704,35 @@ export const INTERACTIONS = {
    */
   'show-project-docs': 'The Docs page lists every published docs site, by section',
   /**
-   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader on the
-   * docs app (until qits-2337 moves it here), same tab. Leaves the app, and names no pact.
+   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader,
+   * `docs-reader.page.ts` (qits-2337), at the site's newest version. Navigates only, and names no
+   * pact (epic qits-2000).
    */
   'open-docs-site': 'A docs site’s row on a Docs page opens its reader',
+  /**
+   * `docs-reader.page.ts` via `DOCS_VERSIONS`, `DOCS_VERSION` and `DOCS_FILE` (qits-2337): the
+   * reader lists the site's versions, the version's files, and reads each Markdown page (and its
+   * images) or the OpenAPI document it draws; via `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES`
+   * the repository a contracts or routes site hands off to.
+   */
+  'show-docs-site': 'The docs reader shows one docs site at a version',
+  /**
+   * `docs-reader.page.ts`: the reader's Version and Branch selects read another version of the
+   * site, keeping `?category=` (qits-2337). Navigates only, and names no pact (epic qits-2000).
+   */
+  'pick-docs-version': 'Picking a version or branch in the docs reader reads that version',
+  /**
+   * `docs-reader.page.ts`: the bodies the reader does not draw (qits-2337): a contracts site's
+   * repository's Contracts page (`contracts`), a routes site's UI builder (`builder`), and a
+   * Storybook site on the docs app (`storybook`, which leaves the app). Names no pact.
+   */
+  'open-docs-handoff':
+    'A contracts, routes or Storybook site in the docs reader opens where it is read',
+  /**
+   * `docs-reader.page.ts`: “← Docs” and an unknown site's link go back to the project's Docs page,
+   * an unknown version's to the site's newest (qits-2337). Navigates only, and names no pact.
+   */
+  'leave-docs-site': 'The docs reader goes back to the Docs page, or to the site’s newest version',
   /**
    * `repository-docs.page.ts` via `PROJECT_REPOSITORY_NAMES` and `DOCS_CATALOG` (qits-2336): a
    * repository's Docs page finds the repository in the project and lists the docs sites whose
@@ -1155,9 +1180,13 @@ export const INTERACTIONS = {
   'open-builder-entity': 'An entity in the UI builder opens its entity page',
   /**
    * `call-details.ts`: a call's popover in the UI builder opens the provider state's page
-   * (`state`) or an entity's page (`entity`). Navigates only, and names no pact (epic qits-2000).
+   * (`state`), an entity's page (`entity`) or the provider repository's Contracts page
+   * (`contracts`, qits-2337); `ui-builder.page.ts`: an outbox entry with no recorded call opens
+   * the provider's Contracts page (`mutationContracts`). Navigates only, and names no pact (epic
+   * qits-2000).
    */
-  'open-call-contract': 'A call’s popover in the UI builder opens its provider state or an entity',
+  'open-call-contract':
+    'A call’s popover in the UI builder opens its provider state, an entity or the contracts',
   /**
    * `root.page.ts`: the root leaves for the project picker at once, replacing itself in the
    * history (`projects`). No element triggers it. Navigates only, and names no pact (epic

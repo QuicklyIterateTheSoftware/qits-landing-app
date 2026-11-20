@@ -44,3 +44,12 @@ export function readCommands(
   const commands = [...prefix, 'read', ...site.split('/')];
   return version ? [...commands, '-', version] : commands;
 }
+
+/**
+ * Where the docs app (qits-docs-frontend) reads a site, below its origin:
+ * `<scope>read/<site>/-/<version>`, or the newest without a version. Only Storybook is still read
+ * there (qits-2337): the docs app frames it whole, on the private network.
+ */
+export function docsAppReadPath(scope: string, site: string, version?: string): string {
+  return version ? `${scope}read/${site}/-/${version}` : `${scope}read/${site}`;
+}
