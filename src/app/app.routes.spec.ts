@@ -34,6 +34,7 @@ import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/do
 import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
+import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -297,6 +298,11 @@ describe('system routes (qits-2344)', () => {
     expect(await pages('/system/swarm/nodes')).toEqual([SwarmNodesPage]);
     expect(TestBed.inject(Router).url).toBe('/system/swarm/nodes');
   });
+
+  it('opens one swarm service at system/swarm/services/:id (qits-2345)', async () => {
+    expect(await pages('/system/swarm/services/dev-qits-artifacts')).toEqual([SwarmServicePage]);
+    expect(TestBed.inject(Router).url).toBe('/system/swarm/services/dev-qits-artifacts');
+  });
 });
 
 describe('entry points (qits-2049)', () => {
@@ -313,12 +319,14 @@ describe('entry points (qits-2049)', () => {
 
   it('marks the front door, the old agent address, the docs reader’s split form and the swarm pages, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
-    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services
-    // and nodes where qits-system-frontend's old pages hand off (qits-2344, qits-2346).
+    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
+    // nodes and one service's page where qits-system-frontend's old pages hand off (qits-2344,
+    // qits-2345, qits-2346).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
       'projects/:slug/docs/read/**',
+      'system/swarm/services/:id',
       'system/swarm/services',
       'system/swarm/nodes',
     ]);

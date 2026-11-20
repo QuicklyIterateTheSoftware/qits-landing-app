@@ -1,6 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsApiError,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import { plural } from '$core/artifacts/artifact-listings';
 import { loadState } from '$core/resources/load-state';
 import type { SwarmService } from '$core/system/swarm.consumes';
@@ -23,8 +32,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * (the server render has no session).
  *
  * - Header: "Swarm services", Refresh, and "N services".
- * - Rows: name (plain text: a service's own page is qits-2345's), state, mode, replicas, image and
- *   published ports ("—" when none).
+ * - Rows: name (linking the service's page here, `open-swarm-service`, qits-2345), state, mode,
+ *   replicas, image and published ports ("—" when none).
  * - State is derived from `replicas` alone (`swarmServiceState`): Running, Degraded, Down, Stopped,
  *   or "—" where it does not read as `running/desired` (a `global` service).
  *
@@ -44,7 +53,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-swarm-services-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsEntityList, QitsField, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -97,12 +115,15 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         [qitsEntity]="row"
                         entityKey="id"
                       >
-                        <td
-                          class="py-1.5 pr-3 font-medium whitespace-nowrap"
-                          [fieldOf]="row"
-                          qitsField="name"
-                        >
-                          {{ row.name }}
+                        <td class="py-1.5 pr-3 font-medium whitespace-nowrap">
+                          <a
+                            class="text-accent no-underline hover:underline"
+                            [qitsExit]="opening.service"
+                            [exitParams]="{ id: row.name || row.id || '' }"
+                            [fieldOf]="row"
+                            qitsField="name"
+                            >{{ row.name }}</a
+                          >
                         </td>
                         <td class="py-1.5 pr-3 whitespace-nowrap">
                           <ui-chip
@@ -158,6 +179,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class SwarmServicesPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** A row's name: the service's page here (qits-2345), addressed by its name. */
+  protected readonly opening = outcomes('open-swarm-service', {
+    service: exit('system/swarm/services/:id'),
+  });
 
   /** The swarm's services; read again after a deployment went live or failed. */
   protected readonly services = qitsResource(

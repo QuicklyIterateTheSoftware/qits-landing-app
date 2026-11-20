@@ -1,5 +1,6 @@
 import { HttpTestingController, type TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { page } from 'vitest/browser';
 import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
@@ -35,7 +36,8 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * until the `@qits/system-golden-masters` pin records it). A read still open (`loading`) and a 503
  * (`unavailable`: the swarm not answering) are statuses only; so is a 403, which says the role.
  *
- * The page declares no outcome of its own: the shell's are shot once (`shootShellMenus`). The live
+ * A row's name opens the service's page (`open-swarm-service`, qits-2345), whose read is answered
+ * with the same state's `getSwarmService`. The shell's outcomes are shot once (`shootShellMenus`). The live
  * stream (`EVENT_SOURCE`, the transport seam) is fed a `DeploymentActive` by hand, after which the
  * page reads the services again.
  */
@@ -178,6 +180,17 @@ describe('SwarmServicesPage (screenshots)', () => {
       .element(view.getByRole('alert'))
       .toMatchTextContent('Reading the swarm needs an admin role');
     expect(view.getByRole('button', { name: 'Retry' }).elements()).toHaveLength(0);
+  });
+
+  it('opens a service’s page from its name', async () => {
+    const { opened, view } = await render(SWARM);
+    await view.getByRole('link', { name: 'dev-qits-artifacts', exact: true }).click();
+    await opened.idle();
+    http
+      .expectOne('/system/api/swarm/services/dev-qits-artifacts')
+      .flush(await goldenMaster(SWARM, 'getSwarmService', SYSTEM));
+    await opened.settled();
+    expect(TestBed.inject(Router).url).toBe('/system/swarm/services/dev-qits-artifacts');
   });
 
   it('reads the services again on Refresh', async () => {
