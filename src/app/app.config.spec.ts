@@ -20,6 +20,7 @@ import { client as systemClient } from './api/system/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
 import { client as workspaceDaemonClient } from './api/workspace-daemon/client.gen';
 import { literalDocsPaths } from '$core/ui-builder/docs-paths';
+import { literalSbomPaths } from '$core/artifacts/sbom-paths';
 import { appConfig } from './app.config';
 
 /** Under `ng test` the environment is the development one (`environment.development.ts`). */
@@ -61,6 +62,12 @@ describe('appConfig', () => {
     TestBed.inject(QITS_SIGN_IN);
     const fns = artifactsClient.interceptors.request.fns;
     expect(fns.filter((fn) => fn === literalDocsPaths)).toHaveLength(1);
+  });
+
+  it('puts the SBOM store’s path rewrite on the artifacts client, once (qits-2326)', () => {
+    TestBed.inject(QITS_SIGN_IN);
+    const fns = artifactsClient.interceptors.request.fns;
+    expect(fns.filter((fn) => fn === literalSbomPaths)).toHaveLength(1);
   });
 
   it("provides the bearer sign-in with the environment's client and platform domain", () => {

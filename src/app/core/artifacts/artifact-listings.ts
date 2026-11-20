@@ -1,10 +1,13 @@
 /**
  * The Artifacts section's pure steps (qits-2316): which listing a store repository's type has, how
- * a count and a size read, the name search, and the old explorer's address of a row's detail page;
- * the image page's (qits-2324): a digest shortened, the tags newest push first, the untagged
- * manifests counted; and the maven package page's (qits-2325): a coordinate split, the versions
- * newest publish first, the files sorted, the SBOMs joined to the versions. Mirrors qits-artifacts-frontend's `repository-type.ts` and `format.ts`, whose
- * `repositories/:repo` page this section replaces.
+ * a count and a size read, and the name search; the image page's (qits-2324): a digest shortened,
+ * the tags newest push first, the untagged manifests counted; the maven package page's
+ * (qits-2325): a coordinate split, the versions newest publish first, the files sorted, the SBOMs
+ * joined to the versions; and the npm package page's (qits-2326): a package name split from its
+ * scope (the rest shared with the maven page's). Mirrors qits-artifacts-frontend's
+ * `repository-type.ts` and `format.ts`, whose `repositories/:repo` page this section replaces. No
+ * row links into the old explorer any more: every listing's detail page is this app's own
+ * (qits-2324 to qits-2328, and the npm package page of qits-2326, the last).
  */
 
 /** The listings a store repository can have, one per type that has one. */
@@ -46,37 +49,6 @@ export const LISTING_NOUNS: Readonly<Record<ListingKind, string>> = {
   docs: 'documentation sites',
   records: 'records',
 };
-
-/**
- * The old explorer's segment for a row's detail page below `repositories/<repo>/`; none for the ci
- * records, which have no detail page, and none for the images, the maven coordinates, the daemons
- * and the docs sites, whose pages are this app's own (`artifacts/repositories/:repo/images/:image`,
- * `ArtifactsImagePage`, qits-2324; `artifacts/repositories/:repo/maven-packages/:coordinate`,
- * `ArtifactsMavenPackagePage`, qits-2325; `artifacts/repositories/:repo/daemons/:daemon`,
- * `ArtifactsDaemonPage`, qits-2327; `artifacts/repositories/:repo/docs/:site`,
- * `ArtifactsDocsSitePage`, qits-2328). Only an npm package still opens the old explorer (qits-2326).
- */
-const DETAIL_SEGMENTS: Readonly<Partial<Record<ListingKind, string>>> = {
-  npm: 'packages',
-};
-
-/**
- * The address of a row's detail page in the old explorer (qits-artifacts-frontend), until its
- * landing page exists: `<origin>/repositories/<repo>/<segment>/<name>`, the repository and the name
- * each one segment (`@qits/angular` is `%40qits%2Fangular`). `''` while the origin is not known
- * (the server render) or for a listing without detail pages there (the ci records; the images,
- * the maven coordinates, the daemons and the docs sites, which open this app's own pages instead).
- */
-export function oldDetailHref(
-  origin: string,
-  repo: string,
-  kind: ListingKind,
-  name: string,
-): string {
-  const segment = DETAIL_SEGMENTS[kind];
-  if (!origin || !segment || !name) return '';
-  return `${origin}/repositories/${encodeURIComponent(repo)}/${segment}/${encodeURIComponent(name)}`;
-}
 
 /**
  * What a repository of `type` counts, as a word: `itemCount` is images here, packages there,
@@ -174,7 +146,7 @@ export function shortDigest(digest: string | null | undefined): string {
 }
 
 /** An instant's epoch milliseconds; 0 for none or one that does not parse (sorted last). */
-const epochOf = (iso: string | undefined): number => Date.parse(iso ?? '') || 0;
+const epochOf = (iso: string | null | undefined): number => Date.parse(iso ?? '') || 0;
 
 /**
  * The tags newest push first (`createdAt`), a tag without one last, then by name; never mutates
@@ -208,16 +180,31 @@ export function splitCoordinate(coordinate: string): {
     : { groupId: coordinate.slice(0, colon), artifactId: coordinate.slice(colon + 1) };
 }
 
+/**
+ * An npm package name split into its scope and its own name (qits-2326): `@qits/angular` is scope
+ * `@qits` and name `angular`; an unscoped name has no scope (`''`). Split at the first `/`, which
+ * a scoped name holds once.
+ */
+export function splitPackageName(packageName: string): {
+  readonly scope: string;
+  readonly name: string;
+} {
+  const slash = packageName.indexOf('/');
+  return packageName.startsWith('@') && slash > 0
+    ? { scope: packageName.slice(0, slash), name: packageName.slice(slash + 1) }
+    : { scope: '', name: packageName };
+}
+
 /** Two versions compared as people read them: `2100.10.0` after `2100.9.0`. */
 const byVersion = (a: string, b: string): number =>
   a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 
 /**
- * The versions newest publish first (`publishedAt`), a version without one last, then the higher
- * version first; never mutates `versions`. The store answers in its own order (oldest first).
+ * The versions newest publish first (`publishedAt`), a version without one (absent or null, as an
+ * npm version whose publish was not recorded) last, then the higher version first; never mutates `versions`. The store answers in its own order (oldest first).
  */
 export function newestPublishFirst<
-  T extends { readonly version?: string; readonly publishedAt?: string },
+  T extends { readonly version?: string; readonly publishedAt?: string | null },
 >(versions: readonly T[]): readonly T[] {
   return [...versions].sort(
     (a, b) =>

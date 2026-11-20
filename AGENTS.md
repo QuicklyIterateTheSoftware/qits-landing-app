@@ -367,12 +367,9 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 has a name search over the one answer. An image row's name opens the image's page here
 (`open-artifact-image`, below), a maven row's coordinate the coordinate's page
 (`open-maven-package`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
-below), a docs site row's name the site's page (`open-artifact-docs-site`, below); only an npm
-row's name still leaves for its detail page in the old explorer
-(`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/packages/<name>`, the name one segment)
-until the section's npm package page lands (qits-2326); `provideAppRoute()` gives specs that
-origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
+below), a docs site row's name the site's page (`open-artifact-docs-site`, below), and an npm row's
+name the package's page (`open-npm-package`, below). No row leaves for the old explorer any more
+(`open-artifacts-entry` is retired, qits-2326). qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
 
@@ -486,6 +483,33 @@ reads again. The pact binds `listDocsVersionSummaries` exactly in "a store holdi
 every kind" (`contract-docs-site`, one version on `main`) and "a docs site published by two
 releases" (two versions whose metadata differ, the newer never read), and in "a store with nothing
 published" by status only, as the empty listings above.
+
+`artifacts/repositories/<repo>/packages/<package>` (`ArtifactsNpmPackagePage`, qits-2326) is one npm
+package; `<package>` is one segment (`@qits/angular` is `@qits%2Fangular` in the URL; the router
+decodes it). Two reads in parallel, nothing per row, and no `listRepositories`:
+`ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`, the name sent encoded, as this `/artifacts/api/`
+door takes it) and `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `npm` and the name; its 404 means
+"no SBOMs", not a failure, and any other failure keeps the table with its SBOM column "unknown" and
+a Retry). The SBOM store keys a scoped name as written and answers `%40qits%2Fangular` with a 404,
+so `literalSbomPaths` (`core/artifacts/sbom-paths.ts`, which `app.config.ts` puts on the artifacts
+client beside `literalDocsPaths`; specs reading a scoped name's SBOM put it on too) turns `%40` and
+`%2F` back on `/artifacts/sboms/` URLs. The header shows the name in monospace, its scope and own
+name apart when scoped (`splitPackageName`), and "N versions · M with an SBOM"; the versions newest
+publish first (`newestPublishFirst`, a null `publishedAt` last), their dist-tags joined or "—", the
+tarball's size or "not measured" (never totalled, as a caption says: each tarball is a separate
+archive, and unmeasured rows cannot be summed), published or "not recorded", and the SBOM through
+the shared `app-sbom-cell`. Download (`download-npm-sbom`) saves the document through
+`sbom-download.ts` as `<name without its scope>-<version>.cdx.json`. SBOMs of versions the store
+no longer holds are counted under the table. A 404 is "There is no repository called <repo> in
+this store", a 400 "<repo> is not an npm repository" (linking its store page), an empty list
+"There is no package called <package> in this repository"; "← <repo>" and the note's link lead
+back (`leave-npm-package`). No event, no polling: Refresh reads both again. The pact reads the
+versions in "a store holding one artifact of every kind" (`contract-package`, one version) and "a
+scoped npm package with an sbom on one of two versions" (`@contract/contract-scoped`: two versions,
+one SBOM, and its document by status and media type, the SBOM paths literal), and in "a store with
+nothing published" by status only. Neither explorer state records the SBOM list for its npm
+package (each records it once, for its maven coordinate, a 404 too), so the npm page's 404s bind
+that recording's status only.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend

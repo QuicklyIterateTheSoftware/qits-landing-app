@@ -131,6 +131,78 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "getSbom"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "download-npm-sbom",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/packages/:package"
+          }
+        }
+      },
+      "description": "download-npm-sbom: getSbom",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a scoped npm package with an sbom on one of two versions",
+          "params": {
+            "npmPackage": "@contract/contract-scoped",
+            "npmRepository": "npm",
+            "packageName": "@contract/contract-scoped",
+            "packageType": "npm",
+            "version": "2100.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}/-/${version}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/npm/@contract/contract-scoped/-/2100.2.0"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": [
+            "application/vnd.cyclonedx+json; version=1.6"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.cyclonedx\\+json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "listDaemonVersions"
           },
           "qits-trigger": {
@@ -6433,6 +6505,660 @@
         }
       },
       "description": "show-maven-package: listSbomVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store with nothing published",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listNpmVersionSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-npm-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/packages/:package"
+          }
+        }
+      },
+      "description": "show-npm-package: listNpmVersionSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a scoped npm package with an sbom on one of two versions",
+          "params": {
+            "npmPackage": "@contract/contract-scoped",
+            "npmRepository": "npm",
+            "packageName": "@contract/contract-scoped",
+            "packageType": "npm",
+            "version": "2100.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${npmRepository}/packages/${npmPackage}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/npm/packages/@contract/contract-scoped/versions"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "distTags": [],
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "tarballSizeBytes": 2071,
+                "version": "2100.1.0"
+              },
+              {
+                "distTags": [
+                  "latest",
+                  "latest"
+                ],
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "tarballSizeBytes": 2071,
+                "version": "2100.2.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.publishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.tarballSizeBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.distTags": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 2,
+                              "min": 2
+                            }
+                          ]
+                        },
+                        "$.distTags[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.publishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.tarballSizeBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listNpmVersionSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-npm-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/packages/:package"
+          }
+        }
+      },
+      "description": "show-npm-package: listNpmVersionSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store holding one artifact of every kind",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${npmRepository}/packages/${npmPackage}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/npm/packages/contract-package/versions"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "distTags": [
+                  "latest"
+                ],
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "tarballSizeBytes": 2071,
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].distTags": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].distTags[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].publishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.versions[*].tarballSizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listNpmVersionSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-npm-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/packages/:package"
+          }
+        }
+      },
+      "description": "show-npm-package: listNpmVersionSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store with nothing published",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${npmRepository}/packages/${npmPackage}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/npm/packages/contract-package/versions"
+      },
+      "response": {
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listSbomVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-npm-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/packages/:package"
+          }
+        }
+      },
+      "description": "show-npm-package: listSbomVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a scoped npm package with an sbom on one of two versions",
+          "params": {
+            "npmPackage": "@contract/contract-scoped",
+            "npmRepository": "npm",
+            "packageName": "@contract/contract-scoped",
+            "packageType": "npm",
+            "version": "2100.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/npm/@contract/contract-scoped"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 905,
+                "specVersion": "1.6",
+                "version": "2100.2.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.versions[*].specVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listSbomVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-npm-package",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-npm-package: listSbomVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store holding one artifact of every kind",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listSbomVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-npm-package",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-npm-package: listSbomVersions",
       "pending": false,
       "providerStates": [
         {
