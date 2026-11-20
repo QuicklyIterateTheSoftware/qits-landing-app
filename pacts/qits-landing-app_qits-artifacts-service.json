@@ -3613,7 +3613,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -3682,7 +3683,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -3820,7 +3822,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -3888,7 +3891,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -3986,7 +3990,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -4100,7 +4105,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -4248,7 +4254,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -4374,7 +4381,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
           }
         }
       },
@@ -4549,7 +4556,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -4669,7 +4677,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site, projects/:slug/docs/read/:site/-/:version"
           }
         }
       },
@@ -4805,7 +4814,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -5224,7 +5234,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-entity",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/:site"
           }
         }
       },
@@ -6479,7 +6490,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-docs",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
           }
         }
       },
@@ -7426,7 +7437,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
           }
         }
       },
