@@ -65,7 +65,8 @@ const NO_NAMES: EventNames = { names: [] };
  * instant (`cursor=<until>,ffffffff-…`), and a text box whose `key=value` tokens are `attr`s (at most
  * seven besides the project's) and whose other words are `q`.
  *
- * Where it leads is declared (epic qits-2000): a release request a row names opens its page
+ * Where it leads is declared (epic qits-2000): a row's Open link opens the event's own page
+ * (`open-project-event` `event`, qits-2338), a release request a row names opens its page
  * (`open-project-event-subject` `releaseRequest`), a work item its page (`workItem`). An agent is
  * named but not linked: no recorded event names one, so no screenshot could follow the exit.
  *
@@ -219,26 +220,35 @@ const NO_NAMES: EventNames = { names: [] };
                 [qitsEntity]="event"
                 entityKey="id"
               >
-                <button
-                  type="button"
-                  class="flex cursor-pointer flex-wrap items-baseline gap-x-3 gap-y-0.5 border-0 bg-transparent p-0 text-left"
-                  [attr.aria-expanded]="isOpen(event.id)"
-                  [attr.aria-controls]="'event-' + event.id"
-                  (click)="toggleOpen(event.id)"
-                >
-                  <span
-                    class="font-semibold break-all text-fg"
-                    [fieldOf]="event"
-                    qitsField="name"
-                    >{{ event.name }}</span
+                <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                  <button
+                    type="button"
+                    class="flex cursor-pointer flex-wrap items-baseline gap-x-3 gap-y-0.5 border-0 bg-transparent p-0 text-left"
+                    [attr.aria-expanded]="isOpen(event.id)"
+                    [attr.aria-controls]="'event-' + event.id"
+                    (click)="toggleOpen(event.id)"
                   >
-                  <span
-                    class="text-xs text-fg-muted tabular-nums"
-                    [fieldOf]="event"
-                    [qitsField]="{ derived: ['occurredAt'] }"
-                    >{{ when(event.occurredAt) }}</span
+                    <span
+                      class="font-semibold break-all text-fg"
+                      [fieldOf]="event"
+                      qitsField="name"
+                      >{{ event.name }}</span
+                    >
+                    <span
+                      class="text-xs text-fg-muted tabular-nums"
+                      [fieldOf]="event"
+                      [qitsField]="{ derived: ['occurredAt'] }"
+                      >{{ when(event.occurredAt) }}</span
+                    >
+                  </button>
+                  <a
+                    class="text-xs font-semibold text-accent no-underline hover:underline"
+                    [qitsExit]="viewing.event"
+                    [exitParams]="{ slug: slug(), id: event.id ?? '' }"
+                    [attr.aria-label]="'Open event ' + event.id"
+                    >Open</a
                   >
-                </button>
+                </div>
                 @let subjects = subjectsOf(event);
                 @if (subjects.length) {
                   <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 text-xs text-fg-soft">
@@ -324,6 +334,11 @@ export class ProjectEventsPage {
   protected readonly opening = outcomes('open-project-event-subject', {
     releaseRequest: exit('projects/:slug/release-requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** A row's event: its own page (qits-2338). */
+  protected readonly viewing = outcomes('open-project-event', {
+    event: exit('projects/:slug/events/:id'),
   });
 
   /** The marks over values a helper derives from the event (class constants, which the rule trusts). */

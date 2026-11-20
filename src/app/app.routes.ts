@@ -75,6 +75,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * repository's name from ever meaning a reader path under `docs/` (qits-2337); the sidebar keeps
  * Docs current below it.
  *
+ * A project's events are at `projects/<slug>/events` (`ProjectEventsPage`, qits-2312), one event
+ * at `events/<event id>` (`ProjectEventPage`, qits-2338): its facts, its payload and its chain,
+ * a detail page with no sidebar entry of its own.
+ *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
@@ -450,6 +454,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./routes/projects/[slug]/events/project-events.page').then(
             (m) => m.ProjectEventsPage,
+          ),
+      },
+      {
+        // One event (qits-2338), a detail page of the Events section.
+        path: 'projects/:slug/events/:id',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/events/[id]/project-event.page').then(
+            (m) => m.ProjectEventPage,
           ),
       },
       {

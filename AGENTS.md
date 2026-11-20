@@ -463,7 +463,23 @@ only when a filter sets them; built by `projectEventsQuery` in `core/events/proj
 `matchesProjectEvents` lets them through (the project by `payloadIds().projectIds`, which reads
 `entities[].projectId` too); none while "until" is set, held while paused. A row names what the
 payload concerns (`eventSubjects`) and links a release request and a work item
-(`open-project-event-subject`); an agent is named, not linked, as no recording names one.
+(`open-project-event-subject`); an agent is named, not linked, as no recording names one. A row's
+Open link leads to the event's own page (`open-project-event`); the inline JSON stays.
+
+One event (qits-2338, `projects/<slug>/events/<id>`, `ProjectEventPage`, ported from
+qits-events-frontend's event page) reads the event through its own `qitsResource` over
+`PROJECT_EVENT` (`getEvent`) and shows it only when its payload names the project
+(`belongsToProject`, `payloadIds().projectIds`); a 404 or another project's event is "No event <id>
+in this project.". It shows the header (name, badge, `eventGist`'s repository · gist, the
+`eventSubjects` with a release request linked), the facts (cause linked,
+`open-related-project-event` `cause`), the payload (`renderPayload`: sorted keys, raw when not
+JSON) and the chain: `walkChain` (`core/events/event-chain.ts`, the old `ChainWalker`) walks up by
+`parentId` through `PROJECT_EVENT`'s `fetch` (a 404 cause is the chain's start) and down from the
+start through `EVENT_CHILDREN` (`listEvents?parentId=`), capped at 32 hops up, 8 levels down and 200
+events, and `app-event-chain` (`patterns/events/event-chain/`) draws it, each other event of the
+project linking its page (`open-related-project-event` `chain`). The walk is an Angular `resource()`
+of its own, so its failure (with Retry) leaves the event on screen. A work item the event names is
+not linked here: no recording this page reads names one.
 
 A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
 between Observability and Events) reads qits-artifacts' whole docs catalog through its own
