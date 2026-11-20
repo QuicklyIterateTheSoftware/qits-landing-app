@@ -499,9 +499,9 @@ export const INTERACTIONS = {
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
    * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (a package, a coordinate, a daemon or a docs site), until the Artifacts
-   * section's own detail pages land (qits-2316; an image's landed, `open-artifact-image`). Leaves
-   * only, and names no pact.
+   * qits-artifacts explorer (a package, a coordinate or a docs site), until the Artifacts section's
+   * own detail pages land (qits-2316; an image's landed, `open-artifact-image`, and a daemon's,
+   * `open-artifact-daemon`). Leaves only, and names no pact.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -565,6 +565,27 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact.
    */
   'leave-artifacts-cleanup': 'A cleanup page leads back to its repository',
+  /**
+   * `artifacts-repository.page.ts`: a daemon row's name opens the daemon's page in this app,
+   * `artifacts/repositories/:repo/daemons/:daemon` (qits-2327). Navigates only, and names no pact.
+   */
+  'open-artifact-daemon': 'A daemon of a daemon repository opens its page',
+  /**
+   * `artifacts-daemon.page.ts` via `ARTIFACT_DAEMON_VERSIONS` (qits-2327): the daemon page lists
+   * the daemon's published versions, newest first. Refresh reads them again.
+   */
+  'show-artifact-daemon': 'A daemon’s page lists its published versions, newest first',
+  /**
+   * `artifacts-daemon.page.ts`: the back link, and the store page a non-daemon repository's note
+   * links, open the repository's page (qits-2327). Navigates only, and names no pact.
+   */
+  'leave-artifact-daemon': 'A daemon’s page leads back to its repository',
+  /**
+   * `artifacts-daemon.page.ts` via `ARTIFACT_DAEMON_DOWNLOAD` (qits-2327): a version's button
+   * fetches its bytes with the bearer (`getDaemon`, the daemon wire, no repository segment) and
+   * saves them as `<daemon>-<version>`; the page stays.
+   */
+  'download-artifact-daemon': 'A daemon version downloads as a file',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).

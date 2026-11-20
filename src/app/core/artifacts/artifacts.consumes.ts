@@ -2,6 +2,7 @@ import type { Consumed } from '@qits/angular';
 import type {
   ListArtifactRecordsResponses,
   ListDaemonsResponses,
+  ListDaemonVersionsResponses,
   ListDocsSiteSummariesResponses,
   ListImageManifestSummariesResponses,
   ListImagesResponses,
@@ -13,8 +14,8 @@ import type {
 
 /**
  * What the app reads from qits-artifacts' store explorer doors (qits-2316): the store's
- * repositories, and one repository's listing by its type; and one image's tags and manifests
- * (qits-2324). `artifacts.operations.ts` declares each read with these lists, so nothing can read
+ * repositories, and one repository's listing by its type; one image's tags and manifests
+ * (qits-2324); and one daemon's versions and a version's bytes (qits-2327). `artifacts.operations.ts` declares each read with these lists, so nothing can read
  * any other field, and `artifacts.operations.pact.spec.ts` binds the same. To read another field,
  * add it here.
  */
@@ -127,6 +128,31 @@ export const LIST_ARTIFACT_DAEMONS = [
 
 export type ArtifactDaemons = Consumed<ListDaemonsResponses[200], typeof LIST_ARTIFACT_DAEMONS>;
 export type ArtifactDaemon = NonNullable<ArtifactDaemons['daemons']>[number];
+
+/**
+ * `ARTIFACT_DAEMON_VERSIONS` (`listDaemonVersions`, qits-2327): one daemon's published versions,
+ * newest first as the wire gives them, each with its digest, its own blob's bytes, when it was
+ * published and when its version-addressed download last answered (`null`: never).
+ */
+export const LIST_ARTIFACT_DAEMON_VERSIONS = [
+  'versions[].version',
+  'versions[].digest',
+  'versions[].sizeBytes',
+  'versions[].publishedAt',
+  'versions[].accessedAt',
+] as const;
+
+export type ArtifactDaemonVersions = Consumed<
+  ListDaemonVersionsResponses[200],
+  typeof LIST_ARTIFACT_DAEMON_VERSIONS
+>;
+export type ArtifactDaemonVersion = NonNullable<ArtifactDaemonVersions['versions']>[number];
+
+/**
+ * `ARTIFACT_DAEMON_DOWNLOAD` (`getDaemon`, qits-2327): one daemon version's bytes. The answer is no
+ * JSON: it is read whole, as a Blob, and saved as a file, so the pact binds its status only.
+ */
+export const GET_ARTIFACT_DAEMON = [] as const;
 
 /** `ARTIFACT_DOCS_SITES` (`listDocsSiteSummaries`): a docs repository's sites. */
 export const LIST_ARTIFACT_DOCS_SITES = [

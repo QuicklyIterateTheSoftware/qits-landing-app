@@ -365,10 +365,11 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 `artifact-listings.ts`: `listImages`, `listNpmPackages`, `listMavenPackages`, `listDaemons`,
 `listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
 has a name search over the one answer. An image row's name opens the image's page here
-(`open-artifact-image`, below); any other row's name leaves for its detail page in the old explorer
+(`open-artifact-image`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
+below); any other row's name leaves for its detail page in the old explorer
 (`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/<packages|maven-packages|daemons|docs>/<name>`, the name one segment)
-until the section's detail pages land (qits-2325 to qits-2327); `provideAppRoute()` gives specs that
+`/repositories/<repo>/<packages|maven-packages|docs>/<name>`, the name one segment)
+until the section's detail pages land (qits-2325, qits-2326); `provideAppRoute()` gives specs that
 origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
@@ -417,6 +418,27 @@ both doors in "a repository the cleanup can plan" (`daemons`: one identity conde
 figures zeroed; its sweep withholds it, deleting nothing) and the plan in "a repository the cleanup
 has nothing to delete in" (the dead list empty: no Run); the plans no recording holds (pins unread,
 not collected, failed closed, withheld figures) are the plain spec's, derived.
+
+`artifacts/repositories/<repo>/daemons/<daemon>` (`ArtifactsDaemonPage`, qits-2327) is one daemon of
+a daemon store; a daemon name is bounded to `[a-z0-9][a-z0-9._-]{0,63}` by the wire, so it is one
+plain segment. One read, nothing per row: `ARTIFACT_DAEMON_VERSIONS` (`listDaemonVersions`), "N
+versions · newest first", the table in the wire's order: the version, its size (the version's own
+blob, not totalled: the caption says the store page's figure is the union over the daemon), its
+digest (`shortDigest`, the whole `sha256:` value in the cell's title), published and last accessed
+("Never" for null; a note says a digest-addressed read does not move it). A version's button
+downloads it (`download-artifact-daemon`, a stay reached on the press): `ARTIFACT_DAEMON_DOWNLOAD`
+(`getDaemon`, `GET /artifacts/daemons/<daemon>/<version>`, the daemon wire, which carries no
+repository segment, as a note says) through `HttpClient`, so `qitsBearerInterceptor` signs it, as a
+Blob (`daemonDownloadParams`), saved through an object URL as `<daemon>-<version>`; a navigation
+would carry no bearer. A failed download says so under the table. "← <repo>" and a non-daemon
+repository's note lead back (`leave-artifact-daemon`). A 404 is "There is no repository called
+<repo> in this store", a 400 "<repo> is not a daemon repository", and an empty list one sentence:
+the daemon has no published versions here, and an unknown daemon answers the same (200 with no
+versions). No event, no polling: Refresh reads again. The pact binds `listDaemonVersions` exactly
+in "a daemon with two versions" and "a daemon nothing has published" (`contract-daemon` in
+`daemons`, a contract name every state cleans up), and `getDaemon` in the first by status only (its
+answer is bytes). No recording holds those bytes, so the browser spec answers the download with a
+failure (`download-failed`), a status only, after checking its request.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend

@@ -40,7 +40,8 @@ type Listed = keyof typeof LISTINGS;
  *
  * Its exits (epic qits-2000) are each followed once: a store repository in the switcher
  * (`switch-artifacts-repository`), an image row, which opens the image's page here
- * (`open-artifact-image`, qits-2324), and each other kind's row, which leaves for the old explorer
+ * (`open-artifact-image`, qits-2324), a daemon row, which opens the daemon's page here
+ * (`open-artifact-daemon`, qits-2327), each other kind's row, which leaves for the old explorer
  * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and Cleanup, which opens
  * the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
  */
@@ -290,6 +291,28 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     await opened.settled();
   });
 
+  it('open-artifact-daemon daemon: a daemon row opens the daemon’s page here', async () => {
+    const opened = await open('daemons');
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-daemon', exact: true });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', '/artifacts/repositories/daemons/daemons/contract-daemon');
+    await userEvent.click(link);
+    await opened.settled();
+    expect(reached()).toEqual(['open-artifact-daemon:daemon']);
+    expect(TestBed.inject(Router).url).toBe(
+      '/artifacts/repositories/daemons/daemons/contract-daemon',
+    );
+    expect(leave).not.toHaveBeenCalled();
+    // The daemon page's read, answered as its own spec does (the same daemon in the same store).
+    http
+      .expectOne('/artifacts/api/repositories/daemons/daemons/contract-daemon/versions')
+      .flush(await goldenMaster('a daemon with two versions', 'listDaemonVersions', ARTIFACTS));
+    await opened.settled();
+  });
+
   for (const [repo, outcome, name, path] of [
     ['npm', 'npmPackage', 'contract-package', 'packages/contract-package'],
     [
@@ -298,7 +321,6 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
       'eu.wohlben.qits:contract-maven',
       'maven-packages/eu.wohlben.qits%3Acontract-maven',
     ],
-    ['daemons', 'daemon', 'contract-daemon', 'daemons/contract-daemon'],
     ['docs', 'docsSite', 'contract-docs-site', 'docs/contract-docs-site'],
   ] as const) {
     it(`open-artifacts-entry ${outcome}: a row leaves for its page in the old explorer`, async () => {
