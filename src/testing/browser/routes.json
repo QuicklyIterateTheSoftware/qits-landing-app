@@ -57,6 +57,12 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
+      "operationId": "listMavenVersionSummaries",
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listNpmPackages",
       "route": "artifacts/repositories/:repo"
     },
@@ -259,6 +265,56 @@
       "state": "an image with a manifest no tag names",
       "operationId": "listImages",
       "route": "artifacts/repositories/:repo/images/:image"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a maven coordinate with an sbom on one of two versions",
+      "operationId": "getSbom",
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a maven coordinate with an sbom on one of two versions",
+      "operationId": "listMavenVersionSummaries",
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a maven coordinate with an sbom on one of two versions",
+      "operationId": "listSbomVersions",
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listMavenPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listMavenVersionSummaries",
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listMavenVersionSummaries",
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
     }
   ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
@@ -1295,6 +1351,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/observability/logs"
+    }
+  ],
+  "src/app/routes/projects/[slug]/observability/metrics/observability-metrics.page.browser.spec.ts": [
+    {
+      "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetryMetrics",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/observability/metrics"
     }
   ],
   "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [

@@ -83,7 +83,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
  * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
- * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace.
+ * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
+ * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -133,6 +134,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * cleanup: its gc plan read through qits-orchestrator, and the Run that sweeps it.
  * `artifacts/repositories/<repo>/daemons/<daemon>` (`ArtifactsDaemonPage`, qits-2327) is one daemon
  * of a daemon store, its published versions, each one downloadable.
+ * `artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
+ * qits-2325) is one maven coordinate, its versions and their SBOMs; `groupId:artifactId` is one
+ * segment.
  * `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site
  * of a docs store, its published versions, each read in qits-docs' reader; the site name is one
  * segment (`@changelog/qits-qits` is `@changelog%2Fqits-qits` in the URL).
@@ -446,6 +450,13 @@ export const routes: Routes = [
                 (m) => m.ObservabilityErrorsPage,
               ),
           },
+          {
+            path: 'metrics',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/metrics/observability-metrics.page').then(
+                (m) => m.ObservabilityMetricsPage,
+              ),
+          },
         ],
       },
       {
@@ -566,6 +577,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page').then(
                 (m) => m.ArtifactsDaemonPage,
+              ),
+          },
+          {
+            // One maven coordinate of a maven store (qits-2325): its versions and their SBOMs.
+            // `:coordinate` is one segment, `groupId:artifactId`.
+            path: 'repositories/:repo/maven-packages/:coordinate',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page').then(
+                (m) => m.ArtifactsMavenPackagePage,
               ),
           },
           {

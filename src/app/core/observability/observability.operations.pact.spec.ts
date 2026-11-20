@@ -11,7 +11,12 @@ import { client as observabilityClient } from '../../api/observability/client.ge
 import { provideHeyApiClient } from '../../api/observability/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { observabilityGoldenMasters as masters } from '../../../testing/golden-masters';
-import { TELEMETRY_ERRORS, TELEMETRY_LOGS, TELEMETRY_SOURCES } from './observability.operations';
+import {
+  TELEMETRY_ERRORS,
+  TELEMETRY_LOGS,
+  TELEMETRY_METRICS,
+  TELEMETRY_SOURCES,
+} from './observability.operations';
 
 /**
  * qits-landing-app's pact with qits-observability-service (qits-2313), in
@@ -23,7 +28,8 @@ import { TELEMETRY_ERRORS, TELEMETRY_LOGS, TELEMETRY_SOURCES } from './observabi
  * service's telemetry (`telemetry from one platform service`); that source's logs as the page asks
  * for them by default (the source alone), and the same narrowed to the last hour (`sinceMinutes`,
  * `telemetry records of every kind`); that source's error groups as the Errors page asks for them
- * by default (the source alone, qits-2339).
+ * by default (the source alone, qits-2339); and that source's metric series, the latest point of
+ * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -139,5 +145,23 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
       expect(group?.errorLogs?.[0]?.severityText).toBe('ERROR');
       expect(data?.total).toBe(data?.groups?.length);
       expect(data?.truncated).toBe(false);
+    }));
+
+  it('show-telemetry-metrics: a source’s metric series, the latest point of each', () =>
+    given(TELEMETRY_METRICS, ONE_SERVICE, 'show-telemetry-metrics').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        TELEMETRY_METRICS.fetch({ query: { source: sourceOf(ONE_SERVICE) } }),
+      );
+      expect(error).toBeUndefined();
+      const metrics = data?.metrics ?? [];
+      expect(metrics.length).toBeGreaterThan(0);
+      for (const metric of metrics) {
+        expect(metric.name).toBeTruthy();
+        expect(typeof metric.value).toBe('number');
+        expect(metric.epochNanos).toBeGreaterThan(0);
+        expect(metric.serviceName).toBeTruthy();
+        expect(metric.attributes).toBeDefined();
+      }
+      expect(metrics.some((metric) => metric.unit === 'By')).toBe(true);
     }));
 });

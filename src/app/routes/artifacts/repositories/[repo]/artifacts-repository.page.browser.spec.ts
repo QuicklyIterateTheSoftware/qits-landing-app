@@ -40,11 +40,12 @@ type Listed = keyof typeof LISTINGS;
  *
  * Its exits (epic qits-2000) are each followed once: a store repository in the switcher
  * (`switch-artifacts-repository`), an image row, which opens the image's page here
- * (`open-artifact-image`, qits-2324), a daemon row, which opens the daemon's page here
+ * (`open-artifact-image`, qits-2324), a maven row, which opens the coordinate's page here
+ * (`open-maven-package`, qits-2325), a daemon row, which opens the daemon's page here
  * (`open-artifact-daemon`, qits-2327), a docs site row, which opens the site's page here
- * (`open-artifact-docs-site`, qits-2328), each other kind's row, which leaves for the old explorer
- * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and Cleanup, which opens
- * the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
+ * (`open-artifact-docs-site`, qits-2328), an npm row, which still leaves for the old explorer
+ * until qits-2326 (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and
+ * Cleanup, which opens the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
  */
 describe('ArtifactsRepositoryPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -271,6 +272,33 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     await opened.settled();
   });
 
+  it('open-maven-package mavenPackage: a coordinate row opens the coordinate’s page here', async () => {
+    const opened = await open('maven');
+    const coordinate = 'eu.wohlben.qits:contract-maven';
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: coordinate, exact: true });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', `/artifacts/repositories/maven/maven-packages/${coordinate}`);
+    await userEvent.click(link);
+    await opened.settled();
+    expect(reached()).toEqual(['open-maven-package:mavenPackage']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/artifacts/repositories/maven/maven-packages/${coordinate}`,
+    );
+    expect(leave).not.toHaveBeenCalled();
+    // The coordinate page's reads, answered as its own spec does (no SBOM: a 404).
+    const encoded = encodeURIComponent(coordinate);
+    http
+      .expectOne(`/artifacts/api/repositories/maven/maven-packages/${encoded}/versions`)
+      .flush(await goldenMaster(STORE, 'listMavenVersionSummaries', ARTIFACTS));
+    http
+      .expectOne(`/artifacts/sboms/maven/${encoded}`)
+      .flush(null, { status: 404, statusText: 'Not Found' });
+    await opened.settled();
+  });
+
   it('open-artifacts-cleanup cleanup: Cleanup opens the repository’s cleanup page here', async () => {
     const opened = await open('daemons');
     const link = page.elementLocator(opened.page).getByRole('link', { name: 'Cleanup →' });
@@ -334,24 +362,16 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     await opened.settled();
   });
 
-  for (const [repo, outcome, name, path] of [
-    ['npm', 'npmPackage', 'contract-package', 'packages/contract-package'],
-    [
-      'maven',
-      'mavenPackage',
-      'eu.wohlben.qits:contract-maven',
-      'maven-packages/eu.wohlben.qits%3Acontract-maven',
-    ],
-  ] as const) {
-    it(`open-artifacts-entry ${outcome}: a row leaves for its page in the old explorer`, async () => {
-      const opened = await open(repo);
-      const href = `${OLD_EXPLORER}/repositories/${repo}/${path}`;
-      const link = page.elementLocator(opened.page).getByRole('link', { name, exact: true });
-      await expect.element(link).toHaveAttribute('href', href);
-      await userEvent.click(link);
-      expect(reached()).toEqual([`open-artifacts-entry:${outcome}`]);
-      expect(leave).toHaveBeenCalledWith(href);
-      expect(TestBed.inject(Router).url).toBe(`/artifacts/repositories/${repo}`);
-    });
-  }
+  it('open-artifacts-entry npmPackage: an npm row leaves for its page in the old explorer', async () => {
+    const opened = await open('npm');
+    const href = `${OLD_EXPLORER}/repositories/npm/packages/contract-package`;
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-package', exact: true });
+    await expect.element(link).toHaveAttribute('href', href);
+    await userEvent.click(link);
+    expect(reached()).toEqual(['open-artifacts-entry:npmPackage']);
+    expect(leave).toHaveBeenCalledWith(href);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/npm');
+  });
 });

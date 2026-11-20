@@ -59,6 +59,78 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "getSbom"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "download-maven-sbom",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+          }
+        }
+      },
+      "description": "download-maven-sbom: getSbom",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a maven coordinate with an sbom on one of two versions",
+          "params": {
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "version": "2100.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}/-/${version}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven/-/2100.2.0"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": [
+            "application/vnd.cyclonedx+json; version=1.6"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/vnd\\.cyclonedx\\+json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "listDaemonVersions"
           },
           "qits-trigger": {
@@ -4397,6 +4469,649 @@
           }
         },
         "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listMavenVersionSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maven-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+          }
+        }
+      },
+      "description": "show-maven-package: listMavenVersionSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a maven coordinate with an sbom on one of two versions",
+          "params": {
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "version": "2100.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${mavenRepository}/maven-packages/${mavenPackage}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits:contract-maven/versions"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "files": [
+                  "contract-maven-2100.1.0.jar",
+                  "contract-maven-2100.1.0.jar"
+                ],
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 228,
+                "version": "2100.1.0"
+              },
+              {
+                "files": [
+                  "contract-maven-2100.1.0.jar",
+                  "contract-maven-2100.1.0.jar"
+                ],
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 228,
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.versions[*].files": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                },
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.versions[*].files[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].publishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listMavenVersionSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maven-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+          }
+        }
+      },
+      "description": "show-maven-package: listMavenVersionSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store holding one artifact of every kind",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${mavenRepository}/maven-packages/${mavenPackage}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits:contract-maven/versions"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "files": [
+                  "contract-maven-2100.1.0.pom"
+                ],
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 206,
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].files": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].files[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].publishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listMavenVersionSummaries"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maven-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+          }
+        }
+      },
+      "description": "show-maven-package: listMavenVersionSummaries",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store with nothing published",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${mavenRepository}/maven-packages/${mavenPackage}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits:contract-maven/versions"
+      },
+      "response": {
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listSbomVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maven-package",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+          }
+        }
+      },
+      "description": "show-maven-package: listSbomVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a maven coordinate with an sbom on one of two versions",
+          "params": {
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "version": "2100.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 909,
+                "specVersion": "1.6",
+                "version": "2100.2.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.versions[*].specVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listSbomVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maven-package",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-maven-package: listSbomVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store holding one artifact of every kind",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listSbomVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-maven-package",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-maven-package: listSbomVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a store with nothing published",
+          "params": {
+            "daemon": "contract-daemon",
+            "daemonsRepository": "daemons",
+            "docsRepository": "docs",
+            "docsSite": "contract-docs-site",
+            "image": "contract-image",
+            "imagesRepository": "qits",
+            "mavenPackage": "eu.wohlben.qits:contract-maven",
+            "mavenRepository": "maven",
+            "npmPackage": "contract-package",
+            "npmRepository": "npm",
+            "packageName": "eu.wohlben.qits:contract-maven",
+            "packageType": "maven",
+            "screenshotsRepository": "ci-screenshots"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/sboms/${packageType}/${packageName}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+      },
+      "response": {
+        "status": 404
       },
       "type": "Synchronous/HTTP"
     },

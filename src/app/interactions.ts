@@ -159,6 +159,12 @@ export const INTERACTIONS = {
   'open-telemetry-error-logs':
     'Error logs on an error group opens the Logs page at that source’s ERROR lines',
   /**
+   * `observability-metrics.page.ts` via `TELEMETRY_METRICS` (qits-2340): the Metrics page shows the
+   * chosen source's buffered metric series, the latest value of each, one card per metric name.
+   */
+  'show-telemetry-metrics':
+    'The Metrics page shows the latest value of each of a source’s buffered metric series',
+  /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.
    */
@@ -511,10 +517,10 @@ export const INTERACTIONS = {
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
    * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (a package or a coordinate), until the Artifacts section's own detail
-   * pages land (qits-2316; an image's landed, `open-artifact-image`, a daemon's,
-   * `open-artifact-daemon`, and a docs site's, `open-artifact-docs-site`). Leaves only, and names
-   * no pact.
+   * qits-artifacts explorer (an npm package), until the Artifacts section's own detail page for it
+   * lands (qits-2326; the others landed: an image's, `open-artifact-image`, a maven coordinate's,
+   * `open-maven-package`, a daemon's, `open-artifact-daemon`, and a docs site's,
+   * `open-artifact-docs-site`). Leaves only, and names no pact.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -538,6 +544,28 @@ export const INTERACTIONS = {
    * the page only: no request, and names no pact.
    */
   'toggle-image-digests': 'An image’s page shows its digests whole or shortened',
+  /**
+   * `artifacts-repository.page.ts`: a maven row's coordinate opens its page in this app,
+   * `artifacts/repositories/:repo/maven-packages/:coordinate` (qits-2325). Navigates only, and
+   * names no pact.
+   */
+  'open-maven-package': 'A coordinate of a maven repository opens its page',
+  /**
+   * `artifacts-maven-package.page.ts` via `ARTIFACT_MAVEN_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
+   * (qits-2325): the maven package page reads the coordinate's versions and its stored SBOMs, in
+   * parallel. Refresh reads both again.
+   */
+  'show-maven-package': 'A coordinate’s page lists its versions, each with its SBOM',
+  /**
+   * `artifacts-maven-package.page.ts` (`app-sbom-cell`) via `ARTIFACT_SBOM` (qits-2325): a
+   * version's Download reads its CycloneDX document and saves it as a file.
+   */
+  'download-maven-sbom': 'A coordinate’s page saves a version’s SBOM as a file',
+  /**
+   * `artifacts-maven-package.page.ts`: the back link, and the store page a non-maven repository's
+   * note links, open the repository's page (qits-2325). Navigates only, and names no pact.
+   */
+  'leave-maven-package': 'A coordinate’s page leads back to its repository',
   /**
    * `artifacts-repository.page.ts`: Cleanup opens the repository's cleanup page in this app,
    * `artifacts/repositories/:repo/cleanup` (qits-2329). Navigates only, and names no pact.
@@ -1260,7 +1288,8 @@ export const INTERACTIONS = {
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
    * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
-   * one exit per page (qits-2313: Logs; qits-2339: Errors). Navigates only, and names no pact.
+   * one exit per page (qits-2313: Logs; qits-2339: Errors; qits-2340: Metrics). Navigates only,
+   * and names no pact.
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',

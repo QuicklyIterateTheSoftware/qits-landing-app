@@ -9,15 +9,18 @@ import type {
   ListImagesResponses,
   ListImageTagSummariesResponses,
   ListMavenPackagesResponses,
+  ListMavenVersionSummariesResponses,
   ListNpmPackagesResponses,
   ListRepositoriesResponses,
+  ListSbomVersionsResponses,
 } from '../../api/artifacts';
 
 /**
  * What the app reads from qits-artifacts' store explorer doors (qits-2316): the store's
  * repositories, and one repository's listing by its type; one image's tags and manifests
- * (qits-2324); one daemon's versions and a version's bytes (qits-2327); and one docs site's
- * versions (qits-2328). `artifacts.operations.ts` declares each read with these lists, so nothing can read
+ * (qits-2324); one maven coordinate's versions and SBOMs (qits-2325); one daemon's versions and a
+ * version's bytes (qits-2327); and one docs site's versions (qits-2328). `artifacts.operations.ts`
+ * declares each read with these lists, so nothing can read
  * any other field, and `artifacts.operations.pact.spec.ts` binds the same. To read another field,
  * add it here.
  */
@@ -118,6 +121,48 @@ export type ArtifactMavenPackages = Consumed<
   typeof LIST_ARTIFACT_MAVEN_PACKAGES
 >;
 export type ArtifactMavenPackage = NonNullable<ArtifactMavenPackages['packages']>[number];
+
+/**
+ * `ARTIFACT_MAVEN_VERSIONS` (`listMavenVersionSummaries`, qits-2325): one coordinate's versions in
+ * store order, each with its deployed file names (in either order), their bytes and when the
+ * version was published.
+ */
+export const LIST_ARTIFACT_MAVEN_VERSIONS = [
+  'versions[].version',
+  'versions[].files',
+  'versions[].sizeBytes',
+  'versions[].publishedAt',
+] as const;
+
+export type ArtifactMavenVersions = Consumed<
+  ListMavenVersionSummariesResponses[200],
+  typeof LIST_ARTIFACT_MAVEN_VERSIONS
+>;
+export type ArtifactMavenVersion = NonNullable<ArtifactMavenVersions['versions']>[number];
+
+/**
+ * `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, qits-2325): every stored SBOM of one package,
+ * newest first, each by its release version, with its CycloneDX spec version, its bytes and when
+ * it was stored. A package with none answers 404, which is "no SBOMs", not a failure.
+ */
+export const LIST_ARTIFACT_SBOM_VERSIONS = [
+  'versions[].version',
+  'versions[].specVersion',
+  'versions[].sizeBytes',
+  'versions[].createdAt',
+] as const;
+
+export type ArtifactSbomVersions = Consumed<
+  ListSbomVersionsResponses[200],
+  typeof LIST_ARTIFACT_SBOM_VERSIONS
+>;
+export type ArtifactSbomVersion = NonNullable<ArtifactSbomVersions['versions']>[number];
+
+/**
+ * `ARTIFACT_SBOM` (`getSbom`, qits-2325): one release's CycloneDX document, read on a press to be
+ * saved as a file. It is read whole, as text, so the pact binds its media type, never a field.
+ */
+export const GET_ARTIFACT_SBOM = [] as const;
 
 /** `ARTIFACT_DAEMONS` (`listDaemons`): a daemon repository's daemons, with their newest version. */
 export const LIST_ARTIFACT_DAEMONS = [
