@@ -259,11 +259,13 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door and the old agent address, beside the library’s own', () => {
-    // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's.
+  it('marks the front door, the old agent address and the docs reader’s split form, beside the library’s own', () => {
+    // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
+    // reader's `read/**` is where the docs app's redirect lands (qits-2337).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
+      'projects/:slug/docs/read/**',
     ]);
   });
 });

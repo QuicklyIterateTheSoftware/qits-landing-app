@@ -1,4 +1,5 @@
 import type {
+  ListSlowSpansResponses,
   ListTelemetryErrorsResponses,
   ListTelemetryMetricsResponses,
   ListTelemetrySourcesResponses,
@@ -78,6 +79,27 @@ export const LIST_TELEMETRY_METRICS = [
   'metrics[].attributes',
 ] as const;
 
+/**
+ * `listSlowSpans` (qits-2341): each span's trace and span id, name, kind, duration, status and
+ * start; its attributes (read whole: `url.full` and `http.route`, keyed with dots); whether any of
+ * its events is an exception; its resource attributes (read whole, for `service.version`); and how
+ * many spans matched and whether the answer left some out.
+ */
+export const LIST_SLOW_SPANS = [
+  'spans[].traceId',
+  'spans[].spanId',
+  'spans[].name',
+  'spans[].kind',
+  'spans[].durationMs',
+  'spans[].status',
+  'spans[].startEpochNanos',
+  'spans[].attributes',
+  'spans[].events[].exception',
+  'spans[].resourceAttributes',
+  'total',
+  'truncated',
+] as const;
+
 /** The buffer's sources, cut to what the picker reads. */
 export type TelemetrySources = Consumed<
   ListTelemetrySourcesResponses[200],
@@ -115,3 +137,9 @@ export type TelemetryMetrics = Consumed<
 
 /** One metric series at its latest point. */
 export type TelemetryMetricPoint = NonNullable<TelemetryMetrics['metrics']>[number];
+
+/** A source's slow spans, cut to what the slow spans page reads. */
+export type TelemetrySlowSpans = Consumed<ListSlowSpansResponses[200], typeof LIST_SLOW_SPANS>;
+
+/** One slow span. */
+export type TelemetrySlowSpan = NonNullable<TelemetrySlowSpans['spans']>[number];

@@ -1166,7 +1166,7 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
   });
 
   protected artifactLinks(artifact: ReleaseArtifact) {
-    return artifactLinks(artifact, this.scope()).map((link) => this.linked(link));
+    return artifactLinks(artifact, this.scope(), this.slug()).map((link) => this.linked(link));
   }
 
   /**

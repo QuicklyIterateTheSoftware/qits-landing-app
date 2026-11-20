@@ -72,15 +72,24 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`. One repository's are at
  * `docs/repositories/<repository name>` (`RepositoryDocsPage`, qits-2336): the sites whose newest
  * version it published, narrowed by `?section=`. The fixed `repositories` segment keeps a
- * repository's name from ever meaning a reader path under `docs/` (qits-2337); the sidebar keeps
- * Docs current below it.
+ * repository's name from ever meaning a reader path under `docs/`; the sidebar keeps Docs
+ * current below it. One site is read at `docs/read/<site>[/-/<version>]` (`DocsReaderPage`,
+ * qits-2337): the site spans segments, so `read/:site` and `read/:site/-/:version` (this app's
+ * links, the site one segment) and `read/**` (the docs app's redirect, the site split) all render
+ * it, and it parses the site and the version off the URL. The page lives in `read/[site]/`, the
+ * route its outcomes are declared for.
+ *
+ * A project's events are at `projects/<slug>/events` (`ProjectEventsPage`, qits-2312), one event
+ * at `events/<event id>` (`ProjectEventPage`, qits-2338): its facts, its payload and its chain,
+ * a detail page with no sidebar entry of its own.
  *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
  * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
  * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
- * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series.
+ * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series;
+ * `slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) its spans at or above a duration floor.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -453,6 +462,13 @@ export const routes: Routes = [
                 (m) => m.ObservabilityMetricsPage,
               ),
           },
+          {
+            path: 'slow-spans',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page').then(
+                (m) => m.ObservabilitySlowSpansPage,
+              ),
+          },
         ],
       },
       {
@@ -467,11 +483,47 @@ export const routes: Routes = [
             (m) => m.RepositoryDocsPage,
           ),
       },
+      // The docs reader (qits-2337): one page under three addresses. This app's links name the site
+      // as one segment (`read/:site[/-/:version]`, the site's `/` escaped), which an exit can carry;
+      // `read/**` takes the same addresses with the site split over segments, as the docs app's
+      // redirect writes them (an entry from outside the app). The page reads the site and the
+      // version off the URL either way (`parseReadPath`), so all three load it from `read/[site]/`.
+      {
+        path: 'projects/:slug/docs/read/:site',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/read/[site]/docs-reader.page').then(
+            (m) => m.DocsReaderPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/docs/read/:site/-/:version',
+        // eslint-disable-next-line qits/route-matches-directory -- the version is read off the URL by the site's page
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/read/[site]/docs-reader.page').then(
+            (m) => m.DocsReaderPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/docs/read/**',
+        data: { qitsEntry: true },
+        loadComponent: () =>
+          import('./routes/projects/[slug]/docs/read/[site]/docs-reader.page').then(
+            (m) => m.DocsReaderPage,
+          ),
+      },
       {
         path: 'projects/:slug/events',
         loadComponent: () =>
           import('./routes/projects/[slug]/events/project-events.page').then(
             (m) => m.ProjectEventsPage,
+          ),
+      },
+      {
+        // One event (qits-2338), a detail page of the Events section.
+        path: 'projects/:slug/events/:id',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/events/[id]/project-event.page').then(
+            (m) => m.ProjectEventPage,
           ),
       },
       {

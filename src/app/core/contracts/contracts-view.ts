@@ -35,11 +35,6 @@ export function bundleOf(catalog: CatalogRead | null, repo: string): BundleLooku
     : { status: 'none' };
 }
 
-/** The bundle in qits-docs' reader at its version, as the UI builder's call popover links it. */
-export function docsUrl(origin: string, site: ContractsSite): string | null {
-  return origin ? `${origin}/read/${site.site}/-/${site.version}` : null;
-}
-
 /** A class's simple name: `eu.wohlben.qits.Project` → `Project`. */
 export const simpleName = (fqn: string): string => fqn.split('.').at(-1) ?? fqn;
 

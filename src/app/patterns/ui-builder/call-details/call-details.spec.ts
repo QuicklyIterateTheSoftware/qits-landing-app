@@ -133,9 +133,8 @@ describe('CallDetails', () => {
     expect(element.querySelector('pre.json')?.textContent).toBe(
       JSON.stringify({ runs: [{ id: 'r-1' }] }, null, 2),
     );
-    expect(element.querySelector<HTMLAnchorElement>('.call-popover a.docs')?.href).toBe(
-      `https://docs.example/read/${s.site}/-/${s.version}`,
-    );
+    // Without the project, no Contracts link (qits-2337: it was qits-docs' reader).
+    expect(element.querySelector('.call-popover a.docs')).toBeNull();
   });
 
   it('opens an entity the call touches, and closes', async () => {
@@ -177,6 +176,10 @@ describe('CallDetails', () => {
       '/projects/qits/repositories/qits-ci-service/entities/eu.wohlben.qits.ci.CiRun',
     );
     expect(entity?.getAttribute('aria-label')).toBe('Open CiRun entity page');
+    // The provider repository's Contracts page, in this app (qits-2337).
+    expect(
+      element.querySelector<HTMLAnchorElement>('.call-popover a.docs')?.getAttribute('href'),
+    ).toBe('/projects/qits/repositories/qits-ci-service/contracts');
     // The pick stays beside the link.
     const buttons = [...element.querySelectorAll('.call-popover button')];
     expect(buttons.some((b) => b.textContent?.trim() === 'CiRun')).toBe(true);

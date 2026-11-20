@@ -134,6 +134,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/observability/logs', component: TestPage },
           { path: 'projects/:slug/observability/errors', component: TestPage },
           { path: 'projects/:slug/observability/metrics', component: TestPage },
+          { path: 'projects/:slug/observability/slow-spans', component: TestPage },
           { path: 'projects/:slug/docs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
           { path: 'projects/:slug/maintenance', component: TestPage },
@@ -668,6 +669,18 @@ describe('ShellLayout (screenshots)', () => {
     const link = navigation.getByRole('link', { name: 'Metrics', exact: true });
     expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/observability/metrics`);
     expect(reached()).toEqual(['open-sidebar-observability-page:metrics']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Observability', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+  });
+
+  it('open-sidebar-observability-page slowSpans: Slow spans below Observability opens it', async () => {
+    const { fixture, project } = await renderProject('/observability/logs');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Slow spans', exact: true });
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/observability/slow-spans`);
+    expect(reached()).toEqual(['open-sidebar-observability-page:slowSpans']);
     await expect.element(link).toHaveAttribute('aria-current', 'page');
     await expect
       .element(navigation.getByRole('link', { name: 'Observability', exact: true }))

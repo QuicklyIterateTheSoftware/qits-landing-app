@@ -779,6 +779,116 @@
       "route": "projects/:slug/docs"
     }
   ],
+  "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog naming contract repositories",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog of every kind",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published apidocs bundle",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published apidocs bundle",
+      "operationId": "getDocsVersion",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published apidocs bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "getDocsVersion",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/docs/read/:site/-/:version"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a repository with published changelogs",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a repository with published changelogs",
+      "operationId": "getDocsVersion",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a repository with published changelogs",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/docs/read/:site/-/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/docs/read/:site"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/docs/read/:site/-/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/docs/read/:site"
+    }
+  ],
   "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",
@@ -803,6 +913,50 @@
       "state": "two projects exist",
       "operationId": "listProjectRepositories",
       "route": "projects/:slug/docs/repositories/:repo"
+    }
+  ],
+  "src/app/routes/projects/[slug]/events/[id]/project-event.page.browser.spec.ts": [
+    {
+      "provider": "qits-events-service",
+      "state": "an event of a project with a cause and effects",
+      "operationId": "getEvent",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "an event of a project with a cause and effects",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "an event of a project with no effects",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "the cause of a project event",
+      "operationId": "getEvent",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "the cause of a project event",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/events/:id"
     }
   ],
   "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts": [
@@ -1339,6 +1493,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/observability/metrics"
+    }
+  ],
+  "src/app/routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page.browser.spec.ts": [
+    {
+      "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/slow-spans"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listSlowSpans",
+      "route": "projects/:slug/observability/slow-spans"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/slow-spans"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/observability/slow-spans"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/observability/slow-spans"
     }
   ],
   "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [

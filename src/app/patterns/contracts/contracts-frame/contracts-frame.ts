@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { exit, outcomes, QitsExit } from '@qits/angular';
-import { docsUrl, type BundleLookup } from '$core/contracts/contracts-view';
-import { PlatformOrigins } from '$core/platform/platform-origins';
+import type { BundleLookup } from '$core/contracts/contracts-view';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 import type { ValueMarks } from '$ui/dom/value-marks';
 
 /**
  * The frame of a repository's contracts and entities pages (qits-1994): the page's heading, the
- * repository, the bundle's site and version with its link into qits-docs' reader, the Contracts
+ * repository, the bundle's site and version (no link into a docs reader: the docs reader hands
+ * contracts sites back to this page, qits-2337), the Contracts
  * and Entities tabs (declared exits, `switch-contracts-section`, epic qits-2000: each marked
  * current by `[qitsExit]` on its list and the pages below it), and why there is nothing to show when the repository has no readable bundle
  * (`lookup`). The page's own content is projected and drawn only once the bundle is found.
@@ -52,11 +52,6 @@ import type { ValueMarks } from '$ui/dom/value-marks';
                 data-qits-derived="versions"
                 >{{ s.site }} {{ s.version }}</span
               >
-              @if (docs(); as url) {
-                <a class="docs text-xs font-semibold" [href]="url" target="_blank" rel="noopener"
-                  >Docs ↗</a
-                >
-              }
             }
           </div>
         </div>
@@ -96,16 +91,9 @@ export class ContractsFrame {
   readonly repo = input.required<string>();
   readonly lookup = input.required<BundleLookup>();
 
-  private readonly origins = inject(PlatformOrigins);
-
   protected readonly site = computed(() => {
     const l = this.lookup();
     return l.status === 'loaded' ? l.site : null;
-  });
-
-  protected readonly docs = computed(() => {
-    const site = this.site();
-    return site ? docsUrl(this.origins.page('docs'), site) : null;
   });
 
   protected readonly state = computed((): LoadState => {

@@ -11,7 +11,6 @@ import {
   byKind,
   dependencyRows,
   dependencySites,
-  docsUrl,
   DTO_KINDS,
   entityGroups,
   filterRows,
@@ -63,15 +62,6 @@ describe('bundleOf', () => {
     expect(
       bundleOf({ status: 'loaded', sites: [CI], unreadable: ['@contracts/qits-y'] }, 'x'),
     ).toEqual({ status: 'unreadable', sites: ['@contracts/qits-y'] });
-  });
-});
-
-describe('docsUrl', () => {
-  it('links the bundle in qits-docs’ reader at its version', () => {
-    expect(docsUrl('https://docs.example', PROJECTS)).toBe(
-      'https://docs.example/read/@contracts/qits-projects/-/2100.1.0',
-    );
-    expect(docsUrl('', PROJECTS)).toBeNull();
   });
 });
 

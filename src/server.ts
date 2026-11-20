@@ -54,7 +54,8 @@ app.get(HEALTH_PATH, (_req, res) => {
 /**
  * Files whose name does not change between releases: the service worker (`sw.js`, the wrapper the
  * app registers, qits-2297, and the `ngsw-worker.js` it imports), its manifest and the html it
- * serves to an open tab. They must never come from a year-old cache.
+ * serves to an open tab. They must never come from a year-old cache. So is swagger-ui's
+ * stylesheet, a non-injected global style the docs reader loads (qits-2337): `[name].css`.
  */
 const UNHASHED = new Set([
   'sw.js',
@@ -62,6 +63,7 @@ const UNHASHED = new Set([
   'ngsw.json',
   'safety-worker.js',
   'index.csr.html',
+  'swagger-ui.css',
 ]);
 
 /**

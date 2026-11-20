@@ -1,4 +1,4 @@
-import { artifactLinks, docsReadPath, releaseLinks, repositoryScope } from './release-links';
+import { artifactLinks, readerPath, releaseLinks, repositoryScope } from './release-links';
 
 // Pure rules, so hand-built artifacts (ported from qits-projects-frontend's artifact links spec).
 
@@ -15,7 +15,7 @@ describe('release links', () => {
 
   it('addresses an image by its application, and its SBOM by its full name, unscoped', () => {
     expect(
-      artifactLinks({ type: 'docker', name: 'qits/qits-ci', version: '2026.1.1' }, SCOPE),
+      artifactLinks({ type: 'docker', name: 'qits/qits-ci', version: '2026.1.1' }, SCOPE, 'qits'),
     ).toEqual([
       { label: 'qits/qits-ci', app: 'artifacts', path: `${SCOPE}repositories/qits/images/qits-ci` },
       { label: 'SBOM', app: 'artifacts', path: '/artifacts/sboms/docker/qits/qits-ci/-/2026.1.1' },
@@ -23,26 +23,35 @@ describe('release links', () => {
   });
 
   it('addresses a maven coordinate, an npm package and docs', () => {
-    expect(artifactLinks({ type: 'maven', name: 'eu.x:y', version: '1' }, SCOPE)[0].path).toBe(
-      `${SCOPE}repositories/maven/maven-packages/eu.x:y`,
-    );
-    expect(artifactLinks({ type: 'npm', name: '@qits/a', version: '1' }, SCOPE)).toEqual([
+    expect(
+      artifactLinks({ type: 'maven', name: 'eu.x:y', version: '1' }, SCOPE, 'qits')[0].path,
+    ).toBe(`${SCOPE}repositories/maven/maven-packages/eu.x:y`);
+    expect(artifactLinks({ type: 'npm', name: '@qits/a', version: '1' }, SCOPE, 'qits')).toEqual([
       { label: '@qits/a', app: 'artifacts', path: `${SCOPE}repositories/npm/packages/%40qits%2Fa` },
     ]);
-    expect(artifactLinks({ type: 'docs', name: 'guide', version: '2' }, SCOPE)).toEqual([
-      { label: 'guide', app: 'docs', path: `${SCOPE}read/guide/-/2` },
+    expect(artifactLinks({ type: 'docs', name: '@guides/x', version: '2' }, SCOPE, 'qits')).toEqual(
+      [{ label: '@guides/x', path: '/projects/qits/docs/read/@guides%2Fx/-/2' }],
+    );
+    expect(
+      artifactLinks({ type: 'userflows', name: '@userflows/x', version: 'abc' }, SCOPE, 'qits'),
+    ).toEqual([{ label: '@userflows/x', path: '/projects/qits/docs/read/@userflows%2Fx/-/abc' }]);
+    // No version to read, no reader to open.
+    expect(artifactLinks({ type: 'docs', name: '@guides/x' }, SCOPE, 'qits')).toEqual([
+      { label: '@guides/x' },
     ]);
   });
 
-  it('reads a docs site at a version, or at its newest without one (qits-2318)', () => {
-    expect(docsReadPath('/qits/', '@apidocs/qits-ci', '2026.1.1')).toBe(
-      '/qits/read/@apidocs/qits-ci/-/2026.1.1',
+  it('addresses the docs reader with the site as one segment (qits-2337)', () => {
+    expect(readerPath('qits', '@apidocs/qits-ci', '2026.1.1')).toBe(
+      '/projects/qits/docs/read/@apidocs%2Fqits-ci/-/2026.1.1',
     );
-    expect(docsReadPath('/qits/', '@apidocs/qits-ci')).toBe('/qits/read/@apidocs/qits-ci');
+    expect(readerPath('a b', 'storybook', 'v 1')).toBe(
+      '/projects/a%20b/docs/read/storybook/-/v%201',
+    );
   });
 
   it('draws a type nothing serves as a name without a link', () => {
-    expect(artifactLinks({ type: 'helm', name: 'chart', version: '1' }, SCOPE)).toEqual([
+    expect(artifactLinks({ type: 'helm', name: 'chart', version: '1' }, SCOPE, 'qits')).toEqual([
       { label: 'chart' },
     ]);
   });

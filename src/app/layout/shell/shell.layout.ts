@@ -87,6 +87,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'observability/logs'
   | 'observability/errors'
   | 'observability/metrics'
+  | 'observability/slow-spans'
   | 'docs'
   | 'events'
   | 'maintenance'
@@ -481,12 +482,13 @@ export class ShellLayout {
 
   /**
    * The Observability pages below Observability in the sidebar, one exit per page (qits-2313;
-   * Errors, qits-2339; Metrics, qits-2340).
+   * Errors, qits-2339; Metrics, qits-2340; Slow spans, qits-2341).
    */
   private readonly observabilityPages = outcomes('open-sidebar-observability-page', {
     logs: exit('projects/:slug/observability/logs'),
     errors: exit('projects/:slug/observability/errors'),
     metrics: exit('projects/:slug/observability/metrics'),
+    slowSpans: exit('projects/:slug/observability/slow-spans'),
   });
 
   /**
@@ -682,6 +684,11 @@ export class ShellLayout {
             label: 'Metrics',
             exit: this.observabilityPages.metrics,
             path: this.observabilityPages.metrics.url(params),
+          },
+          {
+            label: 'Slow spans',
+            exit: this.observabilityPages.slowSpans,
+            path: this.observabilityPages.slowSpans.url(params),
           },
         ],
       },
