@@ -6,6 +6,7 @@ import {
   newestPushFirst,
   oldDetailHref,
   plural,
+  publishedFrom,
   searched,
   shortDigest,
   untaggedCount,
@@ -34,14 +35,13 @@ describe('artifact listings (qits-2316)', () => {
     expect(oldDetailHref(origin, 'maven', 'maven', 'eu.wohlben.qits:x')).toBe(
       'https://registry.example.test/repositories/maven/maven-packages/eu.wohlben.qits%3Ax',
     );
-    expect(oldDetailHref(origin, 'docs', 'docs', '@routes/qits-landing')).toBe(
-      'https://registry.example.test/repositories/docs/docs/%40routes%2Fqits-landing',
-    );
     expect(oldDetailHref('', 'qits', 'images', 'x')).toBe('');
     // An image opens this app's own image page (qits-2324), not the old explorer's.
     expect(oldDetailHref(origin, 'qits', 'images', 'x')).toBe('');
     // A daemon opens this app's own daemon page (qits-2327), not the old explorer's.
     expect(oldDetailHref(origin, 'daemons', 'daemons', 'x')).toBe('');
+    // A docs site opens this app's own docs site page (qits-2328), not the old explorer's.
+    expect(oldDetailHref(origin, 'docs', 'docs', '@routes/qits-landing')).toBe('');
     expect(oldDetailHref(origin, 'ci-videos', 'records', 'x')).toBe('');
   });
 
@@ -64,6 +64,26 @@ describe('artifact listings (qits-2316)', () => {
   it('writes a record’s metadata as key=value pairs', () => {
     expect(metadataLine({ branch: 'main', sha: 'abc' })).toBe('branch=main · sha=abc');
     expect(metadataLine(undefined)).toBe('—');
+  });
+
+  it('says where a docs version came from, with the keys it carries (qits-2328)', () => {
+    expect(
+      publishedFrom({
+        'git.repository.name': 'qits-projects-service',
+        'git.commit.hash': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        'release.request.qualified-id': 'qits-projects-service-rr-535',
+      }),
+    ).toBe('qits-projects-service · aaaaaaa · qits-projects-service-rr-535');
+    expect(
+      publishedFrom({
+        'git.repository.name': 'qits-qits',
+        'git.branch.name': 'main',
+        'git.commit.hash': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+        'content.hash': 'x',
+      }),
+    ).toBe('qits-qits · main · bbbbbbb');
+    expect(publishedFrom({ 'content.hash': 'x' })).toBe('—');
+    expect(publishedFrom(undefined)).toBe('—');
   });
 
   it('shortens a digest to its algorithm and 12 hex characters (qits-2324)', () => {

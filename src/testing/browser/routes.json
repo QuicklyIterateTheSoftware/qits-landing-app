@@ -21,6 +21,12 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listImageManifestSummaries",
       "route": "artifacts/repositories/:repo/images/:image"
     },
@@ -141,6 +147,44 @@
       "state": "a store holding one artifact of every kind",
       "operationId": "listRepositories",
       "route": "artifacts/repositories/:repo"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs site published by two releases",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsSiteSummaries",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
     }
   ],
   "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts": [
