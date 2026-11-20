@@ -526,8 +526,8 @@ The System section (qits-2344) is qits-system's one swarm, which no project join
 under `system/...`, each listed below the sidebar's System while the section is open (Services
 and Nodes so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
 hands off to it with a full-document load; the sidebar's System exit names `system`, which
-redirects, Services below it names it, and a service's page leads back to it by name
-(`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
+redirects, and Services below it names it; a service's page
+leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
 `SWARM_SERVICE_LIST` (`listSwarmServices`, `docker service ls` on the manager qits-system runs on,
 one swarm, not per target), one table in the server's order: name (linking the service's page by
 its name, `open-swarm-service`, qits-2345), state, mode, replicas, image and ports ("—" when none published); no

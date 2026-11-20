@@ -705,8 +705,8 @@ export const routes: Routes = [
             path: 'swarm/services',
             // An entry point (qits-2049): qits-system-frontend's old `swarm/services` hands off
             // here with a full-document load, and its bookmarks follow; the sidebar's System
-            // leads to `system`, which redirects here, Services below it names it (qits-2346), and a
-            // service's page leads back.
+            // leads to `system`, which redirects here, Services below it names it (qits-2346),
+            // and a service's page leads back.
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/system/swarm/services/swarm-services.page').then(
