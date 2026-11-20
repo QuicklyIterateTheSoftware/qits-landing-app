@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { exit, outcomes, QitsExit } from '@qits/angular';
 import { Dropdown } from '$ui/components/dropdown/dropdown';
-import { PlatformOrigins } from '$core/platform/platform-origins';
+import { contractsPageOutcomes } from '$core/contracts/contracts-links';
 import { ContractsBundles } from '$core/contracts/contracts-bundles';
 import { CONTRACTS_MARKS } from '$core/contracts/contracts-marks';
 import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
@@ -48,11 +48,12 @@ const PREVIEW_CHARS = 12_000;
 /**
  * One call of a route in the UI builder's calls panel (qits-1999). The row opens a popover with
  * what the platform recorded for the call: the operation (method, path, status), its provider
- * state (params, dependencies), the domain entities it touches, a link to the provider's contracts
- * in qits-docs, and the recorded response as JSON. With the project's slug given (`project`), the
+ * state (params, dependencies), the domain entities it touches, a link to the provider repository's
+ * Contracts page (qits-2337), and the recorded response as JSON. With the project's slug given (`project`), the
  * state's name links the provider repository's state page and each entity has an "open" link to
- * its entity page beside the button that picks it (qits-1994); without it they stay plain. Both
- * are declared exits (`open-call-contract` `state` and `entity`, epic qits-2000).
+ * its entity page beside the button that picks it (qits-1994); without it they stay plain, and
+ * the Contracts link is left out. All are declared exits (`open-call-contract` `state`, `entity`
+ * and `contracts`, epic qits-2000).
  *
  * It reads the provider's `golden-masters/index.json` and the recorded file from its `@contracts/`
  * site (`ContractsBundles.readIndex`, `readRecording`, qits-2146: the contracts pages' reads, so
@@ -212,11 +213,11 @@ const PREVIEW_CHARS = 12_000;
             </section>
           }
 
-          @if (docsUrl(); as url) {
+          @if (contractsParams(); as params) {
             <section>
-              <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Docs</h4>
-              <a class="docs font-semibold" [href]="url" target="_blank" rel="noopener"
-                >Contracts of {{ c.provider }} in qits-docs ↗</a
+              <h4 class="m-0 mb-1 font-semibold text-fg-soft uppercase">Contracts</h4>
+              <a class="docs font-semibold" [qitsExit]="toContracts.contracts" [exitParams]="params"
+                >Contracts of {{ c.provider }}</a
               >
             </section>
           }
@@ -277,7 +278,6 @@ export class CallDetails {
    */
   protected readonly marks = CONTRACTS_MARKS;
 
-  private readonly origins = inject(PlatformOrigins);
   private readonly dropdown = viewChild.required(Dropdown);
 
   private readonly bundles = inject(ContractsBundles);
@@ -361,11 +361,14 @@ export class CallDetails {
     return json.length > PREVIEW_CHARS ? `${json.slice(0, PREVIEW_CHARS)}\n…` : json;
   });
 
-  /** The service's contracts in qits-docs' reader, at the version read. */
-  protected readonly docsUrl = computed(() => {
-    const site = this.site();
-    const origin = this.origins.page('docs');
-    return site && origin ? `${origin}/read/${site.site}/-/${site.version}` : null;
+  /** The provider repository's Contracts page (qits-2337; it was qits-docs' reader). */
+  protected readonly toContracts = contractsPageOutcomes();
+
+  /** The Contracts page's exit params, when the project and the site's repository are known. */
+  protected readonly contractsParams = computed(() => {
+    const slug = this.project();
+    const repo = this.site()?.repository;
+    return slug && repo ? { slug, repo } : null;
   });
 
   constructor() {

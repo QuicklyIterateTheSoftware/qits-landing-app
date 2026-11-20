@@ -29,7 +29,7 @@ import {
 } from '@qits/angular';
 import { map } from 'rxjs';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
-import { PlatformOrigins } from '$core/platform/platform-origins';
+import { contractsPageOutcomes } from '$core/contracts/contracts-links';
 import { SelectedProject } from '$core/projects/selected-project';
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { payloadField } from '$core/events/refresh-on';
@@ -390,8 +390,8 @@ interface EntityGroup {
  *   (`connectivity.cached`) says "from cache, as of <instant>" in Selected data, on the line above
  *   the frame while it is highlighted, and in its highlight buttons' tooltips. A freeze with an
  *   outbox lists it, oldest first, in a Sync section above Calls and states: each mutation's state,
- *   its call (its row's popover when the freeze records it, else its provider's contracts in
- *   qits-docs), its record and, on a conflict, the server's version.
+ *   its call (its row's popover when the freeze records it, else a link to its provider
+ *   repository's Contracts page, qits-2337), its record and, on a conflict, the server's version.
  * - Selection: the URL's query, `route` (the route's full path), `state` (the state's name),
  *   `viewport` (`phone`, `tablet`, `desktop`) and `network` (`offline`, qits-2153), so Back walks back through tree, tab, switch and link
  *   clicks. A `route` that is not a route of the tree opens the first route with states; a `state`
@@ -2048,10 +2048,13 @@ interface EntityGroup {
                     <span class="block font-mono">{{ op.operationId }}</span>
                     <span class="block text-fg-muted">
                       {{ op.provider }}
-                      @if (contractsUrl(op.provider); as url) {
+                      @if (contractsParams(op.provider); as params) {
                         ·
-                        <a class="mutation-docs" [href]="url" target="_blank" rel="noopener"
-                          >contracts ↗</a
+                        <a
+                          class="mutation-docs"
+                          [qitsExit]="toContracts.contracts"
+                          [exitParams]="params"
+                          >contracts</a
                         >
                       }
                     </span>
@@ -2088,7 +2091,6 @@ export class UiBuilderPage {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
   private readonly theme = inject(ThemePreferenceStore);
-  private readonly origins = inject(PlatformOrigins);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /** The marks of what the page shows of the docs files it reads (qits-2220; `builder-marks.ts`). */
@@ -3505,14 +3507,17 @@ export class UiBuilderPage {
     return this.freeze()?.records.find((record) => sourceOf(record) === entry.operation) ?? null;
   }
 
+  /** The provider repository's Contracts page, as a call's popover links it (qits-2337). */
+  protected readonly toContracts = contractsPageOutcomes();
+
   /**
-   * The provider's contracts in qits-docs' reader at the newest version (qits-2153), as a call's
-   * popover links them; null without a contracts site or a docs origin.
+   * The exit params of the provider repository's Contracts page (qits-2153; qits-2337 moved it
+   * off qits-docs' reader), as a call's popover links it; null without a contracts site or a project.
    */
-  protected contractsUrl(provider: string): string | null {
-    const site = this.siteOf(provider);
-    const origin = this.origins.page('docs');
-    return site && origin ? `${origin}/read/${site.site}/-/${site.version}` : null;
+  protected contractsParams(provider: string): { slug: string; repo: string } | null {
+    const repo = this.siteOf(provider)?.repository;
+    const slug = this.slug();
+    return repo && slug ? { slug, repo } : null;
   }
 
   constructor() {

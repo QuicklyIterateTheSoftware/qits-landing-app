@@ -44,9 +44,14 @@ const IMAGE_SCOPE = 'qits/';
 /**
  * Where a published artifact can be looked at: an image or a Maven or npm package in qits-artifacts
  * (scoped to the project, `scope`), its SBOM (wire address, not scoped), and docs or user flows in
- * qits-docs. A type nothing serves is a name without a link.
+ * this app's docs reader at the released version (qits-2337, `readerPath`). A type nothing serves
+ * is a name without a link.
  */
-export function artifactLinks(artifact: ReleaseArtifact, scope: string): readonly AppLink[] {
+export function artifactLinks(
+  artifact: ReleaseArtifact,
+  scope: string,
+  slug: string,
+): readonly AppLink[] {
   const name = artifact.name ?? '';
   const version = artifact.version ?? '';
   switch (artifact.type) {
@@ -78,19 +83,22 @@ export function artifactLinks(artifact: ReleaseArtifact, scope: string): readonl
       ];
     case 'docs':
     case 'userflows':
-      return [{ label: name, app: 'docs', path: docsReadPath(scope, name, version) }];
+      return name && version && slug
+        ? [{ label: name, path: readerPath(slug, name, version) }]
+        : [{ label: name }];
     default:
       return [{ label: name }];
   }
 }
 
 /**
- * Where qits-docs reads a docs site, below the docs app's origin: `<scope>read/<site>/-/<version>`,
- * or the site's newest version without one (`<scope>read/<site>`). The site's name keeps its `/`:
- * the reader takes every segment after `read` as the name.
+ * The docs reader's address of `site` at `version` in project `slug` (qits-2337):
+ * `/projects/<slug>/docs/read/<site>/-/<version>`, the site one segment with its `/` escaped, as
+ * the reader's own links name it (`@` stays literal, as the router writes it).
  */
-export function docsReadPath(scope: string, site: string, version?: string): string {
-  return version ? `${scope}read/${site}/-/${version}` : `${scope}read/${site}`;
+export function readerPath(slug: string, site: string, version: string): string {
+  const segment = (value: string) => encodeURIComponent(value).replace(/%40/g, '@');
+  return `/projects/${segment(slug)}/docs/read/${segment(site)}/-/${segment(version)}`;
 }
 
 /**

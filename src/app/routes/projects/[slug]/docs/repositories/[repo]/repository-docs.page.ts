@@ -4,21 +4,17 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   exit,
-  external,
   outcomes,
   QitsEntity,
   QitsEntityList,
   QitsExit,
   QitsField,
   qitsResource,
-  QitsTriggers,
   type QitsDomainEvent,
 } from '@qits/angular';
 import { repositoryNamed } from '$core/ci/repository-ci';
 import { docBlocks, publishedBy, sectionOf, shortNameOf } from '$core/docs/doc-sections';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
-import { docsReadPath } from '$core/release-requests/release-links';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
 import { PROJECT_REPOSITORY_NAMES } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
@@ -55,8 +51,8 @@ const NO_SITES: DocsCatalog = { sites: [] };
  * `?section=<route segment>` keeps that section's block alone (a value naming no section is
  * ignored): the docs app's old `/<slug>/<group>/<repository>/<section>` addresses land here so.
  *
- * A row opens the site's reader on the docs app until qits-2337 moves it here, the same exit as
- * the project's page (`open-docs-site` `open`, `docsReadPath` without a version, same tab).
+ * A row opens the site's reader in this app (`DocsReaderPage`, qits-2337), the same exit as the
+ * project's page (`open-docs-site` `open`, without a version, so the newest of `main`).
  *
  * States: loading, a failed read (either) with Retry, the unknown repository (with a link back to
  * the project's Docs page, and no rows), a repository that published no site, and a `?section=`
@@ -77,7 +73,6 @@ const NO_SITES: DocsCatalog = { sites: [] };
     QitsEntityList,
     QitsExit,
     QitsField,
-    QitsTriggers,
     RouterLink,
     Spinner,
   ],
@@ -176,9 +171,8 @@ const NO_SITES: DocsCatalog = { sites: [] };
                     <li [qitsEntity]="site" entityKey="name">
                       <a
                         class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 px-3 py-2 no-underline hover:bg-surface-muted"
-                        [attr.href]="href(site) || null"
-                        [qitsTriggers]="href(site) ? [opening.open] : []"
-                        (click)="open($event, site)"
+                        [qitsExit]="opening.open"
+                        [exitParams]="{ slug: slug(), site: site.name ?? '' }"
                       >
                         <span
                           class="font-semibold break-all text-accent"
@@ -255,7 +249,6 @@ export class RepositoryDocsPage {
   private readonly selected = inject(SelectedProject);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
-  private readonly docsOrigin = inject(PlatformOrigins).page('docs');
 
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
@@ -276,8 +269,10 @@ export class RepositoryDocsPage {
     this.browser ? this.selected.project()?.id : undefined,
   );
 
-  /** A row: the site's reader on the docs app, until qits-2337 moves it here. Same tab. */
-  protected readonly opening = outcomes('open-docs-site', { open: external('docs') });
+  /** A row: the site's reader, at its newest version (qits-2337). */
+  protected readonly opening = outcomes('open-docs-site', {
+    open: exit('projects/:slug/docs/read/:site'),
+  });
 
   /** Back to the project's Docs page. */
   protected readonly leaving = outcomes('leave-repository-docs', {
@@ -381,21 +376,6 @@ export class RepositoryDocsPage {
   /** Whether a commit is to the wrapper's main branch, as the repositories read names them. */
   private commitsToWrapper(event: QitsDomainEvent): boolean {
     return movesWrapper(event, this.repositoryAnswer());
-  }
-
-  /** The site's reader on the docs app, at its newest version; `''` while the origin is unknown. */
-  protected href(site: DocsCatalogSite): string {
-    const slug = this.slug();
-    if (!this.docsOrigin || !slug || !site.name) return '';
-    return `${this.docsOrigin}${docsReadPath(`/${slug}/`, site.name)}`;
-  }
-
-  /** Leaves for the site's reader through `open-docs-site`, which records the outcome. */
-  protected open(event: MouseEvent, site: DocsCatalogSite): void {
-    const href = this.href(site);
-    if (!href || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    event.preventDefault();
-    this.opening.open.leave(href);
   }
 
   protected short(site: DocsCatalogSite): string {
