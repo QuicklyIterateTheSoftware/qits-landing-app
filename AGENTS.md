@@ -555,8 +555,9 @@ an empty fallback) says the upstreams cannot be read right now, with Retry. Stal
 `refreshOn`. qits-mirror sends no event when an upstream is registered or deleted or an image is
 pulled through, so none of it is followed: Refresh reads again (a known gap). The pact
 (`upstreams.operations.pact.spec.ts`, the whole mirror pact) reads it in "the default caches" (the
-three default registries) and "a mirror fronting no registries" (`upstreams: []`; the interaction
-and the `empty` screenshot skip themselves until the `@qits/mirror-golden-masters` pin records it).
+three default registries) and "a mirror fronting no registries" (`upstreams: []`, recorded from
+`@qits/mirror-golden-masters` 2026.1120.232746 on; the interaction and the `empty` screenshot skip
+themselves on an older pin).
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend

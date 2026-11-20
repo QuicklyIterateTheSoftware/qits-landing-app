@@ -18,8 +18,8 @@ const UPSTREAMS = '/mirror/api/upstreams';
  * Screenshots of the Mirror section's OCI upstreams page (qits-2357) inside the shell
  * (`openRoute`), with no project open, its one read (`listUpstreams`) answered with qits-mirror's
  * recordings: "the default caches" (docker.io, quay.io and registry.access.redhat.com; `upstreams`)
- * and "a mirror fronting no registries" (`upstreams: []`; `empty`, which skips itself until the
- * `@qits/mirror-golden-masters` pin records it). A read still open (`loading`) and a 500
+ * and "a mirror fronting no registries" (`upstreams: []`; `empty`, recorded from
+ * `@qits/mirror-golden-masters` 2026.1120.232746 on, skips itself on an older pin). A read still open (`loading`) and a 500
  * (`unavailable`: the database not answering) are statuses only.
  *
  * The page declares no outcome of its own: the shell's are shot once (`shootShellMenus`). Nothing

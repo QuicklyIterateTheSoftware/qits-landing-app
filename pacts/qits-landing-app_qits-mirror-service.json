@@ -21,6 +21,61 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a mirror fronting no registries"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/mirror/api/upstreams"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "upstreams": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listUpstreams"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-upstreams",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-upstreams: listUpstreams",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "the default caches"
         }
       ],

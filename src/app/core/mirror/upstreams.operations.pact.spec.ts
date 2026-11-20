@@ -17,8 +17,8 @@ import { UPSTREAM_LIST } from './upstreams.operations';
  *
  * The Mirror section's upstreams page lists the image registries the mirror fronts
  * (`show-mirror-upstreams`): in "the default caches" (docker.io, quay.io and
- * registry.access.redhat.com), and in "a mirror fronting no registries" (`upstreams: []`), which
- * skips itself until the `@qits/mirror-golden-masters` pin records it. The test runs the
+ * registry.access.redhat.com), and in "a mirror fronting no registries" (`upstreams: []`, recorded
+ * from `@qits/mirror-golden-masters` 2026.1120.232746 on), which skips itself on an older pin. The test runs the
  * operation's own `fetch`; the interaction's `operationId` and `consumes` are the operation's.
  */
 const CONSUMER = 'qits-landing-app';
