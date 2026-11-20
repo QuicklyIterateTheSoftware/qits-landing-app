@@ -157,7 +157,14 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * of the one swarm qits-system runs on, with a state derived from their replicas, reached from the
  * root sidebar with no project open. `system` and `system/swarm` redirect to it by a relative
  * `redirectTo`; it is an entry point, where qits-system-frontend's old `swarm/services` hands off.
- * qits-2345…qits-2356 add the section's other pages under `system/...`.
+ * `system/swarm/nodes` (`SwarmNodesPage`, qits-2346) is the same swarm's nodes, an entry point too,
+ * where the old `swarm/nodes` hands off. Below the root sidebar's System, its pages are listed while
+ * the section is open (Services, Nodes); qits-2345…qits-2356 add the section's other pages under
+ * `system/...`, qits-2347…qits-2356 each with its own entry there.
+ * `system/swarm/services/<id>` (`SwarmServicePage`, qits-2345) is one service of that swarm, by
+ * its name or id: its facts, rollout, environment keys, labels, mounts, networks and tasks; each
+ * services row's name opens it, and it is an entry point too, where the old `swarm/services/:id`
+ * hands off.
  *
  * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
  * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
@@ -690,15 +697,35 @@ export const routes: Routes = [
           { path: '', pathMatch: 'full', redirectTo: 'swarm/services' },
           { path: 'swarm', pathMatch: 'full', redirectTo: 'swarm/services' },
           {
+            path: 'swarm/services/:id',
+            // An entry point (qits-2049): qits-system-frontend's old `swarm/services/:id` hands
+            // off here with a full-document load (qits-2345); the services list links it too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/services/[id]/swarm-service.page').then(
+                (m) => m.SwarmServicePage,
+              ),
+          },
+          {
             path: 'swarm/services',
             // An entry point (qits-2049): qits-system-frontend's old `swarm/services` hands off
             // here with a full-document load, and its bookmarks follow; the sidebar's System
-            // leads to `system`, which redirects here, so no outcome of this app names it.
+            // leads to `system`, which redirects here, Services below it names it (qits-2346),
+            // and a service's page leads back.
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/system/swarm/services/swarm-services.page').then(
                 (m) => m.SwarmServicesPage,
               ),
+          },
+          {
+            path: 'swarm/nodes',
+            // An entry point (qits-2049, qits-2346): qits-system-frontend's old `swarm/nodes` hands
+            // off here with a full-document load, and its bookmarks follow; Nodes below the
+            // sidebar's System leads here too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/nodes/swarm-nodes.page').then((m) => m.SwarmNodesPage),
           },
         ],
       },

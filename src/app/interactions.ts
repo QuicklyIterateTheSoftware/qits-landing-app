@@ -839,6 +839,22 @@ export const INTERACTIONS = {
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
+   * `swarm-service.page.ts` via `SWARM_SERVICE` (qits-2345): one swarm service's page shows its
+   * facts, rollout, environment keys and labels, mounts, networks and tasks. Refresh, and a
+   * deployment of its application going live or failing, read it again.
+   */
+  'show-swarm-service': 'A swarm service’s page shows its configuration and its tasks',
+  /**
+   * `swarm-services.page.ts`: a service row's name opens the service's page in this app,
+   * `system/swarm/services/:id` (qits-2345). Navigates only, and names no pact.
+   */
+  'open-swarm-service': 'A service of the swarm services list opens its page',
+  /**
+   * `swarm-service.page.ts`: the crumb back opens the swarm services list (qits-2345). Navigates
+   * only, and names no pact.
+   */
+  'leave-swarm-service': 'A swarm service’s page leads back to the services list',
+  /**
    * `swarm-services.page.ts` via `SWARM_SERVICE_LIST` (qits-2344): the System section's services
    * page lists the services of qits-system's swarm, each with a state derived from its replicas.
    * Refresh, and a deployment going live or failing, read them again.
@@ -850,6 +866,12 @@ export const INTERACTIONS = {
    * registration date. Refresh reads them again (no event announces a change).
    */
   'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
+  /**
+   * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
+   * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
+   * engine version, the one qits-system runs on marked. Refresh reads them again.
+   */
+  'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
@@ -1437,6 +1459,12 @@ export const INTERACTIONS = {
    * names no pact.
    */
   'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
+  /**
+   * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
+   * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no
+   * pact.
+   */
+  'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and

@@ -72,7 +72,9 @@ export type RoutePath =
   | 'projects/:slug/work/schedule'
   | 'projects/:slug/workspaces/:slotId'
   | 'system'
-  | 'system/swarm/services';
+  | 'system/swarm/nodes'
+  | 'system/swarm/services'
+  | 'system/swarm/services/:id';
 
 declare module '@qits/angular' {
   interface QitsApp {

@@ -10,7 +10,7 @@ import { provideHeyApiClient } from '../../api/system/client/client.gen';
 import { addGoldenInteraction, assertPactPart } from '@qits/angular/testing';
 import { isRecorded, systemGoldenMasters as masters } from '../../../testing/golden-masters';
 import { swarmServiceState } from './swarm-service-state';
-import { SWARM_SERVICE_LIST } from './swarm.operations';
+import { SWARM_NODE_LIST, SWARM_SERVICE_LIST } from './swarm.operations';
 
 /**
  * The swarm's part of qits-landing-app's pact with qits-system-service (qits-2344,
@@ -19,18 +19,22 @@ import { SWARM_SERVICE_LIST } from './swarm.operations';
  *
  * The System section's services page lists the swarm's services (`show-swarm-services`): in "a
  * single-node swarm" (two replicated services, each `1/1`), and in "a swarm running no services"
- * (`[]`), which skips itself until the `@qits/system-golden-masters` pin records it. The test runs
- * the operation's own `fetch`; the interaction's `operationId` and `consumes` are the operation's.
+ * (`[]`), which skips itself until the `@qits/system-golden-masters` pin records it. Its nodes page
+ * lists the swarm's nodes (`show-swarm-nodes`, qits-2346): in "a single-node swarm" (one node, the
+ * manager and Leader qits-system runs on), and in "a swarm listing no nodes" (`[]`), which skips
+ * itself the same way. Each test runs the operation's own `fetch`; the interaction's `operationId`
+ * and `consumes` are the operation's.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-system-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 /** The operations this spec owns in that file. */
-const OPERATIONS = ['listSwarmServices'];
+const OPERATIONS = ['listSwarmServices', 'listSwarmNodes'];
 
 const SWARM = 'a single-node swarm';
 const EMPTY_SWARM = 'a swarm running no services';
+const NO_NODES = 'a swarm listing no nodes';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-swarm-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -65,6 +69,7 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
 
   it('declares the provider this spec binds', () => {
     expect(SWARM_SERVICE_LIST.provider).toBe(PROVIDER);
+    expect(SWARM_NODE_LIST.provider).toBe(PROVIDER);
   });
 
   it('show-swarm-services: the page lists the swarm’s services, each with its replicas', () =>
@@ -97,6 +102,38 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
         consumes: SWARM_SERVICE_LIST.consumes,
       }).executeTest(async (server) => {
         const { data, error } = await at(server.url, () => SWARM_SERVICE_LIST.fetch({}));
+        expect(error).toBeUndefined();
+        expect(data).toEqual([]);
+      }),
+  );
+
+  it('show-swarm-nodes: the page lists the swarm’s nodes, the one qits-system runs on marked', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: SWARM,
+      operationId: SWARM_NODE_LIST.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-nodes' },
+      consumes: SWARM_NODE_LIST.consumes,
+    }).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => SWARM_NODE_LIST.fetch({}));
+      expect(error).toBeUndefined();
+      const nodes = data ?? [];
+      expect(nodes).toHaveLength(1);
+      expect(nodes[0].self).toBe(true);
+      expect(nodes[0].role).toBe('manager');
+    }));
+
+  it.skipIf(!isRecorded(NO_NODES, 'listSwarmNodes', masters))(
+    'show-swarm-nodes: a manager listing no nodes lists none',
+    () =>
+      addGoldenInteraction(pact, masters, {
+        provider: PROVIDER,
+        state: NO_NODES,
+        operationId: SWARM_NODE_LIST.operationId,
+        trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-nodes' },
+        consumes: SWARM_NODE_LIST.consumes,
+      }).executeTest(async (server) => {
+        const { data, error } = await at(server.url, () => SWARM_NODE_LIST.fetch({}));
         expect(error).toBeUndefined();
         expect(data).toEqual([]);
       }),

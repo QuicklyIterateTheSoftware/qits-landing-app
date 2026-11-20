@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../api/system/client.gen';
@@ -33,6 +34,8 @@ describe('SwarmServicesPage', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
+        // Each row's name links the service's page (qits-2345).
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(systemClient),
@@ -72,6 +75,11 @@ describe('SwarmServicesPage', () => {
     expect(rows.map((row) => text(row.querySelector('td')))).toEqual([
       'dev-qits-artifacts',
       'dev-qits-ci',
+    ]);
+    // Each name links the service's page, by its name (qits-2345).
+    expect(rows.map((row) => row.querySelector('td a')?.getAttribute('href'))).toEqual([
+      '/system/swarm/services/dev-qits-artifacts',
+      '/system/swarm/services/dev-qits-ci',
     ]);
     expect(rows.map((row) => text(row.querySelector('ui-chip')))).toEqual(['Running', 'Running']);
     expect(text(element.querySelector('[data-lede]'))).toBe('2 services');

@@ -347,7 +347,16 @@ to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section o
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316), System
 (`open-sidebar-system`, `exit('system')`, qits-2344) and Mirror (`open-sidebar-mirror`,
-`exit('mirror')`, qits-2357).
+`exit('mirror')`, qits-2357). Such a section may list its own pages below it
+(`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
+while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
+exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
+on its own page, `true` while one of its pages below it is the current one (that page `page`).
+System's are Services and Nodes (`open-sidebar-system-page`, `services`/`nodes`,
+`exit('system/swarm/services')`, `exit('system/swarm/nodes')`); qits-2347…qits-2356 add one each.
+Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
+`mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
+page below it.
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
@@ -518,12 +527,14 @@ that recording's status only.
 The System section (qits-2344) is qits-system's one swarm, which no project joins:
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
-under `system/...`. It is an entry point (`qitsEntry`): the old page hands off to it with a
-full-document load, and the sidebar's System exit names `system`, which redirects, so no outcome
-of this app leads to it by name. It reads through `qitsResource` over `core/system/swarm.operations.ts`:
+under `system/...`, each listed below the sidebar's System while the section is open (Services
+and Nodes so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+hands off to it with a full-document load; the sidebar's System exit names `system`, which
+redirects, and Services below it names it; a service's page
+leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
 `SWARM_SERVICE_LIST` (`listSwarmServices`, `docker service ls` on the manager qits-system runs on,
-one swarm, not per target), one table in the server's order: name (plain text until a service's
-page lands, qits-2345), state, mode, replicas, image and ports ("—" when none published); no
+one swarm, not per target), one table in the server's order: name (linking the service's page by
+its name, `open-swarm-service`, qits-2345), state, mode, replicas, image and ports ("—" when none published); no
 Updated column, as the list door answers `updatedAt: null` for every row. The state is derived
 from `replicas` alone (`swarmServiceState`, `core/system/swarm-service-state.ts`): a trailing
 ` (…)` dropped, `R/D` with D > 0 and R = D is Running, 0 < R < D Degraded, R = 0 < D Down, D = 0
@@ -538,6 +549,44 @@ replicated services, `1/1`) and "a swarm running no services" (`[]`; the interac
 `empty` screenshot skip themselves until the `@qits/system-golden-masters` pin records it), in its
 own part of the system pact (`swarm.operations.pact.spec.ts`, `assertPactPart`).
 
+`system/swarm/services/<id>` (`SwarmServicePage`, qits-2345, replacing qits-system-frontend's
+`swarm/services/:id`, also an entry point) is one service, `<id>` its name or id (docker takes
+either). One read, `SWARM_SERVICE` (`getSwarmService`, `core/system/swarm-service.operations.ts`,
+its consumes in `swarm-service.consumes.ts`): "← Swarm services" (`leave-swarm-service`), the name
+(else the id) with the full id in monospace; facts (mode, replicas as served, image, ports or "—",
+created, updated, `formatInstant`); rollout (update order, parallelism, failure action, restart
+condition, the healthcheck joined); the environment's keys only (the door never serves a value,
+which the page says) and the labels as `key=value`; mounts (type, source, target, read-only; none
+is "This service mounts nothing."); networks (the id shortened to 12 characters, the whole in its
+title, and the VIP address); tasks in the served order, shut-down ones kept as the last rollout's
+history (the caption says so): slot, node hostname (plain text: `nodeId` is always null), state,
+desired state, the error (red only when non-empty), and an Image column only when some task runs
+another image than the service's; no Updated column (`updatedAt` is always null). No task is "Swarm
+has placed no task for this service…", a 404 "No swarm service <id>.", a 403 the roles, a 503 the
+swarm not answering, with Retry. Staleness: `DEPLOYMENT_EVENTS` of the application the service's
+`qits.platform.deployments.app-name` label names (`concernsSwarmService`, `core/system/swarm-service.ts`;
+every deployment while it has none or nothing is shown), debounced 1 s; Refresh reads again. The
+pact reads it in "a single-node swarm" (`dev-qits-artifacts`, two mounts, two tasks, one Failed),
+"a swarm service with no tasks" (`dev-qits-idle`, `0/0`) and "no such swarm service" (404, status
+only), the last two (and their screenshots) skipping themselves until the
+`@qits/system-golden-masters` pin records them, in its own part of the system pact
+(`swarm-service.operations.pact.spec.ts`, `assertPactPart`).
+
+`system/swarm/nodes` (`SwarmNodesPage`, qits-2346, replacing qits-system-frontend's `swarm/nodes`,
+an entry point too) is the same swarm's nodes: `SWARM_NODE_LIST` (`listSwarmNodes`, `docker node
+ls` on the manager), one table in the server's order: hostname (plain text until a node's page
+lands, qits-2347) with a neutral "this node" chip on the one qits-system runs on (`self`), docker's
+12-character id (`shortSwarmId`, the whole id in `title`), role, status and availability (docker's
+own words, each on a chip), manager status and engine version ("—" when empty: a worker has no
+manager status). No Address column and no `address` in `LIST_SWARM_NODES`: the list door always
+answers it `null`. The chips' tones are `core/system/swarm-node-tones.ts`, case-insensitive:
+status Ready ok, Down failed, Unknown / Disconnected waiting, else neutral; availability Active ok,
+Pause waiting, Drain and else neutral. An empty listing is one sentence ("The swarm manager lists
+no nodes."), a 503 and a 403 as the services page. Staleness: no `refreshOn`. No event names a
+node change (a join, a leave, a drain, a node going Down), so the page is not followed at all:
+Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a single-node swarm"
+(one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
+the interaction and the `empty` screenshot skip themselves until the pin records it).
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
 `https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and qits-2358 adds
@@ -1087,7 +1136,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm}.operations*.ts`                                                 | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service}.operations*.ts`                                   | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
