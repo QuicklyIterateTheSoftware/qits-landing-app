@@ -160,7 +160,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-nodes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes"
           }
         }
       },
@@ -306,7 +307,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-nodes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes"
           }
         }
       },
@@ -359,7 +361,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-service",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/services/:id"
           }
         }
       },
@@ -789,7 +792,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-service",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/services/:id"
           }
         }
       },
