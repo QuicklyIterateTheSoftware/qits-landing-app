@@ -90,6 +90,7 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
  * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series;
  * `slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) its spans at or above a duration floor;
+ * `traces` (`ObservabilityTracesPage`, qits-2342) its traces, grouped by path.
  * `traces/<traceId>` (`ObservabilityTracePage`, qits-2343, `?source=`) one of its traces as a
  * waterfall, reached from a trace id on the Slow spans and Errors pages.
  *
@@ -147,6 +148,16 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site
  * of a docs store, its published versions, each read in qits-docs' reader; the site name is one
  * segment (`@changelog/qits-qits` is `@changelog%2Fqits-qits` in the URL).
+ * `artifacts/repositories/<repo>/packages/<package>` (`ArtifactsNpmPackagePage`, qits-2326) is one
+ * npm package of an npm store, its versions with their dist-tags and their SBOMs; the package name
+ * is one segment (`@qits/angular` is `@qits%2Fangular` in the URL). With it every store listing's
+ * rows open a page of this app; none leaves for qits-artifacts-frontend any more.
+ *
+ * The System section (qits-2344) is at `system/swarm/services` (`SwarmServicesPage`): the services
+ * of the one swarm qits-system runs on, with a state derived from their replicas, reached from the
+ * root sidebar with no project open. `system` and `system/swarm` redirect to it by a relative
+ * `redirectTo`; it is an entry point, where qits-system-frontend's old `swarm/services` hands off.
+ * qits-2345…qits-2356 add the section's other pages under `system/...`.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -472,6 +483,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'traces',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/traces/observability-traces.page').then(
+                (m) => m.ObservabilityTracesPage,
+              ),
+          },
+          {
             // One trace of a source (qits-2343), a detail page: the sidebar keeps Observability.
             path: 'traces/:traceId',
             loadComponent: () =>
@@ -645,6 +663,36 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page').then(
                 (m) => m.ArtifactsDocsSitePage,
+              ),
+          },
+          {
+            // One npm package of an npm store (qits-2326): its versions and their SBOMs.
+            // `:package` is one segment; a scoped name's slash rides as %2F, which the router
+            // decodes into the param (`@qits/angular`).
+            path: 'repositories/:repo/packages/:package',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page').then(
+                (m) => m.ArtifactsNpmPackagePage,
+              ),
+          },
+        ],
+      },
+      {
+        // The System section (qits-2344): qits-system's one swarm, bound to no project. No front
+        // page of its own yet: `/system` and `/system/swarm` open the swarm's services.
+        path: 'system',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'swarm/services' },
+          { path: 'swarm', pathMatch: 'full', redirectTo: 'swarm/services' },
+          {
+            path: 'swarm/services',
+            // An entry point (qits-2049): qits-system-frontend's old `swarm/services` hands off
+            // here with a full-document load, and its bookmarks follow; the sidebar's System
+            // leads to `system`, which redirects here, so no outcome of this app names it.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/services/swarm-services.page').then(
+                (m) => m.SwarmServicesPage,
               ),
           },
         ],

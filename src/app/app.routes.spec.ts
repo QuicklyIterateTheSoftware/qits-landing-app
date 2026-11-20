@@ -31,6 +31,8 @@ import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo
 import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
 import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page';
 import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
+import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
+import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -241,9 +243,53 @@ describe('artifacts routes (qits-2316)', () => {
     expect(leaf.paramMap.get('site')).toBe('@changelog/qits-qits');
   });
 
+  it('opens an npm package at artifacts/repositories/<repo>/packages/<package>, the name one segment (qits-2326)', async () => {
+    expect(
+      await pages('/artifacts/repositories/npm/packages/%40contract%2Fcontract-scoped'),
+    ).toEqual([ArtifactsNpmPackagePage]);
+    const router = TestBed.inject(Router);
+    // The router writes `@` literal in a segment (it needs no escape there); the `/` stays `%2F`.
+    expect(router.url).toBe('/artifacts/repositories/npm/packages/@contract%2Fcontract-scoped');
+    let leaf = router.routerState.snapshot.root;
+    while (leaf.firstChild) leaf = leaf.firstChild;
+    expect(leaf.paramMap.get('repo')).toBe('npm');
+    expect(leaf.paramMap.get('package')).toBe('@contract/contract-scoped');
+  });
+
   it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {
     expect(await pages(url)).toEqual([ArtifactsRepositoryPage]);
     expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/qits');
+  });
+});
+
+describe('system routes (qits-2344)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter(work),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+        },
+        // The page's resource follows the app's one stream (its `refreshOn`).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
+      ],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens the swarm services at system/swarm/services', async () => {
+    expect(await pages('/system/swarm/services')).toEqual([SwarmServicesPage]);
+    expect(TestBed.inject(Router).url).toBe('/system/swarm/services');
+  });
+
+  it.each(['/system', '/system/swarm'])('opens the swarm services at %s', async (url) => {
+    expect(await pages(url)).toEqual([SwarmServicesPage]);
+    expect(TestBed.inject(Router).url).toBe('/system/swarm/services');
   });
 });
 
@@ -259,13 +305,15 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door, the old agent address and the docs reader’s split form, beside the library’s own', () => {
+  it('marks the front door, the old agent address, the docs reader’s split form and the swarm services, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
-    // reader's `read/**` is where the docs app's redirect lands (qits-2337).
+    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services
+    // where qits-system-frontend's old page hands off (qits-2344).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
       'projects/:slug/docs/read/**',
+      'system/swarm/services',
     ]);
   });
 });

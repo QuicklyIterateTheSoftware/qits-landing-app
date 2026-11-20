@@ -10,6 +10,7 @@ export type RoutePath =
   | 'artifacts/repositories/:repo/docs/:site'
   | 'artifacts/repositories/:repo/images/:image'
   | 'artifacts/repositories/:repo/maven-packages/:coordinate'
+  | 'artifacts/repositories/:repo/packages/:package'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'
@@ -46,6 +47,7 @@ export type RoutePath =
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/observability/metrics'
   | 'projects/:slug/observability/slow-spans'
+  | 'projects/:slug/observability/traces'
   | 'projects/:slug/observability/traces/:traceId'
   | 'projects/:slug/release-requests'
   | 'projects/:slug/release-requests/:requestId'
@@ -66,7 +68,9 @@ export type RoutePath =
   | 'projects/:slug/work/in-progress'
   | 'projects/:slug/work/refinement'
   | 'projects/:slug/work/schedule'
-  | 'projects/:slug/workspaces/:slotId';
+  | 'projects/:slug/workspaces/:slotId'
+  | 'system'
+  | 'system/swarm/services';
 
 declare module '@qits/angular' {
   interface QitsApp {

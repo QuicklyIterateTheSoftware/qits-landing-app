@@ -149,6 +149,215 @@
         "status": 200
       },
       "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listSwarmServices"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-services",
+            "kind": "ui",
+            "route": "system/swarm/services"
+          }
+        }
+      },
+      "description": "show-swarm-services: listSwarmServices",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a single-node swarm",
+          "params": {
+            "configId": "qits-edge-vhosts",
+            "containerId": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+            "nodeId": "iwbwrdui2z0n62kqcjfo1erwh",
+            "serviceId": "dev-qits-artifacts"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/swarm/services"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "id": "l2izhr0o4tjq",
+              "image": "registry.dev.localhost:8080/qits/qits-artifacts:09920e6",
+              "mode": "replicated",
+              "name": "dev-qits-artifacts",
+              "ports": "",
+              "replicas": "1/1"
+            },
+            {
+              "id": "l2izhr0o4tjq",
+              "image": "registry.dev.localhost:8080/qits/qits-artifacts:09920e6",
+              "mode": "replicated",
+              "name": "dev-qits-artifacts",
+              "ports": "",
+              "replicas": "1/1"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].image": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].mode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].ports": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].replicas": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listSwarmServices"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-services",
+            "kind": "ui",
+            "route": "system/swarm/services"
+          }
+        }
+      },
+      "description": "show-swarm-services: listSwarmServices",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a swarm running no services"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/swarm/services"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
     }
   ],
   "metadata": {

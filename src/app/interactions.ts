@@ -171,6 +171,11 @@ export const INTERACTIONS = {
   'show-telemetry-slow-spans':
     'The Slow spans page shows a source’s buffered spans at or above a duration floor',
   /**
+   * `observability-traces.page.ts` via `TELEMETRY_TRACES` (qits-2342): the Traces page shows the
+   * chosen source's buffered traces, grouped by path or one row each, newest or slowest first.
+   */
+  'show-telemetry-traces': 'The Traces page shows a source’s buffered traces, grouped by path',
+  /**
    * `observability-trace.page.ts` via `TELEMETRY_TRACE` (qits-2343): the trace page shows one
    * trace of a source as a waterfall, a chosen span's detail and the trace's correlated logs; via
    * `TELEMETRY_STORE`, after a trace answered no spans, whether the buffer ever evicted any.
@@ -541,11 +546,10 @@ export const INTERACTIONS = {
    */
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
-   * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (an npm package), until the Artifacts section's own detail page for it
-   * lands (qits-2326; the others landed: an image's, `open-artifact-image`, a maven coordinate's,
-   * `open-maven-package`, a daemon's, `open-artifact-daemon`, and a docs site's,
-   * `open-artifact-docs-site`). Leaves only, and names no pact.
+   * Retired (qits-2326): a store repository row's name, which left for its detail page in the old
+   * qits-artifacts explorer, the npm package's last. Every row now opens this app's own page
+   * (`open-artifact-image`, `open-maven-package`, `open-artifact-daemon`,
+   * `open-artifact-docs-site`, `open-npm-package`). Kept so the slug is never reused.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -674,6 +678,28 @@ export const INTERACTIONS = {
    * the app, and names no pact.
    */
   'read-artifact-docs-version': 'A docs site version opens in the docs reader',
+  /**
+   * `artifacts-repository.page.ts`: an npm row's name opens its package's page in this app,
+   * `artifacts/repositories/:repo/packages/:package` (qits-2326). Navigates only, and names no
+   * pact.
+   */
+  'open-npm-package': 'A package of an npm repository opens its page',
+  /**
+   * `artifacts-npm-package.page.ts` via `ARTIFACT_NPM_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
+   * (qits-2326): the npm package page reads the package's versions and its stored SBOMs, in
+   * parallel. Refresh reads both again.
+   */
+  'show-npm-package': 'A package’s page lists its versions, each with its dist-tags and SBOM',
+  /**
+   * `artifacts-npm-package.page.ts` (`app-sbom-cell`) via `ARTIFACT_SBOM` (qits-2326): a version's
+   * Download reads its CycloneDX document and saves it as a file.
+   */
+  'download-npm-sbom': 'A package’s page saves a version’s SBOM as a file',
+  /**
+   * `artifacts-npm-package.page.ts`: the back link, and the store page a non-npm repository's note
+   * links, open the repository's page (qits-2326). Navigates only, and names no pact.
+   */
+  'leave-npm-package': 'A package’s page leads back to its repository',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).
@@ -812,6 +838,12 @@ export const INTERACTIONS = {
   'open-version-bumps': 'Opening the bumps menu lists the platform’s pending version bumps',
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
+  /**
+   * `swarm-services.page.ts` via `SWARM_SERVICE_LIST` (qits-2344): the System section's services
+   * page lists the services of qits-system's swarm, each with a state derived from its replicas.
+   * Refresh, and a deployment going live or failing, read them again.
+   */
+  'show-swarm-services': 'The swarm services page lists the swarm’s services with their state',
   /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
@@ -1343,7 +1375,7 @@ export const INTERACTIONS = {
   /**
    * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
    * one exit per page (qits-2313: Logs; qits-2339: Errors; qits-2340: Metrics; qits-2341: Slow
-   * spans). Navigates only, and names no pact.
+   * spans; qits-2342: Traces). Navigates only, and names no pact.
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',
@@ -1387,6 +1419,12 @@ export const INTERACTIONS = {
    * and names no pact.
    */
   'open-sidebar-artifacts': 'The sidebar’s Artifacts entry opens the Artifacts section',
+  /**
+   * `shell.layout.ts`: the sidebar's System, a global section shown with no project open, opens
+   * the System section (`system`, which opens the swarm's services; qits-2344). Navigates only,
+   * and names no pact.
+   */
+  'open-sidebar-system': 'The sidebar’s System entry opens the System section',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and

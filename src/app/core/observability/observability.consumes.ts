@@ -5,6 +5,7 @@ import type {
   ListTelemetryErrorsResponses,
   ListTelemetryMetricsResponses,
   ListTelemetrySourcesResponses,
+  ListTelemetryTracesResponses,
   SearchTelemetryLogsResponses,
 } from '../../api/observability';
 import type { Consumed } from '@qits/angular';
@@ -16,11 +17,15 @@ import type { Consumed } from '@qits/angular';
  * To read another field, add it here.
  */
 
-/** `listTelemetrySources`: the source picker's rows, each with its counts and its reach. */
+/**
+ * `listTelemetrySources`: the source picker's rows, each with its counts and its reach, and the
+ * names of the services that reported into it (the Traces page's service lens, qits-2342).
+ */
 export const LIST_TELEMETRY_SOURCES = [
   'sources[].key',
   'sources[].kind',
   'sources[].label',
+  'sources[].services[].name',
   'sources[].logs',
   'sources[].spans',
   'sources[].metricSeries',
@@ -135,6 +140,28 @@ export const GET_TELEMETRY_TRACE = [
  */
 export const GET_TELEMETRY_STORE = ['evictedSpans'] as const;
 
+/**
+ * `listTelemetryTraces` (qits-2342): each trace's id, its root span's name, service and route, the
+ * services it touched, its start, duration and span count, how many of its spans are errors,
+ * whether any recorded an exception and whether its root is missing from the buffer; and how many
+ * traces matched and whether the answer left some out.
+ */
+export const LIST_TELEMETRY_TRACES = [
+  'traces[].traceId',
+  'traces[].rootName',
+  'traces[].rootService',
+  'traces[].rootRoute',
+  'traces[].services',
+  'traces[].startEpochNanos',
+  'traces[].durationMs',
+  'traces[].spanCount',
+  'traces[].errorSpanCount',
+  'traces[].hasException',
+  'traces[].rootMissing',
+  'total',
+  'truncated',
+] as const;
+
 /** The buffer's sources, cut to what the picker reads. */
 export type TelemetrySources = Consumed<
   ListTelemetrySourcesResponses[200],
@@ -178,6 +205,15 @@ export type TelemetrySlowSpans = Consumed<ListSlowSpansResponses[200], typeof LI
 
 /** One slow span. */
 export type TelemetrySlowSpan = NonNullable<TelemetrySlowSpans['spans']>[number];
+
+/** A source's traces, cut to what the traces page reads. */
+export type TelemetryTraces = Consumed<
+  ListTelemetryTracesResponses[200],
+  typeof LIST_TELEMETRY_TRACES
+>;
+
+/** One trace's summary. */
+export type TelemetryTraceSummary = NonNullable<TelemetryTraces['traces']>[number];
 
 /** A trace, cut to what the trace page reads. */
 export type TelemetryTrace = Consumed<GetTelemetryTraceResponses[200], typeof GET_TELEMETRY_TRACE>;

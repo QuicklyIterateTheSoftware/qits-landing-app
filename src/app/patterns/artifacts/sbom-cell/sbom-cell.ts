@@ -23,15 +23,16 @@ import { fetchSbomFile, saveFile } from '$core/artifacts/sbom-download';
 type Download = 'idle' | 'downloading' | 'failed';
 
 /**
- * One version's SBOM, in a package page's version table (qits-2325; the maven package page now,
- * the npm package page with qits-2326, so it knows no package type): "CycloneDX <specVersion> ·
+ * One version's SBOM, in a package page's version table (qits-2325: the maven package page's, and
+ * the npm package page's of qits-2326, so it knows no package type): "CycloneDX <specVersion> ·
  * <size>" and a **Download** button when the version has one (`sbom`), "—" when it has none,
  * "unknown" when the page's SBOM list could not be read (`unknown`).
  *
  * Download reads the document through the app's client (`fetchSbomFile`: the store wants the
- * bearer, so a bare link cannot) and saves it as `<artifactId>-<version>.cdx.json`, in the browser
- * only. A failed read says so on this row, and the button offers it again. The page declares the
- * interaction and hands its two stays in (`saved`, `failed`), so each page names its own.
+ * bearer, so a bare link cannot) and saves it as `<artifactId>-<version>.cdx.json` (a scoped npm
+ * name without its scope), in the browser only. A failed read says so on this row, and the button
+ * offers it again. The page declares the interaction and hands its two stays in (`saved`,
+ * `failed`), so each page names its own.
  *
  * Marks (qits-2141): the SBOM is a join, an entry of the page's SBOM list (`source`) by `version`
  * inside the version's row; its line is derived from `specVersion` and `sizeBytes`.

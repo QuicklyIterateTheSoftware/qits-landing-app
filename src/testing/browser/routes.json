@@ -69,6 +69,12 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listRepositories",
       "route": "artifacts/repositories/:repo"
     },
@@ -315,6 +321,56 @@
       "state": "a store with nothing published",
       "operationId": "listMavenVersionSummaries",
       "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a scoped npm package with an sbom on one of two versions",
+      "operationId": "getSbom",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a scoped npm package with an sbom on one of two versions",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a scoped npm package with an sbom on one of two versions",
+      "operationId": "listSbomVersions",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listMavenPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
     }
   ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
@@ -1557,6 +1613,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/observability/traces/:traceId"
+    }
+  ],
+  "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts": [
+    {
+      "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/traces"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/traces"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetryTraces",
+      "route": "projects/:slug/observability/traces"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/observability/traces"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/observability/traces"
     }
   ],
   "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [
@@ -2849,6 +2937,20 @@
       "state": "two projects exist",
       "operationId": "listProjects",
       "route": "projects"
+    }
+  ],
+  "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmServices",
+      "route": "system/swarm/services"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a swarm running no services",
+      "operationId": "listSwarmServices",
+      "route": "system/swarm/services"
     }
   ]
 }

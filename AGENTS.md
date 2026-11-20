@@ -345,15 +345,15 @@ With no project open, the sidebar shows its global sections in the project's sec
 (`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
-every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316).
+every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316) and System
+(`open-sidebar-system`, `exit('system')`, qits-2344).
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
-no outcome. System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry
-there with their own `outcomes(...)` exit (a `GlobalPath` of their own). With a project open the
-list is empty.
+no outcome. Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry there with their own
+`outcomes(...)` exit (a `GlobalPath` of their own). With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
@@ -367,12 +367,9 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 has a name search over the one answer. An image row's name opens the image's page here
 (`open-artifact-image`, below), a maven row's coordinate the coordinate's page
 (`open-maven-package`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
-below), a docs site row's name the site's page (`open-artifact-docs-site`, below); only an npm
-row's name still leaves for its detail page in the old explorer
-(`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/packages/<name>`, the name one segment)
-until the section's npm package page lands (qits-2326); `provideAppRoute()` gives specs that
-origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
+below), a docs site row's name the site's page (`open-artifact-docs-site`, below), and an npm row's
+name the package's page (`open-npm-package`, below). No row leaves for the old explorer any more
+(`open-artifacts-entry` is retired, qits-2326). qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
 
@@ -457,8 +454,8 @@ row) reads `ARTIFACT_SBOM` (`getSbom`) as text through the generated client (the
 bearer, so no bare link) and saves it as `<artifactId>-<version>.cdx.json`,
 `application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). The SBOM store
 is a regex route over the raw path and 404s an encoded name (`eu.wohlben.qits%3Acontract-maven`,
-`%40qits%2Fangular`), so `app.config.ts` also puts `literalSbomPaths` (`core/artifacts/sbom-paths.ts`)
-on the artifacts client: `:`, `@` and `/` literal in `/artifacts/sboms/` wire URLs only (the
+`%40qits%2Fangular`), so `app.config.ts` also puts `literalSbomPaths` (`core/artifacts/sbom-paths.ts`,
+qits-2325; the npm package page of qits-2326 relies on it for scoped names) on the artifacts client: `:`, `@` and `/` literal in `/artifacts/sboms/` wire URLs only (the
 `/artifacts/api/` versions door takes the coordinate encoded). The specs that read SBOMs register
 it as well and expect the literal URL, so an encoded one fails them. SBOMs of
 versions the store no longer holds are counted under the table. A 404 is "There is no repository
@@ -491,6 +488,54 @@ reads again. The pact binds `listDocsVersionSummaries` exactly in "a store holdi
 every kind" (`contract-docs-site`, one version on `main`) and "a docs site published by two
 releases" (two versions whose metadata differ, the newer never read), and in "a store with nothing
 published" by status only, as the empty listings above.
+
+`artifacts/repositories/<repo>/packages/<package>` (`ArtifactsNpmPackagePage`, qits-2326) is one npm
+package; `<package>` is one segment (`@qits/angular` is `@qits%2Fangular` in the URL; the router
+decodes it). Two reads in parallel, nothing per row, and no `listRepositories`:
+`ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`, the name sent encoded, as this `/artifacts/api/`
+door takes it) and `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `npm` and the name; its 404 means
+"no SBOMs", not a failure, and any other failure keeps the table with its SBOM column "unknown" and
+a Retry). Both SBOM reads send the scoped name literally (`@qits/angular`) through qits-2325's
+`literalSbomPaths` (above). The header shows the name in monospace, its scope and own
+name apart when scoped (`splitPackageName`), and "N versions · M with an SBOM"; the versions newest
+publish first (`newestPublishFirst`, a null `publishedAt` last), their dist-tags joined or "—", the
+tarball's size or "not measured" (never totalled, as a caption says: each tarball is a separate
+archive, and unmeasured rows cannot be summed), published or "not recorded", and the SBOM through
+the shared `app-sbom-cell`. Download (`download-npm-sbom`) saves the document through
+`sbom-download.ts` as `<name without its scope>-<version>.cdx.json`. SBOMs of versions the store
+no longer holds are counted under the table. A 404 is "There is no repository called <repo> in
+this store", a 400 "<repo> is not an npm repository" (linking its store page), an empty list
+"There is no package called <package> in this repository"; "← <repo>" and the note's link lead
+back (`leave-npm-package`). No event, no polling: Refresh reads both again. The pact reads the
+versions in "a store holding one artifact of every kind" (`contract-package`, one version) and "a
+scoped npm package with an sbom on one of two versions" (`@contract/contract-scoped`: two versions,
+one SBOM, and its document by status and media type, the SBOM paths literal), and in "a store with
+nothing published" by status only. Neither explorer state records the SBOM list for its npm
+package (each records it once, for its maven coordinate, a 404 too), so the npm page's 404s bind
+that recording's status only.
+
+The System section (qits-2344) is qits-system's one swarm, which no project joins:
+`system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
+`system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
+under `system/...`. It is an entry point (`qitsEntry`): the old page hands off to it with a
+full-document load, and the sidebar's System exit names `system`, which redirects, so no outcome
+of this app leads to it by name. It reads through `qitsResource` over `core/system/swarm.operations.ts`:
+`SWARM_SERVICE_LIST` (`listSwarmServices`, `docker service ls` on the manager qits-system runs on,
+one swarm, not per target), one table in the server's order: name (plain text until a service's
+page lands, qits-2345), state, mode, replicas, image and ports ("—" when none published); no
+Updated column, as the list door answers `updatedAt: null` for every row. The state is derived
+from `replicas` alone (`swarmServiceState`, `core/system/swarm-service-state.ts`): a trailing
+` (…)` dropped, `R/D` with D > 0 and R = D is Running, 0 < R < D Degraded, R = 0 < D Down, D = 0
+Stopped, anything else (`global`, empty) "—"; it is marked derived from `replicas`. An empty swarm
+(`[]`) is one sentence; a 503 (swarm inactive, docker's socket missing or timing out: never an
+empty fallback) says the swarm cannot be read right now, with Retry; a 403 names the roles.
+Staleness: the resource's `refreshOn`, `DEPLOYMENT_EVENTS` (`core/updates/app-updates.ts`;
+`DeploymentFailed` is also what a swarm rollback sends) → the whole list, debounced 1 s.
+qits-system sends no event for a service, so a change outside a deployment (docker by hand, a
+scale) is not followed: Refresh reads again. The pact reads it in "a single-node swarm" (two
+replicated services, `1/1`) and "a swarm running no services" (`[]`; the interaction and the
+`empty` screenshot skip themselves until the `@qits/system-golden-masters` pin records it), in its
+own part of the system pact (`swarm.operations.pact.spec.ts`, `assertPactPart`).
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
@@ -694,8 +739,8 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the traces list comes as its own
-child later); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (logs, errors, metrics, slow spans,
+traces and one trace); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
@@ -748,6 +793,30 @@ row's `spans` is 0), none reaches the floor (when above 0, offering Any duration
 the time range (when set, offering Everything buffered). The formatting and the empty reason are
 `core/observability/slow-spans.ts`. The recording answers the default read only, so the other
 lenses, a truncated answer and the empty reasons are the page's plain spec's.
+`observability/traces` (`ObservabilityTracesPage`, qits-2342, the retired frontend's `traces`)
+reads `TELEMETRY_TRACES` (`listTelemetryTraces`), never before a source is chosen, with the old
+frontend's query names so its bookmarks forward, each sent only when it is not the door's default,
+so the default read is the source alone: `sort=duration` (slowest first, sent as `sort`; absent,
+newest first, sends none), `threshold` (the floor in ms: 0 "Any duration", the default and absent,
+10, 100, 500 or 1000, and any other positive whole number a bookmark carries; sent as `thresholdMs`
+above 0, nonsense reads as 0), `service` (the traces any of whose spans is that service's; its
+options are the chosen source row's `services[].name`, the select hidden when it lists none, "All
+services" clears it) and `since` (→ `sinceMinutes`); never `limit`. `view=flat` draws one row per
+trace and changes no request; absent, the rows are grouped by path
+(`core/observability/trace-groups.ts`, ported from the old `trace-group.ts`: keyed by `rootRoute`,
+else `rootName`, else `(unnamed span)`; groups and members in the door's order, never re-sorted), each group row
+its path, trace count, slowest duration, newest start, services, an "N errored" chip and an
+exception marker, expanding (a signal, not the URL) to its traces. A trace's row: its duration,
+root name ("(root not buffered)" when `rootMissing`), an error count chip and an exception marker,
+root service, span count, services, start and its trace id as text (the trace page is qits-2343).
+A truncated answer says "Showing the newest (slowest) N of T matching traces". An empty one says
+why, in order (`core/observability/traces.ts`, with the lens parsing and the query): no source
+chosen, the source holds no spans, the service is not one of the source row's (offering All
+services), none reaches the floor (offering Any duration), none falls in the time range (offering
+Everything buffered). The recording answers the default read only, so the other lenses, the flat
+view, a truncated answer and the empty reasons are the page's plain spec's; the pact's mock
+answers each array with its first recorded element, so the pact spec checks the recorded order
+and the errored trace on the recording itself.
 `observability/traces/<traceId>?source=` (`ObservabilityTracePage`, qits-2343, the retired
 frontend's `traces/:traceId`, whose `?source=` it keeps) is one trace of one source, a detail page
 with no sidebar entry (the sidebar keeps Observability current). It reads `TELEMETRY_TRACE`
@@ -995,7 +1064,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm}.operations*.ts`                                                 | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |

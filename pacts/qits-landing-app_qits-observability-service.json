@@ -1378,7 +1378,7 @@
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
             "kind": "ui",
-            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans"
+            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces"
           }
         }
       },
@@ -1439,7 +1439,7 @@
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
             "kind": "ui",
-            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans"
+            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces"
           }
         }
       },
@@ -1470,6 +1470,11 @@
                 "logs": 2,
                 "metricSeries": 2,
                 "oldestReceivedAt": "2026-01-01T00:00:00Z",
+                "services": [
+                  {
+                    "name": "qits-example"
+                  }
+                ],
                 "spans": 3
               }
             ]
@@ -1540,6 +1545,24 @@
                 {
                   "match": "regex",
                   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.sources[*].services": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.sources[*].services[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             },
@@ -2306,6 +2329,289 @@
                       }
                     }
                   ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "listTelemetryTraces"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-traces",
+            "kind": "ui",
+            "route": "projects/:slug/observability/traces"
+          }
+        }
+      },
+      "description": "show-telemetry-traces: listTelemetryTraces",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "telemetry from one platform service",
+          "params": {
+            "service": "qits-example",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "source": {
+              "expression": "${source}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/observability/api/telemetry/traces",
+        "query": {
+          "source": [
+            "_service/qits-example"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "total": 2,
+            "traces": [
+              {
+                "durationMs": 5,
+                "errorSpanCount": 0,
+                "hasException": false,
+                "rootMissing": false,
+                "rootName": "GET /health",
+                "rootRoute": "/health",
+                "rootService": "qits-example",
+                "services": [
+                  "qits-example"
+                ],
+                "spanCount": 1,
+                "startEpochNanos": 1767225601000000000,
+                "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a02"
+              },
+              {
+                "durationMs": 5,
+                "errorSpanCount": 0,
+                "hasException": false,
+                "rootMissing": false,
+                "rootName": "GET /health",
+                "rootRoute": "/health",
+                "rootService": "qits-example",
+                "services": [
+                  "qits-example"
+                ],
+                "spanCount": 1,
+                "startEpochNanos": 1767225601000000000,
+                "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a02"
+              }
+            ],
+            "truncated": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.total": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.traces": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.traces[*].durationMs": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.traces[*].errorSpanCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.traces[*].hasException": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.traces[*].rootMissing": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.traces[*].rootName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.traces[*].rootRoute": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.traces[*].rootService": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.traces[*].services": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                },
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.traces[*].services[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.traces[*].spanCount": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.traces[*].startEpochNanos": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.traces[*].traceId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.truncated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
                 }
               ]
             }

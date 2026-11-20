@@ -88,6 +88,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'observability/errors'
   | 'observability/metrics'
   | 'observability/slow-spans'
+  | 'observability/traces'
   | 'docs'
   | 'events'
   | 'maintenance'
@@ -112,12 +113,12 @@ export interface NavChild extends NavPage {
 }
 
 /** A global section's page in this app: a route that takes no params (qits-2316). */
-export type GlobalPath = 'artifacts';
+export type GlobalPath = 'artifacts' | 'system';
 
 /**
  * One of the sidebar's global sections, shown while no project is open: a platform page that
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
- * link (`kind: 'exit'`, qits-2316: Artifacts), or a site of its own the app leaves for at `href`,
+ * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System), or a site of its own the app leaves for at `href`,
  * through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
  */
 export type GlobalLink =
@@ -183,13 +184,13 @@ export interface NavNote {
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry) and its Network access entry
  * (`open-sidebar-network-access`, external), the global sections shown with no project open
- * (Artifacts, `open-sidebar-artifacts`, an in-app section; IdP admin, `open-sidebar-idp-admin`,
- * which leaves the app for the idp's own admin), the gear (`open-project-settings`), the network
+ * (Artifacts, `open-sidebar-artifacts`, and System, `open-sidebar-system`, in-app sections; IdP
+ * admin, `open-sidebar-idp-admin`, which leaves the app for the idp's own admin), the gear (`open-project-settings`), the network
  * icon (`open-network-access`, external), and the trail's brand and crumbs (`follow-breadcrumb`),
  * handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare
  * their own, being patterns (app-wide too). The two Network access links and IdP admin are plain
  * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
- * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts and a work page
+ * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts and System and a work page
  * are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true` while one
  * of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]` through
  * `[exitCurrent]` (qits-2064).
@@ -482,13 +483,14 @@ export class ShellLayout {
 
   /**
    * The Observability pages below Observability in the sidebar, one exit per page (qits-2313;
-   * Errors, qits-2339; Metrics, qits-2340; Slow spans, qits-2341).
+   * Errors, qits-2339; Metrics, qits-2340; Slow spans, qits-2341; Traces, qits-2342).
    */
   private readonly observabilityPages = outcomes('open-sidebar-observability-page', {
     logs: exit('projects/:slug/observability/logs'),
     errors: exit('projects/:slug/observability/errors'),
     metrics: exit('projects/:slug/observability/metrics'),
     slowSpans: exit('projects/:slug/observability/slow-spans'),
+    traces: exit('projects/:slug/observability/traces'),
   });
 
   /**
@@ -537,6 +539,15 @@ export class ShellLayout {
   });
 
   /**
+   * The sidebar's System (qits-2344): the System section, qits-system's one swarm, which belongs
+   * to no project. `system` opens the swarm's services (a redirect), and the entry stays current
+   * on every page below it.
+   */
+  protected readonly system = outcomes('open-sidebar-system', {
+    open: exit('system'),
+  });
+
+  /**
    * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
    * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
    * (owner, 2026-11-18). Same tab.
@@ -554,14 +565,15 @@ export class ShellLayout {
   /**
    * The sidebar's global sections: where the sections that belong to no project go, shown in the
    * project's sections' place while no project is open, and not at all while one is: Artifacts
-   * (qits-2316, an in-app section) and IdP admin (qits-2319, leaving the app); System (qits-2344),
-   * Mirror (qits-2357) and Orchestrator (qits-2359) will each add one entry here, with its own
-   * `outcomes(...)` exit (a `GlobalPath`) or external.
+   * (qits-2316) and System (qits-2344), in-app sections, and IdP admin (qits-2319, leaving the
+   * app); Mirror (qits-2357) and Orchestrator (qits-2359) will each add one entry here, with its
+   * own `outcomes(...)` exit (a `GlobalPath`) or external.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     return [
       { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
+      { kind: 'exit', label: 'System', exit: this.system.open },
       { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
     ];
   });
@@ -689,6 +701,11 @@ export class ShellLayout {
             label: 'Slow spans',
             exit: this.observabilityPages.slowSpans,
             path: this.observabilityPages.slowSpans.url(params),
+          },
+          {
+            label: 'Traces',
+            exit: this.observabilityPages.traces,
+            path: this.observabilityPages.traces.url(params),
           },
         ],
       },

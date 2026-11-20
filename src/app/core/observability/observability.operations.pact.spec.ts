@@ -10,6 +10,7 @@ import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { client as observabilityClient } from '../../api/observability/client.gen';
 import { provideHeyApiClient } from '../../api/observability/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
+import type { TelemetryTraces } from './observability.consumes';
 import { observabilityGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
   TELEMETRY_ERRORS,
@@ -19,6 +20,7 @@ import {
   TELEMETRY_SOURCES,
   TELEMETRY_STORE,
   TELEMETRY_TRACE,
+  TELEMETRY_TRACES,
 } from './observability.operations';
 
 /**
@@ -28,18 +30,21 @@ import {
  * client, so this file is the whole pact.
  *
  * The sources, in an empty buffer (the page's "nothing buffered") and in one holding one platform
- * service's telemetry (`telemetry from one platform service`); that source's logs as the page asks
+ * service's telemetry (`telemetry from one platform service`), each row with its services' names
+ * (the Traces page's service lens, qits-2342); that source's logs as the page asks
  * for them by default (the source alone), and the same narrowed to the last hour (`sinceMinutes`,
  * `telemetry records of every kind`); that source's error groups as the Errors page asks for them
  * by default (the source alone, qits-2339); that source's metric series, the latest point of
  * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340); and that
  * source's slow spans as the Slow spans page asks for them by default (the source and the floor,
- * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341); and one of
- * that source's traces as the trace page asks for it (the trace id in the path and the source
- * alone, never `repositoryId` or `workspaceId`, qits-2343), with the buffer's own state, which the
- * page reads after an empty trace for whether it ever evicted spans (`evictedSpans`); the empty
- * buffer's own trace, no spans and no logs, and its own state, nothing evicted (from
- * `@qits/observability-golden-masters` 2026.1120.180009 on).
+ * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341); that
+ * source's traces as the Traces page asks for them by default (the source alone: newest first, no
+ * floor, every service, everything buffered are the door's defaults, and `limit` is never sent,
+ * qits-2342); and one of that source's traces as the trace page asks for it (the trace id in the
+ * path and the source alone, never `repositoryId` or `workspaceId`, qits-2343), with the
+ * buffer's own state, which the page reads after an empty trace for whether it ever evicted
+ * spans (`evictedSpans`); the empty buffer's own trace, no spans and no logs, and its own
+ * state, nothing evicted (from `@qits/observability-golden-masters` 2026.1120.180009 on).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -274,5 +279,39 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
       const { data, error } = await at(server.url, () => TELEMETRY_STORE.fetch({}));
       expect(error).toBeUndefined();
       expect(data?.evictedSpans).toBe(0);
+    }));
+
+  it('show-telemetry-traces: a source’s traces, newest first', () =>
+    given(TELEMETRY_TRACES, ONE_SERVICE, 'show-telemetry-traces').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        TELEMETRY_TRACES.fetch({ query: { source: sourceOf(ONE_SERVICE) } }),
+      );
+      expect(error).toBeUndefined();
+      const traces = data?.traces ?? [];
+      expect(traces.length).toBeGreaterThan(1);
+      expect(traces.map((trace) => trace.startEpochNanos ?? 0)).toEqual(
+        traces.map((trace) => trace.startEpochNanos ?? 0).sort((a, b) => b - a),
+      );
+      for (const trace of traces) {
+        expect(trace.traceId).toBeTruthy();
+        expect(trace.rootName).toBeTruthy();
+        expect(trace.rootService).toBeTruthy();
+        expect(trace.rootRoute).toBeTruthy();
+        expect(trace.services?.length).toBeGreaterThan(0);
+        expect(trace.durationMs).toBeGreaterThanOrEqual(0);
+        expect(trace.spanCount).toBeGreaterThan(0);
+        expect(trace.rootMissing).toBe(false);
+      }
+      expect(data?.total).toBe(traces.length);
+      expect(data?.truncated).toBe(false);
+      // The mock answers each array with its first recorded element, matched by type; the
+      // recording itself is the newest-first pair the Traces page shows, one of them errored.
+      const recorded =
+        masters.body<TelemetryTraces>(ONE_SERVICE, 'listTelemetryTraces').traces ?? [];
+      expect(recorded.map((trace) => trace.rootName)).toEqual(['GET /health', 'GET /invoices']);
+      expect(recorded[0].startEpochNanos ?? 0).toBeGreaterThan(recorded[1].startEpochNanos ?? 0);
+      expect(
+        recorded.some((trace) => (trace.errorSpanCount ?? 0) > 0 && trace.hasException === true),
+      ).toBe(true);
     }));
 });
