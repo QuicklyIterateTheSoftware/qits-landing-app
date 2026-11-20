@@ -102,6 +102,16 @@ export function readerPath(slug: string, site: string, version: string): string 
 }
 
 /**
+ * Where qits-docs reads a docs site, below the docs app's origin: `<scope>read/<site>/-/<version>`,
+ * or the site's newest version without one (`<scope>read/<site>`). The site's name keeps its `/`:
+ * the reader takes every segment after `read` as the name. The landing app's own links go to
+ * {@link readerPath} (qits-2337); this stays for a page with no project to scope the reader to.
+ */
+export function docsReadPath(scope: string, site: string, version?: string): string {
+  return version ? `${scope}read/${site}/-/${version}` : `${scope}read/${site}`;
+}
+
+/**
  * The release's own links: its tag and released commit in qits-githost, its deployment requests in
  * this app's Deployments section (only when something deploys it, qits-2323), and its adoption
  * (how far it got downstream) in this app's Maintenance section (qits-2333; it replaces the
