@@ -8,6 +8,57 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "getDaemon"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "download-artifact-daemon",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "download-artifact-daemon: getDaemon",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a daemon with two versions",
+          "params": {
+            "daemon": "contract-daemon",
+            "repository": "daemons",
+            "version": "2026.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/daemons/${daemon}/${version}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/daemons/contract-daemon/2026.2.0"
+      },
+      "response": {
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "getSbom"
           },
           "qits-trigger": {
@@ -66,6 +117,233 @@
                 {
                   "match": "regex",
                   "regex": "application/vnd\\.cyclonedx\\+json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDaemonVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-daemon",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/daemons/:daemon"
+          }
+        }
+      },
+      "description": "show-artifact-daemon: listDaemonVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a daemon nothing has published",
+          "params": {
+            "daemon": "contract-daemon",
+            "repository": "daemons",
+            "version": "2026.3.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${repository}/daemons/${daemon}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/daemons/daemons/contract-daemon/versions"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDaemonVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-artifact-daemon",
+            "kind": "ui",
+            "route": "artifacts/repositories/:repo/daemons/:daemon"
+          }
+        }
+      },
+      "description": "show-artifact-daemon: listDaemonVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a daemon with two versions",
+          "params": {
+            "daemon": "contract-daemon",
+            "repository": "daemons",
+            "version": "2026.2.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/api/repositories/${repository}/daemons/${daemon}/versions",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/api/repositories/daemons/daemons/contract-daemon/versions"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "accessedAt": null,
+                "digest": "sha256:6caecc97403739b2273c00a43c649e5efdebddde20a0ed27ed4fe356a1344aa4",
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 24,
+                "version": "2026.2.0"
+              },
+              {
+                "accessedAt": null,
+                "digest": "sha256:6caecc97403739b2273c00a43c649e5efdebddde20a0ed27ed4fe356a1344aa4",
+                "publishedAt": "2026-01-01T00:00:00Z",
+                "sizeBytes": 24,
+                "version": "2026.2.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.versions[*].digest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].publishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
                 }
               ]
             }

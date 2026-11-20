@@ -124,6 +124,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * relative `redirectTo`.
  * `artifacts/repositories/<repo>/images/<image>` (`ArtifactsImagePage`, qits-2324) is one image of
  * an image store, its tags and manifests; the image name is one segment (`%2F` for a slash).
+ * `artifacts/repositories/<repo>/cleanup` (`ArtifactsCleanupPage`, qits-2329) is one repository's
+ * cleanup: its gc plan read through qits-orchestrator, and the Run that sweeps it.
+ * `artifacts/repositories/<repo>/daemons/<daemon>` (`ArtifactsDaemonPage`, qits-2327) is one daemon
+ * of a daemon store, its published versions, each one downloadable.
  * `artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
  * qits-2325) is one maven coordinate, its versions and their SBOMs; `groupId:artifactId` is one
  * segment.
@@ -525,6 +529,23 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page').then(
                 (m) => m.ArtifactsImagePage,
+              ),
+          },
+          {
+            // One repository's cleanup (qits-2329): its gc plan through qits-orchestrator, and Run.
+            path: 'repositories/:repo/cleanup',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page').then(
+                (m) => m.ArtifactsCleanupPage,
+              ),
+          },
+          {
+            // One daemon of a daemon store (qits-2327): its published versions. A daemon name is
+            // bounded to [a-z0-9][a-z0-9._-]{0,63} by the wire, so it is always one plain segment.
+            path: 'repositories/:repo/daemons/:daemon',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page').then(
+                (m) => m.ArtifactsDaemonPage,
               ),
           },
           {

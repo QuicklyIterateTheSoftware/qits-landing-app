@@ -28,6 +28,8 @@ import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edi
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
 import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
+import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
+import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -207,6 +209,22 @@ describe('artifacts routes (qits-2316)', () => {
     let leaf = router.routerState.snapshot.root;
     while (leaf.firstChild) leaf = leaf.firstChild;
     expect(leaf.paramMap.get('coordinate')).toBe('eu.wohlben.qits:contract-maven');
+  });
+
+  it('opens a repository’s cleanup at artifacts/repositories/<repo>/cleanup (qits-2329)', async () => {
+    expect(await pages('/artifacts/repositories/daemons/cleanup')).toEqual([ArtifactsCleanupPage]);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/daemons/cleanup');
+  });
+
+  it('opens a daemon at artifacts/repositories/<repo>/daemons/<daemon> (qits-2327)', async () => {
+    expect(await pages('/artifacts/repositories/daemons/daemons/contract-daemon')).toEqual([
+      ArtifactsDaemonPage,
+    ]);
+    const router = TestBed.inject(Router);
+    let leaf = router.routerState.snapshot.root;
+    while (leaf.firstChild) leaf = leaf.firstChild;
+    expect(leaf.paramMap.get('repo')).toBe('daemons');
+    expect(leaf.paramMap.get('daemon')).toBe('contract-daemon');
   });
 
   it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {

@@ -14,6 +14,8 @@ import { artifactsGoldenMasters as masters } from '../../../testing/golden-maste
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { listingOf } from './artifact-listings';
 import {
+  ARTIFACT_DAEMON_DOWNLOAD,
+  ARTIFACT_DAEMON_VERSIONS,
   ARTIFACT_DAEMONS,
   ARTIFACT_DOCS_SITES,
   ARTIFACT_IMAGE_MANIFESTS,
@@ -26,6 +28,7 @@ import {
   ARTIFACT_REPOSITORIES,
   ARTIFACT_SBOM,
   ARTIFACT_SBOM_VERSIONS,
+  daemonDownloadParams,
 } from './artifacts.operations';
 import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
 
@@ -35,9 +38,10 @@ import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
  * (`core/ui-builder/docs.operations.pact.spec.ts`). This spec owns every interaction of the store
  * repository page's operations (`artifacts.operations.ts`): `listRepositories`, `listImages`,
  * `listNpmPackages`, `listMavenPackages`, `listDaemons`, `listDocsSiteSummaries` and
- * `listArtifactRecords`; and the image page's (qits-2324): `listImageTagSummaries` and
- * `listImageManifestSummaries`, with `listImages` read again for the image's own row; and the maven
- * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`.
+ * `listArtifactRecords`; the image page's (qits-2324): `listImageTagSummaries` and
+ * `listImageManifestSummaries`, with `listImages` read again for the image's own row; the maven
+ * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`; and
+ * the daemon page's (qits-2327): `listDaemonVersions` and `getDaemon`.
  *
  * Against qits-artifacts' recordings of "a store holding one artifact of every kind" (the seeded
  * repositories, and one image, npm package, maven coordinate, daemon and docs site; no ci record)
@@ -69,6 +73,12 @@ import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
  * document is read whole, as text, so its interaction binds the status and the CycloneDX media
  * type, never the bytes.
  *
+ * The daemon page's versions (qits-2327) are one daemon's (`daemon` in `repository`), a contract
+ * name no other suite publishes and every state cleans up, so both recordings bind exactly: "a
+ * daemon with two versions" (2026.2.0, then 2026.1.0, a minute older) and "a daemon nothing has
+ * published" (no versions, which is also what an unknown daemon answers). A version's download
+ * (`getDaemon`, the daemon wire, no repository segment) is no JSON: it binds the status only.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
@@ -85,6 +95,10 @@ const EMPTY = 'a store with nothing published';
 const UNTAGGED = 'an image with a manifest no tag names';
 /** One maven coordinate with two versions, an SBOM on the newer one (qits-2325). */
 const SBOMMED = 'a maven coordinate with an sbom on one of two versions';
+/** One daemon with two versions, a minute apart (qits-2327). */
+const DAEMON = 'a daemon with two versions';
+/** The daemon repository, with no version of the daemon in it (qits-2327). */
+const NO_DAEMON = 'a daemon nothing has published';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_REPOSITORIES,
@@ -99,6 +113,8 @@ const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_MAVEN_VERSIONS,
   ARTIFACT_SBOM_VERSIONS,
   ARTIFACT_SBOM,
+  ARTIFACT_DAEMON_VERSIONS,
+  ARTIFACT_DAEMON_DOWNLOAD,
 ].map((op) => op.operationId);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-store-pact-'));
@@ -150,6 +166,12 @@ const paramOf = (state: string, operationId: string, param: string): string => {
 
 /** The store repository a state's listing is recorded for (`imagesRepository`, …). */
 const repoOf = (state: string, param: string): string => paramOf(state, 'listRepositories', param);
+
+/** The daemon repository and daemon a state's daemon page reads (qits-2327). */
+const daemonOf = (state: string) => ({
+  repo: paramOf(state, 'listDaemonVersions', 'repository'),
+  daemon: paramOf(state, 'listDaemonVersions', 'daemon'),
+});
 
 /** The image repository and image a state's image page reads (qits-2324). */
 const imageOf = (state: string, operationId: string) => ({
@@ -402,6 +424,41 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
         const path = coordinateOf(EMPTY);
         const { response, error } = await at(server.url, () =>
           ARTIFACT_MAVEN_VERSIONS.fetch({ path }),
+        );
+        expect(error).toBeUndefined();
+        expect(response?.status).toBe(200);
+      },
+    ));
+
+  it('show-artifact-daemon: a daemon’s two versions', () =>
+    given(ARTIFACT_DAEMON_VERSIONS, DAEMON, 'show-artifact-daemon').executeTest(async (server) => {
+      const path = daemonOf(DAEMON);
+      const { data } = await at(server.url, () => ARTIFACT_DAEMON_VERSIONS.fetch({ path }));
+      const versions = data?.versions ?? [];
+      // Bound at its recorded count; each version by its type, as the matchers read it.
+      expect(versions).toHaveLength(2);
+      const [newest] = versions;
+      expect(newest?.digest).toMatch(/^sha256:/);
+      expect(typeof newest?.sizeBytes).toBe('number');
+      expect(newest?.publishedAt).toBeTruthy();
+      expect(newest?.accessedAt).toBeNull();
+    }));
+
+  it('show-artifact-daemon: a daemon nothing has published, no versions', () =>
+    given(ARTIFACT_DAEMON_VERSIONS, NO_DAEMON, 'show-artifact-daemon').executeTest(
+      async (server) => {
+        const path = daemonOf(NO_DAEMON);
+        const { data } = await at(server.url, () => ARTIFACT_DAEMON_VERSIONS.fetch({ path }));
+        expect(data?.versions).toEqual([]);
+      },
+    ));
+
+  it('download-artifact-daemon: a daemon version’s bytes, on the daemon wire', () =>
+    given(ARTIFACT_DAEMON_DOWNLOAD, DAEMON, 'download-artifact-daemon').executeTest(
+      async (server) => {
+        const params = masters.operation(DAEMON, 'getDaemon').params as Record<string, string>;
+        const { response, error } = await at(server.url, () =>
+          ARTIFACT_DAEMON_DOWNLOAD.fetch(daemonDownloadParams(params['daemon'], params['version'])),
         );
         expect(error).toBeUndefined();
         expect(response?.status).toBe(200);

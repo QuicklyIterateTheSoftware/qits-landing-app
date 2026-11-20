@@ -44,6 +44,8 @@ describe('artifact listings (qits-2316)', () => {
     expect(oldDetailHref(origin, 'qits', 'images', 'x')).toBe('');
     // So does a maven coordinate its own page (qits-2325).
     expect(oldDetailHref(origin, 'maven', 'maven', 'eu.wohlben.qits:x')).toBe('');
+    // A daemon opens this app's own daemon page (qits-2327), not the old explorer's.
+    expect(oldDetailHref(origin, 'daemons', 'daemons', 'x')).toBe('');
     expect(oldDetailHref(origin, 'ci-videos', 'records', 'x')).toBe('');
   });
 

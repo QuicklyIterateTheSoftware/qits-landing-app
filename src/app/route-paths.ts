@@ -5,6 +5,8 @@ export type RoutePath =
   | ''
   | 'artifacts'
   | 'artifacts/repositories/:repo'
+  | 'artifacts/repositories/:repo/cleanup'
+  | 'artifacts/repositories/:repo/daemons/:daemon'
   | 'artifacts/repositories/:repo/images/:image'
   | 'artifacts/repositories/:repo/maven-packages/:coordinate'
   | 'projects'

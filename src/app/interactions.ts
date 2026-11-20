@@ -499,9 +499,9 @@ export const INTERACTIONS = {
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
    * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (a package, a daemon or a docs site), until the Artifacts section's own
-   * detail pages land (qits-2316; an image's landed, `open-artifact-image`, and a maven
-   * coordinate's, `open-maven-package`). Leaves only, and names no pact.
+   * qits-artifacts explorer (an npm package or a docs site), until the Artifacts section's own
+   * detail pages land (qits-2316; an image's landed, `open-artifact-image`, a maven coordinate's,
+   * `open-maven-package`, and a daemon's, `open-artifact-daemon`). Leaves only, and names no pact.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -547,6 +547,67 @@ export const INTERACTIONS = {
    * note links, open the repository's page (qits-2325). Navigates only, and names no pact.
    */
   'leave-maven-package': 'A coordinate’s page leads back to its repository',
+  /**
+   * `artifacts-repository.page.ts`: Cleanup opens the repository's cleanup page in this app,
+   * `artifacts/repositories/:repo/cleanup` (qits-2329). Navigates only, and names no pact.
+   */
+  'open-artifacts-cleanup': 'A store repository’s page opens its cleanup page',
+  /**
+   * `artifacts-cleanup.page.ts` via `ARTIFACTS_CLEANUP_PLAN` (qits-2329): the cleanup page reads
+   * the repository's collection plan through qits-orchestrator: what a run would delete and keep,
+   * each with its rule, the configured rule and how the run read the live pins.
+   */
+  'show-artifacts-cleanup-plan':
+    'A repository’s cleanup page shows what a cleanup would delete and keep, each with its rule',
+  /**
+   * `artifacts-cleanup.page.ts`: Re-read the plan (header, or under a receipt) reads the plan
+   * again, the same `ARTIFACTS_CLEANUP_PLAN` read as `show-artifacts-cleanup-plan`, and drops a
+   * receipt (qits-2329). The page stays.
+   */
+  'reread-artifacts-cleanup-plan': 'A repository’s cleanup page reads its plan again',
+  /**
+   * `artifacts-cleanup.page.ts`: the first press of Run asks for the second, naming what it would
+   * delete; Keep everything takes the question back (qits-2329). No request, and names no pact.
+   */
+  'ask-artifacts-cleanup-run': 'A cleanup page’s Run asks to be pressed again before it deletes',
+  /**
+   * `artifacts-cleanup.page.ts` via `ARTIFACTS_CLEANUP_SWEEP` (qits-2329): the second press sweeps
+   * the repository through qits-orchestrator, and its receipt replaces the plan; a refusal or a
+   * lost answer is said in its place. Never queued offline, never sent again by itself.
+   */
+  'sweep-artifacts-repository':
+    'The confirmed Run on a cleanup page sweeps the repository and shows the receipt',
+  /**
+   * `artifacts-cleanup.page.ts`: shows or hides the kept identities, each with the rule that kept
+   * it (qits-2329). Changes the page only: no request, and names no pact.
+   */
+  'toggle-artifacts-cleanup-kept': 'A cleanup page shows or hides what a cleanup would keep',
+  /**
+   * `artifacts-cleanup.page.ts`: the back link opens the repository's store page (qits-2329).
+   * Navigates only, and names no pact.
+   */
+  'leave-artifacts-cleanup': 'A cleanup page leads back to its repository',
+  /**
+   * `artifacts-repository.page.ts`: a daemon row's name opens the daemon's page in this app,
+   * `artifacts/repositories/:repo/daemons/:daemon` (qits-2327). Navigates only, and names no pact.
+   */
+  'open-artifact-daemon': 'A daemon of a daemon repository opens its page',
+  /**
+   * `artifacts-daemon.page.ts` via `ARTIFACT_DAEMON_VERSIONS` (qits-2327): the daemon page lists
+   * the daemon's published versions, newest first. Refresh reads them again.
+   */
+  'show-artifact-daemon': 'A daemon’s page lists its published versions, newest first',
+  /**
+   * `artifacts-daemon.page.ts`: the back link, and the store page a non-daemon repository's note
+   * links, open the repository's page (qits-2327). Navigates only, and names no pact.
+   */
+  'leave-artifact-daemon': 'A daemon’s page leads back to its repository',
+  /**
+   * `artifacts-daemon.page.ts` via `ARTIFACT_DAEMON_DOWNLOAD` (qits-2327): a version's button
+   * fetches its bytes with the bearer (`getDaemon`, the daemon wire, no repository segment) and
+   * saves them as `<daemon>-<version>`; the page stays.
+   */
+  'download-artifact-daemon': 'A daemon version downloads as a file',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).

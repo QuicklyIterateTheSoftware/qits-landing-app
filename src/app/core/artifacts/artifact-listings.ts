@@ -49,14 +49,14 @@ export const LISTING_NOUNS: Readonly<Record<ListingKind, string>> = {
 
 /**
  * The old explorer's segment for a row's detail page below `repositories/<repo>/`; none for the ci
- * records, which have no detail page, and none for the images and the maven coordinates, whose
- * pages are this app's own (`artifacts/repositories/:repo/images/:image`, `ArtifactsImagePage`,
- * qits-2324; `artifacts/repositories/:repo/maven-packages/:coordinate`,
- * `ArtifactsMavenPackagePage`, qits-2325).
+ * records, which have no detail page, and none for the images, the maven coordinates and the
+ * daemons, whose pages are this app's own (`artifacts/repositories/:repo/images/:image`,
+ * `ArtifactsImagePage`, qits-2324; `artifacts/repositories/:repo/maven-packages/:coordinate`,
+ * `ArtifactsMavenPackagePage`, qits-2325; `artifacts/repositories/:repo/daemons/:daemon`,
+ * `ArtifactsDaemonPage`, qits-2327).
  */
 const DETAIL_SEGMENTS: Readonly<Partial<Record<ListingKind, string>>> = {
   npm: 'packages',
-  daemons: 'daemons',
   docs: 'docs',
 };
 
@@ -64,8 +64,8 @@ const DETAIL_SEGMENTS: Readonly<Partial<Record<ListingKind, string>>> = {
  * The address of a row's detail page in the old explorer (qits-artifacts-frontend), until its
  * landing page exists: `<origin>/repositories/<repo>/<segment>/<name>`, the repository and the name
  * each one segment (`@qits/angular` is `%40qits%2Fangular`). `''` while the origin is not known
- * (the server render) or for a listing without detail pages there (the ci records; the images and
- * the maven coordinates, which open this app's own pages instead).
+ * (the server render) or for a listing without detail pages there (the ci records; the images, the
+ * maven coordinates and the daemons, which open this app's own pages instead).
  */
 export function oldDetailHref(
   origin: string,

@@ -87,13 +87,17 @@ interface ListingRead {
  *
  * Where it leads is declared (epic qits-2000): an image's name opens its page here
  * (`open-artifact-image`, `artifacts/repositories/:repo/images/:image`, `ArtifactsImagePage`,
- * qits-2324), and a maven coordinate's its page here (`open-maven-package`,
+ * qits-2324), a maven coordinate's its page here (`open-maven-package`,
  * `artifacts/repositories/:repo/maven-packages/:coordinate`, `ArtifactsMavenPackagePage`,
- * qits-2325), the name one segment. Any other row's name opens its detail page in the old explorer
- * (`open-artifacts-entry`, `external('artifacts')`, same tab), at
- * `PlatformOrigins.page('artifacts')` + `/repositories/<repo>/<packages|daemons|docs>/<name>`, the
- * name one segment (`oldDetailHref`), until the section's own detail pages (qits-2326 to qits-2328)
- * land. The ci records have no detail page, and no download here.
+ * qits-2325), and a daemon's name its page here (`open-artifact-daemon`,
+ * `artifacts/repositories/:repo/daemons/:daemon`, `ArtifactsDaemonPage`, qits-2327), the name one
+ * segment. Any other row's name opens its detail page in the old explorer (`open-artifacts-entry`,
+ * `external('artifacts')`, same tab), at `PlatformOrigins.page('artifacts')` +
+ * `/repositories/<repo>/<packages|docs>/<name>`, the name one segment (`oldDetailHref`), until the
+ * section's own detail pages (qits-2326, qits-2328) land. The ci records have no detail page, and
+ * no download here.
+ * Cleanup, beside the header line, opens the repository's cleanup page (`open-artifacts-cleanup`,
+ * `artifacts/repositories/:repo/cleanup`, `ArtifactsCleanupPage`, qits-2329).
  *
  * Marks (qits-2141): the header's row and each switcher entry are `listRepositories`' rows by
  * name; each table is its listing's read, each row an entry by its name (a record by its id).
@@ -129,6 +133,13 @@ interface ListingRead {
           >
             <ui-chip [label]="row.type ?? ''" [fieldOf]="row" qitsField="type" />
             <span [fieldOf]="row" [qitsField]="ledeMark">{{ lede(row) }}</span>
+            <a
+              class="ml-auto font-semibold text-accent no-underline hover:underline"
+              [qitsExit]="cleaning.cleanup"
+              [exitParams]="{ repo: repo() }"
+              data-cleanup
+              >Cleanup →</a
+            >
           </p>
         }
         <nav
@@ -480,9 +491,8 @@ interface ListingRead {
                             <td class="py-1.5 pr-3 font-medium break-all">
                               <a
                                 class="text-accent no-underline hover:underline"
-                                [attr.href]="detailHref('daemons', daemon.name) || null"
-                                [qitsTriggers]="triggers('daemons', daemon.name, opening.daemon)"
-                                (click)="leave($event, opening.daemon, 'daemons', daemon.name)"
+                                [qitsExit]="daemoning.daemon"
+                                [exitParams]="{ repo: repo(), daemon: daemon.name ?? '' }"
                                 [fieldOf]="daemon"
                                 qitsField="name"
                                 >{{ daemon.name }}</a
@@ -768,6 +778,19 @@ export class ArtifactsRepositoryPage {
     image: exit('artifacts/repositories/:repo/images/:image'),
   });
 
+  /** A daemon row's name: the daemon's page here (qits-2327), the name one segment. */
+  protected readonly daemoning = outcomes('open-artifact-daemon', {
+    daemon: exit('artifacts/repositories/:repo/daemons/:daemon'),
+  });
+
+  /**
+   * Cleanup: what collecting this repository would delete and keep, and the Run (qits-2329), on
+   * its cleanup page here.
+   */
+  protected readonly cleaning = outcomes('open-artifacts-cleanup', {
+    cleanup: exit('artifacts/repositories/:repo/cleanup'),
+  });
+
   /**
    * A maven row's name: the coordinate's page here (qits-2325), `groupId:artifactId` one segment
    * (the exit encodes it).
@@ -778,11 +801,10 @@ export class ArtifactsRepositoryPage {
 
   /**
    * Any other row's name: its detail page in the old explorer (qits-artifacts-frontend), same tab,
-   * until the section's own detail pages land (qits-2326 to qits-2328).
+   * until the section's own detail pages land (qits-2326, qits-2328).
    */
   protected readonly opening = outcomes('open-artifacts-entry', {
     npmPackage: external('artifacts'),
-    daemon: external('artifacts'),
     docsSite: external('artifacts'),
   });
 

@@ -99,6 +99,17 @@ export type DocsSiteSummary = {
     sizeBytes?: number;
 };
 
+export type DocsVersionSummary = {
+    version?: string;
+    fileCount?: number;
+    sizeBytes?: number;
+    publishedAt?: Instant;
+    accessedAt?: Instant;
+    metadata?: {
+        [key: string]: string;
+    };
+};
+
 export type GcDiskReport = {
     state?: string;
     blobTablesBytesBefore?: number;
@@ -323,6 +334,10 @@ export type ListDocsSitesResponse = {
     sites?: Array<DocsSiteSummary>;
 };
 
+export type ListDocsVersionsResponse = {
+    versions?: Array<DocsVersionSummary>;
+};
+
 export type ListImagesResponse = {
     images?: Array<ImageSummary>;
 };
@@ -443,7 +458,7 @@ export type ListDocsVersionsResponses = {
     200: DocsVersionList;
 };
 
-export type ListDocsVersionsResponse = ListDocsVersionsResponses[keyof ListDocsVersionsResponses];
+export type ListDocsVersionsResponse2 = ListDocsVersionsResponses[keyof ListDocsVersionsResponses];
 
 export type GetDocsVersionData = {
     body?: never;
@@ -1374,6 +1389,36 @@ export type ListDocsSiteSummariesResponses = {
 };
 
 export type ListDocsSiteSummariesResponse = ListDocsSiteSummariesResponses[keyof ListDocsSiteSummariesResponses];
+
+export type ListDocsVersionSummariesData = {
+    body?: never;
+    path: {
+        repo: string;
+        site: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/docs/{site}/versions';
+};
+
+export type ListDocsVersionSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListDocsVersionSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListDocsVersionsResponse;
+};
+
+export type ListDocsVersionSummariesResponse = ListDocsVersionSummariesResponses[keyof ListDocsVersionSummariesResponses];
 
 export type ListImagesData = {
     body?: never;

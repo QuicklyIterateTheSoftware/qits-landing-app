@@ -88,6 +88,12 @@ export const deploymentsGoldenMasters = goldenMasters(
   'qits-deployments',
 );
 
+/** qits-orchestrator's golden masters (qits-2329: one repository's cleanup plan), from npm. */
+export const orchestratorGoldenMasters = goldenMasters(
+  '@qits/orchestrator-golden-masters',
+  'qits-orchestrator',
+);
+
 /**
  * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
  * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this
@@ -163,6 +169,10 @@ export const edgeGoldenMaster = <T = any>(state: string, operationId: string): T
 /** The body qits-deployments recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const deploymentsGoldenMaster = <T = any>(state: string, operationId: string): T =>
   deploymentsGoldenMasters.body<T>(state, operationId);
+
+/** The body qits-orchestrator recorded for `operationId` in `state`, for a spec to `flush(...)`. */
+export const orchestratorGoldenMaster = <T = any>(state: string, operationId: string): T =>
+  orchestratorGoldenMasters.body<T>(state, operationId);
 
 /** The body qits-ci recorded for `operationId` in `state`, for a spec to `flush(...)`. */
 export const ciGoldenMaster = <T = any>(state: string, operationId: string): T =>

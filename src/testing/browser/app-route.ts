@@ -44,6 +44,7 @@ import { client as eventsClient } from '../../app/api/events/client.gen';
 import { client as githostClient } from '../../app/api/githost/client.gen';
 import { client as maintenanceClient } from '../../app/api/maintenance/client.gen';
 import { client as observabilityClient } from '../../app/api/observability/client.gen';
+import { client as orchestratorClient } from '../../app/api/orchestrator/client.gen';
 import { client as projectsClient } from '../../app/api/projects/client.gen';
 import { provideHeyApiClient } from '../../app/api/projects/client/client.gen';
 import { client as systemClient } from '../../app/api/system/client.gen';
@@ -91,6 +92,7 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(observabilityClient),
     provideHeyApiClient(deploymentsClient),
+    provideHeyApiClient(orchestratorClient),
     provideHeyApiClient(edgeClient),
     // The idp's page origin, so the root sidebar's IdP admin (qits-2319) shows on the routes
     // without a project, as it does deployed; the old artifacts explorer's, so the store

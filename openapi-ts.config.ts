@@ -32,6 +32,8 @@ const services = [
   'qits-observability/qits-observability-service',
   // The Deployments section (qits-2315): a project's deployment requests.
   'qits-deployments/qits-deployments-service',
+  // The Artifacts section's cleanup page (qits-2329): one repository's gc plan and its sweep.
+  'qits-orchestrator/qits-orchestrator-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

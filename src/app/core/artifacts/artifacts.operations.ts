@@ -1,8 +1,10 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  getDaemon,
   getSbom,
   listArtifactRecords,
   listDaemons,
+  listDaemonVersions,
   listDocsSiteSummaries,
   listImageManifestSummaries,
   listImages,
@@ -14,7 +16,9 @@ import {
   listSbomVersions,
 } from '../../api/artifacts';
 import {
+  GET_ARTIFACT_DAEMON,
   GET_ARTIFACT_SBOM,
+  LIST_ARTIFACT_DAEMON_VERSIONS,
   LIST_ARTIFACT_DAEMONS,
   LIST_ARTIFACT_DOCS_SITES,
   LIST_ARTIFACT_IMAGE_MANIFESTS,
@@ -34,8 +38,10 @@ import {
  * `qitsResource`: the store's repositories, then exactly one listing, chosen by the repository's
  * type (`listingOf`, `artifact-listings.ts`); and the image page's (`ArtifactsImagePage`,
  * qits-2324), which reads `ARTIFACT_IMAGES` for its headline row and one image's tags and
- * manifests; and the maven package page's (`ArtifactsMavenPackagePage`, qits-2325), which reads one
- * coordinate's versions and its SBOMs, and one SBOM on a press. `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
+ * manifests; the maven package page's (`ArtifactsMavenPackagePage`, qits-2325), which reads one
+ * coordinate's versions and its SBOMs, and one SBOM on a press; and the daemon page's
+ * (`ArtifactsDaemonPage`, qits-2327): one daemon's versions, and a version's bytes on a press.
+ * `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`.
  */
 
@@ -103,6 +109,41 @@ export const ARTIFACT_DAEMONS = qitsOperation({
   method: 'GET',
   call: listDaemons,
   consumes: LIST_ARTIFACT_DAEMONS,
+});
+
+/**
+ * One daemon's versions (`listDaemonVersions`, qits-2327), newest first: 404 for an unknown
+ * repository, 400 for one that holds no daemons, an empty list for a daemon it does not hold.
+ */
+export const ARTIFACT_DAEMON_VERSIONS = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listDaemonVersions',
+  method: 'GET',
+  call: listDaemonVersions,
+  consumes: LIST_ARTIFACT_DAEMON_VERSIONS,
+});
+
+/**
+ * One daemon version's bytes (`getDaemon`, qits-2327): the version-addressed download a bootstrap
+ * makes, on the daemon wire, which carries no repository segment. The daemon page reads it on a
+ * press (`fetch`, through `HttpClient`, so the bearer signs it) as a Blob (`daemonDownloadParams`)
+ * and saves it; a navigation would carry no bearer.
+ */
+export const ARTIFACT_DAEMON_DOWNLOAD = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'getDaemon',
+  method: 'GET',
+  call: getDaemon,
+  consumes: GET_ARTIFACT_DAEMON,
+});
+
+/**
+ * The params of a download of `daemon` at `version`, its body a Blob. The generated options do not
+ * name `responseType`, but the client hands every option to the request's init, which reads it.
+ */
+export const daemonDownloadParams = (daemon: string, version: string) => ({
+  path: { daemon, version },
+  responseType: 'blob' as const,
 });
 
 /** A `docs` repository's sites (`listDocsSiteSummaries`). */

@@ -366,10 +366,11 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 `listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
 has a name search over the one answer. An image row's name opens the image's page here
 (`open-artifact-image`, below), a maven row's coordinate the coordinate's page
-(`open-maven-package`, below); any other row's name leaves for its detail page in the old explorer
+(`open-maven-package`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
+below); any other row's name leaves for its detail page in the old explorer
 (`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/<packages|daemons|docs>/<name>`, the name one segment)
-until the section's detail pages land (qits-2326 to qits-2328); `provideAppRoute()` gives specs that
+`/repositories/<repo>/<packages|docs>/<name>`, the name one segment)
+until the section's detail pages land (qits-2326, qits-2328); `provideAppRoute()` gives specs that
 origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
@@ -392,6 +393,53 @@ called <image> in this repository". No event, no polling: Refresh reads all thre
 reads both doors in "a store holding one artifact of every kind" and "an image with a manifest no
 tag names" (with its `listImages`), each list at its recorded count (one image's, which no other
 suite pushes), and in "a store with nothing published" by status only, as the empty listings above.
+
+`artifacts/repositories/<repo>/cleanup` (`ArtifactsCleanupPage`, qits-2329, the old explorer's
+`repositories/:repo/cleanup`) is what garbage collection would delete in one repository and what it
+keeps, each identity with the rule that decided it, and the Run. The store repository page's
+Cleanup leads there (`open-artifacts-cleanup`), "← <repo>" back (`leave-artifacts-cleanup`). One
+read, `ARTIFACTS_CLEANUP_PLAN` (`core/artifacts/cleanup.operations.ts`, qits-orchestrator's
+`planArtifactsCleanupRepository` on the `orchestrator` host: it reads the live pins and answers
+qits-artifacts' plan verbatim): the type, "Plan as of `generatedAt`", the configured rule, `note`,
+`error` (the type failed closed), "Not collected" for `strategy: null` (no figures, no lists), one
+line per pin source (`source · N pins | did not answer · took ms`, its `outcome` beneath),
+`pinFailures` when `executable` is false, the dead list with its count, reclaimable bytes and the
+grace window's and the structural notes, and the kept list collapsed (`toggle-artifacts-cleanup-kept`).
+The row-less pool (`untouchable`) is store-wide and not drawn. Run is drawn only when `executable`,
+`error === null` and the dead list is not empty (absent, never disabled); the first press asks
+(`ask-artifacts-cleanup-run`), the second sends `ARTIFACTS_CLEANUP_SWEEP` through `qitsMutation`
+with `offline: 'online-only'` (never queued, never sent again by itself; a failure asks again from
+the start), and the receipt (`patterns/artifacts/cleanup-receipt/`) replaces the plan
+(`sweep-artifacts-repository`). A failure says what is known (`explainRun`): a 4xx did not run and
+deleted nothing, in the service's words (409: a gc run is active; 403: not allowed); a 5xx or no
+answer brought no receipt, so re-read the plan. Re-read the plan (header, or under a receipt,
+`reread-artifacts-cleanup-plan`) drops the receipt and reads again. A 404 is "There is no repository
+called <repo> in this store", a 403 names the gc roles. No event follows the store. The pact reads
+both doors in "a repository the cleanup can plan" (`daemons`: one identity condemned, two kept, the
+figures zeroed; its sweep withholds it, deleting nothing) and the plan in "a repository the cleanup
+has nothing to delete in" (the dead list empty: no Run); the plans no recording holds (pins unread,
+not collected, failed closed, withheld figures) are the plain spec's, derived.
+
+`artifacts/repositories/<repo>/daemons/<daemon>` (`ArtifactsDaemonPage`, qits-2327) is one daemon of
+a daemon store; a daemon name is bounded to `[a-z0-9][a-z0-9._-]{0,63}` by the wire, so it is one
+plain segment. One read, nothing per row: `ARTIFACT_DAEMON_VERSIONS` (`listDaemonVersions`), "N
+versions · newest first", the table in the wire's order: the version, its size (the version's own
+blob, not totalled: the caption says the store page's figure is the union over the daemon), its
+digest (`shortDigest`, the whole `sha256:` value in the cell's title), published and last accessed
+("Never" for null; a note says a digest-addressed read does not move it). A version's button
+downloads it (`download-artifact-daemon`, a stay reached on the press): `ARTIFACT_DAEMON_DOWNLOAD`
+(`getDaemon`, `GET /artifacts/daemons/<daemon>/<version>`, the daemon wire, which carries no
+repository segment, as a note says) through `HttpClient`, so `qitsBearerInterceptor` signs it, as a
+Blob (`daemonDownloadParams`), saved through an object URL as `<daemon>-<version>`; a navigation
+would carry no bearer. A failed download says so under the table. "← <repo>" and a non-daemon
+repository's note lead back (`leave-artifact-daemon`). A 404 is "There is no repository called
+<repo> in this store", a 400 "<repo> is not a daemon repository", and an empty list one sentence:
+the daemon has no published versions here, and an unknown daemon answers the same (200 with no
+versions). No event, no polling: Refresh reads again. The pact binds `listDaemonVersions` exactly
+in "a daemon with two versions" and "a daemon nothing has published" (`contract-daemon` in
+`daemons`, a contract name every state cleans up), and `getDaemon` in the first by status only (its
+answer is bytes). No recording holds those bytes, so the browser spec answers the download with a
+failure (`download-failed`), a status only, after checking its request.
 
 `artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
 qits-2325) is one maven coordinate; `<coordinate>` is `groupId:artifactId`, one segment. Two reads
@@ -817,6 +865,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`                                                      | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

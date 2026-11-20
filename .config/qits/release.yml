@@ -61,3 +61,4 @@ contracts:
     qits-edge-service: { packages: [maven] }
     qits-observability-service: { packages: [maven] }
     qits-deployments-service: { packages: [maven] }
+    qits-orchestrator-service: { packages: [maven] }
