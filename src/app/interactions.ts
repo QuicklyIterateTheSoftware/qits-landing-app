@@ -499,9 +499,9 @@ export const INTERACTIONS = {
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
    * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (a package, a coordinate, a daemon or a docs site), until the Artifacts
-   * section's own detail pages land (qits-2316; an image's landed, `open-artifact-image`). Leaves
-   * only, and names no pact.
+   * qits-artifacts explorer (a package, a daemon or a docs site), until the Artifacts section's own
+   * detail pages land (qits-2316; an image's landed, `open-artifact-image`, and a maven
+   * coordinate's, `open-maven-package`). Leaves only, and names no pact.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -525,6 +525,28 @@ export const INTERACTIONS = {
    * the page only: no request, and names no pact.
    */
   'toggle-image-digests': 'An image’s page shows its digests whole or shortened',
+  /**
+   * `artifacts-repository.page.ts`: a maven row's coordinate opens its page in this app,
+   * `artifacts/repositories/:repo/maven-packages/:coordinate` (qits-2325). Navigates only, and
+   * names no pact.
+   */
+  'open-maven-package': 'A coordinate of a maven repository opens its page',
+  /**
+   * `artifacts-maven-package.page.ts` via `ARTIFACT_MAVEN_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
+   * (qits-2325): the maven package page reads the coordinate's versions and its stored SBOMs, in
+   * parallel. Refresh reads both again.
+   */
+  'show-maven-package': 'A coordinate’s page lists its versions, each with its SBOM',
+  /**
+   * `artifacts-maven-package.page.ts` (`app-sbom-cell`) via `ARTIFACT_SBOM` (qits-2325): a
+   * version's Download reads its CycloneDX document and saves it as a file.
+   */
+  'download-maven-sbom': 'A coordinate’s page saves a version’s SBOM as a file',
+  /**
+   * `artifacts-maven-package.page.ts`: the back link, and the store page a non-maven repository's
+   * note links, open the repository's page (qits-2325). Navigates only, and names no pact.
+   */
+  'leave-maven-package': 'A coordinate’s page leads back to its repository',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).

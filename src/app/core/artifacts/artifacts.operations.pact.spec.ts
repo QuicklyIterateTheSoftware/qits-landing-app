@@ -20,10 +20,14 @@ import {
   ARTIFACT_IMAGE_TAGS,
   ARTIFACT_IMAGES,
   ARTIFACT_MAVEN_PACKAGES,
+  ARTIFACT_MAVEN_VERSIONS,
   ARTIFACT_NPM_PACKAGES,
   ARTIFACT_RECORDS,
   ARTIFACT_REPOSITORIES,
+  ARTIFACT_SBOM,
+  ARTIFACT_SBOM_VERSIONS,
 } from './artifacts.operations';
+import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
 
 /**
  * qits-landing-app's pact with qits-artifacts-service, the store explorer's part (qits-2316):
@@ -32,7 +36,8 @@ import {
  * repository page's operations (`artifacts.operations.ts`): `listRepositories`, `listImages`,
  * `listNpmPackages`, `listMavenPackages`, `listDaemons`, `listDocsSiteSummaries` and
  * `listArtifactRecords`; and the image page's (qits-2324): `listImageTagSummaries` and
- * `listImageManifestSummaries`, with `listImages` read again for the image's own row.
+ * `listImageManifestSummaries`, with `listImages` read again for the image's own row; and the maven
+ * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`.
  *
  * Against qits-artifacts' recordings of "a store holding one artifact of every kind" (the seeded
  * repositories, and one image, npm package, maven coordinate, daemon and docs site; no ci record)
@@ -55,6 +60,15 @@ import {
  * nobody pushed: empty lists) follow the empty listings above and bind the status only, though the
  * provider records them exactly; the page's "no such image" screenshot shows their recorded bodies.
  *
+ * The maven package page's reads (qits-2325) are one coordinate's (`mavenPackage` in
+ * `mavenRepository`; `packageName` of `packageType` for its SBOMs), which no other suite deploys,
+ * so a populated list binds its recorded count exactly: "a store holding one artifact of every
+ * kind" (one version, no SBOM: the list answers 404) and "a maven coordinate with an sbom on one of
+ * two versions" (two versions, one SBOM, and that SBOM's document). The empty store's versions (a
+ * coordinate nobody deployed: an empty list) and every SBOM list's 404 bind the status only. The
+ * document is read whole, as text, so its interaction binds the status and the CycloneDX media
+ * type, never the bytes.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
@@ -69,6 +83,8 @@ const STORE = 'a store holding one artifact of every kind';
 const EMPTY = 'a store with nothing published';
 /** One image with a tagged manifest and a manifest no tag names (qits-2324). */
 const UNTAGGED = 'an image with a manifest no tag names';
+/** One maven coordinate with two versions, an SBOM on the newer one (qits-2325). */
+const SBOMMED = 'a maven coordinate with an sbom on one of two versions';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_REPOSITORIES,
@@ -80,6 +96,9 @@ const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_RECORDS,
   ARTIFACT_IMAGE_TAGS,
   ARTIFACT_IMAGE_MANIFESTS,
+  ARTIFACT_MAVEN_VERSIONS,
+  ARTIFACT_SBOM_VERSIONS,
+  ARTIFACT_SBOM,
 ].map((op) => op.operationId);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-store-pact-'));
@@ -136,6 +155,18 @@ const repoOf = (state: string, param: string): string => paramOf(state, 'listRep
 const imageOf = (state: string, operationId: string) => ({
   repo: paramOf(state, operationId, 'imagesRepository'),
   image: paramOf(state, operationId, 'image'),
+});
+
+/** The maven repository and coordinate a state's maven package page reads (qits-2325). */
+const coordinateOf = (state: string) => ({
+  repo: paramOf(state, 'listMavenVersionSummaries', 'mavenRepository'),
+  coordinate: paramOf(state, 'listMavenVersionSummaries', 'mavenPackage'),
+});
+
+/** The package type and name a state's SBOM list is recorded for (qits-2325). */
+const sbomPackageOf = (state: string) => ({
+  packageType: paramOf(state, 'listSbomVersions', 'packageType'),
+  packageName: paramOf(state, 'listSbomVersions', 'packageName'),
 });
 
 describe('qits-landing-app → qits-artifacts-service pact: the store repository page', () => {
@@ -322,4 +353,87 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
         expect(response?.status).toBe(200);
       },
     ));
+
+  it('show-maven-package: a coordinate’s one version, with its files', () =>
+    given(ARTIFACT_MAVEN_VERSIONS, STORE, 'show-maven-package').executeTest(async (server) => {
+      const path = coordinateOf(STORE);
+      const { data } = await at(server.url, () => ARTIFACT_MAVEN_VERSIONS.fetch({ path }));
+      const [version] = data?.versions ?? [];
+      expect(data?.versions?.length).toBe(1);
+      expect(version?.version).toBeTruthy();
+      expect(version?.files?.length).toBeGreaterThan(0);
+      expect(typeof version?.sizeBytes).toBe('number');
+      expect(version?.publishedAt).toBeTruthy();
+    }));
+
+  // A 404 is an error answer: its status only.
+  it('show-maven-package: a coordinate with no SBOM, its SBOM list a 404', () =>
+    given(ARTIFACT_SBOM_VERSIONS, STORE, 'show-maven-package', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = sbomPackageOf(STORE);
+        const { response } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
+        expect(response?.status).toBe(404);
+      },
+    ));
+
+  it('show-maven-package: a coordinate’s two versions', () =>
+    given(ARTIFACT_MAVEN_VERSIONS, SBOMMED, 'show-maven-package').executeTest(async (server) => {
+      const path = coordinateOf(SBOMMED);
+      const { data } = await at(server.url, () => ARTIFACT_MAVEN_VERSIONS.fetch({ path }));
+      expect(data?.versions?.map((version) => version.version)).toHaveLength(2);
+    }));
+
+  it('show-maven-package: a coordinate’s SBOMs, one on the newer version', () =>
+    given(ARTIFACT_SBOM_VERSIONS, SBOMMED, 'show-maven-package').executeTest(async (server) => {
+      const path = sbomPackageOf(SBOMMED);
+      const { data } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
+      const [sbom] = data?.versions ?? [];
+      expect(data?.versions?.length).toBe(1);
+      expect(sbom?.version).toBe(paramOf(SBOMMED, 'getSbom', 'version'));
+      expect(sbom?.specVersion).toBeTruthy();
+      expect(typeof sbom?.sizeBytes).toBe('number');
+      expect(sbom?.createdAt).toBeTruthy();
+    }));
+
+  // Status only, as for the empty listings above.
+  it('show-maven-package: the versions of a coordinate nobody deployed', () =>
+    given(ARTIFACT_MAVEN_VERSIONS, EMPTY, 'show-maven-package', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = coordinateOf(EMPTY);
+        const { response, error } = await at(server.url, () =>
+          ARTIFACT_MAVEN_VERSIONS.fetch({ path }),
+        );
+        expect(error).toBeUndefined();
+        expect(response?.status).toBe(200);
+      },
+    ));
+
+  it('show-maven-package: the SBOM list of a coordinate nobody deployed, a 404', () =>
+    given(ARTIFACT_SBOM_VERSIONS, EMPTY, 'show-maven-package', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = sbomPackageOf(EMPTY);
+        const { response } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
+        expect(response?.status).toBe(404);
+      },
+    ));
+
+  it('download-maven-sbom: a version’s CycloneDX document', () => {
+    if (ARTIFACT_SBOM.provider !== PROVIDER) throw new Error('getSbom is not the artifacts one');
+    return addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: SBOMMED,
+      operationId: ARTIFACT_SBOM.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'download-maven-sbom' },
+      consumes: ARTIFACT_SBOM.consumes,
+      response: { contentType: SBOM_MEDIA_TYPE },
+    }).executeTest(async (server) => {
+      const { packageType, packageName } = sbomPackageOf(SBOMMED);
+      const version = paramOf(SBOMMED, 'getSbom', 'version');
+      const { response, error } = await at(server.url, () =>
+        ARTIFACT_SBOM.fetch(sbomParams(packageType, packageName, version)),
+      );
+      expect(error).toBeUndefined();
+      expect(response?.status).toBe(200);
+    });
+  });
 });

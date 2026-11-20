@@ -124,6 +124,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * relative `redirectTo`.
  * `artifacts/repositories/<repo>/images/<image>` (`ArtifactsImagePage`, qits-2324) is one image of
  * an image store, its tags and manifests; the image name is one segment (`%2F` for a slash).
+ * `artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
+ * qits-2325) is one maven coordinate, its versions and their SBOMs; `groupId:artifactId` is one
+ * segment.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -522,6 +525,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page').then(
                 (m) => m.ArtifactsImagePage,
+              ),
+          },
+          {
+            // One maven coordinate of a maven store (qits-2325): its versions and their SBOMs.
+            // `:coordinate` is one segment, `groupId:artifactId`.
+            path: 'repositories/:repo/maven-packages/:coordinate',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page').then(
+                (m) => m.ArtifactsMavenPackagePage,
               ),
           },
         ],

@@ -87,11 +87,13 @@ interface ListingRead {
  *
  * Where it leads is declared (epic qits-2000): an image's name opens its page here
  * (`open-artifact-image`, `artifacts/repositories/:repo/images/:image`, `ArtifactsImagePage`,
- * qits-2324), the name one segment. Any other row's name opens its detail page in the old explorer
+ * qits-2324), and a maven coordinate's its page here (`open-maven-package`,
+ * `artifacts/repositories/:repo/maven-packages/:coordinate`, `ArtifactsMavenPackagePage`,
+ * qits-2325), the name one segment. Any other row's name opens its detail page in the old explorer
  * (`open-artifacts-entry`, `external('artifacts')`, same tab), at
- * `PlatformOrigins.page('artifacts')` + `/repositories/<repo>/<packages|maven-packages|daemons|
- * docs>/<name>`, the name one segment (`oldDetailHref`), until the section's own detail pages
- * (qits-2325 to qits-2327) land. The ci records have no detail page, and no download here.
+ * `PlatformOrigins.page('artifacts')` + `/repositories/<repo>/<packages|daemons|docs>/<name>`, the
+ * name one segment (`oldDetailHref`), until the section's own detail pages (qits-2326 to qits-2328)
+ * land. The ci records have no detail page, and no download here.
  *
  * Marks (qits-2141): the header's row and each switcher entry are `listRepositories`' rows by
  * name; each table is its listing's read, each row an entry by its name (a record by its id).
@@ -389,9 +391,8 @@ interface ListingRead {
                             <td class="py-1.5 pr-3 font-mono break-all">
                               <a
                                 class="text-accent no-underline hover:underline"
-                                [attr.href]="detailHref('maven', pkg.name) || null"
-                                [qitsTriggers]="triggers('maven', pkg.name, opening.mavenPackage)"
-                                (click)="leave($event, opening.mavenPackage, 'maven', pkg.name)"
+                                [qitsExit]="coordinating.mavenPackage"
+                                [exitParams]="{ repo: repo(), coordinate: pkg.name ?? '' }"
                                 [fieldOf]="pkg"
                                 qitsField="name"
                                 >{{ pkg.name }}</a
@@ -768,12 +769,19 @@ export class ArtifactsRepositoryPage {
   });
 
   /**
+   * A maven row's name: the coordinate's page here (qits-2325), `groupId:artifactId` one segment
+   * (the exit encodes it).
+   */
+  protected readonly coordinating = outcomes('open-maven-package', {
+    mavenPackage: exit('artifacts/repositories/:repo/maven-packages/:coordinate'),
+  });
+
+  /**
    * Any other row's name: its detail page in the old explorer (qits-artifacts-frontend), same tab,
-   * until the section's own detail pages land (qits-2325 to qits-2327).
+   * until the section's own detail pages land (qits-2326 to qits-2328).
    */
   protected readonly opening = outcomes('open-artifacts-entry', {
     npmPackage: external('artifacts'),
-    mavenPackage: external('artifacts'),
     daemon: external('artifacts'),
     docsSite: external('artifacts'),
   });

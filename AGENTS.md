@@ -365,10 +365,11 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 `artifact-listings.ts`: `listImages`, `listNpmPackages`, `listMavenPackages`, `listDaemons`,
 `listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
 has a name search over the one answer. An image row's name opens the image's page here
-(`open-artifact-image`, below); any other row's name leaves for its detail page in the old explorer
+(`open-artifact-image`, below), a maven row's coordinate the coordinate's page
+(`open-maven-package`, below); any other row's name leaves for its detail page in the old explorer
 (`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/<packages|maven-packages|daemons|docs>/<name>`, the name one segment)
-until the section's detail pages land (qits-2325 to qits-2327); `provideAppRoute()` gives specs that
+`/repositories/<repo>/<packages|daemons|docs>/<name>`, the name one segment)
+until the section's detail pages land (qits-2326 to qits-2328); `provideAppRoute()` gives specs that
 origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
 suites' rows in the same seeded repositories), which still lets the `empty` screenshot show it.
@@ -391,6 +392,29 @@ called <image> in this repository". No event, no polling: Refresh reads all thre
 reads both doors in "a store holding one artifact of every kind" and "an image with a manifest no
 tag names" (with its `listImages`), each list at its recorded count (one image's, which no other
 suite pushes), and in "a store with nothing published" by status only, as the empty listings above.
+
+`artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
+qits-2325) is one maven coordinate; `<coordinate>` is `groupId:artifactId`, one segment. Two reads
+in parallel, nothing per row: `ARTIFACT_MAVEN_VERSIONS` (`listMavenVersionSummaries`) and
+`ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `maven` and the coordinate; its 404 means "no SBOMs",
+not a failure, and any other failure keeps the table with its SBOM column "unknown" and a Retry).
+The header shows the coordinate, its groupId and artifactId apart, and "N versions · M with an
+SBOM"; the versions newest publish first (`newestPublishFirst`; the store answers oldest first),
+their files sorted (`sortedFiles`) and wrapped, size, published and SBOM: `app-sbom-cell`
+(`patterns/artifacts/sbom-cell/`, shared with the npm package page of qits-2326, so it takes the
+package type and name and the page's two stays as inputs), "CycloneDX <specVersion> · <size>" with
+Download, or "—". Download (`download-maven-sbom`, `saved` / `failed` stays, a failure said on its
+row) reads `ARTIFACT_SBOM` (`getSbom`) as text through the generated client (the store wants the
+bearer, so no bare link) and saves it as `<artifactId>-<version>.cdx.json`,
+`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). SBOMs of
+versions the store no longer holds are counted under the table. A 404 is "There is no repository
+called <repo> in this store", a 400 "<repo> is not a Maven repository" (linking its store page), an
+empty list "There is no Maven coordinate called <coordinate> in this repository"; "← <repo>" and the
+note's link lead back (`leave-maven-package`). No event, no polling: Refresh reads both again. The
+pact reads the versions and the SBOM list in "a store holding one artifact of every kind" (one
+version, the SBOM list a 404) and "a maven coordinate with an sbom on one of two versions" (two
+versions, one SBOM, and its document by status and media type), and in "a store with nothing
+published" by status only; every SBOM list's 404 by status only.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend

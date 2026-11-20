@@ -40,7 +40,8 @@ type Listed = keyof typeof LISTINGS;
  *
  * Its exits (epic qits-2000) are each followed once: a store repository in the switcher
  * (`switch-artifacts-repository`), an image row, which opens the image's page here
- * (`open-artifact-image`, qits-2324), and each other kind's row, which leaves for the old explorer
+ * (`open-artifact-image`, qits-2324), a maven row, which opens the coordinate's page here
+ * (`open-maven-package`, qits-2325), and each other kind's row, which leaves for the old explorer
  * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays).
  */
 describe('ArtifactsRepositoryPage (screenshots)', () => {
@@ -268,14 +269,35 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     await opened.settled();
   });
 
+  it('open-maven-package mavenPackage: a coordinate row opens the coordinate’s page here', async () => {
+    const opened = await open('maven');
+    const coordinate = 'eu.wohlben.qits:contract-maven';
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: coordinate, exact: true });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', `/artifacts/repositories/maven/maven-packages/${coordinate}`);
+    await userEvent.click(link);
+    await opened.settled();
+    expect(reached()).toEqual(['open-maven-package:mavenPackage']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/artifacts/repositories/maven/maven-packages/${coordinate}`,
+    );
+    expect(leave).not.toHaveBeenCalled();
+    // The coordinate page's reads, answered as its own spec does (no SBOM: a 404).
+    const encoded = encodeURIComponent(coordinate);
+    http
+      .expectOne(`/artifacts/api/repositories/maven/maven-packages/${encoded}/versions`)
+      .flush(await goldenMaster(STORE, 'listMavenVersionSummaries', ARTIFACTS));
+    http
+      .expectOne(`/artifacts/sboms/maven/${encoded}`)
+      .flush(null, { status: 404, statusText: 'Not Found' });
+    await opened.settled();
+  });
+
   for (const [repo, outcome, name, path] of [
     ['npm', 'npmPackage', 'contract-package', 'packages/contract-package'],
-    [
-      'maven',
-      'mavenPackage',
-      'eu.wohlben.qits:contract-maven',
-      'maven-packages/eu.wohlben.qits%3Acontract-maven',
-    ],
     ['daemons', 'daemon', 'contract-daemon', 'daemons/contract-daemon'],
     ['docs', 'docsSite', 'contract-docs-site', 'docs/contract-docs-site'],
   ] as const) {

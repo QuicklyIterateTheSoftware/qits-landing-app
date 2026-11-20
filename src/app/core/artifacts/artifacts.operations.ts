@@ -1,5 +1,6 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  getSbom,
   listArtifactRecords,
   listDaemons,
   listDocsSiteSummaries,
@@ -7,19 +8,24 @@ import {
   listImages,
   listImageTagSummaries,
   listMavenPackages,
+  listMavenVersionSummaries,
   listNpmPackages,
   listRepositories,
+  listSbomVersions,
 } from '../../api/artifacts';
 import {
+  GET_ARTIFACT_SBOM,
   LIST_ARTIFACT_DAEMONS,
   LIST_ARTIFACT_DOCS_SITES,
   LIST_ARTIFACT_IMAGE_MANIFESTS,
   LIST_ARTIFACT_IMAGE_TAGS,
   LIST_ARTIFACT_IMAGES,
   LIST_ARTIFACT_MAVEN_PACKAGES,
+  LIST_ARTIFACT_MAVEN_VERSIONS,
   LIST_ARTIFACT_NPM_PACKAGES,
   LIST_ARTIFACT_RECORDS,
   LIST_ARTIFACT_REPOSITORIES,
+  LIST_ARTIFACT_SBOM_VERSIONS,
 } from './artifacts.consumes';
 
 /**
@@ -28,7 +34,8 @@ import {
  * `qitsResource`: the store's repositories, then exactly one listing, chosen by the repository's
  * type (`listingOf`, `artifact-listings.ts`); and the image page's (`ArtifactsImagePage`,
  * qits-2324), which reads `ARTIFACT_IMAGES` for its headline row and one image's tags and
- * manifests. `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
+ * manifests; and the maven package page's (`ArtifactsMavenPackagePage`, qits-2325), which reads one
+ * coordinate's versions and its SBOMs, and one SBOM on a press. `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`.
  */
 
@@ -114,4 +121,41 @@ export const ARTIFACT_RECORDS = qitsOperation({
   method: 'GET',
   call: listArtifactRecords,
   consumes: LIST_ARTIFACT_RECORDS,
+});
+
+/**
+ * One maven coordinate's versions (`listMavenVersionSummaries`, qits-2325), in store order: 404 for
+ * an unknown repository, 400 for one that holds no maven packages, an empty list for a coordinate
+ * it does not hold.
+ */
+export const ARTIFACT_MAVEN_VERSIONS = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listMavenVersionSummaries',
+  method: 'GET',
+  call: listMavenVersionSummaries,
+  consumes: LIST_ARTIFACT_MAVEN_VERSIONS,
+});
+
+/**
+ * One package's stored SBOMs (`listSbomVersions`, qits-2325), newest first, for any package type
+ * (`maven`, `npm`): 404 when it has none.
+ */
+export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listSbomVersions',
+  method: 'GET',
+  call: listSbomVersions,
+  consumes: LIST_ARTIFACT_SBOM_VERSIONS,
+});
+
+/**
+ * One release's CycloneDX document (`getSbom`, qits-2325), read on a press and saved as a file
+ * (`sbom-download.ts`); 404 when none is stored.
+ */
+export const ARTIFACT_SBOM = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'getSbom',
+  method: 'GET',
+  call: getSbom,
+  consumes: GET_ARTIFACT_SBOM,
 });
