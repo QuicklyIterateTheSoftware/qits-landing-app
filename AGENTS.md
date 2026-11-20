@@ -345,15 +345,15 @@ With no project open, the sidebar shows its global sections in the project's sec
 (`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
-every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316).
+every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316) and System
+(`open-sidebar-system`, `exit('system')`, qits-2344).
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
-no outcome. System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry
-there with their own `outcomes(...)` exit (a `GlobalPath` of their own). With a project open the
-list is empty.
+no outcome. Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry there with their own
+`outcomes(...)` exit (a `GlobalPath` of their own). With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
@@ -513,6 +513,29 @@ one SBOM, and its document by status and media type, the SBOM paths literal), an
 nothing published" by status only. Neither explorer state records the SBOM list for its npm
 package (each records it once, for its maven coordinate, a 404 too), so the npm page's 404s bind
 that recording's status only.
+
+The System section (qits-2344) is qits-system's one swarm, which no project joins:
+`system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
+`system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
+under `system/...`. It is an entry point (`qitsEntry`): the old page hands off to it with a
+full-document load, and the sidebar's System exit names `system`, which redirects, so no outcome
+of this app leads to it by name. It reads through `qitsResource` over `core/system/swarm.operations.ts`:
+`SWARM_SERVICE_LIST` (`listSwarmServices`, `docker service ls` on the manager qits-system runs on,
+one swarm, not per target), one table in the server's order: name (plain text until a service's
+page lands, qits-2345), state, mode, replicas, image and ports ("—" when none published); no
+Updated column, as the list door answers `updatedAt: null` for every row. The state is derived
+from `replicas` alone (`swarmServiceState`, `core/system/swarm-service-state.ts`): a trailing
+` (…)` dropped, `R/D` with D > 0 and R = D is Running, 0 < R < D Degraded, R = 0 < D Down, D = 0
+Stopped, anything else (`global`, empty) "—"; it is marked derived from `replicas`. An empty swarm
+(`[]`) is one sentence; a 503 (swarm inactive, docker's socket missing or timing out: never an
+empty fallback) says the swarm cannot be read right now, with Retry; a 403 names the roles.
+Staleness: the resource's `refreshOn`, `DEPLOYMENT_EVENTS` (`core/updates/app-updates.ts`;
+`DeploymentFailed` is also what a swarm rollback sends) → the whole list, debounced 1 s.
+qits-system sends no event for a service, so a change outside a deployment (docker by hand, a
+scale) is not followed: Refresh reads again. The pact reads it in "a single-node swarm" (two
+replicated services, `1/1`) and "a swarm running no services" (`[]`; the interaction and the
+`empty` screenshot skip themselves until the `@qits/system-golden-masters` pin records it), in its
+own part of the system pact (`swarm.operations.pact.spec.ts`, `assertPactPart`).
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
@@ -1014,7 +1037,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/targets.operations*.ts`                                                         | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm}.operations*.ts`                                                 | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |

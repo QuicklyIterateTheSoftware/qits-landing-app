@@ -257,6 +257,34 @@ export type Lease = {
     grantedAt?: Instant;
     startedAt?: Instant;
     endedAt?: Instant;
+    /**
+     * Processes of this lease killed by any OOM killer (its container's cgroup memory.events oom_kill); the last sample is kept after it exits. Null until a runner reported one
+     */
+    oomKills?: number;
+    /**
+     * LEASE (the lease hit its own memory limit) or NODE (the node or kernel ran out and the killer picked a process in this lease); null when oomKills is null or 0
+     */
+    oomScope?: 'LEASE' | 'NODE';
+    /**
+     * The lease container's peak memory (memory.peak); null when unread
+     */
+    memoryPeakBytes?: number;
+    /**
+     * docker's State.OOMKilled of the lease's exited container; else null
+     */
+    oomKilled?: boolean;
+    /**
+     * The lease container's --dns servers in order, as its runner last reported them; empty is the node's own resolvers, or no container (qits-2091)
+     */
+    resolvers?: Array<string>;
+    /**
+     * The runner says the node now has a resolver (its tunnel's or the private edge's) this container lacks first; POST /leases/{id}/refresh recreates it
+     */
+    resolversStale?: boolean;
+    /**
+     * The refresh counter: each refresh raises it by one and the runner recreates the container, keeping its work volume; 0 is never refreshed
+     */
+    generation?: number;
 };
 
 export type LogChunk = {
@@ -342,6 +370,14 @@ export type PatchTargetRequest = {
      * Slots reserved per type; absent members leave theirs
      */
     reservations?: SlotCounts;
+    /**
+     * The most leases per type the target runs at once, 0..1024 and at least that type's reservation; absent members leave theirs, an explicit null clears one (no ceiling). 0 is a ceiling: that type never runs here
+     */
+    maximums?: {
+        ci?: number;
+        workspace?: number;
+        desk?: number;
+    };
 };
 
 export type RegisterTargetRequest = {
@@ -444,6 +480,10 @@ export type Target = {
      */
     reservations?: SlotCounts;
     /**
+     * The most leases per type the target runs at once; null is no ceiling. The limit a reservation is not: a type at its maximum waits however many shared slots are free
+     */
+    maximums?: SlotCounts;
+    /**
      * GRANTED, RUNNING and ENDING leases per type
      */
     used?: SlotCounts;
@@ -474,6 +514,10 @@ export type Target = {
     lastHealthCheckAt?: Instant;
     lastHealthCheckOk?: boolean;
     createdAt?: Instant;
+    /**
+     * The node's memory and OOM kills, as its runner last reported them
+     */
+    memory?: TargetMemory;
 };
 
 export type TargetAuditRow = {
@@ -500,6 +544,25 @@ export type TargetLogin = {
     checkedAt?: Instant;
 };
 
+export type TargetMemory = {
+    /**
+     * Processes the OOM killer took in the node's cgroup tree (its root memory.events oom_kill); null on a bare host, whose root has none
+     */
+    nodeOomKills?: number;
+    /**
+     * The kernel's own count (/proc/vmstat oom_kill): every OOM kill on the physical host, not only this node's
+     */
+    kernelOomKills?: number;
+    /**
+     * The node's memory limit (its root memory.max); null when none
+     */
+    memoryMaxBytes?: number;
+    /**
+     * When the runner last reported these
+     */
+    reportedAt?: Instant;
+};
+
 export type TargetRegistered = {
     clientId?: string;
     secret?: string;
@@ -518,6 +581,18 @@ export type TargetRegistration = {
      * The one line that installs the target's runner: it fetches install.sh with the registration token and pipes it into sudo sh. Returned once
      */
     installLine?: string;
+};
+
+export type TargetRegistrationCheck = {
+    targetId?: Uuid;
+    targetName?: string;
+};
+
+export type TargetRegistrationCheckRequest = {
+    /**
+     * Compared to the target's live registration token's subject
+     */
+    subject: string;
 };
 
 export type TargetSignIn = {
@@ -597,6 +672,26 @@ export type VolumeSummary = {
     labels?: {
         [key: string]: string;
     };
+};
+
+export type WarmImage = {
+    slotType?: SlotType;
+    /**
+     * The released package, as qits-ci names it: qits/workspace
+     */
+    packageName?: string;
+    /**
+     * Its version, YYYY.MMDD.HHMMSS
+     */
+    version?: string;
+    /**
+     * The full reference the estate carries: <configured image>:<version>
+     */
+    image?: string;
+    /**
+     * When the newest release moved it here
+     */
+    updatedAt?: Instant;
 };
 
 export type WorkVolume = {
@@ -684,7 +779,7 @@ export type EndLeaseData = {
     };
     query?: {
         /**
-         * Why; an operator's lands in the lease's detail and the audit
+         * Why; it lands in the lease's detail, and an operator's in the audit too. An owner's never-dialled-back on a RUNNING CI lease counts toward its target's dial-back quarantine (qits-1809)
          */
         reason?: string;
     };
@@ -790,6 +885,43 @@ export type LeaseLogsResponses = {
     200: unknown;
 };
 
+export type RefreshLeaseData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/system/api/leases/{id}/refresh';
+};
+
+export type RefreshLeaseErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * NOT_YOUR_LEASE: a qits:system caller's refresh of another's lease
+     */
+    403: unknown;
+    /**
+     * No such lease
+     */
+    404: unknown;
+    /**
+     * LEASE_NOT_RUNNING: the lease is not RUNNING
+     */
+    409: unknown;
+};
+
+export type RefreshLeaseResponses = {
+    /**
+     * The lease with its new generation
+     */
+    200: Lease;
+};
+
+export type RefreshLeaseResponse = RefreshLeaseResponses[keyof RefreshLeaseResponses];
+
 export type ReplaceLeaseSpecData = {
     body: ReplaceLeaseSpecRequest;
     path: {
@@ -831,7 +963,7 @@ export type ReplaceLeaseSpecResponses = {
 
 export type ReplaceLeaseSpecResponse = ReplaceLeaseSpecResponses[keyof ReplaceLeaseSpecResponses];
 
-export type GetSystemApiNodesByIdContainersData = {
+export type ListNodeContainersData = {
     body?: never;
     path: {
         id: string;
@@ -842,7 +974,7 @@ export type GetSystemApiNodesByIdContainersData = {
     url: '/system/api/nodes/{id}/containers';
 };
 
-export type GetSystemApiNodesByIdContainersErrors = {
+export type ListNodeContainersErrors = {
     /**
      * Not Authorized
      */
@@ -853,16 +985,16 @@ export type GetSystemApiNodesByIdContainersErrors = {
     403: unknown;
 };
 
-export type GetSystemApiNodesByIdContainersResponses = {
+export type ListNodeContainersResponses = {
     /**
      * OK
      */
     200: Array<ContainerSummary>;
 };
 
-export type GetSystemApiNodesByIdContainersResponse = GetSystemApiNodesByIdContainersResponses[keyof GetSystemApiNodesByIdContainersResponses];
+export type ListNodeContainersResponse = ListNodeContainersResponses[keyof ListNodeContainersResponses];
 
-export type GetSystemApiNodesByIdContainersByCidData = {
+export type GetNodeContainerData = {
     body?: never;
     path: {
         cid: string;
@@ -872,7 +1004,7 @@ export type GetSystemApiNodesByIdContainersByCidData = {
     url: '/system/api/nodes/{id}/containers/{cid}';
 };
 
-export type GetSystemApiNodesByIdContainersByCidErrors = {
+export type GetNodeContainerErrors = {
     /**
      * Not Authorized
      */
@@ -883,16 +1015,16 @@ export type GetSystemApiNodesByIdContainersByCidErrors = {
     403: unknown;
 };
 
-export type GetSystemApiNodesByIdContainersByCidResponses = {
+export type GetNodeContainerResponses = {
     /**
      * OK
      */
     200: ContainerDetail;
 };
 
-export type GetSystemApiNodesByIdContainersByCidResponse = GetSystemApiNodesByIdContainersByCidResponses[keyof GetSystemApiNodesByIdContainersByCidResponses];
+export type GetNodeContainerResponse = GetNodeContainerResponses[keyof GetNodeContainerResponses];
 
-export type GetSystemApiNodesByIdContainersByCidLogsData = {
+export type GetContainerLogsData = {
     body?: never;
     path: {
         cid: string;
@@ -904,7 +1036,7 @@ export type GetSystemApiNodesByIdContainersByCidLogsData = {
     url: '/system/api/nodes/{id}/containers/{cid}/logs';
 };
 
-export type GetSystemApiNodesByIdContainersByCidLogsErrors = {
+export type GetContainerLogsErrors = {
     /**
      * Not Authorized
      */
@@ -915,16 +1047,16 @@ export type GetSystemApiNodesByIdContainersByCidLogsErrors = {
     403: unknown;
 };
 
-export type GetSystemApiNodesByIdContainersByCidLogsResponses = {
+export type GetContainerLogsResponses = {
     /**
      * OK
      */
     200: LogChunk;
 };
 
-export type GetSystemApiNodesByIdContainersByCidLogsResponse = GetSystemApiNodesByIdContainersByCidLogsResponses[keyof GetSystemApiNodesByIdContainersByCidLogsResponses];
+export type GetContainerLogsResponse = GetContainerLogsResponses[keyof GetContainerLogsResponses];
 
-export type GetSystemApiNodesByIdImagesData = {
+export type ListNodeImagesData = {
     body?: never;
     path: {
         id: string;
@@ -933,7 +1065,7 @@ export type GetSystemApiNodesByIdImagesData = {
     url: '/system/api/nodes/{id}/images';
 };
 
-export type GetSystemApiNodesByIdImagesErrors = {
+export type ListNodeImagesErrors = {
     /**
      * Not Authorized
      */
@@ -944,16 +1076,16 @@ export type GetSystemApiNodesByIdImagesErrors = {
     403: unknown;
 };
 
-export type GetSystemApiNodesByIdImagesResponses = {
+export type ListNodeImagesResponses = {
     /**
      * OK
      */
     200: Array<ImageSummary>;
 };
 
-export type GetSystemApiNodesByIdImagesResponse = GetSystemApiNodesByIdImagesResponses[keyof GetSystemApiNodesByIdImagesResponses];
+export type ListNodeImagesResponse = ListNodeImagesResponses[keyof ListNodeImagesResponses];
 
-export type GetSystemApiNodesByIdNetworksData = {
+export type ListNodeNetworksData = {
     body?: never;
     path: {
         id: string;
@@ -962,7 +1094,7 @@ export type GetSystemApiNodesByIdNetworksData = {
     url: '/system/api/nodes/{id}/networks';
 };
 
-export type GetSystemApiNodesByIdNetworksErrors = {
+export type ListNodeNetworksErrors = {
     /**
      * Not Authorized
      */
@@ -973,16 +1105,16 @@ export type GetSystemApiNodesByIdNetworksErrors = {
     403: unknown;
 };
 
-export type GetSystemApiNodesByIdNetworksResponses = {
+export type ListNodeNetworksResponses = {
     /**
      * OK
      */
     200: Array<NetworkSummary>;
 };
 
-export type GetSystemApiNodesByIdNetworksResponse = GetSystemApiNodesByIdNetworksResponses[keyof GetSystemApiNodesByIdNetworksResponses];
+export type ListNodeNetworksResponse = ListNodeNetworksResponses[keyof ListNodeNetworksResponses];
 
-export type GetSystemApiNodesByIdVolumesData = {
+export type ListNodeVolumesData = {
     body?: never;
     path: {
         id: string;
@@ -991,7 +1123,7 @@ export type GetSystemApiNodesByIdVolumesData = {
     url: '/system/api/nodes/{id}/volumes';
 };
 
-export type GetSystemApiNodesByIdVolumesErrors = {
+export type ListNodeVolumesErrors = {
     /**
      * Not Authorized
      */
@@ -1002,23 +1134,23 @@ export type GetSystemApiNodesByIdVolumesErrors = {
     403: unknown;
 };
 
-export type GetSystemApiNodesByIdVolumesResponses = {
+export type ListNodeVolumesResponses = {
     /**
      * OK
      */
     200: Array<VolumeSummary>;
 };
 
-export type GetSystemApiNodesByIdVolumesResponse = GetSystemApiNodesByIdVolumesResponses[keyof GetSystemApiNodesByIdVolumesResponses];
+export type ListNodeVolumesResponse = ListNodeVolumesResponses[keyof ListNodeVolumesResponses];
 
-export type GetSystemApiOverviewData = {
+export type GetOverviewData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/system/api/overview';
 };
 
-export type GetSystemApiOverviewErrors = {
+export type GetOverviewErrors = {
     /**
      * Not Authorized
      */
@@ -1029,23 +1161,23 @@ export type GetSystemApiOverviewErrors = {
     403: unknown;
 };
 
-export type GetSystemApiOverviewResponses = {
+export type GetOverviewResponses = {
     /**
      * OK
      */
     200: Overview;
 };
 
-export type GetSystemApiOverviewResponse = GetSystemApiOverviewResponses[keyof GetSystemApiOverviewResponses];
+export type GetOverviewResponse = GetOverviewResponses[keyof GetOverviewResponses];
 
-export type GetSystemApiSwarmConfigsData = {
+export type ListSwarmConfigsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/system/api/swarm/configs';
 };
 
-export type GetSystemApiSwarmConfigsErrors = {
+export type ListSwarmConfigsErrors = {
     /**
      * Not Authorized
      */
@@ -1056,16 +1188,16 @@ export type GetSystemApiSwarmConfigsErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmConfigsResponses = {
+export type ListSwarmConfigsResponses = {
     /**
      * OK
      */
     200: Array<ConfigSummary>;
 };
 
-export type GetSystemApiSwarmConfigsResponse = GetSystemApiSwarmConfigsResponses[keyof GetSystemApiSwarmConfigsResponses];
+export type ListSwarmConfigsResponse = ListSwarmConfigsResponses[keyof ListSwarmConfigsResponses];
 
-export type GetSystemApiSwarmConfigsByIdData = {
+export type GetSwarmConfigData = {
     body?: never;
     path: {
         id: string;
@@ -1074,7 +1206,7 @@ export type GetSystemApiSwarmConfigsByIdData = {
     url: '/system/api/swarm/configs/{id}';
 };
 
-export type GetSystemApiSwarmConfigsByIdErrors = {
+export type GetSwarmConfigErrors = {
     /**
      * Not Authorized
      */
@@ -1085,23 +1217,23 @@ export type GetSystemApiSwarmConfigsByIdErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmConfigsByIdResponses = {
+export type GetSwarmConfigResponses = {
     /**
      * OK
      */
     200: ConfigDetail;
 };
 
-export type GetSystemApiSwarmConfigsByIdResponse = GetSystemApiSwarmConfigsByIdResponses[keyof GetSystemApiSwarmConfigsByIdResponses];
+export type GetSwarmConfigResponse = GetSwarmConfigResponses[keyof GetSwarmConfigResponses];
 
-export type GetSystemApiSwarmNodesData = {
+export type ListSwarmNodesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/system/api/swarm/nodes';
 };
 
-export type GetSystemApiSwarmNodesErrors = {
+export type ListSwarmNodesErrors = {
     /**
      * Not Authorized
      */
@@ -1112,16 +1244,16 @@ export type GetSystemApiSwarmNodesErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmNodesResponses = {
+export type ListSwarmNodesResponses = {
     /**
      * OK
      */
     200: Array<NodeSummary>;
 };
 
-export type GetSystemApiSwarmNodesResponse = GetSystemApiSwarmNodesResponses[keyof GetSystemApiSwarmNodesResponses];
+export type ListSwarmNodesResponse = ListSwarmNodesResponses[keyof ListSwarmNodesResponses];
 
-export type GetSystemApiSwarmNodesByIdData = {
+export type GetSwarmNodeData = {
     body?: never;
     path: {
         id: string;
@@ -1130,7 +1262,7 @@ export type GetSystemApiSwarmNodesByIdData = {
     url: '/system/api/swarm/nodes/{id}';
 };
 
-export type GetSystemApiSwarmNodesByIdErrors = {
+export type GetSwarmNodeErrors = {
     /**
      * Not Authorized
      */
@@ -1141,23 +1273,23 @@ export type GetSystemApiSwarmNodesByIdErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmNodesByIdResponses = {
+export type GetSwarmNodeResponses = {
     /**
      * OK
      */
     200: NodeDetail;
 };
 
-export type GetSystemApiSwarmNodesByIdResponse = GetSystemApiSwarmNodesByIdResponses[keyof GetSystemApiSwarmNodesByIdResponses];
+export type GetSwarmNodeResponse = GetSwarmNodeResponses[keyof GetSwarmNodeResponses];
 
-export type GetSystemApiSwarmSecretsData = {
+export type ListSwarmSecretsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/system/api/swarm/secrets';
 };
 
-export type GetSystemApiSwarmSecretsErrors = {
+export type ListSwarmSecretsErrors = {
     /**
      * Not Authorized
      */
@@ -1168,23 +1300,23 @@ export type GetSystemApiSwarmSecretsErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmSecretsResponses = {
+export type ListSwarmSecretsResponses = {
     /**
      * OK
      */
     200: Array<SecretSummary>;
 };
 
-export type GetSystemApiSwarmSecretsResponse = GetSystemApiSwarmSecretsResponses[keyof GetSystemApiSwarmSecretsResponses];
+export type ListSwarmSecretsResponse = ListSwarmSecretsResponses[keyof ListSwarmSecretsResponses];
 
-export type GetSystemApiSwarmServicesData = {
+export type ListSwarmServicesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/system/api/swarm/services';
 };
 
-export type GetSystemApiSwarmServicesErrors = {
+export type ListSwarmServicesErrors = {
     /**
      * Not Authorized
      */
@@ -1195,16 +1327,16 @@ export type GetSystemApiSwarmServicesErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmServicesResponses = {
+export type ListSwarmServicesResponses = {
     /**
      * OK
      */
     200: Array<ServiceSummary>;
 };
 
-export type GetSystemApiSwarmServicesResponse = GetSystemApiSwarmServicesResponses[keyof GetSystemApiSwarmServicesResponses];
+export type ListSwarmServicesResponse = ListSwarmServicesResponses[keyof ListSwarmServicesResponses];
 
-export type GetSystemApiSwarmServicesByIdData = {
+export type GetSwarmServiceData = {
     body?: never;
     path: {
         id: string;
@@ -1213,7 +1345,7 @@ export type GetSystemApiSwarmServicesByIdData = {
     url: '/system/api/swarm/services/{id}';
 };
 
-export type GetSystemApiSwarmServicesByIdErrors = {
+export type GetSwarmServiceErrors = {
     /**
      * Not Authorized
      */
@@ -1224,14 +1356,14 @@ export type GetSystemApiSwarmServicesByIdErrors = {
     403: unknown;
 };
 
-export type GetSystemApiSwarmServicesByIdResponses = {
+export type GetSwarmServiceResponses = {
     /**
      * OK
      */
     200: ServiceDetail;
 };
 
-export type GetSystemApiSwarmServicesByIdResponse = GetSystemApiSwarmServicesByIdResponses[keyof GetSystemApiSwarmServicesByIdResponses];
+export type GetSwarmServiceResponse = GetSwarmServiceResponses[keyof GetSwarmServiceResponses];
 
 export type ListTargetsData = {
     body?: never;
@@ -1334,6 +1466,33 @@ export type GetTargetInstallScriptResponses = {
 
 export type GetTargetInstallScriptResponse = GetTargetInstallScriptResponses[keyof GetTargetInstallScriptResponses];
 
+export type ListWarmImagesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/system/api/targets/warm-images';
+};
+
+export type ListWarmImagesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListWarmImagesResponses = {
+    /**
+     * One per slot type a slot image was released for, in slot type order; empty when none
+     */
+    200: Array<WarmImage>;
+};
+
+export type ListWarmImagesResponse = ListWarmImagesResponses[keyof ListWarmImagesResponses];
+
 export type DeleteTargetData = {
     body?: never;
     path: {
@@ -1415,7 +1574,7 @@ export type PatchTargetData = {
 
 export type PatchTargetErrors = {
     /**
-     * A malformed description or reservation
+     * A malformed description, reservation or maximum
      */
     400: unknown;
     /**
@@ -1431,7 +1590,7 @@ export type PatchTargetErrors = {
      */
     404: unknown;
     /**
-     * RESERVATIONS_EXCEED_TOTAL: their sum is above the total the runner reports
+     * RESERVATIONS_EXCEED_TOTAL: their sum is above the total the runner reports; MAXIMUM_BELOW_RESERVATION: a type's maximum is below its reservation
      */
     409: unknown;
 };
@@ -1922,6 +2081,43 @@ export type RegisterTargetResponses = {
 
 export type RegisterTargetResponse = RegisterTargetResponses[keyof RegisterTargetResponses];
 
+export type CheckTargetRegistrationData = {
+    body: TargetRegistrationCheckRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/system/api/targets/{id}/registration-check';
+};
+
+export type CheckTargetRegistrationErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * subject differs, or no token is live
+     */
+    403: unknown;
+    /**
+     * No such target
+     */
+    404: unknown;
+};
+
+export type CheckTargetRegistrationResponses = {
+    /**
+     * subject is this target's live registration token's subject
+     */
+    200: TargetRegistrationCheck;
+};
+
+export type CheckTargetRegistrationResponse = CheckTargetRegistrationResponses[keyof CheckTargetRegistrationResponses];
+
 export type RotateTargetRegistrationTokenData = {
     body?: RotateTargetRegistrationTokenRequest;
     path: {
@@ -2118,14 +2314,14 @@ export type SubmitTargetSignInCodeResponses = {
 
 export type SubmitTargetSignInCodeResponse = SubmitTargetSignInCodeResponses[keyof SubmitTargetSignInCodeResponses];
 
-export type GetSystemApiTerminalsData = {
+export type ListTerminalsData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/system/api/terminals';
 };
 
-export type GetSystemApiTerminalsErrors = {
+export type ListTerminalsErrors = {
     /**
      * Not Authorized
      */
@@ -2136,25 +2332,25 @@ export type GetSystemApiTerminalsErrors = {
     403: unknown;
 };
 
-export type GetSystemApiTerminalsResponses = {
+export type ListTerminalsResponses = {
     /**
      * OK
      */
     200: Array<TerminalView>;
 };
 
-export type GetSystemApiTerminalsResponse = GetSystemApiTerminalsResponses[keyof GetSystemApiTerminalsResponses];
+export type ListTerminalsResponse = ListTerminalsResponses[keyof ListTerminalsResponses];
 
-export type PostSystemApiTerminalsData = {
+export type OpenTerminalData = {
     body: TerminalRequest;
     path?: never;
     query?: never;
     url: '/system/api/terminals';
 };
 
-export type PostSystemApiTerminalsErrors = {
+export type OpenTerminalErrors = {
     /**
-     * Bad Request
+     * Not one of the two request shapes
      */
     400: unknown;
     /**
@@ -2165,16 +2361,30 @@ export type PostSystemApiTerminalsErrors = {
      * Not Allowed
      */
     403: unknown;
-};
-
-export type PostSystemApiTerminalsResponses = {
     /**
-     * OK
+     * EXEC: no such container
      */
-    200: unknown;
+    404: unknown;
+    /**
+     * EXEC: the container is not running; or the terminal limit is reached
+     */
+    409: unknown;
 };
 
-export type DeleteSystemApiTerminalsByIdData = {
+export type OpenTerminalResponses = {
+    /**
+     * The live glances terminal, found rather than started again
+     */
+    200: TerminalView;
+    /**
+     * A new terminal
+     */
+    201: TerminalView;
+};
+
+export type OpenTerminalResponse = OpenTerminalResponses[keyof OpenTerminalResponses];
+
+export type CloseTerminalData = {
     body?: never;
     path: {
         id: string;
@@ -2183,7 +2393,7 @@ export type DeleteSystemApiTerminalsByIdData = {
     url: '/system/api/terminals/{id}';
 };
 
-export type DeleteSystemApiTerminalsByIdErrors = {
+export type CloseTerminalErrors = {
     /**
      * Not Authorized
      */
@@ -2192,16 +2402,22 @@ export type DeleteSystemApiTerminalsByIdErrors = {
      * Not Allowed
      */
     403: unknown;
-};
-
-export type DeleteSystemApiTerminalsByIdResponses = {
     /**
-     * OK
+     * No such terminal
      */
-    200: unknown;
+    404: unknown;
 };
 
-export type GetSystemApiTerminalsByIdData = {
+export type CloseTerminalResponses = {
+    /**
+     * Ended
+     */
+    204: void;
+};
+
+export type CloseTerminalResponse = CloseTerminalResponses[keyof CloseTerminalResponses];
+
+export type GetTerminalData = {
     body?: never;
     path: {
         id: string;
@@ -2210,7 +2426,7 @@ export type GetSystemApiTerminalsByIdData = {
     url: '/system/api/terminals/{id}';
 };
 
-export type GetSystemApiTerminalsByIdErrors = {
+export type GetTerminalErrors = {
     /**
      * Not Authorized
      */
@@ -2219,16 +2435,20 @@ export type GetSystemApiTerminalsByIdErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * No such terminal
+     */
+    404: unknown;
 };
 
-export type GetSystemApiTerminalsByIdResponses = {
+export type GetTerminalResponses = {
     /**
      * OK
      */
     200: TerminalView;
 };
 
-export type GetSystemApiTerminalsByIdResponse = GetSystemApiTerminalsByIdResponses[keyof GetSystemApiTerminalsByIdResponses];
+export type GetTerminalResponse = GetTerminalResponses[keyof GetTerminalResponses];
 
 export type PurgeWorkVolumeData = {
     body?: never;

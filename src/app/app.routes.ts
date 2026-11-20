@@ -151,6 +151,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * is one segment (`@qits/angular` is `@qits%2Fangular` in the URL). With it every store listing's
  * rows open a page of this app; none leaves for qits-artifacts-frontend any more.
  *
+ * The System section (qits-2344) is at `system/swarm/services` (`SwarmServicesPage`): the services
+ * of the one swarm qits-system runs on, with a state derived from their replicas, reached from the
+ * root sidebar with no project open. `system` and `system/swarm` redirect to it by a relative
+ * `redirectTo`; it is an entry point, where qits-system-frontend's old `swarm/services` hands off.
+ * qits-2345…qits-2356 add the section's other pages under `system/...`.
+ *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
  * shell, so the guard does not run on it and the catch-all never takes it.
@@ -657,6 +663,26 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page').then(
                 (m) => m.ArtifactsNpmPackagePage,
+              ),
+          },
+        ],
+      },
+      {
+        // The System section (qits-2344): qits-system's one swarm, bound to no project. No front
+        // page of its own yet: `/system` and `/system/swarm` open the swarm's services.
+        path: 'system',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'swarm/services' },
+          { path: 'swarm', pathMatch: 'full', redirectTo: 'swarm/services' },
+          {
+            path: 'swarm/services',
+            // An entry point (qits-2049): qits-system-frontend's old `swarm/services` hands off
+            // here with a full-document load, and its bookmarks follow; the sidebar's System
+            // leads to `system`, which redirects here, so no outcome of this app names it.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/services/swarm-services.page').then(
+                (m) => m.SwarmServicesPage,
               ),
           },
         ],

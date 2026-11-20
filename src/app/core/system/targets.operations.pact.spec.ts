@@ -7,23 +7,26 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as systemClient } from '../../api/system/client.gen';
 import { provideHeyApiClient } from '../../api/system/client/client.gen';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction, assertPactPart } from '@qits/angular/testing';
 import { systemGoldenMasters as masters } from '../../../testing/golden-masters';
 import { targetOf } from './targets';
 import { TARGET_LIST } from './targets.operations';
 
 /**
- * qits-landing-app's pact with qits-system-service (epic qits-112), in
- * `pacts/qits-landing-app_qits-system-service.json`.
+ * The targets' part of qits-landing-app's pact with qits-system-service (epic qits-112), in
+ * `pacts/qits-landing-app_qits-system-service.json` — the same file `swarm.operations.pact.spec.ts`
+ * owns the swarm's operations of (`assertPactPart`, qits-2344).
  *
- * `TARGET_LIST` is the only read of the qits-system client, so this file is the whole pact: the
- * lightning menu's list of execution targets. Moved here from `TargetsStore`'s pact spec when the
+ * `TARGET_LIST` is the lightning menu's list of execution targets. Moved here from `TargetsStore`'s pact spec when the
  * store went (qits-2146), unchanged: the same description, state, request and bound fields; the test
  * runs the operation's own `fetch`.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-system-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+
+/** The operations this spec owns in that file. */
+const OPERATIONS = ['listTargets'];
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -41,11 +44,16 @@ function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   return TestBed.runInInjectionContext(call);
 }
 
-describe('qits-landing-app → qits-system-service pact', () => {
+describe('qits-landing-app → qits-system-service pact: the targets', () => {
   afterAll(() => {
     systemClient.setConfig({ baseUrl: '' });
     try {
-      assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        OPERATIONS,
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

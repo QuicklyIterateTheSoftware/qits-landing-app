@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CancelTargetSignInData, CancelTargetSignInErrors, CancelTargetSignInResponses, CreateLeaseData, CreateLeaseErrors, CreateLeaseResponses, CreateTargetData, CreateTargetErrors, CreateTargetResponses, DeleteSystemApiTerminalsByIdData, DeleteSystemApiTerminalsByIdErrors, DeleteSystemApiTerminalsByIdResponses, DeleteTargetData, DeleteTargetErrors, DeleteTargetResponses, EndLeaseData, EndLeaseErrors, EndLeaseResponses, ExecInTargetContainerData, ExecInTargetContainerErrors, ExecInTargetContainerResponses, GetLeaseData, GetLeaseErrors, GetLeaseResponses, GetSystemApiNodesByIdContainersByCidData, GetSystemApiNodesByIdContainersByCidErrors, GetSystemApiNodesByIdContainersByCidLogsData, GetSystemApiNodesByIdContainersByCidLogsErrors, GetSystemApiNodesByIdContainersByCidLogsResponses, GetSystemApiNodesByIdContainersByCidResponses, GetSystemApiNodesByIdContainersData, GetSystemApiNodesByIdContainersErrors, GetSystemApiNodesByIdContainersResponses, GetSystemApiNodesByIdImagesData, GetSystemApiNodesByIdImagesErrors, GetSystemApiNodesByIdImagesResponses, GetSystemApiNodesByIdNetworksData, GetSystemApiNodesByIdNetworksErrors, GetSystemApiNodesByIdNetworksResponses, GetSystemApiNodesByIdVolumesData, GetSystemApiNodesByIdVolumesErrors, GetSystemApiNodesByIdVolumesResponses, GetSystemApiOverviewData, GetSystemApiOverviewErrors, GetSystemApiOverviewResponses, GetSystemApiSwarmConfigsByIdData, GetSystemApiSwarmConfigsByIdErrors, GetSystemApiSwarmConfigsByIdResponses, GetSystemApiSwarmConfigsData, GetSystemApiSwarmConfigsErrors, GetSystemApiSwarmConfigsResponses, GetSystemApiSwarmNodesByIdData, GetSystemApiSwarmNodesByIdErrors, GetSystemApiSwarmNodesByIdResponses, GetSystemApiSwarmNodesData, GetSystemApiSwarmNodesErrors, GetSystemApiSwarmNodesResponses, GetSystemApiSwarmSecretsData, GetSystemApiSwarmSecretsErrors, GetSystemApiSwarmSecretsResponses, GetSystemApiSwarmServicesByIdData, GetSystemApiSwarmServicesByIdErrors, GetSystemApiSwarmServicesByIdResponses, GetSystemApiSwarmServicesData, GetSystemApiSwarmServicesErrors, GetSystemApiSwarmServicesResponses, GetSystemApiTerminalsByIdData, GetSystemApiTerminalsByIdErrors, GetSystemApiTerminalsByIdResponses, GetSystemApiTerminalsData, GetSystemApiTerminalsErrors, GetSystemApiTerminalsResponses, GetTargetData, GetTargetErrors, GetTargetHealthData, GetTargetHealthErrors, GetTargetHealthResponses, GetTargetInstallScriptData, GetTargetInstallScriptErrors, GetTargetInstallScriptResponses, GetTargetResponses, GetTargetSignInData, GetTargetSignInErrors, GetTargetSignInResponses, GreenlightTargetData, GreenlightTargetErrors, GreenlightTargetResponses, InspectTargetContainerData, InspectTargetContainerErrors, InspectTargetContainerResponses, InspectTargetVolumeData, InspectTargetVolumeErrors, InspectTargetVolumeResponses, LeaseLogsData, LeaseLogsErrors, LeaseLogsResponses, ListLeasesData, ListLeasesErrors, ListLeasesResponses, ListTargetContainersData, ListTargetContainersErrors, ListTargetContainersResponses, ListTargetsData, ListTargetsErrors, ListTargetsResponses, ListTargetVolumesData, ListTargetVolumesErrors, ListTargetVolumesResponses, PatchTargetData, PatchTargetErrors, PatchTargetResponses, PostSystemApiTerminalsData, PostSystemApiTerminalsErrors, PostSystemApiTerminalsResponses, PurgeWorkVolumeData, PurgeWorkVolumeErrors, PurgeWorkVolumeResponses, RegisterTargetData, RegisterTargetErrors, RegisterTargetResponses, RemoveTargetContainerData, RemoveTargetContainerErrors, RemoveTargetContainerResponses, ReplaceLeaseSpecData, ReplaceLeaseSpecErrors, ReplaceLeaseSpecResponses, RequestTargetHealthCheckData, RequestTargetHealthCheckErrors, RequestTargetHealthCheckResponses, RequestTargetLoginCheckData, RequestTargetLoginCheckErrors, RequestTargetLoginCheckResponses, RotateTargetRegistrationTokenData, RotateTargetRegistrationTokenErrors, RotateTargetRegistrationTokenResponses, StartTargetSignInData, StartTargetSignInErrors, StartTargetSignInResponses, StopTargetContainerData, StopTargetContainerErrors, StopTargetContainerResponses, SubmitTargetSignInCodeData, SubmitTargetSignInCodeErrors, SubmitTargetSignInCodeResponses, TargetAuditData, TargetAuditErrors, TargetAuditResponses, TargetContainerLogsData, TargetContainerLogsErrors, TargetContainerLogsResponses } from './types.gen';
+import type { CancelTargetSignInData, CancelTargetSignInErrors, CancelTargetSignInResponses, CheckTargetRegistrationData, CheckTargetRegistrationErrors, CheckTargetRegistrationResponses, CloseTerminalData, CloseTerminalErrors, CloseTerminalResponses, CreateLeaseData, CreateLeaseErrors, CreateLeaseResponses, CreateTargetData, CreateTargetErrors, CreateTargetResponses, DeleteTargetData, DeleteTargetErrors, DeleteTargetResponses, EndLeaseData, EndLeaseErrors, EndLeaseResponses, ExecInTargetContainerData, ExecInTargetContainerErrors, ExecInTargetContainerResponses, GetContainerLogsData, GetContainerLogsErrors, GetContainerLogsResponses, GetLeaseData, GetLeaseErrors, GetLeaseResponses, GetNodeContainerData, GetNodeContainerErrors, GetNodeContainerResponses, GetOverviewData, GetOverviewErrors, GetOverviewResponses, GetSwarmConfigData, GetSwarmConfigErrors, GetSwarmConfigResponses, GetSwarmNodeData, GetSwarmNodeErrors, GetSwarmNodeResponses, GetSwarmServiceData, GetSwarmServiceErrors, GetSwarmServiceResponses, GetTargetData, GetTargetErrors, GetTargetHealthData, GetTargetHealthErrors, GetTargetHealthResponses, GetTargetInstallScriptData, GetTargetInstallScriptErrors, GetTargetInstallScriptResponses, GetTargetResponses, GetTargetSignInData, GetTargetSignInErrors, GetTargetSignInResponses, GetTerminalData, GetTerminalErrors, GetTerminalResponses, GreenlightTargetData, GreenlightTargetErrors, GreenlightTargetResponses, InspectTargetContainerData, InspectTargetContainerErrors, InspectTargetContainerResponses, InspectTargetVolumeData, InspectTargetVolumeErrors, InspectTargetVolumeResponses, LeaseLogsData, LeaseLogsErrors, LeaseLogsResponses, ListLeasesData, ListLeasesErrors, ListLeasesResponses, ListNodeContainersData, ListNodeContainersErrors, ListNodeContainersResponses, ListNodeImagesData, ListNodeImagesErrors, ListNodeImagesResponses, ListNodeNetworksData, ListNodeNetworksErrors, ListNodeNetworksResponses, ListNodeVolumesData, ListNodeVolumesErrors, ListNodeVolumesResponses, ListSwarmConfigsData, ListSwarmConfigsErrors, ListSwarmConfigsResponses, ListSwarmNodesData, ListSwarmNodesErrors, ListSwarmNodesResponses, ListSwarmSecretsData, ListSwarmSecretsErrors, ListSwarmSecretsResponses, ListSwarmServicesData, ListSwarmServicesErrors, ListSwarmServicesResponses, ListTargetContainersData, ListTargetContainersErrors, ListTargetContainersResponses, ListTargetsData, ListTargetsErrors, ListTargetsResponses, ListTargetVolumesData, ListTargetVolumesErrors, ListTargetVolumesResponses, ListTerminalsData, ListTerminalsErrors, ListTerminalsResponses, ListWarmImagesData, ListWarmImagesErrors, ListWarmImagesResponses, OpenTerminalData, OpenTerminalErrors, OpenTerminalResponses, PatchTargetData, PatchTargetErrors, PatchTargetResponses, PurgeWorkVolumeData, PurgeWorkVolumeErrors, PurgeWorkVolumeResponses, RefreshLeaseData, RefreshLeaseErrors, RefreshLeaseResponses, RegisterTargetData, RegisterTargetErrors, RegisterTargetResponses, RemoveTargetContainerData, RemoveTargetContainerErrors, RemoveTargetContainerResponses, ReplaceLeaseSpecData, ReplaceLeaseSpecErrors, ReplaceLeaseSpecResponses, RequestTargetHealthCheckData, RequestTargetHealthCheckErrors, RequestTargetHealthCheckResponses, RequestTargetLoginCheckData, RequestTargetLoginCheckErrors, RequestTargetLoginCheckResponses, RotateTargetRegistrationTokenData, RotateTargetRegistrationTokenErrors, RotateTargetRegistrationTokenResponses, StartTargetSignInData, StartTargetSignInErrors, StartTargetSignInResponses, StopTargetContainerData, StopTargetContainerErrors, StopTargetContainerResponses, SubmitTargetSignInCodeData, SubmitTargetSignInCodeErrors, SubmitTargetSignInCodeResponses, TargetAuditData, TargetAuditErrors, TargetAuditResponses, TargetContainerLogsData, TargetContainerLogsErrors, TargetContainerLogsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -41,7 +41,7 @@ export const createLease = <ThrowOnError extends boolean = false>(options: Optio
 });
 
 /**
- * End a lease: ENDING, then ENDED once the runner reports it gone. An operator (qits:admin, qits:admin-agent, qits:desk-admin) ends any lease, and an ENDING one at once
+ * End a lease: ENDING, then ENDED once the runner reports it gone; a QUEUED, EXITED or FAILED one at once, and so one on a target with no runner connected. An operator (qits:admin, qits:admin-agent, qits:desk-admin) ends any lease, and an ENDING one at once
  */
 export const endLease = <ThrowOnError extends boolean = false>(options: Options<EndLeaseData, ThrowOnError>): RequestResult<EndLeaseResponses, EndLeaseErrors, ThrowOnError> => (options.client ?? client).delete<EndLeaseResponses, EndLeaseErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -68,6 +68,15 @@ export const leaseLogs = <ThrowOnError extends boolean = false>(options: Options
 });
 
 /**
+ * Refresh a RUNNING lease: its generation is raised by one and the runner recreates its container, keeping its work volume, so it picks up what the runner decides only at create (its resolvers). Its owner refreshes its own; an operator (qits:admin, qits:admin-agent, qits:desk-admin) any lease, audited
+ */
+export const refreshLease = <ThrowOnError extends boolean = false>(options: Options<RefreshLeaseData, ThrowOnError>): RequestResult<RefreshLeaseResponses, RefreshLeaseErrors, ThrowOnError> => (options.client ?? client).post<RefreshLeaseResponses, RefreshLeaseErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/system/api/leases/{id}/refresh',
+    ...options
+});
+
+/**
  * Roll a lease: the runner recreates its container
  */
 export const replaceLeaseSpec = <ThrowOnError extends boolean = false>(options: Options<ReplaceLeaseSpecData, ThrowOnError>): RequestResult<ReplaceLeaseSpecResponses, ReplaceLeaseSpecErrors, ThrowOnError> => (options.client ?? client).put<ReplaceLeaseSpecResponses, ReplaceLeaseSpecErrors, ThrowOnError>({
@@ -83,7 +92,7 @@ export const replaceLeaseSpec = <ThrowOnError extends boolean = false>(options: 
 /**
  * Containers
  */
-export const getSystemApiNodesByIdContainers = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdContainersData, ThrowOnError>): RequestResult<GetSystemApiNodesByIdContainersResponses, GetSystemApiNodesByIdContainersErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiNodesByIdContainersResponses, GetSystemApiNodesByIdContainersErrors, ThrowOnError>({
+export const listNodeContainers = <ThrowOnError extends boolean = false>(options: Options<ListNodeContainersData, ThrowOnError>): RequestResult<ListNodeContainersResponses, ListNodeContainersErrors, ThrowOnError> => (options.client ?? client).get<ListNodeContainersResponses, ListNodeContainersErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/nodes/{id}/containers',
     ...options
@@ -92,7 +101,7 @@ export const getSystemApiNodesByIdContainers = <ThrowOnError extends boolean = f
 /**
  * Container
  */
-export const getSystemApiNodesByIdContainersByCid = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdContainersByCidData, ThrowOnError>): RequestResult<GetSystemApiNodesByIdContainersByCidResponses, GetSystemApiNodesByIdContainersByCidErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiNodesByIdContainersByCidResponses, GetSystemApiNodesByIdContainersByCidErrors, ThrowOnError>({
+export const getNodeContainer = <ThrowOnError extends boolean = false>(options: Options<GetNodeContainerData, ThrowOnError>): RequestResult<GetNodeContainerResponses, GetNodeContainerErrors, ThrowOnError> => (options.client ?? client).get<GetNodeContainerResponses, GetNodeContainerErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/nodes/{id}/containers/{cid}',
     ...options
@@ -101,7 +110,7 @@ export const getSystemApiNodesByIdContainersByCid = <ThrowOnError extends boolea
 /**
  * Logs
  */
-export const getSystemApiNodesByIdContainersByCidLogs = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdContainersByCidLogsData, ThrowOnError>): RequestResult<GetSystemApiNodesByIdContainersByCidLogsResponses, GetSystemApiNodesByIdContainersByCidLogsErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiNodesByIdContainersByCidLogsResponses, GetSystemApiNodesByIdContainersByCidLogsErrors, ThrowOnError>({
+export const getContainerLogs = <ThrowOnError extends boolean = false>(options: Options<GetContainerLogsData, ThrowOnError>): RequestResult<GetContainerLogsResponses, GetContainerLogsErrors, ThrowOnError> => (options.client ?? client).get<GetContainerLogsResponses, GetContainerLogsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/nodes/{id}/containers/{cid}/logs',
     ...options
@@ -110,7 +119,7 @@ export const getSystemApiNodesByIdContainersByCidLogs = <ThrowOnError extends bo
 /**
  * Images
  */
-export const getSystemApiNodesByIdImages = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdImagesData, ThrowOnError>): RequestResult<GetSystemApiNodesByIdImagesResponses, GetSystemApiNodesByIdImagesErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiNodesByIdImagesResponses, GetSystemApiNodesByIdImagesErrors, ThrowOnError>({
+export const listNodeImages = <ThrowOnError extends boolean = false>(options: Options<ListNodeImagesData, ThrowOnError>): RequestResult<ListNodeImagesResponses, ListNodeImagesErrors, ThrowOnError> => (options.client ?? client).get<ListNodeImagesResponses, ListNodeImagesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/nodes/{id}/images',
     ...options
@@ -119,7 +128,7 @@ export const getSystemApiNodesByIdImages = <ThrowOnError extends boolean = false
 /**
  * Networks
  */
-export const getSystemApiNodesByIdNetworks = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdNetworksData, ThrowOnError>): RequestResult<GetSystemApiNodesByIdNetworksResponses, GetSystemApiNodesByIdNetworksErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiNodesByIdNetworksResponses, GetSystemApiNodesByIdNetworksErrors, ThrowOnError>({
+export const listNodeNetworks = <ThrowOnError extends boolean = false>(options: Options<ListNodeNetworksData, ThrowOnError>): RequestResult<ListNodeNetworksResponses, ListNodeNetworksErrors, ThrowOnError> => (options.client ?? client).get<ListNodeNetworksResponses, ListNodeNetworksErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/nodes/{id}/networks',
     ...options
@@ -128,7 +137,7 @@ export const getSystemApiNodesByIdNetworks = <ThrowOnError extends boolean = fal
 /**
  * Volumes
  */
-export const getSystemApiNodesByIdVolumes = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdVolumesData, ThrowOnError>): RequestResult<GetSystemApiNodesByIdVolumesResponses, GetSystemApiNodesByIdVolumesErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiNodesByIdVolumesResponses, GetSystemApiNodesByIdVolumesErrors, ThrowOnError>({
+export const listNodeVolumes = <ThrowOnError extends boolean = false>(options: Options<ListNodeVolumesData, ThrowOnError>): RequestResult<ListNodeVolumesResponses, ListNodeVolumesErrors, ThrowOnError> => (options.client ?? client).get<ListNodeVolumesResponses, ListNodeVolumesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/nodes/{id}/volumes',
     ...options
@@ -137,7 +146,7 @@ export const getSystemApiNodesByIdVolumes = <ThrowOnError extends boolean = fals
 /**
  * Overview
  */
-export const getSystemApiOverview = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiOverviewData, ThrowOnError>): RequestResult<GetSystemApiOverviewResponses, GetSystemApiOverviewErrors, ThrowOnError> => (options?.client ?? client).get<GetSystemApiOverviewResponses, GetSystemApiOverviewErrors, ThrowOnError>({
+export const getOverview = <ThrowOnError extends boolean = false>(options?: Options<GetOverviewData, ThrowOnError>): RequestResult<GetOverviewResponses, GetOverviewErrors, ThrowOnError> => (options?.client ?? client).get<GetOverviewResponses, GetOverviewErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/overview',
     ...options
@@ -146,7 +155,7 @@ export const getSystemApiOverview = <ThrowOnError extends boolean = false>(optio
 /**
  * Configs
  */
-export const getSystemApiSwarmConfigs = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmConfigsData, ThrowOnError>): RequestResult<GetSystemApiSwarmConfigsResponses, GetSystemApiSwarmConfigsErrors, ThrowOnError> => (options?.client ?? client).get<GetSystemApiSwarmConfigsResponses, GetSystemApiSwarmConfigsErrors, ThrowOnError>({
+export const listSwarmConfigs = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmConfigsData, ThrowOnError>): RequestResult<ListSwarmConfigsResponses, ListSwarmConfigsErrors, ThrowOnError> => (options?.client ?? client).get<ListSwarmConfigsResponses, ListSwarmConfigsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/configs',
     ...options
@@ -155,7 +164,7 @@ export const getSystemApiSwarmConfigs = <ThrowOnError extends boolean = false>(o
 /**
  * Config
  */
-export const getSystemApiSwarmConfigsById = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiSwarmConfigsByIdData, ThrowOnError>): RequestResult<GetSystemApiSwarmConfigsByIdResponses, GetSystemApiSwarmConfigsByIdErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiSwarmConfigsByIdResponses, GetSystemApiSwarmConfigsByIdErrors, ThrowOnError>({
+export const getSwarmConfig = <ThrowOnError extends boolean = false>(options: Options<GetSwarmConfigData, ThrowOnError>): RequestResult<GetSwarmConfigResponses, GetSwarmConfigErrors, ThrowOnError> => (options.client ?? client).get<GetSwarmConfigResponses, GetSwarmConfigErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/configs/{id}',
     ...options
@@ -164,7 +173,7 @@ export const getSystemApiSwarmConfigsById = <ThrowOnError extends boolean = fals
 /**
  * Nodes
  */
-export const getSystemApiSwarmNodes = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmNodesData, ThrowOnError>): RequestResult<GetSystemApiSwarmNodesResponses, GetSystemApiSwarmNodesErrors, ThrowOnError> => (options?.client ?? client).get<GetSystemApiSwarmNodesResponses, GetSystemApiSwarmNodesErrors, ThrowOnError>({
+export const listSwarmNodes = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmNodesData, ThrowOnError>): RequestResult<ListSwarmNodesResponses, ListSwarmNodesErrors, ThrowOnError> => (options?.client ?? client).get<ListSwarmNodesResponses, ListSwarmNodesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/nodes',
     ...options
@@ -173,7 +182,7 @@ export const getSystemApiSwarmNodes = <ThrowOnError extends boolean = false>(opt
 /**
  * Node
  */
-export const getSystemApiSwarmNodesById = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiSwarmNodesByIdData, ThrowOnError>): RequestResult<GetSystemApiSwarmNodesByIdResponses, GetSystemApiSwarmNodesByIdErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiSwarmNodesByIdResponses, GetSystemApiSwarmNodesByIdErrors, ThrowOnError>({
+export const getSwarmNode = <ThrowOnError extends boolean = false>(options: Options<GetSwarmNodeData, ThrowOnError>): RequestResult<GetSwarmNodeResponses, GetSwarmNodeErrors, ThrowOnError> => (options.client ?? client).get<GetSwarmNodeResponses, GetSwarmNodeErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/nodes/{id}',
     ...options
@@ -182,7 +191,7 @@ export const getSystemApiSwarmNodesById = <ThrowOnError extends boolean = false>
 /**
  * Secrets
  */
-export const getSystemApiSwarmSecrets = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmSecretsData, ThrowOnError>): RequestResult<GetSystemApiSwarmSecretsResponses, GetSystemApiSwarmSecretsErrors, ThrowOnError> => (options?.client ?? client).get<GetSystemApiSwarmSecretsResponses, GetSystemApiSwarmSecretsErrors, ThrowOnError>({
+export const listSwarmSecrets = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmSecretsData, ThrowOnError>): RequestResult<ListSwarmSecretsResponses, ListSwarmSecretsErrors, ThrowOnError> => (options?.client ?? client).get<ListSwarmSecretsResponses, ListSwarmSecretsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/secrets',
     ...options
@@ -191,7 +200,7 @@ export const getSystemApiSwarmSecrets = <ThrowOnError extends boolean = false>(o
 /**
  * Services
  */
-export const getSystemApiSwarmServices = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmServicesData, ThrowOnError>): RequestResult<GetSystemApiSwarmServicesResponses, GetSystemApiSwarmServicesErrors, ThrowOnError> => (options?.client ?? client).get<GetSystemApiSwarmServicesResponses, GetSystemApiSwarmServicesErrors, ThrowOnError>({
+export const listSwarmServices = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmServicesData, ThrowOnError>): RequestResult<ListSwarmServicesResponses, ListSwarmServicesErrors, ThrowOnError> => (options?.client ?? client).get<ListSwarmServicesResponses, ListSwarmServicesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/services',
     ...options
@@ -200,7 +209,7 @@ export const getSystemApiSwarmServices = <ThrowOnError extends boolean = false>(
 /**
  * Service
  */
-export const getSystemApiSwarmServicesById = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiSwarmServicesByIdData, ThrowOnError>): RequestResult<GetSystemApiSwarmServicesByIdResponses, GetSystemApiSwarmServicesByIdErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiSwarmServicesByIdResponses, GetSystemApiSwarmServicesByIdErrors, ThrowOnError>({
+export const getSwarmService = <ThrowOnError extends boolean = false>(options: Options<GetSwarmServiceData, ThrowOnError>): RequestResult<GetSwarmServiceResponses, GetSwarmServiceErrors, ThrowOnError> => (options.client ?? client).get<GetSwarmServiceResponses, GetSwarmServiceErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/swarm/services/{id}',
     ...options
@@ -238,6 +247,15 @@ export const getTargetInstallScript = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
+ * The image each slot type keeps warm, by slot type
+ */
+export const listWarmImages = <ThrowOnError extends boolean = false>(options?: Options<ListWarmImagesData, ThrowOnError>): RequestResult<ListWarmImagesResponses, ListWarmImagesErrors, ThrowOnError> => (options?.client ?? client).get<ListWarmImagesResponses, ListWarmImagesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/system/api/targets/warm-images',
+    ...options
+});
+
+/**
  * Decommission a target: retire its runner, give its credentials back
  */
 export const deleteTarget = <ThrowOnError extends boolean = false>(options: Options<DeleteTargetData, ThrowOnError>): RequestResult<DeleteTargetResponses, DeleteTargetErrors, ThrowOnError> => (options.client ?? client).delete<DeleteTargetResponses, DeleteTargetErrors, ThrowOnError>({
@@ -256,7 +274,7 @@ export const getTarget = <ThrowOnError extends boolean = false>(options: Options
 });
 
 /**
- * Change a target's description or reservations
+ * Change a target's description, reservations or maximums
  */
 export const patchTarget = <ThrowOnError extends boolean = false>(options: Options<PatchTargetData, ThrowOnError>): RequestResult<PatchTargetResponses, PatchTargetErrors, ThrowOnError> => (options.client ?? client).patch<PatchTargetResponses, PatchTargetErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -403,6 +421,21 @@ export const registerTarget = <ThrowOnError extends boolean = false>(options: Op
 });
 
 /**
+ * Whether subject is target id's live registration token's subject
+ *
+ * For a service with its own idp client (qits-network-access) to ask without attempting a registration itself. Never answers what the stored subject is.
+ */
+export const checkTargetRegistration = <ThrowOnError extends boolean = false>(options: Options<CheckTargetRegistrationData, ThrowOnError>): RequestResult<CheckTargetRegistrationResponses, CheckTargetRegistrationErrors, ThrowOnError> => (options.client ?? client).post<CheckTargetRegistrationResponses, CheckTargetRegistrationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/system/api/targets/{id}/registration-check',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Replace a target's registration token; answers a new install line
  *
  * Registered or not: a registered target keeps its client, and its runner keeps working, until a runner installed with the new token registers. The body is optional.
@@ -466,7 +499,7 @@ export const submitTargetSignInCode = <ThrowOnError extends boolean = false>(opt
 /**
  * List
  */
-export const getSystemApiTerminals = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiTerminalsData, ThrowOnError>): RequestResult<GetSystemApiTerminalsResponses, GetSystemApiTerminalsErrors, ThrowOnError> => (options?.client ?? client).get<GetSystemApiTerminalsResponses, GetSystemApiTerminalsErrors, ThrowOnError>({
+export const listTerminals = <ThrowOnError extends boolean = false>(options?: Options<ListTerminalsData, ThrowOnError>): RequestResult<ListTerminalsResponses, ListTerminalsErrors, ThrowOnError> => (options?.client ?? client).get<ListTerminalsResponses, ListTerminalsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/terminals',
     ...options
@@ -475,7 +508,7 @@ export const getSystemApiTerminals = <ThrowOnError extends boolean = false>(opti
 /**
  * Open
  */
-export const postSystemApiTerminals = <ThrowOnError extends boolean = false>(options: Options<PostSystemApiTerminalsData, ThrowOnError>): RequestResult<PostSystemApiTerminalsResponses, PostSystemApiTerminalsErrors, ThrowOnError> => (options.client ?? client).post<PostSystemApiTerminalsResponses, PostSystemApiTerminalsErrors, ThrowOnError>({
+export const openTerminal = <ThrowOnError extends boolean = false>(options: Options<OpenTerminalData, ThrowOnError>): RequestResult<OpenTerminalResponses, OpenTerminalErrors, ThrowOnError> => (options.client ?? client).post<OpenTerminalResponses, OpenTerminalErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/terminals',
     ...options,
@@ -488,7 +521,7 @@ export const postSystemApiTerminals = <ThrowOnError extends boolean = false>(opt
 /**
  * Close
  */
-export const deleteSystemApiTerminalsById = <ThrowOnError extends boolean = false>(options: Options<DeleteSystemApiTerminalsByIdData, ThrowOnError>): RequestResult<DeleteSystemApiTerminalsByIdResponses, DeleteSystemApiTerminalsByIdErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSystemApiTerminalsByIdResponses, DeleteSystemApiTerminalsByIdErrors, ThrowOnError>({
+export const closeTerminal = <ThrowOnError extends boolean = false>(options: Options<CloseTerminalData, ThrowOnError>): RequestResult<CloseTerminalResponses, CloseTerminalErrors, ThrowOnError> => (options.client ?? client).delete<CloseTerminalResponses, CloseTerminalErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/terminals/{id}',
     ...options
@@ -497,7 +530,7 @@ export const deleteSystemApiTerminalsById = <ThrowOnError extends boolean = fals
 /**
  * Get
  */
-export const getSystemApiTerminalsById = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiTerminalsByIdData, ThrowOnError>): RequestResult<GetSystemApiTerminalsByIdResponses, GetSystemApiTerminalsByIdErrors, ThrowOnError> => (options.client ?? client).get<GetSystemApiTerminalsByIdResponses, GetSystemApiTerminalsByIdErrors, ThrowOnError>({
+export const getTerminal = <ThrowOnError extends boolean = false>(options: Options<GetTerminalData, ThrowOnError>): RequestResult<GetTerminalResponses, GetTerminalErrors, ThrowOnError> => (options.client ?? client).get<GetTerminalResponses, GetTerminalErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/system/api/terminals/{id}',
     ...options

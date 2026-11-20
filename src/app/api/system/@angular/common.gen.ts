@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CancelTargetSignInData, CancelTargetSignInResponse, CreateLeaseData, CreateLeaseResponse, CreateTargetData, CreateTargetResponse, DeleteSystemApiTerminalsByIdData, DeleteTargetData, DeleteTargetResponse, EndLeaseData, EndLeaseResponse, ExecInTargetContainerData, ExecInTargetContainerResponse, GetLeaseData, GetLeaseResponse, GetSystemApiNodesByIdContainersByCidData, GetSystemApiNodesByIdContainersByCidLogsData, GetSystemApiNodesByIdContainersByCidLogsResponse, GetSystemApiNodesByIdContainersByCidResponse, GetSystemApiNodesByIdContainersData, GetSystemApiNodesByIdContainersResponse, GetSystemApiNodesByIdImagesData, GetSystemApiNodesByIdImagesResponse, GetSystemApiNodesByIdNetworksData, GetSystemApiNodesByIdNetworksResponse, GetSystemApiNodesByIdVolumesData, GetSystemApiNodesByIdVolumesResponse, GetSystemApiOverviewData, GetSystemApiOverviewResponse, GetSystemApiSwarmConfigsByIdData, GetSystemApiSwarmConfigsByIdResponse, GetSystemApiSwarmConfigsData, GetSystemApiSwarmConfigsResponse, GetSystemApiSwarmNodesByIdData, GetSystemApiSwarmNodesByIdResponse, GetSystemApiSwarmNodesData, GetSystemApiSwarmNodesResponse, GetSystemApiSwarmSecretsData, GetSystemApiSwarmSecretsResponse, GetSystemApiSwarmServicesByIdData, GetSystemApiSwarmServicesByIdResponse, GetSystemApiSwarmServicesData, GetSystemApiSwarmServicesResponse, GetSystemApiTerminalsByIdData, GetSystemApiTerminalsByIdResponse, GetSystemApiTerminalsData, GetSystemApiTerminalsResponse, GetTargetData, GetTargetHealthData, GetTargetHealthResponse, GetTargetInstallScriptData, GetTargetInstallScriptResponse, GetTargetResponse, GetTargetSignInData, GetTargetSignInResponse, GreenlightTargetData, GreenlightTargetResponse, InspectTargetContainerData, InspectTargetContainerResponse, InspectTargetVolumeData, InspectTargetVolumeResponse, LeaseLogsData, ListLeasesData, ListLeasesResponse, ListTargetContainersData, ListTargetContainersResponse, ListTargetsData, ListTargetsResponse, ListTargetVolumesData, ListTargetVolumesResponse, PatchTargetData, PatchTargetResponse, PostSystemApiTerminalsData, PurgeWorkVolumeData, PurgeWorkVolumeResponse, RegisterTargetData, RegisterTargetResponse, RemoveTargetContainerData, RemoveTargetContainerResponse, ReplaceLeaseSpecData, ReplaceLeaseSpecResponse, RequestTargetHealthCheckData, RequestTargetHealthCheckResponse, RequestTargetLoginCheckData, RotateTargetRegistrationTokenData, RotateTargetRegistrationTokenResponse, StartTargetSignInData, StartTargetSignInResponse, StopTargetContainerData, StopTargetContainerResponse, SubmitTargetSignInCodeData, SubmitTargetSignInCodeResponse, TargetAuditData, TargetAuditResponse, TargetContainerLogsData } from '../types.gen';
+import type { CancelTargetSignInData, CancelTargetSignInResponse, CheckTargetRegistrationData, CheckTargetRegistrationResponse, CloseTerminalData, CloseTerminalResponse, CreateLeaseData, CreateLeaseResponse, CreateTargetData, CreateTargetResponse, DeleteTargetData, DeleteTargetResponse, EndLeaseData, EndLeaseResponse, ExecInTargetContainerData, ExecInTargetContainerResponse, GetContainerLogsData, GetContainerLogsResponse, GetLeaseData, GetLeaseResponse, GetNodeContainerData, GetNodeContainerResponse, GetOverviewData, GetOverviewResponse, GetSwarmConfigData, GetSwarmConfigResponse, GetSwarmNodeData, GetSwarmNodeResponse, GetSwarmServiceData, GetSwarmServiceResponse, GetTargetData, GetTargetHealthData, GetTargetHealthResponse, GetTargetInstallScriptData, GetTargetInstallScriptResponse, GetTargetResponse, GetTargetSignInData, GetTargetSignInResponse, GetTerminalData, GetTerminalResponse, GreenlightTargetData, GreenlightTargetResponse, InspectTargetContainerData, InspectTargetContainerResponse, InspectTargetVolumeData, InspectTargetVolumeResponse, LeaseLogsData, ListLeasesData, ListLeasesResponse, ListNodeContainersData, ListNodeContainersResponse, ListNodeImagesData, ListNodeImagesResponse, ListNodeNetworksData, ListNodeNetworksResponse, ListNodeVolumesData, ListNodeVolumesResponse, ListSwarmConfigsData, ListSwarmConfigsResponse, ListSwarmNodesData, ListSwarmNodesResponse, ListSwarmSecretsData, ListSwarmSecretsResponse, ListSwarmServicesData, ListSwarmServicesResponse, ListTargetContainersData, ListTargetContainersResponse, ListTargetsData, ListTargetsResponse, ListTargetVolumesData, ListTargetVolumesResponse, ListTerminalsData, ListTerminalsResponse, ListWarmImagesData, ListWarmImagesResponse, OpenTerminalData, OpenTerminalResponse, PatchTargetData, PatchTargetResponse, PurgeWorkVolumeData, PurgeWorkVolumeResponse, RefreshLeaseData, RefreshLeaseResponse, RegisterTargetData, RegisterTargetResponse, RemoveTargetContainerData, RemoveTargetContainerResponse, ReplaceLeaseSpecData, ReplaceLeaseSpecResponse, RequestTargetHealthCheckData, RequestTargetHealthCheckResponse, RequestTargetLoginCheckData, RotateTargetRegistrationTokenData, RotateTargetRegistrationTokenResponse, StartTargetSignInData, StartTargetSignInResponse, StopTargetContainerData, StopTargetContainerResponse, SubmitTargetSignInCodeData, SubmitTargetSignInCodeResponse, TargetAuditData, TargetAuditResponse, TargetContainerLogsData } from '../types.gen';
 
 /**
  * Leases, oldest first; a service sees its own
@@ -27,7 +27,7 @@ export const createLeaseRequest = <ThrowOnError extends boolean = false>(options
 });
 
 /**
- * End a lease: ENDING, then ENDED once the runner reports it gone. An operator (qits:admin, qits:admin-agent, qits:desk-admin) ends any lease, and an ENDING one at once
+ * End a lease: ENDING, then ENDED once the runner reports it gone; a QUEUED, EXITED or FAILED one at once, and so one on a target with no runner connected. An operator (qits:admin, qits:admin-agent, qits:desk-admin) ends any lease, and an ENDING one at once
  */
 export const endLeaseRequest = <ThrowOnError extends boolean = false>(options: Options<EndLeaseData, ThrowOnError>): HttpRequest<EndLeaseResponse> => (options?.client ?? client).requestOptions<EndLeaseResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -57,6 +57,16 @@ export const leaseLogsRequest = <ThrowOnError extends boolean = false>(options: 
 });
 
 /**
+ * Refresh a RUNNING lease: its generation is raised by one and the runner recreates its container, keeping its work volume, so it picks up what the runner decides only at create (its resolvers). Its owner refreshes its own; an operator (qits:admin, qits:admin-agent, qits:desk-admin) any lease, audited
+ */
+export const refreshLeaseRequest = <ThrowOnError extends boolean = false>(options: Options<RefreshLeaseData, ThrowOnError>): HttpRequest<RefreshLeaseResponse> => (options?.client ?? client).requestOptions<RefreshLeaseResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/system/api/leases/{id}/refresh',
+    ...options
+});
+
+/**
  * Roll a lease: the runner recreates its container
  */
 export const replaceLeaseSpecRequest = <ThrowOnError extends boolean = false>(options: Options<ReplaceLeaseSpecData, ThrowOnError>): HttpRequest<ReplaceLeaseSpecResponse> => (options?.client ?? client).requestOptions<ReplaceLeaseSpecResponse, ThrowOnError>({
@@ -69,7 +79,7 @@ export const replaceLeaseSpecRequest = <ThrowOnError extends boolean = false>(op
 /**
  * Containers
  */
-export const getSystemApiNodesByIdContainersRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdContainersData, ThrowOnError>): HttpRequest<GetSystemApiNodesByIdContainersResponse> => (options?.client ?? client).requestOptions<GetSystemApiNodesByIdContainersResponse, ThrowOnError>({
+export const listNodeContainersRequest = <ThrowOnError extends boolean = false>(options: Options<ListNodeContainersData, ThrowOnError>): HttpRequest<ListNodeContainersResponse> => (options?.client ?? client).requestOptions<ListNodeContainersResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/nodes/{id}/containers',
@@ -79,7 +89,7 @@ export const getSystemApiNodesByIdContainersRequest = <ThrowOnError extends bool
 /**
  * Container
  */
-export const getSystemApiNodesByIdContainersByCidRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdContainersByCidData, ThrowOnError>): HttpRequest<GetSystemApiNodesByIdContainersByCidResponse> => (options?.client ?? client).requestOptions<GetSystemApiNodesByIdContainersByCidResponse, ThrowOnError>({
+export const getNodeContainerRequest = <ThrowOnError extends boolean = false>(options: Options<GetNodeContainerData, ThrowOnError>): HttpRequest<GetNodeContainerResponse> => (options?.client ?? client).requestOptions<GetNodeContainerResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/nodes/{id}/containers/{cid}',
@@ -89,7 +99,7 @@ export const getSystemApiNodesByIdContainersByCidRequest = <ThrowOnError extends
 /**
  * Logs
  */
-export const getSystemApiNodesByIdContainersByCidLogsRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdContainersByCidLogsData, ThrowOnError>): HttpRequest<GetSystemApiNodesByIdContainersByCidLogsResponse> => (options?.client ?? client).requestOptions<GetSystemApiNodesByIdContainersByCidLogsResponse, ThrowOnError>({
+export const getContainerLogsRequest = <ThrowOnError extends boolean = false>(options: Options<GetContainerLogsData, ThrowOnError>): HttpRequest<GetContainerLogsResponse> => (options?.client ?? client).requestOptions<GetContainerLogsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/nodes/{id}/containers/{cid}/logs',
@@ -99,7 +109,7 @@ export const getSystemApiNodesByIdContainersByCidLogsRequest = <ThrowOnError ext
 /**
  * Images
  */
-export const getSystemApiNodesByIdImagesRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdImagesData, ThrowOnError>): HttpRequest<GetSystemApiNodesByIdImagesResponse> => (options?.client ?? client).requestOptions<GetSystemApiNodesByIdImagesResponse, ThrowOnError>({
+export const listNodeImagesRequest = <ThrowOnError extends boolean = false>(options: Options<ListNodeImagesData, ThrowOnError>): HttpRequest<ListNodeImagesResponse> => (options?.client ?? client).requestOptions<ListNodeImagesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/nodes/{id}/images',
@@ -109,7 +119,7 @@ export const getSystemApiNodesByIdImagesRequest = <ThrowOnError extends boolean 
 /**
  * Networks
  */
-export const getSystemApiNodesByIdNetworksRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdNetworksData, ThrowOnError>): HttpRequest<GetSystemApiNodesByIdNetworksResponse> => (options?.client ?? client).requestOptions<GetSystemApiNodesByIdNetworksResponse, ThrowOnError>({
+export const listNodeNetworksRequest = <ThrowOnError extends boolean = false>(options: Options<ListNodeNetworksData, ThrowOnError>): HttpRequest<ListNodeNetworksResponse> => (options?.client ?? client).requestOptions<ListNodeNetworksResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/nodes/{id}/networks',
@@ -119,7 +129,7 @@ export const getSystemApiNodesByIdNetworksRequest = <ThrowOnError extends boolea
 /**
  * Volumes
  */
-export const getSystemApiNodesByIdVolumesRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiNodesByIdVolumesData, ThrowOnError>): HttpRequest<GetSystemApiNodesByIdVolumesResponse> => (options?.client ?? client).requestOptions<GetSystemApiNodesByIdVolumesResponse, ThrowOnError>({
+export const listNodeVolumesRequest = <ThrowOnError extends boolean = false>(options: Options<ListNodeVolumesData, ThrowOnError>): HttpRequest<ListNodeVolumesResponse> => (options?.client ?? client).requestOptions<ListNodeVolumesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/nodes/{id}/volumes',
@@ -129,7 +139,7 @@ export const getSystemApiNodesByIdVolumesRequest = <ThrowOnError extends boolean
 /**
  * Overview
  */
-export const getSystemApiOverviewRequest = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiOverviewData, ThrowOnError>): HttpRequest<GetSystemApiOverviewResponse> => (options?.client ?? client).requestOptions<GetSystemApiOverviewResponse, ThrowOnError>({
+export const getOverviewRequest = <ThrowOnError extends boolean = false>(options?: Options<GetOverviewData, ThrowOnError>): HttpRequest<GetOverviewResponse> => (options?.client ?? client).requestOptions<GetOverviewResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/overview',
@@ -139,7 +149,7 @@ export const getSystemApiOverviewRequest = <ThrowOnError extends boolean = false
 /**
  * Configs
  */
-export const getSystemApiSwarmConfigsRequest = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmConfigsData, ThrowOnError>): HttpRequest<GetSystemApiSwarmConfigsResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmConfigsResponse, ThrowOnError>({
+export const listSwarmConfigsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmConfigsData, ThrowOnError>): HttpRequest<ListSwarmConfigsResponse> => (options?.client ?? client).requestOptions<ListSwarmConfigsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/configs',
@@ -149,7 +159,7 @@ export const getSystemApiSwarmConfigsRequest = <ThrowOnError extends boolean = f
 /**
  * Config
  */
-export const getSystemApiSwarmConfigsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiSwarmConfigsByIdData, ThrowOnError>): HttpRequest<GetSystemApiSwarmConfigsByIdResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmConfigsByIdResponse, ThrowOnError>({
+export const getSwarmConfigRequest = <ThrowOnError extends boolean = false>(options: Options<GetSwarmConfigData, ThrowOnError>): HttpRequest<GetSwarmConfigResponse> => (options?.client ?? client).requestOptions<GetSwarmConfigResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/configs/{id}',
@@ -159,7 +169,7 @@ export const getSystemApiSwarmConfigsByIdRequest = <ThrowOnError extends boolean
 /**
  * Nodes
  */
-export const getSystemApiSwarmNodesRequest = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmNodesData, ThrowOnError>): HttpRequest<GetSystemApiSwarmNodesResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmNodesResponse, ThrowOnError>({
+export const listSwarmNodesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmNodesData, ThrowOnError>): HttpRequest<ListSwarmNodesResponse> => (options?.client ?? client).requestOptions<ListSwarmNodesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/nodes',
@@ -169,7 +179,7 @@ export const getSystemApiSwarmNodesRequest = <ThrowOnError extends boolean = fal
 /**
  * Node
  */
-export const getSystemApiSwarmNodesByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiSwarmNodesByIdData, ThrowOnError>): HttpRequest<GetSystemApiSwarmNodesByIdResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmNodesByIdResponse, ThrowOnError>({
+export const getSwarmNodeRequest = <ThrowOnError extends boolean = false>(options: Options<GetSwarmNodeData, ThrowOnError>): HttpRequest<GetSwarmNodeResponse> => (options?.client ?? client).requestOptions<GetSwarmNodeResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/nodes/{id}',
@@ -179,7 +189,7 @@ export const getSystemApiSwarmNodesByIdRequest = <ThrowOnError extends boolean =
 /**
  * Secrets
  */
-export const getSystemApiSwarmSecretsRequest = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmSecretsData, ThrowOnError>): HttpRequest<GetSystemApiSwarmSecretsResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmSecretsResponse, ThrowOnError>({
+export const listSwarmSecretsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmSecretsData, ThrowOnError>): HttpRequest<ListSwarmSecretsResponse> => (options?.client ?? client).requestOptions<ListSwarmSecretsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/secrets',
@@ -189,7 +199,7 @@ export const getSystemApiSwarmSecretsRequest = <ThrowOnError extends boolean = f
 /**
  * Services
  */
-export const getSystemApiSwarmServicesRequest = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiSwarmServicesData, ThrowOnError>): HttpRequest<GetSystemApiSwarmServicesResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmServicesResponse, ThrowOnError>({
+export const listSwarmServicesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListSwarmServicesData, ThrowOnError>): HttpRequest<ListSwarmServicesResponse> => (options?.client ?? client).requestOptions<ListSwarmServicesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/services',
@@ -199,7 +209,7 @@ export const getSystemApiSwarmServicesRequest = <ThrowOnError extends boolean = 
 /**
  * Service
  */
-export const getSystemApiSwarmServicesByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiSwarmServicesByIdData, ThrowOnError>): HttpRequest<GetSystemApiSwarmServicesByIdResponse> => (options?.client ?? client).requestOptions<GetSystemApiSwarmServicesByIdResponse, ThrowOnError>({
+export const getSwarmServiceRequest = <ThrowOnError extends boolean = false>(options: Options<GetSwarmServiceData, ThrowOnError>): HttpRequest<GetSwarmServiceResponse> => (options?.client ?? client).requestOptions<GetSwarmServiceResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/services/{id}',
@@ -237,6 +247,16 @@ export const getTargetInstallScriptRequest = <ThrowOnError extends boolean = fal
 });
 
 /**
+ * The image each slot type keeps warm, by slot type
+ */
+export const listWarmImagesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListWarmImagesData, ThrowOnError>): HttpRequest<ListWarmImagesResponse> => (options?.client ?? client).requestOptions<ListWarmImagesResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/system/api/targets/warm-images',
+    ...options
+});
+
+/**
  * Decommission a target: retire its runner, give its credentials back
  */
 export const deleteTargetRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteTargetData, ThrowOnError>): HttpRequest<DeleteTargetResponse> => (options?.client ?? client).requestOptions<DeleteTargetResponse, ThrowOnError>({
@@ -257,7 +277,7 @@ export const getTargetRequest = <ThrowOnError extends boolean = false>(options: 
 });
 
 /**
- * Change a target's description or reservations
+ * Change a target's description, reservations or maximums
  */
 export const patchTargetRequest = <ThrowOnError extends boolean = false>(options: Options<PatchTargetData, ThrowOnError>): HttpRequest<PatchTargetResponse> => (options?.client ?? client).requestOptions<PatchTargetResponse, ThrowOnError>({
     responseStyle: 'data',
@@ -407,6 +427,18 @@ export const registerTargetRequest = <ThrowOnError extends boolean = false>(opti
 });
 
 /**
+ * Whether subject is target id's live registration token's subject
+ *
+ * For a service with its own idp client (qits-network-access) to ask without attempting a registration itself. Never answers what the stored subject is.
+ */
+export const checkTargetRegistrationRequest = <ThrowOnError extends boolean = false>(options: Options<CheckTargetRegistrationData, ThrowOnError>): HttpRequest<CheckTargetRegistrationResponse> => (options?.client ?? client).requestOptions<CheckTargetRegistrationResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/system/api/targets/{id}/registration-check',
+    ...options
+});
+
+/**
  * Replace a target's registration token; answers a new install line
  *
  * Registered or not: a registered target keeps its client, and its runner keeps working, until a runner installed with the new token registers. The body is optional.
@@ -463,7 +495,7 @@ export const submitTargetSignInCodeRequest = <ThrowOnError extends boolean = fal
 /**
  * List
  */
-export const getSystemApiTerminalsRequest = <ThrowOnError extends boolean = false>(options?: Options<GetSystemApiTerminalsData, ThrowOnError>): HttpRequest<GetSystemApiTerminalsResponse> => (options?.client ?? client).requestOptions<GetSystemApiTerminalsResponse, ThrowOnError>({
+export const listTerminalsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListTerminalsData, ThrowOnError>): HttpRequest<ListTerminalsResponse> => (options?.client ?? client).requestOptions<ListTerminalsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/terminals',
@@ -473,7 +505,7 @@ export const getSystemApiTerminalsRequest = <ThrowOnError extends boolean = fals
 /**
  * Open
  */
-export const postSystemApiTerminalsRequest = <ThrowOnError extends boolean = false>(options: Options<PostSystemApiTerminalsData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const openTerminalRequest = <ThrowOnError extends boolean = false>(options: Options<OpenTerminalData, ThrowOnError>): HttpRequest<OpenTerminalResponse> => (options?.client ?? client).requestOptions<OpenTerminalResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/system/api/terminals',
@@ -483,7 +515,7 @@ export const postSystemApiTerminalsRequest = <ThrowOnError extends boolean = fal
 /**
  * Close
  */
-export const deleteSystemApiTerminalsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<DeleteSystemApiTerminalsByIdData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const closeTerminalRequest = <ThrowOnError extends boolean = false>(options: Options<CloseTerminalData, ThrowOnError>): HttpRequest<CloseTerminalResponse> => (options?.client ?? client).requestOptions<CloseTerminalResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'DELETE',
     url: '/system/api/terminals/{id}',
@@ -493,7 +525,7 @@ export const deleteSystemApiTerminalsByIdRequest = <ThrowOnError extends boolean
 /**
  * Get
  */
-export const getSystemApiTerminalsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetSystemApiTerminalsByIdData, ThrowOnError>): HttpRequest<GetSystemApiTerminalsByIdResponse> => (options?.client ?? client).requestOptions<GetSystemApiTerminalsByIdResponse, ThrowOnError>({
+export const getTerminalRequest = <ThrowOnError extends boolean = false>(options: Options<GetTerminalData, ThrowOnError>): HttpRequest<GetTerminalResponse> => (options?.client ?? client).requestOptions<GetTerminalResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/terminals/{id}',
@@ -527,7 +559,7 @@ export const createLeaseResource = <ThrowOnError extends boolean = false>(option
 });
 
 /**
- * End a lease: ENDING, then ENDED once the runner reports it gone. An operator (qits:admin, qits:admin-agent, qits:desk-admin) ends any lease, and an ENDING one at once
+ * End a lease: ENDING, then ENDED once the runner reports it gone; a QUEUED, EXITED or FAILED one at once, and so one on a target with no runner connected. An operator (qits:admin, qits:admin-agent, qits:desk-admin) ends any lease, and an ENDING one at once
  */
 export const endLeaseResource = <ThrowOnError extends boolean = false>(options: () => Options<EndLeaseData, ThrowOnError> | undefined) => httpResource<EndLeaseResponse>(() => {
     const opts = options ? options() : undefined;
@@ -551,6 +583,14 @@ export const leaseLogsResource = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
+ * Refresh a RUNNING lease: its generation is raised by one and the runner recreates its container, keeping its work volume, so it picks up what the runner decides only at create (its resolvers). Its owner refreshes its own; an operator (qits:admin, qits:admin-agent, qits:desk-admin) any lease, audited
+ */
+export const refreshLeaseResource = <ThrowOnError extends boolean = false>(options: () => Options<RefreshLeaseData, ThrowOnError> | undefined) => httpResource<RefreshLeaseResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? refreshLeaseRequest(opts) : undefined;
+});
+
+/**
  * Roll a lease: the runner recreates its container
  */
 export const replaceLeaseSpecResource = <ThrowOnError extends boolean = false>(options: () => Options<ReplaceLeaseSpecData, ThrowOnError> | undefined) => httpResource<ReplaceLeaseSpecResponse>(() => {
@@ -561,113 +601,113 @@ export const replaceLeaseSpecResource = <ThrowOnError extends boolean = false>(o
 /**
  * Containers
  */
-export const getSystemApiNodesByIdContainersResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiNodesByIdContainersData, ThrowOnError> | undefined) => httpResource<GetSystemApiNodesByIdContainersResponse>(() => {
+export const listNodeContainersResource = <ThrowOnError extends boolean = false>(options: () => Options<ListNodeContainersData, ThrowOnError> | undefined) => httpResource<ListNodeContainersResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiNodesByIdContainersRequest(opts) : undefined;
+    return opts ? listNodeContainersRequest(opts) : undefined;
 });
 
 /**
  * Container
  */
-export const getSystemApiNodesByIdContainersByCidResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiNodesByIdContainersByCidData, ThrowOnError> | undefined) => httpResource<GetSystemApiNodesByIdContainersByCidResponse>(() => {
+export const getNodeContainerResource = <ThrowOnError extends boolean = false>(options: () => Options<GetNodeContainerData, ThrowOnError> | undefined) => httpResource<GetNodeContainerResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiNodesByIdContainersByCidRequest(opts) : undefined;
+    return opts ? getNodeContainerRequest(opts) : undefined;
 });
 
 /**
  * Logs
  */
-export const getSystemApiNodesByIdContainersByCidLogsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiNodesByIdContainersByCidLogsData, ThrowOnError> | undefined) => httpResource<GetSystemApiNodesByIdContainersByCidLogsResponse>(() => {
+export const getContainerLogsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetContainerLogsData, ThrowOnError> | undefined) => httpResource<GetContainerLogsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiNodesByIdContainersByCidLogsRequest(opts) : undefined;
+    return opts ? getContainerLogsRequest(opts) : undefined;
 });
 
 /**
  * Images
  */
-export const getSystemApiNodesByIdImagesResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiNodesByIdImagesData, ThrowOnError> | undefined) => httpResource<GetSystemApiNodesByIdImagesResponse>(() => {
+export const listNodeImagesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListNodeImagesData, ThrowOnError> | undefined) => httpResource<ListNodeImagesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiNodesByIdImagesRequest(opts) : undefined;
+    return opts ? listNodeImagesRequest(opts) : undefined;
 });
 
 /**
  * Networks
  */
-export const getSystemApiNodesByIdNetworksResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiNodesByIdNetworksData, ThrowOnError> | undefined) => httpResource<GetSystemApiNodesByIdNetworksResponse>(() => {
+export const listNodeNetworksResource = <ThrowOnError extends boolean = false>(options: () => Options<ListNodeNetworksData, ThrowOnError> | undefined) => httpResource<ListNodeNetworksResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiNodesByIdNetworksRequest(opts) : undefined;
+    return opts ? listNodeNetworksRequest(opts) : undefined;
 });
 
 /**
  * Volumes
  */
-export const getSystemApiNodesByIdVolumesResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiNodesByIdVolumesData, ThrowOnError> | undefined) => httpResource<GetSystemApiNodesByIdVolumesResponse>(() => {
+export const listNodeVolumesResource = <ThrowOnError extends boolean = false>(options: () => Options<ListNodeVolumesData, ThrowOnError> | undefined) => httpResource<ListNodeVolumesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiNodesByIdVolumesRequest(opts) : undefined;
+    return opts ? listNodeVolumesRequest(opts) : undefined;
 });
 
 /**
  * Overview
  */
-export const getSystemApiOverviewResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetSystemApiOverviewData, ThrowOnError> | undefined) => httpResource<GetSystemApiOverviewResponse>(() => {
+export const getOverviewResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetOverviewData, ThrowOnError> | undefined) => httpResource<GetOverviewResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiOverviewRequest(opts) : undefined;
+    return opts ? getOverviewRequest(opts) : undefined;
 });
 
 /**
  * Configs
  */
-export const getSystemApiSwarmConfigsResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetSystemApiSwarmConfigsData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmConfigsResponse>(() => {
+export const listSwarmConfigsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListSwarmConfigsData, ThrowOnError> | undefined) => httpResource<ListSwarmConfigsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmConfigsRequest(opts) : undefined;
+    return opts ? listSwarmConfigsRequest(opts) : undefined;
 });
 
 /**
  * Config
  */
-export const getSystemApiSwarmConfigsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiSwarmConfigsByIdData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmConfigsByIdResponse>(() => {
+export const getSwarmConfigResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSwarmConfigData, ThrowOnError> | undefined) => httpResource<GetSwarmConfigResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmConfigsByIdRequest(opts) : undefined;
+    return opts ? getSwarmConfigRequest(opts) : undefined;
 });
 
 /**
  * Nodes
  */
-export const getSystemApiSwarmNodesResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetSystemApiSwarmNodesData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmNodesResponse>(() => {
+export const listSwarmNodesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListSwarmNodesData, ThrowOnError> | undefined) => httpResource<ListSwarmNodesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmNodesRequest(opts) : undefined;
+    return opts ? listSwarmNodesRequest(opts) : undefined;
 });
 
 /**
  * Node
  */
-export const getSystemApiSwarmNodesByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiSwarmNodesByIdData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmNodesByIdResponse>(() => {
+export const getSwarmNodeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSwarmNodeData, ThrowOnError> | undefined) => httpResource<GetSwarmNodeResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmNodesByIdRequest(opts) : undefined;
+    return opts ? getSwarmNodeRequest(opts) : undefined;
 });
 
 /**
  * Secrets
  */
-export const getSystemApiSwarmSecretsResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetSystemApiSwarmSecretsData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmSecretsResponse>(() => {
+export const listSwarmSecretsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListSwarmSecretsData, ThrowOnError> | undefined) => httpResource<ListSwarmSecretsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmSecretsRequest(opts) : undefined;
+    return opts ? listSwarmSecretsRequest(opts) : undefined;
 });
 
 /**
  * Services
  */
-export const getSystemApiSwarmServicesResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetSystemApiSwarmServicesData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmServicesResponse>(() => {
+export const listSwarmServicesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListSwarmServicesData, ThrowOnError> | undefined) => httpResource<ListSwarmServicesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmServicesRequest(opts) : undefined;
+    return opts ? listSwarmServicesRequest(opts) : undefined;
 });
 
 /**
  * Service
  */
-export const getSystemApiSwarmServicesByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiSwarmServicesByIdData, ThrowOnError> | undefined) => httpResource<GetSystemApiSwarmServicesByIdResponse>(() => {
+export const getSwarmServiceResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSwarmServiceData, ThrowOnError> | undefined) => httpResource<GetSwarmServiceResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiSwarmServicesByIdRequest(opts) : undefined;
+    return opts ? getSwarmServiceRequest(opts) : undefined;
 });
 
 /**
@@ -695,6 +735,14 @@ export const getTargetInstallScriptResource = <ThrowOnError extends boolean = fa
 });
 
 /**
+ * The image each slot type keeps warm, by slot type
+ */
+export const listWarmImagesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListWarmImagesData, ThrowOnError> | undefined) => httpResource<ListWarmImagesResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listWarmImagesRequest(opts) : undefined;
+});
+
+/**
  * Decommission a target: retire its runner, give its credentials back
  */
 export const deleteTargetResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteTargetData, ThrowOnError> | undefined) => httpResource<DeleteTargetResponse>(() => {
@@ -711,7 +759,7 @@ export const getTargetResource = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
- * Change a target's description or reservations
+ * Change a target's description, reservations or maximums
  */
 export const patchTargetResource = <ThrowOnError extends boolean = false>(options: () => Options<PatchTargetData, ThrowOnError> | undefined) => httpResource<PatchTargetResponse>(() => {
     const opts = options ? options() : undefined;
@@ -831,6 +879,16 @@ export const registerTargetResource = <ThrowOnError extends boolean = false>(opt
 });
 
 /**
+ * Whether subject is target id's live registration token's subject
+ *
+ * For a service with its own idp client (qits-network-access) to ask without attempting a registration itself. Never answers what the stored subject is.
+ */
+export const checkTargetRegistrationResource = <ThrowOnError extends boolean = false>(options: () => Options<CheckTargetRegistrationData, ThrowOnError> | undefined) => httpResource<CheckTargetRegistrationResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? checkTargetRegistrationRequest(opts) : undefined;
+});
+
+/**
  * Replace a target's registration token; answers a new install line
  *
  * Registered or not: a registered target keeps its client, and its runner keeps working, until a runner installed with the new token registers. The body is optional.
@@ -877,33 +935,33 @@ export const submitTargetSignInCodeResource = <ThrowOnError extends boolean = fa
 /**
  * List
  */
-export const getSystemApiTerminalsResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetSystemApiTerminalsData, ThrowOnError> | undefined) => httpResource<GetSystemApiTerminalsResponse>(() => {
+export const listTerminalsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListTerminalsData, ThrowOnError> | undefined) => httpResource<ListTerminalsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiTerminalsRequest(opts) : undefined;
+    return opts ? listTerminalsRequest(opts) : undefined;
 });
 
 /**
  * Open
  */
-export const postSystemApiTerminalsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostSystemApiTerminalsData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const openTerminalResource = <ThrowOnError extends boolean = false>(options: () => Options<OpenTerminalData, ThrowOnError> | undefined) => httpResource<OpenTerminalResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postSystemApiTerminalsRequest(opts) : undefined;
+    return opts ? openTerminalRequest(opts) : undefined;
 });
 
 /**
  * Close
  */
-export const deleteSystemApiTerminalsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<DeleteSystemApiTerminalsByIdData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const closeTerminalResource = <ThrowOnError extends boolean = false>(options: () => Options<CloseTerminalData, ThrowOnError> | undefined) => httpResource<CloseTerminalResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? deleteSystemApiTerminalsByIdRequest(opts) : undefined;
+    return opts ? closeTerminalRequest(opts) : undefined;
 });
 
 /**
  * Get
  */
-export const getSystemApiTerminalsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSystemApiTerminalsByIdData, ThrowOnError> | undefined) => httpResource<GetSystemApiTerminalsByIdResponse>(() => {
+export const getTerminalResource = <ThrowOnError extends boolean = false>(options: () => Options<GetTerminalData, ThrowOnError> | undefined) => httpResource<GetTerminalResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getSystemApiTerminalsByIdRequest(opts) : undefined;
+    return opts ? getTerminalRequest(opts) : undefined;
 });
 
 /**
