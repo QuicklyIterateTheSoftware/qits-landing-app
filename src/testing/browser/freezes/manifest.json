@@ -300,6 +300,10 @@
               "fullPath": "artifacts/repositories/:repo/daemons/:daemon"
             },
             {
+              "path": "repositories/:repo/maven-packages/:coordinate",
+              "fullPath": "artifacts/repositories/:repo/maven-packages/:coordinate"
+            },
+            {
               "path": "repositories/:repo/docs/:site",
               "fullPath": "artifacts/repositories/:repo/docs/:site"
             }
@@ -26044,7 +26048,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:mavenPackage",
+        "open-maven-package:mavenPackage",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -26229,7 +26233,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:mavenPackage",
+        "open-maven-package:mavenPackage",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -26772,7 +26776,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:mavenPackage",
+        "open-maven-package:mavenPackage",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -26957,7 +26961,7 @@
       "triggers": [
         "follow-breadcrumb:home",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:mavenPackage",
+        "open-maven-package:mavenPackage",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -46607,6 +46611,3110 @@
             "sizeBytes"
           ]
         }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+      "name": "download-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+      "name": "download-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+      "name": "download-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+      "name": "download-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+      "name": "download-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+      "name": "download-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says there is no such coordinate when the repository holds no version of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says there is no such coordinate when the repository holds no version of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says there is no such coordinate when the repository holds no version of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says there is no such coordinate when the repository holds no version of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says there is no such coordinate when the repository holds no version of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says there is no such coordinate when the repository holds no version of it",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a version without an SBOM as “—” when the coordinate has none (a 404)",
+      "name": "no-sbom",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a version without an SBOM as “—” when the coordinate has none (a 404)",
+      "name": "no-sbom",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a version without an SBOM as “—” when the coordinate has none (a 404)",
+      "name": "no-sbom",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a version without an SBOM as “—” when the coordinate has none (a 404)",
+      "name": "no-sbom",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a version without an SBOM as “—” when the coordinate has none (a 404)",
+      "name": "no-sbom",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a version without an SBOM as “—” when the coordinate has none (a 404)",
+      "name": "no-sbom",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says a repository of another type is not a Maven repository, linking its page",
+      "name": "not-a-maven-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "leave-maven-package:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says a repository of another type is not a Maven repository, linking its page",
+      "name": "not-a-maven-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "leave-maven-package:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says a repository of another type is not a Maven repository, linking its page",
+      "name": "not-a-maven-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says a repository of another type is not a Maven repository, linking its page",
+      "name": "not-a-maven-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says a repository of another type is not a Maven repository, linking its page",
+      "name": "not-a-maven-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "leave-maven-package:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says a repository of another type is not a Maven repository, linking its page",
+      "name": "not-a-maven-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "leave-maven-package:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+      "name": "package",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "getSbom"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+      "name": "package",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "getSbom"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+      "name": "package",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "getSbom"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+      "name": "package",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "getSbom"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+      "name": "package",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "getSbom"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+      "name": "package",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "getSbom"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when only the SBOM list fails, its column unknown, with Retry",
+      "name": "sbom-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when only the SBOM list fails, its column unknown, with Retry",
+      "name": "sbom-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when only the SBOM list fails, its column unknown, with Retry",
+      "name": "sbom-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when only the SBOM list fails, its column unknown, with Retry",
+      "name": "sbom-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when only the SBOM list fails, its column unknown, with Retry",
+      "name": "sbom-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when only the SBOM list fails, its column unknown, with Retry",
+      "name": "sbom-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "leave-maven-package:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-maven-package:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
       ]
     },
     {
@@ -269765,6 +272873,62 @@
       "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-tablet-dark.html",
       "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/untagged-tablet-light.html"
     ],
+    "artifacts/repositories/:repo/maven-packages/:coordinate": [
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/error-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/no-sbom-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/not-a-maven-repository-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-tablet-light.html"
+    ],
     "auth/callback": [
       "src/app/routes/auth-callback.page.browser.spec.ts/no-code-desktop-dark.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/no-code-desktop-light.html",
@@ -271465,7 +274629,7 @@
       {
         "route": "artifacts/repositories/:repo",
         "interaction": "open-artifacts-entry",
-        "outcome": "mavenPackage",
+        "outcome": "npmPackage",
         "kind": "external",
         "to": "artifacts",
         "global": false,
@@ -271474,10 +274638,10 @@
       },
       {
         "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "npmPackage",
-        "kind": "external",
-        "to": "artifacts",
+        "interaction": "open-maven-package",
+        "outcome": "mavenPackage",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo/maven-packages/:coordinate",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
@@ -271651,6 +274815,46 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "download-maven-sbom",
+        "outcome": "failed",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "download-maven-sbom",
+        "outcome": "saved",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "leave-maven-package",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "leave-maven-package",
+        "outcome": "repository",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.ts"
       },
       {
         "route": "auth/callback",
@@ -274218,20 +277422,20 @@
       },
       {
         "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
-        "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry mavenPackage: a row leaves for its page in the old explorer",
+        "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry npmPackage: an npm row leaves for its page in the old explorer",
         "route": "artifacts/repositories/:repo",
         "interaction": "open-artifacts-entry",
-        "outcome": "mavenPackage",
+        "outcome": "npmPackage",
         "kind": "external",
         "freeze": null
       },
       {
         "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
-        "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry npmPackage: a row leaves for its page in the old explorer",
+        "test": "ArtifactsRepositoryPage (screenshots) > open-maven-package mavenPackage: a coordinate row opens the coordinate’s page here",
         "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "npmPackage",
-        "kind": "external",
+        "interaction": "open-maven-package",
+        "outcome": "mavenPackage",
+        "kind": "exit",
         "freeze": null
       },
       {
@@ -274467,6 +277671,42 @@
         "outcome": "toggled",
         "kind": "stay",
         "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+        "test": "ArtifactsMavenPackagePage (screenshots) > leave-maven-package back: the back link opens the repository’s page",
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "leave-maven-package",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+        "test": "ArtifactsMavenPackagePage (screenshots) > leave-maven-package repository: a non-maven repository’s note opens its page",
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "leave-maven-package",
+        "outcome": "repository",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+        "test": "ArtifactsMavenPackagePage (screenshots) > says on its row that a version’s SBOM could not be downloaded",
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "download-maven-sbom",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/download-error-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+        "test": "ArtifactsMavenPackagePage (screenshots) > shows a coordinate’s versions newest first, an SBOM on one, and saves it",
+        "route": "artifacts/repositories/:repo/maven-packages/:coordinate",
+        "interaction": "download-maven-sbom",
+        "outcome": "saved",
+        "kind": "stay",
+        "freeze": "src/app/routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/package-desktop-light.html"
       },
       {
         "spec": "src/app/routes/auth-callback.page.browser.spec.ts",
