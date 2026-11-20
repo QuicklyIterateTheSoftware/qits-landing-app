@@ -156,9 +156,10 @@ describe('DocsReaderPage (screenshots)', () => {
     const opened = await open('@userflows/contract-userflows');
     const { version } = await markdown(opened, MARKDOWN);
     const view = page.elementLocator(opened.page);
+    // The page's own title; a story's `# …` is a level-1 heading too, inside the story.
     await expect
-      .element(view.getByRole('heading', { level: 1 }))
-      .toHaveTextContent('contract-userflows');
+      .element(view.getByRole('heading', { level: 1, name: 'contract-userflows', exact: true }))
+      .toBeVisible();
     expect(stories(opened)).toEqual([
       'README.md',
       'alpha/first-story/user-story.md',
