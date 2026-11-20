@@ -107521,6 +107521,1632 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > draws an apidocs site’s OpenAPI document with swagger-ui, without Try it out",
+      "name": "apidocs",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > draws an apidocs site’s OpenAPI document with swagger-ui, without Try it out",
+      "name": "apidocs",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > draws an apidocs site’s OpenAPI document with swagger-ui, without Try it out",
+      "name": "apidocs",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > draws an apidocs site’s OpenAPI document with swagger-ui, without Try it out",
+      "name": "apidocs",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > draws an apidocs site’s OpenAPI document with swagger-ui, without Try it out",
+      "name": "apidocs",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > draws an apidocs site’s OpenAPI document with swagger-ui, without Try it out",
+      "name": "apidocs",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published apidocs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > keeps one category’s stories at ?category=",
+      "name": "category",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > keeps one category’s stories at ?category=",
+      "name": "category",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > keeps one category’s stories at ?category=",
+      "name": "category",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > keeps one category’s stories at ?category=",
+      "name": "category",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > keeps one category’s stories at ?category=",
+      "name": "category",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > keeps one category’s stories at ?category=",
+      "name": "category",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a changelog’s one page, with no chips and no legend",
+      "name": "changelog",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a changelog’s one page, with no chips and no legend",
+      "name": "changelog",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a changelog’s one page, with no chips and no legend",
+      "name": "changelog",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a changelog’s one page, with no chips and no legend",
+      "name": "changelog",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a changelog’s one page, with no chips and no legend",
+      "name": "changelog",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a changelog’s one page, with no chips and no legend",
+      "name": "changelog",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a repository with published changelogs",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/contracts-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
       "test": "DocsReaderPage (screenshots) > hands a contracts site to its repository’s Contracts page",
@@ -108541,6 +110167,434 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > hands a routes site to its repository’s UI builder",
+      "name": "routes",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog naming contract repositories",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-docs-handoff:builder",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > hands a routes site to its repository’s UI builder",
+      "name": "routes",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog naming contract repositories",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-docs-handoff:builder",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > hands a routes site to its repository’s UI builder",
+      "name": "routes",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog naming contract repositories",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-docs-handoff:builder",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > hands a routes site to its repository’s UI builder",
+      "name": "routes",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog naming contract repositories",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-docs-handoff:builder",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > hands a routes site to its repository’s UI builder",
+      "name": "routes",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog naming contract repositories",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-docs-handoff:builder",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > hands a routes site to its repository’s UI builder",
+      "name": "routes",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs catalog naming contract repositories",
+          "operationId": "listDocsSites"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with 3 repositories",
+          "operationId": "listProjectRepositories"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-docs-handoff:builder",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsSites",
+          "item": null,
+          "field": null,
+          "derived": [
+            "latestRepository"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/storybook-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
       "test": "DocsReaderPage (screenshots) > says Storybook is the docs app’s, and open-docs-handoff storybook leaves for it",
@@ -109196,6 +111250,1294 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version-menu-agents",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version-menu-agents",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+      "name": "unknown-version",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site/-/:version",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "leave-docs-site:newest",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-docs-site:docs",
+        "open-project-settings:open",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+      "test": "DocsReaderPage (screenshots) > reads a userflows site’s newest of main in place: every story, the legend and a diagram",
+      "name": "userflows",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/docs/read/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsFile"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "getDocsVersion"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a published markdown docs bundle",
+          "operationId": "listDocsVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "leave-docs-site:docs",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work",
+        "pick-docs-version:version"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#getDocsVersion",
+          "item": null,
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -283145,6 +286487,24 @@
       "src/app/routes/projects/[slug]/docs/project-docs.page.browser.spec.ts/populated-tablet-light.html"
     ],
     "projects/:slug/docs/read/:site": [
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/apidocs-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/category-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/changelog-tablet-light.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/contracts-desktop-dark.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/contracts-desktop-light.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/contracts-phone-dark.html",
@@ -283163,6 +286523,12 @@
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/loading-phone-light.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/loading-tablet-dark.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/routes-tablet-light.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/storybook-desktop-dark.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/storybook-desktop-light.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/storybook-phone-dark.html",
@@ -283174,7 +286540,25 @@
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-phone-dark.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-phone-light.html",
       "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-tablet-dark.html",
-      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-tablet-light.html"
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-tablet-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/userflows-tablet-light.html"
+    ],
+    "projects/:slug/docs/read/:site/-/:version": [
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-phone-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-phone-light.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-tablet-dark.html",
+      "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts/unknown-version-tablet-light.html"
     ],
     "projects/:slug/docs/repositories/:repo": [
       "src/app/routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page.browser.spec.ts/empty-desktop-dark.html",
@@ -288037,10 +291421,28 @@
       },
       {
         "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+        "test": "DocsReaderPage (screenshots) > open-docs-handoff builder: the hand-off opens the repository’s UI builder",
+        "route": "projects/:slug/docs/read/:site",
+        "interaction": "open-docs-handoff",
+        "outcome": "builder",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
         "test": "DocsReaderPage (screenshots) > open-docs-handoff contracts: the hand-off opens the repository’s Contracts page",
         "route": "projects/:slug/docs/read/:site",
         "interaction": "open-docs-handoff",
         "outcome": "contracts",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+        "test": "DocsReaderPage (screenshots) > pick-docs-version version: a Branch pick reads that branch’s newest, keeping the category",
+        "route": "projects/:slug/docs/read/:site",
+        "interaction": "pick-docs-version",
+        "outcome": "version",
         "kind": "exit",
         "freeze": null
       },
@@ -288051,6 +291453,15 @@
         "interaction": "open-docs-handoff",
         "outcome": "storybook",
         "kind": "external",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/docs/read/[site]/docs-reader.page.browser.spec.ts",
+        "test": "DocsReaderPage (screenshots) > says the site has no such version, linking its newest (leave-docs-site newest)",
+        "route": "projects/:slug/docs/read/:site/-/:version",
+        "interaction": "leave-docs-site",
+        "outcome": "newest",
+        "kind": "exit",
         "freeze": null
       },
       {
