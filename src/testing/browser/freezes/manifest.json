@@ -286,6 +286,10 @@
             {
               "path": "repositories/:repo/images/:image",
               "fullPath": "artifacts/repositories/:repo/images/:image"
+            },
+            {
+              "path": "repositories/:repo/daemons/:daemon",
+              "fullPath": "artifacts/repositories/:repo/daemons/:daemon"
             }
           ]
         },
@@ -21497,7 +21501,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:daemon",
+        "open-artifact-daemon:daemon",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -21690,7 +21694,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:daemon",
+        "open-artifact-daemon:daemon",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -21882,7 +21886,7 @@
         }
       ],
       "triggers": [
-        "open-artifacts-entry:daemon",
+        "open-artifact-daemon:daemon",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -22070,7 +22074,7 @@
         }
       ],
       "triggers": [
-        "open-artifacts-entry:daemon",
+        "open-artifact-daemon:daemon",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -22259,7 +22263,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:daemon",
+        "open-artifact-daemon:daemon",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -22452,7 +22456,7 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
-        "open-artifacts-entry:daemon",
+        "open-artifact-daemon:daemon",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -29799,6 +29803,2244 @@
           "field": "name",
           "derived": []
         }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > shows a daemon’s versions, newest first, each with its size and digest",
+      "name": "daemon",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > shows a daemon’s versions, newest first, each with its size and digest",
+      "name": "daemon",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > shows a daemon’s versions, newest first, each with its size and digest",
+      "name": "daemon",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "leave-artifact-daemon:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > shows a daemon’s versions, newest first, each with its size and digest",
+      "name": "daemon",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "leave-artifact-daemon:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > shows a daemon’s versions, newest first, each with its size and digest",
+      "name": "daemon",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > shows a daemon’s versions, newest first, each with its size and digest",
+      "name": "daemon",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+      "name": "download-failed",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+      "name": "download-failed",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+      "name": "download-failed",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "leave-artifact-daemon:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+      "name": "download-failed",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "leave-artifact-daemon:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+      "name": "download-failed",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+      "name": "download-failed",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon with two versions",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "download-artifact-daemon:started",
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "digest"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": "version=2026.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a daemon with no versions has none here, as an unknown one would",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon nothing has published",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a daemon with no versions has none here, as an unknown one would",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon nothing has published",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a daemon with no versions has none here, as an unknown one would",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon nothing has published",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a daemon with no versions has none here, as an unknown one would",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon nothing has published",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a daemon with no versions has none here, as an unknown one would",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon nothing has published",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a daemon with no versions has none here, as an unknown one would",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a daemon nothing has published",
+          "operationId": "listDaemonVersions"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDaemonVersions",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a repository of another type is not a daemon repository, linking its page",
+      "name": "not-a-daemon-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "leave-artifact-daemon:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a repository of another type is not a daemon repository, linking its page",
+      "name": "not-a-daemon-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "leave-artifact-daemon:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a repository of another type is not a daemon repository, linking its page",
+      "name": "not-a-daemon-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a repository of another type is not a daemon repository, linking its page",
+      "name": "not-a-daemon-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a repository of another type is not a daemon repository, linking its page",
+      "name": "not-a-daemon-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "leave-artifact-daemon:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says a repository of another type is not a daemon repository, linking its page",
+      "name": "not-a-daemon-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "leave-artifact-daemon:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "leave-artifact-daemon:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+      "test": "ArtifactsDaemonPage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/daemons/:daemon",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
       ]
     },
     {
@@ -253909,6 +256151,50 @@
       "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts/unknown-repository-tablet-dark.html",
       "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts/unknown-repository-tablet-light.html"
     ],
+    "artifacts/repositories/:repo/daemons/:daemon": [
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/daemon-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/error-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/not-a-daemon-repository-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-tablet-light.html"
+    ],
     "artifacts/repositories/:repo/images/:image": [
       "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-light.html",
@@ -255590,20 +257876,20 @@
       },
       {
         "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifact-image",
-        "outcome": "image",
+        "interaction": "open-artifact-daemon",
+        "outcome": "daemon",
         "kind": "exit",
-        "to": "artifacts/repositories/:repo/images/:image",
+        "to": "artifacts/repositories/:repo/daemons/:daemon",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
       },
       {
         "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "daemon",
-        "kind": "external",
-        "to": "artifacts",
+        "interaction": "open-artifact-image",
+        "outcome": "image",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo/images/:image",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
@@ -255647,6 +257933,36 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/daemons/:daemon",
+        "interaction": "download-artifact-daemon",
+        "outcome": "started",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/daemons/:daemon",
+        "interaction": "leave-artifact-daemon",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/daemons/:daemon",
+        "interaction": "leave-artifact-daemon",
+        "outcome": "repository",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.ts"
       },
       {
         "route": "artifacts/repositories/:repo/images/:image",
@@ -258179,20 +260495,20 @@
       },
       {
         "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
-        "test": "ArtifactsRepositoryPage (screenshots) > open-artifact-image image: an image row opens the image’s page here",
+        "test": "ArtifactsRepositoryPage (screenshots) > open-artifact-daemon daemon: a daemon row opens the daemon’s page here",
         "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifact-image",
-        "outcome": "image",
+        "interaction": "open-artifact-daemon",
+        "outcome": "daemon",
         "kind": "exit",
         "freeze": null
       },
       {
         "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
-        "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry daemon: a row leaves for its page in the old explorer",
+        "test": "ArtifactsRepositoryPage (screenshots) > open-artifact-image image: an image row opens the image’s page here",
         "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "daemon",
-        "kind": "external",
+        "interaction": "open-artifact-image",
+        "outcome": "image",
+        "kind": "exit",
         "freeze": null
       },
       {
@@ -258227,6 +260543,33 @@
         "test": "ArtifactsRepositoryPage (screenshots) > switch-artifacts-repository repository: a store repository in the switcher opens its page",
         "route": "artifacts/repositories/:repo",
         "interaction": "switch-artifacts-repository",
+        "outcome": "repository",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+        "test": "ArtifactsDaemonPage (screenshots) > download-artifact-daemon started: a version fetches its bytes on the daemon wire",
+        "route": "artifacts/repositories/:repo/daemons/:daemon",
+        "interaction": "download-artifact-daemon",
+        "outcome": "started",
+        "kind": "stay",
+        "freeze": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/download-failed-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+        "test": "ArtifactsDaemonPage (screenshots) > leave-artifact-daemon back: the back link opens the repository’s page",
+        "route": "artifacts/repositories/:repo/daemons/:daemon",
+        "interaction": "leave-artifact-daemon",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts",
+        "test": "ArtifactsDaemonPage (screenshots) > leave-artifact-daemon repository: a non-daemon repository’s note opens its page",
+        "route": "artifacts/repositories/:repo/daemons/:daemon",
+        "interaction": "leave-artifact-daemon",
         "outcome": "repository",
         "kind": "exit",
         "freeze": null
