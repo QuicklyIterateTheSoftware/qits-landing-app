@@ -38,6 +38,7 @@
                 "inject": false
               }
             ],
+            "allowedCommonJsDependencies": ["swagger-ui-dist/swagger-ui-es-bundle.js"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
