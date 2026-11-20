@@ -15,7 +15,15 @@ import {
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
 import { asDatabaseIndex, type DatabaseIndex } from '$core/contracts/database-diagram';
+import {
+  categoriesOf,
+  markdownParts,
+  openapiPathOf,
+  storyPages,
+  storyTitle,
+} from '$core/docs/bundle-files';
 import { docBlocks, publishedBy } from '$core/docs/doc-sections';
+import { defaultVersion, distinctBranches, versionsOnBranch } from '$core/docs/doc-versions';
 import { contractsSiteOf, type ContractsSite, type ContractsSites } from './contracts-catalog';
 import { literalDocsPaths } from './docs-paths';
 import {
@@ -1072,6 +1080,299 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         const sites = (await at(server.url, () => catalogRead())) ?? [];
         expect(docBlocks(publishedBy(sites, 'qits-ci-service'))).toEqual([]);
       }),
+    );
+  });
+}
+
+{
+  /**
+   * qits-landing-app's pact with qits-artifacts-service, the docs reader's part (qits-2337,
+   * `DocsReaderPage`): it owns `listDocsVersions`', `getDocsVersion`'s and `getDocsFile`'s
+   * interactions for `show-docs-site`. The reader reads a site's versions (`DOCS_VERSIONS`), the
+   * version's file list (`DOCS_VERSION`) and each file it draws (`DOCS_FILE`, as text, or an image
+   * by its address), all on the public docs store; never qits-docs-service.
+   *
+   * Against qits-artifacts' recordings of `a published markdown docs bundle` (`@userflows/…`, two
+   * versions on `main` and another branch; the newest holds two categories, an uncategorized story,
+   * a `README.md`, a `mermaid` fence and a relative `screenshot.png`), `a published markdown docs
+   * bundle image` (that png), `a published apidocs bundle` (`openapi.yml`, which the store labels
+   * `application/octet-stream`), `a repository with published changelogs` (`CHANGELOG.md`) and `no
+   * docs bundle published for the coordinate` (the 404s of an unknown site and version). A file
+   * binds its status and media type only (`NonJsonResponse`): Pact sniffs Markdown and YAML as
+   * `text/plain`, so a bound body would fail at the provider. A path from a provider state matches
+   * any path, so each test adds one interaction. A state the installed golden masters do not hold
+   * yet skips its interactions, until qits-maintenance bumps `@qits/artifacts-golden-masters`.
+   */
+  const CONSUMER = 'qits-landing-app';
+  const PROVIDER = 'qits-artifacts-service';
+  const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+  const SLUG: InteractionSlug = 'show-docs-site';
+  const OPERATIONS: readonly OwnedOperation[] = [
+    'listDocsVersions',
+    'getDocsVersion',
+    'getDocsFile',
+  ].map((operationId) => ({ operationId, interactions: [SLUG] }));
+
+  const MARKDOWN = 'a published markdown docs bundle';
+  const IMAGE = 'a published markdown docs bundle image';
+  const APIDOCS = 'a published apidocs bundle';
+  const CHANGELOG = 'a repository with published changelogs';
+  const MISSING = 'no docs bundle published for the coordinate';
+
+  /** Whether the installed golden masters record `operationId` in `state`. */
+  const recorded = (state: string, operationId: string) => {
+    try {
+      masters.operation(state, operationId);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const params = (state: string, operationId: string) =>
+    masters.operation(state, operationId).params;
+
+  /** The site and version of `state`'s `operationId`; a changelog names its repository. */
+  const siteOf = (state: string, operationId: string) => {
+    const p = params(state, operationId);
+    return {
+      site: p['site'] ?? `@changelog/${p['repository']}`,
+      version:
+        p['version'] ??
+        masters.body<DocsVersions>(state, 'listDocsVersions').versions?.[0]?.version ??
+        '',
+      path: p['path'] ?? 'CHANGELOG.md',
+    };
+  };
+
+  let dir = '';
+  let pact: PactV4;
+
+  const given = (state: string, operationId: string, response?: NonJsonResponse) =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state,
+      operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: SLUG },
+      // An error answer binds its status only.
+      consumes:
+        state === MISSING
+          ? []
+          : operationId === 'listDocsVersions'
+            ? LIST_DOCS_VERSIONS
+            : operationId === 'getDocsVersion'
+              ? GET_DOCS_VERSION
+              : GET_DOCS_FILE,
+      response,
+    });
+
+  /** Runs `call` against the mock server at `url`, in an injection context. */
+  function at<T>(url: string, call: () => Promise<T>): Promise<T> {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PLATFORM_ID, useValue: 'server' },
+        provideHttpClient(withFetch()),
+        provideHeyApiClient(artifactsClient),
+      ],
+    });
+    artifactsClient.setConfig({ baseUrl: url });
+    return TestBed.runInInjectionContext(call);
+  }
+
+  /** The reader's reads, each answered or failed with its status. */
+  const versionsRead = (site: string) =>
+    DOCS_VERSIONS.fetch({ path: { ...DOCS, site } }).then(({ data, error, response }) => ({
+      data: error === undefined ? data : undefined,
+      status: response?.status,
+    }));
+  const versionRead = (site: string, version: string) =>
+    DOCS_VERSION.fetch({ path: { ...DOCS, site, version } }).then(({ data, error, response }) => ({
+      data: error === undefined ? data : undefined,
+      status: response?.status,
+    }));
+  const AS_TEXT = { responseType: 'text' } as const;
+  const AS_BLOB = { responseType: 'blob' } as const;
+  const textRead = (site: string, version: string, path: string) =>
+    DOCS_FILE.fetch({ path: { ...DOCS, site, version, path }, ...AS_TEXT }).then(
+      ({ data, error, response }) => ({
+        text: error === undefined ? (data as unknown) : undefined,
+        status: response?.status,
+      }),
+    );
+
+  describe('qits-landing-app → qits-artifacts-service pact: the docs reader', () => {
+    beforeAll(() => {
+      dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-reader-pact-'));
+      pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
+    });
+
+    afterAll(() => {
+      artifactsClient.setConfig({ baseUrl: '' });
+      try {
+        assertPactPart(
+          join(dir, `${CONSUMER}-${PROVIDER}.json`),
+          COMMITTED,
+          OPERATIONS,
+          'QITS_GOLDEN_UPDATE',
+        );
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    });
+
+    it.skipIf(!recorded(MARKDOWN, 'listDocsVersions'))(
+      'show-docs-site: lists a userflows site’s versions, the newest of main first to read',
+      () =>
+        given(MARKDOWN, 'listDocsVersions').executeTest(async (server) => {
+          const { site } = siteOf(MARKDOWN, 'listDocsVersions');
+          const read = await at(server.url, () => versionsRead(site));
+          const versions = read.data?.versions ?? [];
+          expect(versions).toEqual(
+            masters.body<DocsVersions>(MARKDOWN, 'listDocsVersions').versions,
+          );
+          expect(defaultVersion(versions)).toBe(versions[0]?.version);
+          const branches = distinctBranches(versions);
+          expect(branches).toContain('main');
+          expect(branches.length).toBeGreaterThan(1);
+          expect(versionsOnBranch(versions, 'main').length).toBeLessThan(versions.length);
+        }),
+    );
+
+    it.skipIf(!recorded(MARKDOWN, 'getDocsVersion'))(
+      'show-docs-site: lists the version’s Markdown pages, by category',
+      () =>
+        given(MARKDOWN, 'getDocsVersion').executeTest(async (server) => {
+          const { site, version } = siteOf(MARKDOWN, 'getDocsVersion');
+          const read = await at(server.url, () => versionRead(site, version));
+          const pages = storyPages(read.data?.files ?? []);
+          expect(pages.length).toBeGreaterThan(1);
+          expect(categoriesOf(pages).length).toBeGreaterThan(1);
+          expect(pages.some((page) => !page.category)).toBe(true);
+        }),
+    );
+
+    it.skipIf(!recorded(MARKDOWN, 'getDocsFile'))(
+      'show-docs-site: reads a story as text, its diagram apart from its text',
+      () =>
+        given(MARKDOWN, 'getDocsFile', { contentType: 'text/markdown' }).executeTest(
+          async (server) => {
+            const { site, version, path } = siteOf(MARKDOWN, 'getDocsFile');
+            const read = await at(server.url, () => textRead(site, version, path));
+            expect(read.status).toBe(200);
+            // No example body bound: the recording's own text is what the reader makes of it.
+            const recordedText = masters.text(MARKDOWN, 'getDocsFile');
+            expect(markdownParts(recordedText).some((part) => part.kind === 'mermaid')).toBe(true);
+            expect(storyTitle(recordedText, 'x')).not.toBe('x');
+          },
+        ),
+    );
+
+    it.skipIf(!recorded(IMAGE, 'getDocsFile'))(
+      'show-docs-site: reads a story’s relative image beside it',
+      () =>
+        given(IMAGE, 'getDocsFile', { contentType: 'image/png' }).executeTest(async (server) => {
+          const { site, version, path } = siteOf(IMAGE, 'getDocsFile');
+          const { response, error } = await at(server.url, () =>
+            DOCS_FILE.fetch({ path: { ...DOCS, site, version, path }, ...AS_BLOB }),
+          );
+          expect(error).toBeUndefined();
+          expect(response?.status).toBe(200);
+        }),
+    );
+
+    it.skipIf(!recorded(APIDOCS, 'listDocsVersions'))(
+      'show-docs-site: lists an apidocs site’s versions',
+      () =>
+        given(APIDOCS, 'listDocsVersions').executeTest(async (server) => {
+          const { site } = siteOf(APIDOCS, 'listDocsVersions');
+          const read = await at(server.url, () => versionsRead(site));
+          expect(defaultVersion(read.data?.versions ?? [])).toBe(
+            siteOf(APIDOCS, 'getDocsFile').version,
+          );
+        }),
+    );
+
+    it.skipIf(!recorded(APIDOCS, 'getDocsVersion'))(
+      'show-docs-site: finds the version’s OpenAPI document',
+      () =>
+        given(APIDOCS, 'getDocsVersion').executeTest(async (server) => {
+          const { site, version } = siteOf(APIDOCS, 'getDocsVersion');
+          const read = await at(server.url, () => versionRead(site, version));
+          expect(openapiPathOf(read.data?.files ?? [])).toBe(siteOf(APIDOCS, 'getDocsFile').path);
+        }),
+    );
+
+    it.skipIf(!recorded(APIDOCS, 'getDocsFile'))(
+      'show-docs-site: reads the OpenAPI document as text, whatever its media type',
+      () =>
+        given(APIDOCS, 'getDocsFile', { contentType: 'application/octet-stream' }).executeTest(
+          async (server) => {
+            const { site, version, path } = siteOf(APIDOCS, 'getDocsFile');
+            const read = await at(server.url, () => textRead(site, version, path));
+            expect(read.status).toBe(200);
+            expect(typeof read.text).toBe('string');
+          },
+        ),
+    );
+
+    it.skipIf(!recorded(CHANGELOG, 'listDocsVersions'))(
+      'show-docs-site: lists a changelog’s versions',
+      () =>
+        given(CHANGELOG, 'listDocsVersions').executeTest(async (server) => {
+          const { site } = siteOf(CHANGELOG, 'listDocsVersions');
+          const read = await at(server.url, () => versionsRead(site));
+          expect(defaultVersion(read.data?.versions ?? [])).toBe(
+            siteOf(CHANGELOG, 'getDocsFile').version,
+          );
+        }),
+    );
+
+    it.skipIf(!recorded(CHANGELOG, 'getDocsVersion'))(
+      'show-docs-site: lists a changelog version’s one file',
+      () =>
+        given(CHANGELOG, 'getDocsVersion').executeTest(async (server) => {
+          const { site, version } = siteOf(CHANGELOG, 'getDocsVersion');
+          const read = await at(server.url, () => versionRead(site, version));
+          const pages = storyPages(read.data?.files ?? []);
+          expect(pages.map((page) => page.path)).toEqual(['CHANGELOG.md']);
+          expect(categoriesOf(pages)).toEqual([]);
+        }),
+    );
+
+    it.skipIf(!recorded(CHANGELOG, 'getDocsFile'))(
+      'show-docs-site: reads a changelog’s one page as text',
+      () =>
+        given(CHANGELOG, 'getDocsFile', { contentType: 'text/markdown' }).executeTest(
+          async (server) => {
+            const { site, version, path } = siteOf(CHANGELOG, 'getDocsFile');
+            const read = await at(server.url, () => textRead(site, version, path));
+            expect(read.status).toBe(200);
+            expect(storyPages([path])).toHaveLength(1);
+          },
+        ),
+    );
+
+    it.skipIf(!recorded(MISSING, 'listDocsVersions'))(
+      'show-docs-site: an unknown site answers 404',
+      () =>
+        given(MISSING, 'listDocsVersions').executeTest(async (server) => {
+          const read = await at(server.url, () =>
+            versionsRead(siteOf(MISSING, 'getDocsVersion').site),
+          );
+          expect(read.status).toBe(404);
+          expect(read.data).toBeUndefined();
+        }),
+    );
+
+    it.skipIf(!recorded(MISSING, 'getDocsVersion'))(
+      'show-docs-site: an unknown version answers 404',
+      () =>
+        given(MISSING, 'getDocsVersion').executeTest(async (server) => {
+          const { site, version } = siteOf(MISSING, 'getDocsVersion');
+          const read = await at(server.url, () => versionRead(site, version));
+          expect(read.status).toBe(404);
+          expect(read.data).toBeUndefined();
+        }),
     );
   });
 }

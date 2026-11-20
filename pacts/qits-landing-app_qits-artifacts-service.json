@@ -3046,6 +3046,286 @@
           },
           "qits-trigger": {
             "app": "qits-landing-app",
+            "interaction": "show-docs-site",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-docs-site: getDocsFile",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with published changelogs",
+          "params": {
+            "repository": "contract-repository",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/@changelog/${repository}/-/${version}/CHANGELOG.md",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@changelog/contract-repository/-/2100.1.0/CHANGELOG.md"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": [
+            "text/markdown; charset=utf-8"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "text/markdown.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsVersion"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-docs-site",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-docs-site: getDocsVersion",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no docs bundle published for the coordinate",
+          "params": {
+            "path": "index.html",
+            "site": "contract-docs-site",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}/-/${version}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/contract-docs-site/-/2100.1.0"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-docs-site",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-docs-site: listDocsVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with published changelogs",
+          "params": {
+            "repository": "contract-repository",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/@changelog/${repository}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/@changelog/contract-repository"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "versions": [
+              {
+                "metadata": {
+                  "git.branch.name": "main"
+                },
+                "version": "2100.1.0"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.versions[*].metadata['git.branch.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsVersions"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-docs-site",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-docs-site: listDocsVersions",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no docs bundle published for the coordinate",
+          "params": {
+            "path": "index.html",
+            "site": "contract-docs-site",
+            "version": "2100.1.0"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/artifacts/docs/docs/${site}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/artifacts/docs/docs/contract-docs-site"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "getDocsFile"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
             "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
