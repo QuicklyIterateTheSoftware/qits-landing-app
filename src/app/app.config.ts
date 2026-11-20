@@ -22,6 +22,7 @@ import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as observabilityClient } from './api/observability/client.gen';
+import { client as orchestratorClient } from './api/orchestrator/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { client as systemClient } from './api/system/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
@@ -55,6 +56,7 @@ const CLIENTS = [
   [artifactsClient, 'artifacts'],
   [observabilityClient, 'observability'],
   [deploymentsClient, 'deployments'],
+  [orchestratorClient, 'orchestrator'],
 ] as const satisfies readonly (readonly [unknown, PlatformApp])[];
 
 /**
@@ -106,6 +108,7 @@ export const appConfig: ApplicationConfig = {
     provideHeyApiClient(artifactsClient),
     provideHeyApiClient(observabilityClient),
     provideHeyApiClient(deploymentsClient),
+    provideHeyApiClient(orchestratorClient),
     provideHeyApiClient(edgeClient),
     provideBackendOrigins(),
     // A `qitsResource`'s `refreshOn` (qits-2145) reads the app's one live stream (qits-1270): the

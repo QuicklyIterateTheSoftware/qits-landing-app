@@ -19,6 +19,7 @@ import {
   idpGoldenMasters,
   maintenanceGoldenMasters,
   observabilityGoldenMasters,
+  orchestratorGoldenMasters,
   projectsGoldenMasters,
   systemGoldenMasters,
   workspaceDaemonGoldenMasters,
@@ -60,6 +61,10 @@ const READERS = {
   'qits-deployments': pactedGoldenMasters(
     deploymentsGoldenMasters,
     pactWith('qits-deployments-service'),
+  ),
+  'qits-orchestrator': pactedGoldenMasters(
+    orchestratorGoldenMasters,
+    pactWith('qits-orchestrator-service'),
   ),
   // The one reader no pact of this app gates (qits-2044): the sign-in's code swap (`issueToken`)
   // is `@qits/angular`'s `QitsTokens` calling the idp through `QITS_SIGN_IN_FETCH`, not a store of
