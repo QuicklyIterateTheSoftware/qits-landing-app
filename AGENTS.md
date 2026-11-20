@@ -623,8 +623,8 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the metrics, slow spans and traces
-pages come as their own children later); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (the slow spans and traces pages
+come as their own children later); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
@@ -649,6 +649,18 @@ ported from the old `error-group.ts`), expanding to its spans (stack trace inclu
 row's Error logs opens `observability/logs?source=…&level=ERROR` (`open-telemetry-error-logs`); the
 trace id is text until a trace page exists. No recording holds an uncorrelated group, an empty
 list or a truncated answer, so those are the page's plain spec's, derived from the recorded group.
+`observability/metrics` (`ObservabilityMetricsPage`, qits-2340, the retired frontend's `metrics`)
+reads `TELEMETRY_METRICS` (`listTelemetryMetrics`) by `source` alone, never before a source is
+chosen: one latest point per series and no history, which the page says, so nothing is charted over
+time and no points are gathered across reads. One card per metric name, sorted by name; a name with
+two or more series is a bar per series (sorted by the series key `name|k=v|k=v`, labelled by its
+attributes and value, its length the value over the card's largest; series are never summed), one
+series is its value as a large figure; the type (GAUGE, COUNTER) is shown, never drawn by. The
+grouping, bar geometry and value formatting (`By` in binary units, integers as integers, six
+significant digits, exponential under 1e-4; `unitGloss`) are `core/observability/metric-series.ts`,
+ported from the old `metric-series.ts`. `?name=` narrows the cards by a case-insensitive substring
+in the browser; the door's own exact `name` is never sent. No recording holds a name with several
+series, so the bars are the page's plain spec's, derived from the recorded series.
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,

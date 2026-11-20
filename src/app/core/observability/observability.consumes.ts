@@ -1,5 +1,6 @@
 import type {
   ListTelemetryErrorsResponses,
+  ListTelemetryMetricsResponses,
   ListTelemetrySourcesResponses,
   SearchTelemetryLogsResponses,
 } from '../../api/observability';
@@ -61,6 +62,22 @@ export const LIST_TELEMETRY_ERRORS = [
   'truncated',
 ] as const;
 
+/**
+ * `listTelemetryMetrics` (qits-2340): one latest point per series, each with its metric's name,
+ * description, unit and type, its value, when it was stamped, the service that reported it and its
+ * attributes (read whole: the series' identity beside the name, keyed with dots).
+ */
+export const LIST_TELEMETRY_METRICS = [
+  'metrics[].name',
+  'metrics[].description',
+  'metrics[].unit',
+  'metrics[].type',
+  'metrics[].value',
+  'metrics[].epochNanos',
+  'metrics[].serviceName',
+  'metrics[].attributes',
+] as const;
+
 /** The buffer's sources, cut to what the picker reads. */
 export type TelemetrySources = Consumed<
   ListTelemetrySourcesResponses[200],
@@ -89,3 +106,12 @@ export type TelemetryErrorSpan = NonNullable<TelemetryErrorGroup['errorSpans']>[
 
 /** One error log of a group. */
 export type TelemetryErrorLog = NonNullable<TelemetryErrorGroup['errorLogs']>[number];
+
+/** A source's metric series, cut to what the metrics page reads. */
+export type TelemetryMetrics = Consumed<
+  ListTelemetryMetricsResponses[200],
+  typeof LIST_TELEMETRY_METRICS
+>;
+
+/** One metric series at its latest point. */
+export type TelemetryMetricPoint = NonNullable<TelemetryMetrics['metrics']>[number];

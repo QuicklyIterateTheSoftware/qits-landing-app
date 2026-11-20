@@ -159,6 +159,12 @@ export const INTERACTIONS = {
   'open-telemetry-error-logs':
     'Error logs on an error group opens the Logs page at that source’s ERROR lines',
   /**
+   * `observability-metrics.page.ts` via `TELEMETRY_METRICS` (qits-2340): the Metrics page shows the
+   * chosen source's buffered metric series, the latest value of each, one card per metric name.
+   */
+  'show-telemetry-metrics':
+    'The Metrics page shows the latest value of each of a source’s buffered metric series',
+  /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.
    */
@@ -1233,7 +1239,8 @@ export const INTERACTIONS = {
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
    * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
-   * one exit per page (qits-2313: Logs; qits-2339: Errors). Navigates only, and names no pact.
+   * one exit per page (qits-2313: Logs; qits-2339: Errors; qits-2340: Metrics). Navigates only,
+   * and names no pact.
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',

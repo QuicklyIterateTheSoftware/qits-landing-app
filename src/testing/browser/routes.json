@@ -1253,6 +1253,38 @@
       "route": "projects/:slug/observability/logs"
     }
   ],
+  "src/app/routes/projects/[slug]/observability/metrics/observability-metrics.page.browser.spec.ts": [
+    {
+      "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetryMetrics",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/observability/metrics"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/observability/metrics"
+    }
+  ],
   "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
