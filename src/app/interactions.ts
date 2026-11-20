@@ -165,6 +165,12 @@ export const INTERACTIONS = {
   'show-telemetry-metrics':
     'The Metrics page shows the latest value of each of a source’s buffered metric series',
   /**
+   * `observability-slow-spans.page.ts` via `TELEMETRY_SLOW_SPANS` (qits-2341): the Slow spans page
+   * shows the chosen source's buffered spans at or above a duration floor, slowest or newest first.
+   */
+  'show-telemetry-slow-spans':
+    'The Slow spans page shows a source’s buffered spans at or above a duration floor',
+  /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.
    */
@@ -1338,8 +1344,8 @@ export const INTERACTIONS = {
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
    * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
-   * one exit per page (qits-2313: Logs; qits-2339: Errors; qits-2340: Metrics). Navigates only,
-   * and names no pact.
+   * one exit per page (qits-2313: Logs; qits-2339: Errors; qits-2340: Metrics; qits-2341: Slow
+   * spans). Navigates only, and names no pact.
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',

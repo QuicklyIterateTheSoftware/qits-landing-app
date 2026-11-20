@@ -4,23 +4,25 @@ import type { HttpRequest } from '@angular/common/http';
 const SBOMS = '/artifacts/sboms/';
 
 /**
- * `url` with the SBOM store's `packageName` on the wire as the store reads it (qits-2326): `/` and
- * `@` literal, everything else percent-encoded.
+ * `url` with the SBOM store's `packageName` on the wire as the store reads it: `:`, `@` and `/`
+ * literal, everything else as the client encoded it (qits-2325).
  *
  * The generated client percent-encodes every path parameter whole (`encodeURIComponent`), and
- * ignores the spec's `allowReserved`. The store keys a scoped npm package by its name as written:
- * `%40contract%2Fcontract-scoped` names no package and answers 404, `@contract/contract-scoped`
- * is the package. So the client's encoding is kept and only `%2F` and `%40` are turned back, as
- * `literalDocsUrl` does for the docs store. That is exact: `encodeURIComponent` writes `%2F` and
- * `%40` for `/` and `@` alone (a literal `%` becomes `%25`); the package type and the version hold
- * neither, and a maven coordinate's `:` stays `%3A`, as the store reads it.
+ * ignores the spec's `allowReserved`. The SBOM store is a Vert.x regex route over the raw path: a
+ * name is up to four `/`-separated segments of `@?[A-Za-z0-9][A-Za-z0-9._~:-]{0,127}`, so it
+ * answers `eu.wohlben.qits:qits-eventstream` and `@qits/angular` but 404s ("not a route this sbom
+ * store serves") on `eu.wohlben.qits%3Aqits-eventstream` and `%40qits%2Fangular`. So the client's
+ * encoding is kept and only `%3A`, `%40` and `%2F` are turned back. That is exact:
+ * `encodeURIComponent` writes those for `:`, `@` and `/` alone (a literal `%` becomes `%25`), and
+ * the package type and version segments hold none of them. The query is left as it is, and so is
+ * every other door: the `/artifacts/api/` versions door takes a coordinate encoded.
  */
 export function literalSbomUrl(url: string): string {
   const at = url.indexOf(SBOMS);
   if (at < 0) return url;
   const query = url.indexOf('?', at);
   const end = query < 0 ? url.length : query;
-  const path = url.slice(at, end).replace(/%2F/g, '/').replace(/%40/g, '@');
+  const path = url.slice(at, end).replace(/%3A/g, ':').replace(/%40/g, '@').replace(/%2F/g, '/');
   return url.slice(0, at) + path + url.slice(end);
 }
 

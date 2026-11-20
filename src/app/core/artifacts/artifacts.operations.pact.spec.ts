@@ -106,6 +106,12 @@ import { literalSbomPaths } from './sbom-paths';
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
  */
+// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325) and a scoped npm
+// name's `@` and `/` (qits-2326).
+if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
+  artifactsClient.interceptors.request.use(literalSbomPaths);
+}
+
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
@@ -145,12 +151,6 @@ const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_DOCS_VERSIONS,
   ARTIFACT_NPM_VERSIONS,
 ].map((op) => op.operationId);
-
-// The SBOM store reads a scoped npm name with `@` and `/` literal (qits-2326), as `app.config.ts`
-// rewrites it.
-if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
-  artifactsClient.interceptors.request.use(literalSbomPaths);
-}
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-store-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });

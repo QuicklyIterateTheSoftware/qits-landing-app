@@ -48,7 +48,8 @@ const PACKAGE_TYPE = 'maven';
  * One maven coordinate of a maven store (qits-2325), at
  * `/artifacts/repositories/<repo>/maven-packages/<coordinate>`: replaces qits-artifacts-frontend's
  * `repositories/:repo/maven-packages/:coordinate`, and adds what that page never showed, each
- * version's SBOM. The coordinate (`groupId:artifactId`) is one segment, encoded on the wire.
+ * version's SBOM. The coordinate (`groupId:artifactId`) is one segment: encoded on the wire to the
+ * versions door, with its `:` literal to the SBOM store (`literalSbomPaths`, `sbom-paths.ts`).
  *
  * **Load budget: 2 + 0.** `ARTIFACT_MAVEN_VERSIONS` (`listMavenVersionSummaries`) is the version
  * table; `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `maven` and the coordinate) says which of them

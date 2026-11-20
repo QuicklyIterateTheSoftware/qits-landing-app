@@ -10,11 +10,18 @@ import {
   provideAppRoute,
   type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
+import { client as artifactsClient } from '../../../../api/artifacts/client.gen';
+import { literalSbomPaths } from '$core/artifacts/sbom-paths';
 import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
 const STORE = 'a store holding one artifact of every kind';
 const EMPTY = 'a store with nothing published';
 const ARTIFACTS = 'qits-artifacts';
+
+// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325).
+if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
+  artifactsClient.interceptors.request.use(literalSbomPaths);
+}
 
 /** Each store repository the recordings seed, the listing its type reads, and what that lists. */
 const LISTINGS = {
@@ -293,7 +300,7 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
       .expectOne(`/artifacts/api/repositories/maven/maven-packages/${encoded}/versions`)
       .flush(await goldenMaster(STORE, 'listMavenVersionSummaries', ARTIFACTS));
     http
-      .expectOne(`/artifacts/sboms/maven/${encoded}`)
+      .expectOne(`/artifacts/sboms/maven/${coordinate}`)
       .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
   });

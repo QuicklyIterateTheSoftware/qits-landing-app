@@ -215,7 +215,9 @@ export const ARTIFACT_NPM_VERSIONS = qitsOperation({
 /**
  * One package's stored SBOMs (`listSbomVersions`, qits-2325), newest first, for any package type
  * (`maven`, the maven package page; `npm`, the npm package page, qits-2326): 404 when it has none.
- * A scoped npm name goes on the wire literally (`@qits/angular`; `literalSbomPaths`).
+ * The store reads `packageName` with `:`, `@` and `/` literal, which the generated client encodes:
+ * `literalSbomPaths` (`sbom-paths.ts`, qits-2325), which `app.config.ts` puts on the artifacts
+ * client, turns them back (a scoped npm name, `@qits/angular`, too).
  */
 export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
   provider: 'qits-artifacts-service',
@@ -227,8 +229,8 @@ export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
 
 /**
  * One release's CycloneDX document (`getSbom`, qits-2325; npm's too, qits-2326), read on a press
- * and saved as a file (`sbom-download.ts`); 404 when none is stored. A scoped npm name goes on the
- * wire literally, as for the list (`literalSbomPaths`).
+ * and saved as a file (`sbom-download.ts`); 404 when none is stored. Its `packageName` goes out
+ * literal, as the list's (`literalSbomPaths`).
  */
 export const ARTIFACT_SBOM = qitsOperation({
   provider: 'qits-artifacts-service',

@@ -64,7 +64,7 @@ describe('appConfig', () => {
     expect(fns.filter((fn) => fn === literalDocsPaths)).toHaveLength(1);
   });
 
-  it('puts the SBOM store’s path rewrite on the artifacts client, once (qits-2326)', () => {
+  it('puts the SBOM store’s path rewrite on the artifacts client, once', () => {
     TestBed.inject(QITS_SIGN_IN);
     const fns = artifactsClient.interceptors.request.fns;
     expect(fns.filter((fn) => fn === literalSbomPaths)).toHaveLength(1);

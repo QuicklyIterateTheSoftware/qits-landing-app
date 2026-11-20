@@ -19,7 +19,7 @@ const SCOPED = 'a scoped npm package with an sbom on one of two versions';
 const NPM = artifactsGoldenMasters.operation(SCOPED, 'getSbom').params;
 const NPM_DOCUMENT = artifactsGoldenMasters.text(SCOPED, 'getSbom');
 
-// The SBOM store reads a scoped name with `@` and `/` literal, as `app.config.ts` rewrites it.
+// As `app.config.ts` does: the SBOM store's paths, with `:`, `@` and `/` literal.
 if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
   artifactsClient.interceptors.request.use(literalSbomPaths);
 }
@@ -43,12 +43,13 @@ describe('sbom download (qits-2325, qits-2326)', () => {
 
   afterEach(() => http.verify());
 
-  /** The one SBOM read in flight, checked for its address and its text response type. */
+  /**
+   * The one SBOM read in flight, checked for its address (the coordinate's `:` literal, as the
+   * store's raw-path route needs it) and its text response type.
+   */
   async function pending() {
     await settle();
-    const request = http.expectOne(
-      `/artifacts/sboms/maven/${encodeURIComponent(COORDINATE)}/-/${VERSION}`,
-    );
+    const request = http.expectOne(`/artifacts/sboms/maven/${COORDINATE}/-/${VERSION}`);
     expect(request.request.responseType).toBe('text');
     return request;
   }

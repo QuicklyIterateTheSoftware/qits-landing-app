@@ -74,7 +74,8 @@ function provideBackendOrigins() {
     if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
       artifactsClient.interceptors.request.use(literalDocsPaths);
     }
-    // So does the SBOM store a scoped npm name (qits-2326, `sbom-paths.ts`).
+    // The SBOM store reads `packageName` with `:`, `@` and `/` literal, which the generated client
+    // encodes (qits-2325, `sbom-paths.ts`).
     if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
       artifactsClient.interceptors.request.use(literalSbomPaths);
     }

@@ -452,7 +452,12 @@ package type and name and the page's two stays as inputs), "CycloneDX <specVersi
 Download, or "—". Download (`download-maven-sbom`, `saved` / `failed` stays, a failure said on its
 row) reads `ARTIFACT_SBOM` (`getSbom`) as text through the generated client (the store wants the
 bearer, so no bare link) and saves it as `<artifactId>-<version>.cdx.json`,
-`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). SBOMs of
+`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). The SBOM store
+is a regex route over the raw path and 404s an encoded name (`eu.wohlben.qits%3Acontract-maven`,
+`%40qits%2Fangular`), so `app.config.ts` also puts `literalSbomPaths` (`core/artifacts/sbom-paths.ts`,
+qits-2325; the npm package page of qits-2326 relies on it for scoped names) on the artifacts client: `:`, `@` and `/` literal in `/artifacts/sboms/` wire URLs only (the
+`/artifacts/api/` versions door takes the coordinate encoded). The specs that read SBOMs register
+it as well and expect the literal URL, so an encoded one fails them. SBOMs of
 versions the store no longer holds are counted under the table. A 404 is "There is no repository
 called <repo> in this store", a 400 "<repo> is not a Maven repository" (linking its store page), an
 empty list "There is no Maven coordinate called <coordinate> in this repository"; "← <repo>" and the
@@ -490,10 +495,8 @@ decodes it). Two reads in parallel, nothing per row, and no `listRepositories`:
 `ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`, the name sent encoded, as this `/artifacts/api/`
 door takes it) and `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `npm` and the name; its 404 means
 "no SBOMs", not a failure, and any other failure keeps the table with its SBOM column "unknown" and
-a Retry). The SBOM store keys a scoped name as written and answers `%40qits%2Fangular` with a 404,
-so `literalSbomPaths` (`core/artifacts/sbom-paths.ts`, which `app.config.ts` puts on the artifacts
-client beside `literalDocsPaths`; specs reading a scoped name's SBOM put it on too) turns `%40` and
-`%2F` back on `/artifacts/sboms/` URLs. The header shows the name in monospace, its scope and own
+a Retry). Both SBOM reads send the scoped name literally (`@qits/angular`) through qits-2325's
+`literalSbomPaths` (above). The header shows the name in monospace, its scope and own
 name apart when scoped (`splitPackageName`), and "N versions · M with an SBOM"; the versions newest
 publish first (`newestPublishFirst`, a null `publishedAt` last), their dist-tags joined or "—", the
 tarball's size or "not measured" (never totalled, as a caption says: each tarball is a separate
@@ -713,8 +716,8 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the slow spans and traces pages
-come as their own children later); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (the traces page comes as its own
+child later); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
@@ -751,6 +754,20 @@ significant digits, exponential under 1e-4; `unitGloss`) are `core/observability
 ported from the old `metric-series.ts`. `?name=` narrows the cards by a case-insensitive substring
 in the browser; the door's own exact `name` is never sent. No recording holds a name with several
 series, so the bars are the page's plain spec's, derived from the recorded series.
+`observability/slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) reads `TELEMETRY_SLOW_SPANS`
+(`listSlowSpans`), never before a source is chosen, with three lenses in the query: `threshold`
+(the floor in ms: 500, the default and absent, 1000, 100, 10 or 0 "Any duration"; always sent as
+`thresholdMs`, so the default read is the source and `thresholdMs=500` alone), `sort=recent`
+(newest first, sent as `sort`; absent, slowest first, sends none) and `since` (→ `sinceMinutes`);
+never `limit`, `service` or `name`. One row per span in the door's order: its duration (ms under a
+second, else seconds with one decimal), name and kind, which call (`url.full`, else `http.route`),
+an ERROR chip and an exception marker (any event with `exception: true`), its start, its
+`service.version` and its trace id as text. A truncated answer says "Showing the slowest (newest)
+N of T matching spans". An empty one says why, in order: the source holds no spans (its source
+row's `spans` is 0), none reaches the floor (when above 0, offering Any duration), none falls in
+the time range (when set, offering Everything buffered). The formatting and the empty reason are
+`core/observability/slow-spans.ts`. The recording answers the default read only, so the other
+lenses, a truncated answer and the empty reasons are the page's plain spec's.
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,
