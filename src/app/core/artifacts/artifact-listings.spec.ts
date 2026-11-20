@@ -40,6 +40,8 @@ describe('artifact listings (qits-2316)', () => {
     expect(oldDetailHref('', 'qits', 'images', 'x')).toBe('');
     // An image opens this app's own image page (qits-2324), not the old explorer's.
     expect(oldDetailHref(origin, 'qits', 'images', 'x')).toBe('');
+    // A daemon opens this app's own daemon page (qits-2327), not the old explorer's.
+    expect(oldDetailHref(origin, 'daemons', 'daemons', 'x')).toBe('');
     expect(oldDetailHref(origin, 'ci-videos', 'records', 'x')).toBe('');
   });
 

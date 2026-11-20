@@ -2,6 +2,12 @@
   "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",
+      "state": "a daemon with two versions",
+      "operationId": "listDaemonVersions",
+      "route": "artifacts/repositories/:repo/daemons/:daemon"
+    },
+    {
+      "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
       "operationId": "listDaemons",
       "route": "artifacts/repositories/:repo"
@@ -63,6 +69,38 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store with nothing published",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a daemon nothing has published",
+      "operationId": "listDaemonVersions",
+      "route": "artifacts/repositories/:repo/daemons/:daemon"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a daemon with two versions",
+      "operationId": "listDaemonVersions",
+      "route": "artifacts/repositories/:repo/daemons/:daemon"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDaemons",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listRepositories",
       "route": "artifacts/repositories/:repo"
     }
