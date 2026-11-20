@@ -392,6 +392,31 @@ reads both doors in "a store holding one artifact of every kind" and "an image w
 tag names" (with its `listImages`), each list at its recorded count (one image's, which no other
 suite pushes), and in "a store with nothing published" by status only, as the empty listings above.
 
+`artifacts/repositories/<repo>/cleanup` (`ArtifactsCleanupPage`, qits-2329, the old explorer's
+`repositories/:repo/cleanup`) is what garbage collection would delete in one repository and what it
+keeps, each identity with the rule that decided it, and the Run. The store repository page's
+Cleanup leads there (`open-artifacts-cleanup`), "← <repo>" back (`leave-artifacts-cleanup`). One
+read, `ARTIFACTS_CLEANUP_PLAN` (`core/artifacts/cleanup.operations.ts`, qits-orchestrator's
+`planArtifactsCleanupRepository` on the `orchestrator` host: it reads the live pins and answers
+qits-artifacts' plan verbatim): the type, "Plan as of `generatedAt`", the configured rule, `note`,
+`error` (the type failed closed), "Not collected" for `strategy: null` (no figures, no lists), one
+line per pin source (`source · N pins | did not answer · took ms`, its `outcome` beneath),
+`pinFailures` when `executable` is false, the dead list with its count, reclaimable bytes and the
+grace window's and the structural notes, and the kept list collapsed (`toggle-artifacts-cleanup-kept`).
+The row-less pool (`untouchable`) is store-wide and not drawn. Run is drawn only when `executable`,
+`error === null` and the dead list is not empty (absent, never disabled); the first press asks
+(`ask-artifacts-cleanup-run`), the second sends `ARTIFACTS_CLEANUP_SWEEP` through `qitsMutation`
+with `offline: 'online-only'` (never queued, never sent again by itself; a failure asks again from
+the start), and the receipt (`patterns/artifacts/cleanup-receipt/`) replaces the plan
+(`sweep-artifacts-repository`). A failure says what is known (`explainRun`): a 4xx did not run and
+deleted nothing, in the service's words (409: a gc run is active; 403: not allowed); a 5xx or no
+answer brought no receipt, so re-read the plan. Re-read the plan (header, or under a receipt,
+`reread-artifacts-cleanup-plan`) drops the receipt and reads again. A 404 is "There is no repository
+called <repo> in this store", a 403 names the gc roles. No event follows the store. The pact reads
+both doors in "a repository the cleanup can plan" (`daemons`: one identity condemned, two kept, the
+figures zeroed; its sweep withholds it, deleting nothing); the plans no recording holds (nothing to
+delete, pins unread, not collected, failed closed, withheld figures) are the plain spec's, derived.
+
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
 (qits-network-access-frontend), served at `https://network-access.<domain>/` by
@@ -793,6 +818,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`                                                      | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

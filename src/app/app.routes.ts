@@ -124,6 +124,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * relative `redirectTo`.
  * `artifacts/repositories/<repo>/images/<image>` (`ArtifactsImagePage`, qits-2324) is one image of
  * an image store, its tags and manifests; the image name is one segment (`%2F` for a slash).
+ * `artifacts/repositories/<repo>/cleanup` (`ArtifactsCleanupPage`, qits-2329) is one repository's
+ * cleanup: its gc plan read through qits-orchestrator, and the Run that sweeps it.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -522,6 +524,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page').then(
                 (m) => m.ArtifactsImagePage,
+              ),
+          },
+          {
+            // One repository's cleanup (qits-2329): its gc plan through qits-orchestrator, and Run.
+            path: 'repositories/:repo/cleanup',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page').then(
+                (m) => m.ArtifactsCleanupPage,
               ),
           },
         ],

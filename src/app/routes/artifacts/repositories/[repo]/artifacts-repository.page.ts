@@ -92,6 +92,8 @@ interface ListingRead {
  * `PlatformOrigins.page('artifacts')` + `/repositories/<repo>/<packages|maven-packages|daemons|
  * docs>/<name>`, the name one segment (`oldDetailHref`), until the section's own detail pages
  * (qits-2325 to qits-2327) land. The ci records have no detail page, and no download here.
+ * Cleanup, beside the header line, opens the repository's cleanup page (`open-artifacts-cleanup`,
+ * `artifacts/repositories/:repo/cleanup`, `ArtifactsCleanupPage`, qits-2329).
  *
  * Marks (qits-2141): the header's row and each switcher entry are `listRepositories`' rows by
  * name; each table is its listing's read, each row an entry by its name (a record by its id).
@@ -127,6 +129,13 @@ interface ListingRead {
           >
             <ui-chip [label]="row.type ?? ''" [fieldOf]="row" qitsField="type" />
             <span [fieldOf]="row" [qitsField]="ledeMark">{{ lede(row) }}</span>
+            <a
+              class="ml-auto font-semibold text-accent no-underline hover:underline"
+              [qitsExit]="cleaning.cleanup"
+              [exitParams]="{ repo: repo() }"
+              data-cleanup
+              >Cleanup →</a
+            >
           </p>
         }
         <nav
@@ -765,6 +774,14 @@ export class ArtifactsRepositoryPage {
    */
   protected readonly imaging = outcomes('open-artifact-image', {
     image: exit('artifacts/repositories/:repo/images/:image'),
+  });
+
+  /**
+   * Cleanup: what collecting this repository would delete and keep, and the Run (qits-2329), on
+   * its cleanup page here.
+   */
+  protected readonly cleaning = outcomes('open-artifacts-cleanup', {
+    cleanup: exit('artifacts/repositories/:repo/cleanup'),
   });
 
   /**

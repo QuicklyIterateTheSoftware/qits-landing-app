@@ -526,6 +526,46 @@ export const INTERACTIONS = {
    */
   'toggle-image-digests': 'An image’s page shows its digests whole or shortened',
   /**
+   * `artifacts-repository.page.ts`: Cleanup opens the repository's cleanup page in this app,
+   * `artifacts/repositories/:repo/cleanup` (qits-2329). Navigates only, and names no pact.
+   */
+  'open-artifacts-cleanup': 'A store repository’s page opens its cleanup page',
+  /**
+   * `artifacts-cleanup.page.ts` via `ARTIFACTS_CLEANUP_PLAN` (qits-2329): the cleanup page reads
+   * the repository's collection plan through qits-orchestrator: what a run would delete and keep,
+   * each with its rule, the configured rule and how the run read the live pins.
+   */
+  'show-artifacts-cleanup-plan':
+    'A repository’s cleanup page shows what a cleanup would delete and keep, each with its rule',
+  /**
+   * `artifacts-cleanup.page.ts`: Re-read the plan (header, or under a receipt) reads the plan
+   * again, the same `ARTIFACTS_CLEANUP_PLAN` read as `show-artifacts-cleanup-plan`, and drops a
+   * receipt (qits-2329). The page stays.
+   */
+  'reread-artifacts-cleanup-plan': 'A repository’s cleanup page reads its plan again',
+  /**
+   * `artifacts-cleanup.page.ts`: the first press of Run asks for the second, naming what it would
+   * delete; Keep everything takes the question back (qits-2329). No request, and names no pact.
+   */
+  'ask-artifacts-cleanup-run': 'A cleanup page’s Run asks to be pressed again before it deletes',
+  /**
+   * `artifacts-cleanup.page.ts` via `ARTIFACTS_CLEANUP_SWEEP` (qits-2329): the second press sweeps
+   * the repository through qits-orchestrator, and its receipt replaces the plan; a refusal or a
+   * lost answer is said in its place. Never queued offline, never sent again by itself.
+   */
+  'sweep-artifacts-repository':
+    'The confirmed Run on a cleanup page sweeps the repository and shows the receipt',
+  /**
+   * `artifacts-cleanup.page.ts`: shows or hides the kept identities, each with the rule that kept
+   * it (qits-2329). Changes the page only: no request, and names no pact.
+   */
+  'toggle-artifacts-cleanup-kept': 'A cleanup page shows or hides what a cleanup would keep',
+  /**
+   * `artifacts-cleanup.page.ts`: the back link opens the repository's store page (qits-2329).
+   * Navigates only, and names no pact.
+   */
+  'leave-artifacts-cleanup': 'A cleanup page leads back to its repository',
+  /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).
    */
