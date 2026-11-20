@@ -1388,7 +1388,9 @@
         {
           "name": "an empty telemetry buffer",
           "params": {
-            "authorization": "Bearer qits_tok_contract-telemetry"
+            "authorization": "Bearer qits_tok_contract-telemetry",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
           }
         }
       ],
