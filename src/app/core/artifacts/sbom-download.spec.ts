@@ -14,7 +14,12 @@ const COORDINATE = params['packageName'];
 const VERSION = params['version'];
 const DOCUMENT = artifactsGoldenMasters.text(STATE, 'getSbom');
 
-// As `app.config.ts` does: the SBOM store's paths, with `:` literal.
+/** qits-artifacts' scoped npm package with an SBOM on its newer version (qits-2326). */
+const SCOPED = 'a scoped npm package with an sbom on one of two versions';
+const NPM = artifactsGoldenMasters.operation(SCOPED, 'getSbom').params;
+const NPM_DOCUMENT = artifactsGoldenMasters.text(SCOPED, 'getSbom');
+
+// As `app.config.ts` does: the SBOM store's paths, with `:`, `@` and `/` literal.
 if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
   artifactsClient.interceptors.request.use(literalSbomPaths);
 }
@@ -22,7 +27,7 @@ if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-describe('sbom download (qits-2325)', () => {
+describe('sbom download (qits-2325, qits-2326)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
@@ -68,6 +73,24 @@ describe('sbom download (qits-2325)', () => {
     expect(file?.name).toBe('contract-maven-2100.2.0.cdx.json');
     expect(file?.blob.type).toBe(SBOM_MEDIA_TYPE);
     expect(await file?.blob.text()).toBe(DOCUMENT);
+  });
+
+  it('reads a scoped npm package’s document, its name literal on the wire (qits-2326)', async () => {
+    const reading = TestBed.runInInjectionContext(() =>
+      fetchSbomFile('npm', NPM['packageName'], NPM['version']),
+    );
+    await settle();
+    // `@` and `/` as written: the store answers `%40contract%2Fcontract-scoped` with a 404.
+    const request = http.expectOne('/artifacts/sboms/npm/@contract/contract-scoped/-/2100.2.0');
+    expect(request.request.urlWithParams).not.toMatch(/%40|%2F/);
+    expect(request.request.responseType).toBe('text');
+    request.flush(NPM_DOCUMENT, {
+      headers: { 'Content-Type': 'application/vnd.cyclonedx+json; version=1.6' },
+    });
+    const file = await reading;
+    expect(file?.name).toBe('contract-scoped-2100.2.0.cdx.json');
+    expect(file?.blob.type).toBe(SBOM_MEDIA_TYPE);
+    expect(await file?.blob.text()).toBe(NPM_DOCUMENT);
   });
 
   it('makes no file when the read fails', async () => {

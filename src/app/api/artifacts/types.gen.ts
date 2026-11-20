@@ -358,6 +358,10 @@ export type ListNpmPackagesResponse = {
     packages?: Array<PackageSummary>;
 };
 
+export type ListNpmVersionsResponse = {
+    versions?: Array<PackageVersionSummary>;
+};
+
 export type ListRepositoriesResponse = {
     repositories?: Array<RepositorySummary>;
 };
@@ -383,6 +387,14 @@ export type PackageSummary = {
     name?: string;
     versionCount?: number;
     latest?: string;
+};
+
+export type PackageVersionSummary = {
+    version?: string;
+    tarballSizeBytes?: number;
+    publishedAt?: Instant;
+    accessedAt?: Instant;
+    distTags?: Array<string>;
 };
 
 export type PurgedPackage = {
@@ -1612,6 +1624,36 @@ export type ListNpmPackagesResponses = {
 };
 
 export type ListNpmPackagesResponse2 = ListNpmPackagesResponses[keyof ListNpmPackagesResponses];
+
+export type ListNpmVersionSummariesData = {
+    body?: never;
+    path: {
+        package: string;
+        repo: string;
+    };
+    query?: never;
+    url: '/artifacts/api/repositories/{repo}/packages/{package}/versions';
+};
+
+export type ListNpmVersionSummariesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListNpmVersionSummariesResponses = {
+    /**
+     * OK
+     */
+    200: ListNpmVersionsResponse;
+};
+
+export type ListNpmVersionSummariesResponse = ListNpmVersionSummariesResponses[keyof ListNpmVersionSummariesResponses];
 
 export type GetStoreSummaryData = {
     body?: never;

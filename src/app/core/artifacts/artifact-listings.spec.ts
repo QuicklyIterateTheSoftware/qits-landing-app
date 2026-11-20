@@ -5,7 +5,6 @@ import {
   metadataLine,
   newestPublishFirst,
   newestPushFirst,
-  oldDetailHref,
   orphanSbomCount,
   plural,
   publishedFrom,
@@ -14,6 +13,7 @@ import {
   shortDigest,
   sortedFiles,
   splitCoordinate,
+  splitPackageName,
   untaggedCount,
 } from './artifact-listings';
 
@@ -30,24 +30,6 @@ describe('artifact listings (qits-2316)', () => {
     [undefined, undefined],
   ])('reads %s through the %s listing', (type, kind) => {
     expect(listingOf(type)).toBe(kind);
-  });
-
-  // Only an npm package still opens the old explorer (until qits-2326).
-  it('links a row to its page in the old explorer, the name one segment', () => {
-    const origin = 'https://registry.example.test';
-    expect(oldDetailHref(origin, 'npm', 'npm', '@qits/angular')).toBe(
-      'https://registry.example.test/repositories/npm/packages/%40qits%2Fangular',
-    );
-    expect(oldDetailHref('', 'qits', 'images', 'x')).toBe('');
-    // An image opens this app's own image page (qits-2324), not the old explorer's.
-    expect(oldDetailHref(origin, 'qits', 'images', 'x')).toBe('');
-    // A maven coordinate opens this app's own maven package page (qits-2325).
-    expect(oldDetailHref(origin, 'maven', 'maven', 'eu.wohlben.qits:x')).toBe('');
-    // A daemon opens this app's own daemon page (qits-2327), not the old explorer's.
-    expect(oldDetailHref(origin, 'daemons', 'daemons', 'x')).toBe('');
-    // A docs site opens this app's own docs site page (qits-2328), not the old explorer's.
-    expect(oldDetailHref(origin, 'docs', 'docs', '@routes/qits-landing')).toBe('');
-    expect(oldDetailHref(origin, 'ci-videos', 'records', 'x')).toBe('');
   });
 
   it('counts with the noun the type counts, and sizes in binary units', () => {
@@ -123,6 +105,14 @@ describe('artifact listings (qits-2316)', () => {
     expect(splitCoordinate('bare')).toEqual({ groupId: '', artifactId: 'bare' });
   });
 
+  it('splits a scoped npm name into its scope and its own name (qits-2326)', () => {
+    expect(splitPackageName('@contract/contract-scoped')).toEqual({
+      scope: '@contract',
+      name: 'contract-scoped',
+    });
+    expect(splitPackageName('contract-package')).toEqual({ scope: '', name: 'contract-package' });
+  });
+
   it('orders versions newest publish first, then the higher version, one without a publish last', () => {
     const versions = [
       { version: '2100.9.0', publishedAt: '2026-01-01T00:00:00Z' },
@@ -137,6 +127,12 @@ describe('artifact listings (qits-2316)', () => {
       'old',
     ]);
     expect(versions[0].version).toBe('2100.9.0');
+    // An npm version whose publish was not recorded answers null (qits-2326): last too.
+    const npm = [
+      { version: '1.0.0', publishedAt: null },
+      { version: '2.0.0', publishedAt: '2026-01-01T00:00:00Z' },
+    ];
+    expect(newestPublishFirst(npm).map((v) => v.version)).toEqual(['2.0.0', '1.0.0']);
   });
 
   it('sorts file names, whichever order the store answers them in', () => {

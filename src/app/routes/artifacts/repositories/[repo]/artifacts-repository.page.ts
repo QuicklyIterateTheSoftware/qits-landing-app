@@ -11,15 +11,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
   exit,
-  external,
   outcomes,
   QitsEntity,
   QitsEntityList,
   QitsExit,
   QitsField,
   qitsResource,
-  QitsTriggers,
-  type ExternalOutcome,
 } from '@qits/angular';
 import { map } from 'rxjs';
 import {
@@ -27,7 +24,6 @@ import {
   itemNoun,
   listingOf,
   metadataLine,
-  oldDetailHref,
   plural,
   searched,
   type ListingKind,
@@ -50,7 +46,6 @@ import {
   ARTIFACT_RECORDS,
   ARTIFACT_REPOSITORIES,
 } from '$core/artifacts/artifacts.operations';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -92,11 +87,10 @@ interface ListingRead {
  * qits-2325), a daemon's name its page here (`open-artifact-daemon`,
  * `artifacts/repositories/:repo/daemons/:daemon`, `ArtifactsDaemonPage`, qits-2327), and a docs
  * site's name its page here (`open-artifact-docs-site`, `artifacts/repositories/:repo/docs/:site`,
- * `ArtifactsDocsSitePage`, qits-2328), the name one segment. Only an npm package's name still
- * opens its detail page in the old explorer (`open-artifacts-entry`, `external('artifacts')`, same
- * tab), at `PlatformOrigins.page('artifacts')` + `/repositories/<repo>/packages/<name>`, the name
- * one segment (`oldDetailHref`), until the section's own npm package page (qits-2326) lands. The
- * ci records have no detail page, and no download here.
+ * `ArtifactsDocsSitePage`, qits-2328), and an npm package's name its page here
+ * (`open-npm-package`, `artifacts/repositories/:repo/packages/:package`, `ArtifactsNpmPackagePage`,
+ * qits-2326), the name one segment. No row leaves for the old explorer any more. The ci records
+ * have no detail page, and no download here.
  * Cleanup, beside the header line, opens the repository's cleanup page (`open-artifacts-cleanup`,
  * `artifacts/repositories/:repo/cleanup`, `ArtifactsCleanupPage`, qits-2329).
  *
@@ -118,7 +112,6 @@ interface ListingRead {
     QitsEntityList,
     QitsExit,
     QitsField,
-    QitsTriggers,
     Spinner,
   ],
   host: { class: 'block' },
@@ -315,9 +308,8 @@ interface ListingRead {
                             <td class="py-1.5 pr-3 font-medium break-all">
                               <a
                                 class="text-accent no-underline hover:underline"
-                                [attr.href]="detailHref('npm', pkg.name) || null"
-                                [qitsTriggers]="triggers('npm', pkg.name, opening.npmPackage)"
-                                (click)="leave($event, opening.npmPackage, 'npm', pkg.name)"
+                                [qitsExit]="packaging.npmPackage"
+                                [exitParams]="{ repo: repo(), package: pkg.name ?? '' }"
                                 [fieldOf]="pkg"
                                 qitsField="name"
                                 >{{ pkg.name }}</a
@@ -763,7 +755,6 @@ interface ListingRead {
 export class ArtifactsRepositoryPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
-  private readonly origin = inject(PlatformOrigins).page('artifacts');
 
   /** Another store repository, from the switcher. */
   protected readonly switching = outcomes('switch-artifacts-repository', {
@@ -808,11 +799,11 @@ export class ArtifactsRepositoryPage {
   });
 
   /**
-   * An npm row's name: its detail page in the old explorer (qits-artifacts-frontend), same tab,
-   * until the section's own npm package page lands (qits-2326).
+   * An npm row's name: the package's page here (qits-2326), the name one segment (the exit encodes
+   * it, so `@qits/angular` is `@qits%2Fangular`).
    */
-  protected readonly opening = outcomes('open-artifacts-entry', {
-    npmPackage: external('artifacts'),
+  protected readonly packaging = outcomes('open-npm-package', {
+    npmPackage: exit('artifacts/repositories/:repo/packages/:package'),
   });
 
   /** The header line's mark: derived from the row's type, count and size. */
@@ -969,33 +960,6 @@ export class ArtifactsRepositoryPage {
 
   protected metadata(record: ArtifactRecord): string {
     return metadataLine(record.metadata);
-  }
-
-  /** A row's detail page in the old explorer; `''` while the origin is not known. */
-  protected detailHref(kind: ListingKind, name: string | undefined): string {
-    return oldDetailHref(this.origin, this.repo(), kind, name ?? '');
-  }
-
-  /** The row link's outcome, only while it has an address. */
-  protected triggers(
-    kind: ListingKind,
-    name: string | undefined,
-    outcome: ExternalOutcome,
-  ): readonly ExternalOutcome[] {
-    return this.detailHref(kind, name) ? [outcome] : [];
-  }
-
-  /** A row link's plain click: records the outcome and leaves for the old explorer, in this tab. */
-  protected leave(
-    event: MouseEvent,
-    outcome: ExternalOutcome,
-    kind: ListingKind,
-    name: string | undefined,
-  ): void {
-    const href = this.detailHref(kind, name);
-    if (!href || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return;
-    event.preventDefault();
-    outcome.leave(href);
   }
 
   protected inputValue(event: Event): string {

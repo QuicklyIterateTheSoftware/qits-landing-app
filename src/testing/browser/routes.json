@@ -69,6 +69,12 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listRepositories",
       "route": "artifacts/repositories/:repo"
     },
@@ -315,6 +321,56 @@
       "state": "a store with nothing published",
       "operationId": "listMavenVersionSummaries",
       "route": "artifacts/repositories/:repo/maven-packages/:coordinate"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a scoped npm package with an sbom on one of two versions",
+      "operationId": "getSbom",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a scoped npm package with an sbom on one of two versions",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a scoped npm package with an sbom on one of two versions",
+      "operationId": "listSbomVersions",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listMavenPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listNpmVersionSummaries",
+      "route": "artifacts/repositories/:repo/packages/:package"
     }
   ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [

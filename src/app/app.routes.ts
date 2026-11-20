@@ -146,6 +146,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site
  * of a docs store, its published versions, each read in qits-docs' reader; the site name is one
  * segment (`@changelog/qits-qits` is `@changelog%2Fqits-qits` in the URL).
+ * `artifacts/repositories/<repo>/packages/<package>` (`ArtifactsNpmPackagePage`, qits-2326) is one
+ * npm package of an npm store, its versions with their dist-tags and their SBOMs; the package name
+ * is one segment (`@qits/angular` is `@qits%2Fangular` in the URL). With it every store listing's
+ * rows open a page of this app; none leaves for qits-artifacts-frontend any more.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -643,6 +647,16 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page').then(
                 (m) => m.ArtifactsDocsSitePage,
+              ),
+          },
+          {
+            // One npm package of an npm store (qits-2326): its versions and their SBOMs.
+            // `:package` is one segment; a scoped name's slash rides as %2F, which the router
+            // decodes into the param (`@qits/angular`).
+            path: 'repositories/:repo/packages/:package',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page').then(
+                (m) => m.ArtifactsNpmPackagePage,
               ),
           },
         ],
