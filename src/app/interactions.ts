@@ -1432,6 +1432,12 @@ export const INTERACTIONS = {
    */
   'open-sidebar-system': 'The sidebar’s System entry opens the System section',
   /**
+   * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
+   * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no
+   * pact.
+   */
+  'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
+  /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
    * the Work, Agents or Release Requests section above a subpage. Navigates only, and names no pact

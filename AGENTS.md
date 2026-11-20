@@ -346,7 +346,13 @@ With no project open, the sidebar shows its global sections in the project's sec
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316) and System
-(`open-sidebar-system`, `exit('system')`, qits-2344).
+(`open-sidebar-system`, `exit('system')`, qits-2344). Such a section may list its own pages below it
+(`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
+while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
+exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
+on its own page, `true` while one of its pages below it is the current one (that page `page`).
+System's are Services and Nodes (`open-sidebar-system-page`, `services`/`nodes`,
+`exit('system/swarm/services')`, `exit('system/swarm/nodes')`); qits-2347…qits-2356 add one each.
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
@@ -517,9 +523,10 @@ that recording's status only.
 The System section (qits-2344) is qits-system's one swarm, which no project joins:
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
-under `system/...`. It is an entry point (`qitsEntry`): the old page hands off to it with a
-full-document load, and the sidebar's System exit names `system`, which redirects, so no outcome
-of this app leads to it by name. It reads through `qitsResource` over `core/system/swarm.operations.ts`:
+under `system/...`, each listed below the sidebar's System while the section is open (Services
+and Nodes so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+hands off to it with a full-document load; the sidebar's System exit names `system`, which
+redirects, and Services below it names it. It reads through `qitsResource` over `core/system/swarm.operations.ts`:
 `SWARM_SERVICE_LIST` (`listSwarmServices`, `docker service ls` on the manager qits-system runs on,
 one swarm, not per target), one table in the server's order: name (plain text until a service's
 page lands, qits-2345), state, mode, replicas, image and ports ("—" when none published); no

@@ -94,7 +94,8 @@ class PinnedPage {}
  * (`follow-breadcrumb`). The agents and release menus' own exits are followed in their own specs.
  * The global sections shown with no project open open a section of this app (Artifacts,
  * `open-sidebar-artifacts`, qits-2316, and System, `open-sidebar-system`, qits-2344, each to a
- * stand-in route) or leave the app (IdP admin,
+ * stand-in route, with System's own pages below it while it is open, `open-sidebar-system-page`,
+ * qits-2346) or leave the app (IdP admin,
  * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
  * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
  * and with one, qits-2262) and the network icon (`open-network-access`) are pressed once each. The
@@ -113,6 +114,8 @@ describe('ShellLayout (screenshots)', () => {
           { path: '', component: TestPage },
           { path: 'artifacts', component: TestPage },
           { path: 'system', component: TestPage },
+          { path: 'system/swarm/services', component: TestPage },
+          { path: 'system/swarm/nodes', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -183,9 +186,9 @@ describe('ShellLayout (screenshots)', () => {
    * The layout at the root, with no project open: nothing is read (`SelectedProject` reads the
    * project list once a URL names a project, qits-2146).
    */
-  async function render() {
+  async function render(url = '/') {
     const fixture = TestBed.createComponent(ShellLayout);
-    await TestBed.inject(Router).navigateByUrl('/');
+    await TestBed.inject(Router).navigateByUrl(url);
     fixture.detectChanges();
     await settle();
     http.expectNone('/projects/api/projects');
@@ -799,6 +802,81 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
+  it('lists the System section’s pages below System while it is open, and marks the current one', async () => {
+    await page.viewport(1280, 800);
+    await render('/system/swarm/nodes');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels).toEqual([
+      'Artifacts',
+      'System',
+      'Services',
+      'Nodes',
+      'IdP admin',
+      'Network access',
+    ]);
+    await expect
+      .element(navigation.getByRole('link', { name: 'System', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Nodes', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Services', exact: true }))
+      .not.toHaveAttribute('aria-current');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Artifacts', exact: true }))
+      .not.toHaveAttribute('aria-current');
+  });
+
+  /** The System section's pages below System in the sidebar (qits-2346), from the other one. */
+  const SYSTEM_PAGES = [
+    {
+      label: 'Services',
+      path: '/system/swarm/services',
+      from: '/system/swarm/nodes',
+      outcome: 'services',
+    },
+    {
+      label: 'Nodes',
+      path: '/system/swarm/nodes',
+      from: '/system/swarm/services',
+      outcome: 'nodes',
+    },
+  ] as const;
+
+  for (const system of SYSTEM_PAGES) {
+    it(`open-sidebar-system-page ${system.outcome}: ${system.label} below System opens it`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(system.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: system.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', system.path);
+      expect(await follow(fixture, link)).toBe(system.path);
+      expect(reached()).toEqual([`open-sidebar-system-page:${system.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: 'System', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
+
+  it('renders no System page outside the System section', async () => {
+    await render('/artifacts');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect
+      .element(navigation.getByRole('link', { name: 'System', exact: true }))
+      .not.toHaveAttribute('aria-current');
+    for (const label of ['Services', 'Nodes']) {
+      await expect
+        .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
+        .not.toBeInTheDocument();
+    }
+  });
+
   it('open-sidebar-idp-admin open: the sidebar’s IdP admin leaves for the idp’s admin, in this tab', async () => {
     await render();
     const href = `https://idp.${PLATFORM_DOMAIN}/idp/`;
@@ -828,6 +906,11 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true, includeHidden: true }))
       .not.toBeInTheDocument();
+    for (const label of ['Services', 'Nodes']) {
+      await expect
+        .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
+        .not.toBeInTheDocument();
+    }
   });
 
   it('open-sidebar-network-access networkAccess: the sidebar’s Network access leaves for its frontend from a project, below its sections', async () => {
