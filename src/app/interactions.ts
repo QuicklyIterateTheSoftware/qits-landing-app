@@ -839,6 +839,22 @@ export const INTERACTIONS = {
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
+   * `swarm-service.page.ts` via `SWARM_SERVICE` (qits-2345): one swarm service's page shows its
+   * facts, rollout, environment keys and labels, mounts, networks and tasks. Refresh, and a
+   * deployment of its application going live or failing, read it again.
+   */
+  'show-swarm-service': 'A swarm service’s page shows its configuration and its tasks',
+  /**
+   * `swarm-services.page.ts`: a service row's name opens the service's page in this app,
+   * `system/swarm/services/:id` (qits-2345). Navigates only, and names no pact.
+   */
+  'open-swarm-service': 'A service of the swarm services list opens its page',
+  /**
+   * `swarm-service.page.ts`: the crumb back opens the swarm services list (qits-2345). Navigates
+   * only, and names no pact.
+   */
+  'leave-swarm-service': 'A swarm service’s page leads back to the services list',
+  /**
    * `swarm-services.page.ts` via `SWARM_SERVICE_LIST` (qits-2344): the System section's services
    * page lists the services of qits-system's swarm, each with a state derived from its replicas.
    * Refresh, and a deployment going live or failing, read them again.
