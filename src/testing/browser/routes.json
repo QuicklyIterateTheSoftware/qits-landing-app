@@ -21,6 +21,12 @@
     {
       "provider": "qits-artifacts-service",
       "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
       "operationId": "listImageManifestSummaries",
       "route": "artifacts/repositories/:repo/images/:image"
     },
@@ -147,6 +153,44 @@
       "state": "a store holding one artifact of every kind",
       "operationId": "listRepositories",
       "route": "artifacts/repositories/:repo"
+    }
+  ],
+  "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs site published by two releases",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsSiteSummaries",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listNpmPackages",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store holding one artifact of every kind",
+      "operationId": "listRepositories",
+      "route": "artifacts/repositories/:repo"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a store with nothing published",
+      "operationId": "listDocsVersionSummaries",
+      "route": "artifacts/repositories/:repo/docs/:site"
     }
   ],
   "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts": [
@@ -1193,6 +1237,38 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/maintenance/repositories/:name"
+    }
+  ],
+  "src/app/routes/projects/[slug]/observability/errors/observability-errors.page.browser.spec.ts": [
+    {
+      "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/errors"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetryErrors",
+      "route": "projects/:slug/observability/errors"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "listTelemetrySources",
+      "route": "projects/:slug/observability/errors"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/observability/errors"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/observability/errors"
     }
   ],
   "src/app/routes/projects/[slug]/observability/logs/observability-logs.page.browser.spec.ts": [

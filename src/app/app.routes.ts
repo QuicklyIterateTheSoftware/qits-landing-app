@@ -78,7 +78,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
- * `/observability?source=_service/qits-ci` lands on that source's logs.
+ * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
+ * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -131,6 +132,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
  * qits-2325) is one maven coordinate, its versions and their SBOMs; `groupId:artifactId` is one
  * segment.
+ * `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site
+ * of a docs store, its published versions, each read in qits-docs' reader; the site name is one
+ * segment (`@changelog/qits-qits` is `@changelog%2Fqits-qits` in the URL).
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -434,6 +438,13 @@ export const routes: Routes = [
                 (m) => m.ObservabilityLogsPage,
               ),
           },
+          {
+            path: 'errors',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/errors/observability-errors.page').then(
+                (m) => m.ObservabilityErrorsPage,
+              ),
+          },
         ],
       },
       {
@@ -555,6 +566,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page').then(
                 (m) => m.ArtifactsMavenPackagePage,
+              ),
+          },
+          {
+            // One docs site of a docs store (qits-2328): its published versions. Every site name
+            // is scoped and slashed (`@changelog/qits-qits`), so it is one segment, `%2F` encoded.
+            path: 'repositories/:repo/docs/:site',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page').then(
+                (m) => m.ArtifactsDocsSitePage,
               ),
           },
         ],

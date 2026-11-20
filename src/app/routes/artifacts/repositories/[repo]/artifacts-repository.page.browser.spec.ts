@@ -42,9 +42,10 @@ type Listed = keyof typeof LISTINGS;
  * (`switch-artifacts-repository`), an image row, which opens the image's page here
  * (`open-artifact-image`, qits-2324), a maven row, which opens the coordinate's page here
  * (`open-maven-package`, qits-2325), a daemon row, which opens the daemon's page here
- * (`open-artifact-daemon`, qits-2327), each other kind's row, which leaves for the old explorer
- * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and Cleanup, which opens
- * the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
+ * (`open-artifact-daemon`, qits-2327), a docs site row, which opens the site's page here
+ * (`open-artifact-docs-site`, qits-2328), an npm row, which still leaves for the old explorer
+ * until qits-2326 (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and
+ * Cleanup, which opens the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
  */
 describe('ArtifactsRepositoryPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -341,19 +342,36 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     await opened.settled();
   });
 
-  for (const [repo, outcome, name, path] of [
-    ['npm', 'npmPackage', 'contract-package', 'packages/contract-package'],
-    ['docs', 'docsSite', 'contract-docs-site', 'docs/contract-docs-site'],
-  ] as const) {
-    it(`open-artifacts-entry ${outcome}: a row leaves for its page in the old explorer`, async () => {
-      const opened = await open(repo);
-      const href = `${OLD_EXPLORER}/repositories/${repo}/${path}`;
-      const link = page.elementLocator(opened.page).getByRole('link', { name, exact: true });
-      await expect.element(link).toHaveAttribute('href', href);
-      await userEvent.click(link);
-      expect(reached()).toEqual([`open-artifacts-entry:${outcome}`]);
-      expect(leave).toHaveBeenCalledWith(href);
-      expect(TestBed.inject(Router).url).toBe(`/artifacts/repositories/${repo}`);
-    });
-  }
+  it('open-artifact-docs-site site: a docs site row opens the site’s page here', async () => {
+    const opened = await open('docs');
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-docs-site', exact: true });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', '/artifacts/repositories/docs/docs/contract-docs-site');
+    await userEvent.click(link);
+    await opened.settled();
+    expect(reached()).toEqual(['open-artifact-docs-site:site']);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/docs/docs/contract-docs-site');
+    expect(leave).not.toHaveBeenCalled();
+    // The docs site page's read, answered as its own spec does (the same site in the same store).
+    http
+      .expectOne('/artifacts/api/repositories/docs/docs/contract-docs-site/versions')
+      .flush(await goldenMaster(STORE, 'listDocsVersionSummaries', ARTIFACTS));
+    await opened.settled();
+  });
+
+  it('open-artifacts-entry npmPackage: an npm row leaves for its page in the old explorer', async () => {
+    const opened = await open('npm');
+    const href = `${OLD_EXPLORER}/repositories/npm/packages/contract-package`;
+    const link = page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-package', exact: true });
+    await expect.element(link).toHaveAttribute('href', href);
+    await userEvent.click(link);
+    expect(reached()).toEqual(['open-artifacts-entry:npmPackage']);
+    expect(leave).toHaveBeenCalledWith(href);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/npm');
+  });
 });

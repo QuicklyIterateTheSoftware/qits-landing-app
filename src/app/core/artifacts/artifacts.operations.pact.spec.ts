@@ -18,6 +18,7 @@ import {
   ARTIFACT_DAEMON_VERSIONS,
   ARTIFACT_DAEMONS,
   ARTIFACT_DOCS_SITES,
+  ARTIFACT_DOCS_VERSIONS,
   ARTIFACT_IMAGE_MANIFESTS,
   ARTIFACT_IMAGE_TAGS,
   ARTIFACT_IMAGES,
@@ -40,8 +41,9 @@ import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
  * `listNpmPackages`, `listMavenPackages`, `listDaemons`, `listDocsSiteSummaries` and
  * `listArtifactRecords`; the image page's (qits-2324): `listImageTagSummaries` and
  * `listImageManifestSummaries`, with `listImages` read again for the image's own row; the maven
- * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`; and
- * the daemon page's (qits-2327): `listDaemonVersions` and `getDaemon`.
+ * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`; the
+ * daemon page's (qits-2327): `listDaemonVersions` and `getDaemon`; and the docs site page's
+ * (qits-2328): `listDocsVersionSummaries`.
  *
  * Against qits-artifacts' recordings of "a store holding one artifact of every kind" (the seeded
  * repositories, and one image, npm package, maven coordinate, daemon and docs site; no ci record)
@@ -79,6 +81,12 @@ import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
  * published" (no versions, which is also what an unknown daemon answers). A version's download
  * (`getDaemon`, the daemon wire, no repository segment) is no JSON: it binds the status only.
  *
+ * The docs site page's versions (qits-2328) are one site's (`docsSite` in `docsRepository`), the
+ * contract site the states publish, so both populated recordings bind exactly: "a store holding
+ * one artifact of every kind" (one version on `main`) and "a docs site published by two releases"
+ * (two versions whose metadata differ, one never read). "A store with nothing published" (no
+ * versions) binds the status only, as the empty listings above.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
@@ -99,6 +107,8 @@ const SBOMMED = 'a maven coordinate with an sbom on one of two versions';
 const DAEMON = 'a daemon with two versions';
 /** The daemon repository, with no version of the daemon in it (qits-2327). */
 const NO_DAEMON = 'a daemon nothing has published';
+/** One docs site with two versions from two releases, their metadata differing (qits-2328). */
+const TWO_RELEASES = 'a docs site published by two releases';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_REPOSITORIES,
@@ -115,6 +125,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_SBOM,
   ARTIFACT_DAEMON_VERSIONS,
   ARTIFACT_DAEMON_DOWNLOAD,
+  ARTIFACT_DOCS_VERSIONS,
 ].map((op) => op.operationId);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-store-pact-'));
@@ -171,6 +182,12 @@ const repoOf = (state: string, param: string): string => paramOf(state, 'listRep
 const daemonOf = (state: string) => ({
   repo: paramOf(state, 'listDaemonVersions', 'repository'),
   daemon: paramOf(state, 'listDaemonVersions', 'daemon'),
+});
+
+/** The docs repository and site a state's docs site page reads (qits-2328). */
+const docsSiteOf = (state: string) => ({
+  repo: paramOf(state, 'listDocsVersionSummaries', 'docsRepository'),
+  site: paramOf(state, 'listDocsVersionSummaries', 'docsSite'),
 });
 
 /** The image repository and image a state's image page reads (qits-2324). */
@@ -493,4 +510,47 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
       expect(response?.status).toBe(200);
     });
   });
+
+  it('show-artifact-docs-site: a docs site’s one version', () =>
+    given(ARTIFACT_DOCS_VERSIONS, STORE, 'show-artifact-docs-site').executeTest(async (server) => {
+      const path = docsSiteOf(STORE);
+      const { data } = await at(server.url, () => ARTIFACT_DOCS_VERSIONS.fetch({ path }));
+      const versions = data?.versions ?? [];
+      expect(versions).toHaveLength(1);
+      const [version] = versions;
+      expect(version?.version).toBeTruthy();
+      expect(typeof version?.fileCount).toBe('number');
+      expect(typeof version?.sizeBytes).toBe('number');
+      expect(version?.publishedAt).toBeTruthy();
+      expect(version?.accessedAt).toBeNull();
+      expect(version?.metadata?.['git.branch.name']).toBeTruthy();
+    }));
+
+  it('show-artifact-docs-site: a docs site published by two releases', () =>
+    given(ARTIFACT_DOCS_VERSIONS, TWO_RELEASES, 'show-artifact-docs-site').executeTest(
+      async (server) => {
+        const path = docsSiteOf(TWO_RELEASES);
+        const { data } = await at(server.url, () => ARTIFACT_DOCS_VERSIONS.fetch({ path }));
+        const [newest, older] = data?.versions ?? [];
+        expect(data?.versions).toHaveLength(2);
+        expect(newest?.accessedAt).toBeNull();
+        expect(newest?.metadata?.['git.branch.name']).toBeTruthy();
+        expect(older?.accessedAt).toBeTruthy();
+        expect(older?.metadata?.['release.request.qualified-id']).toBeTruthy();
+        expect(older?.metadata?.['git.branch.name']).toBeUndefined();
+      },
+    ));
+
+  // Status only, as for the empty listings above.
+  it('show-artifact-docs-site: a docs site nothing has published', () =>
+    given(ARTIFACT_DOCS_VERSIONS, EMPTY, 'show-artifact-docs-site', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = docsSiteOf(EMPTY);
+        const { response, error } = await at(server.url, () =>
+          ARTIFACT_DOCS_VERSIONS.fetch({ path }),
+        );
+        expect(error).toBeUndefined();
+        expect(response?.status).toBe(200);
+      },
+    ));
 });

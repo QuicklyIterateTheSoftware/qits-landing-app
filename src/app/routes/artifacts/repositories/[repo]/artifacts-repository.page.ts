@@ -89,13 +89,14 @@ interface ListingRead {
  * (`open-artifact-image`, `artifacts/repositories/:repo/images/:image`, `ArtifactsImagePage`,
  * qits-2324), a maven coordinate's its page here (`open-maven-package`,
  * `artifacts/repositories/:repo/maven-packages/:coordinate`, `ArtifactsMavenPackagePage`,
- * qits-2325), and a daemon's name its page here (`open-artifact-daemon`,
- * `artifacts/repositories/:repo/daemons/:daemon`, `ArtifactsDaemonPage`, qits-2327), the name one
- * segment. Any other row's name opens its detail page in the old explorer (`open-artifacts-entry`,
- * `external('artifacts')`, same tab), at `PlatformOrigins.page('artifacts')` +
- * `/repositories/<repo>/<packages|docs>/<name>`, the name one segment (`oldDetailHref`), until the
- * section's own detail pages (qits-2326, qits-2328) land. The ci records have no detail page, and
- * no download here.
+ * qits-2325), a daemon's name its page here (`open-artifact-daemon`,
+ * `artifacts/repositories/:repo/daemons/:daemon`, `ArtifactsDaemonPage`, qits-2327), and a docs
+ * site's name its page here (`open-artifact-docs-site`, `artifacts/repositories/:repo/docs/:site`,
+ * `ArtifactsDocsSitePage`, qits-2328), the name one segment. Only an npm package's name still
+ * opens its detail page in the old explorer (`open-artifacts-entry`, `external('artifacts')`, same
+ * tab), at `PlatformOrigins.page('artifacts')` + `/repositories/<repo>/packages/<name>`, the name
+ * one segment (`oldDetailHref`), until the section's own npm package page (qits-2326) lands. The
+ * ci records have no detail page, and no download here.
  * Cleanup, beside the header line, opens the repository's cleanup page (`open-artifacts-cleanup`,
  * `artifacts/repositories/:repo/cleanup`, `ArtifactsCleanupPage`, qits-2329).
  *
@@ -595,9 +596,8 @@ interface ListingRead {
                             <td class="py-1.5 pr-3 font-mono break-all">
                               <a
                                 class="text-accent no-underline hover:underline"
-                                [attr.href]="detailHref('docs', site.name) || null"
-                                [qitsTriggers]="triggers('docs', site.name, opening.docsSite)"
-                                (click)="leave($event, opening.docsSite, 'docs', site.name)"
+                                [qitsExit]="siting.site"
+                                [exitParams]="{ repo: repo(), site: site.name ?? '' }"
                                 [fieldOf]="site"
                                 qitsField="name"
                                 >{{ site.name }}</a
@@ -784,6 +784,14 @@ export class ArtifactsRepositoryPage {
   });
 
   /**
+   * A docs site row's name: the site's page here (qits-2328), the name one segment (the exit
+   * encodes it, so `@changelog/qits-qits` is `@changelog%2Fqits-qits`).
+   */
+  protected readonly siting = outcomes('open-artifact-docs-site', {
+    site: exit('artifacts/repositories/:repo/docs/:site'),
+  });
+
+  /**
    * Cleanup: what collecting this repository would delete and keep, and the Run (qits-2329), on
    * its cleanup page here.
    */
@@ -800,12 +808,11 @@ export class ArtifactsRepositoryPage {
   });
 
   /**
-   * Any other row's name: its detail page in the old explorer (qits-artifacts-frontend), same tab,
-   * until the section's own detail pages land (qits-2326, qits-2328).
+   * An npm row's name: its detail page in the old explorer (qits-artifacts-frontend), same tab,
+   * until the section's own npm package page lands (qits-2326).
    */
   protected readonly opening = outcomes('open-artifacts-entry', {
     npmPackage: external('artifacts'),
-    docsSite: external('artifacts'),
   });
 
   /** The header line's mark: derived from the row's type, count and size. */

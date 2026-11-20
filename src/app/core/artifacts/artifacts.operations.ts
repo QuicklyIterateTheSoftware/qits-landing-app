@@ -6,6 +6,7 @@ import {
   listDaemons,
   listDaemonVersions,
   listDocsSiteSummaries,
+  listDocsVersionSummaries,
   listImageManifestSummaries,
   listImages,
   listImageTagSummaries,
@@ -21,6 +22,7 @@ import {
   LIST_ARTIFACT_DAEMON_VERSIONS,
   LIST_ARTIFACT_DAEMONS,
   LIST_ARTIFACT_DOCS_SITES,
+  LIST_ARTIFACT_DOCS_VERSIONS,
   LIST_ARTIFACT_IMAGE_MANIFESTS,
   LIST_ARTIFACT_IMAGE_TAGS,
   LIST_ARTIFACT_IMAGES,
@@ -39,8 +41,9 @@ import {
  * type (`listingOf`, `artifact-listings.ts`); and the image page's (`ArtifactsImagePage`,
  * qits-2324), which reads `ARTIFACT_IMAGES` for its headline row and one image's tags and
  * manifests; the maven package page's (`ArtifactsMavenPackagePage`, qits-2325), which reads one
- * coordinate's versions and its SBOMs, and one SBOM on a press; and the daemon page's
- * (`ArtifactsDaemonPage`, qits-2327): one daemon's versions, and a version's bytes on a press.
+ * coordinate's versions and its SBOMs, and one SBOM on a press; the daemon page's
+ * (`ArtifactsDaemonPage`, qits-2327): one daemon's versions, and a version's bytes on a press; and
+ * the docs site page's (`ArtifactsDocsSitePage`, qits-2328): one docs site's versions.
  * `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`.
  */
@@ -153,6 +156,20 @@ export const ARTIFACT_DOCS_SITES = qitsOperation({
   method: 'GET',
   call: listDocsSiteSummaries,
   consumes: LIST_ARTIFACT_DOCS_SITES,
+});
+
+/**
+ * One docs site's versions (`listDocsVersionSummaries`, qits-2328), newest first: 404 for an
+ * unknown repository, 400 for one that holds no docs, an empty list for a site it does not hold.
+ * The site is one path segment (`@changelog/qits-qits` is sent as `%40changelog%2Fqits-qits`); this
+ * `/artifacts/api/` door takes it encoded, and `literalDocsPaths` leaves it so.
+ */
+export const ARTIFACT_DOCS_VERSIONS = qitsOperation({
+  provider: 'qits-artifacts-service',
+  operationId: 'listDocsVersionSummaries',
+  method: 'GET',
+  call: listDocsVersionSummaries,
+  consumes: LIST_ARTIFACT_DOCS_VERSIONS,
 });
 
 /** A `ci-screenshots` or `ci-videos` repository's records, unfiltered (`listArtifactRecords`). */
