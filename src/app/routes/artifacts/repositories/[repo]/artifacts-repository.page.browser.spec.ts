@@ -41,7 +41,8 @@ type Listed = keyof typeof LISTINGS;
  * Its exits (epic qits-2000) are each followed once: a store repository in the switcher
  * (`switch-artifacts-repository`), an image row, which opens the image's page here
  * (`open-artifact-image`, qits-2324), and each other kind's row, which leaves for the old explorer
- * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays).
+ * (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and Cleanup, which opens
+ * the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
  */
 describe('ArtifactsRepositoryPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -265,6 +266,27 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     http
       .expectOne(`${at}/contract-image/manifests`)
       .flush(await goldenMaster(STORE, 'listImageManifestSummaries', ARTIFACTS));
+    await opened.settled();
+  });
+
+  it('open-artifacts-cleanup cleanup: Cleanup opens the repository’s cleanup page here', async () => {
+    const opened = await open('daemons');
+    const link = page.elementLocator(opened.page).getByRole('link', { name: 'Cleanup →' });
+    await expect.element(link).toHaveAttribute('href', '/artifacts/repositories/daemons/cleanup');
+    await userEvent.click(link);
+    await opened.settled();
+    expect(reached()).toEqual(['open-artifacts-cleanup:cleanup']);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/daemons/cleanup');
+    // The cleanup page's one read, answered as its own spec does.
+    http
+      .expectOne('/orchestrator/api/artifacts/repositories/daemons/plan')
+      .flush(
+        await goldenMaster(
+          'a repository the cleanup can plan',
+          'planArtifactsCleanupRepository',
+          'qits-orchestrator',
+        ),
+      );
     await opened.settled();
   });
 

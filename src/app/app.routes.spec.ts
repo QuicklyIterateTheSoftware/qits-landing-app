@@ -27,6 +27,7 @@ import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.pa
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
+import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -196,6 +197,11 @@ describe('artifacts routes (qits-2316)', () => {
     while (leaf.firstChild) leaf = leaf.firstChild;
     expect(leaf.paramMap.get('image')).toBe('team/app');
     expect(router.url).toBe('/artifacts/repositories/qits/images/team%2Fapp');
+  });
+
+  it('opens a repository’s cleanup at artifacts/repositories/<repo>/cleanup (qits-2329)', async () => {
+    expect(await pages('/artifacts/repositories/daemons/cleanup')).toEqual([ArtifactsCleanupPage]);
+    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/daemons/cleanup');
   });
 
   it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {
