@@ -227,6 +227,10 @@
             {
               "path": "slow-spans",
               "fullPath": "projects/:slug/observability/slow-spans"
+            },
+            {
+              "path": "traces",
+              "fullPath": "projects/:slug/observability/traces"
             }
           ]
         },
@@ -160834,6 +160838,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -160894,6 +160899,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -161032,6 +161038,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -161092,6 +161099,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -161157,6 +161165,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -161377,6 +161386,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -161598,6 +161608,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -161819,6 +161830,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -162437,6 +162449,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -162657,6 +162670,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -162867,6 +162881,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -162922,6 +162937,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163045,6 +163061,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163100,6 +163117,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163155,6 +163173,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163210,6 +163229,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163333,6 +163353,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163388,6 +163409,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163448,6 +163470,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163508,6 +163531,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163646,6 +163670,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163706,6 +163731,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163771,6 +163797,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -163950,6 +163977,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -164130,6 +164158,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -164310,6 +164339,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -164805,6 +164835,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -164984,6 +165015,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165153,6 +165185,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165208,6 +165241,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165331,6 +165365,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165386,6 +165421,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165441,6 +165477,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165496,6 +165533,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165619,6 +165657,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165674,6 +165713,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165734,6 +165774,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165794,6 +165835,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165932,6 +165974,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -165992,6 +166035,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -166057,6 +166101,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -166256,6 +166301,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -166456,6 +166502,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -166656,6 +166703,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167211,6 +167259,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167410,6 +167459,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167599,6 +167649,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167654,6 +167705,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167777,6 +167829,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167832,6 +167885,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167887,6 +167941,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -167942,6 +167997,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168065,6 +168121,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168120,6 +168177,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168180,6 +168238,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168240,6 +168299,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168378,6 +168438,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168438,6 +168499,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168503,6 +168565,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168734,6 +168797,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -168966,6 +169030,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -169198,6 +169263,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -169849,6 +169915,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170080,6 +170147,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170301,6 +170369,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170356,6 +170425,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170479,6 +170549,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170534,6 +170605,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170589,6 +170661,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170644,6 +170717,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170767,6 +170841,7 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -170822,6 +170897,2471 @@
         "open-sidebar-observability-page:logs",
         "open-sidebar-observability-page:metrics",
         "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > says nothing is buffered when the buffer is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "an empty telemetry buffer",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > says nothing is buffered when the buffer is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "an empty telemetry buffer",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > says nothing is buffered when the buffer is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "an empty telemetry buffer",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > says nothing is buffered when the buffer is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "an empty telemetry buffer",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > says nothing is buffered when the buffer is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "an empty telemetry buffer",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > says nothing is buffered when the buffer is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "an empty telemetry buffer",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-menu-agents-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-menu-agents-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded-menu-agents",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-all-agents:agents",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > shows a source’s traces newest first, grouped by path",
+      "name": "loaded",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetrySources"
+        },
+        {
+          "provider": "qits-observability-service",
+          "state": "telemetry from one platform service",
+          "operationId": "listTelemetryTraces"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": null,
+          "field": null,
+          "derived": [
+            "sources"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "logs",
+            "spans",
+            "metricSeries"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": null,
+          "derived": [
+            "oldestReceivedAt"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetrySources",
+          "item": "key=_service/qits-example",
+          "field": "label",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": null,
+          "field": null,
+          "derived": [
+            "traces"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "durationMs"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "errorSpanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "hasException"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "rootService"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "services"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "spanCount"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": null,
+          "derived": [
+            "startEpochNanos"
+          ]
+        },
+        {
+          "source": "qits-observability-service#listTelemetryTraces",
+          "item": "traceId=6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+          "field": "traceId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:agents",
+        "open-sidebar-section:ci",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:desk",
+        "open-sidebar-section:docs",
+        "open-sidebar-section:events",
+        "open-sidebar-section:ideas",
+        "open-sidebar-section:maintenance",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releaseRequests",
+        "open-sidebar-section:repositories",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts",
+      "test": "ObservabilityTracesPage (screenshots) > marks the page as loading, then says a refusal needs qits:admin",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/traces",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-network-access:open",
+        "open-project-settings:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:slowSpans",
+        "open-sidebar-observability-page:traces",
         "open-sidebar-section:agents",
         "open-sidebar-section:ci",
         "open-sidebar-section:deployments",
@@ -293046,6 +295586,34 @@
       "src/app/routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page.browser.spec.ts/refused-tablet-dark.html",
       "src/app/routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page.browser.spec.ts/refused-tablet-light.html"
     ],
+    "projects/:slug/observability/traces": [
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-desktop-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-desktop-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-menu-agents-desktop-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-menu-agents-desktop-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-phone-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-phone-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-tablet-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loaded-tablet-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-desktop-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-desktop-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-phone-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-phone-light.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-tablet-dark.html",
+      "src/app/routes/projects/[slug]/observability/traces/observability-traces.page.browser.spec.ts/refused-tablet-light.html"
+    ],
     "projects/:slug/release-requests": [
       "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts/attention-desktop-dark.html",
       "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts/attention-desktop-light.html",
@@ -295741,6 +298309,16 @@
       },
       {
         "route": null,
+        "interaction": "open-sidebar-observability-page",
+        "outcome": "traces",
+        "kind": "exit",
+        "to": "projects/:slug/observability/traces",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-sidebar-section",
         "outcome": "agents",
         "kind": "exit",
@@ -296254,6 +298832,15 @@
         "route": null,
         "interaction": "open-sidebar-observability-page",
         "outcome": "slowSpans",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-observability-page traces: Traces below Observability opens it",
+        "route": null,
+        "interaction": "open-sidebar-observability-page",
+        "outcome": "traces",
         "kind": "exit",
         "freeze": null
       },
