@@ -20,11 +20,14 @@ import { shootShellMenus } from '../../../../../../../testing/browser/shell-menu
  * `getTelemetryTrace` is answered from qits-observability's golden master "telemetry from one
  * platform service": trace `6a1f0c2b9d8e47f3a5b4c3d2e1f00a01` of `_service/qits-example`, a
  * `GET /invoices` SERVER span (750 ms, ERROR, an exception event, the root) over a `SELECT
- * invoices` CLIENT span (600 ms), and two logs written in the root. No recording holds an empty
- * trace (and so the store read that follows one), a missing root, an orphan or a cycle: those are
- * the plain spec's (`observability-trace.page.spec.ts`) and `trace-layout.spec.ts`'s. The page
- * without a source reads nothing, which is its no-data shot. A refusal is a 403 with no body, as
- * the service answers a credential without a telemetry role.
+ * invoices` CLIENT span (600 ms), and two logs written in the root. "an empty telemetry buffer"
+ * (from `@qits/observability-golden-masters` 2026.1120.180009 on) records the same trace id with no
+ * spans and no logs, so it is this page's empty shot, after the `getTelemetryStore` read that
+ * follows an empty trace (also recorded there, nothing evicted). A missing root, an orphan or a
+ * cycle are not recorded anywhere: those stay the plain spec's (`observability-trace.page.spec.ts`)
+ * and `trace-layout.spec.ts`'s. The page without a source reads nothing, which is its own no-data
+ * shot (`no-source`). A refusal is a 403 with no body, as the service answers a credential without
+ * a telemetry role.
  */
 describe('ObservabilityTracePage (screenshots)', () => {
   let http: HttpTestingController;
@@ -41,13 +44,19 @@ describe('ObservabilityTracePage (screenshots)', () => {
   });
 
   const ONE_SERVICE = 'telemetry from one platform service';
+  const EMPTY = 'an empty telemetry buffer';
   const TRACES = '/observability/api/telemetry/traces/';
+  const STORE = '/observability/api/telemetry/store';
   const SOURCE = '_service/qits-example';
   const TRACE_ID = '6a1f0c2b9d8e47f3a5b4c3d2e1f00a01';
 
   /** The open trace reads. */
   const reads = (): TestRequest[] =>
     http.match((request) => request.url.startsWith(TRACES)).filter((r) => !r.cancelled);
+
+  /** The open store reads (made only after an empty trace answers). */
+  const storeReads = (): TestRequest[] =>
+    http.match((request) => request.url.startsWith(STORE)).filter((r) => !r.cancelled);
 
   /** The query `read` was sent with, as name → value. */
   const params = (read: TestRequest): Record<string, string> =>
@@ -159,6 +168,24 @@ describe('ObservabilityTracePage (screenshots)', () => {
     await opened.idle();
     await answerTrace();
     await opened.settled();
+  });
+
+  it('shows an empty trace from its recording, after reading the store, without eviction', async () => {
+    const { opened, view } = await render();
+    const open = reads();
+    expect(open).toHaveLength(1);
+    open[0].flush(await goldenMaster(EMPTY, 'getTelemetryTrace', 'qits-observability'));
+    await opened.idle();
+    const store = storeReads();
+    expect(store).toHaveLength(1);
+    store[0].flush(await goldenMaster(EMPTY, 'getTelemetryStore', 'qits-observability'));
+    await opened.settled();
+    await expect
+      .element(view)
+      .toMatchTextContent('No spans of this trace are buffered in this source.');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('reads nothing without a source, and says where to choose one', async () => {

@@ -1530,6 +1530,18 @@
   "src/app/routes/projects/[slug]/observability/traces/[traceId]/observability-trace.page.browser.spec.ts": [
     {
       "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "getTelemetryStore",
+      "route": "projects/:slug/observability/traces/:traceId"
+    },
+    {
+      "provider": "qits-observability-service",
+      "state": "an empty telemetry buffer",
+      "operationId": "getTelemetryTrace",
+      "route": "projects/:slug/observability/traces/:traceId"
+    },
+    {
+      "provider": "qits-observability-service",
       "state": "telemetry from one platform service",
       "operationId": "getTelemetryTrace",
       "route": "projects/:slug/observability/traces/:traceId"

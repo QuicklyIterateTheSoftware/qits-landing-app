@@ -37,7 +37,9 @@ import {
  * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341); and one of
  * that source's traces as the trace page asks for it (the trace id in the path and the source
  * alone, never `repositoryId` or `workspaceId`, qits-2343), with the buffer's own state, which the
- * page reads after an empty trace for whether it ever evicted spans (`evictedSpans`).
+ * page reads after an empty trace for whether it ever evicted spans (`evictedSpans`); the empty
+ * buffer's own trace, no spans and no logs, and its own state, nothing evicted (from
+ * `@qits/observability-golden-masters` 2026.1120.180009 on).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -250,6 +252,25 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
 
   it('show-telemetry-trace: the buffer’s state, how many spans it evicted', () =>
     given(TELEMETRY_STORE, ONE_SERVICE, 'show-telemetry-trace').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_STORE.fetch({}));
+      expect(error).toBeUndefined();
+      expect(data?.evictedSpans).toBe(0);
+    }));
+
+  it('show-telemetry-trace: an empty buffer’s trace, no spans and no logs', () =>
+    given(TELEMETRY_TRACE, EMPTY, 'show-telemetry-trace').executeTest(async (server) => {
+      const traceId = masters.operation(EMPTY, 'getTelemetryTrace').params['traceId'];
+      const source = masters.operation(EMPTY, 'getTelemetryTrace').params['source'];
+      const { data, error } = await at(server.url, () =>
+        TELEMETRY_TRACE.fetch({ path: { traceId }, query: { source } }),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.trace?.spans).toEqual([]);
+      expect(data?.trace?.logs).toEqual([]);
+    }));
+
+  it('show-telemetry-trace: the empty buffer’s own state, nothing evicted', () =>
+    given(TELEMETRY_STORE, EMPTY, 'show-telemetry-trace').executeTest(async (server) => {
       const { data, error } = await at(server.url, () => TELEMETRY_STORE.fetch({}));
       expect(error).toBeUndefined();
       expect(data?.evictedSpans).toBe(0);

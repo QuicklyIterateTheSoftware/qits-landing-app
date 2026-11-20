@@ -1388,7 +1388,9 @@
         {
           "name": "an empty telemetry buffer",
           "params": {
-            "authorization": "Bearer qits_tok_contract-telemetry"
+            "authorization": "Bearer qits_tok_contract-telemetry",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
           }
         }
       ],
@@ -1576,6 +1578,77 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-telemetry-trace",
+            "kind": "ui",
+            "route": "projects/:slug/observability/traces/:traceId"
+          }
+        }
+      },
+      "description": "show-telemetry-trace: getTelemetryStore",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an empty telemetry buffer",
+          "params": {
+            "authorization": "Bearer qits_tok_contract-telemetry",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/observability/api/telemetry/store"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "evictedSpans": 0
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.evictedSpans": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "getTelemetryStore"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-trace",
             "kind": "ui"
           }
         }
@@ -1620,6 +1693,107 @@
               ]
             }
           },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "getTelemetryTrace"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-trace",
+            "kind": "ui",
+            "route": "projects/:slug/observability/traces/:traceId"
+          }
+        }
+      },
+      "description": "show-telemetry-trace: getTelemetryTrace",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an empty telemetry buffer",
+          "params": {
+            "authorization": "Bearer qits_tok_contract-telemetry",
+            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/observability/api/telemetry/traces/${traceId}",
+            "type": "ProviderState"
+          },
+          "query": {
+            "source": {
+              "expression": "${source}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          },
+          "query": {
+            "source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/observability/api/telemetry/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+        "query": {
+          "source": [
+            "_service/qits-example"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "trace": {
+              "logs": [],
+              "spans": []
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
           "header": {
             "Content-Type": {
               "combine": "AND",
