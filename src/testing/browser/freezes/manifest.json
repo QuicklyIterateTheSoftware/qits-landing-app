@@ -361,8 +361,18 @@
               "redirectTo": "swarm/services"
             },
             {
+              "path": "swarm/services/:id",
+              "fullPath": "system/swarm/services/:id",
+              "entry": true
+            },
+            {
               "path": "swarm/services",
               "fullPath": "system/swarm/services",
+              "entry": true
+            },
+            {
+              "path": "swarm/nodes",
+              "fullPath": "system/swarm/nodes",
               "entry": true
             }
           ]
@@ -296634,6 +296644,4302 @@
       ]
     },
     {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm listing no nodes",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm listing no nodes",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm listing no nodes",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm listing no nodes",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm listing no nodes",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm listing no nodes",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > lists the swarm’s nodes, the one qits-system runs on marked",
+      "name": "nodes",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > lists the swarm’s nodes, the one qits-system runs on marked",
+      "name": "nodes",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > lists the swarm’s nodes, the one qits-system runs on marked",
+      "name": "nodes",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-phone-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > lists the swarm’s nodes, the one qits-system runs on marked",
+      "name": "nodes",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > lists the swarm’s nodes, the one qits-system runs on marked",
+      "name": "nodes",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > lists the swarm’s nodes, the one qits-system runs on marked",
+      "name": "nodes",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodes"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmNodes",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
+      "test": "SwarmNodesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says swarm has placed no task for a service",
+      "name": "no-tasks",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm service with no tasks",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "mounts"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "tasks"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says swarm has placed no task for a service",
+      "name": "no-tasks",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm service with no tasks",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "mounts"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "tasks"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says swarm has placed no task for a service",
+      "name": "no-tasks",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm service with no tasks",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-service:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "mounts"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "tasks"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says swarm has placed no task for a service",
+      "name": "no-tasks",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm service with no tasks",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-service:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "mounts"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "tasks"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says swarm has placed no task for a service",
+      "name": "no-tasks",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm service with no tasks",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "mounts"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "tasks"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says swarm has placed no task for a service",
+      "name": "no-tasks",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm service with no tasks",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "mounts"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "tasks"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7x2kq9m4v1c8p0d5w3n6e2rt",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says there is no such service",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says there is no such service",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says there is no such service",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says there is no such service",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says there is no such service",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says there is no such service",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > shows a service: its facts, rollout, keys, labels, mounts, networks and tasks",
+      "name": "service",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "type",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > shows a service: its facts, rollout, keys, labels, mounts, networks and tasks",
+      "name": "service",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "type",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > shows a service: its facts, rollout, keys, labels, mounts, networks and tasks",
+      "name": "service",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-service:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "type",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > shows a service: its facts, rollout, keys, labels, mounts, networks and tasks",
+      "name": "service",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-service:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "type",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > shows a service: its facts, rollout, keys, labels, mounts, networks and tasks",
+      "name": "service",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "type",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > shows a service: its facts, rollout, keys, labels, mounts, networks and tasks",
+      "name": "service",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmService"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=abx4yo2tk0ls7z5z5t80pweo9",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "healthcheck"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "name",
+            "id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "envKeys",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "restartCondition",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateFailureAction",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateOrder",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=l2izhr0o4tjq34f7arurhgmm8",
+          "field": "updateParallelism",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "error"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": null,
+          "derived": [
+            "slot"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "desiredState",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "nodeHostname",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=n512nrfshfr8qfrm60sv4nyfo",
+          "field": "state",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": null,
+          "derived": [
+            "networkId"
+          ]
+        },
+        {
+          "source": null,
+          "item": "networkId=mulnl3uqqi0hkr0yuutakpyed",
+          "field": "address",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/data",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": null,
+          "derived": [
+            "readOnly"
+          ]
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "source",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "target",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "target=/etc/qits/edge",
+          "field": "type",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-service:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+      "test": "SwarmServicePage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-service:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
       "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-dark.html",
       "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
       "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
@@ -296656,6 +300962,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ],
       "dataMarks": [
@@ -296690,6 +300998,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ],
       "dataMarks": [
@@ -296778,6 +301088,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ],
       "dataMarks": [
@@ -296812,6 +301124,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ],
       "dataMarks": [
@@ -296840,6 +301154,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -296860,6 +301176,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -296906,6 +301224,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -296926,6 +301246,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -296952,7 +301274,10 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
-        "open-sidebar-system:open"
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open",
+        "open-swarm-service:service"
       ],
       "dataMarks": [
         {
@@ -297078,7 +301403,10 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
-        "open-sidebar-system:open"
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open",
+        "open-swarm-service:service"
       ],
       "dataMarks": [
         {
@@ -297198,7 +301526,9 @@
           "operationId": "listSwarmServices"
         }
       ],
-      "triggers": [],
+      "triggers": [
+        "open-swarm-service:service"
+      ],
       "dataMarks": [
         {
           "source": "qits-system-service#listSwarmServices",
@@ -297301,7 +301631,9 @@
           "operationId": "listSwarmServices"
         }
       ],
-      "triggers": [],
+      "triggers": [
+        "open-swarm-service:service"
+      ],
       "dataMarks": [
         {
           "source": "qits-system-service#listSwarmServices",
@@ -297410,7 +301742,10 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
-        "open-sidebar-system:open"
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open",
+        "open-swarm-service:service"
       ],
       "dataMarks": [
         {
@@ -297536,7 +301871,10 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
-        "open-sidebar-system:open"
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open",
+        "open-swarm-service:service"
       ],
       "dataMarks": [
         {
@@ -297656,6 +301994,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -297676,6 +302016,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -297722,6 +302064,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -297742,6 +302086,8 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
         "open-sidebar-system:open"
       ]
     },
@@ -301511,6 +305857,32 @@
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-tablet-dark.html",
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-tablet-light.html"
     ],
+    "system/swarm/nodes": [
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-desktop-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-desktop-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-phone-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-phone-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-tablet-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/nodes-tablet-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/unavailable-tablet-light.html"
+    ],
     "system/swarm/services": [
       "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-light.html",
@@ -301536,6 +305908,44 @@
       "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-phone-light.html",
       "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-tablet-dark.html",
       "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-tablet-light.html"
+    ],
+    "system/swarm/services/:id": [
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-desktop-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-desktop-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-phone-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-phone-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-tablet-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/no-tasks-tablet-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-desktop-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-desktop-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-phone-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-phone-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-tablet-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/not-found-tablet-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-desktop-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-desktop-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-phone-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-phone-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-tablet-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/refused-tablet-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-desktop-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-desktop-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-phone-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-phone-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-tablet-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/service-tablet-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts/unavailable-tablet-light.html"
     ]
   },
   "outcomes": {
@@ -302881,6 +307291,26 @@
         "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.ts"
       },
       {
+        "route": "system/swarm/services",
+        "interaction": "open-swarm-service",
+        "outcome": "service",
+        "kind": "exit",
+        "to": "system/swarm/services/:id",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/swarm/services/swarm-services.page.ts"
+      },
+      {
+        "route": "system/swarm/services/:id",
+        "interaction": "leave-swarm-service",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "system/swarm/services",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.ts"
+      },
+      {
         "route": null,
         "interaction": "act-on-agent-attention",
         "outcome": "openItem",
@@ -303652,6 +308082,26 @@
       },
       {
         "route": null,
+        "interaction": "open-sidebar-system-page",
+        "outcome": "nodes",
+        "kind": "exit",
+        "to": "system/swarm/nodes",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-sidebar-system-page",
+        "outcome": "services",
+        "kind": "exit",
+        "to": "system/swarm/services",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-sidebar-work-page",
         "outcome": "acceptance",
         "kind": "exit",
@@ -304171,6 +308621,24 @@
         "route": null,
         "interaction": "open-sidebar-system",
         "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-system-page nodes: Nodes below System opens it",
+        "route": null,
+        "interaction": "open-sidebar-system-page",
+        "outcome": "nodes",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-system-page services: Services below System opens it",
+        "route": null,
+        "interaction": "open-sidebar-system-page",
+        "outcome": "services",
         "kind": "exit",
         "freeze": null
       },
@@ -306142,6 +310610,24 @@
         "route": null,
         "interaction": "leave-root",
         "outcome": "projects",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/swarm/services/[id]/swarm-service.page.browser.spec.ts",
+        "test": "SwarmServicePage (screenshots) > leads back to the swarm services",
+        "route": "system/swarm/services/:id",
+        "interaction": "leave-swarm-service",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+        "test": "SwarmServicesPage (screenshots) > opens a service’s page from its name",
+        "route": "system/swarm/services",
+        "interaction": "open-swarm-service",
+        "outcome": "service",
         "kind": "exit",
         "freeze": null
       },
