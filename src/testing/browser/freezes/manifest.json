@@ -343,6 +343,27 @@
           ]
         },
         {
+          "path": "system",
+          "fullPath": "system",
+          "children": [
+            {
+              "path": "",
+              "fullPath": "system",
+              "redirectTo": "swarm/services"
+            },
+            {
+              "path": "swarm",
+              "fullPath": "system/swarm",
+              "redirectTo": "swarm/services"
+            },
+            {
+              "path": "swarm/services",
+              "fullPath": "system/swarm/services",
+              "entry": true
+            }
+          ]
+        },
+        {
           "path": "**",
           "fullPath": "**"
         }
@@ -4742,7 +4763,8 @@
       "triggers": [
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -4759,7 +4781,8 @@
       "triggers": [
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -5276,7 +5299,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -5295,7 +5319,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -5418,7 +5443,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -5437,7 +5463,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -21558,6 +21585,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -21752,6 +21780,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -22324,6 +22353,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -22518,6 +22548,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -22712,6 +22743,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -22906,6 +22938,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -23478,6 +23511,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -23672,6 +23706,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -23865,6 +23900,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -24017,6 +24053,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -24463,6 +24500,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -24615,6 +24653,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -24754,7 +24793,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -24773,7 +24813,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -24818,7 +24859,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -24837,7 +24879,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -24870,6 +24913,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -25058,6 +25102,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -25610,6 +25655,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -25798,6 +25844,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -25972,7 +26019,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -25991,7 +26039,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -26036,7 +26085,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -26055,7 +26105,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -26088,6 +26139,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -26273,6 +26325,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -26816,6 +26869,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -27001,6 +27055,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -27180,6 +27235,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -27327,6 +27383,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -27758,6 +27815,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -27905,6 +27963,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -28058,6 +28117,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -28243,6 +28303,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -28788,6 +28849,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -28973,6 +29035,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -29151,6 +29214,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -29281,6 +29345,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -29661,6 +29726,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -29791,6 +29857,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -29923,6 +29990,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "sweep-artifacts-repository:refused",
         "sweep-artifacts-repository:swept",
@@ -30142,6 +30210,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "sweep-artifacts-repository:refused",
         "sweep-artifacts-repository:swept",
@@ -30788,6 +30857,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -30995,6 +31065,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -31196,6 +31267,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -31217,6 +31289,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -31270,6 +31343,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -31291,6 +31365,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -31319,6 +31394,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -31572,6 +31648,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -32320,6 +32397,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -32540,6 +32618,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -32754,6 +32833,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -32775,6 +32855,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -32828,6 +32909,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -32849,6 +32931,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -32876,6 +32959,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -33055,6 +33139,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -33582,6 +33667,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -33761,6 +33847,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -33941,6 +34028,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -34158,6 +34246,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -34799,6 +34888,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -35016,6 +35106,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -35237,6 +35328,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ],
       "dataMarks": [
@@ -35339,6 +35431,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ],
       "dataMarks": [
@@ -35635,6 +35728,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ],
       "dataMarks": [
@@ -35737,6 +35831,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ],
       "dataMarks": [
@@ -35828,6 +35923,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -35849,6 +35945,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -35902,6 +35999,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -35923,6 +36021,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -35951,6 +36050,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -36168,6 +36268,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -36809,6 +36910,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -37026,6 +37128,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -37243,6 +37346,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -37460,6 +37564,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -38101,6 +38206,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -38318,6 +38424,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
         "toggle-artifacts-cleanup-kept:toggled"
       ],
@@ -38528,6 +38635,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -38549,6 +38657,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -38602,6 +38711,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -38623,6 +38733,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
       ]
     },
@@ -38650,7 +38761,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -38781,7 +38893,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -39164,7 +39277,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -39295,7 +39409,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -39426,7 +39541,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -39557,7 +39673,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -39940,7 +40057,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40071,7 +40189,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40201,7 +40320,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40243,7 +40363,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40359,7 +40480,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40401,7 +40523,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40437,7 +40560,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40457,7 +40581,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40507,7 +40632,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40527,7 +40653,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40547,7 +40674,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40567,7 +40695,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40617,7 +40746,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40637,7 +40767,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40658,7 +40789,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40679,7 +40811,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40730,7 +40863,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40751,7 +40885,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40771,7 +40906,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40791,7 +40927,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40841,7 +40978,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40861,7 +40999,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -40887,7 +41026,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -40929,7 +41069,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -41045,7 +41186,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -41087,7 +41229,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -41123,7 +41266,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41143,7 +41287,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41193,7 +41338,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41213,7 +41359,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41233,7 +41380,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41253,7 +41401,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41303,7 +41452,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41323,7 +41473,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41344,7 +41495,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41365,7 +41517,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41416,7 +41569,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41437,7 +41591,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -41464,6 +41619,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -41557,6 +41713,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -41808,6 +41965,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -41901,6 +42059,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -41994,6 +42153,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -42137,6 +42297,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -42522,6 +42683,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -42665,6 +42827,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "read-artifact-docs-version:read"
       ],
       "dataMarks": [
@@ -42801,7 +42964,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -42821,7 +42985,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -42871,7 +43036,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -42891,7 +43057,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -42927,7 +43094,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -42963,7 +43131,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43061,7 +43230,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43097,7 +43267,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43117,7 +43288,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43137,7 +43309,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43187,7 +43360,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43207,7 +43381,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -43244,6 +43419,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -43407,6 +43583,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -43854,6 +44031,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -44017,6 +44195,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -44180,6 +44359,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -44343,6 +44523,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -44790,6 +44971,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -44953,6 +45135,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -45099,7 +45282,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45119,7 +45303,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45169,7 +45354,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45189,7 +45375,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45210,7 +45397,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45231,7 +45419,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45282,7 +45471,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45303,7 +45493,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45323,7 +45514,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45343,7 +45535,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45393,7 +45586,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45413,7 +45607,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -45450,6 +45645,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -45665,6 +45861,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -46252,6 +46449,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -46467,6 +46665,7 @@
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
         "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open",
         "toggle-image-digests:toggled"
       ],
       "dataMarks": [
@@ -46678,7 +46877,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -46806,7 +47006,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -47146,7 +47347,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -47274,7 +47476,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -47395,7 +47598,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47421,7 +47625,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47489,7 +47694,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47515,7 +47721,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47535,7 +47742,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47555,7 +47763,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47605,7 +47814,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47625,7 +47835,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47645,7 +47856,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47665,7 +47877,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47715,7 +47928,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47735,7 +47949,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -47761,7 +47976,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -47831,7 +48047,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -48031,7 +48248,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -48101,7 +48319,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -48166,7 +48385,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -48187,7 +48407,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -48238,7 +48459,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -48259,7 +48481,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -48297,7 +48520,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -48430,7 +48654,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -48785,7 +49010,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -48918,7 +49144,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -49039,7 +49266,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -49145,7 +49373,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -49453,7 +49682,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -49559,7 +49789,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -49659,7 +49890,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -49679,7 +49911,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -49729,7 +49962,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -49749,7 +49983,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -49782,7 +50017,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -49910,7 +50146,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -50280,7 +50517,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -50408,7 +50646,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -50529,7 +50768,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50555,7 +50795,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50623,7 +50864,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50649,7 +50891,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50669,7 +50912,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50689,7 +50933,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50739,7 +50984,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50759,7 +51005,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50779,7 +51026,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50799,7 +51047,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50849,7 +51098,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50869,7 +51119,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -50895,7 +51146,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -50965,7 +51217,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -51165,7 +51418,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -51235,7 +51489,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -51300,7 +51555,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -51321,7 +51577,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -51372,7 +51629,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -51393,7 +51651,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -51431,7 +51690,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -51564,7 +51824,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -51949,7 +52210,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -52082,7 +52344,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -52203,7 +52466,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -52309,7 +52573,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -52617,7 +52882,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -52723,7 +52989,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -52823,7 +53090,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -52843,7 +53111,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -52893,7 +53162,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -52913,7 +53183,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291528,7 +291799,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291553,7 +291825,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291616,7 +291889,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291641,7 +291915,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291660,7 +291935,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291679,7 +291955,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291724,7 +292001,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291743,7 +292021,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -291789,7 +292068,8 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -291923,7 +292203,8 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -292315,7 +292596,8 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -292449,7 +292731,8 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ],
       "dataMarks": [
         {
@@ -292556,7 +292839,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -292575,7 +292859,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -292620,7 +292905,8 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -292639,7 +292925,1120 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
-        "open-sidebar-network-access:networkAccess"
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm running no services",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm running no services",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm running no services",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm running no services",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm running no services",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > says an empty swarm runs no services",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm running no services",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > lists the swarm’s services, each with its state",
+      "name": "services",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "replicas",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > lists the swarm’s services, each with its state",
+      "name": "services",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "replicas",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > lists the swarm’s services, each with its state",
+      "name": "services",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "replicas",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > lists the swarm’s services, each with its state",
+      "name": "services",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "replicas",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > lists the swarm’s services, each with its state",
+      "name": "services",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "replicas",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > lists the swarm’s services, each with its state",
+      "name": "services",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmServices"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=l2izhr0o4tjq",
+          "field": "replicas",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": null,
+          "derived": [
+            "replicas"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "mode",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmServices",
+          "item": "id=qz3slj0owlxd",
+          "field": "replicas",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts",
+      "test": "SwarmServicesPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/services",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -296373,6 +297772,32 @@
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-phone-light.html",
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-tablet-dark.html",
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-tablet-light.html"
+    ],
+    "system/swarm/services": [
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-desktop-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-desktop-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-phone-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-phone-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-tablet-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/services-tablet-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts/unavailable-tablet-light.html"
     ]
   },
   "outcomes": {
@@ -298439,6 +299864,16 @@
       },
       {
         "route": null,
+        "interaction": "open-sidebar-system",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "system",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-sidebar-work-page",
         "outcome": "acceptance",
         "kind": "exit",
@@ -298949,6 +300384,15 @@
         "route": null,
         "interaction": "open-sidebar-section",
         "outcome": "work",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-system open: the sidebar’s System opens the System section, marked current there",
+        "route": null,
+        "interaction": "open-sidebar-system",
+        "outcome": "open",
         "kind": "exit",
         "freeze": null
       },

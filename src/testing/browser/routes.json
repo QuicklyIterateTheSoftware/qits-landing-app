@@ -2906,5 +2906,19 @@
       "operationId": "listProjects",
       "route": "projects"
     }
+  ],
+  "src/app/routes/system/swarm/services/swarm-services.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmServices",
+      "route": "system/swarm/services"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a swarm running no services",
+      "operationId": "listSwarmServices",
+      "route": "system/swarm/services"
+    }
   ]
 }
