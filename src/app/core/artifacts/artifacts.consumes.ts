@@ -4,6 +4,7 @@ import type {
   ListDaemonsResponses,
   ListDaemonVersionsResponses,
   ListDocsSiteSummariesResponses,
+  ListDocsVersionSummariesResponses,
   ListImageManifestSummariesResponses,
   ListImagesResponses,
   ListImageTagSummariesResponses,
@@ -15,7 +16,8 @@ import type {
 /**
  * What the app reads from qits-artifacts' store explorer doors (qits-2316): the store's
  * repositories, and one repository's listing by its type; one image's tags and manifests
- * (qits-2324); and one daemon's versions and a version's bytes (qits-2327). `artifacts.operations.ts` declares each read with these lists, so nothing can read
+ * (qits-2324); one daemon's versions and a version's bytes (qits-2327); and one docs site's
+ * versions (qits-2328). `artifacts.operations.ts` declares each read with these lists, so nothing can read
  * any other field, and `artifacts.operations.pact.spec.ts` binds the same. To read another field,
  * add it here.
  */
@@ -168,6 +170,27 @@ export type ArtifactDocsSites = Consumed<
   typeof LIST_ARTIFACT_DOCS_SITES
 >;
 export type ArtifactDocsSite = NonNullable<ArtifactDocsSites['sites']>[number];
+
+/**
+ * `ARTIFACT_DOCS_VERSIONS` (`listDocsVersionSummaries`, qits-2328): one docs site's versions,
+ * newest first as the wire gives them, each with its file count, its size (the union of the
+ * version's own blobs), when it was published, when it was last read (`null`: never) and its
+ * metadata, a map of free keys (`git.repository.name`, `git.commit.hash`, …), bound whole.
+ */
+export const LIST_ARTIFACT_DOCS_VERSIONS = [
+  'versions[].version',
+  'versions[].fileCount',
+  'versions[].sizeBytes',
+  'versions[].publishedAt',
+  'versions[].accessedAt',
+  'versions[].metadata',
+] as const;
+
+export type ArtifactDocsVersions = Consumed<
+  ListDocsVersionSummariesResponses[200],
+  typeof LIST_ARTIFACT_DOCS_VERSIONS
+>;
+export type ArtifactDocsVersion = NonNullable<ArtifactDocsVersions['versions']>[number];
 
 /**
  * `ARTIFACT_RECORDS` (`listArtifactRecords`): a ci repository's records, unfiltered. `metadata` is

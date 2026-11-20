@@ -366,9 +366,10 @@ and `artifacts/repositories` redirect to `artifacts/repositories/qits`. It reads
 `listDocsSiteSummaries`, `listArtifactRecords`), none for a type without one (`sboms`). Each table
 has a name search over the one answer. An image row's name opens the image's page here
 (`open-artifact-image`, below), a daemon row's name the daemon's page (`open-artifact-daemon`,
-below); any other row's name leaves for its detail page in the old explorer
+below), a docs site row's name the site's page (`open-artifact-docs-site`, below); any other row's
+name leaves for its detail page in the old explorer
 (`open-artifacts-entry`, `external('artifacts')`: `PlatformOrigins.page('artifacts')` +
-`/repositories/<repo>/<packages|maven-packages|docs>/<name>`, the name one segment)
+`/repositories/<repo>/<packages|maven-packages>/<name>`, the name one segment)
 until the section's detail pages land (qits-2325, qits-2326); `provideAppRoute()` gives specs that
 origin too. qits-artifacts sends no domain event: Refresh reads again. The pact binds an empty
 recorded listing by its status only (the shared database the provider verifies on holds other
@@ -439,6 +440,28 @@ in "a daemon with two versions" and "a daemon nothing has published" (`contract-
 `daemons`, a contract name every state cleans up), and `getDaemon` in the first by status only (its
 answer is bytes). No recording holds those bytes, so the browser spec answers the download with a
 failure (`download-failed`), a status only, after checking its request.
+
+`artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site of
+a docs store. Every site name is scoped and slashed (`@changelog/qits-qits`), and `<site>` is one
+segment: `@changelog%2Fqits-qits` in the URL (the router keeps `@` literal), sent to the door as
+`%40changelog%2Fqits-qits` (`literalDocsPaths` rewrites only `/artifacts/docs/` wire URLs, never
+this `/artifacts/api/` door). One read, nothing per row: `ARTIFACT_DOCS_VERSIONS`
+(`listDocsVersionSummaries`), "N versions · newest first" from its answer, the table in the wire's
+order: the version, its file count, its size (the union of the version's own blobs; one caption
+says the sizes do not add up), published, last accessed ("Never" for null), published from
+(`publishedFrom`: `git.repository.name` · `git.branch.name` when present · the commit's 7
+characters · `release.request.qualified-id` when present; "—" for none; plain text, the store
+joins to no project) and Read (`read-artifact-docs-version`, `external('docs')`, same tab:
+`PlatformOrigins.page('docs')` + `docsReadPath('/', site, version)`, qits-docs' reader, which
+renders a changelog or an `openapi.yml` the old page's raw `index.html` link could not, until
+qits-2337 moves the reader here). "← <repo>" and a non-docs repository's note lead back
+(`leave-artifact-docs-site`). A 404 is "There is no repository called <repo> in this store", a 400
+"<repo> is not a docs repository", and an empty list "There is no site called <site> in this
+repository" (the door answers an unknown site 200 with no versions). No event, no polling: Refresh
+reads again. The pact binds `listDocsVersionSummaries` exactly in "a store holding one artifact of
+every kind" (`contract-docs-site`, one version on `main`) and "a docs site published by two
+releases" (two versions whose metadata differ, the newer never read), and in "a store with nothing
+published" by status only, as the empty listings above.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend

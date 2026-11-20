@@ -128,6 +128,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * cleanup: its gc plan read through qits-orchestrator, and the Run that sweeps it.
  * `artifacts/repositories/<repo>/daemons/<daemon>` (`ArtifactsDaemonPage`, qits-2327) is one daemon
  * of a daemon store, its published versions, each one downloadable.
+ * `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site
+ * of a docs store, its published versions, each read in qits-docs' reader; the site name is one
+ * segment (`@changelog/qits-qits` is `@changelog%2Fqits-qits` in the URL).
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -543,6 +546,15 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page').then(
                 (m) => m.ArtifactsDaemonPage,
+              ),
+          },
+          {
+            // One docs site of a docs store (qits-2328): its published versions. Every site name
+            // is scoped and slashed (`@changelog/qits-qits`), so it is one segment, `%2F` encoded.
+            path: 'repositories/:repo/docs/:site',
+            loadComponent: () =>
+              import('./routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page').then(
+                (m) => m.ArtifactsDocsSitePage,
               ),
           },
         ],

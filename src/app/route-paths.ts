@@ -7,6 +7,7 @@ export type RoutePath =
   | 'artifacts/repositories/:repo'
   | 'artifacts/repositories/:repo/cleanup'
   | 'artifacts/repositories/:repo/daemons/:daemon'
+  | 'artifacts/repositories/:repo/docs/:site'
   | 'artifacts/repositories/:repo/images/:image'
   | 'projects'
   | 'projects/:slug'
