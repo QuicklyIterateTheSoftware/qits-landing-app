@@ -469,7 +469,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-project-event",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/events/:id"
           }
         }
       },
@@ -957,7 +958,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "walk-project-event-chain",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/events/:id"
           }
         }
       },
@@ -1121,7 +1123,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "walk-project-event-chain",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/events/:id"
           }
         }
       },
@@ -1283,7 +1286,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "walk-project-event-chain",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/events/:id"
           }
         }
       },
@@ -1367,7 +1371,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "walk-project-event-chain",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/events/:id"
           }
         }
       },

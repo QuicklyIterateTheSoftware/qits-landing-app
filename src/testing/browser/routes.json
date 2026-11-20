@@ -705,6 +705,50 @@
       "route": "projects/:slug/docs/repositories/:repo"
     }
   ],
+  "src/app/routes/projects/[slug]/events/[id]/project-event.page.browser.spec.ts": [
+    {
+      "provider": "qits-events-service",
+      "state": "an event of a project with a cause and effects",
+      "operationId": "getEvent",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "an event of a project with a cause and effects",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "an event of a project with no effects",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "the cause of a project event",
+      "operationId": "getEvent",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-events-service",
+      "state": "the cause of a project event",
+      "operationId": "listEvents",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/events/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/events/:id"
+    }
+  ],
   "src/app/routes/projects/[slug]/events/project-events.page.browser.spec.ts": [
     {
       "provider": "qits-events-service",
