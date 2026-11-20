@@ -80,7 +80,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
  * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
  * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
- * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series.
+ * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series;
+ * `slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) its spans at or above a duration floor.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -451,6 +452,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/observability/metrics/observability-metrics.page').then(
                 (m) => m.ObservabilityMetricsPage,
+              ),
+          },
+          {
+            path: 'slow-spans',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page').then(
+                (m) => m.ObservabilitySlowSpansPage,
               ),
           },
         ],

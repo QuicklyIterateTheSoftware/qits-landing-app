@@ -15,6 +15,7 @@ import {
   TELEMETRY_ERRORS,
   TELEMETRY_LOGS,
   TELEMETRY_METRICS,
+  TELEMETRY_SLOW_SPANS,
   TELEMETRY_SOURCES,
 } from './observability.operations';
 
@@ -28,8 +29,10 @@ import {
  * service's telemetry (`telemetry from one platform service`); that source's logs as the page asks
  * for them by default (the source alone), and the same narrowed to the last hour (`sinceMinutes`,
  * `telemetry records of every kind`); that source's error groups as the Errors page asks for them
- * by default (the source alone, qits-2339); and that source's metric series, the latest point of
- * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340).
+ * by default (the source alone, qits-2339); that source's metric series, the latest point of
+ * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340); and that
+ * source's slow spans as the Slow spans page asks for them by default (the source and the floor,
+ * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -164,4 +167,37 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
       }
       expect(metrics.some((metric) => metric.unit === 'By')).toBe(true);
     }));
+
+  it('show-telemetry-slow-spans: a source’s spans at or above 500 ms, slowest first', () =>
+    given(TELEMETRY_SLOW_SPANS, ONE_SERVICE, 'show-telemetry-slow-spans').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          TELEMETRY_SLOW_SPANS.fetch({
+            query: { source: sourceOf(ONE_SERVICE), thresholdMs: 500 },
+          }),
+        );
+        expect(error).toBeUndefined();
+        const spans = data?.spans ?? [];
+        expect(spans.length).toBeGreaterThan(1);
+        expect(spans.every((span) => (span.durationMs ?? 0) >= 500)).toBe(true);
+        expect(spans.map((span) => span.durationMs ?? 0)).toEqual(
+          spans.map((span) => span.durationMs ?? 0).sort((a, b) => b - a),
+        );
+        for (const span of spans) {
+          expect(span.traceId).toBeTruthy();
+          expect(span.spanId).toBeTruthy();
+          expect(span.name).toBeTruthy();
+          expect(span.kind).toBeTruthy();
+          expect(span.startEpochNanos).toBeGreaterThan(0);
+          expect(span.resourceAttributes?.['service.version']).toBeTruthy();
+        }
+        expect(spans.some((span) => span.status === 'ERROR')).toBe(true);
+        expect(spans.some((span) => span.events?.some((event) => event.exception === true))).toBe(
+          true,
+        );
+        expect(spans.some((span) => !!span.attributes?.['http.route'])).toBe(true);
+        expect(data?.total).toBe(spans.length);
+        expect(data?.truncated).toBe(false);
+      },
+    ));
 });
