@@ -34,6 +34,8 @@ const services = [
   'qits-deployments/qits-deployments-service',
   // The Artifacts section's cleanup page (qits-2329): one repository's gc plan and its sweep.
   'qits-orchestrator/qits-orchestrator-service',
+  // The Mirror section (qits-2357): the OCI registries the mirror fronts.
+  'qits-mirror/qits-mirror-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */
