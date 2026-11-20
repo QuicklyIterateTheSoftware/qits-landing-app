@@ -132,6 +132,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/deployments/requests', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
           { path: 'projects/:slug/observability/logs', component: TestPage },
+          { path: 'projects/:slug/observability/errors', component: TestPage },
           { path: 'projects/:slug/docs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
           { path: 'projects/:slug/maintenance', component: TestPage },
@@ -642,6 +643,18 @@ describe('ShellLayout (screenshots)', () => {
     const link = navigation.getByRole('link', { name: 'Logs', exact: true });
     expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/observability/logs`);
     expect(reached()).toEqual(['open-sidebar-observability-page:logs']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Observability', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+  });
+
+  it('open-sidebar-observability-page errors: Errors below Observability opens it', async () => {
+    const { fixture, project } = await renderProject('/observability/logs');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Errors', exact: true });
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/observability/errors`);
+    expect(reached()).toEqual(['open-sidebar-observability-page:errors']);
     await expect.element(link).toHaveAttribute('aria-current', 'page');
     await expect
       .element(navigation.getByRole('link', { name: 'Observability', exact: true }))

@@ -37,6 +37,7 @@ export type RoutePath =
   | 'projects/:slug/maintenance/dependencies'
   | 'projects/:slug/maintenance/repositories/:name'
   | 'projects/:slug/observability'
+  | 'projects/:slug/observability/errors'
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/release-requests'
   | 'projects/:slug/release-requests/:requestId'

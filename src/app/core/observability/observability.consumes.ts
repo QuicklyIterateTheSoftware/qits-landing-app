@@ -1,4 +1,5 @@
 import type {
+  ListTelemetryErrorsResponses,
   ListTelemetrySourcesResponses,
   SearchTelemetryLogsResponses,
 } from '../../api/observability';
@@ -35,12 +36,56 @@ export const SEARCH_TELEMETRY_LOGS = [
   'truncated',
 ] as const;
 
+/**
+ * `listTelemetryErrors` (qits-2339): each group's trace id and service; its error spans' name, kind,
+ * start, duration, status message, events (read whole: the `exception` flag and the
+ * `exception.type` / `.message` / `.stacktrace` attributes) and resource attributes (read whole, for
+ * `service.version`); its error logs' time, level, body and resource attributes; and how many groups
+ * there were and whether the answer left some out.
+ */
+export const LIST_TELEMETRY_ERRORS = [
+  'groups[].traceId',
+  'groups[].serviceName',
+  'groups[].errorSpans[].name',
+  'groups[].errorSpans[].kind',
+  'groups[].errorSpans[].startEpochNanos',
+  'groups[].errorSpans[].durationMs',
+  'groups[].errorSpans[].statusMessage',
+  'groups[].errorSpans[].events',
+  'groups[].errorSpans[].resourceAttributes',
+  'groups[].errorLogs[].epochNanos',
+  'groups[].errorLogs[].severityText',
+  'groups[].errorLogs[].body',
+  'groups[].errorLogs[].resourceAttributes',
+  'total',
+  'truncated',
+] as const;
+
+/** The buffer's sources, cut to what the picker reads. */
+export type TelemetrySources = Consumed<
+  ListTelemetrySourcesResponses[200],
+  typeof LIST_TELEMETRY_SOURCES
+>;
+
 /** One telemetry source, cut to what the picker reads. */
-export type TelemetrySourceRow = NonNullable<
-  Consumed<ListTelemetrySourcesResponses[200], typeof LIST_TELEMETRY_SOURCES>['sources']
->[number];
+export type TelemetrySourceRow = NonNullable<TelemetrySources['sources']>[number];
 
 /** One log line, cut to what the logs page reads. */
 export type TelemetryLogLine = NonNullable<
   Consumed<SearchTelemetryLogsResponses[200], typeof SEARCH_TELEMETRY_LOGS>['logs']
 >[number];
+
+/** A source's error groups, cut to what the errors page reads. */
+export type TelemetryErrors = Consumed<
+  ListTelemetryErrorsResponses[200],
+  typeof LIST_TELEMETRY_ERRORS
+>;
+
+/** One error group: a trace's (or, under an empty trace id, no trace's) error spans and logs. */
+export type TelemetryErrorGroup = NonNullable<TelemetryErrors['groups']>[number];
+
+/** One error span of a group. */
+export type TelemetryErrorSpan = NonNullable<TelemetryErrorGroup['errorSpans']>[number];
+
+/** One error log of a group. */
+export type TelemetryErrorLog = NonNullable<TelemetryErrorGroup['errorLogs']>[number];

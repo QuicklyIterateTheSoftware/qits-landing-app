@@ -1,16 +1,22 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
-import type {
-  TelemetryLogLine,
-  TelemetrySourceRow,
-} from '$core/observability/observability.consumes';
+import { ActivatedRoute, Router } from '@angular/router';
+import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import type { TelemetryLogLine } from '$core/observability/observability.consumes';
 import { TELEMETRY_LOGS, TELEMETRY_SOURCES } from '$core/observability/observability.operations';
-import { utcMinute } from '$core/projects/release-requests';
+import {
+  levelTone,
+  lineTime,
+  minutesOf,
+  refused,
+  SINCE_MINUTES,
+  sinceLabel,
+  versionOf,
+} from '$core/observability/telemetry';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { TelemetrySourcePicker } from '$patterns/observability/source-picker/source-picker';
 import type { Action } from '$ui/components/action-button/action';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
@@ -18,15 +24,6 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
 /** The levels the level filter offers, lowest first; none (All) reads every line. */
 export const LEVELS = ['DEBUG', 'INFO', 'WARN', 'ERROR'] as const;
-
-/** The time ranges the range filter offers, in minutes; none (Everything) is the default. */
-export const SINCE_MINUTES = [15, 60, 360, 1440] as const;
-
-/** A time range's label. */
-function sinceLabel(minutes: number): string {
-  if (minutes < 60) return `Last ${minutes} minutes`;
-  return minutes === 60 ? 'Last hour' : `Last ${minutes / 60} hours`;
-}
 
 /** What a page reads of the URL's query (`?source=&level=&q=&since=`, the old frontend's names). */
 interface LogsQuery {
@@ -42,50 +39,16 @@ function levelOf(value: string | null): string | undefined {
   return LEVELS.find((level) => level === upper);
 }
 
-/** `value` as a positive whole number of minutes, or undefined (Everything). */
-function minutesOf(value: string | null): number | undefined {
-  const minutes = Number(value);
-  return value && Number.isInteger(minutes) && minutes > 0 ? minutes : undefined;
-}
-
-/** A line's time, `YYYY-MM-DD HH:MM:SS.mmm` in UTC, from its `epochNanos`; empty when missing. */
-export function lineTime(epochNanos: number | undefined): string {
-  if (epochNanos === undefined) return '';
-  const date = new Date(Math.round(epochNanos / 1e6));
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toISOString().slice(0, 23).replace('T', ' ');
-}
-
-/** A line's level, as a chip's tone. */
-function levelTone(level: string | undefined): ChipTone {
-  switch (level?.toUpperCase()) {
-    case 'ERROR':
-    case 'FATAL':
-      return 'failed';
-    case 'WARN':
-      return 'waiting';
-    default:
-      return 'neutral';
-  }
-}
-
-/** Whether a failed read was refused for the viewer's roles. */
-function refused(read: { status(): string; error(): unknown }): boolean {
-  if (read.status() !== 'error') return false;
-  const error = read.error();
-  return error instanceof QitsApiError && error.status === 403;
-}
-
 /**
  * The Observability section's Logs page, at `/projects/<slug>/observability/logs` (qits-2313; the
  * section's own address redirects here): qits-observability's telemetry buffer, which holds only
  * the platform's recent records.
  *
- * On top, the source picker: every SERVICE source of the buffer (`TELEMETRY_SOURCES`,
- * `listTelemetrySources`), by label, with how many log lines, spans and metric series it holds and
- * how far back it reaches (`oldestReceivedAt`). Choosing one puts its key in the URL
- * (`?source=_service/qits-ci`), so the view is linkable and survives a reload. Below, the chosen
- * source's log lines (`TELEMETRY_LOGS`, `searchTelemetryLogs`), narrowed by the level filter
+ * On top, the source picker (`app-telemetry-source-picker`, shared with the Errors page): every
+ * SERVICE source of the buffer (`TELEMETRY_SOURCES`, `listTelemetrySources`), with its counts and
+ * reach. Choosing one puts its key in the URL (`?source=_service/qits-ci`), so the view is linkable
+ * and survives a reload. Below, the chosen source's log lines (`TELEMETRY_LOGS`,
+ * `searchTelemetryLogs`), narrowed by the level filter
  * (`?level=` → `minSeverity`, absent: all), the body filter (`?q=` → `query`, applied on Enter or
  * when the field is left) and the time range (`?since=` minutes → `sinceMinutes`; absent:
  * everything buffered, the default). The query names are the retired qits-observability-frontend's,
@@ -111,8 +74,8 @@ function refused(read: { status(): string; error(): unknown }): boolean {
     QitsEntity,
     QitsEntityList,
     QitsField,
-    RouterLink,
     Spinner,
+    TelemetrySourcePicker,
   ],
   host: { class: 'block' },
   template: `
@@ -129,64 +92,12 @@ function refused(read: { status(): string; error(): unknown }): boolean {
         >
           Reading telemetry needs qits:admin.
         </p>
-        <ui-load-failure
-          message="The telemetry buffer’s sources could not be read."
-          [class.hidden]="sourcesState() !== 'error' || refusal()"
-          (retry)="sources.reload()"
-        />
-        <ui-spinner
+        <app-telemetry-source-picker
+          [sources]="sources"
           [state]="sourcesState()"
-          class="min-h-16"
-          [class.hidden]="sourcesState() === 'error'"
-        >
-          <ul
-            class="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-2 p-0"
-            aria-label="Services"
-            [qitsEntityList]="sources"
-          >
-            @for (source of services(); track source.key) {
-              <li [qitsEntity]="source" entityKey="key">
-                <a
-                  class="block rounded-md border px-3 py-2 no-underline hover:bg-surface-muted"
-                  [class]="
-                    source.key === query().source
-                      ? 'border-accent bg-accent-soft text-fg'
-                      : 'border-line bg-surface text-fg-soft'
-                  "
-                  [attr.aria-current]="source.key === query().source ? 'true' : null"
-                  [routerLink]="[]"
-                  [queryParams]="{ source: source.key }"
-                  queryParamsHandling="merge"
-                >
-                  <span
-                    class="block truncate font-semibold text-fg"
-                    [fieldOf]="source"
-                    qitsField="label"
-                    >{{ source.label }}</span
-                  >
-                  <span
-                    class="block text-xs text-fg-muted"
-                    [fieldOf]="source"
-                    [qitsField]="{ derived: ['logs', 'spans', 'metricSeries'] }"
-                    >{{ counts(source) }}</span
-                  >
-                  <span
-                    class="block text-xs text-fg-muted"
-                    [fieldOf]="source"
-                    [qitsField]="{ derived: ['oldestReceivedAt'] }"
-                    >{{ reach(source) }}</span
-                  >
-                </a>
-              </li>
-            }
-          </ul>
-          <p
-            class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
-            [class]="sourcesState() === 'loaded' && services().length === 0 ? 'block' : 'hidden'"
-          >
-            Nothing is buffered: no platform service has sent telemetry lately.
-          </p>
-        </ui-spinner>
+          [selected]="query().source"
+          [refused]="refusal()"
+        />
 
         <section class="mt-6" aria-label="Log lines" [class.hidden]="!query().source || refusal()">
           <div class="mb-3 flex flex-wrap items-end gap-3 text-sm">
@@ -335,13 +246,6 @@ export class ObservabilityLogsPage {
     };
   });
 
-  /** The platform's services among the sources (workspaces and the unscoped rest left out). */
-  protected readonly services = computed(() =>
-    this.sources.hasValue()
-      ? (this.sources.value()?.sources ?? []).filter((source) => source.kind === 'SERVICE')
-      : [],
-  );
-
   protected readonly logsValue = computed(() =>
     this.logs.hasValue() ? (this.logs.value() ?? {}) : {},
   );
@@ -369,27 +273,12 @@ export class ObservabilityLogsPage {
     },
   ];
 
-  protected counts(source: TelemetrySourceRow): string {
-    const plural = (n: number | undefined, word: string) =>
-      `${n ?? 0} ${word}${n === 1 ? '' : 's'}`;
-    return [
-      plural(source.logs, 'log line'),
-      plural(source.spans, 'span'),
-      `${source.metricSeries ?? 0} metric series`,
-    ].join(' · ');
-  }
-
-  protected reach(source: TelemetrySourceRow): string {
-    const since = utcMinute(source.oldestReceivedAt ?? undefined);
-    return since ? `since ${since}` : '';
-  }
-
   protected tone(level: string | undefined): ChipTone {
     return levelTone(level);
   }
 
   protected version(line: TelemetryLogLine): string {
-    return line.resourceAttributes?.['service.version'] ?? '';
+    return versionOf(line.resourceAttributes);
   }
 
   protected value(event: Event): string {
