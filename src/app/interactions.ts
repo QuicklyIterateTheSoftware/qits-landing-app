@@ -845,6 +845,12 @@ export const INTERACTIONS = {
    */
   'show-swarm-services': 'The swarm services page lists the swarm’s services with their state',
   /**
+   * `mirror-upstreams.page.ts` via `UPSTREAM_LIST` (qits-2357): the Mirror section's upstreams
+   * page lists the image registries qits-mirror fronts, each with its namespace, cached images and
+   * registration date. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
+  /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.
@@ -1425,6 +1431,12 @@ export const INTERACTIONS = {
    * and names no pact.
    */
   'open-sidebar-system': 'The sidebar’s System entry opens the System section',
+  /**
+   * `shell.layout.ts`: the sidebar's Mirror, a global section shown with no project open, opens
+   * the Mirror section (`mirror`, which opens the OCI upstreams; qits-2357). Navigates only, and
+   * names no pact.
+   */
+  'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and

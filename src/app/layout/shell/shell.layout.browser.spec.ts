@@ -93,8 +93,8 @@ class PinnedPage {}
  * (`open-sidebar-work-page`), the gear (`open-project-settings`), and the trail's brand and crumbs
  * (`follow-breadcrumb`). The agents and release menus' own exits are followed in their own specs.
  * The global sections shown with no project open open a section of this app (Artifacts,
- * `open-sidebar-artifacts`, qits-2316, and System, `open-sidebar-system`, qits-2344, each to a
- * stand-in route) or leave the app (IdP admin,
+ * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, and Mirror,
+ * `open-sidebar-mirror`, qits-2357, each to a stand-in route) or leave the app (IdP admin,
  * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
  * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
  * and with one, qits-2262) and the network icon (`open-network-access`) are pressed once each. The
@@ -113,6 +113,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: '', component: TestPage },
           { path: 'artifacts', component: TestPage },
           { path: 'system', component: TestPage },
+          { path: 'mirror', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -223,12 +224,13 @@ describe('ShellLayout (screenshots)', () => {
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
     // At the root the navigation holds no project's sections: the global sections (Artifacts,
-    // qits-2316; System, qits-2344; IdP admin, qits-2319), then Network access, the phone's way
-    // there (qits-2262); the "qits" brand leads home.
+    // qits-2316; System, qits-2344; Mirror, qits-2357; IdP admin, qits-2319), then Network
+    // access, the phone's way there (qits-2262); the "qits" brand leads home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
       'Artifacts',
       'System',
+      'Mirror',
       'IdP admin',
       'Network access',
     ]);
@@ -769,7 +771,7 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels).toEqual(['Artifacts', 'System', 'IdP admin', 'Network access']);
+    expect(labels).toEqual(['Artifacts', 'System', 'Mirror', 'IdP admin', 'Network access']);
     await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
   });
 
@@ -796,6 +798,19 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(entry).not.toHaveAttribute('aria-current');
     expect(await follow(fixture, entry)).toBe('/system');
     expect(reached()).toEqual(['open-sidebar-system:open']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('open-sidebar-mirror open: the sidebar’s Mirror opens the Mirror section, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render();
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Mirror', exact: true });
+    await expect.element(entry).toHaveAttribute('href', '/mirror');
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/mirror');
+    expect(reached()).toEqual(['open-sidebar-mirror:open']);
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
@@ -827,6 +842,9 @@ describe('ShellLayout (screenshots)', () => {
       .not.toBeInTheDocument();
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true, includeHidden: true }))
+      .not.toBeInTheDocument();
+    await expect
+      .element(navigation.getByRole('link', { name: 'Mirror', exact: true, includeHidden: true }))
       .not.toBeInTheDocument();
   });
 

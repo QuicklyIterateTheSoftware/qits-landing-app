@@ -159,6 +159,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `redirectTo`; it is an entry point, where qits-system-frontend's old `swarm/services` hands off.
  * qits-2345…qits-2356 add the section's other pages under `system/...`.
  *
+ * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
+ * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
+ * open. `mirror` redirects to it by a relative `redirectTo`; it is an entry point, where
+ * qits-mirror-frontend's old `upstreams` hands off. qits-2358 adds `mirror/repositories/...`.
+ *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
  * shell, so the guard does not run on it and the catch-all never takes it.
@@ -693,6 +698,25 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/system/swarm/services/swarm-services.page').then(
                 (m) => m.SwarmServicesPage,
+              ),
+          },
+        ],
+      },
+      {
+        // The Mirror section (qits-2357): qits-mirror's pull-through caches, bound to no project.
+        // No front page of its own yet: `/mirror` opens the OCI upstreams.
+        path: 'mirror',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'upstreams' },
+          {
+            path: 'upstreams',
+            // An entry point (qits-2049): qits-mirror-frontend's old `upstreams` hands off here
+            // with a full-document load, and its bookmarks follow; the sidebar's Mirror leads to
+            // `mirror`, which redirects here, so no outcome of this app names it.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/mirror/upstreams/mirror-upstreams.page').then(
+                (m) => m.MirrorUpstreamsPage,
               ),
           },
         ],

@@ -33,6 +33,7 @@ import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daem
 import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
 import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
+import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -293,6 +294,27 @@ describe('system routes (qits-2344)', () => {
   });
 });
 
+describe('mirror routes (qits-2357)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens the OCI upstreams at mirror/upstreams', async () => {
+    expect(await pages('/mirror/upstreams')).toEqual([MirrorUpstreamsPage]);
+    expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
+  });
+
+  it('opens the OCI upstreams at mirror', async () => {
+    expect(await pages('/mirror')).toEqual([MirrorUpstreamsPage]);
+    expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
+  });
+});
+
 describe('entry points (qits-2049)', () => {
   /** The full paths of the routes whose data marks them an entry, as `describeRoutes` reads it. */
   function entries(list: typeof routes, parent = ''): string[] {
@@ -305,15 +327,17 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door, the old agent address, the docs reader’s split form and the swarm services, beside the library’s own', () => {
+  it('marks the front door, the old agent address, the docs reader’s split form, the swarm services and the OCI upstreams, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
     // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services
-    // where qits-system-frontend's old page hands off (qits-2344).
+    // where qits-system-frontend's old page hands off (qits-2344), the OCI upstreams where
+    // qits-mirror-frontend's does (qits-2357).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
       'projects/:slug/docs/read/**',
       'system/swarm/services',
+      'mirror/upstreams',
     ]);
   });
 });

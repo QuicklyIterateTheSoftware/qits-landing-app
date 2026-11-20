@@ -62,3 +62,4 @@ contracts:
     qits-observability-service: { packages: [maven] }
     qits-deployments-service: { packages: [maven] }
     qits-orchestrator-service: { packages: [maven] }
+    qits-mirror-service: { packages: [maven] }

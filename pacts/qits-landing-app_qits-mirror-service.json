@@ -1,0 +1,167 @@
+{
+  "consumer": {
+    "name": "qits-landing-app"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listUpstreams"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-upstreams",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-upstreams: listUpstreams",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the default caches"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/mirror/api/upstreams"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "upstreams": [
+              {
+                "cachedImages": 0,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "host": "docker.io",
+                "namespace": "hub"
+              },
+              {
+                "cachedImages": 0,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "host": "docker.io",
+                "namespace": "hub"
+              },
+              {
+                "cachedImages": 0,
+                "createdAt": "2026-01-01T00:00:00Z",
+                "host": "docker.io",
+                "namespace": "hub"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.upstreams": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.upstreams[*].cachedImages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.upstreams[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.upstreams[*].host": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.upstreams[*].namespace": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.8",
+      "models": "1.3.16"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "qits-mirror-service"
+  }
+}

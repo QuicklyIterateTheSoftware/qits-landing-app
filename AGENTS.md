@@ -74,7 +74,7 @@ each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) b
 pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
-counts.
+counts, a mirror upstream registered or deleted or an image pulled through (qits-2357).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
 `ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
@@ -345,15 +345,16 @@ With no project open, the sidebar shows its global sections in the project's sec
 (`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
-every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316) and System
-(`open-sidebar-system`, `exit('system')`, qits-2344).
+every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316), System
+(`open-sidebar-system`, `exit('system')`, qits-2344) and Mirror (`open-sidebar-mirror`,
+`exit('mirror')`, qits-2357).
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
-no outcome. Mirror (qits-2357) and Orchestrator (qits-2359) each add one entry there with their own
-`outcomes(...)` exit (a `GlobalPath` of their own). With a project open the list is empty.
+no outcome. Orchestrator (qits-2359) adds one entry there with its own `outcomes(...)` exit (a
+`GlobalPath` of its own). With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
@@ -536,6 +537,26 @@ scale) is not followed: Refresh reads again. The pact reads it in "a single-node
 replicated services, `1/1`) and "a swarm running no services" (`[]`; the interaction and the
 `empty` screenshot skip themselves until the `@qits/system-golden-masters` pin records it), in its
 own part of the system pact (`swarm.operations.pact.spec.ts`, `assertPactPart`).
+
+The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
+`mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
+`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and qits-2358 adds
+`mirror/repositories/<repository>`. It is an entry point (`qitsEntry`): the old page hands off to it
+with a full-document load, and the sidebar's Mirror exit names `mirror`, which redirects. It reads
+through `qitsResource` over `core/mirror/upstreams.operations.ts`: `UPSTREAM_LIST`
+(`listUpstreams`, `GET /mirror/api/upstreams`, `{ upstreams: [...] }` in namespace order), in the
+browser only, one table in the server's order: host (mono, the name a docker client uses, the row's
+identity), namespace (mono, the local segment of `mirror.<domain>/<namespace>/<image>`), cached
+images (distinct image names, 0 is normal) and registered (`createdAt`, `formatInstant`, marked
+derived), with "N mirrored registries" above it and a note below that npm and maven have one
+upstream each (a deployment setting), so only image registries are a list. `upstreams: []` (an
+operator deleted them) is one sentence; any failure (a 5xx when the database cannot be read: never
+an empty fallback) says the upstreams cannot be read right now, with Retry. Staleness: no
+`refreshOn`. qits-mirror sends no event when an upstream is registered or deleted or an image is
+pulled through, so none of it is followed: Refresh reads again (a known gap). The pact
+(`upstreams.operations.pact.spec.ts`, the whole mirror pact) reads it in "the default caches" (the
+three default registries) and "a mirror fronting no registries" (`upstreams: []`; the interaction
+and the `empty` screenshot skip themselves until the `@qits/mirror-golden-masters` pin records it).
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
@@ -1071,6 +1092,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
 | qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`                                                      | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
+| qits-mirror-service        | `core/mirror/upstreams.operations*.ts`                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
