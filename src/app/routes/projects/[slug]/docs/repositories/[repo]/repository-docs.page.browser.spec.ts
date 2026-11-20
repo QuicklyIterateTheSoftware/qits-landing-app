@@ -1,7 +1,6 @@
 import { HttpTestingController, type TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { QITS_LEAVE_APP } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
@@ -11,12 +10,6 @@ import {
   type OpenedRoute,
 } from '../../../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
-import { provideTestPlatformOrigins } from '../../../../../../../testing/platform-origins';
-
-/** The docs app's page origin, so each row links its reader (configuration, not data). */
-const DOCS = 'https://docs.qits.example.test';
-/** The idp's, as `provideAppRoute()` gives it, which this spec's origins replace. */
-const IDP = 'https://idp.qits.example.test';
 
 const REPOSITORIES = 'two projects exist';
 const EVERY_KIND = 'a docs catalog of every kind';
@@ -34,23 +27,17 @@ const NOW = new Date('2026-01-20T00:00:00Z');
  * not hold (`unknown`); a read still open (`loading`) or failed (`error`). The two providers' ids
  * are unrelated: the repositories are answered under the open project's id.
  *
- * Its exits are followed once each: a row leaves for the site's reader on the docs app
- * (`open-docs-site` `open`, through `QITS_LEAVE_APP`, a spy), and “← Docs” goes back to the
- * project's Docs page (`leave-repository-docs` `docs`).
+ * Its exits are followed once each: a row opens the site's reader in this app (`open-docs-site`
+ * `open`, qits-2337), and “← Docs” goes back to the project's Docs page (`leave-repository-docs`
+ * `docs`).
  */
 describe('RepositoryDocsPage (screenshots)', () => {
   let http: HttpTestingController;
-  const leave = vi.fn<(href: string) => void>();
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
-    leave.mockReset();
     TestBed.configureTestingModule({
-      providers: [
-        provideAppRoute(),
-        provideTestPlatformOrigins({}, { idp: IDP, docs: DOCS }),
-        { provide: QITS_LEAVE_APP, useValue: leave },
-      ],
+      providers: [provideAppRoute()],
     });
     http = TestBed.inject(HttpTestingController);
   });
@@ -126,7 +113,7 @@ describe('RepositoryDocsPage (screenshots)', () => {
     await expect.element(apidocs).toMatchTextContent('3 versions');
     await expect
       .element(apidocs.getByRole('link'))
-      .toHaveAttribute('href', `${DOCS}/${opened.project.slug}/read/@apidocs/qits-ci`);
+      .toHaveAttribute('href', `/projects/${opened.project.slug}/docs/read/@apidocs%2Fqits-ci`);
     // The sidebar's Docs entry stays current below it.
     await expect
       .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Docs' }))
@@ -222,17 +209,16 @@ describe('RepositoryDocsPage (screenshots)', () => {
   /** The outcomes the test reached, as their marks name them. */
   const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
 
-  it('open-docs-site open: a row leaves for the site’s reader on the docs app, in this tab', async () => {
+  it('open-docs-site open: a row opens the site’s reader in this app (qits-2337)', async () => {
     const opened = await render('qits-ci-service');
-    const href = `${DOCS}/${opened.project.slug}/read/@contracts/qits-ci`;
     await userEvent.click(
       page.elementLocator(opened.page).getByRole('list', { name: 'Contracts' }).getByRole('link'),
     );
-    expect(reached()).toEqual(['open-docs-site:open']);
-    expect(leave).toHaveBeenCalledWith(href);
+    await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/docs/repositories/qits-ci-service`,
+      `/projects/${opened.project.slug}/docs/read/@contracts%2Fqits-ci`,
     );
+    expect(reached()).toEqual(['open-docs-site:open']);
   });
 
   it('leave-repository-docs docs: “← Docs” opens the project’s Docs page', async () => {

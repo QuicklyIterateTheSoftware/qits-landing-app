@@ -510,7 +510,23 @@ only when a filter sets them; built by `projectEventsQuery` in `core/events/proj
 `matchesProjectEvents` lets them through (the project by `payloadIds().projectIds`, which reads
 `entities[].projectId` too); none while "until" is set, held while paused. A row names what the
 payload concerns (`eventSubjects`) and links a release request and a work item
-(`open-project-event-subject`); an agent is named, not linked, as no recording names one.
+(`open-project-event-subject`); an agent is named, not linked, as no recording names one. A row's
+Open link leads to the event's own page (`open-project-event`); the inline JSON stays.
+
+One event (qits-2338, `projects/<slug>/events/<id>`, `ProjectEventPage`, ported from
+qits-events-frontend's event page) reads the event through its own `qitsResource` over
+`PROJECT_EVENT` (`getEvent`) and shows it only when its payload names the project
+(`belongsToProject`, `payloadIds().projectIds`); a 404 or another project's event is "No event <id>
+in this project.". It shows the header (name, badge, `eventGist`'s repository · gist, the
+`eventSubjects` with a release request linked), the facts (cause linked,
+`open-related-project-event` `cause`), the payload (`renderPayload`: sorted keys, raw when not
+JSON) and the chain: `walkChain` (`core/events/event-chain.ts`, the old `ChainWalker`) walks up by
+`parentId` through `PROJECT_EVENT`'s `fetch` (a 404 cause is the chain's start) and down from the
+start through `EVENT_CHILDREN` (`listEvents?parentId=`), capped at 32 hops up, 8 levels down and 200
+events, and `app-event-chain` (`patterns/events/event-chain/`) draws it, each other event of the
+project linking its page (`open-related-project-event` `chain`). The walk is an Angular `resource()`
+of its own, so its failure (with Retry) leaves the event on screen. A work item the event names is
+not linked here: no recording this page reads names one.
 
 A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
 between Observability and Events) reads qits-artifacts' whole docs catalog through its own
@@ -518,8 +534,8 @@ between Observability and Events) reads qits-artifacts' whole docs catalog throu
 qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
 `shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
 rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
-A row leaves for the site's reader on the docs app (`open-docs-site`, `external('docs')`,
-`docsReadPath` without a version) until qits-2337 moves it here. The docs store sends no domain
+A row opens the site's reader in this app (`open-docs-site`, `docs/read/<site>`, the newest of
+`main`). The docs store sends no domain
 event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
 empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
 
@@ -536,6 +552,32 @@ holds it (`projectRepositoryOf`), and every repository card has a `Docs →`; bo
 `listProjectRepositories` with consumes of their own (`LIST_DOCS_CATALOG`, `REPOSITORY_NAMES`):
 the states the builder's and the cards' interactions are recorded in hold no `latestRepository`
 or `lastBackup`, and a path the recorded body lacks cannot be bound.
+
+The docs reader (qits-2337, `projects/<slug>/docs/read/<site>[/-/<version>]`, `DocsReaderPage` in
+`routes/projects/[slug]/docs/read/[site]/`) reads one site of qits-artifacts' public docs store,
+never qits-docs-service. The site spans segments: this app's links name it as one segment (`:site`,
+its `/` escaped, an exit's param) and `read/**` (an entry, `qitsEntry`) takes the split form the
+docs app's redirect writes; the page parses either off the URL (`parseReadPath`,
+`core/docs/doc-url.ts`), so all three routes load the one page, and `read/:site/-/:version` carries
+an `eslint-disable` of `qits/route-matches-directory`. Its outcomes are the `read/:site` route's;
+the one shown only on a versioned address (an unknown version's link to the newest,
+`leave-docs-site` `newest`) is declared app-wide in `core/docs/reader-links.ts`. Markdown sites
+(userflows, guides, changelog) read `DOCS_VERSIONS`, `DOCS_VERSION` and each `.md` (`DOCS_FILE` as
+text; `core/docs/bundle-files.ts`), drawn by `ui-markdown` with each `mermaid` fence split out to
+`<qits-mermaid-diagram>` (`markdownParts`) and relative images resolved to the docs store
+(`bundlePathOf`); `?category=` keeps one category; the Version and Branch selects
+(`core/docs/doc-versions.ts`) navigate (`pick-docs-version`). API docs draw `openapi.*` with
+swagger-ui (`swagger-ui-dist`, a lazy browser-only import; its stylesheet the non-injected global
+style `swagger-ui.css`, `angular.json`, served `no-cache`), `supportedSubmitMethods: []`. Contracts,
+routes and Storybook sites read the catalog only (`DOCS_CATALOG`) and hand off
+(`open-docs-handoff`): the publisher's Contracts page or UI builder when it is the project's
+(`PROJECT_REPOSITORY_NAMES`), Storybook to the docs app (`PlatformOrigins.page('docs')`, the only
+link left to it). The release page's docs and userflows artifacts link it at the released version
+(a plain in-app `href`, `readerPath`: no recording holds a docs artifact, so an exit could not be
+followed by a spec); the UI builder's call popover and outbox link the provider's Contracts page
+(`open-call-contract` `contracts`, `core/contracts/contracts-links.ts`), and the contracts frame has
+no docs link. Its pact interactions and screenshots skip themselves until the
+`@qits/artifacts-golden-masters` pin holds the reader's states.
 
 A CI run's page (qits-2321, `projects/<slug>/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
 other CI page) reads the run once through its own `qitsResource` over `RUN` (`getRun`) and joins it

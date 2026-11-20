@@ -4,20 +4,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   exit,
-  external,
   outcomes,
   QitsEntity,
   QitsEntityList,
   QitsExit,
   QitsField,
   qitsResource,
-  QitsTriggers,
   type QitsDomainEvent,
 } from '@qits/angular';
 import { docBlocks, projectRepositoryOf, sectionOf, shortNameOf } from '$core/docs/doc-sections';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
-import { docsReadPath } from '$core/release-requests/release-links';
 import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
 import { PROJECT_REPOSITORY_NAMES } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
@@ -50,9 +46,8 @@ const NO_SITES: DocsCatalog = { sites: [] };
  * naming no section is ignored), `?q=` keeps the sites whose name holds it, ignoring case (applied
  * on Enter or when the field is left).
  *
- * A row opens the site's reader, which still lives on the docs app until qits-2337 moves it here:
- * `open-docs-site` `open` leaves for `PlatformOrigins.page('docs')` + `/<slug>/read/<site>`
- * (`docsReadPath`, the release page's docs links without the version, so the newest), same tab.
+ * A row opens the site's reader in this app (`DocsReaderPage`, qits-2337): `open-docs-site` `open`
+ * goes to `docs/read/<site>`, without a version, so the newest of `main`.
  * A row whose newest version one of the project's repositories published (`latestRepository`,
  * `projectRepositoryOf`) names that repository beside it, a link to the repository's Docs page
  * (`open-repository-docs` `repository`, qits-2336); any other row names no repository.
@@ -77,7 +72,6 @@ const NO_SITES: DocsCatalog = { sites: [] };
     QitsEntityList,
     QitsExit,
     QitsField,
-    QitsTriggers,
     RouterLink,
     Spinner,
   ],
@@ -166,9 +160,8 @@ const NO_SITES: DocsCatalog = { sites: [] };
                     >
                       <a
                         class="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5 px-3 py-2 no-underline"
-                        [attr.href]="href(site) || null"
-                        [qitsTriggers]="href(site) ? [opening.open] : []"
-                        (click)="open($event, site)"
+                        [qitsExit]="opening.open"
+                        [exitParams]="{ slug: slug(), site: site.name ?? '' }"
                       >
                         <span
                           class="font-semibold break-all text-accent"
@@ -254,10 +247,11 @@ export class ProjectDocsPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly docsOrigin = inject(PlatformOrigins).page('docs');
 
-  /** A row: the site's reader on the docs app, until qits-2337 moves it here. Same tab. */
-  protected readonly opening = outcomes('open-docs-site', { open: external('docs') });
+  /** A row: the site's reader, at its newest version (qits-2337). */
+  protected readonly opening = outcomes('open-docs-site', {
+    open: exit('projects/:slug/docs/read/:site'),
+  });
 
   /** A row's repository: that repository's Docs page (qits-2336). */
   protected readonly toRepository = outcomes('open-repository-docs', {
@@ -373,21 +367,6 @@ export class ProjectDocsPage {
   /** Whether a commit is to the wrapper's main branch, as the repositories read names them. */
   private commitsToWrapper(event: QitsDomainEvent): boolean {
     return movesWrapper(event, this.repositoryAnswer());
-  }
-
-  /** The site's reader on the docs app, at its newest version; `''` while the origin is unknown. */
-  protected href(site: DocsCatalogSite): string {
-    const slug = this.selected.slug();
-    if (!this.docsOrigin || !slug || !site.name) return '';
-    return `${this.docsOrigin}${docsReadPath(`/${slug}/`, site.name)}`;
-  }
-
-  /** Leaves for the site's reader through `open-docs-site`, which records the outcome. */
-  protected open(event: MouseEvent, site: DocsCatalogSite): void {
-    const href = this.href(site);
-    if (!href || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    event.preventDefault();
-    this.opening.open.leave(href);
   }
 
   protected short(site: DocsCatalogSite): string {

@@ -671,11 +671,38 @@ export const INTERACTIONS = {
    */
   'show-event-names': 'The Events page’s type filter offers every stored event name',
   /**
-   * `project-events.page.ts`: a release request or a work item an event names opens its page.
+   * `project-events.page.ts`: a release request or a work item an event names opens its page;
+   * `project-event.page.ts` (qits-2338): a release request the event names opens its page.
    * Navigates only, and names no pact (epic qits-2000).
    */
   'open-project-event-subject':
-    'A release request or work item an event names on the Events page opens its page',
+    'A release request or work item an event names on the Events page or its own page opens its page',
+  /**
+   * `project-events.page.ts` (qits-2338): a row's Open link opens the event's page. Navigates only,
+   * and names no pact.
+   */
+  'open-project-event': 'An event on the Events page opens its own page',
+  /**
+   * `project-event.page.ts` via `PROJECT_EVENT` (qits-2338): an event's page reads the event by its
+   * id; a 404 says there is no such event in the project.
+   */
+  'show-project-event': 'An event’s page shows the event, its facts and its payload',
+  /**
+   * `project-event.page.ts` via `PROJECT_EVENT` and `EVENT_CHILDREN` (qits-2338, `walkChain`):
+   * an event's page walks its chain, up by `parentId` (`getEvent`, a 404 the chain's start) and
+   * down from the start (`listEvents?parentId=`).
+   */
+  'walk-project-event-chain': 'An event’s page walks what caused it and what it caused',
+  /**
+   * `project-event.page.ts` (qits-2338): "← Events" (and "Back to Events" when there is no such
+   * event) leads back to the project's Events page. Navigates only, and names no pact.
+   */
+  'leave-project-event': 'An event’s page leads back to the Events page',
+  /**
+   * `project-event.page.ts` (qits-2338): the event's cause, and another event of the project in
+   * its chain, open that event's page. Navigates only, and names no pact.
+   */
+  'open-related-project-event': 'An event’s cause or an event of its chain opens that event’s page',
   /**
    * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
    * (qits-2317): the Maintenance section's Dependencies page reads the inventory's repositories and
@@ -773,10 +800,35 @@ export const INTERACTIONS = {
    */
   'show-project-docs': 'The Docs page lists every published docs site, by section',
   /**
-   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader on the
-   * docs app (until qits-2337 moves it here), same tab. Leaves the app, and names no pact.
+   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader,
+   * `docs-reader.page.ts` (qits-2337), at the site's newest version. Navigates only, and names no
+   * pact (epic qits-2000).
    */
   'open-docs-site': 'A docs site’s row on a Docs page opens its reader',
+  /**
+   * `docs-reader.page.ts` via `DOCS_VERSIONS`, `DOCS_VERSION` and `DOCS_FILE` (qits-2337): the
+   * reader lists the site's versions, the version's files, and reads each Markdown page (and its
+   * images) or the OpenAPI document it draws; via `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES`
+   * the repository a contracts or routes site hands off to.
+   */
+  'show-docs-site': 'The docs reader shows one docs site at a version',
+  /**
+   * `docs-reader.page.ts`: the reader's Version and Branch selects read another version of the
+   * site, keeping `?category=` (qits-2337). Navigates only, and names no pact (epic qits-2000).
+   */
+  'pick-docs-version': 'Picking a version or branch in the docs reader reads that version',
+  /**
+   * `docs-reader.page.ts`: the bodies the reader does not draw (qits-2337): a contracts site's
+   * repository's Contracts page (`contracts`), a routes site's UI builder (`builder`), and a
+   * Storybook site on the docs app (`storybook`, which leaves the app). Names no pact.
+   */
+  'open-docs-handoff':
+    'A contracts, routes or Storybook site in the docs reader opens where it is read',
+  /**
+   * `docs-reader.page.ts`: “← Docs” and an unknown site's link go back to the project's Docs page,
+   * an unknown version's to the site's newest (qits-2337). Navigates only, and names no pact.
+   */
+  'leave-docs-site': 'The docs reader goes back to the Docs page, or to the site’s newest version',
   /**
    * `repository-docs.page.ts` via `PROJECT_REPOSITORY_NAMES` and `DOCS_CATALOG` (qits-2336): a
    * repository's Docs page finds the repository in the project and lists the docs sites whose
@@ -1224,9 +1276,13 @@ export const INTERACTIONS = {
   'open-builder-entity': 'An entity in the UI builder opens its entity page',
   /**
    * `call-details.ts`: a call's popover in the UI builder opens the provider state's page
-   * (`state`) or an entity's page (`entity`). Navigates only, and names no pact (epic qits-2000).
+   * (`state`), an entity's page (`entity`) or the provider repository's Contracts page
+   * (`contracts`, qits-2337); `ui-builder.page.ts`: an outbox entry with no recorded call opens
+   * the provider's Contracts page (`mutationContracts`). Navigates only, and names no pact (epic
+   * qits-2000).
    */
-  'open-call-contract': 'A call’s popover in the UI builder opens its provider state or an entity',
+  'open-call-contract':
+    'A call’s popover in the UI builder opens its provider state, an entity or the contracts',
   /**
    * `root.page.ts`: the root leaves for the project picker at once, replacing itself in the
    * history (`projects`). No element triggers it. Navigates only, and names no pact (epic

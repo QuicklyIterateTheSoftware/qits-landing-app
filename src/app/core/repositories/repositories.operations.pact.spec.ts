@@ -41,6 +41,10 @@ import {
  *   names the project's repository that published a site, in "two projects exist" (whose
  *   repositories are `qits-ci-service` and `qits-ci-frontend`, the publishers qits-artifacts'
  *   docs catalog recording names).
+ * - `show-docs-site` (`PROJECT_REPOSITORY_NAMES`, qits-2337): the docs reader hands a contracts or
+ *   routes site off only to a repository of the project, in "two projects exist" (`qits-ci-service`,
+ *   `@contracts/qits-ci`'s publisher) and "a project with 3 repositories" (`contract-frontend`,
+ *   `@routes/contract-frontend`'s in "a docs catalog naming contract repositories").
  *
  * The last three moved here from `repositories.store.pact.spec.ts`: the same descriptions, states
  * and requests, and the same bound fields but the card's. Each interaction comes from the operation itself
@@ -195,6 +199,19 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
           expect(repositoryNamed(entries, 'no-such-repository')).toBeUndefined();
         },
       ),
+  );
+
+  it.each(['two projects exist', 'a project with 3 repositories'])(
+    'show-docs-site: the docs reader hands off only to a repository of the project (%s)',
+    (state) =>
+      given(PROJECT_REPOSITORY_NAMES, state, 'show-docs-site').executeTest(async (server) => {
+        const { data } = await at(server.url, () =>
+          PROJECT_REPOSITORY_NAMES.fetch({ path: { projectId: projectOf(state) } }),
+        );
+        const entries = data?.entries ?? [];
+        expect(entries.length).toBeGreaterThan(0);
+        expect(entries[0].repository?.name).toBeTruthy();
+      }),
   );
 
   it('sync-backups-after-sign-in: the store schedules every repository’s backup', () =>

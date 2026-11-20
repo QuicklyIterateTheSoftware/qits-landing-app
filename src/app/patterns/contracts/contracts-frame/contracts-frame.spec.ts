@@ -39,7 +39,7 @@ describe('ContractsFrame', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('shows the bundle, its docs link, the two lists and the content once found', async () => {
+  it('shows the bundle, the two lists and the content once found', async () => {
     // The open list's tab is marked current by its exit, from the router's URL.
     await TestBed.inject(Router).navigateByUrl('/projects/qits/repositories/r/entities');
     const element = render({
@@ -48,9 +48,8 @@ describe('ContractsFrame', () => {
     });
     expect(text(element.querySelector('h1'))).toBe('Entities');
     expect(text(element.querySelector('.site'))).toBe('@contracts/qits-r 1.0');
-    expect(element.querySelector<HTMLAnchorElement>('a.docs')?.href).toBe(
-      'https://docs.example/read/@contracts/qits-r/-/1.0',
-    );
+    // No docs reader link: the reader hands contracts back to this page (qits-2337).
+    expect(element.querySelector('a.docs')).toBeNull();
     const sections = [...element.querySelectorAll<HTMLAnchorElement>('a.section')];
     expect(
       sections.map((a) => [text(a), a.getAttribute('href'), a.getAttribute('aria-current')]),

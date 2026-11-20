@@ -35,8 +35,8 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
  * bottom, above it.
  *
  * The popover's links are declared exits (`open-call-contract`, epic qits-2000), shown by `open`
- * and followed once each, to stubs of the pages: the provider state's (`state`) and the entity's
- * (`entity`).
+ * and followed once each, to stubs of the pages: the provider state's (`state`), the entity's
+ * (`entity`) and the provider repository's Contracts page (`contracts`, qits-2337).
  */
 @Component({
   imports: [CallDetails],
@@ -91,6 +91,7 @@ describe('CallDetails (screenshots)', () => {
         provideRouter([
           { path: 'projects/:slug/repositories/:repo/contracts/:state', children: [] },
           { path: 'projects/:slug/repositories/:repo/entities/:entity', children: [] },
+          { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -259,5 +260,13 @@ describe('CallDetails (screenshots)', () => {
       `/projects/${slug}/repositories/${GITHOST}/entities/${entity.entity}`,
     );
     expect(fired()).toEqual(['open-call-contract:entity']);
+  });
+
+  it('open-call-contract contracts: “Contracts of …” opens the provider’s Contracts page', async () => {
+    const { locator } = await opened();
+    await userEvent.click(locator.getByRole('link', { name: `Contracts of ${GITHOST}` }));
+    await settle();
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/repositories/${GITHOST}/contracts`);
+    expect(fired()).toEqual(['open-call-contract:contracts']);
   });
 });

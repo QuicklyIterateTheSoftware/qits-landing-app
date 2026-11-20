@@ -2,7 +2,6 @@ import { Location } from '@angular/common';
 import { HttpTestingController, type TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { QITS_LEAVE_APP } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
@@ -12,12 +11,6 @@ import {
   type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
-import { provideTestPlatformOrigins } from '../../../../../testing/platform-origins';
-
-/** The docs app's page origin, so each row links its reader (configuration, not data). */
-const DOCS = 'https://docs.qits.example.test';
-/** The idp's, as `provideAppRoute()` gives it, which this spec's origins replace. */
-const IDP = 'https://idp.qits.example.test';
 
 const REPOSITORIES = 'two projects exist';
 const EVERY_KIND = 'a docs catalog of every kind';
@@ -36,23 +29,17 @@ const NOW = new Date('2026-01-20T00:00:00Z');
  * they answer under the open project's id): the three sites whose newest version
  * `qits-ci-service` published name it, a link to its Docs page (qits-2336).
  *
- * Its exits, shown by `populated`, are followed once each: a row leaves for the site's reader on
- * the docs app (`open-docs-site` `open`, through `QITS_LEAVE_APP`, a spy, so the tab stays), and a
- * row's repository opens that repository's Docs page (`open-repository-docs` `repository`).
+ * Its exits, shown by `populated`, are followed once each: a row opens the site's reader in this
+ * app (`open-docs-site` `open`, qits-2337), and a row's repository opens that repository's Docs
+ * page (`open-repository-docs` `repository`).
  */
 describe('ProjectDocsPage (screenshots)', () => {
   let http: HttpTestingController;
-  const leave = vi.fn<(href: string) => void>();
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
-    leave.mockReset();
     TestBed.configureTestingModule({
-      providers: [
-        provideAppRoute(),
-        provideTestPlatformOrigins({}, { idp: IDP, docs: DOCS }),
-        { provide: QITS_LEAVE_APP, useValue: leave },
-      ],
+      providers: [provideAppRoute()],
     });
     http = TestBed.inject(HttpTestingController);
   });
@@ -135,7 +122,7 @@ describe('ProjectDocsPage (screenshots)', () => {
     await expect.element(guides).toMatchTextContent('1 version');
     await expect
       .element(apidocs.getByRole('link').first())
-      .toHaveAttribute('href', `${DOCS}/${opened.project.slug}/read/@apidocs/qits-ci`);
+      .toHaveAttribute('href', `/projects/${opened.project.slug}/docs/read/@apidocs%2Fqits-ci`);
     // The project's repository that published it, and none for a publisher the project lacks.
     expect(repositoriesNamed(opened)).toEqual([
       'qits-ci-service',
@@ -244,9 +231,8 @@ describe('ProjectDocsPage (screenshots)', () => {
   /** The outcomes the test reached, as their marks name them. */
   const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
 
-  it('open-docs-site open: a row leaves for the site’s reader on the docs app, in this tab', async () => {
+  it('open-docs-site open: a row opens the site’s reader in this app (qits-2337)', async () => {
     const opened = await open(EVERY_KIND);
-    const href = `${DOCS}/${opened.project.slug}/read/@apidocs/qits-ci`;
     await userEvent.click(
       page
         .elementLocator(opened.page)
@@ -254,10 +240,17 @@ describe('ProjectDocsPage (screenshots)', () => {
         .getByRole('link')
         .first(),
     );
+    // The reader reads its own data: answered by its own spec, refused here.
+    for (let round = 0; round < 5; round++) {
+      await opened.idle();
+      for (const request of http.match(() => true).filter((r) => !r.cancelled)) {
+        request.flush(null, { status: 404, statusText: 'Not Found' });
+      }
+    }
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/docs/read/@apidocs%2Fqits-ci`,
+    );
     expect(reached()).toEqual(['open-docs-site:open']);
-    expect(leave).toHaveBeenCalledWith(href);
-    // The click left through the spy, not the link: the router stays where it was.
-    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/docs`);
   });
 
   it('open-repository-docs repository: a row’s repository opens its Docs page', async () => {

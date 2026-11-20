@@ -6,7 +6,6 @@ import type { GoldenIndex } from '$core/ui-builder/golden-masters';
 import { projectsGoldenIndex } from '../../../../../../../testing/golden-masters';
 import {
   configureContractsPage,
-  DOCS,
   openContractsPage,
   REPO,
   SITE,
@@ -47,9 +46,7 @@ describe('ContractsPage', () => {
     await answer('golden-masters/index.json', INDEX);
 
     expect(text(element.querySelector('.site'))).toBe(`${SITE} ${VERSION}`);
-    expect(element.querySelector<HTMLAnchorElement>('a.docs')?.href).toBe(
-      `${DOCS}/read/${SITE}/-/${VERSION}`,
-    );
+    expect(element.querySelector('a.docs')).toBeNull();
     const rows = element.querySelectorAll('tr.state');
     expect(rows).toHaveLength(INDEX.states!.length);
     const exists = [...rows].find((r) => text(r.querySelector('a')) === 'a project exists')!;
