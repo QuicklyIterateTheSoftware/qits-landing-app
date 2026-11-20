@@ -861,6 +861,12 @@ export const INTERACTIONS = {
    */
   'show-swarm-services': 'The swarm services page lists the swarm’s services with their state',
   /**
+   * `mirror-upstreams.page.ts` via `UPSTREAM_LIST` (qits-2357): the Mirror section's upstreams
+   * page lists the image registries qits-mirror fronts, each with its namespace, cached images and
+   * registration date. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
+  /**
    * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
    * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
    * engine version, the one qits-system runs on marked. Refresh reads them again.
@@ -1447,6 +1453,12 @@ export const INTERACTIONS = {
    * and names no pact.
    */
   'open-sidebar-system': 'The sidebar’s System entry opens the System section',
+  /**
+   * `shell.layout.ts`: the sidebar's Mirror, a global section shown with no project open, opens
+   * the Mirror section (`mirror`, which opens the OCI upstreams; qits-2357). Navigates only, and
+   * names no pact.
+   */
+  'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
   /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
    * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no

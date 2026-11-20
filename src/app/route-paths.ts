@@ -11,6 +11,8 @@ export type RoutePath =
   | 'artifacts/repositories/:repo/images/:image'
   | 'artifacts/repositories/:repo/maven-packages/:coordinate'
   | 'artifacts/repositories/:repo/packages/:package'
+  | 'mirror'
+  | 'mirror/upstreams'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'

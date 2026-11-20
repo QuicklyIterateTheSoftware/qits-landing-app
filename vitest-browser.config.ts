@@ -18,6 +18,7 @@ import {
   githostGoldenMasters,
   idpGoldenMasters,
   maintenanceGoldenMasters,
+  mirrorGoldenMasters,
   observabilityGoldenMasters,
   orchestratorGoldenMasters,
   projectsGoldenMasters,
@@ -66,6 +67,7 @@ const READERS = {
     orchestratorGoldenMasters,
     pactWith('qits-orchestrator-service'),
   ),
+  'qits-mirror': pactedGoldenMasters(mirrorGoldenMasters, pactWith('qits-mirror-service')),
   // The one reader no pact of this app gates (qits-2044): the sign-in's code swap (`issueToken`)
   // is `@qits/angular`'s `QitsTokens` calling the idp through `QITS_SIGN_IN_FETCH`, not a store of
   // this app, and qits-idp records no authorization code issued to this app's client (`qits-spa`,

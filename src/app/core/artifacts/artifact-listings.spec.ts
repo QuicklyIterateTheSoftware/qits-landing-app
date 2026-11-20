@@ -36,6 +36,8 @@ describe('artifact listings (qits-2316)', () => {
     expect(plural(46, itemNoun('oci-images'))).toBe('46 images');
     expect(plural(1, itemNoun('maven-packages'))).toBe('1 file');
     expect(plural(undefined, itemNoun('docs'))).toBe('0 versions');
+    expect(plural(3, 'mirrored registry', 'mirrored registries')).toBe('3 mirrored registries');
+    expect(plural(1, 'mirrored registry', 'mirrored registries')).toBe('1 mirrored registry');
     expect(formatBytes(0)).toBe('0 B');
     expect(formatBytes(2636)).toBe('2.57 KiB');
     expect(formatBytes(4.04 * 1024 ** 3)).toBe('4.04 GiB');

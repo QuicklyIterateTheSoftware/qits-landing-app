@@ -71,10 +71,17 @@ export function itemNoun(type: string | undefined): string {
   }
 }
 
-/** `10 images`, `1 image`: a count is never drawn without the noun it counts. */
-export function plural(count: number | undefined, singular: string): string {
+/**
+ * `10 images`, `1 image`: a count is never drawn without the noun it counts. A noun that does not
+ * take an `s` names its plural (`plural(3, 'registry', 'registries')`).
+ */
+export function plural(
+  count: number | undefined,
+  singular: string,
+  many: string = `${singular}s`,
+): string {
   const n = count ?? 0;
-  return `${n} ${n === 1 ? singular : `${singular}s`}`;
+  return `${n} ${n === 1 ? singular : many}`;
 }
 
 /** What is drawn for a size the service did not measure. */
