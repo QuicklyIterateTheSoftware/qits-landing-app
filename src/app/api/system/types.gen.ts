@@ -423,12 +423,20 @@ export type ServiceDetail = {
     };
     envKeys?: Array<string>;
     networks?: Array<NetworkAttachment>;
+    mounts?: Array<ServiceMount>;
     updateOrder?: string;
     updateParallelism?: number;
     updateFailureAction?: string;
     restartCondition?: string;
     healthcheck?: Array<string>;
     tasks?: Array<TaskSummary>;
+};
+
+export type ServiceMount = {
+    type?: string;
+    source?: string;
+    target?: string;
+    readOnly?: boolean;
 };
 
 export type ServiceSummary = {
@@ -1354,6 +1362,10 @@ export type GetSwarmServiceErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * No such service
+     */
+    404: unknown;
 };
 
 export type GetSwarmServiceResponses = {
