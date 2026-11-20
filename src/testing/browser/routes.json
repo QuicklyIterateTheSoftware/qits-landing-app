@@ -1527,6 +1527,26 @@
       "route": "projects/:slug/observability/slow-spans"
     }
   ],
+  "src/app/routes/projects/[slug]/observability/traces/[traceId]/observability-trace.page.browser.spec.ts": [
+    {
+      "provider": "qits-observability-service",
+      "state": "telemetry from one platform service",
+      "operationId": "getTelemetryTrace",
+      "route": "projects/:slug/observability/traces/:traceId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/observability/traces/:traceId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/observability/traces/:traceId"
+    }
+  ],
   "src/app/routes/projects/[slug]/project.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",

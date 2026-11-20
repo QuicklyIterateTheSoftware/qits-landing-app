@@ -171,6 +171,25 @@ export const INTERACTIONS = {
   'show-telemetry-slow-spans':
     'The Slow spans page shows a source’s buffered spans at or above a duration floor',
   /**
+   * `observability-trace.page.ts` via `TELEMETRY_TRACE` (qits-2343): the trace page shows one
+   * trace of a source as a waterfall, a chosen span's detail and the trace's correlated logs; via
+   * `TELEMETRY_STORE`, after a trace answered no spans, whether the buffer ever evicted any.
+   */
+  'show-telemetry-trace':
+    'The trace page shows a trace’s buffered spans as a waterfall, with its correlated logs',
+  /**
+   * `observability-slow-spans.page.ts` (a span's trace id) and `observability-errors.page.ts` (a
+   * correlated group's trace id) (qits-2343): a trace id opens the trace page at the same source.
+   * Navigates only, and names no pact.
+   */
+  'open-telemetry-trace': 'A trace id on an Observability page opens that trace’s page',
+  /**
+   * `observability-trace.page.ts` (qits-2343): the trace page opened without a source reads
+   * nothing and points to the Slow spans page, where a source is chosen. Navigates only, and names
+   * no pact.
+   */
+  'open-telemetry-slow-spans': 'The trace page without a source opens the Slow spans page',
+  /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.
    */

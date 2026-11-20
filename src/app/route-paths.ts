@@ -46,6 +46,7 @@ export type RoutePath =
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/observability/metrics'
   | 'projects/:slug/observability/slow-spans'
+  | 'projects/:slug/observability/traces/:traceId'
   | 'projects/:slug/release-requests'
   | 'projects/:slug/release-requests/:requestId'
   | 'projects/:slug/repositories'

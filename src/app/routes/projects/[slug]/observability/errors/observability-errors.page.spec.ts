@@ -80,6 +80,17 @@ describe('ObservabilityErrorsPage', () => {
     expect(rows[1].textContent).toContain('0 error spans · 1 error log');
     expect(rows[1].textContent).toContain('Not correlated to a trace');
     expect(rows[1].textContent).not.toContain('trace 6a1f');
+    expect(rows[1].querySelector('[data-trace]')).toBeNull();
+  });
+
+  it('links a correlated group’s trace id to the trace page at the same source', async () => {
+    const { rows } = await shown(recorded());
+    expect(rows[0].querySelector('[data-trace]')?.textContent?.trim()).toBe(
+      'trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01',
+    );
+    expect(rows[0].querySelector('[data-trace]')?.getAttribute('href')).toBe(
+      '/projects/p/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=_service%2Fqits-example',
+    );
   });
 
   it('says no errors are buffered, as good news, when there are no groups', async () => {

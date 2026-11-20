@@ -2,9 +2,11 @@ import type { TestRequest } from '@angular/common/http/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { leftFor } from '../../../../../../testing/browser/contracts-bundles';
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
@@ -14,7 +16,8 @@ import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
  * `listTelemetrySources` and `listSlowSpans` are answered from qits-observability's golden masters:
  * "telemetry from one platform service" (one SERVICE source, `_service/qits-example`, and its spans
  * at or above 500 ms, slowest first: `GET /invoices`, SERVER, 750 ms, ERROR with an exception event
- * and `http.route=/invoices`, and `SELECT invoices`, CLIENT, 600 ms, UNSET) and "an empty telemetry
+ * and `http.route=/invoices`, and `SELECT invoices`, CLIENT, 600 ms, UNSET; each trace id links the
+ * trace page, `open-telemetry-trace`) and "an empty telemetry
  * buffer" (no source). No recording holds a truncated answer, an empty one, another floor, order or
  * time range, so those are the plain spec's (`observability-slow-spans.page.spec.ts`) and
  * `slow-spans.spec.ts`'s. A refusal is a 403 with no body, as the service answers a credential
@@ -100,7 +103,12 @@ describe('ObservabilitySlowSpansPage (screenshots)', () => {
     await expect.element(invoices).toMatchTextContent('exception');
     await expect.element(invoices).toMatchTextContent('2026-01-01 00:00:00.000');
     await expect.element(invoices).toMatchTextContent('2026.1231.120000');
-    await expect.element(invoices).toMatchTextContent('trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01');
+    await expect
+      .element(invoices.getByRole('link', { name: 'trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01' }))
+      .toHaveAttribute(
+        'href',
+        `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=${encodeURIComponent(await recordedSource())}`,
+      );
     const select = spans.getByRole('listitem', { name: 'SELECT invoices' });
     await expect.element(select).toMatchTextContent('600 ms');
     await expect.element(select).toMatchTextContent('CLIENT');
@@ -108,6 +116,21 @@ describe('ObservabilitySlowSpansPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
     await shootShellMenus(opened, 'loaded');
+  });
+
+  it('open-telemetry-trace trace: a span’s trace id opens the trace at the same source', async () => {
+    const { opened, spans, source } = await loaded();
+    await spans
+      .getByRole('listitem', { name: 'GET /invoices' })
+      .getByRole('link', { name: /^trace / })
+      .click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-telemetry-trace:trace',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=${encodeURIComponent(source)}`,
+    );
   });
 
   it('reads no slow spans before a source is chosen, then the chosen one’s', async () => {

@@ -17,6 +17,8 @@ import {
   TELEMETRY_METRICS,
   TELEMETRY_SLOW_SPANS,
   TELEMETRY_SOURCES,
+  TELEMETRY_STORE,
+  TELEMETRY_TRACE,
 } from './observability.operations';
 
 /**
@@ -32,7 +34,10 @@ import {
  * by default (the source alone, qits-2339); that source's metric series, the latest point of
  * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340); and that
  * source's slow spans as the Slow spans page asks for them by default (the source and the floor,
- * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341).
+ * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341); and one of
+ * that source's traces as the trace page asks for it (the trace id in the path and the source
+ * alone, never `repositoryId` or `workspaceId`, qits-2343), with the buffer's own state, which the
+ * page reads after an empty trace for whether it ever evicted spans (`evictedSpans`).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -200,4 +205,53 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
         expect(data?.truncated).toBe(false);
       },
     ));
+
+  it('show-telemetry-trace: one trace of a source, its spans by start and its logs by time', () =>
+    given(TELEMETRY_TRACE, ONE_SERVICE, 'show-telemetry-trace').executeTest(async (server) => {
+      const traceId = masters.operation(ONE_SERVICE, 'getTelemetryTrace').params['traceId'];
+      const { data, error } = await at(server.url, () =>
+        TELEMETRY_TRACE.fetch({ path: { traceId }, query: { source: sourceOf(ONE_SERVICE) } }),
+      );
+      expect(error).toBeUndefined();
+      const spans = data?.trace?.spans ?? [];
+      expect(spans.length).toBeGreaterThan(1);
+      expect(spans.map((span) => span.startEpochNanos ?? 0)).toEqual(
+        spans.map((span) => span.startEpochNanos ?? 0).sort((a, b) => a - b),
+      );
+      const [root, child] = spans;
+      expect(root.parentSpanId).toBe('');
+      expect(child.parentSpanId).toBe(root.spanId);
+      for (const span of spans) {
+        expect(span.spanId).toBeTruthy();
+        expect(span.serviceName).toBeTruthy();
+        expect(span.scopeName).toBeTruthy();
+        expect(span.name).toBeTruthy();
+        expect(span.kind).toBeTruthy();
+        expect(span.durationMs).toBeGreaterThan(0);
+        expect(span.resourceAttributes?.['service.version']).toBeTruthy();
+      }
+      expect(root.status).toBe('ERROR');
+      expect(root.statusMessage).toBeTruthy();
+      expect(root.attributes?.['http.route']).toBeTruthy();
+      const exception = root.events?.find((event) => event.exception === true);
+      expect(exception?.attributes?.['exception.type']).toBeTruthy();
+      expect(exception?.attributes?.['exception.stacktrace']).toBeTruthy();
+      const logs = data?.trace?.logs ?? [];
+      expect(logs.length).toBeGreaterThan(0);
+      expect(logs.map((log) => log.epochNanos ?? 0)).toEqual(
+        logs.map((log) => log.epochNanos ?? 0).sort((a, b) => a - b),
+      );
+      for (const log of logs) {
+        expect(log.severityText).toBeTruthy();
+        expect(log.body).toBeTruthy();
+        expect(log.spanId).toBe(root.spanId);
+      }
+    }));
+
+  it('show-telemetry-trace: the buffer’s state, how many spans it evicted', () =>
+    given(TELEMETRY_STORE, ONE_SERVICE, 'show-telemetry-trace').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_STORE.fetch({}));
+      expect(error).toBeUndefined();
+      expect(data?.evictedSpans).toBe(0);
+    }));
 });

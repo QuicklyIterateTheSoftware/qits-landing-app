@@ -694,7 +694,7 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the traces page comes as its own
+component whose pages are its children, one route per view (the traces list comes as its own
 child later); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
@@ -717,8 +717,9 @@ empty list, which would claim "no errors" about nothing): one row per group, in 
 order with the uncorrelated group (empty `traceId`) last, headed by its exception (`type:
 message`), else a span's status message, else a log's body (`core/observability/error-groups.ts`,
 ported from the old `error-group.ts`), expanding to its spans (stack trace included) and logs. Each
-row's Error logs opens `observability/logs?source=…&level=ERROR` (`open-telemetry-error-logs`); the
-trace id is text until a trace page exists. No recording holds an uncorrelated group, an empty
+row's Error logs opens `observability/logs?source=…&level=ERROR` (`open-telemetry-error-logs`); a
+correlated group's trace id opens its trace page (`open-telemetry-trace`, qits-2343; the
+uncorrelated group's empty id stays text). No recording holds an uncorrelated group, an empty
 list or a truncated answer, so those are the page's plain spec's, derived from the recorded group.
 `observability/metrics` (`ObservabilityMetricsPage`, qits-2340, the retired frontend's `metrics`)
 reads `TELEMETRY_METRICS` (`listTelemetryMetrics`) by `source` alone, never before a source is
@@ -740,12 +741,38 @@ series, so the bars are the page's plain spec's, derived from the recorded serie
 never `limit`, `service` or `name`. One row per span in the door's order: its duration (ms under a
 second, else seconds with one decimal), name and kind, which call (`url.full`, else `http.route`),
 an ERROR chip and an exception marker (any event with `exception: true`), its start, its
-`service.version` and its trace id as text. A truncated answer says "Showing the slowest (newest)
+`service.version` and its trace id, which opens its trace page at the same source
+(`open-telemetry-trace`, qits-2343). A truncated answer says "Showing the slowest (newest)
 N of T matching spans". An empty one says why, in order: the source holds no spans (its source
 row's `spans` is 0), none reaches the floor (when above 0, offering Any duration), none falls in
 the time range (when set, offering Everything buffered). The formatting and the empty reason are
 `core/observability/slow-spans.ts`. The recording answers the default read only, so the other
 lenses, a truncated answer and the empty reasons are the page's plain spec's.
+`observability/traces/<traceId>?source=` (`ObservabilityTracePage`, qits-2343, the retired
+frontend's `traces/:traceId`, whose `?source=` it keeps) is one trace of one source, a detail page
+with no sidebar entry (the sidebar keeps Observability current). It reads `TELEMETRY_TRACE`
+(`getTelemetryTrace`) by the path's trace id and `source` alone, never `repositoryId` or
+`workspaceId`, and nothing at all without a source (a sourceless read answers an empty trace, which
+looks like an evicted one): it says so and offers the Slow spans page (`open-telemetry-slow-spans`).
+An unknown or evicted trace is a 200 with no spans, never a 404: "No spans of this trace are
+buffered in this source", and only then a `TELEMETRY_STORE` (`getTelemetryStore`) read, whose
+`evictedSpans > 0` adds that it may have been evicted. The waterfall is
+`core/observability/trace-layout.ts` (`layOutTrace`, ported from the old `trace-layout.ts`): a span
+with no parent, itself as parent or a parent not in the answer is top level, the last two marked
+"parent not buffered" and never re-parented; siblings by `startEpochNanos`, then `spanId`; an
+iterative walk with an emitted set, so a parent cycle still draws every span once, at the top level;
+bars as percentages of the window (earliest start to latest end, a zero window guarded), the indent
+capped at 12 levels; per row the name, service, duration, an ERROR chip, an exception chip and its
+correlated log count; a banner when no span lacks a parent (the root is not buffered). The header
+holds the trace id, the source and `traceSummary` (spans, services, total duration, error spans).
+Choosing a row puts its span in `?span=` (`replaceUrl`; the first row when none), so Refresh keeps
+it; its detail shows the ids, service, kind, duration, start (`lineTime`) and offset, status and
+message, scope, `service.version`, attributes, resource attributes and events (an exception's type,
+message and stack trace, else the event's attributes). Below, the correlated logs, oldest first:
+level, offset, body and the span's name, or "its span is not buffered". A 403 says so, else Retry;
+Refresh reads again, no polling. The pact reads both in "telemetry from one platform service"; no
+recording holds an empty trace, a missing root, an orphan or a cycle, so those are the plain spec's
+and `trace-layout.spec.ts`'s, and the no-source page is the route's no-data screenshot.
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,

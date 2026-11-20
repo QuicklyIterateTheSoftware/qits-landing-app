@@ -1,5 +1,7 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  getTelemetryStore,
+  getTelemetryTrace,
   listSlowSpans,
   listTelemetryErrors,
   listTelemetryMetrics,
@@ -7,6 +9,8 @@ import {
   searchTelemetryLogs,
 } from '../../api/observability';
 import {
+  GET_TELEMETRY_STORE,
+  GET_TELEMETRY_TRACE,
   LIST_SLOW_SPANS,
   LIST_TELEMETRY_ERRORS,
   LIST_TELEMETRY_METRICS,
@@ -16,7 +20,7 @@ import {
 
 /**
  * qits-observability's telemetry buffer reads declared as operations (qits-2313; the errors,
- * qits-2339; the metrics, qits-2340; the slow spans, qits-2341), for the Observability section's pages, which read them through `qitsResource`;
+ * qits-2339; the metrics, qits-2340; the slow spans, qits-2341; a trace and the store, qits-2343), for the Observability section's pages, which read them through `qitsResource`;
  * `observability.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`. Every door answers `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
  * `qits:agent` only; anyone else gets a 403.
@@ -75,4 +79,29 @@ export const TELEMETRY_SLOW_SPANS = qitsOperation({
   method: 'GET',
   call: listSlowSpans,
   consumes: LIST_SLOW_SPANS,
+});
+
+/**
+ * One trace of a source, its spans by start and its correlated logs by time (qits-2343), asked
+ * by the trace id in the path and `source` alone. An unknown or evicted trace is a 200 with no
+ * spans, never a 404.
+ */
+export const TELEMETRY_TRACE = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'getTelemetryTrace',
+  method: 'GET',
+  call: getTelemetryTrace,
+  consumes: GET_TELEMETRY_TRACE,
+});
+
+/**
+ * The buffer's own state (qits-2343): the trace page reads it only after a trace answered no
+ * spans, for whether anything was ever evicted (`evictedSpans`).
+ */
+export const TELEMETRY_STORE = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'getTelemetryStore',
+  method: 'GET',
+  call: getTelemetryStore,
+  consumes: GET_TELEMETRY_STORE,
 });

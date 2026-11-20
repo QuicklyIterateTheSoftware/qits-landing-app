@@ -79,7 +79,9 @@ export function spanDuration(durationMs: number | undefined): string {
  * One row per group (`error-groups.ts`), in the service's order with the uncorrelated group (its
  * empty trace id) last: the headline (the exception as `type: message`, else a span's status
  * message, else a log's body), the service, its evidence counts, its latest instant (UTC, like a
- * log line's time), the `service.version` its evidence carries and the trace id as text. Each row's
+ * log line's time), the `service.version` its evidence carries and the trace id, a link to the
+ * trace's page at the same source (`open-telemetry-trace`, qits-2343; the uncorrelated group's has
+ * none). Each row's
  * Error logs link opens the Logs page at the same source from ERROR up
  * (`open-telemetry-error-logs`). Its headline expands it: the error spans (name, kind, duration,
  * status message, exception and stack trace) and the error logs (time, level, body), all of which
@@ -240,7 +242,14 @@ export function spanDuration(durationMs: number | undefined): string {
                     @if (view.uncorrelated) {
                       <span>Not correlated to a trace</span>
                     } @else {
-                      <span class="font-mono">trace {{ view.traceId }}</span>
+                      <a
+                        class="font-mono text-accent no-underline hover:underline"
+                        [qitsExit]="tracing.trace"
+                        [exitParams]="{ slug: slug(), traceId: view.traceId }"
+                        [exitQueryParams]="{ source: query().source }"
+                        data-trace
+                        >trace {{ view.traceId }}</a
+                      >
                     }
                   </p>
                   @if (isOpen(view)) {
@@ -421,6 +430,11 @@ export class ObservabilityErrorsPage {
   /** A row's Error logs: the Logs page, a declared exit (epic qits-2000). */
   protected readonly opening = outcomes('open-telemetry-error-logs', {
     logs: exit('projects/:slug/observability/logs'),
+  });
+
+  /** A correlated group's trace id: the trace's page at the same source (qits-2343). */
+  protected readonly tracing = outcomes('open-telemetry-trace', {
+    trace: exit('projects/:slug/observability/traces/:traceId'),
   });
 
   /** Refresh: reads the sources and the shown errors again. */

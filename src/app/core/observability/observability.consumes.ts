@@ -1,4 +1,6 @@
 import type {
+  GetTelemetryStoreResponses,
+  GetTelemetryTraceResponses,
   ListSlowSpansResponses,
   ListTelemetryErrorsResponses,
   ListTelemetryMetricsResponses,
@@ -100,6 +102,39 @@ export const LIST_SLOW_SPANS = [
   'truncated',
 ] as const;
 
+/**
+ * `getTelemetryTrace` (qits-2343): every span of the trace with what the waterfall and the span
+ * detail show (its id and parent, service, scope, name, kind, start, duration, status and status
+ * message, its attributes, events and resource attributes, each read whole: keys with dots, an
+ * event's `exception` flag, name, time and attributes), and each correlated log's time, level,
+ * body and span id.
+ */
+export const GET_TELEMETRY_TRACE = [
+  'trace.spans[].spanId',
+  'trace.spans[].parentSpanId',
+  'trace.spans[].serviceName',
+  'trace.spans[].scopeName',
+  'trace.spans[].name',
+  'trace.spans[].kind',
+  'trace.spans[].startEpochNanos',
+  'trace.spans[].durationMs',
+  'trace.spans[].status',
+  'trace.spans[].statusMessage',
+  'trace.spans[].attributes',
+  'trace.spans[].events',
+  'trace.spans[].resourceAttributes',
+  'trace.logs[].epochNanos',
+  'trace.logs[].severityText',
+  'trace.logs[].body',
+  'trace.logs[].spanId',
+] as const;
+
+/**
+ * `getTelemetryStore` (qits-2343): how many spans the buffer has evicted, which alone lets the
+ * trace page offer eviction as the reason a trace answered no spans.
+ */
+export const GET_TELEMETRY_STORE = ['evictedSpans'] as const;
+
 /** The buffer's sources, cut to what the picker reads. */
 export type TelemetrySources = Consumed<
   ListTelemetrySourcesResponses[200],
@@ -143,3 +178,15 @@ export type TelemetrySlowSpans = Consumed<ListSlowSpansResponses[200], typeof LI
 
 /** One slow span. */
 export type TelemetrySlowSpan = NonNullable<TelemetrySlowSpans['spans']>[number];
+
+/** A trace, cut to what the trace page reads. */
+export type TelemetryTrace = Consumed<GetTelemetryTraceResponses[200], typeof GET_TELEMETRY_TRACE>;
+
+/** One span of a trace. */
+export type TelemetryTraceSpan = NonNullable<NonNullable<TelemetryTrace['trace']>['spans']>[number];
+
+/** One log line correlated to a trace. */
+export type TelemetryTraceLog = NonNullable<NonNullable<TelemetryTrace['trace']>['logs']>[number];
+
+/** The buffer's own state, cut to what the trace page reads. */
+export type TelemetryStore = Consumed<GetTelemetryStoreResponses[200], typeof GET_TELEMETRY_STORE>;

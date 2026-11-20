@@ -2,7 +2,15 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import {
   TELEMETRY_SLOW_SPANS,
   TELEMETRY_SOURCES,
@@ -30,6 +38,7 @@ import {
   sinceLabel,
   versionOf,
 } from '$core/observability/telemetry';
+import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { TelemetrySourcePicker } from '$patterns/observability/source-picker/source-picker';
@@ -65,8 +74,8 @@ interface SlowSpansQuery {
  * One row per span, in the door's order (`slow-spans.ts`): its duration (ms under a second, else
  * seconds with one decimal), its name and kind, which call it was (`url.full`, else `http.route`),
  * an ERROR chip for an ERROR status and an exception marker when any of its events is one, its
- * start (UTC, like a log line's time), its `service.version` and its trace id as text (no trace
- * page exists yet).
+ * start (UTC, like a log line's time), its `service.version` and its trace id, a link to the
+ * trace's page at the same source (`open-telemetry-trace`, qits-2343).
  *
  * Both reads run in the browser only (the server has no session), through `qitsResource`. A refusal
  * (403: only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and `qits:agent` may read
@@ -87,6 +96,7 @@ interface SlowSpansQuery {
     PageLayoutComponent,
     QitsEntity,
     QitsEntityList,
+    QitsExit,
     QitsField,
     Spinner,
     TelemetrySourcePicker,
@@ -264,9 +274,20 @@ interface SlowSpansQuery {
                         >
                       }
                       <span aria-hidden="true">·</span>
-                      <span class="font-mono break-all" [fieldOf]="span" qitsField="traceId"
-                        >trace {{ span.traceId }}</span
-                      >
+                      @if (span.traceId) {
+                        <a
+                          class="font-mono break-all text-accent no-underline hover:underline"
+                          [qitsExit]="opening.trace"
+                          [exitParams]="{ slug: slug(), traceId: span.traceId }"
+                          [exitQueryParams]="{ source: query().source }"
+                          [fieldOf]="span"
+                          qitsField="traceId"
+                          data-trace
+                          >trace {{ span.traceId }}</a
+                        >
+                      } @else {
+                        <span class="font-mono">no trace</span>
+                      }
                     </p>
                   </div>
                 </li>
@@ -320,6 +341,7 @@ export class ObservabilitySlowSpansPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly selected = inject(SelectedProject);
 
   protected readonly thresholds = THRESHOLDS_MS;
   protected readonly thresholdLabel = thresholdLabel;
@@ -349,6 +371,13 @@ export class ObservabilitySlowSpansPage {
         a.since === b.since,
     },
   );
+
+  protected readonly slug = computed(() => this.selected.slug() ?? '');
+
+  /** A span's trace id: the trace's page at the same source, a declared exit (qits-2343). */
+  protected readonly opening = outcomes('open-telemetry-trace', {
+    trace: exit('projects/:slug/observability/traces/:traceId'),
+  });
 
   /** The buffer's sources, in the browser only (the server has no session). */
   protected readonly sources = qitsResource(TELEMETRY_SOURCES, () =>

@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import type { TestRequest } from '@angular/common/http/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { client as observabilityClient } from '../../../../../api/observability/client.gen';
@@ -10,6 +10,7 @@ import type {
   TelemetrySlowSpans,
   TelemetrySources,
 } from '$core/observability/observability.consumes';
+import { SelectedProject } from '$core/projects/selected-project';
 import { observabilityGoldenMasters } from '../../../../../../testing/golden-masters';
 import { ObservabilitySlowSpansPage } from './observability-slow-spans.page';
 
@@ -48,6 +49,7 @@ describe('ObservabilitySlowSpansPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(observabilityClient),
+        { provide: SelectedProject, useValue: { slug: signal('p') } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -164,7 +166,7 @@ describe('ObservabilitySlowSpansPage', () => {
     await ticked();
   });
 
-  it('shows each span in the door’s order: duration, name, kind, call, status, start, version, trace', async () => {
+  it('shows each span in the door’s order: duration, name, kind, call, status, start, version, trace link', async () => {
     const { rows } = await shown(recorded());
     expect(rows.map((row) => row.getAttribute('aria-label'))).toEqual([
       'GET /invoices',
@@ -179,7 +181,9 @@ describe('ObservabilitySlowSpansPage', () => {
     expect(text(invoices)).toContain('2026-01-01 00:00:00.000');
     expect(text(invoices)).toContain('2026.1231.120000');
     expect(text(invoices)).toContain('trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01');
-    expect(invoices.querySelector('a')).toBeNull();
+    expect(invoices.querySelector('[data-trace]')?.getAttribute('href')).toBe(
+      '/projects/p/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=_service%2Fqits-example',
+    );
 
     expect(text(select.querySelector('[data-duration]'))).toBe('600 ms');
     expect(text(select)).toContain('CLIENT');

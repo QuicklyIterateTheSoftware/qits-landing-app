@@ -103,7 +103,12 @@ describe('ObservabilityErrorsPage (screenshots)', () => {
     await expect.element(row).toMatchTextContent('1 error span · 1 error log');
     await expect.element(row).toMatchTextContent('2026-01-01 00:00:00.750');
     await expect.element(row).toMatchTextContent('2026.1231.120000');
-    await expect.element(row).toMatchTextContent('trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01');
+    await expect
+      .element(row.getByRole('link', { name: 'trace 6a1f0c2b9d8e47f3a5b4c3d2e1f00a01' }))
+      .toHaveAttribute(
+        'href',
+        `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=${encodeURIComponent(source)}`,
+      );
     await expect
       .element(row.getByRole('link', { name: 'Error logs' }))
       .toHaveAttribute(
@@ -188,6 +193,18 @@ describe('ObservabilityErrorsPage (screenshots)', () => {
     ]);
     expect(TestBed.inject(Router).url).toBe(
       `/projects/${opened.project.slug}/observability/logs?source=${encodeURIComponent(source)}&level=ERROR`,
+    );
+  });
+
+  it('open-telemetry-trace trace: a group’s trace id opens the trace at the same source', async () => {
+    const { opened, groups, source } = await loaded();
+    await groups.getByRole('link', { name: /^trace / }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-telemetry-trace:trace',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=${encodeURIComponent(source)}`,
     );
   });
 

@@ -89,7 +89,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
  * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
  * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series;
- * `slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) its spans at or above a duration floor.
+ * `slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) its spans at or above a duration floor;
+ * `traces/<traceId>` (`ObservabilityTracePage`, qits-2343, `?source=`) one of its traces as a
+ * waterfall, reached from a trace id on the Slow spans and Errors pages.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -467,6 +469,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page').then(
                 (m) => m.ObservabilitySlowSpansPage,
+              ),
+          },
+          {
+            // One trace of a source (qits-2343), a detail page: the sidebar keeps Observability.
+            path: 'traces/:traceId',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/traces/[traceId]/observability-trace.page').then(
+                (m) => m.ObservabilityTracePage,
               ),
           },
         ],
