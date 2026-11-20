@@ -29,6 +29,7 @@ import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
 import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
 import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page';
+import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -214,6 +215,19 @@ describe('artifacts routes (qits-2316)', () => {
     while (leaf.firstChild) leaf = leaf.firstChild;
     expect(leaf.paramMap.get('repo')).toBe('daemons');
     expect(leaf.paramMap.get('daemon')).toBe('contract-daemon');
+  });
+
+  it('opens a docs site at artifacts/repositories/<repo>/docs/<site>, the site one segment (qits-2328)', async () => {
+    expect(await pages('/artifacts/repositories/docs/docs/%40changelog%2Fqits-qits')).toEqual([
+      ArtifactsDocsSitePage,
+    ]);
+    const router = TestBed.inject(Router);
+    // The router writes `@` literal in a segment (it needs no escape there); the `/` stays `%2F`.
+    expect(router.url).toBe('/artifacts/repositories/docs/docs/@changelog%2Fqits-qits');
+    let leaf = router.routerState.snapshot.root;
+    while (leaf.firstChild) leaf = leaf.firstChild;
+    expect(leaf.paramMap.get('repo')).toBe('docs');
+    expect(leaf.paramMap.get('site')).toBe('@changelog/qits-qits');
   });
 
   it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {

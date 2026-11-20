@@ -147,6 +147,18 @@ export const INTERACTIONS = {
    */
   'show-telemetry-logs': 'The Logs page shows a source’s buffered log lines, newest first',
   /**
+   * `observability-errors.page.ts` via `TELEMETRY_ERRORS` (qits-2339): the Errors page shows the
+   * chosen source's buffered error spans and logs, grouped by trace, narrowed by age.
+   */
+  'show-telemetry-errors':
+    'The Errors page shows a source’s buffered error spans and logs, grouped by trace',
+  /**
+   * `observability-errors.page.ts` (qits-2339): a group's Error logs on the Errors page opens the
+   * Logs page at the same source from ERROR up. Navigates only, and names no pact.
+   */
+  'open-telemetry-error-logs':
+    'Error logs on an error group opens the Logs page at that source’s ERROR lines',
+  /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.
    */
@@ -499,9 +511,10 @@ export const INTERACTIONS = {
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
    * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (a package, a coordinate or a docs site), until the Artifacts section's
-   * own detail pages land (qits-2316; an image's landed, `open-artifact-image`, and a daemon's,
-   * `open-artifact-daemon`). Leaves only, and names no pact.
+   * qits-artifacts explorer (a package or a coordinate), until the Artifacts section's own detail
+   * pages land (qits-2316; an image's landed, `open-artifact-image`, a daemon's,
+   * `open-artifact-daemon`, and a docs site's, `open-artifact-docs-site`). Leaves only, and names
+   * no pact.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -586,6 +599,28 @@ export const INTERACTIONS = {
    * saves them as `<daemon>-<version>`; the page stays.
    */
   'download-artifact-daemon': 'A daemon version downloads as a file',
+  /**
+   * `artifacts-repository.page.ts`: a docs site row's name opens the site's page in this app,
+   * `artifacts/repositories/:repo/docs/:site` (qits-2328), the name one segment. Navigates only,
+   * and names no pact.
+   */
+  'open-artifact-docs-site': 'A docs site of a docs repository opens its page',
+  /**
+   * `artifacts-docs-site.page.ts` via `ARTIFACT_DOCS_VERSIONS` (qits-2328): the docs site page
+   * lists the site's published versions, newest first. Refresh reads them again.
+   */
+  'show-artifact-docs-site': 'A docs site’s page lists its published versions, newest first',
+  /**
+   * `artifacts-docs-site.page.ts`: the back link, and the store page a non-docs repository's note
+   * links, open the repository's page (qits-2328). Navigates only, and names no pact.
+   */
+  'leave-artifact-docs-site': 'A docs site’s page leads back to its repository',
+  /**
+   * `artifacts-docs-site.page.ts`: a version's Read link opens it in qits-docs' reader
+   * (`/read/<site>/-/<version>` on the docs app, until qits-2337 moves it here), same tab. Leaves
+   * the app, and names no pact.
+   */
+  'read-artifact-docs-version': 'A docs site version opens in the docs reader',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).
@@ -1225,7 +1260,7 @@ export const INTERACTIONS = {
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
    * `shell.layout.ts`: an Observability page listed below Observability in the sidebar opens it,
-   * one exit per page (qits-2313: Logs). Navigates only, and names no pact.
+   * one exit per page (qits-2313: Logs; qits-2339: Errors). Navigates only, and names no pact.
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',
