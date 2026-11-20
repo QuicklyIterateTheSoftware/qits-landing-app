@@ -794,6 +794,12 @@ export const INTERACTIONS = {
   /** `runner-slots.ts` via `TARGET_LIST` (qits-2146): the lightning menu's runners and slots line. */
   'show-runner-slots': 'Opening the release menu shows the connected runners and their slots',
   /**
+   * `swarm-services.page.ts` via `SWARM_SERVICE_LIST` (qits-2344): the System section's services
+   * page lists the services of qits-system's swarm, each with a state derived from its replicas.
+   * Refresh, and a deployment going live or failing, read them again.
+   */
+  'show-swarm-services': 'The swarm services page lists the swarm’s services with their state',
+  /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.
@@ -1368,6 +1374,12 @@ export const INTERACTIONS = {
    * and names no pact.
    */
   'open-sidebar-artifacts': 'The sidebar’s Artifacts entry opens the Artifacts section',
+  /**
+   * `shell.layout.ts`: the sidebar's System, a global section shown with no project open, opens
+   * the System section (`system`, which opens the swarm's services; qits-2344). Navigates only,
+   * and names no pact.
+   */
+  'open-sidebar-system': 'The sidebar’s System entry opens the System section',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
