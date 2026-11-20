@@ -694,8 +694,8 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (the traces page comes as its own
-child later); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (logs, errors, metrics, slow spans
+and traces); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
@@ -746,6 +746,30 @@ row's `spans` is 0), none reaches the floor (when above 0, offering Any duration
 the time range (when set, offering Everything buffered). The formatting and the empty reason are
 `core/observability/slow-spans.ts`. The recording answers the default read only, so the other
 lenses, a truncated answer and the empty reasons are the page's plain spec's.
+`observability/traces` (`ObservabilityTracesPage`, qits-2342, the retired frontend's `traces`)
+reads `TELEMETRY_TRACES` (`listTelemetryTraces`), never before a source is chosen, with the old
+frontend's query names so its bookmarks forward, each sent only when it is not the door's default,
+so the default read is the source alone: `sort=duration` (slowest first, sent as `sort`; absent,
+newest first, sends none), `threshold` (the floor in ms: 0 "Any duration", the default and absent,
+10, 100, 500 or 1000, and any other positive whole number a bookmark carries; sent as `thresholdMs`
+above 0, nonsense reads as 0), `service` (the traces any of whose spans is that service's; its
+options are the chosen source row's `services[].name`, the select hidden when it lists none, "All
+services" clears it) and `since` (→ `sinceMinutes`); never `limit`. `view=flat` draws one row per
+trace and changes no request; absent, the rows are grouped by path
+(`core/observability/trace-groups.ts`, ported from the old `trace-group.ts`: keyed by `rootRoute`,
+else `rootName`, else `(unnamed span)`; groups and members in the door's order, never re-sorted), each group row
+its path, trace count, slowest duration, newest start, services, an "N errored" chip and an
+exception marker, expanding (a signal, not the URL) to its traces. A trace's row: its duration,
+root name ("(root not buffered)" when `rootMissing`), an error count chip and an exception marker,
+root service, span count, services, start and its trace id as text (the trace page is qits-2343).
+A truncated answer says "Showing the newest (slowest) N of T matching traces". An empty one says
+why, in order (`core/observability/traces.ts`, with the lens parsing and the query): no source
+chosen, the source holds no spans, the service is not one of the source row's (offering All
+services), none reaches the floor (offering Any duration), none falls in the time range (offering
+Everything buffered). The recording answers the default read only, so the other lenses, the flat
+view, a truncated answer and the empty reasons are the page's plain spec's; the pact's mock
+answers each array with its first recorded element, so the pact spec checks the recorded order
+and the errored trace on the recording itself.
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,

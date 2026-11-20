@@ -4,6 +4,7 @@ import {
   listTelemetryErrors,
   listTelemetryMetrics,
   listTelemetrySources,
+  listTelemetryTraces,
   searchTelemetryLogs,
 } from '../../api/observability';
 import {
@@ -11,12 +12,13 @@ import {
   LIST_TELEMETRY_ERRORS,
   LIST_TELEMETRY_METRICS,
   LIST_TELEMETRY_SOURCES,
+  LIST_TELEMETRY_TRACES,
   SEARCH_TELEMETRY_LOGS,
 } from './observability.consumes';
 
 /**
  * qits-observability's telemetry buffer reads declared as operations (qits-2313; the errors,
- * qits-2339; the metrics, qits-2340; the slow spans, qits-2341), for the Observability section's pages, which read them through `qitsResource`;
+ * qits-2339; the metrics, qits-2340; the slow spans, qits-2341; the traces, qits-2342), for the Observability section's pages, which read them through `qitsResource`;
  * `observability.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`. Every door answers `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
  * `qits:agent` only; anyone else gets a 403.
@@ -75,4 +77,18 @@ export const TELEMETRY_SLOW_SPANS = qitsOperation({
   method: 'GET',
   call: listSlowSpans,
   consumes: LIST_SLOW_SPANS,
+});
+
+/**
+ * A source's traces, each summarised by its root span (qits-2342): newest first or (`sort=duration`)
+ * slowest first, at or above a duration floor (`thresholdMs`, default 0), narrowed to the traces any
+ * of whose spans is one service's (`service`) and by age; a truncated answer keeps the newest (or
+ * slowest) and says how many matched.
+ */
+export const TELEMETRY_TRACES = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'listTelemetryTraces',
+  method: 'GET',
+  call: listTelemetryTraces,
+  consumes: LIST_TELEMETRY_TRACES,
 });
