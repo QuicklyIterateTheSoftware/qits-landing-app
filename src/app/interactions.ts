@@ -602,11 +602,38 @@ export const INTERACTIONS = {
    */
   'show-event-names': 'The Events page’s type filter offers every stored event name',
   /**
-   * `project-events.page.ts`: a release request or a work item an event names opens its page.
+   * `project-events.page.ts`: a release request or a work item an event names opens its page;
+   * `project-event.page.ts` (qits-2338): a release request the event names opens its page.
    * Navigates only, and names no pact (epic qits-2000).
    */
   'open-project-event-subject':
-    'A release request or work item an event names on the Events page opens its page',
+    'A release request or work item an event names on the Events page or its own page opens its page',
+  /**
+   * `project-events.page.ts` (qits-2338): a row's Open link opens the event's page. Navigates only,
+   * and names no pact.
+   */
+  'open-project-event': 'An event on the Events page opens its own page',
+  /**
+   * `project-event.page.ts` via `PROJECT_EVENT` (qits-2338): an event's page reads the event by its
+   * id; a 404 says there is no such event in the project.
+   */
+  'show-project-event': 'An event’s page shows the event, its facts and its payload',
+  /**
+   * `project-event.page.ts` via `PROJECT_EVENT` and `EVENT_CHILDREN` (qits-2338, `walkChain`):
+   * an event's page walks its chain, up by `parentId` (`getEvent`, a 404 the chain's start) and
+   * down from the start (`listEvents?parentId=`).
+   */
+  'walk-project-event-chain': 'An event’s page walks what caused it and what it caused',
+  /**
+   * `project-event.page.ts` (qits-2338): "← Events" (and "Back to Events" when there is no such
+   * event) leads back to the project's Events page. Navigates only, and names no pact.
+   */
+  'leave-project-event': 'An event’s page leads back to the Events page',
+  /**
+   * `project-event.page.ts` (qits-2338): the event's cause, and another event of the project in
+   * its chain, open that event's page. Navigates only, and names no pact.
+   */
+  'open-related-project-event': 'An event’s cause or an event of its chain opens that event’s page',
   /**
    * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
    * (qits-2317): the Maintenance section's Dependencies page reads the inventory's repositories and

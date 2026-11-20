@@ -464,6 +464,229 @@
         "references": {
           "qits-call": {
             "app": "qits-events-service",
+            "operationId": "getEvent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-event",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-event: getEvent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an event of a project with a cause and effects",
+          "params": {
+            "causeId": "00000000-0000-4000-8000-000000000002",
+            "eventId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/events/api/events/${eventId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events/00000000-0000-4000-8000-000000000003"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "event": {
+              "createdAt": "2026-01-01T00:00:00Z",
+              "description": "qits-ci-service main: VERIFY succeeded",
+              "environment": "dev",
+              "id": "00000000-0000-4000-8000-000000000003",
+              "name": "BuildStatusChanged",
+              "occurredAt": "2026-01-01T00:00:00Z",
+              "parentId": "00000000-0000-4000-8000-000000000002",
+              "payload": "{\"branch\":\"main\",\"commitSha\":\"0123456789abcdef0123456789abcdef01234567\",\"phase\":\"VERIFY\",\"previousStatus\":\"RUNNING\",\"projectId\":\"00000000-0000-4000-8000-000000000001\",\"repoId\":\"00000000-0000-4000-8000-000000000004\",\"repoName\":\"qits-ci-service\",\"runId\":\"00000000-0000-4000-8000-000000000005\",\"status\":\"SUCCEEDED\"}",
+              "publisher": "eu.wohlben.qits:qits-ci-service",
+              "updatedAt": "2026-01-01T00:00:00Z"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.event.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.event.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.environment": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.event.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.occurredAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.event.parentId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.event.payload": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.publisher": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "getEvent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-project-event",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-project-event: getEvent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no event with the given id",
+          "params": {
+            "eventId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/events/api/events/${eventId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events/00000000-0000-4000-8000-000000000001"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
             "operationId": "listEvents"
           },
           "qits-trigger": {
@@ -694,6 +917,577 @@
                           ]
                         },
                         "$.publisher": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "getEvent"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "walk-project-event-chain",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "walk-project-event-chain: getEvent",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the cause of a project event",
+          "params": {
+            "eventId": "00000000-0000-4000-8000-000000000002",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/events/api/events/${eventId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events/00000000-0000-4000-8000-000000000002"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "event": {
+              "createdAt": "2026-01-01T00:00:00Z",
+              "description": "Release request qits-ci-service-rr-12 is ready",
+              "environment": "dev",
+              "id": "00000000-0000-4000-8000-000000000002",
+              "name": "ReleaseRequestStateChanged",
+              "occurredAt": "2026-01-01T00:00:00Z",
+              "parentId": null,
+              "payload": "{\"backingBranch\":\"release/qits-ci-service-rr-12\",\"branches\":[\"main\"],\"changedAt\":\"2026-01-01T00:00:00Z\",\"mergedSha\":\"0123456789abcdef0123456789abcdef01234567\",\"previousState\":\"PENDING\",\"projectId\":\"00000000-0000-4000-8000-000000000001\",\"releaseRequestId\":\"00000000-0000-4000-8000-000000000003\",\"releaseRequestQualifiedId\":\"qits-ci-service-rr-12\",\"repoId\":\"00000000-0000-4000-8000-000000000004\",\"repoName\":\"qits-ci-service\",\"state\":\"READY\",\"version\":\"2026.101.100000\"}",
+              "publisher": "eu.wohlben.qits:qits-projects-service",
+              "updatedAt": "2026-01-01T00:00:00Z"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.event.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.event.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.environment": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.event.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.occurredAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.event.payload": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.publisher": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.event.updatedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEvents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "walk-project-event-chain",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "walk-project-event-chain: listEvents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an event of a project with a cause and effects",
+          "params": {
+            "causeId": "00000000-0000-4000-8000-000000000002",
+            "eventId": "00000000-0000-4000-8000-000000000003",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "parentId": {
+              "expression": "${eventId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "parentId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events",
+        "query": {
+          "parentId": [
+            "00000000-0000-4000-8000-000000000003"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "events": [
+              {
+                "description": "qits-ci-service main built 2026.101.100000",
+                "id": "00000000-0000-4000-8000-000000000004",
+                "name": "BuildSuccessful",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "parentId": "00000000-0000-4000-8000-000000000003",
+                "payload": "{\"branch\":\"main\",\"commitSha\":\"0123456789abcdef0123456789abcdef01234567\",\"projectId\":\"00000000-0000-4000-8000-000000000001\",\"repoId\":\"00000000-0000-4000-8000-000000000005\",\"repoName\":\"qits-ci-service\",\"runId\":\"00000000-0000-4000-8000-000000000006\",\"version\":\"2026.101.100000\"}"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.events": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.description": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.parentId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.payload": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEvents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "walk-project-event-chain",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "walk-project-event-chain: listEvents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an event of a project with no effects",
+          "params": {
+            "eventId": "00000000-0000-4000-8000-000000000002",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "parentId": {
+              "expression": "${eventId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "parentId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events",
+        "query": {
+          "parentId": [
+            "00000000-0000-4000-8000-000000000002"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "events": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-events-service",
+            "operationId": "listEvents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "walk-project-event-chain",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "walk-project-event-chain: listEvents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the cause of a project event",
+          "params": {
+            "eventId": "00000000-0000-4000-8000-000000000002",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "parentId": {
+              "expression": "${eventId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "parentId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/events/api/events",
+        "query": {
+          "parentId": [
+            "00000000-0000-4000-8000-000000000002"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "events": [
+              {
+                "description": "qits-ci-service main: VERIFY succeeded",
+                "id": "00000000-0000-4000-8000-000000000003",
+                "name": "BuildStatusChanged",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "parentId": "00000000-0000-4000-8000-000000000002",
+                "payload": "{\"branch\":\"main\",\"commitSha\":\"0123456789abcdef0123456789abcdef01234567\",\"phase\":\"VERIFY\",\"previousStatus\":\"RUNNING\",\"projectId\":\"00000000-0000-4000-8000-000000000001\",\"repoId\":\"00000000-0000-4000-8000-000000000004\",\"repoName\":\"qits-ci-service\",\"runId\":\"00000000-0000-4000-8000-000000000005\",\"status\":\"SUCCEEDED\"}"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.events": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.description": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.parentId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.payload": {
                           "combine": "AND",
                           "matchers": [
                             {
