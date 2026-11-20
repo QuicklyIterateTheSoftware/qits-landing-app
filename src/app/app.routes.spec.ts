@@ -31,6 +31,7 @@ import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo
 import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
 import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page';
 import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
+import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
@@ -240,6 +241,19 @@ describe('artifacts routes (qits-2316)', () => {
     while (leaf.firstChild) leaf = leaf.firstChild;
     expect(leaf.paramMap.get('repo')).toBe('docs');
     expect(leaf.paramMap.get('site')).toBe('@changelog/qits-qits');
+  });
+
+  it('opens an npm package at artifacts/repositories/<repo>/packages/<package>, the name one segment (qits-2326)', async () => {
+    expect(
+      await pages('/artifacts/repositories/npm/packages/%40contract%2Fcontract-scoped'),
+    ).toEqual([ArtifactsNpmPackagePage]);
+    const router = TestBed.inject(Router);
+    // The router writes `@` literal in a segment (it needs no escape there); the `/` stays `%2F`.
+    expect(router.url).toBe('/artifacts/repositories/npm/packages/@contract%2Fcontract-scoped');
+    let leaf = router.routerState.snapshot.root;
+    while (leaf.firstChild) leaf = leaf.firstChild;
+    expect(leaf.paramMap.get('repo')).toBe('npm');
+    expect(leaf.paramMap.get('package')).toBe('@contract/contract-scoped');
   });
 
   it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {

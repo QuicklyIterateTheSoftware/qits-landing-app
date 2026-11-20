@@ -10,6 +10,7 @@ export type RoutePath =
   | 'artifacts/repositories/:repo/docs/:site'
   | 'artifacts/repositories/:repo/images/:image'
   | 'artifacts/repositories/:repo/maven-packages/:coordinate'
+  | 'artifacts/repositories/:repo/packages/:package'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'

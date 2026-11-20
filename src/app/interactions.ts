@@ -522,11 +522,10 @@ export const INTERACTIONS = {
    */
   'switch-artifacts-repository': 'A store repository in the switcher opens its page',
   /**
-   * `artifacts-repository.page.ts`: a row's name leaves for its detail page in the old
-   * qits-artifacts explorer (an npm package), until the Artifacts section's own detail page for it
-   * lands (qits-2326; the others landed: an image's, `open-artifact-image`, a maven coordinate's,
-   * `open-maven-package`, a daemon's, `open-artifact-daemon`, and a docs site's,
-   * `open-artifact-docs-site`). Leaves only, and names no pact.
+   * Retired (qits-2326): a store repository row's name, which left for its detail page in the old
+   * qits-artifacts explorer, the npm package's last. Every row now opens this app's own page
+   * (`open-artifact-image`, `open-maven-package`, `open-artifact-daemon`,
+   * `open-artifact-docs-site`, `open-npm-package`). Kept so the slug is never reused.
    */
   'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
   /**
@@ -655,6 +654,28 @@ export const INTERACTIONS = {
    * the app, and names no pact.
    */
   'read-artifact-docs-version': 'A docs site version opens in the docs reader',
+  /**
+   * `artifacts-repository.page.ts`: an npm row's name opens its package's page in this app,
+   * `artifacts/repositories/:repo/packages/:package` (qits-2326). Navigates only, and names no
+   * pact.
+   */
+  'open-npm-package': 'A package of an npm repository opens its page',
+  /**
+   * `artifacts-npm-package.page.ts` via `ARTIFACT_NPM_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
+   * (qits-2326): the npm package page reads the package's versions and its stored SBOMs, in
+   * parallel. Refresh reads both again.
+   */
+  'show-npm-package': 'A package’s page lists its versions, each with its dist-tags and SBOM',
+  /**
+   * `artifacts-npm-package.page.ts` (`app-sbom-cell`) via `ARTIFACT_SBOM` (qits-2326): a version's
+   * Download reads its CycloneDX document and saves it as a file.
+   */
+  'download-npm-sbom': 'A package’s page saves a version’s SBOM as a file',
+  /**
+   * `artifacts-npm-package.page.ts`: the back link, and the store page a non-npm repository's note
+   * links, open the repository's page (qits-2326). Navigates only, and names no pact.
+   */
+  'leave-npm-package': 'A package’s page leads back to its repository',
   /**
    * `project-events.page.ts` via `PROJECT_EVENTS_LIST` (qits-2312): the Events page lists the open
    * project's newest events (`attr=projectid=…`, newest first, fifty at a time).

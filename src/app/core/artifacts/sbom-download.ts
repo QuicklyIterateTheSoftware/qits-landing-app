@@ -6,7 +6,8 @@ import { ARTIFACT_SBOM } from './artifacts.operations';
  * the bearer, so a bare `<a href>` cannot fetch it: the document comes through the app's generated
  * client (`ARTIFACT_SBOM`, `getSbom`), which signs the call like every other, and is handed to the
  * browser as a Blob. The package name reaches the store with its `:`, `@` and `/` literal through
- * `literalSbomPaths` (`sbom-paths.ts`) on that client; without it the store answers 404.
+ * `literalSbomPaths` (`sbom-paths.ts`, qits-2325) on that client (a scoped npm name, qits-2326,
+ * as `@qits/angular`); without it the store answers 404.
  */
 
 /** The media type a saved SBOM carries: CycloneDX's JSON. */

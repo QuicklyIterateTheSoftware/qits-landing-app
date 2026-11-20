@@ -25,6 +25,7 @@ import {
   ARTIFACT_MAVEN_PACKAGES,
   ARTIFACT_MAVEN_VERSIONS,
   ARTIFACT_NPM_PACKAGES,
+  ARTIFACT_NPM_VERSIONS,
   ARTIFACT_RECORDS,
   ARTIFACT_REPOSITORIES,
   ARTIFACT_SBOM,
@@ -43,8 +44,9 @@ import { literalSbomPaths } from './sbom-paths';
  * `listArtifactRecords`; the image page's (qits-2324): `listImageTagSummaries` and
  * `listImageManifestSummaries`, with `listImages` read again for the image's own row; the maven
  * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`; the
- * daemon page's (qits-2327): `listDaemonVersions` and `getDaemon`; and the docs site page's
- * (qits-2328): `listDocsVersionSummaries`.
+ * daemon page's (qits-2327): `listDaemonVersions` and `getDaemon`; the docs site page's
+ * (qits-2328): `listDocsVersionSummaries`; and the npm package page's (qits-2326):
+ * `listNpmVersionSummaries`, with `listSbomVersions` and `getSbom` for an npm package.
  *
  * Against qits-artifacts' recordings of "a store holding one artifact of every kind" (the seeded
  * repositories, and one image, npm package, maven coordinate, daemon and docs site; no ci record)
@@ -88,11 +90,24 @@ import { literalSbomPaths } from './sbom-paths';
  * (two versions whose metadata differ, one never read). "A store with nothing published" (no
  * versions) binds the status only, as the empty listings above.
  *
+ * The npm package page's reads (qits-2326) are one package's (`npmPackage` in `npmRepository`;
+ * `packageName` of `packageType` for its SBOMs), which every state clears first, so a populated list
+ * binds its recorded count exactly: "a store holding one artifact of every kind" (one version,
+ * `latest` on it) and "a scoped npm package with an sbom on one of two versions"
+ * (`@contract/contract-scoped`: two versions, `latest` and `main` on the newer, one SBOM, and that
+ * SBOM's document). The empty store's versions (a package nobody published: an empty list) bind the
+ * status only. Neither explorer state records the SBOM list for its npm package: each records it
+ * once, for its maven coordinate (a 404, as for the npm package), so the npm page's 404 binds that
+ * recording's status only. A scoped name rides the SBOM paths literally (`literalSbomPaths`, as
+ * `app.config.ts` puts it on the client), as the provider records them; the versions door takes it
+ * encoded.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
  */
-// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325).
+// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325) and a scoped npm
+// name's `@` and `/` (qits-2326).
 if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
   artifactsClient.interceptors.request.use(literalSbomPaths);
 }
@@ -115,6 +130,8 @@ const DAEMON = 'a daemon with two versions';
 const NO_DAEMON = 'a daemon nothing has published';
 /** One docs site with two versions from two releases, their metadata differing (qits-2328). */
 const TWO_RELEASES = 'a docs site published by two releases';
+/** One scoped npm package with two versions, an SBOM on the newer one (qits-2326). */
+const SCOPED = 'a scoped npm package with an sbom on one of two versions';
 
 const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_REPOSITORIES,
@@ -132,6 +149,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
   ARTIFACT_DAEMON_VERSIONS,
   ARTIFACT_DAEMON_DOWNLOAD,
   ARTIFACT_DOCS_VERSIONS,
+  ARTIFACT_NPM_VERSIONS,
 ].map((op) => op.operationId);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-artifacts-store-pact-'));
@@ -206,6 +224,12 @@ const imageOf = (state: string, operationId: string) => ({
 const coordinateOf = (state: string) => ({
   repo: paramOf(state, 'listMavenVersionSummaries', 'mavenRepository'),
   coordinate: paramOf(state, 'listMavenVersionSummaries', 'mavenPackage'),
+});
+
+/** The npm repository and package a state's npm package page reads (qits-2326). */
+const npmPackageOf = (state: string) => ({
+  repo: paramOf(state, 'listNpmVersionSummaries', 'npmRepository'),
+  package: paramOf(state, 'listNpmVersionSummaries', 'npmPackage'),
 });
 
 /** The package type and name a state's SBOM list is recorded for (qits-2325). */
@@ -559,4 +583,99 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
         expect(response?.status).toBe(200);
       },
     ));
+  it('show-npm-package: a package’s one version, with its dist-tag', () =>
+    given(ARTIFACT_NPM_VERSIONS, STORE, 'show-npm-package').executeTest(async (server) => {
+      const path = npmPackageOf(STORE);
+      const { data } = await at(server.url, () => ARTIFACT_NPM_VERSIONS.fetch({ path }));
+      const [version] = data?.versions ?? [];
+      expect(data?.versions?.length).toBe(1);
+      expect(version?.version).toBeTruthy();
+      expect(typeof version?.tarballSizeBytes).toBe('number');
+      expect(version?.publishedAt).toBeTruthy();
+      expect(version?.distTags).toHaveLength(1);
+    }));
+
+  // A 404 is an error answer: its status only. The state records the SBOM list once, for its maven
+  // coordinate; the npm package has none either, and answers the same 404.
+  it('show-npm-package: a package with no SBOM, its SBOM list a 404', () =>
+    given(ARTIFACT_SBOM_VERSIONS, STORE, 'show-npm-package', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = {
+          packageType: 'npm',
+          packageName: paramOf(STORE, 'listNpmVersionSummaries', 'npmPackage'),
+        };
+        const { response } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
+        expect(response?.status).toBe(404);
+      },
+    ));
+
+  it('show-npm-package: a scoped package’s two versions, the dist-tags on the newer', () =>
+    given(ARTIFACT_NPM_VERSIONS, SCOPED, 'show-npm-package').executeTest(async (server) => {
+      const path = npmPackageOf(SCOPED);
+      expect(path.package).toMatch(/^@[^/]+\/.+/);
+      const { data } = await at(server.url, () => ARTIFACT_NPM_VERSIONS.fetch({ path }));
+      const versions = data?.versions ?? [];
+      expect(versions).toHaveLength(2);
+      const tagged = versions.find((version) => (version.distTags ?? []).length > 0);
+      // Bound at its recorded count (`latest` and `main`), each tag by its type.
+      expect(tagged?.distTags).toHaveLength(2);
+    }));
+
+  it('show-npm-package: a scoped package’s SBOMs, one on the newer version', () =>
+    given(ARTIFACT_SBOM_VERSIONS, SCOPED, 'show-npm-package').executeTest(async (server) => {
+      const path = sbomPackageOf(SCOPED);
+      expect(path.packageType).toBe('npm');
+      const { data } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
+      const [sbom] = data?.versions ?? [];
+      expect(data?.versions?.length).toBe(1);
+      expect(sbom?.version).toBe(paramOf(SCOPED, 'getSbom', 'version'));
+      expect(sbom?.specVersion).toBeTruthy();
+      expect(typeof sbom?.sizeBytes).toBe('number');
+      expect(sbom?.createdAt).toBeTruthy();
+    }));
+
+  // Status only, as for the empty listings above.
+  it('show-npm-package: the versions of a package nobody published', () =>
+    given(ARTIFACT_NPM_VERSIONS, EMPTY, 'show-npm-package', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = npmPackageOf(EMPTY);
+        const { response, error } = await at(server.url, () =>
+          ARTIFACT_NPM_VERSIONS.fetch({ path }),
+        );
+        expect(error).toBeUndefined();
+        expect(response?.status).toBe(200);
+      },
+    ));
+
+  it('show-npm-package: the SBOM list of a package nobody published, a 404', () =>
+    given(ARTIFACT_SBOM_VERSIONS, EMPTY, 'show-npm-package', STATUS_ONLY).executeTest(
+      async (server) => {
+        const path = {
+          packageType: 'npm',
+          packageName: paramOf(EMPTY, 'listNpmVersionSummaries', 'npmPackage'),
+        };
+        const { response } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
+        expect(response?.status).toBe(404);
+      },
+    ));
+
+  it('download-npm-sbom: a version’s CycloneDX document, the scoped name literal', () => {
+    if (ARTIFACT_SBOM.provider !== PROVIDER) throw new Error('getSbom is not the artifacts one');
+    return addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: SCOPED,
+      operationId: ARTIFACT_SBOM.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'download-npm-sbom' },
+      consumes: ARTIFACT_SBOM.consumes,
+      response: { contentType: SBOM_MEDIA_TYPE },
+    }).executeTest(async (server) => {
+      const { packageType, packageName } = sbomPackageOf(SCOPED);
+      const version = paramOf(SCOPED, 'getSbom', 'version');
+      const { response, error } = await at(server.url, () =>
+        ARTIFACT_SBOM.fetch(sbomParams(packageType, packageName, version)),
+      );
+      expect(error).toBeUndefined();
+      expect(response?.status).toBe(200);
+    });
+  });
 });

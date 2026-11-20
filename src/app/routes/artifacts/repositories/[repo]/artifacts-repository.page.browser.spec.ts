@@ -17,8 +17,6 @@ import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 const STORE = 'a store holding one artifact of every kind';
 const EMPTY = 'a store with nothing published';
 const ARTIFACTS = 'qits-artifacts';
-/** The old explorer's page origin, as `provideAppRoute()` gives it. */
-const OLD_EXPLORER = 'https://registry.qits.example.test';
 
 // As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325).
 if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
@@ -50,9 +48,10 @@ type Listed = keyof typeof LISTINGS;
  * (`open-artifact-image`, qits-2324), a maven row, which opens the coordinate's page here
  * (`open-maven-package`, qits-2325), a daemon row, which opens the daemon's page here
  * (`open-artifact-daemon`, qits-2327), a docs site row, which opens the site's page here
- * (`open-artifact-docs-site`, qits-2328), an npm row, which still leaves for the old explorer
- * until qits-2326 (`open-artifacts-entry`; `QITS_LEAVE_APP` is a spy, so the tab stays), and
- * Cleanup, which opens the repository's cleanup page here (`open-artifacts-cleanup`, qits-2329).
+ * (`open-artifact-docs-site`, qits-2328), an npm row, which opens the package's page here
+ * (`open-npm-package`, qits-2326), and Cleanup, which opens the repository's cleanup page here
+ * (`open-artifacts-cleanup`, qits-2329). No row leaves the app (`QITS_LEAVE_APP` is a spy, never
+ * called).
  */
 describe('ArtifactsRepositoryPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -369,16 +368,28 @@ describe('ArtifactsRepositoryPage (screenshots)', () => {
     await opened.settled();
   });
 
-  it('open-artifacts-entry npmPackage: an npm row leaves for its page in the old explorer', async () => {
+  it('open-npm-package npmPackage: a package row opens the package’s page here', async () => {
     const opened = await open('npm');
-    const href = `${OLD_EXPLORER}/repositories/npm/packages/contract-package`;
     const link = page
       .elementLocator(opened.page)
       .getByRole('link', { name: 'contract-package', exact: true });
-    await expect.element(link).toHaveAttribute('href', href);
+    await expect
+      .element(link)
+      .toHaveAttribute('href', '/artifacts/repositories/npm/packages/contract-package');
     await userEvent.click(link);
-    expect(reached()).toEqual(['open-artifacts-entry:npmPackage']);
-    expect(leave).toHaveBeenCalledWith(href);
-    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/npm');
+    await opened.settled();
+    expect(reached()).toEqual(['open-npm-package:npmPackage']);
+    expect(TestBed.inject(Router).url).toBe(
+      '/artifacts/repositories/npm/packages/contract-package',
+    );
+    expect(leave).not.toHaveBeenCalled();
+    // The package page's reads, answered as its own spec does (no SBOM: a 404).
+    http
+      .expectOne('/artifacts/api/repositories/npm/packages/contract-package/versions')
+      .flush(await goldenMaster(STORE, 'listNpmVersionSummaries', ARTIFACTS));
+    http
+      .expectOne('/artifacts/sboms/npm/contract-package')
+      .flush(null, { status: 404, statusText: 'Not Found' });
+    await opened.settled();
   });
 });

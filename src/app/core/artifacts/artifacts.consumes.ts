@@ -11,6 +11,7 @@ import type {
   ListMavenPackagesResponses,
   ListMavenVersionSummariesResponses,
   ListNpmPackagesResponses,
+  ListNpmVersionSummariesResponses,
   ListRepositoriesResponses,
   ListSbomVersionsResponses,
 } from '../../api/artifacts';
@@ -19,7 +20,8 @@ import type {
  * What the app reads from qits-artifacts' store explorer doors (qits-2316): the store's
  * repositories, and one repository's listing by its type; one image's tags and manifests
  * (qits-2324); one maven coordinate's versions and SBOMs (qits-2325); one daemon's versions and a
- * version's bytes (qits-2327); and one docs site's versions (qits-2328). `artifacts.operations.ts`
+ * version's bytes (qits-2327); one docs site's versions (qits-2328); and one npm package's versions
+ * and SBOMs (qits-2326). `artifacts.operations.ts`
  * declares each read with these lists, so nothing can read
  * any other field, and `artifacts.operations.pact.spec.ts` binds the same. To read another field,
  * add it here.
@@ -141,9 +143,28 @@ export type ArtifactMavenVersions = Consumed<
 export type ArtifactMavenVersion = NonNullable<ArtifactMavenVersions['versions']>[number];
 
 /**
- * `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, qits-2325): every stored SBOM of one package,
- * newest first, each by its release version, with its CycloneDX spec version, its bytes and when
- * it was stored. A package with none answers 404, which is "no SBOMs", not a failure.
+ * `ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`, qits-2326): one npm package's versions in
+ * store order, each with its tarball's bytes (null when not measured), when it was published (null
+ * when not recorded) and the dist-tags pointing at it.
+ */
+export const LIST_ARTIFACT_NPM_VERSIONS = [
+  'versions[].version',
+  'versions[].tarballSizeBytes',
+  'versions[].publishedAt',
+  'versions[].distTags',
+] as const;
+
+export type ArtifactNpmVersions = Consumed<
+  ListNpmVersionSummariesResponses[200],
+  typeof LIST_ARTIFACT_NPM_VERSIONS
+>;
+export type ArtifactNpmVersion = NonNullable<ArtifactNpmVersions['versions']>[number];
+
+/**
+ * `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, qits-2325; the npm package page's too, qits-2326):
+ * every stored SBOM of one package, newest first, each by its release version, with its CycloneDX
+ * spec version, its bytes and when it was stored. A package with none answers 404, which is "no
+ * SBOMs", not a failure.
  */
 export const LIST_ARTIFACT_SBOM_VERSIONS = [
   'versions[].version',
@@ -159,8 +180,8 @@ export type ArtifactSbomVersions = Consumed<
 export type ArtifactSbomVersion = NonNullable<ArtifactSbomVersions['versions']>[number];
 
 /**
- * `ARTIFACT_SBOM` (`getSbom`, qits-2325): one release's CycloneDX document, read on a press to be
- * saved as a file. It is read whole, as text, so the pact binds its media type, never a field.
+ * `ARTIFACT_SBOM` (`getSbom`, qits-2325; the npm package page's too, qits-2326): one release's
+ * CycloneDX document, read on a press to be saved as a file. It is read whole, as text, so the pact binds its media type, never a field.
  */
 export const GET_ARTIFACT_SBOM = [] as const;
 
