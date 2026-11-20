@@ -294,6 +294,10 @@
             {
               "path": "repositories/:repo/daemons/:daemon",
               "fullPath": "artifacts/repositories/:repo/daemons/:daemon"
+            },
+            {
+              "path": "repositories/:repo/docs/:site",
+              "fullPath": "artifacts/repositories/:repo/docs/:site"
             }
           ]
         },
@@ -22659,8 +22663,8 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
+        "open-artifact-docs-site:site",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:docsSite",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -22853,8 +22857,8 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
+        "open-artifact-docs-site:site",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:docsSite",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -23046,8 +23050,8 @@
         }
       ],
       "triggers": [
+        "open-artifact-docs-site:site",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:docsSite",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -23235,8 +23239,8 @@
         }
       ],
       "triggers": [
+        "open-artifact-docs-site:site",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:docsSite",
         "switch-artifacts-repository:repository"
       ],
       "dataMarks": [
@@ -23425,8 +23429,8 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
+        "open-artifact-docs-site:site",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:docsSite",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -23619,8 +23623,8 @@
       ],
       "triggers": [
         "follow-breadcrumb:home",
+        "open-artifact-docs-site:site",
         "open-artifacts-cleanup:cleanup",
-        "open-artifacts-entry:docsSite",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -40811,6 +40815,2036 @@
       "triggers": [
         "follow-breadcrumb:home",
         "leave-artifact-daemon:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says there is no such site when the read lists no versions",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says there is no such site when the read lists no versions",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says there is no such site when the read lists no versions",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says there is no such site when the read lists no versions",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says there is no such site when the read lists no versions",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says there is no such site when the read lists no versions",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store with nothing published",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > marks the page as loading, then says it failed, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says a repository of another type is not a docs repository, linking its page",
+      "name": "not-a-docs-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "leave-artifact-docs-site:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says a repository of another type is not a docs repository, linking its page",
+      "name": "not-a-docs-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "leave-artifact-docs-site:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says a repository of another type is not a docs repository, linking its page",
+      "name": "not-a-docs-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says a repository of another type is not a docs repository, linking its page",
+      "name": "not-a-docs-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says a repository of another type is not a docs repository, linking its page",
+      "name": "not-a-docs-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "leave-artifact-docs-site:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says a repository of another type is not a docs repository, linking its page",
+      "name": "not-a-docs-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "leave-artifact-docs-site:repository",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows a docs site’s version, with its files, size and where it came from",
+      "name": "site",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows a docs site’s version, with its files, size and where it came from",
+      "name": "site",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows a docs site’s version, with its files, size and where it came from",
+      "name": "site",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows a docs site’s version, with its files, size and where it came from",
+      "name": "site",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows a docs site’s version, with its files, size and where it came from",
+      "name": "site",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows a docs site’s version, with its files, size and where it came from",
+      "name": "site",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a store holding one artifact of every kind",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows two releases newest first, each published from its own commit",
+      "name": "two-releases",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs site published by two releases",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows two releases newest first, each published from its own commit",
+      "name": "two-releases",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs site published by two releases",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows two releases newest first, each published from its own commit",
+      "name": "two-releases",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs site published by two releases",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows two releases newest first, each published from its own commit",
+      "name": "two-releases",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs site published by two releases",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows two releases newest first, each published from its own commit",
+      "name": "two-releases",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs site published by two releases",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > shows two releases newest first, each published from its own commit",
+      "name": "two-releases",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a docs site published by two releases",
+          "operationId": "listDocsVersionSummaries"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess",
+        "read-artifact-docs-version:read"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "accessedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "metadata"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "fileCount",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listDocsVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "leave-artifact-docs-site:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-network-access:networkAccess"
+      ]
+    },
+    {
+      "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-tablet-light.html",
+      "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+      "test": "ArtifactsDocsSitePage (screenshots) > says so when the store holds no repository of that name",
+      "name": "unknown-repository",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "artifacts/repositories/:repo/docs/:site",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-artifact-docs-site:back",
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
@@ -265037,6 +267071,50 @@
       "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-tablet-dark.html",
       "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.browser.spec.ts/unknown-repository-tablet-light.html"
     ],
+    "artifacts/repositories/:repo/docs/:site": [
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/error-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/not-a-docs-repository-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/site-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/two-releases-tablet-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-desktop-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-desktop-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-phone-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-phone-light.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-tablet-dark.html",
+      "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts/unknown-repository-tablet-light.html"
+    ],
     "artifacts/repositories/:repo/images/:image": [
       "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page.browser.spec.ts/empty-desktop-light.html",
@@ -266728,6 +268806,16 @@
       },
       {
         "route": "artifacts/repositories/:repo",
+        "interaction": "open-artifact-docs-site",
+        "outcome": "site",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo/docs/:site",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo",
         "interaction": "open-artifact-image",
         "outcome": "image",
         "kind": "exit",
@@ -266742,16 +268830,6 @@
         "outcome": "cleanup",
         "kind": "exit",
         "to": "artifacts/repositories/:repo/cleanup",
-        "global": false,
-        "triggered": true,
-        "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
-      },
-      {
-        "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "docsSite",
-        "kind": "external",
-        "to": "artifacts",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.ts"
@@ -266885,6 +268963,36 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/docs/:site",
+        "interaction": "leave-artifact-docs-site",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/docs/:site",
+        "interaction": "leave-artifact-docs-site",
+        "outcome": "repository",
+        "kind": "exit",
+        "to": "artifacts/repositories/:repo",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.ts"
+      },
+      {
+        "route": "artifacts/repositories/:repo/docs/:site",
+        "interaction": "read-artifact-docs-version",
+        "outcome": "read",
+        "kind": "external",
+        "to": "docs",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.ts"
       },
       {
         "route": "artifacts/repositories/:repo/images/:image",
@@ -269426,6 +271534,15 @@
       },
       {
         "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
+        "test": "ArtifactsRepositoryPage (screenshots) > open-artifact-docs-site site: a docs site row opens the site’s page here",
+        "route": "artifacts/repositories/:repo",
+        "interaction": "open-artifact-docs-site",
+        "outcome": "site",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
         "test": "ArtifactsRepositoryPage (screenshots) > open-artifact-image image: an image row opens the image’s page here",
         "route": "artifacts/repositories/:repo",
         "interaction": "open-artifact-image",
@@ -269440,15 +271557,6 @@
         "interaction": "open-artifacts-cleanup",
         "outcome": "cleanup",
         "kind": "exit",
-        "freeze": null
-      },
-      {
-        "spec": "src/app/routes/artifacts/repositories/[repo]/artifacts-repository.page.browser.spec.ts",
-        "test": "ArtifactsRepositoryPage (screenshots) > open-artifacts-entry docsSite: a row leaves for its page in the old explorer",
-        "route": "artifacts/repositories/:repo",
-        "interaction": "open-artifacts-entry",
-        "outcome": "docsSite",
-        "kind": "external",
         "freeze": null
       },
       {
@@ -269638,6 +271746,33 @@
         "interaction": "leave-artifact-daemon",
         "outcome": "repository",
         "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+        "test": "ArtifactsDocsSitePage (screenshots) > leave-artifact-docs-site back: the back link opens the repository’s page",
+        "route": "artifacts/repositories/:repo/docs/:site",
+        "interaction": "leave-artifact-docs-site",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+        "test": "ArtifactsDocsSitePage (screenshots) > leave-artifact-docs-site repository: a non-docs repository’s note opens its page",
+        "route": "artifacts/repositories/:repo/docs/:site",
+        "interaction": "leave-artifact-docs-site",
+        "outcome": "repository",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page.browser.spec.ts",
+        "test": "ArtifactsDocsSitePage (screenshots) > read-artifact-docs-version read: a version opens in qits-docs’ reader",
+        "route": "artifacts/repositories/:repo/docs/:site",
+        "interaction": "read-artifact-docs-version",
+        "outcome": "read",
+        "kind": "external",
         "freeze": null
       },
       {
