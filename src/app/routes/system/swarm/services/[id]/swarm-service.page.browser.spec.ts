@@ -99,14 +99,14 @@ describe('SwarmServicePage (screenshots)', () => {
     expect(tasks.getByRole('row').elements()).toHaveLength(3);
     await expect.element(tasks).toMatchTextContent('Failed 4 hours ago');
     await expect.element(tasks).toMatchTextContent('No such container');
-    // The root sidebar's System stays current below the section.
+    // The root sidebar's System stays current below the section, and Services below it is the
+    // page a service belongs to (its URL is within `/system/swarm/services`, qits-2346).
+    const navigation = page.elementLocator(opened.frame).getByRole('navigation', { name: 'qits' });
     await expect
-      .element(
-        page
-          .elementLocator(opened.frame)
-          .getByRole('navigation', { name: 'qits' })
-          .getByRole('link', { name: 'System', exact: true }),
-      )
+      .element(navigation.getByRole('link', { name: 'System', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Services', exact: true }))
       .toHaveAttribute('aria-current', 'page');
     await expect
       .element(page.elementLocator(opened.frame))
