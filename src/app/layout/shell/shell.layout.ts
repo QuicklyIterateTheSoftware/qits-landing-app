@@ -113,13 +113,24 @@ export interface NavChild extends NavPage {
 }
 
 /** A global section's page in this app: a route that takes no params (qits-2316). */
-export type GlobalPath = 'artifacts' | 'system';
+export type GlobalPath = 'artifacts' | 'system' | 'system/swarm/services' | 'system/swarm/nodes';
+
+/** One of a global section's own pages, below it in the sidebar while the section is open. */
+export interface GlobalChild {
+  readonly label: string;
+  /** Its `exit(...)` outcome, rendered through `[qitsExit]` and current on its page. */
+  readonly exit: ExitOutcome<GlobalPath>;
+  /** The page's URL (absolute, `/system/…`), matched against the router's. */
+  readonly path: string;
+}
 
 /**
  * One of the sidebar's global sections, shown while no project is open: a platform page that
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
- * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System), or a site of its own the app leaves for at `href`,
- * through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
+ * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System), with its own pages listed below
+ * it while it is open (`children`, qits-2346: System's Services and Nodes), or a site of its own
+ * the app leaves for at `href`, through its declared external outcome (`kind: 'external'`,
+ * qits-2319: IdP admin).
  */
 export type GlobalLink =
   | {
@@ -127,6 +138,8 @@ export type GlobalLink =
       readonly label: string;
       /** Its `exit(...)` outcome, rendered through `[qitsExit]` and current on its pages. */
       readonly exit: ExitOutcome<GlobalPath>;
+      /** The section's own pages, listed below it in the sidebar while the section is open. */
+      readonly children?: readonly GlobalChild[];
     }
   | {
       readonly kind: 'external';
@@ -184,16 +197,19 @@ export interface NavNote {
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, one exit per `WORK_TABS` entry) and its Network access entry
  * (`open-sidebar-network-access`, external), the global sections shown with no project open
- * (Artifacts, `open-sidebar-artifacts`, and System, `open-sidebar-system`, in-app sections; IdP
- * admin, `open-sidebar-idp-admin`, which leaves the app for the idp's own admin), the gear (`open-project-settings`), the network
- * icon (`open-network-access`, external), and the trail's brand and crumbs (`follow-breadcrumb`),
+ * (Artifacts, `open-sidebar-artifacts`, and System, `open-sidebar-system`, in-app sections, with
+ * System's own pages below it while it is open, `open-sidebar-system-page`; IdP admin,
+ * `open-sidebar-idp-admin`, which leaves the app for the idp's own admin), the gear
+ * (`open-project-settings`), the network icon (`open-network-access`, external), and the trail's
+ * brand and crumbs (`follow-breadcrumb`),
  * handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare
  * their own, being patterns (app-wide too). The two Network access links and IdP admin are plain
  * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
- * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts and System and a work page
- * are marked current by `[qitsExit]`; a section keeps its own rule (`currentOf`: `true` while one
- * of its pages below it is open, and Agents on a slot's page), given to `[qitsExit]` through
- * `[exitCurrent]` (qits-2064).
+ * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts, a work page and a
+ * global section's page are marked current by `[qitsExit]`; a section keeps its own rule
+ * (`currentOf`: `true` while one of its pages below it is open, and Agents on a slot's page), and so
+ * does a global section with pages of its own (`globalCurrentOf`, the same rule: System is `true`
+ * on Services or Nodes, qits-2346), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
@@ -332,11 +348,30 @@ export interface NavNote {
             @if (link.kind === 'exit') {
               <li>
                 <a
-                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg aria-[current=true]:font-semibold aria-[current=true]:text-fg"
                   [qitsExit]="link.exit"
+                  [exitCurrent]="globalCurrentOf(link)"
                   (click)="closeNav()"
                   >{{ link.label }}</a
                 >
+                <!-- The open global section's pages, indented below it, as a project section's
+                     (qits-2346): the list switched by class, its links rendered only while the
+                     section is open (\`openGlobalChildren\`, qits-2225). -->
+                <ul
+                  class="m-0 mt-0.5 mb-1 ml-3 list-none border-l border-line pl-2"
+                  [class.hidden]="openGlobalChildren(link).length === 0"
+                >
+                  @for (child of openGlobalChildren(link); track child.path) {
+                    <li>
+                      <a
+                        class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                        [qitsExit]="child.exit"
+                        (click)="closeNav()"
+                        >{{ child.label }}</a
+                      >
+                    </li>
+                  }
+                </ul>
               </li>
             } @else {
               <li [class.hidden]="!link.href">
@@ -548,6 +583,15 @@ export class ShellLayout {
   });
 
   /**
+   * The System section's pages below the sidebar's System, one exit per page (qits-2346), listed
+   * while the section is open. qits-2347…qits-2356 each add one more.
+   */
+  private readonly systemPages = outcomes('open-sidebar-system-page', {
+    services: exit('system/swarm/services'),
+    nodes: exit('system/swarm/nodes'),
+  });
+
+  /**
    * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
    * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
    * (owner, 2026-11-18). Same tab.
@@ -567,13 +611,24 @@ export class ShellLayout {
    * project's sections' place while no project is open, and not at all while one is: Artifacts
    * (qits-2316) and System (qits-2344), in-app sections, and IdP admin (qits-2319, leaving the
    * app); Mirror (qits-2357) and Orchestrator (qits-2359) will each add one entry here, with its
-   * own `outcomes(...)` exit (a `GlobalPath`) or external.
+   * own `outcomes(...)` exit (a `GlobalPath`) or external. An in-app section may list its own pages
+   * below it (`children`, qits-2346): System's Services and Nodes, one exit each of
+   * `open-sidebar-system-page`; qits-2347…qits-2356 each add one child there.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
+    const system = this.systemPages;
     return [
       { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
-      { kind: 'exit', label: 'System', exit: this.system.open },
+      {
+        kind: 'exit',
+        label: 'System',
+        exit: this.system.open,
+        children: [
+          { label: 'Services', exit: system.services, path: system.services.url() },
+          { label: 'Nodes', exit: system.nodes, path: system.nodes.url() },
+        ],
+      },
       { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
     ];
   });
@@ -810,6 +865,34 @@ export class ShellLayout {
   protected currentOf(link: NavLink): 'page' | 'true' | null {
     if (link.path !== this.section()?.path) return null;
     return link.children?.some((child) => this.isAt(child)) ? 'true' : 'page';
+  }
+
+  /** Whether the URL is within a global section: its page or one below it (qits-2346). */
+  private isInGlobal(link: GlobalLink & { kind: 'exit' }): boolean {
+    return within(this.selected.url(), link.exit.url());
+  }
+
+  /**
+   * A global section's `aria-current`, as `currentOf` is a project section's (qits-2346): for one
+   * with pages of its own, `page` on its page, `true` when the current page is one of its pages
+   * below it, none outside it; for one without, unbound (`undefined`), so `[qitsExit]`'s path rule
+   * marks it `page` on every page below it.
+   */
+  protected globalCurrentOf(
+    link: GlobalLink & { kind: 'exit' },
+  ): 'page' | 'true' | null | undefined {
+    if (!link.children?.length) return undefined;
+    if (!this.isInGlobal(link)) return null;
+    return link.children.some((child) => this.isAt(child)) ? 'true' : 'page';
+  }
+
+  /**
+   * A global section's own pages as the sidebar renders them (qits-2346): all of them while the
+   * URL is within the section, none otherwise. Not rendered rather than hidden, as `openChildren`
+   * (qits-2225).
+   */
+  protected openGlobalChildren(link: GlobalLink & { kind: 'exit' }): readonly GlobalChild[] {
+    return this.isInGlobal(link) ? (link.children ?? []) : [];
   }
 
   /**

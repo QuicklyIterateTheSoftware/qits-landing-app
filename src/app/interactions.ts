@@ -861,6 +861,12 @@ export const INTERACTIONS = {
    */
   'show-swarm-services': 'The swarm services page lists the swarm’s services with their state',
   /**
+   * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
+   * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
+   * engine version, the one qits-system runs on marked. Refresh reads them again.
+   */
+  'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
+  /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.
@@ -1441,6 +1447,12 @@ export const INTERACTIONS = {
    * and names no pact.
    */
   'open-sidebar-system': 'The sidebar’s System entry opens the System section',
+  /**
+   * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
+   * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no
+   * pact.
+   */
+  'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and

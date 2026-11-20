@@ -346,7 +346,13 @@ With no project open, the sidebar shows its global sections in the project's sec
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316) and System
-(`open-sidebar-system`, `exit('system')`, qits-2344).
+(`open-sidebar-system`, `exit('system')`, qits-2344). Such a section may list its own pages below it
+(`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
+while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
+exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
+on its own page, `true` while one of its pages below it is the current one (that page `page`).
+System's are Services and Nodes (`open-sidebar-system-page`, `services`/`nodes`,
+`exit('system/swarm/services')`, `exit('system/swarm/nodes')`); qits-2347…qits-2356 add one each.
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
@@ -517,8 +523,10 @@ that recording's status only.
 The System section (qits-2344) is qits-system's one swarm, which no project joins:
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
-under `system/...`. It is an entry point (`qitsEntry`): the old page hands off to it with a
-full-document load, and the sidebar's System exit names `system`, which redirects; a service's page
+under `system/...`, each listed below the sidebar's System while the section is open (Services
+and Nodes so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+hands off to it with a full-document load; the sidebar's System exit names `system`, which
+redirects, and Services below it names it; a service's page
 leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
 `SWARM_SERVICE_LIST` (`listSwarmServices`, `docker service ls` on the manager qits-system runs on,
 one swarm, not per target), one table in the server's order: name (linking the service's page by
@@ -559,6 +567,22 @@ pact reads it in "a single-node swarm" (`dev-qits-artifacts`, two mounts, two ta
 only), the last two (and their screenshots) skipping themselves until the
 `@qits/system-golden-masters` pin records them, in its own part of the system pact
 (`swarm-service.operations.pact.spec.ts`, `assertPactPart`).
+
+`system/swarm/nodes` (`SwarmNodesPage`, qits-2346, replacing qits-system-frontend's `swarm/nodes`,
+an entry point too) is the same swarm's nodes: `SWARM_NODE_LIST` (`listSwarmNodes`, `docker node
+ls` on the manager), one table in the server's order: hostname (plain text until a node's page
+lands, qits-2347) with a neutral "this node" chip on the one qits-system runs on (`self`), docker's
+12-character id (`shortSwarmId`, the whole id in `title`), role, status and availability (docker's
+own words, each on a chip), manager status and engine version ("—" when empty: a worker has no
+manager status). No Address column and no `address` in `LIST_SWARM_NODES`: the list door always
+answers it `null`. The chips' tones are `core/system/swarm-node-tones.ts`, case-insensitive:
+status Ready ok, Down failed, Unknown / Disconnected waiting, else neutral; availability Active ok,
+Pause waiting, Drain and else neutral. An empty listing is one sentence ("The swarm manager lists
+no nodes."), a 503 and a 403 as the services page. Staleness: no `refreshOn`. No event names a
+node change (a join, a leave, a drain, a node going Down), so the page is not followed at all:
+Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a single-node swarm"
+(one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
+the interaction and the `empty` screenshot skip themselves until the pin records it).
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend

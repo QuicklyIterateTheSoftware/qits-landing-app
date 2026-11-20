@@ -119,14 +119,14 @@ describe('SwarmServicesPage (screenshots)', () => {
     await expect
       .element(table)
       .toMatchTextContent('registry.dev.localhost:8080/qits/qits-artifacts:09920e6');
-    // The root sidebar's System stays current below the section.
+    // The root sidebar's System stays current below the section, Services below it the page
+    // (qits-2346).
+    const navigation = page.elementLocator(opened.frame).getByRole('navigation', { name: 'qits' });
     await expect
-      .element(
-        page
-          .elementLocator(opened.frame)
-          .getByRole('navigation', { name: 'qits' })
-          .getByRole('link', { name: 'System', exact: true }),
-      )
+      .element(navigation.getByRole('link', { name: 'System', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Services', exact: true }))
       .toHaveAttribute('aria-current', 'page');
     await expect
       .element(page.elementLocator(opened.frame))

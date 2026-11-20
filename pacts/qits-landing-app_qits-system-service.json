@@ -155,6 +155,205 @@
         "references": {
           "qits-call": {
             "app": "qits-system-service",
+            "operationId": "listSwarmNodes"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-nodes",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-swarm-nodes: listSwarmNodes",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a single-node swarm",
+          "params": {
+            "configId": "qits-edge-vhosts",
+            "containerId": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+            "nodeId": "iwbwrdui2z0n62kqcjfo1erwh",
+            "serviceId": "dev-qits-artifacts"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/swarm/nodes"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "availability": "Active",
+              "engineVersion": "29.7.2",
+              "hostname": "fake-host",
+              "id": "iwbwrdui2z0n62kqcjfo1erwh",
+              "managerStatus": "Leader",
+              "role": "manager",
+              "self": true,
+              "status": "Ready"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].availability": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].engineVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].hostname": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].managerStatus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].role": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].self": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listSwarmNodes"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-nodes",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-swarm-nodes: listSwarmNodes",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a swarm listing no nodes"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/swarm/nodes"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
             "operationId": "getSwarmService"
           },
           "qits-trigger": {
