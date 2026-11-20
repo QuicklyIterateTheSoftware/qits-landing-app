@@ -30,3 +30,14 @@ export function runsOtherImage(
 export function shortSwarmId(id: string | undefined): string {
   return (id ?? '').slice(0, 12);
 }
+
+/**
+ * Whether swarm owes `service` a task (qits-2345): a replicated service whose desired count, the
+ * `D` of its served `R/D` replicas, is above 0. A service scaled to 0 (and a global one, whose
+ * count is only the tasks placed) placing none is expected, not a scheduling problem.
+ */
+export function asksForTasks(service: Pick<SwarmServiceDetail, 'mode' | 'replicas'>): boolean {
+  if (service.mode !== 'replicated') return false;
+  const desired = Number(/\/(\d+)/.exec(service.replicas ?? '')?.[1] ?? 0);
+  return desired > 0;
+}

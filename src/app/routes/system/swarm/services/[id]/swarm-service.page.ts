@@ -14,7 +14,12 @@ import {
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { isMissing } from '$core/resources/resource-family';
 import { loadState } from '$core/resources/load-state';
-import { concernsSwarmService, runsOtherImage, shortSwarmId } from '$core/system/swarm-service';
+import {
+  asksForTasks,
+  concernsSwarmService,
+  runsOtherImage,
+  shortSwarmId,
+} from '$core/system/swarm-service';
 import type { SwarmServiceDetail, SwarmServiceTask } from '$core/system/swarm-service.consumes';
 import { SWARM_SERVICE } from '$core/system/swarm-service.operations';
 import { DEPLOYMENT_EVENTS } from '$core/updates/app-updates';
@@ -59,7 +64,8 @@ export function healthcheckLine(healthcheck: readonly string[] | undefined): str
  *   caption says): slot, node hostname (plain text: the door never names the node's id), state,
  *   desired state, the error (red only when there is one) and the image only where it is not the
  *   service's. No Updated column: the door answers a task's `updatedAt` null. No task is a
- *   sentence of its own: for a replicated service that is a scheduling problem.
+ *   sentence of its own: a scheduling problem only when the service asks for replicas
+ *   (`asksForTasks`), and expected when it is scaled to 0.
  *
  * States: loading; a 404 is "No swarm service <id>."; a 403 says reading the swarm needs an admin
  * role; a 503 (the swarm not answering) says the swarm cannot be read right now, with Retry; any
@@ -449,8 +455,13 @@ export function healthcheckLine(healthcheck: readonly string[] | undefined): str
                       [qitsField]="marks.noTasks"
                       data-no-tasks
                     >
-                      Swarm has placed no task for this service. For a replicated service that is a
-                      scheduling problem, not an empty list.
+                      @if (owed(service)) {
+                        Swarm has placed no task for this service. It asks for
+                        {{ service.replicas }} replicas, so that is a scheduling problem, not an
+                        empty list.
+                      } @else {
+                        Swarm has placed no task for this service, and it asks for none.
+                      }
                     </p>
                   }
                 </section>
@@ -534,6 +545,10 @@ export class SwarmServicePage {
   protected readonly healthcheck = healthcheckLine;
 
   /** Whether any task runs another image than the service's: only then is the column drawn. */
+  protected owed(service: SwarmServiceDetail): boolean {
+    return asksForTasks(service);
+  }
+
   protected otherImages(service: SwarmServiceDetail): boolean {
     return (service.tasks ?? []).some((task) => runsOtherImage(task, service));
   }

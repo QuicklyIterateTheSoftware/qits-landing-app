@@ -119,7 +119,7 @@ describe('SwarmServicePage (screenshots)', () => {
     const { opened, view } = await render(NO_TASKS, IDLE);
     await expect
       .element(view.getByRole('status'))
-      .toMatchTextContent('Swarm has placed no task for this service.');
+      .toMatchTextContent('Swarm has placed no task for this service, and it asks for none.');
     await expect.element(view).toMatchTextContent('This service mounts nothing.');
     expect(view.getByRole('table', { name: 'Tasks' }).elements()).toHaveLength(0);
     await expect
