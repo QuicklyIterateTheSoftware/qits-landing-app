@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+/* The docs reader's freezes embed swagger-ui's own stylesheet (qits-2337), whose `backdrop-*`
+   words Tailwind would read as utilities: every freeze would then carry new rules and go stale. */
+@source not './testing/browser/freezes/**/docs-reader.page.browser.spec.ts';
 /* The one qits look: palette, semantic tokens and their dark values, the `dark:` variant (qits-2085). */
 @import '@qits/ui-components/theme.css';
 /* The terminal screen's own layout (xterm.js, ui/components/terminal-screen). */
