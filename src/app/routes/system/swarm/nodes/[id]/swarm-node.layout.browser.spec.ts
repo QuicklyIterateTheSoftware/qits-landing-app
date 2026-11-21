@@ -32,7 +32,7 @@ const MISSING = 'no-such-node';
  * once (`shootShellMenus`). Nothing announces a node change, so the page has no `refreshOn`:
  * Refresh is its only second read of each.
  */
-describe('SwarmNodePage (screenshots)', () => {
+describe('SwarmNodeLayout (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
