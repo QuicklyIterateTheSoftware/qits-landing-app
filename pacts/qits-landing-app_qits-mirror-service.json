@@ -21,6 +21,61 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a mirror holding no cache roots"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/mirror/api/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "repositories": []
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repositories",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-repositories: listRepositories",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "the default caches",
           "params": {
             "repository": "hub"
