@@ -1,9 +1,19 @@
 import { qitsOperation } from '@qits/angular';
-import { listSwarmNodes, listSwarmSecrets, listSwarmServices } from '../../api/system';
-import { LIST_SWARM_NODES, LIST_SWARM_SECRETS, LIST_SWARM_SERVICES } from './swarm.consumes';
+import {
+  listSwarmConfigs,
+  listSwarmNodes,
+  listSwarmSecrets,
+  listSwarmServices,
+} from '../../api/system';
+import {
+  LIST_SWARM_CONFIGS,
+  LIST_SWARM_NODES,
+  LIST_SWARM_SECRETS,
+  LIST_SWARM_SERVICES,
+} from './swarm.consumes';
 
 /**
- * qits-system's swarm (qits-2344, qits-2346, qits-2350) declared as operations, read by the System section's pages
+ * qits-system's swarm (qits-2344, qits-2346, qits-2348, qits-2350) declared as operations, read by the System section's pages
  * through their own `qitsResource`; `swarm.operations.pact.spec.ts` binds them.
  *
  * `SWARM_SERVICE_LIST`: `docker service ls` on the manager qits-system runs on, one swarm, not per
@@ -28,6 +38,20 @@ export const SWARM_NODE_LIST = qitsOperation({
   method: 'GET',
   call: listSwarmNodes,
   consumes: LIST_SWARM_NODES,
+});
+
+/**
+ * `SWARM_CONFIG_LIST` (qits-2348): `docker config ls` on the manager qits-system runs on, one
+ * swarm, in docker's order; `createdAt`/`updatedAt` are docker's own text (a humanized age such as
+ * `2 months ago`, not an instant); `[]` when the swarm holds none, a 503 when the swarm cannot be
+ * read, a 403 for a role that may not read it.
+ */
+export const SWARM_CONFIG_LIST = qitsOperation({
+  provider: 'qits-system-service',
+  operationId: 'listSwarmConfigs',
+  method: 'GET',
+  call: listSwarmConfigs,
+  consumes: LIST_SWARM_CONFIGS,
 });
 
 /**

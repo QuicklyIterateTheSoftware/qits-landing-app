@@ -117,6 +117,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'system', component: TestPage },
           { path: 'system/swarm/services', component: TestPage },
           { path: 'system/swarm/nodes', component: TestPage },
+          { path: 'system/swarm/configs', component: TestPage },
           { path: 'system/swarm/secrets', component: TestPage },
           { path: 'mirror', component: TestPage },
           { path: 'orchestrator', component: TestPage },
@@ -855,6 +856,7 @@ describe('ShellLayout (screenshots)', () => {
       'System',
       'Services',
       'Nodes',
+      'Configs',
       'Secrets',
       'Mirror',
       'Orchestrator',
@@ -867,15 +869,17 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Nodes', exact: true }))
       .toHaveAttribute('aria-current', 'page');
-    await expect
-      .element(navigation.getByRole('link', { name: 'Services', exact: true }))
-      .not.toHaveAttribute('aria-current');
+    for (const label of ['Services', 'Configs', 'Secrets']) {
+      await expect
+        .element(navigation.getByRole('link', { name: label, exact: true }))
+        .not.toHaveAttribute('aria-current');
+    }
     await expect
       .element(navigation.getByRole('link', { name: 'Artifacts', exact: true }))
       .not.toHaveAttribute('aria-current');
   });
 
-  /** The System section's pages below System in the sidebar (qits-2346), each from another. */
+  /** The System section's pages below System in the sidebar (qits-2346, qits-2348, qits-2350), each from another. */
   const SYSTEM_PAGES = [
     {
       label: 'Services',
@@ -888,6 +892,12 @@ describe('ShellLayout (screenshots)', () => {
       path: '/system/swarm/nodes',
       from: '/system/swarm/services',
       outcome: 'nodes',
+    },
+    {
+      label: 'Configs',
+      path: '/system/swarm/configs',
+      from: '/system/swarm/services',
+      outcome: 'configs',
     },
     {
       label: 'Secrets',
@@ -919,7 +929,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true }))
       .not.toHaveAttribute('aria-current');
-    for (const label of ['Services', 'Nodes', 'Secrets']) {
+    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets']) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();
@@ -963,7 +973,7 @@ describe('ShellLayout (screenshots)', () => {
         navigation.getByRole('link', { name: 'Orchestrator', exact: true, includeHidden: true }),
       )
       .not.toBeInTheDocument();
-    for (const label of ['Services', 'Nodes', 'Secrets']) {
+    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets']) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();

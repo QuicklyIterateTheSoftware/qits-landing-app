@@ -1,4 +1,5 @@
 import type {
+  ListSwarmConfigsResponses,
   ListSwarmNodesResponses,
   ListSwarmSecretsResponses,
   ListSwarmServicesResponses,
@@ -6,10 +7,10 @@ import type {
 import type { Consumed } from '@qits/angular';
 
 /**
- * What the app reads of qits-system's swarm (qits-2344, qits-2346, qits-2350): `SWARM_SERVICE_LIST`,
- * `SWARM_NODE_LIST` and `SWARM_SECRET_LIST` (`swarm.operations.ts`) declare it as `consumes`, so
- * nothing else can be read, and their pact spec binds the same lists. To read another field, add it
- * here.
+ * What the app reads of qits-system's swarm (qits-2344, qits-2346, qits-2348, qits-2350):
+ * `SWARM_SERVICE_LIST`, `SWARM_NODE_LIST`, `SWARM_CONFIG_LIST` and `SWARM_SECRET_LIST`
+ * (`swarm.operations.ts`) declare it as `consumes`, so nothing else can be read, and their pact
+ * spec binds the same lists. To read another field, add it here.
  */
 
 /**
@@ -49,6 +50,24 @@ export const LIST_SWARM_NODES = [
 
 /** One swarm node, cut to what the page reads. */
 export type SwarmNode = Consumed<ListSwarmNodesResponses[200], typeof LIST_SWARM_NODES>[number];
+
+/**
+ * `SWARM_CONFIG_LIST` (qits-2348): the swarm's configs, for the System section's configs page.
+ * `createdAt`/`updatedAt` are docker's text as given (a humanized age on real docker), shown as is.
+ */
+export const LIST_SWARM_CONFIGS = [
+  '[].id',
+  '[].name',
+  '[].createdAt',
+  '[].updatedAt',
+  '[].labels',
+] as const;
+
+/** One swarm config, cut to what the page reads. */
+export type SwarmConfig = Consumed<
+  ListSwarmConfigsResponses[200],
+  typeof LIST_SWARM_CONFIGS
+>[number];
 
 /**
  * `SWARM_SECRET_LIST` (qits-2350): the swarm's secrets, for the System section's secrets page. No
