@@ -429,7 +429,9 @@ export class SwarmNodeLayout implements OpenSwarmNodeRead {
    * The tabs' exits, one key per `NODE_TABS` segment (none yet: a tab adds its line here, as
    * `containers: exit('system/swarm/nodes/:id/containers')`).
    */
-  private readonly switching = outcomes('switch-swarm-node-tab', {});
+  private readonly switching = outcomes('switch-swarm-node-tab', {
+    containers: exit('system/swarm/nodes/:id/containers'),
+  });
 
   /** Each tab's exit, by its segment (`NODE_TABS`). */
   private readonly exits: Readonly<Record<string, ExitOutcome>> = this.switching;

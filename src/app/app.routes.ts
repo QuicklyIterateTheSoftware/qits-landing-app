@@ -177,7 +177,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * nodes row's hostname opens it, the sidebar keeps Nodes current on it, and it is an entry point
  * too, where the old `swarm/nodes/:id` hands off. It is a layout (qits-2354): its four resource
  * tabs (`NODE_TABS`: containers, images, volumes, networks) come as its child routes
- * (qits-2352…qits-2355).
+ * (qits-2352…qits-2355); the bare URL shows the node alone, with no redirect to a tab.
+ * `system/swarm/nodes/<id>/containers` (`SwarmNodeContainersPage`, qits-2352) is its first tab:
+ * the containers of the node qits-system runs on (none read for another node), Running by default,
+ * with each one's log tail; an entry point, where the old `swarm/nodes/:id/containers` hands off.
  *
  * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
  * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
@@ -762,7 +765,20 @@ export const routes: Routes = [
             // The node's tabs (`NODE_TABS`, qits-2354) are added here, one child route each
             // (qits-2352 containers, qits-2353 images, qits-2355 volumes, qits-2354 networks); the
             // bare URL shows the node alone.
-            children: [{ path: '', children: [] }],
+            children: [
+              { path: '', children: [] },
+              {
+                // The node's Containers tab (qits-2352): every container on the node qits-system
+                // runs on, filtered to the running ones, with each one's log tail. An entry point:
+                // qits-system-frontend's old `swarm/nodes/:id/containers` hands off here.
+                path: 'containers',
+                data: { qitsEntry: true },
+                loadComponent: () =>
+                  import('./routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page').then(
+                    (m) => m.SwarmNodeContainersPage,
+                  ),
+              },
+            ],
           },
           {
             path: 'swarm/configs',
