@@ -230,6 +230,58 @@ describe('RepositoryPage (screenshots)', () => {
     expect(reached()).toEqual(['open-repository-pages:contracts']);
   });
 
+  it.each([
+    [
+      'contract-service',
+      'eu.wohlben.qits:contract-service-client',
+      'maven',
+      '/artifacts/repositories/maven/maven-packages/eu.wohlben.qits:contract-service-client',
+    ],
+    [
+      'contract-frontend',
+      '@qits/contract-ui',
+      'npm',
+      '/artifacts/repositories/npm/packages/@qits%2Fcontract-ui',
+    ],
+    [
+      'contract-daemon',
+      'contract-daemon',
+      'daemon',
+      '/artifacts/repositories/daemons/daemons/contract-daemon',
+    ],
+  ])('open-repository-artifact: %s’s %s opens its store page (%s)', async (repo, name, key, to) => {
+    const opened = await render(repo);
+    await userEvent.click(
+      page.elementLocator(opened.page).getByRole('link', { name, exact: true }),
+    );
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(to);
+    expect(reached()).toEqual([`open-repository-artifact:${key}`]);
+  });
+
+  it.each([
+    ['contract-service', 'Entities →', 'open-repository-pages:entities', '/entities'],
+    ['contract-frontend', 'UI builder →', 'open-repository-pages:uiBuilder', '/ui-builder'],
+  ])('%s: “%s” opens the repository’s page (%s)', async (repo, label, outcome, rest) => {
+    const opened = await render(repo);
+    await userEvent.click(page.elementLocator(opened.page).getByRole('link', { name: label }));
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/${repo}${rest}`,
+    );
+    expect(reached()).toEqual([outcome]);
+  });
+
+  it('open-repository-docs repository: “Docs →” opens the repository’s Docs page', async () => {
+    const opened = await render('contract-service');
+    await userEvent.click(page.elementLocator(opened.page).getByRole('link', { name: 'Docs →' }));
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/docs/repositories/contract-service`,
+    );
+    expect(reached()).toEqual(['open-repository-docs:repository']);
+  });
+
   it('leave-repository repositories: “← Repositories” goes back to the list', async () => {
     const opened = await render('contract-service');
     await page.elementLocator(opened.page).getByRole('link', { name: '← Repositories' }).click();

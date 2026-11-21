@@ -180,4 +180,19 @@ describe('ContractStatePage (screenshots)', () => {
       `/projects/${opened.project.slug}/repositories/${GITHOST}/contracts`,
     );
   });
+
+  it('follow-breadcrumb repositoryContracts: the trail’s Contracts opens the list (qits-2478)', async () => {
+    const opened = await withDependencies();
+    await page
+      .getByRole('navigation', { name: 'Breadcrumb' })
+      .getByRole('link', { name: 'Contracts', exact: true })
+      .last()
+      .click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(fired()).toEqual(['follow-breadcrumb:repositoryContracts']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/${GITHOST}/contracts`,
+    );
+  });
 });
