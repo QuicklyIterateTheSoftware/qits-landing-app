@@ -10,7 +10,11 @@ import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { client as maintenanceClient } from '../../api/maintenance/client.gen';
 import { provideHeyApiClient } from '../../api/maintenance/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import { heldBy, maintenanceGoldenMasters as masters } from '../../../testing/golden-masters';
+import {
+  heldBy,
+  isRecorded,
+  maintenanceGoldenMasters as masters,
+} from '../../../testing/golden-masters';
 import { PENDING_BUMPS, REPOSITORY_BUMPS_LIMIT } from './maintenance.consumes';
 import {
   MAINTENANCE_ADOPTION,
@@ -83,6 +87,13 @@ import {
  * field under a recorded `null` (a PENDING adopter's `adoptedVersion` and
  * `adoptedAt`) is bound as that `null` (`heldBy` keeps a path the recording holds).
  *
+ * The Mirror section's repository page (qits-2488) reads, for a cached package, which of our
+ * releases embed it (`listDependencyDependents`: "an external package our releases embed", npm
+ * `left-pad` at two versions; "released artifacts, some behind", an artifact of each kind; "no
+ * released artifacts", none) and which repositories pin it (`listDependencies?kind=EXTERNAL&name=`:
+ * the same `left-pad` state; the external glob states, matching and not), as its screenshots show
+ * them. The `left-pad` state is recorded from qits-maintenance's qits-2488 release on.
+ *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
@@ -150,6 +161,11 @@ const ofKind = (kind: 'INTERNAL' | 'EXTERNAL') => ({ query: { kind } });
 const searched = (kind: 'INTERNAL' | 'EXTERNAL', name: string) => ({ query: { kind, name } });
 
 const RELEASED = 'released artifacts, some behind';
+
+/** An external npm package two releases embed and two repositories pin (qits-2488). */
+const EMBEDDED = 'an external package our releases embed';
+/** The package {@link EMBEDDED} is about, as the mirror page asks for it. */
+const EMBEDDED_PACKAGE = 'left-pad';
 const NOTHING_RELEASED = 'no released artifacts';
 
 /** The detail's request for the artifact `state` recorded the dependents of. */
@@ -669,6 +685,89 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       MAINTENANCE_DEPENDENCIES,
       NO_EXTERNAL_MATCHING,
       'search-project-dependencies',
+    ).executeTest(async (server) => {
+      const { data } = await at(server.url, () =>
+        MAINTENANCE_DEPENDENCIES.fetch(searched('EXTERNAL', NO_GLOB)),
+      );
+      expect(data).toEqual([]);
+    }));
+  // The Mirror section's repository page (qits-2488): below a cached package's versions, which of
+  // our releases embed it (`listDependencyDependents?ecosystem=&name=`) and which repositories pin
+  // it (`listDependencies?kind=EXTERNAL&name=`, the name or an image's glob). "an external package
+  // our releases embed" is recorded from qits-maintenance's qits-2488 release on, and its two
+  // interactions skip themselves on an older pin.
+  it.skipIf(!isRecorded(EMBEDDED, MAINTENANCE_DEPENDENTS.operationId, masters))(
+    'show-mirror-package-releases: an external package two releases embed, at two versions',
+    () =>
+      given(MAINTENANCE_DEPENDENTS, EMBEDDED, 'show-mirror-package-releases').executeTest(
+        async (server) => {
+          const { data, error } = await at(server.url, () =>
+            MAINTENANCE_DEPENDENTS.fetch(dependentsOf(EMBEDDED)),
+          );
+          expect(error).toBeUndefined();
+          expect(data?.name).toBe(EMBEDDED_PACKAGE);
+          const dependents = data?.dependents ?? [];
+          expect(dependents.length).toBeGreaterThan(0);
+          expect(dependents.every((d) => !!d.artifactName && !!d.embeddedVersion)).toBe(true);
+        },
+      ),
+  );
+
+  it('show-mirror-package-releases: released artifacts of each kind embed a package', () =>
+    given(MAINTENANCE_DEPENDENTS, RELEASED, 'show-mirror-package-releases').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_DEPENDENTS.fetch(dependentsOf(RELEASED)),
+        );
+        expect(error).toBeUndefined();
+        const dependents = data?.dependents ?? [];
+        expect(dependents.length).toBeGreaterThan(0);
+        expect(dependents.every((d) => !!d.artifactEcosystem && !!d.artifactName)).toBe(true);
+      },
+    ));
+
+  it('show-mirror-package-releases: no release embeds a package', () =>
+    given(MAINTENANCE_DEPENDENTS, NOTHING_RELEASED, 'show-mirror-package-releases').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () =>
+          MAINTENANCE_DEPENDENTS.fetch(dependentsOf(NOTHING_RELEASED)),
+        );
+        expect(data?.dependents).toEqual([]);
+      },
+    ));
+
+  it.skipIf(!isRecorded(EMBEDDED, MAINTENANCE_DEPENDENCIES.operationId, masters))(
+    'show-mirror-package-releases: two repositories pin an external package, one behind',
+    () =>
+      given(MAINTENANCE_DEPENDENCIES, EMBEDDED, 'show-mirror-package-releases').executeTest(
+        async (server) => {
+          const { data, error } = await at(server.url, () =>
+            MAINTENANCE_DEPENDENCIES.fetch(searched('EXTERNAL', EMBEDDED_PACKAGE)),
+          );
+          expect(error).toBeUndefined();
+          const pins = (data ?? []).flatMap((dependency) => dependency.pins ?? []);
+          expect(pins.length).toBeGreaterThan(0);
+          expect(pins.every((pin) => !!pin.repository && !!pin.version)).toBe(true);
+        },
+      ),
+  );
+
+  it('show-mirror-package-releases: an image’s glob matches external pins', () =>
+    given(MAINTENANCE_DEPENDENCIES, EXTERNAL_MATCHING, 'show-mirror-package-releases').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_DEPENDENCIES.fetch(searched('EXTERNAL', SOME_GLOB)),
+        );
+        expect(error).toBeUndefined();
+        expect((data ?? []).length).toBeGreaterThan(0);
+      },
+    ));
+
+  it('show-mirror-package-releases: no repository pins a package', () =>
+    given(
+      MAINTENANCE_DEPENDENCIES,
+      NO_EXTERNAL_MATCHING,
+      'show-mirror-package-releases',
     ).executeTest(async (server) => {
       const { data } = await at(server.url, () =>
         MAINTENANCE_DEPENDENCIES.fetch(searched('EXTERNAL', NO_GLOB)),

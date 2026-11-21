@@ -945,6 +945,28 @@ holding a package" (`npmjs`, `left-pad`), "the default caches" (`hub`, `packages
 root of that name" (404, status only); all but the npm one, and their screenshots, skip themselves
 until the `@qits/mirror-golden-masters` pin records them (qits-mirror's qits-2358 release).
 
+Below the selected package's versions, `PackageReleases` (`patterns/mirror/package-releases/`,
+qits-2488) answers "are we affected by this version" where the package comes in, replacing
+Maintenance › Dependencies. It reads qits-maintenance twice per package shown, in the browser
+only: `MAINTENANCE_DEPENDENCIES` (`listDependencies?kind=EXTERNAL&name=`, the package's name, or for
+an image a glob on its upstream name, `*node`) for the pins, and `MAINTENANCE_DEPENDENTS`
+(`listDependencyDependents?ecosystem=&name=`) for the released artifacts of ours whose newest
+release embeds it. `core/mirror/package-releases.ts` holds the naming: npm and maven name a package
+as the mirror does; an image is held under its `FROM` spelling (`node`, `library/node` or
+`hub/library/node`), so the pins are cut to those names and an image's dependents are asked by the
+name its pin uses, after the pins answer. "Our releases that embed <name>" groups the artifacts by
+the version they embed: the artifact's name links its page in the Artifacts section
+(`open-mirror-package-release`, `image`/`npmPackage`/`mavenPackage`/`daemon`, the store
+repositories `qits`, `npm`, `maven`, `daemons` as `release-links.ts` addresses them), its version,
+its repository, direct or transitive. "Pinned by" lists each repository's pin (version, manifest,
+`behind <latest>` when pending). None either way is one sentence; a 403 says the staff roles;
+another failure is a load failure with Retry. Staleness: no event follows the inventory; the page's
+Refresh reads both again. Its pact interactions (`show-mirror-package-releases`, in
+`maintenance.operations.pact.spec.ts`) read "an external package our releases embed" (`left-pad`,
+recorded from qits-maintenance's qits-2488 release on; it and the `releases` screenshot skip
+themselves on an older pin), "released artifacts, some behind", "no released artifacts" and the
+external glob states.
+
 `mirror/repositories` (`MirrorRepositoriesPage`, qits-2471, replacing qits-mirror-frontend's root
 route `''`, "Cached repositories"; an entry point, where the old route hands off) lists every cache
 root the mirror holds, at `https://qits.<domain>/mirror/repositories`. It reads `REPOSITORY_LIST`

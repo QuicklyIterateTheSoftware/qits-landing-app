@@ -1,5 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
@@ -16,6 +17,18 @@ const NPM = 'an npm cache holding a package';
 const EMPTY = 'the default caches';
 const MIRROR = 'qits-mirror';
 const OPERATION = 'listRepositoryPackages';
+const MAINTENANCE = 'qits-maintenance';
+/** The maintenance states the selected package's releases and pins are answered from (qits-2488). */
+const EMBEDDED = 'an external package our releases embed';
+const RELEASED = 'released artifacts, some behind';
+const NOTHING_RELEASED = 'no released artifacts';
+const EXTERNAL_MATCHING = 'external dependencies matching a glob, some behind';
+const NO_EXTERNAL_MATCHING = 'no external dependencies matching a glob';
+const DEPENDENCIES = '/maintenance/api/dependencies';
+const DEPENDENTS = '/maintenance/api/dependencies/dependents';
+
+/** A request URL's path, without its query. */
+const pathOf = (url: string) => url.split('?')[0];
 const DIGEST = 'sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe';
 
 /** The packages door of the cache root `name`. */
@@ -31,8 +44,15 @@ const packagesOf = (name: string) => `/mirror/api/repositories/${name}/packages`
  * qits-mirror's qits-2358 release on, and skip themselves on an older pin. An unknown name (`unknown`, a 404), the
  * database not answering (`unavailable`, a 500) and a read still open (`loading`) are statuses only.
  *
- * Its one outcome, choosing a package (`select-mirror-package`, a stay), is followed by the `maven`
- * shot. No recording holds two packages in one root, so the swap of the versions table between
+ * Below the selected package's versions, which of our releases embed it and who pins it
+ * (`PackageReleases`, qits-2488) are answered from qits-maintenance's recordings: "an external
+ * package our releases embed" (`left-pad` in npmjs; `releases`, recorded from qits-maintenance's
+ * qits-2488 release on, skips itself on an older pin), "released artifacts, some behind" (an
+ * artifact of each kind, whose links `open-mirror-package-release` follows) and, everywhere else,
+ * nobody ("no released artifacts", "no external dependencies matching a glob").
+ *
+ * Its outcomes: choosing a package (`select-mirror-package`, a stay), followed by the `maven`
+ * shot, and an embedding artifact's name (`open-mirror-package-release`). No recording holds two packages in one root, so the swap of the versions table between
  * packages is the plain spec's. Nothing announces a change to a cache, so Refresh is the only read
  * after the first.
  */
@@ -58,16 +78,35 @@ describe('MirrorRepositoryPage (screenshots)', () => {
     return openRoute(`/mirror/repositories/${name}`);
   }
 
-  /** Answers the read of the root `name` from `state`'s recording. */
-  async function answer(opened: OpenedRoute, name: string, state: string) {
+  /** Answers the read of the root `name` from `state`'s recording, and the releases' reads. */
+  async function answer(
+    opened: OpenedRoute,
+    name: string,
+    state: string,
+    dependents = NOTHING_RELEASED,
+    pins = NO_EXTERNAL_MATCHING,
+  ) {
     http.expectOne(packagesOf(name)).flush(await goldenMaster(state, OPERATION, MIRROR));
+    await opened.settled();
+    await releases(opened, dependents, pins);
+  }
+
+  /** Answers the selected package's pins, then its dependents (an image's wait for its pins). */
+  async function releases(opened: OpenedRoute, dependents: string, pins: string) {
+    for (const request of http.match((r) => pathOf(r.url) === DEPENDENCIES)) {
+      request.flush(await goldenMaster(pins, 'listDependencies', MAINTENANCE));
+    }
+    await opened.settled();
+    for (const request of http.match((r) => pathOf(r.url) === DEPENDENTS)) {
+      request.flush(await goldenMaster(dependents, 'listDependencyDependents', MAINTENANCE));
+    }
     await opened.settled();
   }
 
-  /** The page of the root `name`, answered from `state`. */
-  async function render(name: string, state: string) {
+  /** The page of the root `name`, answered from `state` (and the releases from theirs). */
+  async function render(name: string, state: string, dependents?: string, pins?: string) {
     const opened = await open(name);
-    await answer(opened, name, state);
+    await answer(opened, name, state, dependents, pins);
     return { opened, view: page.elementLocator(opened.page) };
   }
 
@@ -154,6 +193,74 @@ describe('MirrorRepositoryPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('npm', { kind: 'DATA' });
+  });
+
+  it('shows which of our releases embed an npm package, per version, and who pins it', async (context) => {
+    const recorded = await goldenMaster(EMBEDDED, 'listDependencyDependents', MAINTENANCE).catch(
+      () => undefined,
+    );
+    if (!recorded) context.skip();
+    const { opened, view } = await render('npmjs', NPM, EMBEDDED, EMBEDDED);
+    const embedding = view.getByRole('table', { name: 'Releases that embed it' });
+    await expect.element(embedding).toMatchTextContent('1.2.0');
+    await expect.element(embedding).toMatchTextContent('1.3.0');
+    await expect.element(embedding).toMatchTextContent('@qits/contract-ui');
+    const pins = view.getByRole('table', { name: 'Pins' });
+    await expect.element(pins).toMatchTextContent('contract-frontend');
+    await expect.element(pins).toMatchTextContent('behind 1.3.0');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('releases', { kind: 'DATA' });
+    const link = embedding.getByRole('link', { name: '@qits/contract-ui', exact: true });
+    await expect
+      .element(link)
+      .toHaveAttribute('href', '/artifacts/repositories/npm/packages/%40qits%2Fcontract-ui');
+    await link.click();
+    await opened.idle();
+    expect(reached()).toEqual(['open-mirror-package-release:npmPackage']);
+    // The artifact's own page reads qits-artifacts; that is its spec's to answer.
+    http.match(() => true);
+  });
+
+  /** An embedding artifact of each kind and the page its name opens (qits-2488). */
+  const EMBEDDING = [
+    {
+      outcome: 'image',
+      name: 'qits/contract-service',
+      href: '/artifacts/repositories/qits/images/contract-service',
+    },
+    {
+      outcome: 'mavenPackage',
+      name: 'eu.wohlben.qits:contract-service-client',
+      href: '/artifacts/repositories/maven/maven-packages/eu.wohlben.qits%3Acontract-service-client',
+    },
+    {
+      outcome: 'daemon',
+      name: 'contract-daemon',
+      href: '/artifacts/repositories/daemons/daemons/contract-daemon',
+    },
+  ] as const;
+
+  for (const artifact of EMBEDDING) {
+    it(`open-mirror-package-release ${artifact.outcome}: an embedding artifact opens its page`, async () => {
+      const { opened, view } = await render('npmjs', NPM, RELEASED, EXTERNAL_MATCHING);
+      const link = view
+        .getByRole('table', { name: 'Releases that embed it' })
+        .getByRole('link', { name: artifact.name, exact: true });
+      await link.click();
+      await opened.idle();
+      expect(reached()).toEqual([`open-mirror-package-release:${artifact.outcome}`]);
+      expect(decodeURIComponent(TestBed.inject(Router).url)).toBe(
+        decodeURIComponent(artifact.href),
+      );
+      http.match(() => true);
+    });
+  }
+
+  it('says no release of ours embeds the package and no repository pins it', async () => {
+    const { view } = await render('npmjs', NPM);
+    await expect.element(view.getByText('No release of ours embeds left-pad.')).toBeVisible();
+    await expect.element(view.getByText('No repository of ours pins left-pad.')).toBeVisible();
   });
 
   it('narrows the packages by name, and says so when none matches', async () => {

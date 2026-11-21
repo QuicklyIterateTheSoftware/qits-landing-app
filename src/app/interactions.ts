@@ -884,10 +884,21 @@ export const INTERACTIONS = {
    */
   'open-mirror-repository': 'A cache root of the Caches list opens its page',
   /**
-   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358). Changes the page
-   * only: no request, and names no pact.
+   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358), and which of our
+   * releases embed it (`show-mirror-package-releases`, qits-2488).
    */
   'select-mirror-package': 'A cache root’s page shows the versions of the package chosen',
+  /**
+   * `package-releases.ts` via `MAINTENANCE_DEPENDENCIES` and `MAINTENANCE_DEPENDENTS` (qits-2488):
+   * below a cached package's versions, the Mirror section's repository page lists which of our
+   * released artifacts embed it, per version, and which repositories pin it.
+   */
+  'show-mirror-package-releases': 'A cached package lists which of our releases embed it',
+  /**
+   * `package-releases.ts`: an embedding artifact's name opens its page in the Artifacts section
+   * (qits-2488). Navigates only, and names no pact.
+   */
+  'open-mirror-package-release': 'An embedding release of a cached package opens its artifact page',
   /**
    * `orchestrator-process.page.ts` via `PROCESS_LIST`, `PROCESS_RUNS` and `PROCESS_RUN` (qits-2359):
    * the Orchestrator section's process page shows the process, its latest runs and the shown run's
