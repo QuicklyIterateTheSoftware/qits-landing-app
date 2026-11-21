@@ -658,11 +658,10 @@ config says "This config holds binary data, which is not shown." and only `data:
 only answer the estate gives today, since it holds no configs), a 403 the roles, a 503 the swarm
 not answering, with Retry. Staleness: no `refreshOn`. No event names a config change, so Refresh
 reads again; nothing polls. The pact reads it (`show-swarm-config`) in "a single-node swarm"
-(`qits-edge-vhosts`, one label, one line of text, `binary: false`); qits-system's "a swarm config
-holding no data", "a swarm config holding binary data" and "no such swarm config" (a 404) join the
-pact and the screenshots once the `@qits/system-golden-masters` pin records them (until then the
-plain spec derives the empty and binary answers from the recorded config, and the browser spec's
-404 is a status only).
+(`qits-edge-vhosts`, one label, one line of text, `binary: false`), "a swarm config holding no
+data" (`qits-empty-config`, `data: ""`, no labels), "a swarm config holding binary data"
+(`qits-binary-config`, `data: ""`, `binary: true`) and "no such swarm config" (a 404, status
+only); the screenshots (`config`, `empty`, `binary`, `not-found`) open each state's `configId`.
 
 `system/swarm/secrets` (`SwarmSecretsPage`, qits-2350, replacing qits-system-frontend's
 `swarm/secrets`, an entry point too) is the same swarm's secrets, never a value (a lede says so:

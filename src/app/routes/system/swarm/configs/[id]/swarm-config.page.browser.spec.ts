@@ -11,18 +11,26 @@ import {
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 const SWARM = 'a single-node swarm';
+const NO_DATA = 'a swarm config holding no data';
+const BINARY = 'a swarm config holding binary data';
+const NO_SUCH_CONFIG = 'no such swarm config';
 const SYSTEM = 'qits-system';
 
 /** The recorded config's id, as the configs list links it. */
 const CONFIG = 'ktnbjxoalbkvbvedmg1urrz8h';
+/** The configs the other states recorded their reads for (each state's `configId`). */
+const EMPTY = 'qits-empty-config';
+const BINARY_CONFIG = 'qits-binary-config';
 const MISSING = 'no-such-config';
 
 /**
  * Screenshots of one swarm config's page (qits-2349) inside the shell (`openRoute`), with no
  * project open, its one read (`getSwarmConfig`) answered with qits-system's recording "a
- * single-node swarm" (`qits-edge-vhosts`, one label, its data one line of text; `config`). A 404
- * (`not-found`), a read still open (`loading`), a 503 (`unavailable`) and a 403 (`refused`) are
- * statuses only.
+ * single-node swarm" (`qits-edge-vhosts`, one label, its data one line of text; `config`), "a
+ * swarm config holding no data" (`qits-empty-config`, `data: ""`, no labels; `empty`), "a swarm
+ * config holding binary data" (`qits-binary-config`, `data: ""`, `binary: true`; `binary`) and "no
+ * such swarm config" (a 404; `not-found`). A read still open (`loading`), a 503 (`unavailable`)
+ * and a 403 (`refused`) are statuses only.
  *
  * The page's one outcome, the crumb back to the configs list, is followed once; the shell's are
  * shot once (`shootShellMenus`). Nothing announces a config change, so the page has no
@@ -99,9 +107,40 @@ describe('SwarmConfigPage (screenshots)', () => {
     await shootShellMenus(opened, 'config');
   });
 
+  it('says a config holding no data is empty', async () => {
+    const { opened, view } = await render(NO_DATA, EMPTY);
+    await expect
+      .element(view.getByRole('heading', { level: 1 }))
+      .toHaveTextContent('qits-empty-config');
+    await expect.element(view.getByRole('status')).toMatchTextContent('This config is empty.');
+    await expect.element(view).toMatchTextContent(/Labels\s*—/);
+    expect(view.getByLabelText('Config data').elements()).toHaveLength(0);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('empty', { kind: 'NO_DATA' });
+  });
+
+  it('says a config holding binary data does, never that it is empty', async () => {
+    const { opened, view } = await render(BINARY, BINARY_CONFIG);
+    await expect
+      .element(view.getByRole('heading', { level: 1 }))
+      .toHaveTextContent('qits-binary-config');
+    await expect
+      .element(view.getByRole('status'))
+      .toMatchTextContent('This config holds binary data, which is not shown.');
+    expect(view.getByText('This config is empty.').elements()).toHaveLength(0);
+    expect(view.getByLabelText('Config data').elements()).toHaveLength(0);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('binary', { kind: 'DATA' });
+  });
+
   it('says there is no such config', async () => {
     const { opened, config } = await open(MISSING);
-    config().flush(null, { status: 404, statusText: 'Not Found' });
+    config().flush(await goldenMaster(NO_SUCH_CONFIG, 'getSwarmConfig', SYSTEM), {
+      status: 404,
+      statusText: 'Not Found',
+    });
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent(`No swarm config ${MISSING}.`);

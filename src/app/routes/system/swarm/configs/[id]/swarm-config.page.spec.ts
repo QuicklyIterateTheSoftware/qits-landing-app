@@ -13,18 +13,19 @@ import { systemGoldenMasters } from '../../../../../../testing/golden-masters';
 import { configContent, configLabelPairs, SwarmConfigPage } from './swarm-config.page';
 
 /**
- * One swarm config's page (qits-2349), its read answered with qits-system's recording "a
- * single-node swarm" (`qits-edge-vhosts`, one label, its data one line of text, `binary: false`).
- * What no pinned recording holds yet is derived from the recorded config and says how: a config
- * with no data, one holding binary data, one with several labels or none. A 404, a 403 and a 503
- * are statuses only.
+ * One swarm config's page (qits-2349), its read answered with qits-system's recordings: "a
+ * single-node swarm" (`qits-edge-vhosts`, one label, its data one line of text, `binary: false`),
+ * "a swarm config holding no data" (`data: ""`, no labels) and "a swarm config holding binary data"
+ * (`data: ""`, `binary: true`). A config with several labels is derived from the recorded one and
+ * says how. A 404, a 403 and a 503 are statuses only.
  */
 const SWARM = 'a single-node swarm';
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
-const recorded = () => systemGoldenMasters.body<SwarmConfigDetail>(SWARM, 'getSwarmConfig');
+const recorded = (state = SWARM) =>
+  systemGoldenMasters.body<SwarmConfigDetail>(state, 'getSwarmConfig');
 
 /** The recorded config's id, as the configs list links it. */
 const CONFIG = 'ktnbjxoalbkvbvedmg1urrz8h';
@@ -118,16 +119,21 @@ describe('SwarmConfigPage', () => {
   });
 
   it('says a config with no data is empty, with no data block', async () => {
-    // The recorded config with the fields a config holding nothing answers.
-    const { element } = await render(CONFIG, { ...recorded(), data: '', labels: {} });
+    const { element } = await render(
+      'qits-empty-config',
+      recorded('a swarm config holding no data'),
+    );
     expect(text(element.querySelector('[data-empty]'))).toBe('This config is empty.');
     expect(element.querySelector('pre')).toBeNull();
     expect(text(element.querySelector('[data-labels]'))).toBe('—');
   });
 
   it('says a binary config holds binary data, never that it is empty', async () => {
-    // The recorded config as the door answers bytes that are not UTF-8: `""` and `binary: true`.
-    const { element } = await render(CONFIG, { ...recorded(), data: '', binary: true });
+    // The door answers bytes that are not UTF-8 as `""` with `binary: true`.
+    const { element } = await render(
+      'qits-binary-config',
+      recorded('a swarm config holding binary data'),
+    );
     expect(text(element.querySelector('[data-binary]'))).toBe(
       'This config holds binary data, which is not shown.',
     );
