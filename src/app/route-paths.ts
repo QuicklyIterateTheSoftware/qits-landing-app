@@ -79,6 +79,7 @@ export type RoutePath =
   | 'system/swarm/configs/:id'
   | 'system/swarm/nodes'
   | 'system/swarm/nodes/:id'
+  | 'system/swarm/nodes/:id/containers'
   | 'system/swarm/nodes/:id/networks'
   | 'system/swarm/nodes/:id/volumes'
   | 'system/swarm/secrets'
