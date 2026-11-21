@@ -86,7 +86,8 @@ export type RoutePath =
   | 'system/swarm/secrets'
   | 'system/swarm/services'
   | 'system/swarm/services/:id'
-  | 'system/targets';
+  | 'system/targets'
+  | 'system/terminals/:id';
 
 declare module '@qits/angular' {
   interface QitsApp {

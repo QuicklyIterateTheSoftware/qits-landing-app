@@ -131,6 +131,11 @@ export interface GlobalChild {
   readonly exit: ExitOutcome<GlobalPath>;
   /** The page's URL (absolute, `/system/…`), matched against the router's. */
   readonly path: string;
+  /**
+   * Other URLs (absolute) whose pages it stays current on, though they are not below `path`: Nodes
+   * on a terminal's page, `/system/terminals` (qits-2356), opened from a node's Containers tab.
+   */
+  readonly alsoOn?: readonly string[];
 }
 
 /**
@@ -375,6 +380,7 @@ export interface NavNote {
                       <a
                         class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                         [qitsExit]="child.exit"
+                        [exitCurrent]="globalChildCurrent(child)"
                         (click)="closeNav()"
                         >{{ child.label }}</a
                       >
@@ -659,7 +665,12 @@ export class ShellLayout {
         exit: this.system.open,
         children: [
           { label: 'Services', exit: system.services, path: system.services.url() },
-          { label: 'Nodes', exit: system.nodes, path: system.nodes.url() },
+          {
+            label: 'Nodes',
+            exit: system.nodes,
+            path: system.nodes.url(),
+            alsoOn: ['/system/terminals'],
+          },
           { label: 'Configs', exit: system.configs, path: system.configs.url() },
           { label: 'Secrets', exit: system.secrets, path: system.secrets.url() },
           { label: 'Targets', exit: system.targets, path: system.targets.url() },
@@ -921,7 +932,22 @@ export class ShellLayout {
   ): 'page' | 'true' | null | undefined {
     if (!link.children?.length) return undefined;
     if (!this.isInGlobal(link)) return null;
-    return link.children.some((child) => this.isAt(child)) ? 'true' : 'page';
+    return link.children.some((child) => this.isAt(child) || this.isAlsoAt(child))
+      ? 'true'
+      : 'page';
+  }
+
+  /**
+   * A global section's page's `aria-current`: `page` on a page it stays current on outside its
+   * own path (`alsoOn`, qits-2356), else unbound, so `[qitsExit]`'s path rule decides.
+   */
+  protected globalChildCurrent(child: GlobalChild): 'page' | undefined {
+    return this.isAlsoAt(child) ? 'page' : undefined;
+  }
+
+  /** Whether the URL is one of the pages `child` stays current on outside its own path. */
+  private isAlsoAt(child: GlobalChild): boolean {
+    return (child.alsoOn ?? []).some((path) => within(this.selected.url(), path));
   }
 
   /**

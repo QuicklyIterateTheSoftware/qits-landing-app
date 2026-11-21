@@ -962,6 +962,28 @@ export const INTERACTIONS = {
    */
   'show-swarm-node-container-logs': 'A container’s Logs on a swarm node shows its last 200 lines',
   /**
+   * `swarm-node-containers.page.ts` via `OPEN_SYSTEM_TERMINAL` (qits-2356): a running container
+   * row's `bash` or `sh` opens an exec terminal in it and goes to the terminal's page, carrying the
+   * node as `?node=`; a refusal stays on the tab with the service's message.
+   */
+  'open-system-terminal': 'A running container’s bash or sh opens a terminal in it',
+  /**
+   * `system-terminal.page.ts` via `SYSTEM_TERMINAL` (qits-2356): a terminal's page reads the
+   * terminal once (its shell, container, creator and age), then attaches its screen to the
+   * terminal's socket; a gone terminal (404) is a note, with no socket.
+   */
+  'show-system-terminal': 'A terminal’s page shows the terminal and attaches its screen',
+  /**
+   * `system-terminal.page.ts` via `CLOSE_SYSTEM_TERMINAL` (qits-2356): Terminate ends the terminal
+   * and goes back to the containers tab it was opened from (else the nodes list); a refusal stays.
+   */
+  'terminate-system-terminal': 'Terminate on a terminal’s page ends the terminal',
+  /**
+   * `system-terminal.page.ts`: the back link leads to the containers tab the terminal was opened
+   * from (`?node=`), else to the nodes list (qits-2356). Navigates only, and names no pact.
+   */
+  'leave-system-terminal': 'A terminal’s page leads back to the containers or the nodes',
+  /**
    * `swarm-node-volumes.page.ts` via `NODE_VOLUME_LIST` (qits-2355): a swarm node page's Volumes
    * tab lists the volumes of the node qits-system runs on, the unused ones marked, the anonymous
    * ones hidden until asked for. Refresh reads them again (no event announces a volume change).
