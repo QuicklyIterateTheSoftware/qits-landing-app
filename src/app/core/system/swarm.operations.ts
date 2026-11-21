@@ -1,9 +1,9 @@
 import { qitsOperation } from '@qits/angular';
-import { listSwarmNodes, listSwarmServices } from '../../api/system';
-import { LIST_SWARM_NODES, LIST_SWARM_SERVICES } from './swarm.consumes';
+import { listSwarmNodes, listSwarmSecrets, listSwarmServices } from '../../api/system';
+import { LIST_SWARM_NODES, LIST_SWARM_SECRETS, LIST_SWARM_SERVICES } from './swarm.consumes';
 
 /**
- * qits-system's swarm (qits-2344, qits-2346) declared as operations, read by the System section's pages
+ * qits-system's swarm (qits-2344, qits-2346, qits-2350) declared as operations, read by the System section's pages
  * through their own `qitsResource`; `swarm.operations.pact.spec.ts` binds them.
  *
  * `SWARM_SERVICE_LIST`: `docker service ls` on the manager qits-system runs on, one swarm, not per
@@ -28,4 +28,18 @@ export const SWARM_NODE_LIST = qitsOperation({
   method: 'GET',
   call: listSwarmNodes,
   consumes: LIST_SWARM_NODES,
+});
+
+/**
+ * `SWARM_SECRET_LIST` (qits-2350): `docker secret ls` on the manager qits-system runs on, one swarm,
+ * in docker's order, each secret with the services whose spec references it (read from the
+ * services' specs, never from the secret: qits-system never inspects one); `[]` when it holds none,
+ * a 503 when the swarm cannot be read, a 403 for a role that may not read it. No value, ever.
+ */
+export const SWARM_SECRET_LIST = qitsOperation({
+  provider: 'qits-system-service',
+  operationId: 'listSwarmSecrets',
+  method: 'GET',
+  call: listSwarmSecrets,
+  consumes: LIST_SWARM_SECRETS,
 });

@@ -873,6 +873,14 @@ export const INTERACTIONS = {
    */
   'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
+   * `swarm-secrets.page.ts` via `SWARM_SECRET_LIST` (qits-2350): the System section's secrets page
+   * lists the secrets of qits-system's swarm, each with its labels, docker's created and updated
+   * text and the services whose spec references it (`Unused` when none), never a value. Refresh,
+   * and a deployment going live or failing, read them again.
+   */
+  'show-swarm-secrets':
+    'The swarm secrets page lists the swarm’s secrets and the services using them',
+  /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.

@@ -36,6 +36,7 @@ import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services
 import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
+import { SwarmSecretsPage } from './routes/system/swarm/secrets/swarm-secrets.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -304,6 +305,11 @@ describe('system routes (qits-2344)', () => {
     expect(await pages('/system/swarm/nodes')).toEqual([SwarmNodesPage]);
     expect(TestBed.inject(Router).url).toBe('/system/swarm/nodes');
   });
+
+  it('opens the swarm secrets at system/swarm/secrets (qits-2350)', async () => {
+    expect(await pages('/system/swarm/secrets')).toEqual([SwarmSecretsPage]);
+    expect(TestBed.inject(Router).url).toBe('/system/swarm/secrets');
+  });
 });
 
 describe('mirror routes (qits-2357)', () => {
@@ -341,9 +347,9 @@ describe('entry points (qits-2049)', () => {
 
   it('marks the front door, the old agent address, the docs reader’s split form, the swarm pages and the OCI upstreams, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
-    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services
-    // and nodes and one service's page where qits-system-frontend's old pages hand off
-    // (qits-2344, qits-2345, qits-2346), the OCI upstreams where qits-mirror-frontend's does
+    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
+    // nodes and secrets and one service's page where qits-system-frontend's old pages hand off
+    // (qits-2344, qits-2345, qits-2346, qits-2350), the OCI upstreams where qits-mirror-frontend's does
     // (qits-2357).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
@@ -352,6 +358,7 @@ describe('entry points (qits-2049)', () => {
       'system/swarm/services/:id',
       'system/swarm/services',
       'system/swarm/nodes',
+      'system/swarm/secrets',
       'mirror/upstreams',
     ]);
   });
