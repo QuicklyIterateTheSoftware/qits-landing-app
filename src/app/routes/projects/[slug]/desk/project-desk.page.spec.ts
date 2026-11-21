@@ -7,6 +7,7 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as projectsClient } from '../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../api/projects/client/client.gen';
+import { WEB_SOCKET } from '$core/platform/web-socket';
 import { goldenMaster } from '../../../../../testing/golden-masters';
 import { ProjectDeskPage } from './project-desk.page';
 
@@ -102,10 +103,13 @@ const OWED_MESSAGE = {
 
 describe('ProjectDeskPage', () => {
   let http: HttpTestingController;
+  /** The agent dialog's terminal sockets, by URL (qits-2495). */
+  let sockets: string[];
   const list = goldenMaster('a project exists', 'listProjects');
   const project = list.entries[0].project;
 
   beforeEach(() => {
+    sockets = [];
     TestBed.configureTestingModule({
       providers: [
         provideRouter([{ path: 'projects/:slug/desk', component: ProjectDeskPage }]),
@@ -114,6 +118,22 @@ describe('ProjectDeskPage', () => {
         provideHeyApiClient(projectsClient),
         // The open issues' `refreshOn` (qits-2146): a stream that never delivers.
         { provide: QITS_DOMAIN_EVENTS, useValue: { on: () => EMPTY } },
+        // The agent dialog's terminal (qits-2495): a socket that never opens.
+        {
+          provide: WEB_SOCKET,
+          useValue: (url: string) => {
+            sockets.push(url);
+            return {
+              onopen: null,
+              onmessage: null,
+              onclose: null,
+              onerror: null,
+              readyState: 0,
+              send: () => {},
+              close: () => {},
+            };
+          },
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -140,6 +160,43 @@ describe('ProjectDeskPage', () => {
     };
     return { element: harness.routeNativeElement as HTMLElement, request, answered };
   }
+
+  it('opens the desk agent’s dialog from the header’s Agent action, with no page context', async () => {
+    const { element, request, answered } = await render();
+    request.flush({ messages: [] });
+    await answered();
+    const action = [
+      ...element.querySelectorAll<HTMLButtonElement>('[data-page-actions] button'),
+    ].find((button) => button.textContent?.trim() === 'Agent')!;
+    action.click();
+    // The dialog starts the agent after its first render (`afterNextRender`): an app tick.
+    const run = async () => {
+      for (let i = 0; i < 3; i++) {
+        TestBed.tick();
+        await answered();
+      }
+    };
+    await run();
+    const agents = 'a project whose named agent is running';
+    // The recorded start is the ui-builder's: the desk's dialog sets it aside for the list.
+    http
+      .expectOne(`/projects/api/projects/${project.id}/agents/desk/start`)
+      .flush(goldenMaster(agents, 'startAgent'));
+    await run();
+    http
+      .expectOne(`/projects/api/projects/${project.id}/agents`)
+      .flush(goldenMaster(agents, 'listAgents'));
+    await run();
+    const dialog = element.querySelector('dialog');
+    expect(dialog?.querySelector('h2')?.textContent).toBe('Front desk agent');
+    expect(dialog?.querySelector('.agent-state')?.textContent?.trim()).toBe('Idle');
+    expect(dialog?.querySelector('button.insert-context')).toBeNull();
+    expect(dialog?.querySelector('textarea')).toBeNull();
+    expect(sockets).toHaveLength(1);
+    expect(sockets[0]).toMatch(
+      new RegExp(`/projects/container/${project.id}/terminal/commands/desk-command-1$`),
+    );
+  });
 
   it('lists a message, its badge, times, and each line’s source, linked item, label and cause', async () => {
     const { element, request, answered } = await render();
@@ -186,7 +243,7 @@ describe('ProjectDeskPage', () => {
     const { element, request, answered } = await render();
     request.flush({ messages: [OWED_MESSAGE] });
     await answered();
-    const row = element.querySelector('li')!;
+    const row = element.querySelector('ui-spinner > ul > li')!;
     expect(row.querySelector('ui-chip')?.textContent?.trim()).toBe('owed');
     const attemptsLine = Array.from(row.querySelectorAll('span')).find((span) =>
       span.textContent?.includes('attempt'),
@@ -207,7 +264,7 @@ describe('ProjectDeskPage', () => {
     const { element, request, answered } = await render();
     request.flush({ messages: [] });
     await answered();
-    expect(element.querySelectorAll('li')).toHaveLength(0);
+    expect(element.querySelectorAll('ui-spinner > ul > li')).toHaveLength(0);
     expect(empty(element)?.classList.contains('hidden')).toBe(false);
   });
 

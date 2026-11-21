@@ -1,13 +1,13 @@
 import type { DataMark } from './data-marks';
 import type { Freeze, FreezeColorScheme, FreezeNetwork, FreezeViewport } from './routes-manifest';
 
-/** What the UI builder had selected when a prompt was sent: an entity, a data mark, or nothing. */
+/** What the UI builder had selected when its context was inserted: an entity, a data mark, or nothing. */
 export type OpenedSelection =
   | { readonly kind: 'entity'; readonly name: string }
   | { readonly kind: 'mark'; readonly mark: DataMark }
   | null;
 
-/** What the UI builder shows at the moment of sending, read off the page's signals. */
+/** What the UI builder shows at the moment of inserting, read off the page's signals. */
 export interface OpenedContextFields {
   /** The repository the URL names (the page's `repo`). */
   readonly repository: string;
@@ -60,9 +60,10 @@ function selectionWords(selection: OpenedSelection): string {
 }
 
 /**
- * The prompt the UI builder's agent dialog sends (qits-2157): the `<opened-context>` block whose
- * format qits-2156 fixes (section C; the ui-builder agent's briefing reads it), one field a line,
- * then a blank line, then the person's `text` as typed.
+ * The page context the agent dialog's **Insert page context** pastes into the agent's input
+ * (qits-2157, qits-2499): the `<opened-context>` block whose format qits-2156 fixes (section C; the
+ * ui-builder agent's briefing reads it), one field a line, ending with a line break so the person
+ * types on after it.
  *
  * - The screenshot's kind, viewport, colour scheme and connectivity are the **drawn freeze's**, as
  *   a pitch names that screenshot; without a freeze, the switches' viewport, scheme and network,
@@ -72,7 +73,7 @@ function selectionWords(selection: OpenedSelection): string {
  *   call has no form in the format).
  * - Any field without a value reads `none`.
  */
-export function openedContext(fields: OpenedContextFields, text: string): string {
+export function openedContext(fields: OpenedContextFields): string {
   const { freeze, asked } = fields;
   // A freeze without `connectivity` counts as ONLINE, as `freezeNetwork` reads it.
   const network = freeze ? (freeze.connectivity?.network ?? 'ONLINE') : (asked.network ?? 'ONLINE');
@@ -89,5 +90,5 @@ export function openedContext(fields: OpenedContextFields, text: string): string
     `selection: ${selectionWords(fields.selection)}`,
     '</opened-context>',
   ];
-  return `${lines.join('\n')}\n\n${text}`;
+  return `${lines.join('\n')}\n`;
 }

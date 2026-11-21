@@ -1,13 +1,17 @@
 import { payloadOf, type WithPayload } from '$core/events/refresh-on';
-import type { NamedAgentEntry, NamedAgentPromptAnswer } from './named-agents.consumes';
+import type { NamedAgentEntry } from './named-agents.consumes';
 
 /** The UI builder's named agent (qits-2154): one per project, on surface `project.ui-builder`. */
 export const UI_BUILDER_AGENT = 'ui-builder';
 
+/** The front desk, as a named agent (qits-2154, qits-2495): its own row and keeper. */
+export const DESK_AGENT = 'desk';
+
 /**
  * qits-projects' event saying a named agent's computed state moved (qits-2157): its `projectId`,
  * `agentName`, `state`, `commandId` (null while no command runs), `sessionId` and `changedAt`. It is
- * announced for every named agent but the desk, and only when the state or the command changed.
+ * announced for every named agent but the desk, and only when the state or the command changed:
+ * no event says the desk's state moved.
  */
 export const NAMED_AGENT_STATE_CHANGED = 'NamedAgentStateChanged';
 
@@ -75,35 +79,11 @@ export function heardAgentState(
 }
 
 /**
- * What a prompt's answer says, in one line: delivered; queued behind a running turn (at its
- * position when the daemon gives one); or held while the agent starts (202, state STARTING).
+ * A refused or failed start, in one line: its status and the service's `reason`; status 0 is no
+ * answer at all.
  */
-export function promptAnswerLine(answer: NamedAgentPromptAnswer): string {
-  if (answer.delivered) return 'Delivered to the agent.';
-  if (answer.state === 'STARTING') {
-    return 'Starting the agent; your prompt is delivered when it is up.';
-  }
-  if (typeof answer.position === 'number') {
-    return `Queued at position ${answer.position}: the agent takes it after its current turn.`;
-  }
-  return 'Queued: the agent takes it after its current turn.';
-}
-
-/** What each refusal means when the service gives no `reason`. */
-const REFUSALS: Readonly<Record<number, string>> = {
-  400: 'the prompt is blank',
-  404: 'this project has no ui-builder agent',
-  409: 'a prompt is already held for the agent',
-  429: 'the agent’s prompt queue is full',
-  503: 'the agent’s daemon cannot be reached',
-};
-
-/**
- * A refused prompt, in one line: its status and the service's `reason` (else what the status
- * means); status 0 is no answer at all.
- */
-export function promptRefusalLine(status: number, reason: string | undefined): string {
-  if (status === 0) return 'Not sent: the service is unreachable.';
-  const why = reason?.trim() || REFUSALS[status] || 'the service refused it';
-  return `Not sent (${status}): ${/[.!?]$/.test(why) ? why : `${why}.`}`;
+export function startRefusalLine(status: number, reason: string | undefined): string {
+  if (status === 0) return 'Could not start the agent: the service is unreachable.';
+  const why = reason?.trim() || 'the service refused it';
+  return `Could not start the agent (${status}): ${/[.!?]$/.test(why) ? why : `${why}.`}`;
 }

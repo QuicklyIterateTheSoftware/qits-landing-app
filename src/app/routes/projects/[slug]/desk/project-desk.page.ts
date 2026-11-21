@@ -1,5 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import {
   exit,
   outcomes,
@@ -16,7 +23,9 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { loadState } from '$core/resources/load-state';
 import { commentAnchor } from '$core/work/comment-anchor';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { AgentDialog } from '$patterns/agents/agent-dialog/agent-dialog';
 import { OpenIssues } from '$patterns/desk/open-issues/open-issues';
+import type { Action } from '$ui/components/action-button/action';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -66,6 +75,10 @@ function when(instant: string | null | undefined): string {
  *
  * Above them, the project's open issues (`OpenIssues`, qits-1819).
  *
+ * The header's one action, Agent (qits-2495), opens `app-agent-dialog` for the project's `desk`
+ * named agent: its state and its live terminal, typed into directly, the desk started if it is
+ * not running. It has no page context to insert.
+ *
  * Staleness (qits-1270): none yet. No domain event marks a window opening, closing or being
  * delivered — a gap the "Live domain events" section of `AGENTS.md` lists others like — so Retry
  * is the only way to read this page again today.
@@ -74,6 +87,7 @@ function when(instant: string | null | undefined): string {
   selector: 'app-project-desk-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AgentDialog,
     Chip,
     LoadFailure,
     OpenIssues,
@@ -87,7 +101,7 @@ function when(instant: string | null | undefined): string {
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
-      <app-page-layout title="Desk">
+      <app-page-layout title="Desk" [actions]="headerActions()">
         @if (selected.project()?.id; as projectId) {
           <app-open-issues [projectId]="projectId" [slug]="selected.slug() ?? ''" />
         }
@@ -215,6 +229,14 @@ function when(instant: string | null | undefined): string {
           </p>
         </ui-spinner>
       </app-page-layout>
+      @if (agentOpen()) {
+        <app-agent-dialog
+          [projectId]="projectId()"
+          agent="desk"
+          title="Front desk agent"
+          (closed)="agentOpen.set(false)"
+        />
+      }
     </div>
   `,
 })
@@ -233,6 +255,30 @@ export class ProjectDeskPage {
     releaseRequest: exit('projects/:slug/releases/requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
   });
+
+  /** Whether the desk agent's dialog is open (qits-2495). */
+  protected readonly agentOpen = signal(false);
+
+  /** The open project's id, for the agent dialog; empty until known. */
+  protected readonly projectId = computed(() => this.selected.project()?.id ?? '');
+
+  /**
+   * The header's one action (qits-2495): Agent opens the front desk's dialog
+   * (`open-desk-agent`), which starts the desk if it is not running; disabled until the project
+   * is known.
+   */
+  protected readonly headerActions = computed((): readonly Action[] => [
+    {
+      label: 'Agent',
+      variant: 'muted',
+      disabled: !this.projectId(),
+      details: {
+        title: 'The front desk agent',
+        items: ['Its terminal, live: type to it directly', 'Started if it is not running'],
+      },
+      callback: () => this.agentOpen.set(true),
+    },
+  ]);
 
   /** The open project's slug, for the lines' links. */
   protected readonly slug = computed(() => this.selected.slug() ?? '');

@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
-import { commands, page, userEvent } from 'vitest/browser';
+import { commands, page } from 'vitest/browser';
 import { client as projectsClient } from '../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../api/projects/client/client.gen';
 import { DomainEvents, EVENT_SOURCE } from '$core/events/domain-events';
@@ -57,8 +57,9 @@ interface FakeStream {
 }
 
 /**
- * Screenshots of the UI builder's agent dialog (qits-2157) on qits-projects' "a project whose
- * named agent is running": the `ui-builder` agent IDLE on its command. The terminal's socket is a
+ * Screenshots of the agent dialog (qits-2157, qits-2499, qits-2495) on qits-projects' "a project
+ * whose named agent is running": the `ui-builder` agent IDLE on its command, its start leaving it
+ * running. The terminal's socket is a
  * fake (`WEB_SOCKET`) that opens when told and delivers a few lines of the Claude TUI, raw terminal
  * text no golden master records; the event stream (`EVENT_SOURCE`, the transport seam) is fed a
  * `NamedAgentStateChanged` by hand.
@@ -67,7 +68,7 @@ interface FakeStream {
  * - `agent-starting`: the agent relaunching, as the event says it (STARTING, no command yet): the
  *   terminal detaches and its place says the agent is starting. The list read again after the
  *   event is left unanswered, so the dialog shows what the event said.
- * - `agent-refused`: a prompt refused with 409 and the server's reason, the text kept.
+ * - `agent-desk`: the desk's dialog (no Insert page context), its terminal attached.
  */
 describe('AgentDialog (screenshots)', () => {
   let http: HttpTestingController;
@@ -116,15 +117,30 @@ describe('AgentDialog (screenshots)', () => {
     http.verify();
   });
 
-  /** The dialog open on the recorded project, its agents answered and its terminal attached. */
-  async function shown() {
+  /** The dialog open on the recorded project, started, its agents answered. */
+  async function shown(agent = 'ui-builder') {
     const agents = await goldenMaster(STATE, 'listAgents');
+    const started = await goldenMaster(STATE, 'startAgent');
     const fixture = TestBed.createComponent(AgentDialog);
     const projectId = '00000000-0000-4000-8000-000000000001';
     fixture.componentRef.setInput('projectId', projectId);
-    fixture.componentRef.setInput('context', CONTEXT);
+    fixture.componentRef.setInput('agent', agent);
+    fixture.componentRef.setInput(
+      'title',
+      agent === 'desk' ? 'Front desk agent' : 'UI builder agent',
+    );
+    fixture.componentRef.setInput('context', agent === 'desk' ? null : CONTEXT);
     fixture.detectChanges();
-    await settle();
+    for (let i = 0; i < 3; i++) {
+      await settle();
+      TestBed.tick();
+    }
+    // The recorded start is the ui-builder's: the desk's dialog sets it aside and waits for the list.
+    http.expectOne(`/projects/api/projects/${projectId}/agents/${agent}/start`).flush(started);
+    for (let i = 0; i < 3; i++) {
+      await settle();
+      TestBed.tick();
+    }
     http.expectOne(`/projects/api/projects/${projectId}/agents`).flush(agents);
     for (let i = 0; i < 3; i++) {
       await settle();
@@ -144,9 +160,9 @@ describe('AgentDialog (screenshots)', () => {
   }
 
   /** The socket open, with a few lines of the Claude TUI on it. */
-  async function attach(run: () => Promise<void>) {
+  async function attach(run: () => Promise<void>, command = 'ui-builder-command-1') {
     expect(sockets.map((socket) => socket.url)).toEqual([
-      'wss://projects.test/projects/container/00000000-0000-4000-8000-000000000001/terminal/commands/ui-builder-command-1',
+      `wss://projects.test/projects/container/00000000-0000-4000-8000-000000000001/terminal/commands/${command}`,
     ]);
     sockets[0].open();
     sockets[0].deliver(
@@ -165,6 +181,7 @@ describe('AgentDialog (screenshots)', () => {
     await expect
       .element(dialog.getByRole('group', { name: 'UI builder agent terminal' }))
       .toMatchTextContent(/Pitched one snapshot/);
+    await expect.element(dialog.getByRole('button', { name: 'Insert page context' })).toBeEnabled();
     await commands.parkPointer();
     await expect.element(dialog).toMatchScreenshot('agent-idle', { kind: 'DATA' });
   });
@@ -195,26 +212,13 @@ describe('AgentDialog (screenshots)', () => {
     await expect.element(dialog).toMatchScreenshot('agent-starting', { kind: 'DATA' });
   });
 
-  it('shows a refused prompt with the server’s reason, keeping the text', async () => {
-    const { dialog, run, projectId } = await shown();
-    await attach(run);
-    const field = dialog.getByRole('textbox', { name: 'Prompt' });
-    await userEvent.fill(field, 'Pitch a calmer header.');
-    await userEvent.keyboard('{Enter}');
-    await run();
-    // An error answer is a status and a body the spec may write (no recording holds a refusal).
-    http
-      .expectOne(`/projects/api/projects/${projectId}/agents/ui-builder/prompt`)
-      .flush(
-        { reason: 'a prompt already waits for the agent' },
-        { status: 409, statusText: 'Conflict' },
-      );
-    await run();
-    await expect
-      .element(dialog.getByText('Not sent (409): a prompt already waits for the agent.'))
-      .toBeVisible();
-    await expect.element(field).toHaveValue('Pitch a calmer header.');
+  it('shows the desk’s dialog, its terminal attached, with no page context to insert', async () => {
+    const { dialog, run } = await shown('desk');
+    await attach(run, 'desk-command-1');
+    await expect.element(dialog.getByText('Front desk agent', { exact: true })).toBeVisible();
+    await expect.element(dialog.getByRole('status').first()).toHaveTextContent('Attached');
+    expect(dialog.getByRole('button', { name: 'Insert page context' }).query()).toBeNull();
     await commands.parkPointer();
-    await expect.element(dialog).toMatchScreenshot('agent-refused', { kind: 'ERROR' });
+    await expect.element(dialog).toMatchScreenshot('agent-desk', { kind: 'DATA' });
   });
 });

@@ -1,13 +1,13 @@
 import { qitsOperation } from '@qits/angular';
-import { listAgents, promptAgent } from '../../api/projects';
-import { LIST_AGENTS, AGENT_REFUSAL, PROMPT_AGENT } from './named-agents.consumes';
+import { listAgents, startAgent } from '../../api/projects';
+import { AGENT_REFUSAL, LIST_AGENTS, START_AGENT } from './named-agents.consumes';
 
 /**
  * qits-projects' named agents (qits-2154: one per project, tied to no work item, keeping its
- * session across visits) declared as operations (qits-2145), for the UI builder's agent dialog
- * (qits-2157), which reads the list through `qitsResource` and prompts through `qitsMutation`;
- * `named-agents.operations.pact.spec.ts` binds each with the same provider, operationId and
- * `consumes`. The CLI's twins are `qits projects agents list` and `qits projects agents prompt`.
+ * session across visits) declared as operations (qits-2145), for the agent dialog (qits-2157,
+ * qits-2499), which reads the list through `qitsResource` and starts the agent through
+ * `qitsMutation`; `named-agents.operations.pact.spec.ts` binds each with the same provider,
+ * operationId and `consumes`. The CLI's twin of the list is `qits projects agents list`.
  */
 
 /**
@@ -24,16 +24,16 @@ export const NAMED_AGENTS = qitsOperation({
 });
 
 /**
- * A prompt to a named agent (`…/agents/{name}/prompt`), its text passed through unchanged: 200 when
- * the session took it (delivered, or queued at `position` behind a running turn), 202 when it is
- * held until the session is up (state STARTING); refused with a `reason` by 409 (a prompt is
- * already held), 429 (the queue is full) and 503 (the daemon cannot be reached).
+ * Starts a named agent that is not running (`…/agents/{name}/start`, qits-2499), with no prompt:
+ * a stopped desk container is started and the agent's session asked for; a running agent is left
+ * as it is. Answers the agent as the listing does (STARTING while it comes up); 404 with a
+ * `reason` for an unknown project or name.
  */
-export const PROMPT_NAMED_AGENT = qitsOperation({
+export const START_NAMED_AGENT = qitsOperation({
   provider: 'qits-projects-service',
-  operationId: 'promptAgent',
+  operationId: 'startAgent',
   method: 'POST',
-  call: promptAgent,
-  consumes: PROMPT_AGENT,
+  call: startAgent,
+  consumes: START_AGENT,
   errorConsumes: AGENT_REFUSAL,
 });

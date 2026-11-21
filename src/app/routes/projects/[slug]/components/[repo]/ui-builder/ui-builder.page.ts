@@ -53,7 +53,7 @@ import {
   type ElementMark,
   type MarkRead,
 } from '$core/ui-builder/data-marks';
-import { AgentDialog } from '$patterns/ui-builder/agent-dialog/agent-dialog';
+import { AgentDialog } from '$patterns/agents/agent-dialog/agent-dialog';
 import { CallDetails, type CallEntity } from '$patterns/ui-builder/call-details/call-details';
 import type { OpenedContextFields, OpenedSelection } from '$core/ui-builder/opened-context';
 import { RoutesBundles } from '$core/ui-builder/routes-bundles';
@@ -524,11 +524,12 @@ interface EntityGroup {
  *   the title row scrolls away. Below 1280px the panels stack and the page scrolls as one, as
  *   before. A tree row scrolled into view (`revealSelected`) scrolls the tree's panel.
  *
- * - Agent (qits-2157): the header's one action opens `app-agent-dialog`, the project's
- *   `ui-builder` named agent: its terminal, its state, and a prompt field whose every prompt starts
- *   with the opened-context block (`openedContextFields`: the repository, the selected route, the
- *   bundle's version, the drawn freeze and its kind, viewport, scheme and network, else the
- *   switches', and the selected entity or data mark). Closing the dialog only detaches.
+ * - Agent (qits-2157, qits-2499): the header's one action opens `app-agent-dialog` for the
+ *   project's `ui-builder` named agent, which it starts if it is not running: its terminal and its
+ *   state, and Insert page context, which pastes the opened-context block into the agent's input
+ *   without sending it (`openedContextFields`: the repository, the selected route, the bundle's
+ *   version, the drawn freeze and its kind, viewport, scheme and network, else the switches', and
+ *   the selected entity or data mark). Closing the dialog only detaches.
  * - Pitches (qits-2158): Original | Pitched tabs above the frame, Original by default and again
  *   whenever another freeze is drawn. Pitched lists the drawn screenshot's pitches (`PITCHES`,
  *   narrowed by `screenshotPitches`), the shown one's versions newest first (`PITCH`), and draws the
@@ -1633,6 +1634,8 @@ interface EntityGroup {
       @if (agentOpen()) {
         <app-agent-dialog
           [projectId]="projectId()"
+          agent="ui-builder"
+          title="UI builder agent"
           [context]="openedContextFields()"
           (closed)="agentOpen.set(false)"
         />
@@ -3106,7 +3109,7 @@ export class UiBuilderPage {
       details: {
         title: 'The ui-builder agent',
         items: [
-          'Its terminal, live, and a prompt that tells it what this page shows',
+          'Its terminal, live; Insert page context tells it what this page shows',
           'It can pitch a changed screenshot of the route you have open',
         ],
       },

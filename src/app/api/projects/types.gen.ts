@@ -1144,7 +1144,7 @@ export type LegalMove = {
     to?: string;
     kind?: TransitionKind;
     /**
-     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers; CHILDREN_CLOSED: every child is DONE or DROPPED and a person or the delivery desk makes the move; CONDITION_MET: a ticket closing straight to DONE is tagged CONDITION and a person or the delivery desk makes the move). Only a FORWARD, SKIP or CLOSE move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
+     * The quality gates the move has to pass, by name (ACCEPTANCE_CRITERIA: the entity carries acceptance criteria; PERSON_APPROVAL: a person makes the move — a browser session or a person's qits CLI, never an agent, a service client or asserted headers; CHILDREN_CLOSED: every child is DONE or DROPPED and a person or the delivery desk makes the move; CHILDREN_VERIFIED: every feature and task under it is VERIFIED, DONE or DROPPED; CONDITION_MET: a ticket closing straight to DONE is tagged CONDITION and a person or the delivery desk makes the move). Only a FORWARD, SKIP or CLOSE move has any, and the key is absent when there are none. A move that fails one is a 409 naming every failing gate.
      */
     gates?: Array<string>;
 };
@@ -1706,6 +1706,9 @@ export type ReleaseRequestDto = {
     participants?: Array<string>;
     items?: Array<ReleaseRequestItemDto>;
     sourceMoves?: Array<ReleaseRequestSourceMoveDto>;
+    deployHold?: boolean;
+    deployHoldBy?: string;
+    deployHoldAt?: Instant;
 };
 
 export type ReleaseRequestItemDto = {
@@ -1864,7 +1867,7 @@ export type Response20 = {
 export type Response21 = {
     request?: ReleaseRequestDto;
     /**
-     * Where the branch landed (epic qits-1580, the soft feature freeze). Once the repository's active request holds as many counted sources as the threshold in force, it is frozen. Counted are branches naming a work item (epics, tasks, tickets of any type); main, maintenance* and release* never count. The threshold is the repository's own feature_freeze in .config/qits/release-requests.yml, else the project's release_requests.feature_freeze, else 3, and 0 turns it off. While it is frozen, every branch new to the repository's requests (a feature, a bug fix or a maintenance bump) lands in the one request queued behind it, minted if absent, which folds nothing and runs no gate until the active request has released or been withdrawn. A branch already a source of an unreleased request answers PRESENT where it is. outcome is CREATED, JOINED or PRESENT, queued says the answering request is queued, and detail is one sentence saying where the branch went.
+     * Where the branch landed (epic qits-1580, the soft feature freeze). Once the repository's active request holds as many counted sources as the threshold in force, it is frozen. Counted are branches naming a work item (epics, tasks, tickets of any type); main, maintenance* and release* never count. The threshold is the repository's own feature_freeze in .config/qits/release-requests.yml, else the project's release_requests.feature_freeze, else 3, and 0 turns it off. While it is frozen, every branch new to the repository's requests (a feature, a bug fix or a maintenance bump) lands in the one request queued behind it, minted if absent, which folds nothing and runs no gate until the active request has released or been withdrawn. A branch already a source of an unreleased request answers PRESENT where it is. outcome is CREATED, JOINED or PRESENT, queued says the answering request is queued, and detail is one sentence saying where the branch went. When the git host answers that a branch this ask added is not in the repository (qits-2365), detail ends by saying so and what the request does about it: it folds the branch on its push, or rejects it once the missing-source grace is over. The branch is placed all the same.
      */
     placement?: PlacementDto;
 };
@@ -1884,7 +1887,7 @@ export type Response24 = {
 export type Response25 = {
     request?: ReleaseRequestDto;
     /**
-     * Where the branch landed (epic qits-1580). An explicit join overrides the soft feature freeze: a request frozen at its threshold admits any branch named onto it here (a feature, a bug fix or a maintenance branch), and the new source carries explicitJoin true, with a detail saying it joined a frozen request explicitly. From RELEASED on no join is accepted: the 409 says the request is released and names the repository's next unreleased request by qualified id, if there is one.
+     * Where the branch landed (epic qits-1580). An explicit join overrides the soft feature freeze: a request frozen at its threshold admits any branch named onto it here (a feature, a bug fix or a maintenance branch), and the new source carries explicitJoin true, with a detail saying it joined a frozen request explicitly. From RELEASED on no join is accepted: the 409 says the request is released and names the repository's next unreleased request by qualified id, if there is one. When the git host answers that a branch this ask added is not in the repository (qits-2365), detail ends by saying so and what the request does about it: it folds the branch on its push, or rejects it once the missing-source grace is over. The branch is placed all the same.
      */
     placement?: PlacementDto;
 };
@@ -2002,6 +2005,14 @@ export type SaveRequest = {
 
 export type SetMainBranchRequest = {
     branch: string;
+};
+
+export type SetReleaseRequestDeployHold = {
+    hold?: boolean;
+};
+
+export type SetReleaseRequestDeployHoldResponse = {
+    request?: ReleaseRequestDto;
 };
 
 export type SetReleaseSourcePriority = {
@@ -4227,6 +4238,42 @@ export type PromptAgentResponses = {
 };
 
 export type PromptAgentResponse = PromptAgentResponses[keyof PromptAgentResponses];
+
+export type StartAgentData = {
+    body?: never;
+    path: {
+        name: string;
+        projectId: string;
+    };
+    query?: never;
+    url: '/projects/api/projects/{projectId}/agents/{name}/start';
+};
+
+export type StartAgentErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such project, or no named agent of that name
+     */
+    404: NamedAgentRefusal;
+};
+
+export type StartAgentError = StartAgentErrors[keyof StartAgentErrors];
+
+export type StartAgentResponses = {
+    /**
+     * The agent, as the listing answers it
+     */
+    200: NamedAgent;
+};
+
+export type StartAgentResponse = StartAgentResponses[keyof StartAgentResponses];
 
 export type ListDeskTriggerMessagesData = {
     body?: never;
@@ -6556,6 +6603,40 @@ export type DeclineReleaseRequestResponses = {
 
 export type DeclineReleaseRequestResponse = DeclineReleaseRequestResponses[keyof DeclineReleaseRequestResponses];
 
+export type SetReleaseRequestDeployHoldData = {
+    body: SetReleaseRequestDeployHold;
+    path: {
+        repoId: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/projects/api/repositories/{repoId}/release-requests/{requestId}/deploy-hold';
+};
+
+export type SetReleaseRequestDeployHoldErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type SetReleaseRequestDeployHoldResponses = {
+    /**
+     * OK
+     */
+    200: SetReleaseRequestDeployHoldResponse;
+};
+
+export type SetReleaseRequestDeployHoldResponse2 = SetReleaseRequestDeployHoldResponses[keyof SetReleaseRequestDeployHoldResponses];
+
 export type RerunReleasePipelinePhaseData = {
     body?: never;
     path: {
@@ -7022,7 +7103,7 @@ export type TransitionWorkErrors = {
      */
     403: unknown;
     /**
-     * A status this door may not state — a ticket's DONE among them, which the platform sets when the wrapper release request carrying its branch is finalized — or a changed acceptance-criteria list from READY_FOR_DEV on
+     * A status this door may not state — a ticket's DONE among them, which the platform sets when the wrapper release request carrying its branch is finalized, or about 15 minutes after VERIFIED when no wrapper branch or request exists — or a changed acceptance-criteria list from READY_FOR_DEV on
      */
     409: unknown;
 };
@@ -8061,7 +8142,7 @@ export type SetWorkStatusErrors = {
      */
     404: unknown;
     /**
-     * A move the lifecycle does not allow, a target naming no status, an agent superseding an epic, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person, or QUALITY_CHECKS for a ticket leaving IMPLEMENTED — or a ticket's DONE, which no caller of any role may ask for: the platform sets it when the wrapper release request carrying the ticket's branch is finalized
+     * A move the lifecycle does not allow, a target naming no status, an agent superseding an epic, a feature or a task whose epic is still REPORTED, or a quality gate refusing a forward move — ACCEPTANCE_CRITERIA, PERSON_APPROVAL for REFINED to READY_FOR_DEV by a caller this service did not verify as a person, or QUALITY_CHECKS for a ticket leaving IMPLEMENTED, or CHILDREN_VERIFIED for an epic or a feature entering VERIFIED while a feature or task under it is open — or a ticket's DONE, which no caller of any role may ask for: the platform sets it when the wrapper release request carrying the ticket's branch is finalized, or about 15 minutes after VERIFIED when no wrapper branch or request exists
      */
     409: unknown;
 };

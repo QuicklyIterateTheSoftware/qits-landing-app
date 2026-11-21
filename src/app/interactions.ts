@@ -1639,17 +1639,18 @@ export const INTERACTIONS = {
   'open-entity-relation':
     'An entity’s page opens the entity it projects, or a state recording its operation',
   /**
-   * `agent-dialog.ts` via `NAMED_AGENTS` (qits-2157): the UI builder's Agent action opens the
-   * dialog, which reads the project's named agents for the ui-builder agent's state and the
-   * command whose terminal it attaches, again after each `NamedAgentStateChanged` of the project.
+   * `agent-dialog.ts` via `START_NAMED_AGENT` and `NAMED_AGENTS` (qits-2157, qits-2499): the UI
+   * builder's Agent action opens the dialog, which starts the ui-builder agent if it is not
+   * running, then reads the project's named agents for its state and the command whose terminal it
+   * attaches, again after each `NamedAgentStateChanged` of the project.
    */
   'open-ui-builder-agent':
-    'The UI builder’s Agent action shows the ui-builder agent and its terminal',
+    'The UI builder’s Agent action starts and shows the ui-builder agent and its terminal',
   /**
-   * `agent-dialog.ts` via `PROMPT_NAMED_AGENT` (qits-2157): Send in the agent dialog prompts the
-   * ui-builder agent with the opened context (`openedContext`) and the person's text.
+   * `agent-dialog.ts` via `START_NAMED_AGENT` and `NAMED_AGENTS` (qits-2495): the Desk page's Agent
+   * action opens the same dialog for the `desk` named agent, started if it is not running.
    */
-  'prompt-ui-builder-agent': 'Send in the UI builder’s agent dialog prompts the ui-builder agent',
+  'open-desk-agent': 'The Desk page’s Agent action starts and shows the front desk agent',
   /**
    * `ui-builder.page.ts` via `PITCHES` (qits-2158): the UI builder's Pitched tab lists the
    * project's pitches, narrowed to the open repository and screenshot, again after each

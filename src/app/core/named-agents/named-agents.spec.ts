@@ -2,8 +2,7 @@ import {
   aboutProjectAgents,
   heardAgentState,
   namedAgentTerminalSocketUrl,
-  promptAnswerLine,
-  promptRefusalLine,
+  startRefusalLine,
 } from './named-agents';
 
 const event = (payload: object) => ({
@@ -60,35 +59,16 @@ describe('heardAgentState', () => {
   });
 });
 
-describe('promptAnswerLine', () => {
-  it('says delivered, queued at a position, queued, or held while the agent starts', () => {
-    expect(
-      promptAnswerLine({ state: 'IDLE', delivered: true, queued: false, position: null }),
-    ).toBe('Delivered to the agent.');
-    expect(promptAnswerLine({ state: 'BUSY', delivered: false, queued: true, position: 2 })).toBe(
-      'Queued at position 2: the agent takes it after its current turn.',
+describe('startRefusalLine', () => {
+  it('says the status and the server’s reason, else that it was refused', () => {
+    expect(startRefusalLine(404, 'No named agent nobody')).toBe(
+      'Could not start the agent (404): No named agent nobody.',
     );
-    expect(
-      promptAnswerLine({ state: 'BUSY', delivered: false, queued: true, position: null }),
-    ).toBe('Queued: the agent takes it after its current turn.');
-    expect(
-      promptAnswerLine({ state: 'STARTING', delivered: false, queued: true, position: null }),
-    ).toBe('Starting the agent; your prompt is delivered when it is up.');
-  });
-});
-
-describe('promptRefusalLine', () => {
-  it('says the status and the server’s reason, else what the status means', () => {
-    expect(promptRefusalLine(409, 'a prompt already waits for the agent')).toBe(
-      'Not sent (409): a prompt already waits for the agent.',
+    expect(startRefusalLine(500, ' ')).toBe(
+      'Could not start the agent (500): the service refused it.',
     );
-    expect(promptRefusalLine(429, undefined)).toBe(
-      'Not sent (429): the agent’s prompt queue is full.',
+    expect(startRefusalLine(0, undefined)).toBe(
+      'Could not start the agent: the service is unreachable.',
     );
-    expect(promptRefusalLine(503, ' ')).toBe(
-      'Not sent (503): the agent’s daemon cannot be reached.',
-    );
-    expect(promptRefusalLine(500, undefined)).toBe('Not sent (500): the service refused it.');
-    expect(promptRefusalLine(0, undefined)).toBe('Not sent: the service is unreachable.');
   });
 });

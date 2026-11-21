@@ -30,8 +30,8 @@ const DATA_FREEZE: OpenedContextFields = {
 };
 
 describe('openedContext', () => {
-  it('names a DATA freeze and a field mark, then a blank line and the text', () => {
-    expect(openedContext(DATA_FREEZE, 'Pitch a calmer header.\nKeep the cards.')).toBe(
+  it('names a DATA freeze and a field mark, and ends with a line break', () => {
+    expect(openedContext(DATA_FREEZE)).toBe(
       [
         '<opened-context>',
         'repository: qits-landing-app',
@@ -45,8 +45,6 @@ describe('openedContext', () => {
         'selection: mark qitsField qits-projects-service#listProjectRepositories id=r1 repository.name',
         '</opened-context>',
         '',
-        'Pitch a calmer header.',
-        'Keep the cards.',
       ].join('\n'),
     );
   });
@@ -60,7 +58,7 @@ describe('openedContext', () => {
       asked: { viewport: 'TABLET', colorScheme: 'DARK', network: 'OFFLINE' },
       selection: null,
     };
-    expect(openedContext(fields, 'What is on this page?')).toBe(
+    expect(openedContext(fields)).toBe(
       [
         '<opened-context>',
         'repository: qits-landing-app',
@@ -74,31 +72,27 @@ describe('openedContext', () => {
         'selection: none',
         '</opened-context>',
         '',
-        'What is on this page?',
       ].join('\n'),
     );
   });
 
   it('reads a freeze’s missing kind, width and scheme as none, and its network as shot', () => {
-    const block = openedContext(
-      {
-        ...DATA_FREEZE,
-        freeze: {
-          file: 'a.html',
-          kind: null,
-          viewport: null,
-          colorScheme: null,
-          connectivity: {
-            network: 'OFFLINE',
-            outbox: [],
-            cacheResources: [],
-            cached: [],
-            queueMutations: [],
-          },
+    const block = openedContext({
+      ...DATA_FREEZE,
+      freeze: {
+        file: 'a.html',
+        kind: null,
+        viewport: null,
+        colorScheme: null,
+        connectivity: {
+          network: 'OFFLINE',
+          outbox: [],
+          cacheResources: [],
+          cached: [],
+          queueMutations: [],
         },
       },
-      '',
-    );
+    });
     expect(block.split('\n').slice(5, 9)).toEqual([
       'kind: none',
       'viewport: none',
@@ -109,7 +103,7 @@ describe('openedContext', () => {
 
   it('names an entity, an item mark and a list mark', () => {
     const selection = (fields: Partial<OpenedContextFields>) =>
-      openedContext({ ...DATA_FREEZE, ...fields }, '').split('\n')[9];
+      openedContext({ ...DATA_FREEZE, ...fields }).split('\n')[9];
     expect(selection({ selection: { kind: 'entity', name: 'Repository' } })).toBe(
       'selection: entity Repository',
     );

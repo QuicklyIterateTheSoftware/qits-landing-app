@@ -26,17 +26,16 @@ import {
 import { refreshOn } from '$core/events/refresh-on';
 import {
   aboutProjectAgents,
+  DESK_AGENT,
   heardAgentState,
   NAMED_AGENT_STATE_CHANGED,
   NAMED_AGENT_STATE_LABELS,
   namedAgentTerminalSocketUrl,
-  promptAnswerLine,
-  promptRefusalLine,
-  UI_BUILDER_AGENT,
+  startRefusalLine,
   type HeardAgentState,
   type NamedAgentState,
 } from '$core/named-agents/named-agents';
-import { NAMED_AGENTS, PROMPT_NAMED_AGENT } from '$core/named-agents/named-agents.operations';
+import { NAMED_AGENTS, START_NAMED_AGENT } from '$core/named-agents/named-agents.operations';
 import { PlatformOrigins } from '$core/platform/platform-origins';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { openedContext, type OpenedContextFields } from '$core/ui-builder/opened-context';
@@ -68,13 +67,16 @@ const LINK_LABELS: Readonly<Record<TerminalLink, string>> = {
 
 /** What the terminal's place says while there is no command to attach to, per state. */
 const NO_TERMINAL: Readonly<Record<NamedAgentState, string>> = {
-  STOPPED:
-    'The agent is not running. Send a prompt to start it: its terminal shows here once it is up.',
+  STOPPED: 'The agent is not running. Close and open this dialog to start it.',
   STARTING: 'The agent is starting: its terminal shows here once it is up.',
   IDLE: 'The agent has no terminal right now.',
   BUSY: 'The agent has no terminal right now.',
-  FAILED: 'The agent could not be run. Send a prompt to try again.',
+  FAILED: 'The agent could not be run. Close and open this dialog to try again.',
 };
+
+/** Bracketed paste (xterm): the agent's TUI takes what is between as typed text, never as Enter. */
+const PASTE_START = '\x1b[200~';
+const PASTE_END = '\x1b[201~';
 
 /** The agent as the dialog shows it: its state and the command whose terminal it attaches. */
 interface ShownAgent {
@@ -82,43 +84,39 @@ interface ShownAgent {
   readonly commandId: string | null;
 }
 
-/** What the last Send came to: one line, and whether it was taken (200, 202). */
-interface SendResult {
-  readonly line: string;
-  readonly taken: boolean;
-}
-
 /**
- * The UI builder's agent dialog (qits-2157): the project's `ui-builder` named agent (qits-2154, one
- * per project, tied to no work item, keeping its session across visits), its live terminal and a
- * prompt field. It is the UI of `qits projects agents list` and `qits projects agents prompt --name
- * ui-builder`.
+ * A named agent's dialog (qits-2157, qits-2499, qits-2495): one of the project's named agents
+ * (qits-2154, `agent`: `ui-builder` from the UI builder, `desk` from the Desk page), its state and
+ * its live terminal, typed into directly. It is the UI of `qits projects agents list` and the
+ * agent's terminal; there is no prompt field.
  *
  * - A native `<dialog>` opened with `showModal()` (where the DOM has it: jsdom and the server have
  *   not, so it is opened by its `open` attribute there), closed by Escape, the close button or a
  *   click on the backdrop; each says `closed`, and the page removes the dialog. Full screen below
  *   768px. The terminal sits in a pane of bounded height, which `TerminalScreen` sizes itself to.
- * - The agent: the project's named agents (`NAMED_AGENTS`), read on open, its `ui-builder` entry.
- *   With a `commandId`, the terminal attaches to that command (`namedAgentTerminalSocketUrl` on
+ * - Opened, it starts the agent (`START_NAMED_AGENT`): a stopped desk container is started and
+ *   the agent's session asked for; a running agent is left as it is. Its answer is shown at once,
+ *   until the list answers after it. The list (`NAMED_AGENTS`) is read once the start answered or
+ *   failed, and gives the agent's entry. A failed start says why in the header.
+ * - With a `commandId`, the terminal attaches to that command (`namedAgentTerminalSocketUrl` on
  *   qits-projects' container proxy, through `WEB_SOCKET`; `TerminalSocket`) and keystrokes and
- *   sizes go to it. Without one (STOPPED, or STARTING before the daemon takes it) the terminal's
- *   place says so. A `NamedAgentStateChanged` about the agent is shown at once, until the list read
- *   again after it answers (so a command it brings attaches at once); a new command re-attaches.
+ *   sizes go to it. Without one (STARTING before the daemon takes it) the terminal's place says
+ *   so. A `NamedAgentStateChanged` about the agent is shown at once, until the list answers again
+ *   after it; a new command re-attaches.
+ * - **Insert page context** (only with a `context`, the UI builder's): writes the opened-context
+ *   block (`openedContext`, of what the page shows at that moment) into the agent's input as a
+ *   bracketed paste, so it is not sent: the person types on and presses Enter themselves. Enabled
+ *   while the terminal is attached.
  * - Closing only detaches (`TerminalSocket.close()`): it never stops, interrupts or discards the
  *   session. Opened again, the dialog attaches to the same command, and the daemon replays its
  *   scrollback.
- * - The prompt field: Enter sends, Shift+Enter is a new line. Send posts `PROMPT_NAMED_AGENT` with
- *   the opened-context block (`openedContext`, of what the page shows at that moment: `context`)
- *   before the text, which only this door can prefix: typing in the terminal goes into the Claude
- *   TUI as typed, which the line under the field says. One line says what came of it: delivered,
- *   queued (at its position), starting (202), or refused (409, 429, 503, with the server's
- *   `reason`). The field is cleared only when the prompt was taken (200, 202).
  * - The header's chip is the agent's state (Stopped, Starting, Idle, Working, Failed), the
  *   terminal's link status beside it.
  *
  * Staleness (qits-1270): `NamedAgentStateChanged` naming the open project (`projectId`) → the named
- * agents (the resource's `refreshOn`); of them, the `ui-builder` agent's state and command are
- * shown at once (`refreshOn`, the dialog's own), which attaches or detaches the terminal.
+ * agents (the resource's `refreshOn`); of them, the agent's own state and command are shown at
+ * once (`refreshOn`, the dialog's own), which attaches or detaches the terminal. No event says the
+ * desk's state moved, so while the desk shows no terminal its place offers **Read again**.
  *
  * In the browser only: the server renders nothing it reads, and never connects.
  */
@@ -139,7 +137,7 @@ interface SendResult {
     >
       <div class="flex min-h-0 flex-1 flex-col gap-3 p-4" [qitsEntityList]="agents">
         <header class="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h2 id="agent-dialog-title" class="m-0 text-lg font-semibold">UI builder agent</h2>
+          <h2 id="agent-dialog-title" class="m-0 text-lg font-semibold">{{ title() }}</h2>
           @if (listed(); as entry) {
             <span class="agent-state inline-flex" [qitsEntity]="entry" entityKey="name">
               @if (shown(); as agent) {
@@ -170,6 +168,9 @@ interface SendResult {
               </button>
             }
           }
+          @if (startFailure(); as failure) {
+            <span class="start-failure text-sm text-danger" role="status">{{ failure }}</span>
+          }
           <button
             type="button"
             class="close ml-auto cursor-pointer rounded-md border border-line bg-surface px-2 py-1 text-sm text-fg hover:bg-surface-subtle"
@@ -180,13 +181,14 @@ interface SendResult {
           </button>
         </header>
         <div
+          #pane
           class="terminal-pane h-[min(28rem,50dvh)] min-h-48 shrink-0 overflow-y-auto max-md:h-auto max-md:flex-1 max-md:shrink"
         >
           @if (socket()) {
             <ui-terminal-screen
               [frames]="frames()"
               [attached]="link() === 'open'"
-              label="UI builder agent terminal"
+              [label]="title() + ' terminal'"
               (data)="socket()?.send($event)"
               (resized)="socket()?.resize($event.cols, $event.rows)"
             />
@@ -195,6 +197,15 @@ interface SendResult {
               <span [fieldOf]="entry" [qitsField]="{ derived: ['state', 'commandId'] }">{{
                 noTerminal()
               }}</span>
+              @if (untold()) {
+                <button
+                  type="button"
+                  class="read-again ml-2 cursor-pointer border-0 bg-transparent p-0 text-sm text-accent underline"
+                  (click)="agents.reload()"
+                >
+                  Read again
+                </button>
+              }
             </p>
           } @else {
             <p class="no-terminal {{ placeClass }}">
@@ -211,40 +222,22 @@ interface SendResult {
             </p>
           }
         </div>
-        <form class="flex flex-col gap-1" (submit)="submitted($event)">
-          <label class="text-sm font-semibold" for="agent-dialog-prompt">Prompt</label>
-          <div class="flex items-end gap-2">
-            <textarea
-              id="agent-dialog-prompt"
-              autofocus
-              class="box-border min-h-16 flex-1 resize-y rounded-md border border-line bg-surface px-2 py-1 font-sans text-sm text-fg"
-              rows="3"
-              placeholder="Ask for a pitch of what you see, or about it"
-              [value]="draft()"
-              (input)="typed($event)"
-              (keydown)="promptKey($event)"
-            ></textarea>
+        @if (context()) {
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
             <button
-              type="submit"
-              class="send cursor-pointer rounded-md border-0 bg-accent px-3 py-2 text-sm font-semibold text-fg-on-accent disabled:cursor-default disabled:opacity-50"
-              [disabled]="sending() || !draft().trim()"
+              type="button"
+              class="insert-context cursor-pointer rounded-md border border-line bg-surface px-3 py-1.5 text-sm font-semibold text-fg hover:bg-surface-subtle disabled:cursor-default disabled:opacity-50"
+              [disabled]="link() !== 'open'"
+              (click)="insertContext()"
             >
-              Send
+              Insert page context
             </button>
+            <p class="hint m-0 text-xs text-fg-muted">
+              Pastes what the page shows (route, screenshot, selection) into the agent’s input. It
+              is not sent: type on, then press Enter.
+            </p>
           </div>
-          <p
-            class="result m-0 min-h-5 text-sm"
-            [class.text-fg-soft]="result()?.taken !== false"
-            [class.text-danger]="result()?.taken === false"
-            role="status"
-          >
-            {{ result()?.line ?? '' }}
-          </p>
-          <p class="hint m-0 text-xs text-fg-muted">
-            Send puts what the page shows (route, screenshot, selection) before your text. Text
-            typed straight into the terminal goes to the agent as typed, without that context.
-          </p>
-        </form>
+        }
       </div>
     </dialog>
   `,
@@ -255,21 +248,43 @@ export class AgentDialog {
   private readonly document = inject(DOCUMENT);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  /** The open project's id. */
-  readonly projectId = input.required<string>();
-  /** What the UI builder shows now, put before each prompt (`openedContext`). */
-  readonly context = input.required<OpenedContextFields>();
+  /**
+   * The open project's id. Not `required`: the list's resource reads it while the dialog's own
+   * view is created, which can come before its inputs are set; empty reads nothing.
+   */
+  readonly projectId = input('');
+  /** The named agent's name (`ui-builder`, `desk`); empty starts and shows nothing. */
+  readonly agent = input('');
+  /** The dialog's heading, and its terminal's label with ` terminal` after it. */
+  readonly title = input.required<string>();
+  /** What the page shows now, for Insert page context (`openedContext`); none, no button. */
+  readonly context = input<OpenedContextFields | null>(null);
   /** The dialog was closed (Escape, the close button, the backdrop): the page removes it. */
   readonly closed = output<void>();
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
+  private readonly pane = viewChild.required<ElementRef<HTMLElement>>('pane');
 
-  /** The project's named agents, in the browser only, read again after each state change. */
+  /** The start's answer (null until it answered), and whether it is over (answered or failed). */
+  private readonly started = signal<{
+    readonly over: unknown;
+    readonly said: ShownAgent;
+  } | null>(null);
+  private readonly startOver = signal(false);
+  /** Why the start failed, in one line; null while it did not. */
+  protected readonly startFailure = signal<string | null>(null);
+
+  private readonly start = qitsMutation(START_NAMED_AGENT);
+
+  /**
+   * The project's named agents, in the browser only, read once the start is over and again after
+   * each state change.
+   */
   protected readonly agents = qitsResource(
     NAMED_AGENTS,
     () => {
       const projectId = this.projectId();
-      return this.browser && projectId ? { path: { projectId } } : undefined;
+      return this.browser && projectId && this.startOver() ? { path: { projectId } } : undefined;
     },
     {
       refreshOn: {
@@ -284,9 +299,9 @@ export class AgentDialog {
     this.agents.hasValue() ? this.agents.value() : undefined,
   );
 
-  /** The `ui-builder` entry of the list; null until read, or when the project has none. */
+  /** The agent's entry of the list; null until read, or when the project has none. */
   protected readonly listed = computed(
-    () => this.answered()?.agents.find((agent) => agent.name === UI_BUILDER_AGENT) ?? null,
+    () => this.answered()?.agents.find((agent) => agent.name === this.agent()) ?? null,
   );
 
   /** The latest state event about the agent, with the list's value it arrived over. */
@@ -296,15 +311,25 @@ export class AgentDialog {
   } | null>(null);
 
   /**
-   * The agent as shown: what the latest state event said, until the list answers again after it;
-   * else its list entry. Null while neither says anything.
+   * The agent as shown: what the latest state event said, or the start answered, until the list
+   * answers again after it; else its list entry. Null while none says anything.
    */
   protected readonly shown = computed((): ShownAgent | null => {
     const heard = this.heard();
     if (heard && heard.over === this.answered()) return heard.said;
+    const started = this.started();
+    if (started && started.over === this.answered()) return started.said;
     const entry = this.listed();
     return entry ? { state: entry.state, commandId: entry.commandId ?? null } : null;
   });
+
+  /**
+   * Whether the agent shows without a terminal and no event will say when that changes: the desk,
+   * whose state no `NamedAgentStateChanged` carries.
+   */
+  protected readonly untold = computed(
+    () => this.agent() === DESK_AGENT && !this.shown()?.commandId,
+  );
 
   protected readonly socket = signal<TerminalSocket | null>(null);
   protected readonly frames = computed(() => this.socket()?.frames() ?? EMPTY_TERMINAL_FRAMES);
@@ -321,17 +346,12 @@ export class AgentDialog {
     return agent ? NO_TERMINAL[agent.state] : '';
   });
 
-  /** What the terminal's place says while the list names no ui-builder agent: why not. */
+  /** What the terminal's place says while the list names no such agent: why not. */
   protected readonly readLine = computed(() => {
     if (this.agents.status() === 'error') return 'The agent could not be read.';
-    return this.agents.hasValue() ? 'This project has no ui-builder agent.' : 'Reading the agent…';
+    if (this.agents.hasValue()) return `This project has no ${this.agent()} agent.`;
+    return this.startOver() ? 'Reading the agent…' : 'Starting the agent…';
   });
-
-  protected readonly draft = signal('');
-  protected readonly sending = signal(false);
-  protected readonly result = signal<SendResult | null>(null);
-
-  private readonly prompt = qitsMutation(PROMPT_NAMED_AGENT);
 
   /** `<project>/<command>` of the socket on hand. */
   private socketFor: string | null = null;
@@ -340,6 +360,7 @@ export class AgentDialog {
   constructor() {
     afterNextRender(() => this.show());
     if (!this.browser) return;
+    afterNextRender(() => void this.startAgent());
     effect(() => {
       const projectId = this.projectId();
       const commandId = this.shown()?.commandId ?? null;
@@ -352,7 +373,7 @@ export class AgentDialog {
       debounceMs: 0,
       refresh: (events) => {
         const said = events
-          .map((event) => heardAgentState(event, this.projectId(), UI_BUILDER_AGENT))
+          .map((event) => heardAgentState(event, this.projectId(), this.agent()))
           .filter((heard) => heard !== null)
           .at(-1);
         if (said) this.heard.set({ over: this.answered(), said });
@@ -399,47 +420,41 @@ export class AgentDialog {
     if (event.target === this.dialog().nativeElement) this.finish();
   }
 
-  protected typed(event: Event): void {
-    this.draft.set((event.target as HTMLTextAreaElement).value);
+  /** Pastes the opened-context block into the agent's input, bracketed so it is not sent. */
+  protected insertContext(): void {
+    const context = this.context();
+    const socket = this.socket();
+    if (!context || !socket || this.link() !== 'open') return;
+    socket.send(`${PASTE_START}${openedContext(context)}${PASTE_END}`);
+    // Back to the terminal (xterm's input), so the person types on after the paste.
+    this.pane().nativeElement.querySelector('textarea')?.focus();
   }
 
-  /** Enter sends; Shift+Enter (and Enter while composing) is the textarea's own. */
-  protected promptKey(event: KeyboardEvent): void {
-    if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
-    event.preventDefault();
-    void this.send();
-  }
-
-  protected submitted(event: Event): void {
-    event.preventDefault();
-    void this.send();
-  }
-
-  /** Posts the opened-context block and the draft; clears the draft only when it was taken. */
-  private async send(): Promise<void> {
-    const text = this.draft();
+  /** Starts the agent once, on open; the list is read once this is over, either way. */
+  private async startAgent(): Promise<void> {
     const projectId = this.projectId();
-    if (!text.trim() || this.sending() || !projectId) return;
-    this.sending.set(true);
+    const name = this.agent();
+    if (!projectId || !name || this.done) {
+      this.startOver.set(true);
+      return;
+    }
     try {
-      const answer = await this.prompt.run({
-        path: { projectId, name: UI_BUILDER_AGENT },
-        body: { text: openedContext(this.context(), text) },
-      });
+      const answer = await this.start.run({ path: { projectId, name } });
       if (answer) {
-        this.result.set({ line: promptAnswerLine(answer), taken: true });
-        this.draft.set('');
+        // An answer about another agent says nothing of this one; the list answers next.
+        if (answer.name !== name) return;
+        this.started.set({
+          over: this.answered(),
+          said: { state: answer.state, commandId: answer.commandId ?? null },
+        });
       } else {
-        this.result.set({ line: promptRefusalLine(0, undefined), taken: false });
+        this.startFailure.set(startRefusalLine(0, undefined));
       }
     } catch (error) {
       const refused = error instanceof QitsApiError ? error : null;
-      this.result.set({
-        line: promptRefusalLine(refused?.status ?? 0, refused?.error?.reason),
-        taken: false,
-      });
+      this.startFailure.set(startRefusalLine(refused?.status ?? 0, refused?.error?.reason));
     } finally {
-      this.sending.set(false);
+      this.startOver.set(true);
     }
   }
 
