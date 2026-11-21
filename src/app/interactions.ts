@@ -1686,10 +1686,17 @@ export const INTERACTIONS = {
   'open-sidebar-network-access':
     'The sidebar’s Network access entry opens the Network access frontend',
   /**
-   * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, leaves
-   * the app for the idp's own admin (qits-2319). Leaves only, and names no pact.
+   * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, opens
+   * the IdP admin section (`idp`, which opens the clients; qits-2481). Navigates only, and names no
+   * pact.
    */
-  'open-sidebar-idp-admin': 'The sidebar’s IdP admin entry opens the standalone idp admin',
+  'open-sidebar-idp': 'The sidebar’s IdP admin entry opens the IdP admin section',
+  /**
+   * `shell.layout.ts`: the IdP admin section's pages, listed below the sidebar's IdP admin while
+   * the section is open, open their page (Clients, Users, Signed-in devices; qits-2481), each the
+   * idp's own admin page in a frame. Navigates only, and names no pact.
+   */
+  'open-sidebar-idp-page': 'An IdP admin page below the sidebar’s IdP admin opens it',
   /**
    * `shell.layout.ts`: the sidebar's Artifacts, a global section shown with no project open, opens
    * the Artifacts section (`artifacts`, which opens the image store; qits-2316). Navigates only,

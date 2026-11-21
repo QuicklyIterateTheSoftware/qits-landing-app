@@ -358,7 +358,7 @@ router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no para
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316), System
 (`open-sidebar-system`, `exit('system')`, qits-2344), Mirror (`open-sidebar-mirror`,
 `exit('mirror')`, qits-2357) and Orchestrator (`open-sidebar-orchestrator`, `exit('orchestrator')`,
-qits-2359). Such a section may list its own pages below it
+qits-2359), IdP admin (below). Such a section may list its own pages below it
 (`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
@@ -372,12 +372,15 @@ Mirror's are Caches and OCI upstreams (`open-sidebar-mirror-page`, `caches`/`ups
 `exit('mirror/repositories')`, `exit('mirror/upstreams')`, qits-2479); Caches stays current on one
 cache root's page below it. Orchestrator lists none: its one process (gc) is what `orchestrator`
 redirects to, so, as Artifacts, it is marked `page` on every page below it.
-`kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
-`external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
-(qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
-page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
-idp origin (the server render) it has no address, is hidden by class and names
-no outcome. With a project open the list is empty.
+IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
+(qits-idp-frontend) inside this app: its pages are Clients, Users and Signed-in devices
+(`open-sidebar-idp-page`, `clients`/`users`/`devices`, `exit('idp/clients')`, `exit('idp/users')`,
+`exit('idp/devices')`), each a page (`routes/idp/<page>/`) that shows
+`PlatformOrigins.page('idp')` + `/idp/<page>` in a frame filling the main slot
+(`patterns/idp/idp-frame/`). The idp's admin pages draw no navigation of their own; this sidebar is
+theirs. The door and the idp are the same site, so the frame opens signed in. With no idp origin
+(the server render) there is no frame. `kind: 'external'` leaves the app at `href` through an
+`external(...)` outcome; no global section uses it today. With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories

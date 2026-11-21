@@ -96,9 +96,9 @@ class PinnedPage {}
  * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, Mirror,
  * `open-sidebar-mirror`, qits-2357, and Orchestrator, `open-sidebar-orchestrator`, qits-2359, each
  * to a stand-in route, with System's own pages below it
- * while it is open, `open-sidebar-system-page`, qits-2346, and Mirror's,
- * `open-sidebar-mirror-page`, qits-2479) or leave the app (IdP admin,
- * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
+ * while it is open, `open-sidebar-system-page`, qits-2346, Mirror's, `open-sidebar-mirror-page`,
+ * qits-2479, and IdP admin, `open-sidebar-idp`, qits-2481, with its pages,
+ * `open-sidebar-idp-page`). Network access leaves the app for qits-network-access' own
  * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
  * and with one, qits-2262) and the network icon (`open-network-access`) are pressed once each. The
  * page origins are under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
@@ -125,6 +125,10 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'mirror/repositories', component: TestPage },
           { path: 'mirror/upstreams', component: TestPage },
           { path: 'orchestrator', component: TestPage },
+          { path: 'idp', component: TestPage },
+          { path: 'idp/clients', component: TestPage },
+          { path: 'idp/users', component: TestPage },
+          { path: 'idp/devices', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -236,7 +240,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
     // At the root the navigation holds no project's sections: the global sections (Artifacts,
     // qits-2316; System, qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
-    // qits-2319), then Network access, the phone's way there (qits-2262); the "qits" brand leads
+    // qits-2481), then Network access, the phone's way there (qits-2262); the "qits" brand leads
     // home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
@@ -1033,21 +1037,72 @@ describe('ShellLayout (screenshots)', () => {
     }
   });
 
-  it('open-sidebar-idp-admin open: the sidebar’s IdP admin leaves for the idp’s admin, in this tab', async () => {
-    await render();
-    const href = `https://idp.${PLATFORM_DOMAIN}/idp/`;
+  it('open-sidebar-idp open: the sidebar’s IdP admin opens the IdP admin section, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render();
     const entry = page
       .getByRole('navigation', { name: 'qits' })
-      .getByRole('link', { name: 'IdP admin' });
-    await expect.element(entry).toHaveAttribute('href', href);
-    await expect.element(entry).not.toHaveAttribute('target');
-    await userEvent.click(entry);
-    expect(reached()).toEqual(['open-sidebar-idp-admin:open']);
-    expect(leave).toHaveBeenCalledTimes(1);
-    expect(leave).toHaveBeenCalledWith(href);
-    // The click left through the spy, not the link: the router stays where it was.
-    expect(TestBed.inject(Router).url).toBe('/');
+      .getByRole('link', { name: 'IdP admin', exact: true });
+    await expect.element(entry).toHaveAttribute('href', '/idp');
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/idp');
+    expect(reached()).toEqual(['open-sidebar-idp:open']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    expect(leave).not.toHaveBeenCalled();
   });
+
+  it('lists the IdP admin section’s pages below IdP admin while it is open (qits-2481)', async () => {
+    await page.viewport(1280, 800);
+    const { layout } = await render('/idp/users');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels).toEqual([
+      'Artifacts',
+      'System',
+      'Mirror',
+      'Orchestrator',
+      'IdP admin',
+      'Clients',
+      'Users',
+      'Signed-in devices',
+      'Network access',
+    ]);
+    await expect
+      .element(navigation.getByRole('link', { name: 'IdP admin', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Users', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    await expect.element(layout).toMatchScreenshot('idp-sidebar', { kind: 'DATA' });
+  });
+
+  /** The IdP admin section's pages below IdP admin in the sidebar (qits-2481), each from another. */
+  const IDP_PAGES = [
+    { label: 'Clients', path: '/idp/clients', from: '/idp/users', outcome: 'clients' },
+    { label: 'Users', path: '/idp/users', from: '/idp/clients', outcome: 'users' },
+    {
+      label: 'Signed-in devices',
+      path: '/idp/devices',
+      from: '/idp/clients',
+      outcome: 'devices',
+    },
+  ] as const;
+
+  for (const idp of IDP_PAGES) {
+    it(`open-sidebar-idp-page ${idp.outcome}: ${idp.label} below IdP admin opens it`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(idp.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: idp.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', idp.path);
+      expect(await follow(fixture, link)).toBe(idp.path);
+      expect(reached()).toEqual([`open-sidebar-idp-page:${idp.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+    });
+  }
 
   it('shows no global sections with a project open', async () => {
     await renderProject('/work/acceptance');
