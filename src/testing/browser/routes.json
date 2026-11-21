@@ -3043,7 +3043,45 @@
       "route": "system/swarm/configs"
     }
   ],
+  "src/app/routes/system/swarm/nodes/[id]/swarm-node.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a swarm node running no tasks",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a swarm node running no tasks",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id"
+    }
+  ],
   "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id"
+    },
     {
       "provider": "qits-system-service",
       "state": "a single-node swarm",
@@ -3103,6 +3141,98 @@
       "state": "a swarm running no services",
       "operationId": "listSwarmServices",
       "route": "system/swarm/services"
+    }
+  ],
+  "src/app/routes/system/targets/system-targets.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target",
+      "operationId": "requestTargetHealthCheck",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target",
+      "operationId": "startTargetSignIn",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target with a claude sign-in awaiting its code",
+      "operationId": "cancelTargetSignIn",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target with a claude sign-in awaiting its code",
+      "operationId": "getTargetSignIn",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target with a claude sign-in awaiting its code",
+      "operationId": "submitTargetSignInCode",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target with leases",
+      "operationId": "listLeases",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a connected target with leases",
+      "operationId": "listTargets",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a declared target",
+      "operationId": "getTargetHealth",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a declared target",
+      "operationId": "listTargets",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a declared target",
+      "operationId": "patchTarget",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a quarantined target",
+      "operationId": "greenlightTarget",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a quarantined target",
+      "operationId": "listTargets",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a registered runner",
+      "operationId": "rotateTargetRegistrationToken",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "no target",
+      "operationId": "createTarget",
+      "route": "system/targets"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "no target",
+      "operationId": "listTargets",
+      "route": "system/targets"
     }
   ]
 }
