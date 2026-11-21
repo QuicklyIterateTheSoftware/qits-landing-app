@@ -426,6 +426,11 @@
               "path": "targets",
               "fullPath": "system/targets",
               "entry": true
+            },
+            {
+              "path": "terminals/:id",
+              "fullPath": "system/terminals/:id",
+              "entry": true
             }
           ]
         },
@@ -332665,6 +332670,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -332970,6 +332977,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -333769,6 +333778,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -334074,6 +334085,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -334379,6 +334392,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -334619,6 +334634,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -335267,6 +335284,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -335507,6 +335526,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -336724,6 +336745,1382 @@
       ]
     },
     {
+      "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+      "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+      "name": "exec-refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes/:id/containers",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmNode"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listNodeContainers"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodeTasks"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-node:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
+        "show-swarm-node-container-logs:opened",
+        "switch-swarm-node-tab:containers",
+        "switch-swarm-node-tab:images",
+        "switch-swarm-node-tab:networks",
+        "switch-swarm-node-tab:volumes"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "address"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "architecture"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "cpus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "memoryBytes"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "os"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmNode",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "health",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "status",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+      "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+      "name": "exec-refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes/:id/containers",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmNode"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listNodeContainers"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodeTasks"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-node:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
+        "show-swarm-node-container-logs:opened",
+        "switch-swarm-node-tab:containers",
+        "switch-swarm-node-tab:images",
+        "switch-swarm-node-tab:networks",
+        "switch-swarm-node-tab:volumes"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "address"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "architecture"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "cpus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "memoryBytes"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "os"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmNode",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "health",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "status",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+      "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+      "name": "exec-refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes/:id/containers",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmNode"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listNodeContainers"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodeTasks"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-node:back",
+        "switch-swarm-node-tab:containers",
+        "switch-swarm-node-tab:images",
+        "switch-swarm-node-tab:networks",
+        "switch-swarm-node-tab:volumes"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "address"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "architecture"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "cpus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "memoryBytes"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "os"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmNode",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "health",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-phone-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+      "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+      "name": "exec-refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes/:id/containers",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmNode"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listNodeContainers"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodeTasks"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-node:back",
+        "switch-swarm-node-tab:containers",
+        "switch-swarm-node-tab:images",
+        "switch-swarm-node-tab:networks",
+        "switch-swarm-node-tab:volumes"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "address"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "architecture"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "cpus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "memoryBytes"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "os"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmNode",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "health",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+      "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+      "name": "exec-refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes/:id/containers",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmNode"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listNodeContainers"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodeTasks"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-node:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
+        "show-swarm-node-container-logs:opened",
+        "switch-swarm-node-tab:containers",
+        "switch-swarm-node-tab:images",
+        "switch-swarm-node-tab:networks",
+        "switch-swarm-node-tab:volumes"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "address"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "architecture"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "cpus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "memoryBytes"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "os"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmNode",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "health",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "status",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+      "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+      "name": "exec-refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/nodes/:id/containers",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmNode"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listNodeContainers"
+        },
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmNodeTasks"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-node:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
+        "show-swarm-node-container-logs:opened",
+        "switch-swarm-node-tab:containers",
+        "switch-swarm-node-tab:images",
+        "switch-swarm-node-tab:networks",
+        "switch-swarm-node-tab:volumes"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "address"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "architecture"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "availability"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "cpus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "engineVersion"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "managerStatus"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "memoryBytes"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "os"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "role",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "self",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmNode",
+          "item": "id=iwbwrdui2z0n62kqcjfo1erwh",
+          "field": "hostname",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "health",
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "ports"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "image",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listNodeContainers",
+          "item": "id=b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+          "field": "status",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/loading-desktop-dark.html",
       "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
       "test": "SwarmNodeContainersPage (screenshots) > marks the tab as loading, then says the containers cannot be read, with Retry",
@@ -337758,6 +339155,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -338015,6 +339414,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -338714,6 +340115,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -338971,6 +340374,8 @@
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
         "open-sidebar-system:open",
+        "open-system-terminal:opened",
+        "open-system-terminal:refused",
         "show-swarm-node-container-logs:opened",
         "switch-swarm-node-tab:containers",
         "switch-swarm-node-tab:images",
@@ -386256,6 +387661,1436 @@
       ]
     },
     {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-desktop-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows the terminal, attached, with its output, and sends what is typed",
+      "name": "attached",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-desktop-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows the terminal, attached, with its output, and sends what is typed",
+      "name": "attached",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-phone-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows the terminal, attached, with its output, and sends what is typed",
+      "name": "attached",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "leave-system-terminal:containers",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-phone-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows the terminal, attached, with its output, and sends what is typed",
+      "name": "attached",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "leave-system-terminal:containers",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-tablet-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows the terminal, attached, with its output, and sends what is typed",
+      "name": "attached",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-tablet-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows the terminal, attached, with its output, and sends what is typed",
+      "name": "attached",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-desktop-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > says a terminal that has ended is no longer running, with no socket",
+      "name": "gone",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-desktop-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > says a terminal that has ended is no longer running, with no socket",
+      "name": "gone",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-phone-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > says a terminal that has ended is no longer running, with no socket",
+      "name": "gone",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "leave-system-terminal:containers"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-phone-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > says a terminal that has ended is no longer running, with no socket",
+      "name": "gone",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "leave-system-terminal:containers"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-tablet-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > says a terminal that has ended is no longer running, with no socket",
+      "name": "gone",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-tablet-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > says a terminal that has ended is no longer running, with no socket",
+      "name": "gone",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "leave-system-terminal:containers"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "leave-system-terminal:containers"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-desktop-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows a socket that cannot attach as closed, and attaches again on the button",
+      "name": "lost",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-desktop-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows a socket that cannot attach as closed, and attaches again on the button",
+      "name": "lost",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-phone-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows a socket that cannot attach as closed, and attaches again on the button",
+      "name": "lost",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "leave-system-terminal:containers",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-phone-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows a socket that cannot attach as closed, and attaches again on the button",
+      "name": "lost",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "leave-system-terminal:containers",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-tablet-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows a socket that cannot attach as closed, and attaches again on the button",
+      "name": "lost",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-tablet-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > shows a socket that cannot attach as closed, and attaches again on the button",
+      "name": "lost",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "an open exec terminal",
+          "operationId": "getTerminal"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open",
+        "terminate-system-terminal:containers",
+        "terminate-system-terminal:refused"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "container.id"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": null,
+          "derived": [
+            "kind",
+            "shell",
+            "container.name"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "container.name",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "createdBy",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=00000000-0000-4000-8000-000000000003",
+          "field": "shell",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "leave-system-terminal:containers"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "leave-system-terminal:containers"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+      "test": "SystemTerminalPage (screenshots) > marks the page as loading, then says the terminal cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/terminals/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-system-terminal:containers",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
       "file": "src/app/ui/components/action-button/action-button.browser.spec.ts/details-closed-dark.html",
       "spec": "src/app/ui/components/action-button/action-button.browser.spec.ts",
       "test": "ActionButton (screenshots) > with details > draws closed",
@@ -390288,6 +393123,12 @@
       "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/empty-phone-light.html",
       "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/empty-tablet-dark.html",
       "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-desktop-dark.html",
+      "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-desktop-light.html",
+      "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-phone-dark.html",
+      "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-phone-light.html",
+      "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-tablet-dark.html",
+      "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-tablet-light.html",
       "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/loading-desktop-dark.html",
       "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/loading-desktop-light.html",
       "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/loading-phone-dark.html",
@@ -390632,6 +393473,38 @@
       "src/app/routes/system/targets/system-targets.page.browser.spec.ts/unavailable-phone-light.html",
       "src/app/routes/system/targets/system-targets.page.browser.spec.ts/unavailable-tablet-dark.html",
       "src/app/routes/system/targets/system-targets.page.browser.spec.ts/unavailable-tablet-light.html"
+    ],
+    "system/terminals/:id": [
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-desktop-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-desktop-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-phone-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-phone-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-tablet-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/attached-tablet-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-desktop-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-desktop-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-phone-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-phone-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-tablet-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/gone-tablet-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-desktop-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-desktop-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-phone-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-phone-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-tablet-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/lost-tablet-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts/unavailable-tablet-light.html"
     ]
   },
   "outcomes": {
@@ -392168,6 +395041,26 @@
       },
       {
         "route": "system/swarm/nodes/:id/containers",
+        "interaction": "open-system-terminal",
+        "outcome": "opened",
+        "kind": "exit",
+        "to": "system/terminals/:id",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.ts"
+      },
+      {
+        "route": "system/swarm/nodes/:id/containers",
+        "interaction": "open-system-terminal",
+        "outcome": "refused",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.ts"
+      },
+      {
+        "route": "system/swarm/nodes/:id/containers",
         "interaction": "show-swarm-node-container-logs",
         "outcome": "opened",
         "kind": "stay",
@@ -392205,6 +395098,56 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/system/swarm/services/[id]/swarm-service.page.ts"
+      },
+      {
+        "route": "system/terminals/:id",
+        "interaction": "leave-system-terminal",
+        "outcome": "containers",
+        "kind": "exit",
+        "to": "system/swarm/nodes/:id/containers",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/terminals/[id]/system-terminal.page.ts"
+      },
+      {
+        "route": "system/terminals/:id",
+        "interaction": "leave-system-terminal",
+        "outcome": "nodes",
+        "kind": "exit",
+        "to": "system/swarm/nodes",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/terminals/[id]/system-terminal.page.ts"
+      },
+      {
+        "route": "system/terminals/:id",
+        "interaction": "terminate-system-terminal",
+        "outcome": "containers",
+        "kind": "exit",
+        "to": "system/swarm/nodes/:id/containers",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/terminals/[id]/system-terminal.page.ts"
+      },
+      {
+        "route": "system/terminals/:id",
+        "interaction": "terminate-system-terminal",
+        "outcome": "nodes",
+        "kind": "exit",
+        "to": "system/swarm/nodes",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/terminals/[id]/system-terminal.page.ts"
+      },
+      {
+        "route": "system/terminals/:id",
+        "interaction": "terminate-system-terminal",
+        "outcome": "refused",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/terminals/[id]/system-terminal.page.ts"
       },
       {
         "route": null,
@@ -395880,6 +398823,33 @@
       },
       {
         "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+        "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal opened: sh opens a terminal and goes to it, the node kept",
+        "route": "system/swarm/nodes/:id/containers",
+        "interaction": "open-system-terminal",
+        "outcome": "opened",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+        "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a 409 says the container is not running",
+        "route": "system/swarm/nodes/:id/containers",
+        "interaction": "open-system-terminal",
+        "outcome": "refused",
+        "kind": "stay",
+        "freeze": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts/exec-refused-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
+        "test": "SwarmNodeContainersPage (screenshots) > open-system-terminal refused: a failed open says so above the table",
+        "route": "system/swarm/nodes/:id/containers",
+        "interaction": "open-system-terminal",
+        "outcome": "refused",
+        "kind": "stay",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts",
         "test": "SwarmNodeContainersPage (screenshots) > says a container is gone when its log answers 404",
         "route": "system/swarm/nodes/:id/containers",
         "interaction": "show-swarm-node-container-logs",
@@ -396192,6 +399162,51 @@
         "outcome": "sent",
         "kind": "stay",
         "freeze": "src/app/routes/system/targets/system-targets.page.browser.spec.ts/sign-in-cancelled-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+        "test": "SystemTerminalPage (screenshots) > leave-system-terminal containers: the back link opens the containers of ?node=",
+        "route": "system/terminals/:id",
+        "interaction": "leave-system-terminal",
+        "outcome": "containers",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+        "test": "SystemTerminalPage (screenshots) > leave-system-terminal nodes: without ?node= the back link opens the nodes",
+        "route": "system/terminals/:id",
+        "interaction": "leave-system-terminal",
+        "outcome": "nodes",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+        "test": "SystemTerminalPage (screenshots) > terminate-system-terminal containers: Terminate ends it and goes back to the containers",
+        "route": "system/terminals/:id",
+        "interaction": "terminate-system-terminal",
+        "outcome": "containers",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+        "test": "SystemTerminalPage (screenshots) > terminate-system-terminal nodes: without ?node= Terminate goes to the nodes",
+        "route": "system/terminals/:id",
+        "interaction": "terminate-system-terminal",
+        "outcome": "nodes",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts",
+        "test": "SystemTerminalPage (screenshots) > terminate-system-terminal refused: a failed Terminate says so and stays",
+        "route": "system/terminals/:id",
+        "interaction": "terminate-system-terminal",
+        "outcome": "refused",
+        "kind": "stay",
+        "freeze": null
       },
       {
         "spec": "src/app/ui/components/markdown/markdown.browser.spec.ts",
