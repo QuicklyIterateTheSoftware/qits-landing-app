@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { CancelTargetSignInData, CancelTargetSignInResponse, CheckTargetRegistrationData, CheckTargetRegistrationResponse, CloseTerminalData, CloseTerminalResponse, CreateLeaseData, CreateLeaseResponse, CreateTargetData, CreateTargetResponse, DeleteTargetData, DeleteTargetResponse, EndLeaseData, EndLeaseResponse, ExecInTargetContainerData, ExecInTargetContainerResponse, GetContainerLogsData, GetContainerLogsResponse, GetLeaseData, GetLeaseResponse, GetNodeContainerData, GetNodeContainerResponse, GetOverviewData, GetOverviewResponse, GetSwarmConfigData, GetSwarmConfigResponse, GetSwarmNodeData, GetSwarmNodeResponse, GetSwarmServiceData, GetSwarmServiceResponse, GetTargetData, GetTargetHealthData, GetTargetHealthResponse, GetTargetInstallScriptData, GetTargetInstallScriptResponse, GetTargetResponse, GetTargetSignInData, GetTargetSignInResponse, GetTerminalData, GetTerminalResponse, GreenlightTargetData, GreenlightTargetResponse, InspectTargetContainerData, InspectTargetContainerResponse, InspectTargetVolumeData, InspectTargetVolumeResponse, LeaseLogsData, ListLeasesData, ListLeasesResponse, ListNodeContainersData, ListNodeContainersResponse, ListNodeImagesData, ListNodeImagesResponse, ListNodeNetworksData, ListNodeNetworksResponse, ListNodeVolumesData, ListNodeVolumesResponse, ListSwarmConfigsData, ListSwarmConfigsResponse, ListSwarmNodesData, ListSwarmNodesResponse, ListSwarmSecretsData, ListSwarmSecretsResponse, ListSwarmServicesData, ListSwarmServicesResponse, ListTargetContainersData, ListTargetContainersResponse, ListTargetsData, ListTargetsResponse, ListTargetVolumesData, ListTargetVolumesResponse, ListTerminalsData, ListTerminalsResponse, ListWarmImagesData, ListWarmImagesResponse, OpenTerminalData, OpenTerminalResponse, PatchTargetData, PatchTargetResponse, PurgeWorkVolumeData, PurgeWorkVolumeResponse, RefreshLeaseData, RefreshLeaseResponse, RegisterTargetData, RegisterTargetResponse, RemoveTargetContainerData, RemoveTargetContainerResponse, ReplaceLeaseSpecData, ReplaceLeaseSpecResponse, RequestTargetHealthCheckData, RequestTargetHealthCheckResponse, RequestTargetLoginCheckData, RotateTargetRegistrationTokenData, RotateTargetRegistrationTokenResponse, StartTargetSignInData, StartTargetSignInResponse, StopTargetContainerData, StopTargetContainerResponse, SubmitTargetSignInCodeData, SubmitTargetSignInCodeResponse, TargetAuditData, TargetAuditResponse, TargetContainerLogsData } from '../types.gen';
+import type { CancelTargetSignInData, CancelTargetSignInResponse, CheckTargetRegistrationData, CheckTargetRegistrationResponse, CloseTerminalData, CloseTerminalResponse, CreateLeaseData, CreateLeaseResponse, CreateTargetData, CreateTargetResponse, DeleteTargetData, DeleteTargetResponse, EndLeaseData, EndLeaseResponse, ExecInTargetContainerData, ExecInTargetContainerResponse, GetContainerLogsData, GetContainerLogsResponse, GetLeaseData, GetLeaseResponse, GetNodeContainerData, GetNodeContainerResponse, GetOverviewData, GetOverviewResponse, GetSwarmConfigData, GetSwarmConfigResponse, GetSwarmNodeData, GetSwarmNodeResponse, GetSwarmServiceData, GetSwarmServiceResponse, GetTargetData, GetTargetHealthData, GetTargetHealthResponse, GetTargetInstallScriptData, GetTargetInstallScriptResponse, GetTargetResponse, GetTargetSignInData, GetTargetSignInResponse, GetTerminalData, GetTerminalResponse, GreenlightTargetData, GreenlightTargetResponse, InspectTargetContainerData, InspectTargetContainerResponse, InspectTargetVolumeData, InspectTargetVolumeResponse, LeaseLogsData, ListLeasesData, ListLeasesResponse, ListNodeContainersData, ListNodeContainersResponse, ListNodeImagesData, ListNodeImagesResponse, ListNodeNetworksData, ListNodeNetworksResponse, ListNodeVolumesData, ListNodeVolumesResponse, ListSwarmConfigsData, ListSwarmConfigsResponse, ListSwarmNodesData, ListSwarmNodesResponse, ListSwarmNodeTasksData, ListSwarmNodeTasksResponse, ListSwarmSecretsData, ListSwarmSecretsResponse, ListSwarmServicesData, ListSwarmServicesResponse, ListTargetContainersData, ListTargetContainersResponse, ListTargetsData, ListTargetsResponse, ListTargetVolumesData, ListTargetVolumesResponse, ListTerminalsData, ListTerminalsResponse, ListWarmImagesData, ListWarmImagesResponse, OpenTerminalData, OpenTerminalResponse, PatchTargetData, PatchTargetResponse, PurgeWorkVolumeData, PurgeWorkVolumeResponse, RefreshLeaseData, RefreshLeaseResponse, RegisterTargetData, RegisterTargetResponse, RemoveTargetContainerData, RemoveTargetContainerResponse, ReplaceLeaseSpecData, ReplaceLeaseSpecResponse, RequestTargetHealthCheckData, RequestTargetHealthCheckResponse, RequestTargetLoginCheckData, RotateTargetRegistrationTokenData, RotateTargetRegistrationTokenResponse, StartTargetSignInData, StartTargetSignInResponse, StopTargetContainerData, StopTargetContainerResponse, SubmitTargetSignInCodeData, SubmitTargetSignInCodeResponse, TargetAuditData, TargetAuditResponse, TargetContainerLogsData } from '../types.gen';
 
 /**
  * Leases, oldest first; a service sees its own
@@ -183,6 +183,16 @@ export const getSwarmNodeRequest = <ThrowOnError extends boolean = false>(option
     responseStyle: 'data',
     method: 'GET',
     url: '/system/api/swarm/nodes/{id}',
+    ...options
+});
+
+/**
+ * Node tasks
+ */
+export const listSwarmNodeTasksRequest = <ThrowOnError extends boolean = false>(options: Options<ListSwarmNodeTasksData, ThrowOnError>): HttpRequest<ListSwarmNodeTasksResponse> => (options?.client ?? client).requestOptions<ListSwarmNodeTasksResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/system/api/swarm/nodes/{id}/tasks',
     ...options
 });
 
@@ -684,6 +694,14 @@ export const listSwarmNodesResource = <ThrowOnError extends boolean = false>(opt
 export const getSwarmNodeResource = <ThrowOnError extends boolean = false>(options: () => Options<GetSwarmNodeData, ThrowOnError> | undefined) => httpResource<GetSwarmNodeResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? getSwarmNodeRequest(opts) : undefined;
+});
+
+/**
+ * Node tasks
+ */
+export const listSwarmNodeTasksResource = <ThrowOnError extends boolean = false>(options: () => Options<ListSwarmNodeTasksData, ThrowOnError> | undefined) => httpResource<ListSwarmNodeTasksResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listSwarmNodeTasksRequest(opts) : undefined;
 });
 
 /**

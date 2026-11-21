@@ -1,5 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import {
@@ -22,8 +23,10 @@ const NODES = '/system/api/swarm/nodes';
  * `@qits/system-golden-masters` pin records it). A read still open (`loading`) and a 503
  * (`unavailable`: the swarm not answering) are statuses only; so is a 403, which says the role.
  *
- * The page declares no outcome of its own: the shell's are shot once (`shootShellMenus`). Nothing
- * announces a node change, so the page has no `refreshOn`: Refresh is its only second read.
+ * A row's hostname opens the node's page (`open-swarm-node`, qits-2347), whose reads are answered
+ * with the same state's `getSwarmNode` and `listSwarmNodeTasks` (once the pin records the latter).
+ * The shell's outcomes are shot once (`shootShellMenus`). Nothing announces a node change, so the
+ * page has no `refreshOn`: Refresh is its only second read.
  */
 describe('SwarmNodesPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -137,6 +140,24 @@ describe('SwarmNodesPage (screenshots)', () => {
       .element(view.getByRole('alert'))
       .toMatchTextContent('Reading the swarm needs an admin role');
     expect(view.getByRole('button', { name: 'Retry' }).elements()).toHaveLength(0);
+  });
+
+  it('opens a node’s page from its hostname', async (context) => {
+    const tasksRecorded = await goldenMaster(SWARM, 'listSwarmNodeTasks', SYSTEM).then(
+      () => true,
+      () => false,
+    );
+    if (!tasksRecorded) context.skip();
+    const { opened, view } = await render(SWARM);
+    await view.getByRole('link', { name: 'fake-host', exact: true }).click();
+    await opened.idle();
+    const node = 'iwbwrdui2z0n62kqcjfo1erwh';
+    http.expectOne(`${NODES}/${node}`).flush(await goldenMaster(SWARM, 'getSwarmNode', SYSTEM));
+    http
+      .expectOne(`${NODES}/${node}/tasks`)
+      .flush(await goldenMaster(SWARM, 'listSwarmNodeTasks', SYSTEM));
+    await opened.settled();
+    expect(TestBed.inject(Router).url).toBe(`/system/swarm/nodes/${node}`);
   });
 
   it('reads the nodes again on Refresh', async () => {
