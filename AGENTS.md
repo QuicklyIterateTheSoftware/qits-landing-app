@@ -161,7 +161,7 @@ wrapper's READY → RELEASED → FINALIZED sends; deployment events name no proj
 while a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
 shell's own copy of the open project's requests (the sidebar's line, the trail, the agents' waits)
 is `ProjectReleaseRequests` (`core/projects/`, qits-2146), a `qitsResource` over that request with
-those events as its `refreshOn`; the shell hands it to the lightning menu, and the Release Requests
+those events as its `refreshOn`; the shell hands it to the lightning menu, and the Releases section's Requests
 page reads it too, so the request is made once. The notifications menu reads the newest events through its own `qitsResource` on its first
 opening and puts every new event at the top of its list once it is loaded. The bumps menu (the
 lighthouse, `patterns/maintenance/bumps-menu/`) reads qits-maintenance's pending bumps
@@ -186,8 +186,9 @@ after `AGENT_STATUS_EVENTS` about the project (debounced 1 s): `ProjectActiveAge
 the menu as an input (the trail names an agent from it too). Its waits' requests and items, like
 `app-agent-status`'s, come from `OpenProjectWaits` (`ProjectReleaseRequests`, and the work
 `SelectedWork`'s resource already holds once a work page wanted it, never read for the lines).
-The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was Workspaces):
-`projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
+The agent pages (epic qits-1681; Agents below the sidebar's Releases, `AGENTS = 'releases/agents'`,
+was Workspaces; qits-2482 moved them under `releases/`, and the old `agents/…` addresses redirect):
+`projects/<slug>/releases/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
 `agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
 under a Workspaces heading with the Targets link (`open-system-targets`, the System section's
 Targets page, qits-2351); `agents/<agent id>` (`AgentLayout`) reads the
@@ -232,7 +233,7 @@ gives the daemon's generated call that address. How the agent runs is its own `g
 strip, its container verbs and its harness install (sign-in, plugins) are the workspace page's.
 The slot's hint channel (`WorkspaceHints`, `/workspaces/api/workspaces/{id}/events`) stays: it is a
 REST door of qits-workspaces, not the container proxy. `agent-doors.spec.ts` beside the layout
-holds it: it walks the imports of every source under `routes/projects/[slug]/agents/[agentId]/`
+holds it: it walks the imports of every source under `routes/projects/[slug]/releases/agents/[agentId]/`
 (the app's own, not `api/`) and fails on `workspaces/container`, `WorkspaceContainer`,
 `container-proxy` or `containerBase` in any of them, and it runs every operation the page calls,
 addressed as the page addresses it, and fails on any request not to the agent's doors. The container proxy's addresses live in
@@ -1154,7 +1155,7 @@ followed by a spec); the UI builder's call popover and outbox link the provider'
 no docs link. Its pact interactions and screenshots skip themselves until the
 `@qits/artifacts-golden-masters` pin holds the reader's states.
 
-A CI run's page (qits-2321, `projects/<slug>/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
+A CI run's page (qits-2321, `projects/<slug>/releases/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
 other CI page) reads the run once through its own `qitsResource` over `RUN` (`getRun`) and joins it
 to the project by `run.repoId` among `PROJECT_REPOSITORIES`' ids (never `projectId`); a run of
 another project, or a 404, is "No run <id> in this project". Step output keeps its colour:
@@ -1168,7 +1169,7 @@ pushed), else the first FAILED/TIMED_OUT step, the live step or the last (`openS
 (`core/ci/ci-run-links.ts`, the one app-wide exit `open-ci-run:run`): the project's CI page, a
 repository's CI page (rows and "newer run"), a release request's builds, lifecycle, automations,
 reports and active-run chips. Its repository name opens that repository's CI page
-(`projects/<slug>/ci/<repository>`, qits-2320). It follows
+(`projects/<slug>/releases/ci/<repository>`, qits-2320). It follows
 `BUILD_EVENTS` naming the run (`buildOfRun`), and, the one poll qits-1270 allows, reads a RUNNING
 run again every 10 s while the document is visible (`pollWhile` in `core/events/poll-while.ts`):
 the live step's output has no event. A queued or finished run is never polled.
@@ -1486,7 +1487,7 @@ no project filter: the id is the whole address), again after `BUMP_EVENTS`
 (`core/maintenance/bump-events.ts`, shared with the bumps menu) only while the bump is REQUESTED
 or RUNNING. It shows the group and repository (linked to its repository page) with the status as a chip (any status, SUPERSEDED
 or unknown, as its word), the facts, the release request (a uuid links
-`projects/<slug>/release-requests/<id>`, `open-bump-release-request`; the sentinels `converged`
+`projects/<slug>/releases/requests/<id>`, `open-bump-release-request`; the sentinels `converged`
 and `refused` are words with what they mean; null is none), `releaseState` and `releaseDetail`
 verbatim as of `releaseStateAt` (only REJECTED, FAILED and CONFLICTED say the release is not
 coming: every automation bump that succeeded is REQUESTED), one link per CI run (`ciRunIds`, else

@@ -132,7 +132,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     ).agentId;
     await expect
       .element(view.getByRole('link', { name: 'contract-00000001-1' }))
-      .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
+      .toHaveAttribute('href', `/projects/${project.slug}/releases/agents/${agentId}`);
     await expect.element(view).toMatchTextContent('yielded — idle, terminal stays live');
     await expect
       .element(view.getByRole('group', { name: 'Container' }).getByRole('button', { name: 'Stop' }))

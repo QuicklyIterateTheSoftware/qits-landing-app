@@ -1711,8 +1711,7 @@ export const INTERACTIONS = {
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
-   * Agents, Release Requests, CI, Desk, Repositories, Deployments, Observability, Events,
-   * Maintenance). Navigates only, and names no pact (epic qits-2000).
+   * Releases, Desk, Repositories, Deployments, Observability, Docs, Events, Maintenance). Navigates only, and names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
   /**
@@ -1727,6 +1726,11 @@ export const INTERACTIONS = {
    */
   'open-sidebar-observability-page':
     'An Observability page below Observability in the sidebar opens that page',
+  /**
+   * `shell.layout.ts`: a Releases page listed below Releases in the sidebar opens it, one exit per
+   * page (qits-2482: Requests, Agents, CI). Navigates only, and names no pact.
+   */
+  'open-sidebar-releases-page': 'A Releases page below Releases in the sidebar opens that page',
   /**
    * `shell.layout.ts`: a Deployments page listed below Deployments in the sidebar opens it, one
    * exit per page (qits-2315: Requests). Navigates only, and names no pact.
@@ -1807,7 +1811,7 @@ export const INTERACTIONS = {
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
-   * the Work, Agents or Release Requests section above a subpage. Navigates only, and names no pact
+   * the Work or Releases section above a subpage, and Releases' Requests, Agents or CI page. Navigates only, and names no pact
    * (epic qits-2000).
    */
   'follow-breadcrumb': 'A breadcrumb before the current page opens its page',

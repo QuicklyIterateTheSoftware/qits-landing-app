@@ -160,7 +160,7 @@ describe('TicketListItem (screenshots)', () => {
   it('open-closing-request open: the closing line opens its wrapper release request', async () => {
     await shown('acceptance', WRAPPER_CLOSINGS, 'contract-00000001-2', 'Riding a pending');
     const { url, reached } = await follow(page.getByRole('link', { name: REQUEST }));
-    expect(url).toBe(`/projects/contract-00000001/release-requests/${REQUEST}`);
+    expect(url).toBe(`/projects/contract-00000001/releases/requests/${REQUEST}`);
     expect(reached).toEqual(['open-closing-request:open']);
   });
 });

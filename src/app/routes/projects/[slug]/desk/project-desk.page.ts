@@ -230,7 +230,7 @@ export class ProjectDeskPage {
    * comment the line came from when it names one.
    */
   protected readonly opening = outcomes('open-desk-line', {
-    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    releaseRequest: exit('projects/:slug/releases/requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
   });
 

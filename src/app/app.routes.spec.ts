@@ -12,11 +12,11 @@ import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-ite
 import { WorkInProgressPage } from './routes/projects/[slug]/work/in-progress/work-in-progress.page';
 import { WorkRefinementPage } from './routes/projects/[slug]/work/refinement/work-refinement.page';
 import { WorkLayout } from './routes/projects/[slug]/work/work.layout';
-import { AgentChatPage } from './routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page';
-import { AgentFilesPage } from './routes/projects/[slug]/agents/[agentId]/files/agent-files.page';
-import { AgentLayout } from './routes/projects/[slug]/agents/[agentId]/agent.layout';
-import { AgentTerminalPage } from './routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page';
-import { ProjectAgentsPage } from './routes/projects/[slug]/agents/project-agents.page';
+import { AgentChatPage } from './routes/projects/[slug]/releases/agents/[agentId]/chat/agent-chat.page';
+import { AgentFilesPage } from './routes/projects/[slug]/releases/agents/[agentId]/files/agent-files.page';
+import { AgentLayout } from './routes/projects/[slug]/releases/agents/[agentId]/agent.layout';
+import { AgentTerminalPage } from './routes/projects/[slug]/releases/agents/[agentId]/terminal/agent-terminal.page';
+import { ProjectAgentsPage } from './routes/projects/[slug]/releases/agents/project-agents.page';
 import { WorkAgentLayout } from './routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout';
 import { WorkspaceSlotPage } from './routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page';
 import { ProjectPickerPage } from './routes/projects/project-picker.page';
@@ -59,13 +59,16 @@ import { SystemTerminalPage } from './routes/system/terminals/[id]/system-termin
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
 
-/** Navigates to `url` and answers the components it renders, outermost first. */
+/**
+ * Navigates to `url` and answers the components it renders, outermost first; a parent with no
+ * component of its own (a section such as Releases) renders none.
+ */
 async function opened(url: string): Promise<unknown[]> {
   const harness = await RouterTestingHarness.create();
   await harness.navigateByUrl(url);
   const components: unknown[] = [];
   for (let r = TestBed.inject(Router).routerState.snapshot.root.firstChild; r; r = r.firstChild) {
-    components.push(r.component);
+    if (r.component) components.push(r.component);
   }
   return components;
 }
@@ -140,13 +143,28 @@ describe('agents and workspaces routes', () => {
     }),
   );
 
+  it.each([
+    ['/projects/x/agents', '/projects/x/releases/agents'],
+    ['/projects/x/agents/a-1?y=1', '/projects/x/releases/agents/a-1?y=1'],
+    ['/projects/x/agents/a-1/chat', '/projects/x/releases/agents/a-1/chat'],
+    ['/projects/x/release-requests', '/projects/x/releases/requests'],
+    ['/projects/x/release-requests/x-rr-1#c', '/projects/x/releases/requests/x-rr-1#c'],
+    ['/projects/x/ci?status=SUCCESS', '/projects/x/releases/ci?status=SUCCESS'],
+    ['/projects/x/ci/runs/r-1?step=0', '/projects/x/releases/ci/runs/r-1?step=0'],
+    ['/projects/x/ci/x-service', '/projects/x/releases/ci/x-service'],
+    ['/projects/x/releases', '/projects/x/releases/requests'],
+  ])('redirects %s to %s (qits-2482), keeping the query', async (from, to) => {
+    await opened(from);
+    expect(TestBed.inject(Router).url).toBe(to);
+  });
+
   it('opens the project’s agents at agents', async () => {
-    expect(await opened('/projects/x/agents')).toEqual([ProjectAgentsPage]);
+    expect(await opened('/projects/x/releases/agents')).toEqual([ProjectAgentsPage]);
   });
 
   it('redirects workspaces to agents', async () => {
     expect(await opened('/projects/x/workspaces')).toEqual([ProjectAgentsPage]);
-    expect(TestBed.inject(Router).url).toBe('/projects/x/agents');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/releases/agents');
   });
 
   it('redirects the project’s old Docs page to its Repositories (qits-2486)', async () => {
@@ -176,7 +194,7 @@ describe('agents and workspaces routes', () => {
   );
 
   it('opens an agent at agents/<agent id>', async () => {
-    expect((await opened('/projects/x/agents/a-1'))[0]).toBe(AgentLayout);
+    expect((await opened('/projects/x/releases/agents/a-1'))[0]).toBe(AgentLayout);
   });
 
   it.each([
@@ -184,7 +202,7 @@ describe('agents and workspaces routes', () => {
     ['files', AgentFilesPage],
     ['terminal', AgentTerminalPage],
   ])('opens its %s tab below it', async (tab, page) => {
-    expect(await opened(`/projects/x/agents/a-1/${tab}`)).toEqual([AgentLayout, page]);
+    expect(await opened(`/projects/x/releases/agents/a-1/${tab}`)).toEqual([AgentLayout, page]);
   });
 
   it.each(['', '/chat', '/files', '/terminal'])(

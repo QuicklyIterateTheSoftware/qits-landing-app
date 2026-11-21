@@ -210,7 +210,7 @@ describe('MaintenanceRepositoryPage (screenshots)', () => {
     await view.getByRole('link', { name: '00000000-0000-4000-8000-000000000003' }).first().click();
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/release-requests/00000000-0000-4000-8000-000000000003`,
+      `/projects/${opened.project.slug}/releases/requests/00000000-0000-4000-8000-000000000003`,
     );
   });
 

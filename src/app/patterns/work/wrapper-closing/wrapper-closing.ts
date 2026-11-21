@@ -71,7 +71,7 @@ export class WrapperClosingLine {
   protected readonly item = computed(() => itemMark('ticket', this.qualifiedId()));
 
   protected readonly opening = outcomes('open-closing-request', {
-    open: exit('projects/:slug/release-requests/:requestId'),
+    open: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   /** The request's page's params; the link is hidden while the line names no request. */

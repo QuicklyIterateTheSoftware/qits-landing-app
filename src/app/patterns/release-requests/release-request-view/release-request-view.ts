@@ -1101,7 +1101,7 @@ export class ReleaseRequestView implements OpenReleaseRequest {
 
   /** "← Release requests": back to the project's release requests (epic qits-2000). */
   protected readonly leaving = outcomes('leave-release-request', {
-    list: exit('projects/:slug/release-requests'),
+    list: exit('projects/:slug/releases/requests'),
   });
 
   /** "← Release requests" under a repository: back to the repository's (qits-2506). */
@@ -1115,11 +1115,11 @@ export class ReleaseRequestView implements OpenReleaseRequest {
    * the requests a moved source left and joined.
    */
   protected readonly related = outcomes('open-related-release-request', {
-    supersededBy: exit('projects/:slug/release-requests/:requestId'),
-    queuedBehind: exit('projects/:slug/release-requests/:requestId'),
-    queuedNext: exit('projects/:slug/release-requests/:requestId'),
-    movedFrom: exit('projects/:slug/release-requests/:requestId'),
-    movedTo: exit('projects/:slug/release-requests/:requestId'),
+    supersededBy: exit('projects/:slug/releases/requests/:requestId'),
+    queuedBehind: exit('projects/:slug/releases/requests/:requestId'),
+    queuedNext: exit('projects/:slug/releases/requests/:requestId'),
+    movedFrom: exit('projects/:slug/releases/requests/:requestId'),
+    movedTo: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   /** The same requests, opened under the repository the view is mounted in (qits-2506). */

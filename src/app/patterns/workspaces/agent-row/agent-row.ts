@@ -147,7 +147,7 @@ export class AgentRow {
   });
   protected readonly wait = computed(() => agentWaitLabel(this.agent()));
   protected readonly opening = outcomes('open-agent-row', {
-    open: exit('projects/:slug/agents/:agentId'),
+    open: exit('projects/:slug/releases/agents/:agentId'),
   });
 
   /** The agent page's exit params; none without the slug and the agent's id. */

@@ -132,7 +132,7 @@ export interface FrameReads {
   readonly projects?: string;
   /**
    * qits-projects' `listProjectReleaseRequests` of the open project: the shell's one read
-   * (`ProjectReleaseRequests`: the sidebar's Release Requests line, the trail, the agents' waits,
+   * (`ProjectReleaseRequests`: the sidebar's Releases line, the trail, the agents' waits,
    * the lightning menu and the Release Requests page; qits-2146); default
    * `'a project with no release requests'`.
    */

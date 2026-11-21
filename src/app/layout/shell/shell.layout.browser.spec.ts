@@ -83,7 +83,7 @@ class PinnedPage {}
  * Screenshots of the layout in a real browser: the wide sidebar, and the narrow burger closed and
  * open, with no project open; and the sidebar of an open project. The open project is qits-projects'
  * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu and
- * the sidebar's Release Requests entry) are the recorded "a project with no release requests", or
+ * the sidebar's Releases entry) are the recorded "a project with no release requests", or
  * "a project with pending release requests" where a case says so. The event stream never connects.
  * Each top-bar menu is also opened on a phone and on a wide screen, its reads answered with the
  * golden masters its own browser spec uses, to show where its panel lies.
@@ -139,11 +139,13 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/work/archive', component: TestPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
           { path: 'projects/:slug/ideas', component: TestPage },
-          { path: 'projects/:slug/agents', component: TestPage },
-          { path: 'projects/:slug/agents/:agentId', component: TestPage },
-          { path: 'projects/:slug/release-requests', component: TestPage },
-          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
-          { path: 'projects/:slug/ci', component: TestPage },
+          { path: 'projects/:slug/releases', component: TestPage },
+          { path: 'projects/:slug/releases/agents', component: TestPage },
+          { path: 'projects/:slug/releases/agents/:agentId', component: TestPage },
+          { path: 'projects/:slug/releases/requests', component: TestPage },
+          { path: 'projects/:slug/releases/requests/:requestId', component: TestPage },
+          { path: 'projects/:slug/releases/ci', component: TestPage },
+          { path: 'projects/:slug/releases/ci/runs/:runId', component: TestPage },
           { path: 'projects/:slug/desk', component: TestPage },
           { path: 'projects/:slug/repositories', component: TestPage },
           { path: 'projects/:slug/deployments', component: TestPage },
@@ -365,14 +367,17 @@ describe('ShellLayout (screenshots)', () => {
       .toMatchTextContent('Refinement');
   });
 
-  it('shows the newest release request below Release Requests, between Work and Repositories', async () => {
+  it('shows the newest release request below Releases, with its pages below it', async () => {
     const { project, layout } = await renderProject(
-      '/release-requests',
+      '/releases/requests',
       'a project with pending release requests',
     );
     const navigation = page.getByRole('navigation', { name: 'qits' });
-    const entry = navigation.getByRole('link', { name: /^Release Requests/ });
-    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    const entry = navigation.getByRole('link', { name: /^Releases/ });
+    await expect.element(entry).toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Requests', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
     // Recorded: every request changed at the same instant, so the first listed is the newest.
     await expect.element(entry).toMatchTextContent('contract-service');
     await expect.element(entry).toMatchTextContent('pending');
@@ -383,8 +388,10 @@ describe('ShellLayout (screenshots)', () => {
     expect(labels).toEqual([
       'Work',
       'Ideas',
+      'Releases',
+      // Its pages, while it is open (qits-2482).
+      'Requests',
       'Agents',
-      'Release Requests',
       'CI',
       'Desk',
       'Repositories',
@@ -397,16 +404,16 @@ describe('ShellLayout (screenshots)', () => {
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toMatchTextContent(`${project.name}›Release Requests`);
+      .toMatchTextContent(`${project.name}›Releases›Requests`);
     await expect.element(layout).toMatchScreenshot('release-requests', { kind: 'DATA' });
   });
 
-  it('shows no line below Release Requests for a project without any', async () => {
+  it('shows no line below Releases for a project without any', async () => {
     await renderProject('/work');
     const entry = page
       .getByRole('navigation', { name: 'qits' })
-      .getByRole('link', { name: 'Release Requests' });
-    await expect.element(entry).toMatchTextContent(/^Release Requests$/);
+      .getByRole('link', { name: 'Releases' });
+    await expect.element(entry).toMatchTextContent(/^Releases$/);
   });
 
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {
@@ -596,9 +603,7 @@ describe('ShellLayout (screenshots)', () => {
   const SECTIONS = [
     { label: 'Work', segment: 'work', outcome: 'work' },
     { label: 'Ideas', segment: 'ideas', outcome: 'ideas' },
-    { label: 'Agents', segment: 'agents', outcome: 'agents' },
-    { label: /^Release Requests/, segment: 'release-requests', outcome: 'releaseRequests' },
-    { label: 'CI', segment: 'ci', outcome: 'ci' },
+    { label: /^Releases/, segment: 'releases', outcome: 'releases' },
     { label: 'Desk', segment: 'desk', outcome: 'desk' },
     { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
     { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
@@ -642,6 +647,30 @@ describe('ShellLayout (screenshots)', () => {
       await expect.element(link).toHaveAttribute('aria-current', 'page');
       await expect
         .element(navigation.getByRole('link', { name: 'Work', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
+
+  /** The Releases pages below Releases in the sidebar (qits-2482), with their segment and outcome. */
+  const RELEASES_PAGES = [
+    { label: 'Requests', segment: 'requests', from: '/releases/ci' },
+    { label: 'Agents', segment: 'agents', from: '/releases/requests' },
+    { label: 'CI', segment: 'ci', from: '/releases/requests' },
+  ] as const;
+
+  for (const releases of RELEASES_PAGES) {
+    it(`open-sidebar-releases-page ${releases.segment}: ${releases.label} below Releases opens it`, async () => {
+      // On a Releases page already, so its pages show below Releases.
+      const { fixture, project } = await renderProject(releases.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: releases.label, exact: true });
+      expect(await follow(fixture, link)).toBe(
+        `/projects/${project.slug}/releases/${releases.segment}`,
+      );
+      expect(reached()).toEqual([`open-sidebar-releases-page:${releases.segment}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: /^Releases/ }))
         .toHaveAttribute('aria-current', 'true');
     });
   }
@@ -1146,25 +1175,29 @@ describe('ShellLayout (screenshots)', () => {
     expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
   });
 
-  it('marks Agents current on a slot’s page, with the slot below it in the trail', async () => {
+  it('marks Releases › Agents current on a slot’s page, with the slot below it in the trail', async () => {
     const { layout } = await renderProject('/workspaces/3');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
-      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Agents' }))
+      .element(navigation.getByRole('link', { name: 'Agents', exact: true }))
       .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: /^Releases/ }))
+      .toHaveAttribute('aria-current', 'true');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Agents' })).toBeVisible();
-    await expect.element(breadcrumb).toMatchTextContent('Agents›ws-3');
+    await expect.element(breadcrumb).toMatchTextContent('Releases›Agents›ws-3');
     await expect.element(layout).toMatchScreenshot('slot', { kind: 'DATA' });
   });
 
-  it('shows a release request’s trail below Release Requests', async () => {
+  it('shows a release request’s trail below Releases › Requests', async () => {
     const { layout } = await renderProject(
-      '/release-requests/contract-frontend-rr-1',
+      '/releases/requests/contract-frontend-rr-1',
       'a project with pending release requests',
     );
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
-    await expect.element(breadcrumb.getByRole('link', { name: 'Release Requests' })).toBeVisible();
-    await expect.element(breadcrumb).toMatchTextContent('Release Requests›contract-frontend-rr-1');
+    await expect.element(breadcrumb.getByRole('link', { name: 'Requests' })).toBeVisible();
+    await expect.element(breadcrumb).toMatchTextContent('Releases›Requests›contract-frontend-rr-1');
     await expect.element(layout).toMatchScreenshot('release-request', { kind: 'DATA' });
   });
 
@@ -1185,16 +1218,28 @@ describe('ShellLayout (screenshots)', () => {
       outcome: 'work',
     },
     {
-      from: '/workspaces/3',
-      name: 'Agents',
-      to: (slug: string) => `/projects/${slug}/agents`,
-      outcome: 'agents',
+      from: '/releases/requests',
+      name: 'Releases',
+      to: (slug: string) => `/projects/${slug}/releases`,
+      outcome: 'releases',
     },
     {
-      from: '/release-requests/contract-frontend-rr-1',
-      name: 'Release Requests',
-      to: (slug: string) => `/projects/${slug}/release-requests`,
-      outcome: 'releaseRequests',
+      from: '/releases/requests/contract-frontend-rr-1',
+      name: 'Requests',
+      to: (slug: string) => `/projects/${slug}/releases/requests`,
+      outcome: 'releasesRequests',
+    },
+    {
+      from: '/workspaces/3',
+      name: 'Agents',
+      to: (slug: string) => `/projects/${slug}/releases/agents`,
+      outcome: 'releasesAgents',
+    },
+    {
+      from: '/releases/ci/runs/r-1',
+      name: 'CI',
+      to: (slug: string) => `/projects/${slug}/releases/ci`,
+      outcome: 'releasesCi',
     },
   ] as const;
 

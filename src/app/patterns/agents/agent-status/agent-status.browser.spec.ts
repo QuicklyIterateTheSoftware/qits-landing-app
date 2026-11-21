@@ -60,9 +60,9 @@ describe('AgentStatus (screenshots)', () => {
       providers: [
         provideRouter([
           { path: 'projects/:slug', children: [] },
-          { path: 'projects/:slug/release-requests/:requestId', children: [] },
+          { path: 'projects/:slug/releases/requests/:requestId', children: [] },
           { path: 'projects/:slug/work/detail/:id', children: [] },
-          { path: 'projects/:slug/agents/:agentId/chat', children: [] },
+          { path: 'projects/:slug/releases/agents/:agentId/chat', children: [] },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -128,7 +128,7 @@ describe('AgentStatus (screenshots)', () => {
     const { locator, agent } = await shown(NEEDING_ATTENTION);
     await expect
       .element(agent('contract-00000001-9').getByRole('link', { name: 'contract-qits-rr-368' }))
-      .toHaveAttribute('href', `/projects/${slug}/release-requests/contract-qits-rr-368`);
+      .toHaveAttribute('href', `/projects/${slug}/releases/requests/contract-qits-rr-368`);
     await expect
       .element(agent('contract-00000001-4').getByRole('link', { name: 'CI run 00000000' }).first())
       .toHaveAttribute('href', 'https://ci.test/runs/00000000-0000-4000-8000-0000000000c2');
@@ -157,7 +157,7 @@ describe('AgentStatus (screenshots)', () => {
     const { url, reached } = await follow(
       agent('contract-00000001-9').getByRole('link', { name: 'contract-qits-rr-368' }),
     );
-    expect(url).toBe(`/projects/${slug}/release-requests/contract-qits-rr-368`);
+    expect(url).toBe(`/projects/${slug}/releases/requests/contract-qits-rr-368`);
     expect(reached).toEqual(['open-agent-wait:releaseRequest']);
   });
 
@@ -185,7 +185,7 @@ describe('AgentStatus (screenshots)', () => {
     const { url, reached } = await follow(
       agent(idle.entityId).getByRole('link', { name: 'Prompt agent' }),
     );
-    expect(url).toBe(`/projects/${slug}/agents/${idle.agentId}/chat`);
+    expect(url).toBe(`/projects/${slug}/releases/agents/${idle.agentId}/chat`);
     expect(reached).toEqual(['act-on-agent-attention:prompt']);
   });
 
@@ -203,7 +203,7 @@ describe('AgentStatus (screenshots)', () => {
     const { url, reached } = await follow(
       agent('contract-00000001-11').getByRole('link', { name: 'contract-qits-rr-369' }).last(),
     );
-    expect(url).toBe(`/projects/${slug}/release-requests/contract-qits-rr-369`);
+    expect(url).toBe(`/projects/${slug}/releases/requests/contract-qits-rr-369`);
     expect(reached).toEqual(['act-on-agent-attention:overdueRequest']);
   });
 });

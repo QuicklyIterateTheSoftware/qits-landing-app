@@ -679,7 +679,7 @@ export class MaintenanceRepositoryPage {
 
   /** The release request a bump belongs to. */
   protected readonly requesting = outcomes('open-repository-bump-release-request', {
-    request: exit('projects/:slug/release-requests/:requestId'),
+    request: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   private readonly params = toSignal(this.route.paramMap, {

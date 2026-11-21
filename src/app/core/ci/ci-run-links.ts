@@ -20,7 +20,9 @@ export class CiRunLinks {
   private readonly selected = inject(SelectedProject);
 
   /** A run's page. */
-  readonly opening = outcomes('open-ci-run', { run: exit('projects/:slug/ci/runs/:runId') });
+  readonly opening = outcomes('open-ci-run', {
+    run: exit('projects/:slug/releases/ci/runs/:runId'),
+  });
 
   /** The open project's slug; `''` before the URL names one. */
   readonly slug = computed(() => this.selected.slug() ?? '');

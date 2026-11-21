@@ -58,7 +58,7 @@ describe('MaintenanceRepositoryPage', () => {
             component: MaintenanceRepositoryPage,
           },
           { path: 'projects/:slug/maintenance/bumps/:bumpId', component: Stub },
-          { path: 'projects/:slug/release-requests/:requestId', component: Stub },
+          { path: 'projects/:slug/releases/requests/:requestId', component: Stub },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -200,7 +200,7 @@ describe('MaintenanceRepositoryPage', () => {
     expect(text(rows[0], '[data-release-request]')).toBe('none');
     const request = rows[1].querySelector<HTMLAnchorElement>('[data-release-request] a')!;
     expect(request.getAttribute('href')).toBe(
-      `/projects/${project.slug}/release-requests/${bumps[1].releaseRequestId}`,
+      `/projects/${project.slug}/releases/requests/${bumps[1].releaseRequestId}`,
     );
     // The changes count: the RUNNING bump sends one, the others none.
     expect(text(rows[0].querySelectorAll('td')[4])).toBe('1');

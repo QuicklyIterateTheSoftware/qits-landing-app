@@ -55,9 +55,7 @@ export interface NavPage {
 type SectionKey =
   | 'work'
   | 'ideas'
-  | 'agents'
-  | 'releaseRequests'
-  | 'ci'
+  | 'releases'
   | 'desk'
   | 'repositories'
   | 'deployments'
@@ -75,9 +73,10 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'work/acceptance'
   | 'work/archive'
   | 'ideas'
-  | 'agents'
-  | 'release-requests'
-  | 'ci'
+  | 'releases'
+  | 'releases/requests'
+  | 'releases/agents'
+  | 'releases/ci'
   | 'desk'
   | 'repositories'
   | 'deployments'
@@ -108,6 +107,13 @@ export interface NavLink extends NavPage {
 /** One of a section's own pages, below it in the sidebar. */
 export interface NavChild extends NavPage {
   readonly exit: ProjectPageExit;
+  /** Its crumb's exit, for a section whose trail names the page (Releases › Requests). */
+  readonly crumb?: ExitOutcome;
+  /**
+   * Other URLs (absolute) whose pages it stays current on, though they are not below `path`:
+   * Agents on a slot's page (`workspaces/<slot id>`).
+   */
+  readonly alsoOn?: readonly string[];
 }
 
 /** A global section's page in this app: a route that takes no params (qits-2316). */
@@ -228,14 +234,14 @@ export interface NavNote {
  * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
  * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts and
  * Orchestrator, a work page and a global section's page are marked current by `[qitsExit]`; a section keeps its own rule
- * (`currentOf`: `true` while one of its pages below it is open, and Agents on a slot's page), and so
+ * (`currentOf`: `true` while one of its pages below it is open, and Releases › Agents on a slot's page), and so
  * does a global section with pages of its own (`globalCurrentOf`, the same rule: System is `true`
  * on Services, Nodes, Configs or Secrets, qits-2346, and Mirror on Caches or OCI upstreams,
  * qits-2479), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
- * its release requests (`ProjectReleaseRequests`: the sidebar's Release Requests line, a request's
+ * its release requests (`ProjectReleaseRequests`: the sidebar's Releases line, a request's
  * crumb, and the lightning menu, which the shell hands that resource) and its ACTIVE agents
  * (`ProjectActiveAgents`: an agent's crumb, and the agents menu, which the shell hands that
  * resource). Their staleness is each resource's `refreshOn` (see each
@@ -484,6 +490,7 @@ export interface NavNote {
                       class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                       [qitsExit]="child.exit"
                       [exitParams]="{ slug: slug() }"
+                      [exitCurrent]="childCurrent(child)"
                       (click)="closeNav()"
                       >{{ child.label }}</a
                     >
@@ -547,9 +554,7 @@ export class ShellLayout {
   private readonly sections = outcomes('open-sidebar-section', {
     work: exit('projects/:slug/work'),
     ideas: exit('projects/:slug/ideas'),
-    agents: exit('projects/:slug/agents'),
-    releaseRequests: exit('projects/:slug/release-requests'),
-    ci: exit('projects/:slug/ci'),
+    releases: exit('projects/:slug/releases'),
     desk: exit('projects/:slug/desk'),
     repositories: exit('projects/:slug/repositories'),
     deployments: exit('projects/:slug/deployments'),
@@ -565,6 +570,16 @@ export class ShellLayout {
     inProgress: exit('projects/:slug/work/in-progress'),
     acceptance: exit('projects/:slug/work/acceptance'),
     archive: exit('projects/:slug/work/archive'),
+  });
+
+  /**
+   * The Releases pages below Releases in the sidebar, one exit per page (qits-2482): agents file
+   * release requests, CI carries them.
+   */
+  private readonly releasesPages = outcomes('open-sidebar-releases-page', {
+    requests: exit('projects/:slug/releases/requests'),
+    agents: exit('projects/:slug/releases/agents'),
+    ci: exit('projects/:slug/releases/ci'),
   });
 
   /** The Deployments pages below Deployments in the sidebar, one exit per page (qits-2315). */
@@ -779,15 +794,18 @@ export class ShellLayout {
 
   /**
    * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
-   * the project, and the sections a subpage crumb can follow (Work, Agents, Release Requests).
+   * the project, and the sections and pages a subpage crumb can follow (Work; Releases and its
+   * Requests, Agents and CI, qits-2482).
    */
   private readonly trail = outcomes('follow-breadcrumb', {
     home: exit(''),
     projects: exit('projects'),
     project: exit('projects/:slug'),
     work: exit('projects/:slug/work'),
-    agents: exit('projects/:slug/agents'),
-    releaseRequests: exit('projects/:slug/release-requests'),
+    releases: exit('projects/:slug/releases'),
+    releasesRequests: exit('projects/:slug/releases/requests'),
+    releasesAgents: exit('projects/:slug/releases/agents'),
+    releasesCi: exit('projects/:slug/releases/ci'),
     repositories: exit('projects/:slug/repositories'),
     repository: exit('projects/:slug/repositories/:repo'),
     repositoryContracts: exit('projects/:slug/repositories/:repo/contracts'),
@@ -799,8 +817,7 @@ export class ShellLayout {
   /** A section's crumb's exit, for the sections with a subpage below them. */
   private readonly sectionCrumbExits: Partial<Record<SectionKey, ExitOutcome>> = {
     work: this.trail.work,
-    agents: this.trail.agents,
-    releaseRequests: this.trail.releaseRequests,
+    releases: this.trail.releases,
     repositories: this.trail.repositories,
   };
 
@@ -820,7 +837,7 @@ export class ShellLayout {
 
   /**
    * The open project's newest release request (`latestReleaseRequest`), as the line below the
-   * sidebar's Release Requests entry: its repository and version, and its state. The requests are
+   * sidebar's Releases entry: its repository and version, and its state. The requests are
    * `ProjectReleaseRequests`', read when the project opens; until they are there, and for a project
    * without any, there is no line.
    *
@@ -870,12 +887,31 @@ export class ShellLayout {
         }),
       },
       link('ideas', 'Ideas', sections.ideas),
-      link('agents', 'Agents', sections.agents),
       {
-        ...link('releaseRequests', 'Release Requests', sections.releaseRequests),
+        ...link('releases', 'Releases', sections.releases),
         note: this.latestRelease(),
+        children: [
+          {
+            label: 'Requests',
+            exit: this.releasesPages.requests,
+            path: this.releasesPages.requests.url(params),
+            crumb: this.trail.releasesRequests,
+          },
+          {
+            label: 'Agents',
+            exit: this.releasesPages.agents,
+            path: this.releasesPages.agents.url(params),
+            crumb: this.trail.releasesAgents,
+            alsoOn: [`/projects/${slug}/${WORKSPACES}`],
+          },
+          {
+            label: 'CI',
+            exit: this.releasesPages.ci,
+            path: this.releasesPages.ci.url(params),
+            crumb: this.trail.releasesCi,
+          },
+        ],
       },
-      link('ci', 'CI', sections.ci),
       link('desk', 'Desk', sections.desk),
       link('repositories', 'Repositories', sections.repositories),
       {
@@ -973,10 +1009,11 @@ export class ShellLayout {
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
-   * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
-   * Work › <item id>, Release Requests › <request id>, Deployments › <version> · <application>,
-   * Agents › <agent's item id>, Agents › ws-<slot id>). The last crumb is the current page and is not a link; each one before it leads
-   * through its `follow-breadcrumb` exit.
+   * the URL is in ("Work", or "Setup" from the gear), for Releases its page (Requests, Agents, CI,
+   * qits-2482), then a subpage of it (Work › Archive, Work › <item id>, Releases › Requests ›
+   * <request id>, Releases › CI › <run>, Releases › Agents › <agent's item id>, Releases › Agents ›
+   * ws-<slot id>, Deployments › <version> · <application>). The last crumb is the current page and
+   * is not a link; each one before it leads through its `follow-breadcrumb` exit.
    */
   protected readonly crumbs = computed((): readonly Crumb[] => {
     const projects: Crumb = { label: 'Projects', exit: this.trail.projects };
@@ -1025,31 +1062,36 @@ export class ShellLayout {
       steps[steps.length - 1] = { label: last.label };
       return [...crumbs, section, ...steps];
     }
+    // The section's page the trail names (Releases › Requests), when it has a crumb of its own.
+    const child = found.children?.find((page) => page.crumb && this.isOn(page));
+    const page: Crumb[] = child ? [{ label: child.label, exit: child.crumb, params }] : [];
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
-    // Release Requests › <request id>.
+    // Releases › Requests › <request id>, Releases › CI › <run>.
+    const base = `/projects/${slug}`;
     const requests = this.releaseRequests.requests();
     const agents = this.activeAgents.agents();
     const sub =
-      workSubpage(url, `/projects/${slug}`) ??
-      releaseRequestSubpage(url, `/projects/${slug}`, requests) ??
-      deploymentRequestSubpage(url, `/projects/${slug}`, this.openDeploymentRequest.shown()) ??
-      slotSubpage(url, `/projects/${slug}`) ??
-      agentSubpage(url, `/projects/${slug}`, agents);
+      workSubpage(url, base) ??
+      releaseRequestSubpage(url, base, requests) ??
+      ciSubpage(url, base) ??
+      deploymentRequestSubpage(url, base, this.openDeploymentRequest.shown()) ??
+      slotSubpage(url, base) ??
+      agentSubpage(url, base, agents);
     return sub
-      ? [...crumbs, section, { label: sub.label, marks: sub.marks }]
-      : [...crumbs, section];
+      ? [...crumbs, section, ...page, { label: sub.label, marks: sub.marks }]
+      : [...crumbs, section, ...page];
   });
 
   /**
    * The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear.
-   * A slot's page (`workspaces/<slot id>`) is in Agents.
+   * A slot's page (`workspaces/<slot id>`) is in Releases (its Agents).
    */
   protected readonly section = computed((): NavLink | undefined => {
     const slug = this.selected.slug();
     if (slug === undefined) return undefined;
     const url = this.selected.url();
     if (within(url, `/projects/${slug}/${WORKSPACES}`)) {
-      return this.links().find((link) => link.key === 'agents');
+      return this.links().find((link) => link.key === 'releases');
     }
     const setup: NavLink = {
       key: 'setup',
@@ -1065,13 +1107,25 @@ export class ShellLayout {
     return within(this.selected.url(), page.path);
   }
 
+  /** Whether the URL is a section's page `child`, one below it, or one it stays current on. */
+  private isOn(child: NavChild): boolean {
+    return (
+      this.isAt(child) || (child.alsoOn ?? []).some((path) => within(this.selected.url(), path))
+    );
+  }
+
+  /** A section's page's `aria-current`: `page` on a page it stays current on outside its path. */
+  protected childCurrent(child: NavChild): 'page' | undefined {
+    return !this.isAt(child) && this.isOn(child) ? 'page' : undefined;
+  }
+
   /**
    * A section's `aria-current`: `page` when it is the current page, `true` when the current page
    * is one of its own pages in the sidebar below it (or another page of the section).
    */
   protected currentOf(link: NavLink): 'page' | 'true' | null {
     if (link.path !== this.section()?.path) return null;
-    return link.children?.some((child) => this.isAt(child)) ? 'true' : 'page';
+    return link.children?.some((child) => this.isOn(child)) ? 'true' : 'page';
   }
 
   /** Whether the URL is within a global section: its page or one below it (qits-2346). */
@@ -1166,8 +1220,14 @@ export class ShellLayout {
   }
 }
 
-/** The release requests section's segment below a project: `/projects/<slug>/release-requests`. */
-export const RELEASE_REQUESTS = 'release-requests';
+/**
+ * The release requests' segments below a project: `/projects/<slug>/releases/requests`, a page of
+ * the Releases section (qits-2482; the old `release-requests` redirects).
+ */
+export const RELEASE_REQUESTS = 'releases/requests';
+
+/** The CI pages' segments below a project: `/projects/<slug>/releases/ci` (qits-2482). */
+export const CI = 'releases/ci';
 
 /** The desk section's segment below a project: `/projects/<slug>/desk`. */
 export const DESK = 'desk';
@@ -1180,12 +1240,15 @@ function within(url: string, path: string): boolean {
   return url === path || /^[/?#]/.test(url.startsWith(path) ? url.slice(path.length) : 'x');
 }
 
-/** The agents section's segment below a project: `/projects/<slug>/agents` (epic qits-1681). */
-export const AGENTS = 'agents';
+/**
+ * The agents' segments below a project: `/projects/<slug>/releases/agents` (epic qits-1681), a
+ * page of the Releases section (qits-2482; the old `agents` redirects).
+ */
+export const AGENTS = 'releases/agents';
 
 /**
  * The slots' segment below a project: `/projects/<slug>/workspaces/<slot id>`, a page of the
- * agents section (the bare `workspaces` redirects to `agents`).
+ * Releases section's Agents (the bare `workspaces` redirects to `releases/agents`).
  */
 export const WORKSPACES = 'workspaces';
 
@@ -1255,7 +1318,7 @@ export function workSubpage(url: string, project: string): NavPage | undefined {
 
 /**
  * The crumb of one release request below the project at `project` (`/projects/<slug>`):
- * `<project>/release-requests/<id>` names the request by its logical id (`<repository>-rr-<n>`),
+ * `<project>/releases/requests/<id>` names the request by its logical id (`<repository>-rr-<n>`),
  * found in `requests` by uuid or logical id; a request without one by its uuid's first eight
  * characters. Undefined for the list itself and anything outside it.
  */
@@ -1320,6 +1383,24 @@ export function repositoryTrail(url: string, project: string): RepositoryTrail |
     page: segment ? { segment, label: label ?? decodeURIComponent(segment) } : undefined,
     leaf: segment && leaf ? decodeURIComponent(leaf) : undefined,
   };
+}
+
+/**
+ * The crumb of a CI page below the project at `project` (`/projects/<slug>`, qits-2482):
+ * `<project>/releases/ci/runs/<run id>` is the run, by its id's first eight characters, and
+ * `<project>/releases/ci/<repository>` the repository's name. Undefined for the list itself and
+ * anything outside it.
+ */
+export function ciSubpage(url: string, project: string): NavPage | undefined {
+  const prefix = `${project}/${CI}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const [first, second] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  if (first === 'runs') {
+    return second
+      ? { label: decodeURIComponent(second).slice(0, 8), path: `${prefix}runs/${second}` }
+      : undefined;
+  }
+  return first ? { label: decodeURIComponent(first), path: `${prefix}${first}` } : undefined;
 }
 
 /** The deployment requests' segment below a project: `/projects/<slug>/deployments/requests`. */

@@ -94,7 +94,7 @@ describe('WorkAcceptancePage (screenshots)', () => {
     await answered();
     const root = element.element();
     const list = await goldenMaster('a project exists', 'listProjects');
-    const requests = `/projects/${list.entries[0].project.slug}/release-requests`;
+    const requests = `/projects/${list.entries[0].project.slug}/releases/requests`;
     /** The closing line on the card of `ticket`. */
     const lineOf = (ticket: string) =>
       [...root.querySelectorAll('ui-board-card')]

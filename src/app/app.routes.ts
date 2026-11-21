@@ -51,14 +51,19 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * work section's `detail` scheme so an id can never be taken for `create`) and its edit at
  * `ideas/detail/<idea id>/edit` (`IdeaEditPage`).
  *
- * A project's release requests are at `projects/<slug>/release-requests` (`ReleaseRequestsPage`),
- * one request at `release-requests/<requestId>` (`ReleaseRequestPage`).
+ * The Releases section (qits-2482): `projects/<slug>/releases` is a parent with no component, its
+ * pages its children: Requests, Agents and CI. `/releases` opens `requests` by a relative
+ * `redirectTo`. The old addresses (`release-requests/…`, `agents/…`, `ci/…`) redirect to theirs
+ * below `releases/`, one relative redirect per page, so the child path and the query are kept.
  *
- * One CI run is at `projects/<slug>/ci/runs/<runId>` (`CiRunPage`, qits-2321), declared ahead of
+ * A project's release requests are at `projects/<slug>/releases/requests` (`ReleaseRequestsPage`),
+ * one request at `releases/requests/<requestId>` (`ReleaseRequestPage`).
+ *
+ * One CI run is at `projects/<slug>/releases/ci/runs/<runId>` (`CiRunPage`, qits-2321), declared ahead of
  * every other CI page: its header and facts, its steps with their coloured output (`?step=`),
  * Cancel and Run again, and its reports.
  *
- * A project's CI is at `projects/<slug>/ci` (`CiRunsPage`, qits-2314): each repository's newest
+ * A project's CI is at `projects/<slug>/releases/ci` (`CiRunsPage`, qits-2314): each repository's newest
  * run and newest run on main, filtered by `?repository=` and `?status=`, with the project's
  * running and queued runs above them. One repository's runs are at `ci/<repository name>`
  * (`CiRepositoryRunsPage`, qits-2320), newest first, filtered by `?status=`, `?branch=` and
@@ -112,7 +117,7 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * one repository's pins, bumps, dependents and downstream: detail pages with no sidebar entry of
  * their own.
  *
- * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/agents`
+ * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/releases/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
  * (`ProjectAgentsPage`); `agents/<agent id>` is one agent (`AgentLayout`): a layout, whose
  * children are the agent's tabs (`chat`, `AgentChatPage`; `files`, `AgentFilesPage`; `terminal`,
@@ -222,6 +227,20 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
  * shell, so the guard does not run on it and the catch-all never takes it.
  */
+/**
+ * Redirects from an old section's addresses to its new ones, one per page below it (`''` is the
+ * section itself): `redirects('a', 'b', ['', ':id'])` sends `a` to `b` and `a/<id>` to `b/<id>`.
+ * Relative, so the query is kept.
+ */
+function redirects(from: string, to: string, pages: readonly string[]): Routes {
+  const join = (base: string, page: string) => (page ? `${base}/${page}` : base);
+  return pages.map((page) => ({
+    path: join(from, page),
+    pathMatch: 'full',
+    redirectTo: join(to, page),
+  }));
+}
+
 export const routes: Routes = [
   qitsAuthCallbackRoute,
   {
@@ -351,82 +370,108 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'projects/:slug/agents',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/agents/project-agents.page').then(
-            (m) => m.ProjectAgentsPage,
-          ),
-      },
-      {
-        path: 'projects/:slug/agents/:agentId',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/agents/[agentId]/agent.layout').then(
-            (m) => m.AgentLayout,
-          ),
-        // The agent's tabs (`AGENT_TABS`); the bare URL shows the agent alone.
+        // The Releases section (qits-2482): no component of its own, one route per page. Its own
+        // address opens Requests by a relative `redirectTo`, which keeps the query.
+        path: 'projects/:slug/releases',
         children: [
-          { path: '', children: [] },
+          { path: '', pathMatch: 'full', redirectTo: 'requests' },
           {
-            path: 'chat',
+            path: 'requests',
             loadComponent: () =>
-              import('./routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page').then(
-                (m) => m.AgentChatPage,
+              import('./routes/projects/[slug]/releases/requests/release-requests.page').then(
+                (m) => m.ReleaseRequestsPage,
               ),
           },
           {
-            path: 'files',
+            path: 'requests/:requestId',
             loadComponent: () =>
-              import('./routes/projects/[slug]/agents/[agentId]/files/agent-files.page').then(
-                (m) => m.AgentFilesPage,
+              import('./routes/projects/[slug]/releases/requests/[requestId]/release-request.page').then(
+                (m) => m.ReleaseRequestPage,
               ),
           },
           {
-            path: 'terminal',
+            path: 'agents',
             loadComponent: () =>
-              import('./routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page').then(
-                (m) => m.AgentTerminalPage,
+              import('./routes/projects/[slug]/releases/agents/project-agents.page').then(
+                (m) => m.ProjectAgentsPage,
+              ),
+          },
+          {
+            path: 'agents/:agentId',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/releases/agents/[agentId]/agent.layout').then(
+                (m) => m.AgentLayout,
+              ),
+            // The agent's tabs (`AGENT_TABS`); the bare URL shows the agent alone.
+            children: [
+              { path: '', children: [] },
+              {
+                path: 'chat',
+                loadComponent: () =>
+                  import('./routes/projects/[slug]/releases/agents/[agentId]/chat/agent-chat.page').then(
+                    (m) => m.AgentChatPage,
+                  ),
+              },
+              {
+                path: 'files',
+                loadComponent: () =>
+                  import('./routes/projects/[slug]/releases/agents/[agentId]/files/agent-files.page').then(
+                    (m) => m.AgentFilesPage,
+                  ),
+              },
+              {
+                path: 'terminal',
+                loadComponent: () =>
+                  import('./routes/projects/[slug]/releases/agents/[agentId]/terminal/agent-terminal.page').then(
+                    (m) => m.AgentTerminalPage,
+                  ),
+              },
+            ],
+          },
+          {
+            path: 'ci/runs/:runId',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/releases/ci/runs/[runId]/ci-run.page').then(
+                (m) => m.CiRunPage,
+              ),
+          },
+          {
+            path: 'ci',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/releases/ci/ci-runs.page').then((m) => m.CiRunsPage),
+          },
+          {
+            path: 'ci/:repo',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/releases/ci/[repo]/ci-repository-runs.page').then(
+                (m) => m.CiRepositoryRunsPage,
               ),
           },
         ],
       },
+      // The old addresses before the Releases section (qits-2482): relative redirects, so the
+      // query is kept, one per depth, so child paths are kept too.
+      ...redirects('projects/:slug/release-requests', 'projects/:slug/releases/requests', [
+        '',
+        ':requestId',
+      ]),
+      ...redirects('projects/:slug/agents', 'projects/:slug/releases/agents', [
+        '',
+        ':agentId',
+        ':agentId/:tab',
+      ]),
+      ...redirects('projects/:slug/ci', 'projects/:slug/releases/ci', ['', 'runs/:runId', ':repo']),
       // The section was Workspaces before epic qits-1681; its slots are now on the Agents page.
-      { path: 'projects/:slug/workspaces', pathMatch: 'full', redirectTo: 'projects/:slug/agents' },
+      {
+        path: 'projects/:slug/workspaces',
+        pathMatch: 'full',
+        redirectTo: 'projects/:slug/releases/agents',
+      },
       {
         path: 'projects/:slug/workspaces/:slotId',
         loadComponent: () =>
           import('./routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page').then(
             (m) => m.WorkspaceSlotPage,
-          ),
-      },
-      {
-        path: 'projects/:slug/release-requests',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/release-requests/release-requests.page').then(
-            (m) => m.ReleaseRequestsPage,
-          ),
-      },
-      {
-        path: 'projects/:slug/release-requests/:requestId',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/release-requests/[requestId]/release-request.page').then(
-            (m) => m.ReleaseRequestPage,
-          ),
-      },
-      {
-        path: 'projects/:slug/ci/runs/:runId',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/ci/runs/[runId]/ci-run.page').then((m) => m.CiRunPage),
-      },
-      {
-        path: 'projects/:slug/ci',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/ci/ci-runs.page').then((m) => m.CiRunsPage),
-      },
-      {
-        path: 'projects/:slug/ci/:repo',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/ci/[repo]/ci-repository-runs.page').then(
-            (m) => m.CiRepositoryRunsPage,
           ),
       },
       {

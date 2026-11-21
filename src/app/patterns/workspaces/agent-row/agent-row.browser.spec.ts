@@ -44,7 +44,9 @@ describe('AgentRow (screenshots)', () => {
     slug = (await goldenMaster('a project exists', 'getProject')).project.slug;
     vi.useFakeTimers({ toFake: ['Date'], now: NOW });
     TestBed.configureTestingModule({
-      providers: [provideRouter([{ path: 'projects/:slug/agents/:agentId', children: [] }])],
+      providers: [
+        provideRouter([{ path: 'projects/:slug/releases/agents/:agentId', children: [] }]),
+      ],
     });
   });
 
@@ -75,7 +77,7 @@ describe('AgentRow (screenshots)', () => {
     ) as AgentRowAgent;
     await userEvent.click(locator.getByRole('link', { name: 'contract-00000001-9' }));
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/agents/${agent.agentId}`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/releases/agents/${agent.agentId}`);
     expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
       'open-agent-row:open',
     ]);

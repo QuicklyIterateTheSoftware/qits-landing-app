@@ -53,8 +53,8 @@ describe('MaintenanceBumpPage', () => {
       providers: [
         provideRouter([
           { path: 'projects/:slug/maintenance/bumps/:bumpId', component: MaintenanceBumpPage },
-          { path: 'projects/:slug/release-requests/:requestId', component: Stub },
-          { path: 'projects/:slug/ci/runs/:runId', component: Stub },
+          { path: 'projects/:slug/releases/requests/:requestId', component: Stub },
+          { path: 'projects/:slug/releases/ci/runs/:runId', component: Stub },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -130,7 +130,7 @@ describe('MaintenanceBumpPage', () => {
     expect(facts).toContain(bump.resultSha.slice(0, 7));
     const request = element.querySelector<HTMLAnchorElement>('[data-release-request] a')!;
     expect(request.getAttribute('href')).toBe(
-      `/projects/${project.slug}/release-requests/${bump.releaseRequestId}`,
+      `/projects/${project.slug}/releases/requests/${bump.releaseRequestId}`,
     );
     expect(text(element, '[data-release-state]')).toContain('RELEASED');
     expect(element.querySelector('[data-not-coming]')).toBeNull();
@@ -161,7 +161,7 @@ describe('MaintenanceBumpPage', () => {
     expect(element.querySelectorAll('[data-message]')).toHaveLength(1);
     const runs = [...element.querySelectorAll<HTMLAnchorElement>('[data-runs] a')];
     expect(runs.map((a) => a.getAttribute('href'))).toEqual([
-      `/projects/${project.slug}/ci/runs/run-contract-1`,
+      `/projects/${project.slug}/releases/ci/runs/run-contract-1`,
     ]);
     expect(text(element, '[data-run-status]')).toBe('SUCCESS');
     // No release state recorded: none, and nothing flagged.
