@@ -54,7 +54,6 @@ export interface NavPage {
 /** The shell's sections: one per sidebar entry, and Setup from the gear. */
 type SectionKey =
   | 'work'
-  | 'ideas'
   | 'releases'
   | 'desk'
   | 'repositories'
@@ -107,13 +106,19 @@ export interface NavLink extends NavPage {
 /** One of a section's own pages, below it in the sidebar. */
 export interface NavChild extends NavPage {
   readonly exit: ProjectPageExit;
-  /** Its crumb's exit, for a section whose trail names the page (Releases › Requests). */
-  readonly crumb?: ExitOutcome;
+  /**
+   * Its crumb, for a section whose trail names the page (Releases › Requests, Work › Ideas), with
+   * the exit it follows while a page below it is shown (none for Ideas, whose pages have no crumb
+   * after it).
+   */
+  readonly crumb?: { readonly exit?: ExitOutcome };
   /**
    * Other URLs (absolute) whose pages it stays current on, though they are not below `path`:
    * Agents on a slot's page (`workspaces/<slot id>`).
    */
   readonly alsoOn?: readonly string[];
+  /** A gap below it, setting it apart from the pages after it (Ideas above the work pages). */
+  readonly apart?: boolean;
 }
 
 /** A global section's page in this app: a route that takes no params (qits-2316). */
@@ -485,7 +490,7 @@ export interface NavNote {
                 [class.hidden]="!link.children?.length || link.path !== section()?.path"
               >
                 @for (child of openChildren(link); track child.path) {
-                  <li>
+                  <li [class.mb-3]="child.apart">
                     <a
                       class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                       [qitsExit]="child.exit"
@@ -553,7 +558,6 @@ export class ShellLayout {
   /** The sidebar's sections, one exit each (epic qits-2000). */
   private readonly sections = outcomes('open-sidebar-section', {
     work: exit('projects/:slug/work'),
-    ideas: exit('projects/:slug/ideas'),
     releases: exit('projects/:slug/releases'),
     desk: exit('projects/:slug/desk'),
     repositories: exit('projects/:slug/repositories'),
@@ -563,8 +567,13 @@ export class ShellLayout {
     maintenance: exit('projects/:slug/maintenance'),
   });
 
-  /** The work pages below Work in the sidebar, one exit per page (epic qits-2000). */
+  /**
+   * The work pages below Work in the sidebar, one exit per page (epic qits-2000): Ideas first
+   * (qits-2483, not a work entity, so not one of the Work page's tabs), then one per `WORK_TABS`
+   * entry.
+   */
   private readonly workPages = outcomes('open-sidebar-work-page', {
+    ideas: exit('projects/:slug/ideas'),
     refinement: exit('projects/:slug/work/refinement'),
     schedule: exit('projects/:slug/work/schedule'),
     inProgress: exit('projects/:slug/work/in-progress'),
@@ -881,12 +890,21 @@ export class ShellLayout {
     return [
       {
         ...link('work', 'Work', sections.work),
-        children: WORK_TABS.flatMap((tab) => {
-          const to = this.workPageExits[tab.segment];
-          return to ? [{ label: tab.label, exit: to, path: to.url(params) }] : [];
-        }),
+        children: [
+          // Ideas are not work items: first, and set apart from the work pages (qits-2483).
+          {
+            label: 'Ideas',
+            exit: this.workPages.ideas,
+            path: this.workPages.ideas.url(params),
+            crumb: {},
+            apart: true,
+          },
+          ...WORK_TABS.flatMap((tab) => {
+            const to = this.workPageExits[tab.segment];
+            return to ? [{ label: tab.label, exit: to, path: to.url(params) }] : [];
+          }),
+        ],
       },
-      link('ideas', 'Ideas', sections.ideas),
       {
         ...link('releases', 'Releases', sections.releases),
         note: this.latestRelease(),
@@ -895,20 +913,20 @@ export class ShellLayout {
             label: 'Requests',
             exit: this.releasesPages.requests,
             path: this.releasesPages.requests.url(params),
-            crumb: this.trail.releasesRequests,
+            crumb: { exit: this.trail.releasesRequests },
           },
           {
             label: 'Agents',
             exit: this.releasesPages.agents,
             path: this.releasesPages.agents.url(params),
-            crumb: this.trail.releasesAgents,
+            crumb: { exit: this.trail.releasesAgents },
             alsoOn: [`/projects/${slug}/${WORKSPACES}`],
           },
           {
             label: 'CI',
             exit: this.releasesPages.ci,
             path: this.releasesPages.ci.url(params),
-            crumb: this.trail.releasesCi,
+            crumb: { exit: this.trail.releasesCi },
           },
         ],
       },
@@ -1009,8 +1027,8 @@ export class ShellLayout {
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
-   * the URL is in ("Work", or "Setup" from the gear), for Releases its page (Requests, Agents, CI,
-   * qits-2482), then a subpage of it (Work › Archive, Work › <item id>, Releases › Requests ›
+   * the URL is in ("Work", or "Setup" from the gear), the section's page when it names one (Work ›
+   * Ideas, qits-2483; Releases › Requests, Agents or CI, qits-2482), then a subpage of it (Work › Archive, Work › <item id>, Releases › Requests ›
    * <request id>, Releases › CI › <run>, Releases › Agents › <agent's item id>, Releases › Agents ›
    * ws-<slot id>, Deployments › <version> · <application>). The last crumb is the current page and
    * is not a link; each one before it leads through its `follow-breadcrumb` exit.
@@ -1064,7 +1082,7 @@ export class ShellLayout {
     }
     // The section's page the trail names (Releases › Requests), when it has a crumb of its own.
     const child = found.children?.find((page) => page.crumb && this.isOn(page));
-    const page: Crumb[] = child ? [{ label: child.label, exit: child.crumb, params }] : [];
+    const page: Crumb[] = child ? [{ label: child.label, exit: child.crumb?.exit, params }] : [];
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
     // Releases › Requests › <request id>, Releases › CI › <run>.
     const base = `/projects/${slug}`;
@@ -1084,7 +1102,8 @@ export class ShellLayout {
 
   /**
    * The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear.
-   * A slot's page (`workspaces/<slot id>`) is in Releases (its Agents).
+   * A slot's page (`workspaces/<slot id>`) is in Releases (its Agents), an idea's (`ideas/…`) in
+   * Work (qits-2483).
    */
   protected readonly section = computed((): NavLink | undefined => {
     const slug = this.selected.slug();
@@ -1092,6 +1111,9 @@ export class ShellLayout {
     const url = this.selected.url();
     if (within(url, `/projects/${slug}/${WORKSPACES}`)) {
       return this.links().find((link) => link.key === 'releases');
+    }
+    if (within(url, `/projects/${slug}/${IDEAS}`)) {
+      return this.links().find((link) => link.key === 'work');
     }
     const setup: NavLink = {
       key: 'setup',
@@ -1232,7 +1254,10 @@ export const CI = 'releases/ci';
 /** The desk section's segment below a project: `/projects/<slug>/desk`. */
 export const DESK = 'desk';
 
-/** The ideas section's segment below a project: `/projects/<slug>/ideas` (epic qits-888). */
+/**
+ * The ideas' segment below a project: `/projects/<slug>/ideas` (epic qits-888), Work's first page
+ * in the sidebar (qits-2483).
+ */
 export const IDEAS = 'ideas';
 
 /** True when `url` is `path` or a page below it, query and fragment ignored. */

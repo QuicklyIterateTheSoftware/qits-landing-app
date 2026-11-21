@@ -341,7 +341,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('work-tab', { kind: 'DATA' });
   });
 
-  it('lists Refinement first below Work, no Campaigns or Milestones, and marks it when open', async () => {
+  it('lists Ideas, then Refinement first of the work pages below Work, no Campaigns or Milestones, and marks it when open', async () => {
     await renderProject('/work/refinement');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
@@ -350,13 +350,15 @@ describe('ShellLayout (screenshots)', () => {
     const refinement = navigation.getByRole('link', { name: 'Refinement' });
     await expect.element(refinement).toBeVisible();
     await expect.element(refinement).toHaveAttribute('aria-current', 'page');
-    // First of the work section's pages, right below Work (epic qits-1899: no Campaigns).
+    // First of the work section's pages, below Work and Ideas (epic qits-1899: no Campaigns;
+    // qits-2483: Ideas).
     const labels = navigation
       .getByRole('link')
       .elements()
       .map((a) => a.textContent?.trim());
-    expect(labels.slice(labels.indexOf('Work'), labels.indexOf('Work') + 3)).toEqual([
+    expect(labels.slice(labels.indexOf('Work'), labels.indexOf('Work') + 4)).toEqual([
       'Work',
+      'Ideas',
       'Refinement',
       'Schedule',
     ]);
@@ -387,7 +389,6 @@ describe('ShellLayout (screenshots)', () => {
       .map((a) => a.firstChild?.textContent?.trim());
     expect(labels).toEqual([
       'Work',
-      'Ideas',
       'Releases',
       // Its pages, while it is open (qits-2482).
       'Requests',
@@ -602,7 +603,6 @@ describe('ShellLayout (screenshots)', () => {
   /** The sidebar's sections, by label, with their segment below the project and their outcome. */
   const SECTIONS = [
     { label: 'Work', segment: 'work', outcome: 'work' },
-    { label: 'Ideas', segment: 'ideas', outcome: 'ideas' },
     { label: /^Releases/, segment: 'releases', outcome: 'releases' },
     { label: 'Desk', segment: 'desk', outcome: 'desk' },
     { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
@@ -674,6 +674,30 @@ describe('ShellLayout (screenshots)', () => {
         .toHaveAttribute('aria-current', 'true');
     });
   }
+
+  it('open-sidebar-work-page ideas: Ideas, first below Work and set apart, opens the ideas', async () => {
+    const { fixture, project } = await renderProject('/work/archive');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Ideas', exact: true });
+    const work = navigation.getByRole('link', { name: 'Work', exact: true });
+    // Work's first page, with a gap below it before the work pages (qits-2483).
+    const pages = work.element().parentElement?.querySelectorAll(':scope > ul a') ?? [];
+    expect([...pages].map((a) => a.textContent?.trim())).toEqual([
+      'Ideas',
+      ...WORK_PAGES.map((page) => page.label),
+    ]);
+    const gap = (a: Element) =>
+      parseFloat(getComputedStyle(a.parentElement as Element).marginBottom);
+    expect(gap(pages[0])).toBeGreaterThan(0);
+    expect(gap(pages[1])).toBe(0);
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/ideas`);
+    expect(reached()).toEqual(['open-sidebar-work-page:ideas']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect.element(work).toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toMatchTextContent(`${project.name}›Work›Ideas`);
+  });
 
   it('open-sidebar-deployments-page requests: Requests below Deployments opens it', async () => {
     // On the section's page already, so its pages show below Deployments.

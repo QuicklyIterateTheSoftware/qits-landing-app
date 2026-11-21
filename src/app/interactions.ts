@@ -1710,13 +1710,15 @@ export const INTERACTIONS = {
    */
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
   /**
-   * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Ideas,
-   * Releases, Desk, Repositories, Deployments, Observability, Docs, Events, Maintenance). Navigates only, and names no pact (epic qits-2000).
+   * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Releases,
+   * Desk, Repositories, Deployments, Observability, Docs, Events, Maintenance). Navigates only, and
+   * names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
   /**
    * `shell.layout.ts`: a work section's page listed below Work in the sidebar opens it, one exit
-   * per page (`WORK_TABS`). Navigates only, and names no pact (epic qits-2000).
+   * per page: Ideas first (qits-2483), then one per `WORK_TABS` entry. Navigates only, and names
+   * no pact (epic qits-2000).
    */
   'open-sidebar-work-page': 'A work page below Work in the sidebar opens that page',
   /**
