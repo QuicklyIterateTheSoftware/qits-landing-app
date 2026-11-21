@@ -3,8 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
-import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
-import { literalSbomPaths } from '$core/artifacts/sbom-paths';
 import { goldenMaster, goldenMasterText } from '../../../../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -24,11 +22,6 @@ const REPO = 'npm';
 const SCOPED_PACKAGE = '@contract/contract-scoped';
 /** The package of the two explorer states (`npmPackage`): one version in `STORE`, none in `EMPTY`. */
 const PACKAGE = 'contract-package';
-
-// The SBOM store reads a scoped name with `@` and `/` literal, as `app.config.ts` rewrites it.
-if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
-  artifactsClient.interceptors.request.use(literalSbomPaths);
-}
 
 /**
  * Screenshots of the Artifacts section's npm package page (qits-2326) inside the shell
@@ -63,13 +56,14 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
   });
 
   /**
-   * The page's two reads, and one version's SBOM, by URL: the versions door takes the name as one
-   * encoded segment, the SBOM store with `@` and `/` literal.
+   * The page's two reads, and one version's SBOM, by URL: both doors take the name as one encoded
+   * segment, as the generated client sends it.
    */
   const urls = (repo: string, name: string) => ({
     versions: `/artifacts/api/repositories/${encodeURIComponent(repo)}/packages/${encodeURIComponent(name)}/versions`,
-    sboms: `/artifacts/sboms/npm/${name}`,
-    sbom: (version: string) => `/artifacts/sboms/npm/${name}/-/${version}`,
+    sboms: `/artifacts/sboms/npm/${encodeURIComponent(name)}`,
+    sbom: (version: string) =>
+      `/artifacts/sboms/npm/${encodeURIComponent(name)}/-/${encodeURIComponent(version)}`,
   });
 
   /** Opens the package's page, its reads still open. */
@@ -150,7 +144,7 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
     expect(opened.page.querySelector('[data-orphans]')).toBeNull();
 
     // Download: the recorded document, saved as <name without its scope>-<version>.cdx.json, its
-    // name literal on the wire. A DOM click, so the pointer stays parked and the shot shows no hover.
+    // name encoded on the wire. A DOM click, so the pointer stays parked and the shot shows no hover.
     const download = view.getByRole('button', { name: 'Download the SBOM of 2100.2.0' });
     (download.element() as HTMLButtonElement).click();
     await opened.idle();

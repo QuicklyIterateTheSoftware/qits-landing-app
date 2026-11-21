@@ -41,15 +41,18 @@ export async function answerTwoSiteCatalog(opened: OpenedRoute): Promise<void> {
     .flush(await goldenMaster(INDEX, 'listDocsSites', 'qits-artifacts'));
   await opened.settled();
   http
-    .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@contracts/qits-githost'))
+    .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/%40contracts%2Fqits-githost'))
     .flush(await goldenMaster(INDEX, 'listDocsVersions', 'qits-artifacts'));
   http
-    .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@contracts/qits-projects'))
+    .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/%40contracts%2Fqits-projects'))
     .flush(await goldenMaster(ENTITY_MAP, 'listDocsVersions', 'qits-artifacts'));
   await opened.settled();
 }
 
-/** Answers the read of `file` of `site`'s bundle (`@contracts/<site>/-/<version>/<file>`). */
+/**
+ * Answers the read of `file` of `site`'s bundle (`@contracts/<site>/-/<version>/<file>`), the site
+ * and the file each one encoded segment, as the generated client sends them.
+ */
 export async function answerFile(
   opened: OpenedRoute,
   site: string,
@@ -57,7 +60,11 @@ export async function answerFile(
   state: string,
 ): Promise<void> {
   TestBed.inject(HttpTestingController)
-    .expectOne((req) => req.url.includes(`/@contracts/${site}/-/`) && req.url.endsWith(`/${file}`))
+    .expectOne(
+      (req) =>
+        req.url.includes(`/${encodeURIComponent(`@contracts/${site}`)}/-/`) &&
+        req.url.endsWith(`/${encodeURIComponent(file)}`),
+    )
     .flush(await goldenMaster(state, 'getDocsFile', 'qits-artifacts'));
   await opened.settled();
 }

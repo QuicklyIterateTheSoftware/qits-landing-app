@@ -166,7 +166,7 @@ export const ARTIFACT_DOCS_SITES = qitsOperation({
  * One docs site's versions (`listDocsVersionSummaries`, qits-2328), newest first: 404 for an
  * unknown repository, 400 for one that holds no docs, an empty list for a site it does not hold.
  * The site is one path segment (`@changelog/qits-qits` is sent as `%40changelog%2Fqits-qits`); this
- * `/artifacts/api/` door takes it encoded, and `literalDocsPaths` leaves it so.
+ * `/artifacts/api/` door takes it encoded, as every artifacts door does.
  */
 export const ARTIFACT_DOCS_VERSIONS = qitsOperation({
   provider: 'qits-artifacts-service',
@@ -215,9 +215,8 @@ export const ARTIFACT_NPM_VERSIONS = qitsOperation({
 /**
  * One package's stored SBOMs (`listSbomVersions`, qits-2325), newest first, for any package type
  * (`maven`, the maven package page; `npm`, the npm package page, qits-2326): 404 when it has none.
- * The store reads `packageName` with `:`, `@` and `/` literal, which the generated client encodes:
- * `literalSbomPaths` (`sbom-paths.ts`, qits-2325), which `app.config.ts` puts on the artifacts
- * client, turns them back (a scoped npm name, `@qits/angular`, too).
+ * `packageName` is one path segment, sent as the generated client encodes it
+ * (`eu.wohlben.qits%3Aqits-eventstream`, `%40qits%2Fangular`), which the store reads (qits-2409).
  */
 export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
   provider: 'qits-artifacts-service',
@@ -230,7 +229,7 @@ export const ARTIFACT_SBOM_VERSIONS = qitsOperation({
 /**
  * One release's CycloneDX document (`getSbom`, qits-2325; npm's too, qits-2326), read on a press
  * and saved as a file (`sbom-download.ts`); 404 when none is stored. Its `packageName` goes out
- * literal, as the list's (`literalSbomPaths`).
+ * encoded, as the list's.
  */
 export const ARTIFACT_SBOM = qitsOperation({
   provider: 'qits-artifacts-service',

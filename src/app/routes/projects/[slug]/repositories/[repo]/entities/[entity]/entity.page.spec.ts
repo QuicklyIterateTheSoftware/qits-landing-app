@@ -2,7 +2,6 @@ import type { HttpTestingController } from '@angular/common/http/testing';
 import { QITS_MERMAID_LOADER, type QitsMermaid } from '@qits/ui-components';
 import { client as artifactsClient } from '../../../../../../../api/artifacts/client.gen';
 import { provideHeyApiClient } from '../../../../../../../api/artifacts/client/client.gen';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { GoldenIndex } from '$core/ui-builder/golden-masters';
 import {
   artifactsGoldenMasters as masters,
@@ -122,9 +121,6 @@ describe('EntityPage', () => {
       ],
     );
     mermaid.render.mockClear();
-    if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-      artifactsClient.interceptors.request.use(literalDocsPaths);
-    }
   });
 
   afterEach(() => {

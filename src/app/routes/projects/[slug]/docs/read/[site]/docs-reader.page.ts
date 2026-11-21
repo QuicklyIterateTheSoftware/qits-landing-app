@@ -52,7 +52,6 @@ import { PROJECT_REPOSITORY_NAMES } from '$core/repositories/repositories.operat
 import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { loadState } from '$core/resources/load-state';
 import { isMissing, ResourceFamily } from '$core/resources/resource-family';
-import { literalDocsUrl } from '$core/ui-builder/docs-paths';
 import {
   DOCS_REPOSITORY,
   type DocsCatalogSite,
@@ -811,7 +810,11 @@ export class DocsReaderPage {
     this.document.head.appendChild(link);
   }
 
-  /** `ui-markdown`'s `resolveUrl` for a page: a relative reference becomes its docs store address. */
+  /**
+   * `ui-markdown`'s `resolveUrl` for a page: a relative reference becomes its docs store address,
+   * spelled as the generated client spells `getDocsFile` (each parameter one encoded segment, the
+   * file path's `/` as `%2F`): the address `DOCS_FILE` would read that file at (qits-2409).
+   */
   protected resolverFor(page: string): (url: string) => string {
     const site = this.site();
     const version = this.version() ?? '';
@@ -819,10 +822,10 @@ export class DocsReaderPage {
     return (url) => {
       const path = bundlePathOf(page, url);
       if (!path || !site || !version) return url;
-      const segments = [DOCS_REPOSITORY, site, '-', version, ...path.split('/')];
-      return literalDocsUrl(
-        `${base}/artifacts/docs/${segments.map((s) => encodeURIComponent(s)).join('/')}`,
+      const [repository, name, at, file] = [DOCS_REPOSITORY, site, version, path].map((s) =>
+        encodeURIComponent(s),
       );
+      return `${base}/artifacts/docs/${repository}/${name}/-/${at}/${file}`;
     };
   }
 

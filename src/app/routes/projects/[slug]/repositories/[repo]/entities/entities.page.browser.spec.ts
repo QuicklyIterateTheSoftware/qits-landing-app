@@ -3,8 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page } from 'vitest/browser';
-import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster } from '../../../../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -26,11 +24,6 @@ import { leftFor } from '../../../../../../../testing/browser/contracts-bundles'
  */
 const CONTRACTS = 'a published contracts bundle with an entity map';
 
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
-
 describe('EntitiesPage (screenshots)', () => {
   let http: HttpTestingController;
 
@@ -51,7 +44,7 @@ describe('EntitiesPage (screenshots)', () => {
       .flush(await goldenMaster(CONTRACTS, 'listDocsSites', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@contracts/qits-projects'))
+      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/%40contracts%2Fqits-projects'))
       .flush(await goldenMaster(CONTRACTS, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     http

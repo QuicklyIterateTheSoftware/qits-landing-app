@@ -5,8 +5,6 @@ import { QITS_LEAVE_APP } from '@qits/angular';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { provideQitsMermaid } from '@qits/ui-components/mermaid';
 import { page, userEvent } from 'vitest/browser';
-import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster, goldenMasterText } from '../../../../../../../testing/browser/golden-master';
 import { leftFor } from '../../../../../../../testing/browser/contracts-bundles';
 import {
@@ -31,11 +29,6 @@ const TWO_PROJECTS = 'two projects exist';
 const THREE_REPOSITORIES = 'a project with 3 repositories';
 
 const DOCS_STORE = '/artifacts/docs/docs';
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
 
 /** A site as this app's links name it: one segment, its `/` escaped, `@` literal. */
 const segment = (site: string) => encodeURIComponent(site).replace(/%40/g, '@');
@@ -125,16 +118,18 @@ describe('DocsReaderPage (screenshots)', () => {
   async function markdown(opened: OpenedRoute, state: string) {
     const { site, version } = await bundleOf(state);
     http
-      .expectOne(`${DOCS_STORE}/${site}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
       .flush(await goldenMaster(state, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne(`${DOCS_STORE}/${site}/-/${version}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}/-/${version}`)
       .flush(await goldenMaster(state, 'getDocsVersion', 'qits-artifacts'));
     await opened.settled();
     const text = await goldenMasterText(state, 'getDocsFile', 'qits-artifacts');
-    for (const request of http.match((req) => req.url.startsWith(`${DOCS_STORE}/${site}/-/`))) {
-      if (request.request.url.endsWith('/alpha/first-story/user-story.md')) request.flush(text);
+    for (const request of http.match((req) =>
+      req.url.startsWith(`${DOCS_STORE}/${encodeURIComponent(site)}/-/`),
+    )) {
+      if (request.request.url.endsWith('/alpha%2Ffirst-story%2Fuser-story.md')) request.flush(text);
       // The pages no recording holds: refused, each says so in its place.
       else request.flush(null, { status: 404, statusText: 'Not Found' });
     }
@@ -174,11 +169,12 @@ describe('DocsReaderPage (screenshots)', () => {
     const versions = view.getByRole('combobox', { name: 'Version' });
     await expect.element(versions).toHaveValue(version);
     await expect.element(view.getByRole('combobox', { name: 'Branch' })).toHaveValue('main');
-    // The relative screenshot is the docs store's file beside the story, which `ui-markdown`
-    // fetches with the bearer where the app signs in with one (not in this spec: its own address).
+    // The relative screenshot is the docs store's file beside the story, spelled as the generated
+    // client spells it (qits-2409), which `ui-markdown` fetches with the bearer where the app signs
+    // in with one (not in this spec: its own address).
     await vi.waitFor(() =>
       expect(opened.page.querySelector('img[alt="screenshot"]')?.getAttribute('src')).toMatch(
-        /\/artifacts\/docs\/docs\/@userflows\/contract-userflows\/-\/[0-9a-f]+\/alpha\/first-story\/screenshot\.png$/,
+        /\/artifacts\/docs\/docs\/%40userflows%2Fcontract-userflows\/-\/[0-9a-f]+\/alpha%2Ffirst-story%2Fscreenshot\.png$/,
       ),
     );
     await vi.waitFor(() =>
@@ -238,15 +234,15 @@ describe('DocsReaderPage (screenshots)', () => {
     const { site, version } = await bundleOf(CHANGELOG);
     const opened = await open(site);
     http
-      .expectOne(`${DOCS_STORE}/${site}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
       .flush(await goldenMaster(CHANGELOG, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne(`${DOCS_STORE}/${site}/-/${version}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}/-/${version}`)
       .flush(await goldenMaster(CHANGELOG, 'getDocsVersion', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne(`${DOCS_STORE}/${site}/-/${version}/CHANGELOG.md`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}/-/${version}/CHANGELOG.md`)
       .flush(await goldenMasterText(CHANGELOG, 'getDocsFile', 'qits-artifacts'));
     await opened.settled();
     expect(stories(opened)).toEqual(['CHANGELOG.md']);
@@ -268,15 +264,15 @@ describe('DocsReaderPage (screenshots)', () => {
     const { site, version } = await bundleOf(APIDOCS);
     const opened = await open(site);
     http
-      .expectOne(`${DOCS_STORE}/${site}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
       .flush(await goldenMaster(APIDOCS, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne(`${DOCS_STORE}/${site}/-/${version}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}/-/${version}`)
       .flush(await goldenMaster(APIDOCS, 'getDocsVersion', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne(`${DOCS_STORE}/${site}/-/${version}/openapi.yml`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}/-/${version}/openapi.yml`)
       .flush(await goldenMasterText(APIDOCS, 'getDocsFile', 'qits-artifacts'));
     await opened.settled();
     // swagger-ui loads lazily, then fetches the document from its blob: URL.
@@ -385,7 +381,7 @@ describe('DocsReaderPage (screenshots)', () => {
   it('says there is no such site, with a link back to Docs', async () => {
     const opened = await open('@userflows/no-such-site');
     http
-      .expectOne(`${DOCS_STORE}/@userflows/no-such-site`)
+      .expectOne(`${DOCS_STORE}/%40userflows%2Fno-such-site`)
       .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
     const view = page.elementLocator(opened.page);
@@ -400,7 +396,7 @@ describe('DocsReaderPage (screenshots)', () => {
   it('leave-docs-site docs: “← Docs” goes back to the project’s Docs page', async () => {
     const opened = await open('@userflows/no-such-site');
     http
-      .expectOne(`${DOCS_STORE}/@userflows/no-such-site`)
+      .expectOne(`${DOCS_STORE}/%40userflows%2Fno-such-site`)
       .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
     await page.elementLocator(opened.page).getByRole('link', { name: '← Docs' }).click();
@@ -417,10 +413,10 @@ describe('DocsReaderPage (screenshots)', () => {
     const opened = await open(site, '', 'no-such-version');
     // Both reads start at once: the URL names the version.
     http
-      .expectOne(`${DOCS_STORE}/${site}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
       .flush(await goldenMaster(MARKDOWN, 'listDocsVersions', 'qits-artifacts'));
     http
-      .expectOne(`${DOCS_STORE}/${site}/-/no-such-version`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}/-/no-such-version`)
       .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
     const view = page.elementLocator(opened.page);
@@ -446,7 +442,7 @@ describe('DocsReaderPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loading', { kind: 'PENDING' });
     http
-      .expectOne(`${DOCS_STORE}/${site}`)
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
       .flush(null, { status: 500, statusText: 'Server Error' });
     await opened.settled();
     await expect
@@ -457,7 +453,9 @@ describe('DocsReaderPage (screenshots)', () => {
       .toMatchScreenshot('error', { kind: 'ERROR' });
     await view.getByRole('button', { name: 'Retry' }).click();
     await opened.settled();
-    http.expectOne(`${DOCS_STORE}/${site}`).flush(null, { status: 404, statusText: 'Not Found' });
+    http
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
+      .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
     await expect.element(view).toMatchTextContent(`No docs site ${site}.`);
   });

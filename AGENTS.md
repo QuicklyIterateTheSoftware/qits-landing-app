@@ -474,12 +474,10 @@ package type and name and the page's two stays as inputs), "CycloneDX <specVersi
 Download, or "—". Download (`download-maven-sbom`, `saved` / `failed` stays, a failure said on its
 row) reads `ARTIFACT_SBOM` (`getSbom`) as text through the generated client (the store wants the
 bearer, so no bare link) and saves it as `<artifactId>-<version>.cdx.json`,
-`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). The SBOM store
-is a regex route over the raw path and 404s an encoded name (`eu.wohlben.qits%3Acontract-maven`,
-`%40qits%2Fangular`), so `app.config.ts` also puts `literalSbomPaths` (`core/artifacts/sbom-paths.ts`,
-qits-2325; the npm package page of qits-2326 relies on it for scoped names) on the artifacts client: `:`, `@` and `/` literal in `/artifacts/sboms/` wire URLs only (the
-`/artifacts/api/` versions door takes the coordinate encoded). The specs that read SBOMs register
-it as well and expect the literal URL, so an encoded one fails them. SBOMs of
+`application/vnd.cyclonedx+json` (`core/artifacts/sbom-download.ts`, browser only). Every SBOM
+read sends the name as the generated client encodes it, one segment (`eu.wohlben.qits%3Acontract-maven`,
+`%40qits%2Fangular`), as the versions door's reads do; the store reads that spelling (qits-2409; the
+`literalSbomPaths` rewrite qits-2325 added is gone), and the specs that read SBOMs expect it. SBOMs of
 versions the store no longer holds are counted under the table. A 404 is "There is no repository
 called <repo> in this store", a 400 "<repo> is not a Maven repository" (linking its store page), an
 empty list "There is no Maven coordinate called <coordinate> in this repository"; "← <repo>" and the
@@ -492,8 +490,7 @@ published" by status only; every SBOM list's 404 by status only.
 `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site of
 a docs store. Every site name is scoped and slashed (`@changelog/qits-qits`), and `<site>` is one
 segment: `@changelog%2Fqits-qits` in the URL (the router keeps `@` literal), sent to the door as
-`%40changelog%2Fqits-qits` (`literalDocsPaths` rewrites only `/artifacts/docs/` wire URLs, never
-this `/artifacts/api/` door). One read, nothing per row: `ARTIFACT_DOCS_VERSIONS`
+`%40changelog%2Fqits-qits`, as the generated client encodes it. One read, nothing per row: `ARTIFACT_DOCS_VERSIONS`
 (`listDocsVersionSummaries`), "N versions · newest first" from its answer, the table in the wire's
 order: the version, its file count, its size (the union of the version's own blobs; one caption
 says the sizes do not add up), published, last accessed ("Never" for null), published from
@@ -517,8 +514,7 @@ decodes it). Two reads in parallel, nothing per row, and no `listRepositories`:
 `ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`, the name sent encoded, as this `/artifacts/api/`
 door takes it) and `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `npm` and the name; its 404 means
 "no SBOMs", not a failure, and any other failure keeps the table with its SBOM column "unknown" and
-a Retry). Both SBOM reads send the scoped name literally (`@qits/angular`) through qits-2325's
-`literalSbomPaths` (above). The header shows the name in monospace, its scope and own
+a Retry). Both SBOM reads send the scoped name encoded too (`%40qits%2Fangular`, above). The header shows the name in monospace, its scope and own
 name apart when scoped (`splitPackageName`), and "N versions · M with an SBOM"; the versions newest
 publish first (`newestPublishFirst`, a null `publishedAt` last), their dist-tags joined or "—", the
 tarball's size or "not measured" (never totalled, as a caption says: each tarball is a separate
@@ -531,7 +527,7 @@ this store", a 400 "<repo> is not an npm repository" (linking its store page), a
 back (`leave-npm-package`). No event, no polling: Refresh reads both again. The pact reads the
 versions in "a store holding one artifact of every kind" (`contract-package`, one version) and "a
 scoped npm package with an sbom on one of two versions" (`@contract/contract-scoped`: two versions,
-one SBOM, and its document by status and media type, the SBOM paths literal), and in "a store with
+one SBOM, and its document by status and media type, the SBOM paths encoded), and in "a store with
 nothing published" by status only. Neither explorer state records the SBOM list for its npm
 package (each records it once, for its maven coordinate, a 404 too), so the npm page's 404s bind
 that recording's status only.
@@ -1690,11 +1686,12 @@ The UI builder (qits-1951, `projects/<slug>/repositories/<repo>/ui-builder`, lin
 of FRONTEND and APP repositories) reads a frontend's published freezes back through
 `RoutesBundles` (`core/ui-builder/routes-bundles.ts`, `qitsResource`s over `docs.operations.ts`): the `@routes/` site whose newest version's
 `git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
-`assets/*` on demand. The generated client encodes `/` and `@` in a path parameter, which the docs
-store refuses, so `app.config.ts` puts `literalDocsPaths` on the artifacts client (specs that call
-it do the same). A freeze is drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with
+`assets/*` on demand. The site and the file path go out as the generated client encodes them, each
+one segment (`%40routes%2Fqits-landing`, `work%2Fboard-desktop-light.html`), which the docs store
+reads (qits-2409; the `literalDocsPaths` rewrite is gone), and the specs expect that spelling. A freeze is drawn in `<iframe sandbox="allow-same-origin" [srcdoc]>`, never with
 `allow-scripts`, its asset references inlined as `data:` URLs. The pact binds `getDocsFile` by media
-type only; a path from a provider state matches any path, so its spec makes one docs read per test
+type only; a path from a provider state matches any path its encoding leaves unchanged, and only the
+encoded path when encoding changes it (`@qits/angular` 2026.1121.214147), so its spec makes one docs read per test
 (`docs.operations.pact.spec.ts`, one part per reader).
 
 An app that opts in to offline shots (qits-2153, `freezeScreenshots({ offline: true })` in its own

@@ -1,7 +1,6 @@
 import type { HttpTestingController } from '@angular/common/http/testing';
 import { client as artifactsClient } from '../../../../../../../api/artifacts/client.gen';
 import { provideHeyApiClient } from '../../../../../../../api/artifacts/client/client.gen';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { GoldenIndex, GoldenState } from '$core/ui-builder/golden-masters';
 import { goldenMaster, projectsGoldenIndex } from '../../../../../../../../testing/golden-masters';
 import {
@@ -37,9 +36,6 @@ describe('ContractStatePage', () => {
       ContractStatePage,
       provideHeyApiClient(artifactsClient),
     );
-    if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-      artifactsClient.interceptors.request.use(literalDocsPaths);
-    }
   });
 
   afterEach(() => http.verify());

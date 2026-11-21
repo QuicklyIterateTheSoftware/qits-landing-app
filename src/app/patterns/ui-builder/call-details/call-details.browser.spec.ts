@@ -6,7 +6,6 @@ import { provideRouter, Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
 import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
@@ -73,11 +72,6 @@ class Column {
   readonly site = input.required<ContractsSite>();
   readonly entities = input.required<readonly CallEntity[]>();
   readonly project = input.required<string>();
-}
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
 }
 
 describe('CallDetails (screenshots)', () => {
@@ -150,7 +144,7 @@ describe('CallDetails (screenshots)', () => {
     beforeOpen?.(fixture.nativeElement as HTMLElement);
     await locator.getByRole('button', { name: /getGitRepository/ }).click();
     await settle();
-    http.expectOne((req) => req.url.endsWith('/golden-masters/index.json')).flush(index);
+    http.expectOne((req) => req.url.endsWith('/golden-masters%2Findex.json')).flush(index);
     // The popover's effect starts the recorded response's read once the index is drawn (qits-2146:
     // a `qitsResource`, open until answered, so `whenStable()` waits for it): run it first.
     for (let i = 0; i < 3; i++) {
@@ -158,7 +152,7 @@ describe('CallDetails (screenshots)', () => {
       fixture.detectChanges();
     }
     // The recorded response: no recording holds it.
-    for (const request of http.match((req) => req.url.endsWith('/getGitRepository.json'))) {
+    for (const request of http.match((req) => req.url.endsWith('%2FgetGitRepository.json'))) {
       request.flush(null, { status: 404, statusText: 'Not Found' });
     }
     await settle();

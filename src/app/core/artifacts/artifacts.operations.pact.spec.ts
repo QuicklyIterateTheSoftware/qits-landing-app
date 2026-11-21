@@ -33,7 +33,6 @@ import {
   daemonDownloadParams,
 } from './artifacts.operations';
 import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
-import { literalSbomPaths } from './sbom-paths';
 
 /**
  * qits-landing-app's pact with qits-artifacts-service, the store explorer's part (qits-2316):
@@ -98,19 +97,14 @@ import { literalSbomPaths } from './sbom-paths';
  * SBOM's document). The empty store's versions (a package nobody published: an empty list) bind the
  * status only. Neither explorer state records the SBOM list for its npm package: each records it
  * once, for its maven coordinate (a 404, as for the npm package), so the npm page's 404 binds that
- * recording's status only. A scoped name rides the SBOM paths literally (`literalSbomPaths`, as
- * `app.config.ts` puts it on the client), as the provider records them; the versions door takes it
- * encoded.
+ * recording's status only. Every door takes a scoped name, and a maven coordinate, as one encoded
+ * segment, as the generated client sends it (`%40contract%2Fcontract-scoped`, `%3A`); the pact
+ * records that spelling (qits-2409).
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
  * against the mock server.
  */
-// As `app.config.ts` does: the SBOM store's paths, with `:` literal (qits-2325) and a scoped npm
-// name's `@` and `/` (qits-2326).
-if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
-  artifactsClient.interceptors.request.use(literalSbomPaths);
-}
 
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-artifacts-service';
@@ -596,14 +590,13 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
     }));
 
   // A 404 is an error answer: its status only. The state records the SBOM list once, for its maven
-  // coordinate; the npm package has none either, and answers the same 404.
+  // coordinate, so the interaction reads that one; the npm package has none either, and answers
+  // the same 404.
   it('show-npm-package: a package with no SBOM, its SBOM list a 404', () =>
     given(ARTIFACT_SBOM_VERSIONS, STORE, 'show-npm-package', STATUS_ONLY).executeTest(
       async (server) => {
-        const path = {
-          packageType: 'npm',
-          packageName: paramOf(STORE, 'listNpmVersionSummaries', 'npmPackage'),
-        };
+        // The recorded path: the pact matches its encoded spelling exactly (qits-2409).
+        const path = sbomPackageOf(STORE);
         const { response } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
         expect(response?.status).toBe(404);
       },
@@ -650,16 +643,14 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
   it('show-npm-package: the SBOM list of a package nobody published, a 404', () =>
     given(ARTIFACT_SBOM_VERSIONS, EMPTY, 'show-npm-package', STATUS_ONLY).executeTest(
       async (server) => {
-        const path = {
-          packageType: 'npm',
-          packageName: paramOf(EMPTY, 'listNpmVersionSummaries', 'npmPackage'),
-        };
+        // The recorded path: the pact matches its encoded spelling exactly (qits-2409).
+        const path = sbomPackageOf(EMPTY);
         const { response } = await at(server.url, () => ARTIFACT_SBOM_VERSIONS.fetch({ path }));
         expect(response?.status).toBe(404);
       },
     ));
 
-  it('download-npm-sbom: a version’s CycloneDX document, the scoped name literal', () => {
+  it('download-npm-sbom: a version’s CycloneDX document, the scoped name encoded', () => {
     if (ARTIFACT_SBOM.provider !== PROVIDER) throw new Error('getSbom is not the artifacts one');
     return addGoldenInteraction(pact, masters, {
       provider: PROVIDER,

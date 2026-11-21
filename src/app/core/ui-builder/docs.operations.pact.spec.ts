@@ -14,7 +14,7 @@ import {
   ENTITY_MAP_STATE as CONTRACTS,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { asDatabaseIndex, type DatabaseIndex } from '$core/contracts/database-diagram';
+import { asDatabaseIndex } from '$core/contracts/database-diagram';
 import {
   categoriesOf,
   markdownParts,
@@ -25,7 +25,6 @@ import {
 import { docBlocks, publishedBy } from '$core/docs/doc-sections';
 import { defaultVersion, distinctBranches, versionsOnBranch } from '$core/docs/doc-versions';
 import { contractsSiteOf, type ContractsSite, type ContractsSites } from './contracts-catalog';
-import { literalDocsPaths } from './docs-paths';
 import {
   DOCS_REPOSITORY,
   GET_DOCS_FILE,
@@ -60,11 +59,6 @@ import { asManifest, hasViewports, routeStates } from './routes-manifest';
  * operations' own `fetch` (the helpers below), and checks it with the services' own pure steps
  * (`contractsSiteOf`, `routesSiteOf`, `asEntityMap`, `asManifest`, `asDatabaseIndex`).
  */
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
 
 it('declares the provider these parts bind', () => {
   for (const op of [DOCS_SITES, DOCS_CATALOG, DOCS_VERSIONS, DOCS_VERSION, DOCS_FILE]) {
@@ -177,13 +171,6 @@ async function assetFilesFound({ site, version }: BundleVersion): Promise<readon
 async function dataUrlFound(bundle: BundleVersion, path: string): Promise<string | null> {
   const file = await fileOf(bundle, path, { responseType: 'blob' });
   return !file.failed && file.data instanceof Blob ? blobDataUrl(file.data) : null;
-}
-
-/** The version's `database/index.json`, as `ContractsBundles` checks it. */
-async function databaseIndexFound(site: BundleVersion): Promise<DatabaseIndex | 'none' | null> {
-  const file = await fileOf(site, 'database/index.json');
-  if (file.status === 404) return 'none';
-  return file.failed ? null : asDatabaseIndex(file.data);
 }
 
 /** One unit's diagram as Markdown text, as `ContractsBundles` reads it. */
@@ -329,7 +316,8 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
    * path parameter and makes the one step of `RoutesBundles` it answers (the operations' reads, as
    * the steps below make them); `routes-bundles.spec.ts` drives the service whole. The
    * mock server still sees each request's real path, which the provider then replays: the site and
-   * the file path with `/` and `@` literal and `[`/`]` encoded (`literalDocsPaths`).
+   * the file path each one encoded segment (`%40`, `%2F`, `%5B`/`%5D`), as the generated client
+   * sends them (qits-2409).
    *
    * `getDocsFile` answers a file, not JSON the pact binds by field: each of its interactions binds
    * the status and the media type (`NonJsonResponse`). The manifest's example body is the recorded
@@ -531,18 +519,21 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
    * (`getDocsFile`): the contracts pages `golden-masters/index.json` and the recorded responses
    * (`ContractsBundles`, the call popover's reads too), the entities pages
    * `entities.json` (`entityMapFound`). Against qits-artifacts' recording of `a published contracts
-   * bundle with an entity map`, as the entity maps' part explains: a path from a provider
-   * state matches any path, so each test adds at most one interaction with a path parameter, and
+   * bundle with an entity map`, as the entity maps' part explains: each test adds at most one
+   * interaction with a path parameter, and
    * `getDocsFile` binds the status and media type only (`NonJsonResponse`), its example body the
    * state's recorded file. The reads go through `contractsFileFound`, a read of its own, so each test's read
-   * reaches its mock server.
+   * reaches its mock server. The pact matches a recorded path whose encoding differs from its
+   * literal spelling exactly (`@qits/angular` 2026.1121.214147, qits-2409), and the state records
+   * `entities.json` alone, so a read of a file it does not record (`golden-masters/…`,
+   * `database/index.json`) sends the recorded path, as the provider replays it anyway.
    *
    * The entity page also reads the ER diagram of the entity's unit (qits-2014): the bundle's
-   * `database/index.json` (`databaseIndexFound`) and the unit's `database/<file>.md`
+   * `database/index.json` and the unit's `database/<file>.md`
    * (`diagramFound`). No recording of qits-artifacts holds a bundle's database files yet, so each
    * read binds what the docs store answers for a file of its media type: the index as the entity
-   * map's JSON file is bound (the recorded `entities.json` is its example body, which is not an
-   * index), and the Markdown file as `a repository with published changelogs` records one,
+   * map's JSON file is bound (the recorded `entities.json`, read at its own path and checked as not
+   * an index), and the Markdown file as `a repository with published changelogs` records one,
    * `text/markdown`, binding the header only (Pact sniffs a Markdown body as `text/plain`). The
    * provider replays each state's own path.
    *
@@ -630,6 +621,9 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
     repository: 'qits-projects-service',
   });
 
+  /** The file path the state records `getDocsFile` for (`entities.json`). */
+  const recordedPath = () => params('getDocsFile')['path'];
+
   /** The recorded file, as `getDocsFile` answers it. */
   const recordedFile = (): NonJsonResponse => ({
     contentType: 'application/json',
@@ -682,10 +676,12 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
       });
     }
 
+    // The page reads `golden-masters/…`, but the state records `entities.json` alone, and the pact
+    // matches the recorded path's encoded spelling exactly (qits-2409): the read sends that path.
     for (const slug of SLUGS.filter((s) => FILE_READS[s].startsWith('golden-masters/'))) {
-      it(`${slug}: reads ${FILE_READS[slug]} of the site’s version`, () =>
+      it(`${slug}: reads a file of the site’s version (the recorded one)`, () =>
         given(slug, 'getDocsFile', GET_DOCS_FILE, recordedFile()).executeTest(async (server) => {
-          const file = await at(server.url, () => contractsFileFound(site(), FILE_READS[slug]));
+          const file = await at(server.url, () => contractsFileFound(site(), recordedPath()));
           expect(file).toEqual(masters.body(CONTRACTS, 'getDocsFile'));
         }));
     }
@@ -768,12 +764,17 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         );
       }));
 
-    it('show-entity: reads the version’s database/index.json', () =>
+    // The page reads `database/index.json`, which no state records; the pact matches
+    // the recorded path exactly (qits-2409), so the read sends it and checks the answer as an index.
+    it('show-entity: reads a file of the version as its database index', () =>
       given('show-entity', 'getDocsFile', GET_DOCS_FILE, recordedFile()).executeTest(
         async (server) => {
-          const index = await at(server.url, () => databaseIndexFound(site()));
+          const file = await at(server.url, () => fileOf(site(), recordedPath()));
           // The example body is the recorded `entities.json`: read, and checked as not an index.
-          expect(index).toEqual(asDatabaseIndex(masters.body(CONTRACTS, 'getDocsFile')));
+          expect(file.failed).toBe(false);
+          expect(asDatabaseIndex(file.data)).toEqual(
+            asDatabaseIndex(masters.body(CONTRACTS, 'getDocsFile')),
+          );
         },
       ));
 
@@ -872,6 +873,8 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
       }
     });
 
+    // The state records `entities.json`, not the index, and the pact matches the recorded path's
+    // encoded spelling exactly (qits-2409): the read sends the recorded path.
     it('show-ui-builder-call-details: reads a file of the contracts site’s version', () =>
       given('getDocsFile', GET_DOCS_FILE, {
         contentType: 'application/json',
@@ -884,7 +887,7 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
               version: params('getDocsFile')['version'],
               repository: 'qits-projects-service',
             },
-            'golden-masters/index.json',
+            params('getDocsFile')['path'],
           ),
         );
         expect(file).toEqual(masters.body(CONTRACTS, 'getDocsFile'));

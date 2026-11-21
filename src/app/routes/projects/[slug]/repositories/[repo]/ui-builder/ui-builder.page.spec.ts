@@ -14,7 +14,6 @@ import { DomainEvents, EVENT_SOURCE, type EventSourceLike } from '$core/events/d
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { SelectedProject } from '$core/projects/selected-project';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 import type {
   DeclaredOutcome,
@@ -52,10 +51,9 @@ const ID = '00000000-0000-4000-8000-000000000001';
 const BUNDLE = 'a published routes bundle';
 const { site: SITE, version: VERSION } = artifacts.operation(BUNDLE, 'getDocsFile').params;
 const SITES_URL = '/artifacts/docs/docs';
-const VERSIONS_URL = `/artifacts/docs/docs/${SITE}`;
+const VERSIONS_URL = `/artifacts/docs/docs/${encodeURIComponent(SITE)}`;
 const VERSION_URL = `${VERSIONS_URL}/-/${VERSION}`;
-const fileUrl = (file: string) =>
-  `${VERSION_URL}/${file.split('/').map(encodeURIComponent).join('/')}`;
+const fileUrl = (file: string) => `${VERSION_URL}/${encodeURIComponent(file)}`;
 const LOADED_FREEZE = artifacts.operation('a published routes bundle freeze', 'getDocsFile').params[
   'path'
 ];
@@ -157,11 +155,6 @@ const OUTCOMES = {
     fired('signs out', 'shell', 'signed-out'),
   ],
 };
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
 
 /** The recorded version list, its newest version naming `repo` instead (a frontend's own site). */
 function versionsNaming(repo: string) {
@@ -340,7 +333,7 @@ describe('UiBuilderPage', () => {
         CONTRACTS,
         'listDocsVersions',
       );
-      http.expectOne(`${SITES_URL}/${site}`).flush(
+      http.expectOne(`${SITES_URL}/${encodeURIComponent(site)}`).flush(
         repository
           ? {
               ...versions,
@@ -352,7 +345,7 @@ describe('UiBuilderPage', () => {
           : versions,
       );
       for (let i = 0; i < 3; i++) await settle();
-      map(http.expectOne(`${SITES_URL}/${site}/-/${version}/entities.json`));
+      map(http.expectOne(`${SITES_URL}/${encodeURIComponent(site)}/-/${version}/entities.json`));
     };
   }
 
@@ -3069,7 +3062,9 @@ describe('UiBuilderPage', () => {
     const DETAIL = `${PROJECTS}#getProject`;
     const STATE = 'a project exists';
     const { site, version } = artifacts.operation(CONTRACTS, 'getDocsFile').params;
-    const GOLDEN = `${SITES_URL}/${site}/-/${version}/golden-masters`;
+    /** `path` in the site's `golden-masters/`, the site and the file path each one encoded segment. */
+    const golden = (path: string) =>
+      `${SITES_URL}/${encodeURIComponent(site)}/-/${version}/${encodeURIComponent(`golden-masters/${path}`)}`;
 
     /** A projects list marked as qits-2141 marks it, with a joined read of one project. */
     const HTML = `
@@ -3207,7 +3202,7 @@ describe('UiBuilderPage', () => {
       operationIds: readonly string[],
     ) {
       await settle();
-      http.expectOne(`${GOLDEN}/index.json`).flush(INDEX);
+      http.expectOne(golden(`index.json`)).flush(INDEX);
       for (let i = 0; i < 3; i++) await settle();
       const bodies: Record<string, object> = {
         listProjects: [
@@ -3217,7 +3212,7 @@ describe('UiBuilderPage', () => {
         getProject: { id: 'p1', name: 'Qits', description: 'Joined' },
       };
       for (const operationId of operationIds) {
-        http.expectOne(`${GOLDEN}/a-project-exists/${operationId}.json`).flush(bodies[operationId]);
+        http.expectOne(golden(`a-project-exists/${operationId}.json`)).flush(bodies[operationId]);
       }
       for (let i = 0; i < 3; i++) await settle();
       await stable();
@@ -3473,12 +3468,10 @@ describe('UiBuilderPage', () => {
       async function renderTwice() {
         const rendered = await renderMarked(readTwice(), artifactsSite, HTML_TWICE);
         await settle();
-        http.expectOne(`${GOLDEN}/index.json`).flush(DOCS_INDEX);
+        http.expectOne(golden(`index.json`)).flush(DOCS_INDEX);
         for (let i = 0; i < 3; i++) await settle();
-        http.expectOne(`${GOLDEN}/docs-0/getDocsFile.json`).flush({ routes: [], freezes: [] });
-        http
-          .expectOne(`${GOLDEN}/docs-1/getDocsFile.json`)
-          .flush({ entities: [{ entity: 'a.B' }] });
+        http.expectOne(golden(`docs-0/getDocsFile.json`)).flush({ routes: [], freezes: [] });
+        http.expectOne(golden(`docs-1/getDocsFile.json`)).flush({ entities: [{ entity: 'a.B' }] });
         for (let i = 0; i < 3; i++) await settle();
         await stable();
         rendered.fixture.detectChanges();

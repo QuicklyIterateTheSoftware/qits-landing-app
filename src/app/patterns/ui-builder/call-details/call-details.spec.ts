@@ -3,7 +3,6 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { provideHeyApiClient } from '../../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../../api/artifacts/client.gen';
@@ -33,7 +32,9 @@ const site = (): ContractsSite => ({
   version: `2026.1.${++version}`,
   repository: 'qits-ci-service',
 });
-const base = (s: ContractsSite) => `/artifacts/docs/docs/${s.site}/-/${s.version}/golden-masters`;
+/** `path` in the site's `golden-masters/`, the site and the file path each one encoded segment. */
+const base = (s: ContractsSite, path: string) =>
+  `/artifacts/docs/docs/${encodeURIComponent(s.site)}/-/${s.version}/${encodeURIComponent(`golden-masters/${path}`)}`;
 
 const INDEX = {
   formatVersion: 1,
@@ -70,9 +71,6 @@ describe('CallDetails', () => {
         provideTestPlatformOrigins({}, { docs: 'https://docs.example' }),
       ],
     });
-    if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-      artifactsClient.interceptors.request.use(literalDocsPaths);
-    }
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -117,10 +115,10 @@ describe('CallDetails', () => {
 
     await open();
     expect(element.querySelector('.call-popover')?.textContent).toContain('Reading');
-    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    http.expectOne(base(s, `index.json`)).flush(INDEX);
     await update();
     http
-      .expectOne(`${base(s)}/a-commit-with-a-run-in-flight/listActiveRuns.json`)
+      .expectOne(base(s, `a-commit-with-a-run-in-flight/listActiveRuns.json`))
       .flush({ runs: [{ id: 'r-1' }] });
     await update();
 
@@ -143,9 +141,9 @@ describe('CallDetails', () => {
     const picked: string[] = [];
     fixture.componentInstance.entityPicked.subscribe((key) => picked.push(key));
     await open();
-    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    http.expectOne(base(s, `index.json`)).flush(INDEX);
     await update();
-    http.expectOne(`${base(s)}/a-commit-with-a-run-in-flight/listActiveRuns.json`).flush({});
+    http.expectOne(base(s, `a-commit-with-a-run-in-flight/listActiveRuns.json`)).flush({});
     await update();
 
     const entity = [...element.querySelectorAll<HTMLButtonElement>('.call-popover button')].find(
@@ -161,9 +159,9 @@ describe('CallDetails', () => {
     const s = site();
     const { element, open, update } = await render(s, [CI_RUN], 'qits');
     await open();
-    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    http.expectOne(base(s, `index.json`)).flush(INDEX);
     await update();
-    http.expectOne(`${base(s)}/a-commit-with-a-run-in-flight/listActiveRuns.json`).flush({});
+    http.expectOne(base(s, `a-commit-with-a-run-in-flight/listActiveRuns.json`)).flush({});
     await update();
 
     const state = element.querySelector<HTMLAnchorElement>('.call-popover a.state-link');
@@ -189,9 +187,9 @@ describe('CallDetails', () => {
     const s = site();
     const { element, open, update } = await render(s);
     await open();
-    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    http.expectOne(base(s, `index.json`)).flush(INDEX);
     await update();
-    http.expectOne(`${base(s)}/a-commit-with-a-run-in-flight/listActiveRuns.json`).flush({});
+    http.expectOne(base(s, `a-commit-with-a-run-in-flight/listActiveRuns.json`)).flush({});
     await update();
     expect(element.querySelector('.call-popover a.state-link')).toBeNull();
     expect(element.querySelector('.call-popover a.entity-link')).toBeNull();
@@ -202,7 +200,7 @@ describe('CallDetails', () => {
     const s = site();
     const { element, open, update } = await render(s, []);
     await open();
-    http.expectOne(`${base(s)}/index.json`).flush({ ...INDEX, states: [] });
+    http.expectOne(base(s, `index.json`)).flush({ ...INDEX, states: [] });
     await update();
     expect(element.querySelector('.call-popover')?.textContent).toContain(
       `list no state “${CALL.state}”`,

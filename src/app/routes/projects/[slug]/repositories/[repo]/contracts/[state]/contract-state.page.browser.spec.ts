@@ -3,8 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page } from 'vitest/browser';
-import { client as artifactsClient } from '../../../../../../../api/artifacts/client.gen';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { goldenMaster } from '../../../../../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -38,11 +36,6 @@ import {
  */
 const CONTRACTS = 'a published contracts bundle with an entity map';
 
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
-
 describe('ContractStatePage (screenshots)', () => {
   let http: HttpTestingController;
 
@@ -65,11 +58,11 @@ describe('ContractStatePage (screenshots)', () => {
       .flush(await goldenMaster(CONTRACTS, 'listDocsSites', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@contracts/qits-projects'))
+      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/%40contracts%2Fqits-projects'))
       .flush(await goldenMaster(CONTRACTS, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne((req) => req.url.endsWith('/golden-masters/index.json'))
+      .expectOne((req) => req.url.endsWith('/golden-masters%2Findex.json'))
       .flush(null, { status: 404, statusText: 'Not Found' });
     await opened.settled();
     const view = page.elementLocator(opened.page);
@@ -91,7 +84,7 @@ describe('ContractStatePage (screenshots)', () => {
       .flush(await goldenMaster(CONTRACTS, 'listDocsSites', 'qits-artifacts'));
     await opened.settled();
     http
-      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@contracts/qits-projects'))
+      .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/%40contracts%2Fqits-projects'))
       .flush(await goldenMaster(CONTRACTS, 'listDocsVersions', 'qits-artifacts'));
     await opened.settled();
     const view = page.elementLocator(opened.page);
@@ -113,7 +106,7 @@ describe('ContractStatePage (screenshots)', () => {
     await answerFile(opened, 'qits-githost', 'golden-masters/index.json', INDEX);
     await answerFile(opened, 'qits-projects', 'golden-masters/index.json', DEPENDENCY);
     // The recorded response: no recording holds it.
-    for (const request of http.match((req) => req.url.endsWith('/getGitRepository.json'))) {
+    for (const request of http.match((req) => req.url.endsWith('%2FgetGitRepository.json'))) {
       request.flush(null, { status: 404, statusText: 'Not Found' });
     }
     await opened.settled();

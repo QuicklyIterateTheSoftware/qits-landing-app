@@ -3,10 +3,8 @@ import type { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import axe from 'axe-core';
 import { page } from 'vitest/browser';
-import { client as artifactsClient } from '../../app/api/artifacts/client.gen';
 import { WEB_SOCKET } from '$core/platform/web-socket';
 import { IN_PROGRESS_VIEW_KEY } from '$core/work/in-progress-view';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import { provideTestPlatformOrigins } from '../platform-origins';
 import { openRoute, provideAppRoute, type OpenedRoute } from './app-route';
 import { goldenMaster } from './golden-master';
@@ -36,11 +34,6 @@ const LIBRARY_FAILURES: Record<Scheme, readonly string[]> = { light: [], dark: [
 
 /** The page's clock for the cases whose text says how long ago (as their own specs set it). */
 const NOW = new Date('2026-01-01T02:00:00Z');
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal (the UI builder).
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
 
 /** One violation's nodes as lines: selector, foreground on background, ratio against expected. */
 function describeViolations(results: axe.AxeResults): string[] {
@@ -251,7 +244,7 @@ const CASES: Case[] = [
         .flush(await goldenMaster(bundle, 'listDocsSites', 'qits-artifacts'));
       await opened.settled();
       http
-        .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/@routes/qits-landing'))
+        .expectOne((req) => req.url.endsWith('/artifacts/docs/docs/%40routes%2Fqits-landing'))
         .flush(await goldenMaster(bundle, 'listDocsVersions', 'qits-artifacts'));
       await opened.settled();
       http

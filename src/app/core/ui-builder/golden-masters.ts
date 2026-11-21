@@ -89,8 +89,8 @@ export function asGoldenIndex(value: unknown): GoldenIndex | null {
 /**
  * A recorded file's path as the index gives it, when it is plain relative segments: letters,
  * digits, `.`, `_` and `-`, no `.` or `..` segment, no leading `/`, no backslash or `%`. The docs
- * path keeps `/` literal on the wire, so a `..` in an index would otherwise reach another path of
- * the store with the person's bearer.
+ * store reads the path's `/` (sent as `%2F`) as a separator, so a `..` in an index would otherwise
+ * reach another path of the store with the person's bearer.
  */
 export function safeRecordedFile(file: string): boolean {
   return /^[A-Za-z0-9._-]+(\/[A-Za-z0-9._-]+)*$/.test(file) && !/(^|\/)\.\.?(\/|$)/.test(file);
