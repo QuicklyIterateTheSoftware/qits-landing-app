@@ -137,8 +137,8 @@ export interface GlobalChild {
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
  * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System; qits-2357: Mirror; qits-2359:
  * Orchestrator), with its own pages listed below it while it is open (`children`, qits-2346:
- * System's Services, Nodes and Secrets), or a site of its own the app leaves for at `href`, through
- * its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
+ * System's Services, Nodes, Configs and Secrets), or a site of its own the app leaves for at
+ * `href`, through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
  */
 export type GlobalLink =
   | {
@@ -217,7 +217,7 @@ export interface NavNote {
  * Orchestrator, a work page and a global section's page are marked current by `[qitsExit]`; a section keeps its own rule
  * (`currentOf`: `true` while one of its pages below it is open, and Agents on a slot's page), and so
  * does a global section with pages of its own (`globalCurrentOf`, the same rule: System is `true`
- * on Services, Nodes or Secrets, qits-2346), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
+ * on Services, Nodes, Configs or Secrets, qits-2346), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
