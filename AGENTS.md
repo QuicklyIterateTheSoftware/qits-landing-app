@@ -628,6 +628,39 @@ child route and a `switch-swarm-node-tab` exit, and read the node it read throug
 (`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all). The tab row and
 the open tab sit below the labels, and the Tasks section shows on the bare node URL only.
 
+`system/swarm/nodes/<id>/containers` (`SwarmNodeContainersPage`, qits-2352, replacing
+qits-system-frontend's `NodeContainersTab` at `swarm/nodes/:id/containers`, an entry point too) is
+the node's first tab, Containers. Two doors, `core/system/node-containers.operations.ts` (consumes
+in `node-containers.consumes.ts`): `NODE_CONTAINER_LIST` (`listNodeContainers`, always `all=true`,
+`docker ps -a` on the local daemon, newest first; its `errorConsumes` read a 409's `code` and
+`message`) and, per Logs press, `NODE_CONTAINER_LOGS` (`getContainerLogs?tail=200`, by the
+container's id). The remote-node rule: qits-system reaches only the daemon it runs on, so the tab
+reads nothing while the open node (`OPEN_SWARM_NODE`) is not `self`, and says "Only the node
+qits-system runs on can be read; this is another node."; a 409 `NODE_REMOTE` says the same (with
+the service's `message`), never a load failure. The state filter ("Show", `aria-pressed`) is
+Running (the default), Stopped and All, each counted from the one read and filtered client-side;
+the caption follows it (`core/system/node-container-rows.ts`). The table in the server's order:
+name with docker's 12-character short id (the full id in `title`), image, state on a chip (running
+ok, restarting/paused waiting, dead failed, else neutral), health only while running (docker keeps
+a dead container's last probe, which painted 89 of 90 exited containers "unhealthy"; `—`
+otherwise and for `none`), docker's status sentence, created (`formatRelativeTime` of
+`dockerInstant`, `core/system/docker-date.ts`, which reads docker's Go date `2026-11-20 21:56:36
++0000 UTC` by its numeric offset, never by `new Date()`'s leniency; the absolute instant in
+`title`, `—` when it does not parse), ports and Logs. Logs opens one panel under the table ("<name>,
+last 200 lines", `show-swarm-node-container-logs`), closed by Close or a second press; truncated,
+empty, a 404 (the container is gone) and other failures (with Retry) each say so, and Refresh
+leaves it open. `[]` under a filter is that filter's sentence, a 403 names the admin role, a 503 or
+anything else says the node's containers cannot be read right now, with Retry. Staleness: no
+`refreshOn`. No event names a container start, stop or death (qits-system publishes target events
+only), so the tab's Refresh reads again; nothing polls. It ships no exec buttons: `bash`/`sh` and
+the terminal page arrive with qits-2356. The pact (`node-containers.operations.pact.spec.ts`, its
+own part of the system pact) reads the list (`show-swarm-node-containers`) in "a single-node
+swarm" (one running and healthy row, one exited and unhealthy), "a node running no containers"
+(`[]`) and "a swarm node this service cannot reach" (409 `NODE_REMOTE` at `no-such-node`), and the
+logs (`show-swarm-node-container-logs`) in "a single-node swarm"; each skips itself until the
+`@qits/system-golden-masters` pin records the list at `?all=true`. A node that is not `self` is in
+no recording, so the plain spec derives it.
+
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
 (`listSwarmConfigs`, `docker config ls` on the manager), one table in the server's order: name
@@ -1333,7 +1366,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases}.operations*.ts`                            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-containers}.operations*.ts`            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
