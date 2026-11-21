@@ -1,5 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import {
   exit,
   outcomes,
@@ -13,6 +20,7 @@ import {
 } from '@qits/angular';
 import { payloadIds } from '$core/events/refresh-on';
 import { SelectedProject } from '$core/projects/selected-project';
+import { SelectedWork } from '$core/work/selected-work';
 import { LIST_PROJECT_WRAPPER } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
 import { placementNote, runtimeLabel } from '$core/workspaces/agent-labels';
@@ -80,6 +88,8 @@ function loadState(read: { status(): string; hasValue(): boolean }): LoadState {
  *   (`concerns`) → `slots` and `wrapperAgents`;
  * - `SCMPublishCommit` to the wrapper's main branch (`movesWrapper`) → `repositories`, as the
  *   Repositories page reads its own.
+ * - `EntityTransitioned` about the project → its work (`SelectedWork.followTransitions`), whose
+ *   needs a row shows as what its agent waits on (qits-2494).
  * Not announced: a queued agent's creation, a slot's runtime leaving RUNNING.
  */
 @Component({
@@ -197,6 +207,11 @@ export class ProjectAgentsPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly slug = computed(() => this.selected.slug());
+
+  /** Keeps the project's work, and with it the needs its agent rows show (qits-2494), current. */
+  constructor() {
+    inject(SelectedWork).followTransitions(inject(DestroyRef));
+  }
 
   /** The open project's id, in the browser only: every read below waits for it. */
   private readonly projectId = computed(() =>

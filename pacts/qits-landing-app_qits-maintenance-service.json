@@ -4826,7 +4826,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-artifacts",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
+            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo"
           }
         }
       },
@@ -4880,7 +4880,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-artifacts",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
+            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts"
           }
         }
       },
@@ -6160,6 +6160,300 @@
           ]
         },
         "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listArtifacts"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo"
+          }
+        }
+      },
+      "description": "show-repository: listArtifacts",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no released artifacts"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/artifacts"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listArtifacts"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts"
+          }
+        }
+      },
+      "description": "show-repository: listArtifacts",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "released artifacts, some behind",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/artifacts"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "behindCount": 0,
+              "dependentCount": 0,
+              "ecosystem": "npm",
+              "latest": null,
+              "name": "@qits/contract-ui",
+              "occurredAt": "2026-01-01T00:00:00Z",
+              "repository": "contract-frontend",
+              "sbomStatus": "MISSING",
+              "version": "2026.1103.1"
+            },
+            {
+              "behindCount": 1,
+              "dependentCount": 3,
+              "ecosystem": "maven",
+              "latest": "2026.1101.2",
+              "name": "eu.wohlben.qits:contract-core",
+              "occurredAt": "2026-01-01T00:00:00Z",
+              "repository": "contract-javalib",
+              "sbomStatus": "INGESTED",
+              "version": "2026.1101.2"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.behindCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.dependentCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sbomStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.behindCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.dependentCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.ecosystem": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latest": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurredAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.repository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.sbomStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
           "header": {
             "Content-Type": {
               "combine": "AND",

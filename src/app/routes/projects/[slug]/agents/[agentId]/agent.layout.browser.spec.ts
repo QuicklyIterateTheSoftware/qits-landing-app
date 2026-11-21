@@ -13,6 +13,9 @@ import {
   type OpenedRoute,
 } from '../../../../../../testing/browser/app-route';
 
+/** The project's work the agent pages read for their items' needs (qits-2494). */
+const WORK_WITH_NEEDS = 'a ticket that needs another';
+
 /**
  * Screenshots of an agent's page inside the shell (`openRoute`), at the agent's bare URL (no tab
  * open). The project is qits-projects' recording ("a project exists");
@@ -90,7 +93,7 @@ describe('AgentLayout (screenshots)', () => {
     const agent = await goldenMaster(AGENT, 'getAgent', 'qits-workspaces');
     const opened = await openRoute(
       (project) => `/projects/${project.slug}/agents/${agent.agentId}`,
-      { agents },
+      { agents, work: WORK_WITH_NEEDS },
     );
     return { opened, agent };
   }
@@ -130,7 +133,9 @@ describe('AgentLayout (screenshots)', () => {
       .element(view.getByRole('link', { name: `ws-${slot}` }))
       .toHaveAttribute('href', `/projects/${project.slug}/workspaces/${slot}`);
     await expect.element(view.getByRole('region', { name: 'Starting' })).toBeVisible();
-    expect(streams).toEqual([
+    // The start's log, beside the app's one domain-event stream (which the item's needs follow,
+    // qits-2494).
+    expect(streams.filter((url) => !url.startsWith('/events/api/stream'))).toEqual([
       `https://workspaces.test/workspaces/api/technical-processes/${process.technicalProcessId}/events`,
     ]);
     await expect

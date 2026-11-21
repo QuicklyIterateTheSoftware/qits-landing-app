@@ -82,6 +82,15 @@ export class SelectedWork {
   /** The open project's work entities without the finishes waiting or sent; empty until read. */
   readonly entries = computed(() => withoutHidden(this.loaded(), this.pending.hidden()));
 
+  /**
+   * The entry of the item with the qualified id `qualifiedId` (an agent's `entityId`), as read;
+   * none while the work is not read or does not hold it. An agent's line reads its needs here.
+   */
+  entryOf(qualifiedId: string | null | undefined): WorkEntry | undefined {
+    const id = qualifiedId?.trim();
+    return id ? this.loaded().find((e) => e.qualifiedId === id) : undefined;
+  }
+
   /** The open project's work as a tree: phases, columns and spans (`work-tree.ts`). */
   readonly graph = computed(() => new WorkGraph(this.entries()));
 

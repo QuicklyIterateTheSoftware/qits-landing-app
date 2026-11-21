@@ -3686,7 +3686,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -3756,7 +3756,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -3895,7 +3895,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -3964,7 +3964,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -4063,7 +4063,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -4178,7 +4178,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -4327,7 +4327,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -4453,7 +4453,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -4629,7 +4629,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -4750,7 +4750,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site, projects/:slug/docs/read/:site/-/:version"
+            "route": "projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version"
           }
         }
       },
@@ -4887,7 +4887,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -5307,7 +5307,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -8163,7 +8163,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -8338,8 +8338,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
-            "kind": "ui",
-            "route": "projects/:slug/docs"
+            "kind": "ui"
           }
         }
       },
@@ -8712,6 +8711,308 @@
               "matchers": [
                 {
                   "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/docs/:site"
+          }
+        }
+      },
+      "description": "show-repository: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a docs catalog naming contract repositories",
+          "params": {
+            "site0": "@routes/contract-frontend",
+            "site1": "@contracts/contract-service"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
+                "latestRepository": "contract-service",
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/contract-service",
+                "versionCount": 1
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.latestRepository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+          }
+        }
+      },
+      "description": "show-repository: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a docs catalog of every kind",
+          "params": {
+            "site0": "@apidocs/qits-ci",
+            "site1": "@userflows/qits-events",
+            "site2": "@guides/qits-platform",
+            "site3": "@contracts/qits-ci",
+            "site4": "@routes/qits-landing",
+            "site5": "@changelog/qits-ci-service",
+            "site6": "@qits/ui-components",
+            "site7": "qits-storybook"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestPublishedAt": "2026-01-13T01:00:00Z",
+                "latestRepository": "qits-ci-service",
+                "latestVersion": "2026.112.10000",
+                "name": "@apidocs/qits-ci",
+                "versionCount": 3
+              },
+              {
+                "latestPublishedAt": "2026-01-02T08:00:00Z",
+                "latestVersion": "1.0.0",
+                "name": "qits-storybook",
+                "versionCount": 1
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.latestRepository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             }

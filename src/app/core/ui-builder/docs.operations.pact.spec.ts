@@ -922,7 +922,8 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
    * (qits-2318) lists the whole catalog (`DOCS_CATALOG`) and groups it by section (`docBlocks`),
    * naming each site's publisher when the project holds it; `RepositoryDocsPage` (qits-2336) keeps
    * the sites whose newest version the repository published (`latestRepository`, `publishedBy`).
-   * Each part owns `listDocsSites`' interactions for its own trigger alone: `show-project-docs`,
+   * Each part owns `listDocsSites`' interactions for its own trigger alone (the project's Docs page and
+   * its `show-project-docs` are gone, qits-2486):
    * `show-repository-docs`.
    *
    * Against qits-artifacts' recordings of `a docs catalog of every kind` (a site of every section:
@@ -940,6 +941,8 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
 
   const EVERY_KIND = 'a docs catalog of every kind';
   const EMPTY = 'an empty docs catalog';
+  /** `contract-service`'s and `contract-frontend`'s sites: the repository page's (qits-2478). */
+  const CONTRACT_REPOSITORIES = 'a docs catalog naming contract repositories';
 
   /**
    * Whether the installed golden masters record the catalog's publishers (`latestRepository` in
@@ -1034,28 +1037,6 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
     });
   }
 
-  part('show-project-docs', 'the Docs page', (given) => {
-    it.skipIf(!current)(
-      'show-project-docs: groups the catalog’s sites by section, each with its versions and publisher',
-      () =>
-        given(EVERY_KIND).executeTest(async (server) => {
-          const sites = (await at(server.url, () => catalogRead())) ?? [];
-          const blocks = docBlocks(sites);
-          expect(blocks.length).toBeGreaterThan(0);
-          expectRecorded(sites, EVERY_KIND);
-          // A site with a publisher, and one without (`qits-storybook`): the page links the first only.
-          expect(sites.some((site) => !!site.latestRepository)).toBe(true);
-          expect(sites.some((site) => !site.latestRepository)).toBe(true);
-        }),
-    );
-
-    it.skipIf(!current)('show-project-docs: an empty catalog makes no block', () =>
-      given(EMPTY).executeTest(async (server) => {
-        expect(docBlocks((await at(server.url, () => catalogRead())) ?? [])).toEqual([]);
-      }),
-    );
-  });
-
   part('show-repository-docs', 'a repository’s Docs page', (given) => {
     it.skipIf(!current)(
       'show-repository-docs: keeps the sites the repository published, by section',
@@ -1079,6 +1060,27 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
       given(EMPTY).executeTest(async (server) => {
         const sites = (await at(server.url, () => catalogRead())) ?? [];
         expect(docBlocks(publishedBy(sites, 'qits-ci-service'))).toEqual([]);
+      }),
+    );
+  });
+
+  part('show-repository', 'a repository’s page (qits-2478)', (given) => {
+    it.skipIf(!current)('show-repository: keeps the docs sites the repository published', () =>
+      given(EVERY_KIND).executeTest(async (server) => {
+        const sites = (await at(server.url, () => catalogRead())) ?? [];
+        expectRecorded(sites, EVERY_KIND);
+        const publisher = sites.find((site) => !!site.latestRepository)?.latestRepository ?? '';
+        expect(publisher).toBeTruthy();
+        expect(publishedBy(sites, publisher).length).toBeGreaterThan(0);
+        expect(publishedBy(sites, 'no-such-repository')).toEqual([]);
+      }),
+    );
+
+    it.skipIf(!current)('show-repository: a contract service’s own docs sites', () =>
+      given(CONTRACT_REPOSITORIES).executeTest(async (server) => {
+        const sites = (await at(server.url, () => catalogRead())) ?? [];
+        expectRecorded(sites, CONTRACT_REPOSITORIES);
+        expect(sites.every((site) => !!site.latestRepository)).toBe(true);
       }),
     );
   });

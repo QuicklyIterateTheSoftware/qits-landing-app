@@ -62,7 +62,6 @@ type SectionKey =
   | 'repositories'
   | 'deployments'
   | 'observability'
-  | 'docs'
   | 'events'
   | 'maintenance'
   | 'setup';
@@ -89,7 +88,6 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'observability/metrics'
   | 'observability/slow-spans'
   | 'observability/traces'
-  | 'docs'
   | 'events'
   | 'maintenance'
   | 'maintenance/dependencies'
@@ -122,7 +120,11 @@ export type GlobalPath =
   | 'system/swarm/secrets'
   | 'system/targets'
   | 'mirror'
-  | 'orchestrator';
+  | 'orchestrator'
+  | 'idp'
+  | 'idp/clients'
+  | 'idp/users'
+  | 'idp/devices';
 
 /** One of a global section's own pages, below it in the sidebar while the section is open. */
 export interface GlobalChild {
@@ -142,9 +144,10 @@ export interface GlobalChild {
  * One of the sidebar's global sections, shown while no project is open: a platform page that
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
  * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System; qits-2357: Mirror; qits-2359:
- * Orchestrator), with its own pages listed below it while it is open (`children`, qits-2346:
- * System's Services, Nodes, Configs and Secrets), or a site of its own the app leaves for at
- * `href`, through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
+ * Orchestrator; qits-2481: IdP admin), with its own pages listed below it while it is open
+ * (`children`, qits-2346: System's Services, Nodes, Configs and Secrets; qits-2481: IdP admin's
+ * Clients, Users and Signed-in devices), or a site of its own the app leaves for at `href`, through
+ * its declared external outcome (`kind: 'external'`; none today).
  */
 export type GlobalLink =
   | {
@@ -213,11 +216,11 @@ export interface NavNote {
  * (`open-sidebar-network-access`, external), the global sections shown with no project open
  * (Artifacts, `open-sidebar-artifacts`, System, `open-sidebar-system`, Mirror,
  * `open-sidebar-mirror`, and Orchestrator, `open-sidebar-orchestrator`, in-app sections, with
- * System's own pages below it while it is open, `open-sidebar-system-page`; IdP admin, `open-sidebar-idp-admin`, which leaves the app for the
- * idp's own admin), the gear (`open-project-settings`), the network icon (`open-network-access`,
+ * System's own pages below it while it is open, `open-sidebar-system-page`; IdP admin,
+ * `open-sidebar-idp`, with its pages below it, `open-sidebar-idp-page`, qits-2481), the gear (`open-project-settings`), the network icon (`open-network-access`,
  * external), and the trail's brand and crumbs (`follow-breadcrumb`),
  * handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare
- * their own, being patterns (app-wide too). The two Network access links and IdP admin are plain
+ * their own, being patterns (app-wide too). The two Network access links are plain
  * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
  * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts, Mirror and
  * Orchestrator, a work page and a global section's page are marked current by `[qitsExit]`; a section keeps its own rule
@@ -354,7 +357,7 @@ export interface NavNote {
       >
         <!-- With no project open, the global sections in its place (Artifacts, System, Mirror,
              Orchestrator, IdP admin). A section of this app is a router link through its exit,
-             current on its pages; one that leaves the app is a real link that records its outcome first. The list
+             current on its pages; one that leaves the app (none today) is a real link that records its outcome first. The list
              and a leaving entry with no address yet (the server render) are switched by class; such
              an entry names no outcome, being a trigger nobody can reach. -->
         <ul class="m-0 list-none px-2 py-3" [class.hidden]="!globalShown()">
@@ -401,9 +404,43 @@ export interface NavNote {
             }
           }
         </ul>
+        <!-- With a repository open (qits-2492), its own pages in the project's sections' place,
+             below a way back to the project's Repositories; rendered only then (qits-2225). -->
+        @if (repository(); as repo) {
+          <ul class="m-0 list-none px-2 py-3" aria-label="Repository">
+            <li>
+              <a
+                class="block rounded-md px-3 py-[0.4rem] text-sm text-fg-muted no-underline hover:bg-surface-muted"
+                [qitsExit]="repositoryBack.repositories"
+                [exitParams]="{ slug: slug() }"
+                [exitCurrent]="null"
+                (click)="closeNav()"
+                >← Repositories</a
+              >
+            </li>
+            <li
+              class="truncate px-3 pt-2 pb-1 font-mono text-xs font-semibold text-fg"
+              [title]="repo"
+            >
+              {{ repo }}
+            </li>
+            @for (entry of repositoryLinks(); track entry.label) {
+              <li>
+                <a
+                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                  [qitsExit]="entry.exit"
+                  [exitParams]="{ slug: slug(), repo: repo }"
+                  [exitCurrent]="entry.current"
+                  (click)="closeNav()"
+                  >{{ entry.label }}</a
+                >
+              </li>
+            }
+          </ul>
+        }
         <!-- The open project's sections; switched by class while there are none. -->
-        <ul class="m-0 list-none px-2 py-3" [class.hidden]="links().length === 0">
-          @for (link of links(); track link.key) {
+        <ul class="m-0 list-none px-2 py-3" [class.hidden]="shownLinks().length === 0">
+          @for (link of shownLinks(); track link.key) {
             <li>
               <a
                 class="group block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg aria-[current=true]:font-semibold aria-[current=true]:text-fg"
@@ -512,7 +549,6 @@ export class ShellLayout {
     repositories: exit('projects/:slug/repositories'),
     deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
-    docs: exit('projects/:slug/docs'),
     events: exit('projects/:slug/events'),
     maintenance: exit('projects/:slug/maintenance'),
   });
@@ -550,6 +586,25 @@ export class ShellLayout {
   private readonly maintenancePages = outcomes('open-sidebar-maintenance-page', {
     dependencies: exit('projects/:slug/maintenance/dependencies'),
     artifacts: exit('projects/:slug/maintenance/artifacts'),
+  });
+
+  /**
+   * The repository sidebar's entries (qits-2492), one exit per page of the open repository:
+   * Overview, Artifacts, Docs, Contracts, Entities, UI builder and Release requests (qits-2506).
+   */
+  private readonly repositoryPages = outcomes('open-sidebar-repository-page', {
+    overview: exit('projects/:slug/repositories/:repo'),
+    artifacts: exit('projects/:slug/repositories/:repo/artifacts'),
+    docs: exit('projects/:slug/repositories/:repo/docs'),
+    contracts: exit('projects/:slug/repositories/:repo/contracts'),
+    entities: exit('projects/:slug/repositories/:repo/entities'),
+    uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
+    releaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
+  });
+
+  /** The repository sidebar's way back to the project's sidebar (qits-2492). */
+  protected readonly repositoryBack = outcomes('leave-sidebar-repository', {
+    repositories: exit('projects/:slug/repositories'),
   });
 
   /** Each work page's exit, by its segment (`WORK_TABS`). */
@@ -629,27 +684,29 @@ export class ShellLayout {
   });
 
   /**
-   * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
-   * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
-   * (owner, 2026-11-18). Same tab.
+   * The sidebar's IdP admin (qits-2481): the IdP admin section, the idp's own admin pages shown in
+   * a frame in this app's main slot. `idp` opens the clients (a redirect), and the entry stays
+   * current on every page below it.
    */
-  protected readonly idpAdmin = outcomes('open-sidebar-idp-admin', {
-    open: external('idp'),
+  protected readonly idp = outcomes('open-sidebar-idp', {
+    open: exit('idp'),
   });
 
-  /** The idp's page origin; `''` on the server render. */
-  private readonly idpOrigin = inject(PlatformOrigins).page('idp');
-
-  /** The idp admin's address: `<idp origin>/idp/`, or none while the origin is not known. */
-  private readonly idpAdminHref = this.idpOrigin ? `${this.idpOrigin}/idp/` : '';
+  /** The IdP admin section's pages below the sidebar's IdP admin, one exit per page (qits-2481). */
+  private readonly idpPages = outcomes('open-sidebar-idp-page', {
+    clients: exit('idp/clients'),
+    users: exit('idp/users'),
+    devices: exit('idp/devices'),
+  });
 
   /**
    * The sidebar's global sections: where the sections that belong to no project go, shown in the
    * project's sections' place while no project is open, and not at all while one is: Artifacts
-   * (qits-2316), System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359), in-app
-   * sections, and IdP admin (qits-2319, leaving the app). An in-app section may list its own pages
+   * (qits-2316), System (qits-2344), Mirror (qits-2357), Orchestrator (qits-2359) and IdP admin
+   * (qits-2481), in-app sections. An in-app section may list its own pages
    * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348), Secrets
-   * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`;
+   * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`, and IdP
+   * admin's Clients, Users and Signed-in devices, one exit each of `open-sidebar-idp-page`;
    * qits-2347…qits-2356 each add one child there. Mirror lists none: its one listable page is the
    * OCI upstreams, which `mirror` opens; nor does Orchestrator: its one process (gc) is what
    * `orchestrator` opens.
@@ -657,6 +714,7 @@ export class ShellLayout {
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     const system = this.systemPages;
+    const idp = this.idpPages;
     return [
       { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
       {
@@ -678,7 +736,16 @@ export class ShellLayout {
       },
       { kind: 'exit', label: 'Mirror', exit: this.mirror.open },
       { kind: 'exit', label: 'Orchestrator', exit: this.orchestrator.open },
-      { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
+      {
+        kind: 'exit',
+        label: 'IdP admin',
+        exit: this.idp.open,
+        children: [
+          { label: 'Clients', exit: idp.clients, path: idp.clients.url() },
+          { label: 'Users', exit: idp.users, path: idp.users.url() },
+          { label: 'Signed-in devices', exit: idp.devices, path: idp.devices.url() },
+        ],
+      },
     ];
   });
 
@@ -698,6 +765,12 @@ export class ShellLayout {
     work: exit('projects/:slug/work'),
     agents: exit('projects/:slug/agents'),
     releaseRequests: exit('projects/:slug/release-requests'),
+    repositories: exit('projects/:slug/repositories'),
+    repository: exit('projects/:slug/repositories/:repo'),
+    repositoryContracts: exit('projects/:slug/repositories/:repo/contracts'),
+    repositoryEntities: exit('projects/:slug/repositories/:repo/entities'),
+    repositoryReleaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
+    repositoryDocs: exit('projects/:slug/repositories/:repo/docs'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
@@ -705,6 +778,15 @@ export class ShellLayout {
     work: this.trail.work,
     agents: this.trail.agents,
     releaseRequests: this.trail.releaseRequests,
+    repositories: this.trail.repositories,
+  };
+
+  /** A repository page's crumb's exit, for the pages with a page below them (qits-2478). */
+  private readonly repositoryPageCrumbExits: Readonly<Record<string, ExitOutcome | undefined>> = {
+    contracts: this.trail.repositoryContracts,
+    entities: this.trail.repositoryEntities,
+    'release-requests': this.trail.repositoryReleaseRequests,
+    docs: this.trail.repositoryDocs,
   };
 
   /** The trail's brand, home. */
@@ -813,7 +895,6 @@ export class ShellLayout {
           },
         ],
       },
-      link('docs', 'Docs', sections.docs),
       link('events', 'Events', sections.events),
       {
         ...link('maintenance', 'Maintenance', sections.maintenance),
@@ -832,6 +913,40 @@ export class ShellLayout {
       },
     ];
   });
+
+  /** The open repository's name while the URL is one of its pages (qits-2492), else undefined. */
+  protected readonly repository = computed((): string | undefined => {
+    const slug = this.selected.slug();
+    if (slug === undefined) return undefined;
+    return repositoryTrail(this.selected.url(), `/projects/${slug}`)?.repo;
+  });
+
+  /**
+   * The repository sidebar's entries (qits-2492): each page with its exit and its `aria-current`
+   * (Overview `page` on the repository's own page only, the others by `[qitsExit]`'s path rule, so
+   * Contracts stays current on a state's page). Every entry shows for every repository: each page
+   * says itself when the repository has nothing for it. Dependencies waits for qits-2489.
+   */
+  protected readonly repositoryLinks = computed(() => {
+    const slug = this.selected.slug();
+    const repo = this.repository();
+    if (slug === undefined || repo === undefined) return [];
+    const pages = this.repositoryPages;
+    const overview = pages.overview.url({ slug, repo });
+    const atOverview = this.selected.url().split(/[?#]/)[0] === overview;
+    return [
+      { label: 'Overview', exit: pages.overview, current: atOverview ? ('page' as const) : null },
+      { label: 'Artifacts', exit: pages.artifacts, current: undefined },
+      { label: 'Docs', exit: pages.docs, current: undefined },
+      { label: 'Contracts', exit: pages.contracts, current: undefined },
+      { label: 'Entities', exit: pages.entities, current: undefined },
+      { label: 'UI builder', exit: pages.uiBuilder, current: undefined },
+      { label: 'Release requests', exit: pages.releaseRequests, current: undefined },
+    ];
+  });
+
+  /** The project's sections as the sidebar renders them: none while a repository is open. */
+  protected readonly shownLinks = computed(() => (this.repository() ? [] : this.links()));
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
@@ -866,9 +981,29 @@ export class ShellLayout {
       exit: this.sectionCrumbExits[found.key],
       params,
     };
+    const url = this.selected.url();
+    // A repository and its pages (qits-2478): Repositories › <repo> › Contracts › <state>, each
+    // crumb before the last leading to its page.
+    const repository = repositoryTrail(url, `/projects/${slug}`);
+    if (found.key === 'repositories' && repository) {
+      const repoParams = { slug, repo: repository.repo };
+      const steps: Crumb[] = [
+        { label: repository.repo, exit: this.trail.repository, params: repoParams },
+      ];
+      if (repository.page) {
+        steps.push({
+          label: repository.page.label,
+          exit: this.repositoryPageCrumbExits[repository.page.segment],
+          params: repoParams,
+        });
+      }
+      if (repository.leaf) steps.push({ label: repository.leaf });
+      const last = steps[steps.length - 1];
+      steps[steps.length - 1] = { label: last.label };
+      return [...crumbs, section, ...steps];
+    }
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
     // Release Requests › <request id>.
-    const url = this.selected.url();
     const requests = this.releaseRequests.requests();
     const agents = this.activeAgents.agents();
     const sub =
@@ -1122,6 +1257,45 @@ export function releaseRequestSubpage(
           field: 'qualifiedId',
         }
       : undefined,
+  };
+}
+
+/** The repositories section's segment below a project: `/projects/<slug>/repositories`. */
+export const REPOSITORIES = 'repositories';
+
+/** A repository's pages that have a crumb of their own, by segment (qits-2478). */
+const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
+  artifacts: 'Artifacts',
+  contracts: 'Contracts',
+  entities: 'Entities',
+  'ui-builder': 'UI builder',
+  'release-requests': 'Release requests',
+  docs: 'Docs',
+};
+
+/** Where in a repository the URL is: the repository, one of its pages, and a page below that. */
+export interface RepositoryTrail {
+  readonly repo: string;
+  readonly page?: { readonly segment: string; readonly label: string };
+  readonly leaf?: string;
+}
+
+/**
+ * The trail below the Repositories section of the project at `project` (`/projects/<slug>`,
+ * qits-2478): `<project>/repositories/<repo>` is the repository, `…/<repo>/contracts` one of its
+ * pages, `…/contracts/<state>` a page below that (its segment, decoded). Undefined for the list
+ * itself and anything outside it.
+ */
+export function repositoryTrail(url: string, project: string): RepositoryTrail | undefined {
+  const prefix = `${project}/${REPOSITORIES}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const [repo, segment, leaf] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  if (!repo) return undefined;
+  const label = segment ? REPOSITORY_PAGES[segment] : undefined;
+  return {
+    repo: decodeURIComponent(repo),
+    page: segment ? { segment, label: label ?? decodeURIComponent(segment) } : undefined,
+    leaf: segment && leaf ? decodeURIComponent(leaf) : undefined,
   };
 }
 

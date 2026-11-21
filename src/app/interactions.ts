@@ -48,7 +48,9 @@ export const INTERACTIONS = {
   /**
    * The work section's pages (`routes/projects/[slug]/work/`) via `SelectedWork` (`PROJECT_WORK`,
    * qits-2146): they lay the project's work out on the board, the backlog, Acceptance and the
-   * archive, nested, each item with the needs it has not met yet (epic qits-1899).
+   * archive, nested, each item with the needs it has not met yet (epic qits-1899). The agent pages
+   * (the Agents page, a slot's page, an agent's page) make the same read for their items' needs:
+   * an unmet need is what an agent with no declared wait waits on (qits-2494).
    */
   'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
   /**
@@ -1106,13 +1108,7 @@ export const INTERACTIONS = {
    */
   'open-system-targets': 'The Agents page’s Targets link opens the Targets page',
   /**
-   * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
-   * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
-   * project's repository that published each site's newest version.
-   */
-  'show-project-docs': 'The Docs page lists every published docs site, by section',
-  /**
-   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader,
+   * `repository-docs.page.ts`: a docs site's row opens its reader under the repository,
    * `docs-reader.page.ts` (qits-2337), at the site's newest version. Navigates only, and names no
    * pact (epic qits-2000).
    */
@@ -1137,7 +1133,7 @@ export const INTERACTIONS = {
   'open-docs-handoff':
     'A contracts, routes or Storybook site in the docs reader opens where it is read',
   /**
-   * `docs-reader.page.ts`: “← Docs” and an unknown site's link go back to the project's Docs page,
+   * `docs-reader.page.ts`: “← Docs” and an unknown site's link go back to the repository's Docs page,
    * an unknown version's to the site's newest (qits-2337). Navigates only, and names no pact.
    */
   'leave-docs-site': 'The docs reader goes back to the Docs page, or to the site’s newest version',
@@ -1148,17 +1144,16 @@ export const INTERACTIONS = {
    */
   'show-repository-docs': 'A repository’s Docs page lists the docs sites it published, by section',
   /**
-   * `project-docs.page.ts` (a row's repository) and `repository-card.ts` (“Docs →”): opens a
+   * `repository-card.ts`, `repository.page.ts` and the repository sidebar (“Docs”): opens a
    * repository's Docs page (qits-2336). Navigates only, and names no pact (epic qits-2000).
    */
-  'open-repository-docs': 'A repository’s name on the Docs page, or its card, opens its Docs page',
+  'open-repository-docs': 'A repository’s card or page opens its Docs page',
   /**
-   * `repository-docs.page.ts`: “← Docs” on a repository's Docs page (and the link beside an
-   * unknown repository) goes back to the project's Docs page (qits-2336). Navigates only, and
-   * names no pact (epic qits-2000).
+   * `repository-docs.page.ts`: “← <repo>” on a repository's Docs page goes back to the
+   * repository's page, the link beside an unknown repository to the Repositories (qits-2336,
+   * qits-2486). Navigates only, and names no pact (epic qits-2000).
    */
-  'leave-repository-docs':
-    '“← Docs” on a repository’s Docs page goes back to the project’s Docs page',
+  'leave-repository-docs': 'A repository’s Docs page goes back to the repository',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspaceActivity`
    * (`OPEN_WORKSPACES`, qits-2146): the ACTIVE workspaces bound to work items, one request per
@@ -1518,7 +1513,72 @@ export const INTERACTIONS = {
    * pact (epic qits-2000).
    */
   'open-repository-pages':
-    'A repository’s card opens its UI builder, or its contracts or entities page',
+    'A repository’s card or page opens its UI builder, or its contracts or entities page',
+  /**
+   * `repository.page.ts` via `PROJECT_REPOSITORIES`, `MAINTENANCE_ARTIFACTS` and `DOCS_CATALOG`
+   * (qits-2478): a repository's page finds the repository in the project and lists the artifacts
+   * it publishes and the docs sites whose newest version it published.
+   */
+  'show-repository': 'A repository’s page lists the artifacts and docs sites it publishes',
+  /**
+   * `repository-card.ts`: a repository's name on its card opens the repository's page
+   * (qits-2478). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository': 'A repository’s name on its card opens the repository’s page',
+  /**
+   * `repository.page.ts`: a published artifact's name opens its page in the artifact store
+   * (qits-2478). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-artifact': 'A published artifact on a repository’s page opens its store page',
+  /**
+   * `repository.page.ts`: “← Repositories” on a repository's page (and the link beside an
+   * unknown repository) goes back to the project's Repositories page (qits-2478). Navigates only,
+   * and names no pact (epic qits-2000).
+   */
+  'leave-repository': '“← Repositories” on a repository’s page goes back to the Repositories page',
+  /**
+   * `shell.layout.ts`: the repository sidebar's entries, shown while a repository's page is open
+   * (qits-2492). Navigates only, and names no pact (epic qits-2000).
+   */
+  /**
+   * `repository-release-requests.page.ts` via `REPOSITORY_RELEASE_REQUESTS` (qits-2506): a
+   * repository's Release requests page lists its requests, newest first, filtered by state.
+   */
+  'show-repository-release-requests': 'A repository’s Release requests page lists its requests',
+  /**
+   * `repository-release-requests.page.ts`: a row opens the request under the repository
+   * (qits-2506). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-release-request': 'A repository’s release request opens under the repository',
+  /**
+   * `release-request-view.ts` under a repository: “← Release requests” goes back to the
+   * repository's list (qits-2506). Navigates only, and names no pact (epic qits-2000).
+   */
+  'leave-repository-release-request':
+    '“← Release requests” on a request under a repository goes back to the repository’s list',
+  /**
+   * `release-request-view.ts` under a repository: the other requests it names open under the same
+   * repository (qits-2506). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-related-repository-release-request':
+    'A request under a repository opens the requests it names under the same repository',
+  /**
+   * `docs-read-redirect.page.ts` via `DOCS_CATALOG` (qits-2486): the docs reader's old address
+   * replaces itself with the reader under the site's publisher, or links the Repositories. Navigates
+   * only, and names no pact (epic qits-2000).
+   */
+  /**
+   * `repository-published.ts`: a docs category of a repository opens its Docs page narrowed to that
+   * section (qits-2486). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-docs-category': 'A docs category on a repository’s page opens its Docs there',
+  'follow-moved-docs-site': 'The docs reader’s old address goes to the reader under its repository',
+  'open-sidebar-repository-page': 'The repository sidebar opens one of the repository’s pages',
+  /**
+   * `shell.layout.ts`: “← Repositories” at the top of the repository sidebar goes back to the
+   * project's Repositories page, and its sidebar (qits-2492). Navigates only, and names no pact.
+   */
+  'leave-sidebar-repository': 'The repository sidebar’s “← Repositories” goes back to the project',
   /**
    * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
    * pages, one exit each. Navigates only, and names no pact (epic qits-2000).
@@ -1675,10 +1735,17 @@ export const INTERACTIONS = {
   'open-sidebar-network-access':
     'The sidebar’s Network access entry opens the Network access frontend',
   /**
-   * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, leaves
-   * the app for the idp's own admin (qits-2319). Leaves only, and names no pact.
+   * `shell.layout.ts`: the sidebar's IdP admin, a global section shown with no project open, opens
+   * the IdP admin section (`idp`, which opens the clients; qits-2481). Navigates only, and names no
+   * pact.
    */
-  'open-sidebar-idp-admin': 'The sidebar’s IdP admin entry opens the standalone idp admin',
+  'open-sidebar-idp': 'The sidebar’s IdP admin entry opens the IdP admin section',
+  /**
+   * `shell.layout.ts`: the IdP admin section's pages, listed below the sidebar's IdP admin while
+   * the section is open, open their page (Clients, Users, Signed-in devices; qits-2481), each the
+   * idp's own admin page in a frame. Navigates only, and names no pact.
+   */
+  'open-sidebar-idp-page': 'An IdP admin page below the sidebar’s IdP admin opens it',
   /**
    * `shell.layout.ts`: the sidebar's Artifacts, a global section shown with no project open, opens
    * the Artifacts section (`artifacts`, which opens the image store; qits-2316). Navigates only,

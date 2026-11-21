@@ -25,6 +25,9 @@ import { ProjectIdeasPage } from './routes/projects/[slug]/ideas/project-ideas.p
 import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-create.page';
 import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
+import { DocsReadRedirectPage } from './routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page';
+import { DocsReaderPage } from './routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page';
+import { RepositoryDocsPage } from './routes/projects/[slug]/repositories/[repo]/docs/repository-docs.page';
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
 import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
@@ -36,6 +39,9 @@ import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services
 import { MirrorRepositoryPage } from './routes/mirror/repositories/[repository]/mirror-repository.page';
 import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
 import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/orchestrator-process.page';
+import { IdpClientsPage } from './routes/idp/clients/idp-clients.page';
+import { IdpUsersPage } from './routes/idp/users/idp-users.page';
+import { IdpDevicesPage } from './routes/idp/devices/idp-devices.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
 import { SwarmNodeLayout } from './routes/system/swarm/nodes/[id]/swarm-node.layout';
@@ -141,6 +147,32 @@ describe('agents and workspaces routes', () => {
     expect(await opened('/projects/x/workspaces')).toEqual([ProjectAgentsPage]);
     expect(TestBed.inject(Router).url).toBe('/projects/x/agents');
   });
+
+  it('redirects the project’s old Docs page to its Repositories (qits-2486)', async () => {
+    await opened('/projects/x/docs');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/repositories');
+  });
+
+  it('redirects a repository’s old Docs page under the repository, keeping the query (qits-2486)', async () => {
+    expect(await opened('/projects/x/docs/repositories/r?section=apidocs')).toEqual([
+      RepositoryDocsPage,
+    ]);
+    expect(TestBed.inject(Router).url).toBe('/projects/x/repositories/r/docs?section=apidocs');
+  });
+
+  it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
+    'opens the reader’s old address read%s on the page that moves it (qits-2486)',
+    async (rest) => {
+      expect(await opened(`/projects/x/docs/read${rest}`)).toEqual([DocsReadRedirectPage]);
+    },
+  );
+
+  it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
+    'opens the reader under its repository at docs%s (qits-2486)',
+    async (rest) => {
+      expect(await opened(`/projects/x/repositories/r/docs${rest}`)).toEqual([DocsReaderPage]);
+    },
+  );
 
   it('opens an agent at agents/<agent id>', async () => {
     expect((await opened('/projects/x/agents/a-1'))[0]).toBe(AgentLayout);
@@ -439,6 +471,34 @@ describe('orchestrator routes (qits-2359)', () => {
   it('opens the gc process at orchestrator/processes', async () => {
     expect(await pages('/orchestrator/processes')).toEqual([OrchestratorProcessPage]);
     expect(TestBed.inject(Router).url).toBe('/orchestrator/processes/gc');
+  });
+});
+
+describe('idp routes (qits-2481)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens the clients at idp/clients', async () => {
+    expect(await pages('/idp/clients')).toEqual([IdpClientsPage]);
+  });
+
+  it('opens the users at idp/users', async () => {
+    expect(await pages('/idp/users')).toEqual([IdpUsersPage]);
+  });
+
+  it('opens the signed-in devices at idp/devices', async () => {
+    expect(await pages('/idp/devices')).toEqual([IdpDevicesPage]);
+  });
+
+  it('opens the clients at idp', async () => {
+    expect(await pages('/idp')).toEqual([IdpClientsPage]);
+    expect(TestBed.inject(Router).url).toBe('/idp/clients');
   });
 });
 

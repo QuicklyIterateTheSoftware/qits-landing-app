@@ -68,16 +68,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * A project's delivery desk trigger messages are at `projects/<slug>/desk` (`ProjectDeskPage`,
  * epic qits-1604).
  *
- * A project's docs are at `projects/<slug>/docs` (`ProjectDocsPage`, qits-2318): every site of
- * qits-artifacts' docs store, by section, narrowed by `?section=` and `?q=`. One repository's are at
- * `docs/repositories/<repository name>` (`RepositoryDocsPage`, qits-2336): the sites whose newest
- * version it published, narrowed by `?section=`. The fixed `repositories` segment keeps a
- * repository's name from ever meaning a reader path under `docs/`; the sidebar keeps Docs
- * current below it. One site is read at `docs/read/<site>[/-/<version>]` (`DocsReaderPage`,
- * qits-2337): the site spans segments, so `read/:site` and `read/:site/-/:version` (this app's
- * links, the site one segment) and `read/**` (the docs app's redirect, the site split) all render
- * it, and it parses the site and the version off the URL. The page lives in `read/[site]/`, the
- * route its outcomes are declared for.
+ * A repository's docs are at `projects/<slug>/repositories/<repo>/docs` (`RepositoryDocsPage`,
+ * qits-2336, moved there by qits-2486, which removed the project's Docs section): the sites whose
+ * newest version it published, narrowed by `?section=`. One site is read at
+ * `repositories/<repo>/docs/<site>[/-/<version>]` (`DocsReaderPage`, qits-2337): the site spans
+ * segments, so `docs/:site`, `docs/:site/-/:version` and `docs/**` all render it, and it parses the
+ * site and the version off the URL. The old `docs/…` addresses redirect.
  *
  * A project's events are at `projects/<slug>/events` (`ProjectEventsPage`, qits-2312), one event
  * at `events/<event id>` (`ProjectEventPage`, qits-2338): its facts, its payload and its chain,
@@ -215,6 +211,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * address. `orchestrator` and `orchestrator/processes` redirect to `processes/gc` (the only
  * process); it is an entry point, where qits-orchestrator-frontend's old `''` and `processes/:kind`
  * hand off.
+ *
+ * The IdP admin section (qits-2481) is at `idp/clients`, `idp/users` and `idp/devices`
+ * (`IdpClientsPage`, `IdpUsersPage`, `IdpDevicesPage`): the idp's own admin pages
+ * (qits-idp-frontend), each in a frame filling the main slot (`IdpFrame`), reached from the root
+ * sidebar with no project open. `idp` redirects to `idp/clients`.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -440,6 +441,69 @@ export const routes: Routes = [
           ),
       },
       {
+        // One repository's page (qits-2478): its own pages and the artifacts it publishes.
+        path: 'projects/:slug/repositories/:repo',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/repository.page').then(
+            (m) => m.RepositoryPage,
+          ),
+      },
+      {
+        // A repository's Artifacts (qits-2492): what it publishes.
+        path: 'projects/:slug/repositories/:repo/artifacts',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/artifacts/repository-artifacts.page').then(
+            (m) => m.RepositoryArtifactsPage,
+          ),
+      },
+      {
+        // A repository's release requests (qits-2506), and one of them under the repository.
+        path: 'projects/:slug/repositories/:repo/release-requests',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/release-requests/repository-release-requests.page').then(
+            (m) => m.RepositoryReleaseRequestsPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/release-requests/:requestId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/release-requests/[requestId]/repository-release-request.page').then(
+            (m) => m.RepositoryReleaseRequestPage,
+          ),
+      },
+      {
+        // A repository's docs (qits-2336, here since qits-2486), and one site's reader (qits-2337):
+        // one page under three addresses, as before: `docs/:site[/-/:version]` (this app's links,
+        // the site one segment) and `docs/**` (the site split); it reads both off the URL.
+        path: 'projects/:slug/repositories/:repo/docs',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/docs/repository-docs.page').then(
+            (m) => m.RepositoryDocsPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/docs/:site',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page').then(
+            (m) => m.DocsReaderPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/docs/:site/-/:version',
+        // eslint-disable-next-line qits/route-matches-directory -- the version is read off the URL by the site's page
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page').then(
+            (m) => m.DocsReaderPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/docs/**',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page').then(
+            (m) => m.DocsReaderPage,
+          ),
+      },
+      {
         path: 'projects/:slug/repositories/:repo/ui-builder',
         loadComponent: () =>
           import('./routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page').then(
@@ -556,44 +620,36 @@ export const routes: Routes = [
           },
         ],
       },
-      {
-        path: 'projects/:slug/docs',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/docs/project-docs.page').then((m) => m.ProjectDocsPage),
-      },
+      // The project's Docs section is gone (qits-2486): docs belong to the repository that
+      // publishes them. Its addresses redirect: the section to the Repositories, a repository's
+      // docs to `repositories/<repo>/docs`, and the reader (`DocsReadRedirectPage`) to the
+      // reader under the site's publisher.
+      { path: 'projects/:slug/docs', pathMatch: 'full', redirectTo: 'projects/:slug/repositories' },
       {
         path: 'projects/:slug/docs/repositories/:repo',
-        loadComponent: () =>
-          import('./routes/projects/[slug]/docs/repositories/[repo]/repository-docs.page').then(
-            (m) => m.RepositoryDocsPage,
-          ),
+        redirectTo: 'projects/:slug/repositories/:repo/docs',
       },
-      // The docs reader (qits-2337): one page under three addresses. This app's links name the site
-      // as one segment (`read/:site[/-/:version]`, the site's `/` escaped), which an exit can carry;
-      // `read/**` takes the same addresses with the site split over segments, as the docs app's
-      // redirect writes them (an entry from outside the app). The page reads the site and the
-      // version off the URL either way (`parseReadPath`), so all three load it from `read/[site]/`.
       {
         path: 'projects/:slug/docs/read/:site',
         loadComponent: () =>
-          import('./routes/projects/[slug]/docs/read/[site]/docs-reader.page').then(
-            (m) => m.DocsReaderPage,
+          import('./routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page').then(
+            (m) => m.DocsReadRedirectPage,
           ),
       },
       {
         path: 'projects/:slug/docs/read/:site/-/:version',
-        // eslint-disable-next-line qits/route-matches-directory -- the version is read off the URL by the site's page
+        // eslint-disable-next-line qits/route-matches-directory -- the version is read off the URL by the redirect page
         loadComponent: () =>
-          import('./routes/projects/[slug]/docs/read/[site]/docs-reader.page').then(
-            (m) => m.DocsReaderPage,
+          import('./routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page').then(
+            (m) => m.DocsReadRedirectPage,
           ),
       },
       {
         path: 'projects/:slug/docs/read/**',
         data: { qitsEntry: true },
         loadComponent: () =>
-          import('./routes/projects/[slug]/docs/read/[site]/docs-reader.page').then(
-            (m) => m.DocsReaderPage,
+          import('./routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page').then(
+            (m) => m.DocsReadRedirectPage,
           ),
       },
       {
@@ -932,6 +988,29 @@ export const routes: Routes = [
               import('./routes/orchestrator/processes/[kind]/orchestrator-process.page').then(
                 (m) => m.OrchestratorProcessPage,
               ),
+          },
+        ],
+      },
+      {
+        // The IdP admin section (qits-2481): the idp's own admin pages, each in a frame in the main
+        // slot. `/idp` opens the clients.
+        path: 'idp',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'clients' },
+          {
+            path: 'clients',
+            loadComponent: () =>
+              import('./routes/idp/clients/idp-clients.page').then((m) => m.IdpClientsPage),
+          },
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./routes/idp/users/idp-users.page').then((m) => m.IdpUsersPage),
+          },
+          {
+            path: 'devices',
+            loadComponent: () =>
+              import('./routes/idp/devices/idp-devices.page').then((m) => m.IdpDevicesPage),
           },
         ],
       },

@@ -4319,7 +4319,7 @@
             "app": "qits-landing-app",
             "interaction": "list-projects",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/read/:site/-/:version, projects/:slug/docs/repositories/:repo, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -4594,7 +4594,7 @@
             "app": "qits-landing-app",
             "interaction": "move-release-request-source",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
           }
         }
       },
@@ -7521,7 +7521,7 @@
             "app": "qits-landing-app",
             "interaction": "open-release-requests",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/read/:site/-/:version, projects/:slug/docs/repositories/:repo, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -11742,7 +11742,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/docs/read/:site, projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId"
           }
         }
       },
@@ -11925,7 +11925,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -13460,173 +13460,6 @@
         "references": {
           "qits-call": {
             "app": "qits-projects-service",
-            "operationId": "listProjectRepositories"
-          },
-          "qits-trigger": {
-            "app": "qits-landing-app",
-            "interaction": "show-project-docs",
-            "kind": "ui",
-            "route": "projects, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
-          }
-        }
-      },
-      "description": "show-project-docs: listProjectRepositories",
-      "pending": false,
-      "providerStates": [
-        {
-          "name": "two projects exist",
-          "params": {
-            "projectId": "00000000-0000-4000-8000-000000000001",
-            "secondProjectId": "00000000-0000-4000-8000-000000000002"
-          }
-        }
-      ],
-      "request": {
-        "generators": {
-          "path": {
-            "expression": "/projects/api/projects/${projectId}/repositories",
-            "type": "ProviderState"
-          }
-        },
-        "matchingRules": {
-          "path": {
-            "combine": "AND",
-            "matchers": [
-              {
-                "match": "type"
-              }
-            ]
-          }
-        },
-        "method": "GET",
-        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories"
-      },
-      "response": {
-        "body": {
-          "content": {
-            "entries": [
-              {
-                "repository": {
-                  "id": "00000000-0000-4000-8000-000000000003",
-                  "mainBranch": "main",
-                  "name": "qits-00000001-qits-00000001"
-                }
-              },
-              {
-                "repository": {
-                  "id": "00000000-0000-4000-8000-000000000003",
-                  "mainBranch": "main",
-                  "name": "qits-00000001-qits-00000001"
-                }
-              },
-              {
-                "repository": {
-                  "id": "00000000-0000-4000-8000-000000000003",
-                  "mainBranch": "main",
-                  "name": "qits-00000001-qits-00000001"
-                }
-              }
-            ],
-            "wrapper": {
-              "repositoryId": "00000000-0000-4000-8000-000000000003"
-            }
-          },
-          "contentType": "application/json",
-          "encoded": false
-        },
-        "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
-        },
-        "matchingRules": {
-          "body": {
-            "$.entries": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 3,
-                  "min": 3
-                }
-              ]
-            },
-            "$.entries[*].repository.id": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                },
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            },
-            "$.entries[*].repository.mainBranch": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.entries[*].repository.name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.wrapper.repositoryId": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                }
-              ]
-            }
-          },
-          "header": {
-            "Content-Type": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "regex",
-                  "regex": "application/json.*"
-                }
-              ]
-            }
-          }
-        },
-        "status": 200
-      },
-      "type": "Synchronous/HTTP"
-    },
-    {
-      "comments": {
-        "references": {
-          "qits-call": {
-            "app": "qits-projects-service",
             "operationId": "listProjectReleaseRequests"
           },
           "qits-trigger": {
@@ -14486,7 +14319,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/read/:site/-/:version, projects/:slug/docs/repositories/:repo, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -16645,7 +16478,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-repositories",
             "kind": "ui",
-            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/docs/read/:site, projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId"
           }
         }
       },
@@ -16943,7 +16776,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-repositories",
             "kind": "ui",
-            "route": "projects, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -24476,7 +24309,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
           }
         }
       },
@@ -26209,7 +26042,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
           }
         }
       },
@@ -27879,7 +27712,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
           }
         }
       },
@@ -34506,7 +34339,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
             "kind": "ui",
-            "route": "projects, projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
           }
         }
       },
@@ -34588,6 +34421,876 @@
                   "match": "type",
                   "max": 3,
                   "min": 3
+                }
+              ]
+            },
+            "$.entries[*].repository.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].repository.mainBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entries[*].repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.wrapper.repositoryId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listRepositoryReleaseRequests"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-release-requests",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/release-requests"
+          }
+        }
+      },
+      "description": "show-repository-release-requests: listRepositoryReleaseRequests",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a frozen release request with a queued next request",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "queuedRequestId": "00000000-0000-4000-8000-000000000002",
+            "queuedRequestQualifiedId": "contract-service-rr-2",
+            "repositoryId": "00000000-0000-4000-8000-000000000003",
+            "requestId": "00000000-0000-4000-8000-000000000004"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/repositories/${repositoryId}/release-requests",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/repositories/00000000-0000-4000-8000-000000000003/release-requests"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "requests": [
+              {
+                "approvalState": "NOT_REQUIRED",
+                "approvedAt": null,
+                "approvedBy": null,
+                "id": "00000000-0000-4000-8000-000000000002",
+                "items": [
+                  {
+                    "label": "ticket/contract-14"
+                  }
+                ],
+                "qualifiedId": "contract-service-rr-2",
+                "state": "PENDING",
+                "updatedAt": "2026-01-01T00:00:00Z",
+                "version": null
+              },
+              {
+                "approvalState": "NOT_REQUIRED",
+                "approvedAt": null,
+                "approvedBy": null,
+                "id": "00000000-0000-4000-8000-000000000004",
+                "items": [
+                  {
+                    "label": "ticket/contract-11"
+                  },
+                  {
+                    "label": "ticket/contract-11"
+                  },
+                  {
+                    "label": "ticket/contract-11"
+                  }
+                ],
+                "qualifiedId": "contract-service-rr-1",
+                "state": "PENDING",
+                "updatedAt": "2026-01-01T00:00:00Z",
+                "version": null
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.requests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.approvalState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.items": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.items[*].label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.updatedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.approvalState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.items": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 3,
+                              "min": 3
+                            }
+                          ]
+                        },
+                        "$.items[*].label": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.updatedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listRepositoryReleaseRequests"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository-release-requests",
+            "kind": "ui",
+            "route": "projects/:slug/repositories/:repo/release-requests"
+          }
+        }
+      },
+      "description": "show-repository-release-requests: listRepositoryReleaseRequests",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a repository with a release not merged to main",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "repositoryId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/repositories/${repositoryId}/release-requests",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests",
+        "query": {
+          "state": [
+            "all"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "requests": [
+              {
+                "approvalState": "NOT_REQUIRED",
+                "approvedAt": null,
+                "approvedBy": null,
+                "id": "00000000-0000-4000-8000-000000000003",
+                "items": [],
+                "qualifiedId": "contract-service-rr-3",
+                "state": "WITHDRAWN",
+                "updatedAt": "2026-01-01T00:00:00Z",
+                "version": null
+              },
+              {
+                "approvalState": "NOT_REQUIRED",
+                "approvedAt": null,
+                "approvedBy": null,
+                "id": "00000000-0000-4000-8000-000000000004",
+                "items": [],
+                "qualifiedId": "contract-service-rr-2",
+                "state": "RELEASED",
+                "updatedAt": "2026-01-01T00:00:00Z",
+                "version": "2026.101.100400"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.requests": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.approvalState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.updatedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.approvalState": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.qualifiedId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.updatedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.version": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId"
+          }
+        }
+      },
+      "description": "show-repository: listProjectRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a project with 3 repositories",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main",
+                  "name": "contract-00000001-contract-00000001"
+                }
+              },
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main",
+                  "name": "contract-00000001-contract-00000001"
+                }
+              },
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main",
+                  "name": "contract-00000001-contract-00000001"
+                }
+              },
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "mainBranch": "main",
+                  "name": "contract-00000001-contract-00000001"
+                }
+              }
+            ],
+            "wrapper": {
+              "repositoryId": "00000000-0000-4000-8000-000000000002"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 4,
+                  "min": 4
+                }
+              ]
+            },
+            "$.entries[*].repository.archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entries[*].repository.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entries[*].repository.mainBranch": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entries[*].repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.wrapper.repositoryId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-projects-service",
+            "operationId": "listProjectRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+          }
+        }
+      },
+      "description": "show-repository: listProjectRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "two projects exist",
+          "params": {
+            "projectId": "00000000-0000-4000-8000-000000000001",
+            "secondProjectId": "00000000-0000-4000-8000-000000000002"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/projects/api/projects/${projectId}/repositories",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "entries": [
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "mainBranch": "main",
+                  "name": "qits-00000001-qits-00000001"
+                }
+              },
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "mainBranch": "main",
+                  "name": "qits-00000001-qits-00000001"
+                }
+              },
+              {
+                "repository": {
+                  "archetype": "PROJECT",
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "mainBranch": "main",
+                  "name": "qits-00000001-qits-00000001"
+                }
+              }
+            ],
+            "wrapper": {
+              "repositoryId": "00000000-0000-4000-8000-000000000003"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.entries": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.entries[*].repository.archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             },

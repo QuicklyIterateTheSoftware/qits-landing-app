@@ -1,5 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../testing/browser/app-route';
@@ -83,5 +85,28 @@ describe('ProjectRepositoriesPage (screenshots)', () => {
     await opened.settled();
     await expect.element(view.getByRole('img', { name: 'Failed to load' })).toBeVisible();
     await expect.element(frame).toMatchScreenshot('error', { kind: 'ERROR' });
+  });
+
+  it('open-repository page: a card’s name opens the repository’s page (qits-2478)', async () => {
+    const { opened, request } = await render();
+    request.flush(await goldenMaster(STATE, 'listProjectRepositories'));
+    await opened.settled();
+    await page
+      .elementLocator(opened.page)
+      .getByRole('link', { name: 'contract-service', exact: true })
+      .click();
+    await commands.parkPointer();
+    for (let round = 0, quiet = 0; round < 20 && quiet < 2; round++) {
+      await opened.idle();
+      const pending = http.match(() => true).filter((r) => !r.cancelled);
+      for (const r of pending) r.flush(null, { status: 404, statusText: 'Not Found' });
+      quiet = pending.length ? 0 : quiet + 1;
+    }
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/contract-service`,
+    );
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-repository:page',
+    ]);
   });
 });

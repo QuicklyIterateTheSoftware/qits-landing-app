@@ -96,8 +96,8 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(orchestratorClient),
     provideHeyApiClient(mirrorClient),
     provideHeyApiClient(edgeClient),
-    // The idp's page origin, so the root sidebar's IdP admin (qits-2319) shows on the routes
-    // without a project, as it does deployed; the old artifacts explorer's, so the store
+    // The idp's page origin, so the IdP admin section's frames (qits-2481) have an address, as
+    // they do deployed; the old artifacts explorer's, so the store
     // repository page's rows link their detail pages there (qits-2316); qits-network-access' own
     // frontend's, which the shell's Network access links lead to (qits-2361).
     provideTestPlatformOrigins(
@@ -148,6 +148,12 @@ export interface FrameReads {
    * `'a project with workspaces bound to work items'`.
    */
   readonly workspaces?: string;
+  /**
+   * qits-projects' `listProjectWork` of the open project (`SelectedWork`): the agent pages read it
+   * for their items' needs (qits-2494). Default `'unanswered'`: the work section's specs answer it
+   * themselves.
+   */
+  readonly work?: string;
 }
 
 /** A frame read: which request it is, and how a state answers it. */
@@ -182,6 +188,12 @@ const FRAME_READS: readonly FrameRead[] = [
     fallback: 'a project with workspaces bound to work items',
     matches: (url) => url === '/workspaces/api/work/workspaces',
     answer: (state) => goldenMaster(state, 'listOpenWorkspaces', 'qits-workspaces'),
+  },
+  {
+    key: 'work',
+    fallback: 'unanswered',
+    matches: (url) => /^\/projects\/api\/projects\/[^/?]+\/work$/.test(url),
+    answer: (state) => goldenMaster(state, 'listProjectWork'),
   },
 ];
 

@@ -201,4 +201,22 @@ describe('EntityPage (screenshots)', () => {
       `/projects/${opened.project.slug}/repositories/${GITHOST}/contracts/a-git-project-with-a-repository`,
     );
   });
+
+  it('follow-breadcrumb repositoryEntities: the trail’s Entities opens the list (qits-2478)', async () => {
+    const opened = await openGithost('GitProject');
+    // The long entity crumb squeezes the ones before it: press the link itself.
+    (
+      page
+        .getByRole('navigation', { name: 'Breadcrumb' })
+        .getByRole('link', { name: 'Entities', exact: true })
+        .last()
+        .element() as HTMLElement
+    ).click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(fired()).toEqual(['follow-breadcrumb:repositoryEntities']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/${GITHOST}/entities`,
+    );
+  });
 });
