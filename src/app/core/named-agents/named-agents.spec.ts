@@ -2,6 +2,7 @@ import {
   aboutProjectAgents,
   heardAgentState,
   namedAgentTerminalSocketUrl,
+  bracketedPaste,
   startRefusalLine,
 } from './named-agents';
 
@@ -70,5 +71,30 @@ describe('startRefusalLine', () => {
     expect(startRefusalLine(0, undefined)).toBe(
       'Could not start the agent: the service is unreachable.',
     );
+  });
+});
+
+describe('bracketedPaste', () => {
+  const wrapped = (inner: string) => `\x1b[200~${inner}\x1b[201~`;
+
+  it('wraps normal text unchanged, line feeds and tabs kept', () => {
+    expect(bracketedPaste('<opened-context>\nroute: a\tb\n</opened-context>\n')).toBe(
+      wrapped('<opened-context>\nroute: a\tb\n</opened-context>\n'),
+    );
+  });
+
+  it('cannot be ended early: an embedded paste end and its keystrokes lose their controls', () => {
+    const pasted = bracketedPaste('route: x\x1b[201~rm -rf /\r\x1b[200~more');
+    expect(pasted).toBe(wrapped('route: x[201~rm -rf /[200~more'));
+    expect(pasted.match(/\x1b/g)).toHaveLength(2);
+    expect(pasted).not.toContain('\r');
+  });
+
+  it('drops a lone carriage return, other C0 controls and DEL', () => {
+    expect(bracketedPaste('a\rb\x03c\x04d\x7fe\x00f')).toBe(wrapped('abcdef'));
+  });
+
+  it('drops C1 controls (CSI, OSC, NEL)', () => {
+    expect(bracketedPaste('a\u009b201~b\u009dc\u0085d')).toBe(wrapped('a201~bcd'));
   });
 });

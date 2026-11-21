@@ -289,6 +289,19 @@ describe('AgentDialog', () => {
     expect(last.data).toContain('route: projects/:slug/work');
   });
 
+  it('cannot end the paste early from a crafted route: control characters are dropped', async () => {
+    const { fixture, host, insert } = await render();
+    sockets[0].open();
+    host.context.set({ ...CONTEXT, route: 'x\x1b[201~rm -rf /\r' });
+    await settle(fixture);
+    insert()!.click();
+    const last = JSON.parse(sockets[0].sent.at(-1)!) as { data: string };
+    expect(last.data.match(/\x1b/g)).toHaveLength(2);
+    expect(last.data).not.toContain('\r');
+    expect(last.data.endsWith('\x1b[201~')).toBe(true);
+    expect(last.data).toContain('route: x[201~rm -rf /\n');
+  });
+
   it('opens the desk’s dialog without a context button, and offers to read again', async () => {
     // The recorded list with the desk still starting (no recording holds it): no event will say
     // when it is up, so its place offers Read again.

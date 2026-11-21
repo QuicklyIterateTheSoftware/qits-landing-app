@@ -87,3 +87,20 @@ export function startRefusalLine(status: number, reason: string | undefined): st
   const why = reason?.trim() || 'the service refused it';
   return `Could not start the agent (${status}): ${/[.!?]$/.test(why) ? why : `${why}.`}`;
 }
+
+/**
+ * Every C0 and C1 control character but line feed and tab, and DEL: what a terminal reads as a
+ * key or an escape sequence rather than as text.
+ */
+const CONTROL = /[\u0000-\u0008\u000b-\u001f\u007f-\u009f]/g;
+
+/**
+ * `text` as a bracketed paste for an agent's terminal (qits-2499): wrapped in `ESC[200~` and
+ * `ESC[201~`, so the TUI takes it as typed text and sends nothing. Every control character but
+ * line feed and tab is dropped first: parts of the text come from the URL, and an `ESC[201~`
+ * (or a lone `\r`) inside it would end the paste early and type keys into an agent that holds
+ * platform rights.
+ */
+export function bracketedPaste(text: string): string {
+  return `\x1b[200~${text.replace(CONTROL, '')}\x1b[201~`;
+}

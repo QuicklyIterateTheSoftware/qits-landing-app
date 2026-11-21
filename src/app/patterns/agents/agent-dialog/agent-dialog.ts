@@ -26,6 +26,7 @@ import {
 import { refreshOn } from '$core/events/refresh-on';
 import {
   aboutProjectAgents,
+  bracketedPaste,
   DESK_AGENT,
   heardAgentState,
   NAMED_AGENT_STATE_CHANGED,
@@ -73,10 +74,6 @@ const NO_TERMINAL: Readonly<Record<NamedAgentState, string>> = {
   BUSY: 'The agent has no terminal right now.',
   FAILED: 'The agent could not be run. Close and open this dialog to try again.',
 };
-
-/** Bracketed paste (xterm): the agent's TUI takes what is between as typed text, never as Enter. */
-const PASTE_START = '\x1b[200~';
-const PASTE_END = '\x1b[201~';
 
 /** The agent as the dialog shows it: its state and the command whose terminal it attaches. */
 interface ShownAgent {
@@ -420,12 +417,15 @@ export class AgentDialog {
     if (event.target === this.dialog().nativeElement) this.finish();
   }
 
-  /** Pastes the opened-context block into the agent's input, bracketed so it is not sent. */
+  /**
+   * Pastes the opened-context block into the agent's input, bracketed so it is not sent, its
+   * control characters dropped (`bracketedPaste`): parts of it come from the URL.
+   */
   protected insertContext(): void {
     const context = this.context();
     const socket = this.socket();
     if (!context || !socket || this.link() !== 'open') return;
-    socket.send(`${PASTE_START}${openedContext(context)}${PASTE_END}`);
+    socket.send(bracketedPaste(openedContext(context)));
     // Back to the terminal (xterm's input), so the person types on after the paste.
     this.pane().nativeElement.querySelector('textarea')?.focus();
   }
