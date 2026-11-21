@@ -93,8 +93,9 @@ class PinnedPage {}
  * (`open-sidebar-work-page`), the gear (`open-project-settings`), and the trail's brand and crumbs
  * (`follow-breadcrumb`). The agents and release menus' own exits are followed in their own specs.
  * The global sections shown with no project open open a section of this app (Artifacts,
- * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, and Mirror,
- * `open-sidebar-mirror`, qits-2357, each to a stand-in route, with System's own pages below it
+ * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, Mirror,
+ * `open-sidebar-mirror`, qits-2357, and Orchestrator, `open-sidebar-orchestrator`, qits-2359, each
+ * to a stand-in route, with System's own pages below it
  * while it is open, `open-sidebar-system-page`, qits-2346) or leave the app (IdP admin,
  * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
  * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
@@ -116,7 +117,10 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'system', component: TestPage },
           { path: 'system/swarm/services', component: TestPage },
           { path: 'system/swarm/nodes', component: TestPage },
+          { path: 'system/swarm/configs', component: TestPage },
+          { path: 'system/targets', component: TestPage },
           { path: 'mirror', component: TestPage },
+          { path: 'orchestrator', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -227,13 +231,15 @@ describe('ShellLayout (screenshots)', () => {
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
     // At the root the navigation holds no project's sections: the global sections (Artifacts,
-    // qits-2316; System, qits-2344; Mirror, qits-2357; IdP admin, qits-2319), then Network
-    // access, the phone's way there (qits-2262); the "qits" brand leads home.
+    // qits-2316; System, qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
+    // qits-2319), then Network access, the phone's way there (qits-2262); the "qits" brand leads
+    // home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
       'Artifacts',
       'System',
       'Mirror',
+      'Orchestrator',
       'IdP admin',
       'Network access',
     ]);
@@ -774,7 +780,14 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels).toEqual(['Artifacts', 'System', 'Mirror', 'IdP admin', 'Network access']);
+    expect(labels).toEqual([
+      'Artifacts',
+      'System',
+      'Mirror',
+      'Orchestrator',
+      'IdP admin',
+      'Network access',
+    ]);
     await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
   });
 
@@ -817,6 +830,19 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
+  it('open-sidebar-orchestrator open: the sidebar’s Orchestrator opens the Orchestrator section, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render();
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Orchestrator', exact: true });
+    await expect.element(entry).toHaveAttribute('href', '/orchestrator');
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/orchestrator');
+    expect(reached()).toEqual(['open-sidebar-orchestrator:open']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+  });
+
   it('lists the System section’s pages below System while it is open, and marks the current one', async () => {
     await page.viewport(1280, 800);
     await render('/system/swarm/nodes');
@@ -830,7 +856,10 @@ describe('ShellLayout (screenshots)', () => {
       'System',
       'Services',
       'Nodes',
+      'Configs',
+      'Targets',
       'Mirror',
+      'Orchestrator',
       'IdP admin',
       'Network access',
     ]);
@@ -840,15 +869,34 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Nodes', exact: true }))
       .toHaveAttribute('aria-current', 'page');
-    await expect
-      .element(navigation.getByRole('link', { name: 'Services', exact: true }))
-      .not.toHaveAttribute('aria-current');
+    for (const label of ['Services', 'Configs']) {
+      await expect
+        .element(navigation.getByRole('link', { name: label, exact: true }))
+        .not.toHaveAttribute('aria-current');
+    }
     await expect
       .element(navigation.getByRole('link', { name: 'Artifacts', exact: true }))
       .not.toHaveAttribute('aria-current');
   });
 
-  /** The System section's pages below System in the sidebar (qits-2346), from the other one. */
+  it('marks Targets below System current on the targets page (qits-2351)', async () => {
+    await page.viewport(1280, 800);
+    await render('/system/targets');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect
+      .element(navigation.getByRole('link', { name: 'System', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Targets', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    for (const label of ['Services', 'Nodes', 'Configs']) {
+      await expect
+        .element(navigation.getByRole('link', { name: label, exact: true }))
+        .not.toHaveAttribute('aria-current');
+    }
+  });
+
+  /** The System section's pages below System in the sidebar (qits-2346, qits-2348, qits-2351). */
   const SYSTEM_PAGES = [
     {
       label: 'Services',
@@ -861,6 +909,18 @@ describe('ShellLayout (screenshots)', () => {
       path: '/system/swarm/nodes',
       from: '/system/swarm/services',
       outcome: 'nodes',
+    },
+    {
+      label: 'Configs',
+      path: '/system/swarm/configs',
+      from: '/system/swarm/services',
+      outcome: 'configs',
+    },
+    {
+      label: 'Targets',
+      path: '/system/targets',
+      from: '/system/swarm/services',
+      outcome: 'targets',
     },
   ] as const;
 
@@ -886,7 +946,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true }))
       .not.toHaveAttribute('aria-current');
-    for (const label of ['Services', 'Nodes']) {
+    for (const label of ['Services', 'Nodes', 'Configs', 'Targets']) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();
@@ -925,7 +985,12 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Mirror', exact: true, includeHidden: true }))
       .not.toBeInTheDocument();
-    for (const label of ['Services', 'Nodes']) {
+    await expect
+      .element(
+        navigation.getByRole('link', { name: 'Orchestrator', exact: true, includeHidden: true }),
+      )
+      .not.toBeInTheDocument();
+    for (const label of ['Services', 'Nodes', 'Configs', 'Targets']) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();

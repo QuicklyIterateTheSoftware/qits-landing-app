@@ -12,7 +12,6 @@ import {
   type QitsRefreshOn,
 } from '@qits/angular';
 import { payloadIds } from '$core/events/refresh-on';
-import { PlatformOrigins } from '$core/platform/platform-origins';
 import { SelectedProject } from '$core/projects/selected-project';
 import { LIST_PROJECT_WRAPPER } from '$core/repositories/repositories.operations';
 import { movesWrapper } from '$core/repositories/wrapper-commits';
@@ -50,9 +49,10 @@ function loadState(read: { status(): string; hasValue(): boolean }): LoadState {
  * slots, the workspaces agents run in — each a link to the slot's page (`workspaces/<slot id>`,
  * the declared exit `open-agents-slot` `slot`, epic qits-2000) —
  * with its container state, placement and how many agents it hosts. Beside that heading, Targets
- * leads to qits-system's Targets page (`https://system.qits.<domain>/system/targets`,
- * `PlatformOrigins.page('system')`, epic qits-1481), where the execution targets slots are placed
- * on are managed.
+ * opens the System section's Targets page (`system/targets`, the declared exit
+ * `open-system-targets` `open`, qits-2351), where the execution targets slots are placed on are
+ * managed (its old cross-origin link, `https://system.qits.<domain>/system/targets`, answered 404:
+ * `/system` is qits-system's API prefix).
  *
  * It reads through `qitsResource` (qits-2143, the pilot of qits-2145), one resource per backend
  * read, never through a store: `repositories` (qits-projects' `LIST_PROJECT_WRAPPER`: which
@@ -132,9 +132,7 @@ function loadState(read: { status(): string; hasValue(): boolean }): LoadState {
               <h2 id="project-workspaces" class="m-0 text-base font-semibold text-fg">
                 Workspaces
               </h2>
-              @if (targetsHref(); as href) {
-                <a class="text-sm text-accent" [href]="href">Targets</a>
-              }
+              <a class="text-sm text-accent" [qitsExit]="targets.open">Targets</a>
             </div>
             <ui-spinner [state]="state()" class="min-h-16">
               <p
@@ -195,7 +193,6 @@ function loadState(read: { status(): string; hasValue(): boolean }): LoadState {
 })
 export class ProjectAgentsPage {
   private readonly selected = inject(SelectedProject);
-  private readonly origins = inject(PlatformOrigins);
   /** No read in the server render: it has no session to send. */
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -211,11 +208,8 @@ export class ProjectAgentsPage {
     slot: exit('projects/:slug/workspaces/:slotId'),
   });
 
-  /** qits-system's Targets page, where the slots' execution targets are managed (epic qits-1481). */
-  protected readonly targetsHref = computed(() => {
-    const origin = this.origins.page('system');
-    return origin ? `${origin}/system/targets` : undefined;
-  });
+  /** The Targets page, where the slots' execution targets are managed (qits-2351). */
+  protected readonly targets = outcomes('open-system-targets', { open: exit('system/targets') });
 
   /** The project's repositories, for its wrapper; again after a commit to the wrapper's main. */
   protected readonly repositories = qitsResource(

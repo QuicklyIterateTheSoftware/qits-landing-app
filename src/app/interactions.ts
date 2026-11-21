@@ -867,6 +867,54 @@ export const INTERACTIONS = {
    */
   'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
   /**
+   * `mirror-repository.page.ts` via `REPOSITORY_PACKAGES` (qits-2358): the Mirror section's
+   * repository page shows one cache root's type, upstream and eviction rule, its packages and the
+   * selected package's versions. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-repository': 'A cache root’s page lists what the mirror holds in it',
+  /**
+   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358). Changes the page
+   * only: no request, and names no pact.
+   */
+  'select-mirror-package': 'A cache root’s page shows the versions of the package chosen',
+  /**
+   * `orchestrator-process.page.ts` via `PROCESS_LIST`, `PROCESS_RUNS` and `PROCESS_RUN` (qits-2359):
+   * the Orchestrator section's process page shows the process, its latest runs and the shown run's
+   * steps, the run read without bodies (`bodies=false`). Refresh reads them again, and a running
+   * run is read again every 10 s (no event announces its steps moving).
+   */
+  'show-orchestrator-process':
+    'A process page shows the process, its latest runs and the shown run’s steps',
+  /**
+   * `orchestrator-process.page.ts`: a run's Started (or "Show the newest run") shows that run,
+   * `?run=` in the URL (replaced, not pushed), read through `PROCESS_RUN` as
+   * `show-orchestrator-process` reads it (qits-2359).
+   */
+  'open-orchestrator-run': 'A process page shows the run picked from its list',
+  /**
+   * `orchestrator-process.page.ts` via `PROCESS_RUN_STEP` (qits-2359): a step's card opens its call
+   * below the board, `?step=` in the URL, reading that one step with its request body and response;
+   * a second press closes it.
+   */
+  'open-orchestrator-step': 'A process page opens a step’s request and response, or closes it',
+  /**
+   * `orchestrator-process.page.ts`: Run now's first press asks for the second, saying a run
+   * deletes; Not now takes it back. No request (qits-2359).
+   */
+  'ask-orchestrator-run': 'A process page’s Run now asks to be pressed again before it deletes',
+  /**
+   * `orchestrator-process.page.ts` via `START_PROCESS_RUN` (qits-2359): the confirmed Run now
+   * starts a real run (`{ dryRun: false }`) and shows it, or says why it did not start. No
+   * recording holds a real start, so the pact holds the dry run's.
+   */
+  'start-orchestrator-run': 'The confirmed Run now on a process page starts a run and shows it',
+  /**
+   * `orchestrator-process.page.ts` via `START_PROCESS_RUN` (qits-2359): Dry run starts a run that
+   * deletes nothing (`{ dryRun: true }`) at once and shows it, or says why it did not start (a 409
+   * while a run is active, in the service's words).
+   */
+  'start-orchestrator-dry-run': 'Dry run on a process page starts a dry run and shows it',
+  /**
    * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
    * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
    * engine version, the one qits-system runs on marked. Refresh reads them again.
@@ -888,6 +936,93 @@ export const INTERACTIONS = {
    * and names no pact.
    */
   'leave-swarm-node': 'A swarm node’s page leads back to the nodes list',
+  /**
+   * `swarm-configs.page.ts` via `SWARM_CONFIG_LIST` (qits-2348): the System section's configs page
+   * lists the configs of qits-system's swarm, each with its labels and docker's created and
+   * updated text. Refresh reads them again (no event announces a change).
+   */
+  'show-swarm-configs': 'The swarm configs page lists the swarm’s configs with their labels',
+  /**
+   * `system-targets.page.ts` via `TARGET_ROWS` (qits-2351): the System section's Targets page lists
+   * qits-system's execution targets, each with its connection, quarantine, slots, sign-ins, last
+   * health check and memory. Refresh, and a target event (`TARGET_EVENTS`, `TargetDeleted`,
+   * `TargetOomKilled`), read them again.
+   */
+  'show-targets': 'The Targets page lists the execution targets with their slots and sign-ins',
+  /**
+   * `target-card.ts` via `TARGET_HEALTH` (qits-2351): a target's health Details read its last
+   * settled health check, each check with its verdict, on opening.
+   */
+  'show-target-health': 'A target’s health details show its last settled health check',
+  /**
+   * `target-card.ts` via `TARGET_LEASES` (qits-2351): a target's Leases read the leases it holds,
+   * on opening and again after a `TargetLeaseChanged` naming it.
+   */
+  'show-target-leases': 'A target’s leases list the leases it holds',
+  /**
+   * `system-targets.page.ts` via `TARGET_INSTALL_SCRIPT` (qits-2351): View install script reads the
+   * script the install line pipes into `sh`.
+   */
+  'show-target-install-script': 'The Targets page shows the runner install script',
+  /**
+   * `declare-target.ts` via `TARGET_CREATE` (qits-2351): Declare a target declares one and shows its
+   * one-time install line; a refusal stays on the form.
+   */
+  'declare-target': 'Declaring a target shows the install line its runner registers with',
+  /**
+   * `target-card.ts` via `TARGET_PATCH` (qits-2351): Save of a target's Edit sends its description
+   * and reservations; the list is read again, a refusal stays on the card.
+   */
+  'edit-target': 'Saving a target’s description and reservations changes them',
+  /**
+   * `target-card.ts` via `TARGET_TOKEN_ROTATE` (qits-2351): Rotate registration token hands out a
+   * new one-time install line, optionally with another slots total.
+   */
+  'rotate-target-token': 'Rotating a target’s registration token shows a new install line',
+  /** `target-card.ts` via `TARGET_GREENLIGHT` (qits-2351): Greenlight lifts a quarantine. */
+  'greenlight-target': 'Greenlighting a quarantined target lifts its quarantine',
+  /**
+   * `target-card.ts`: Delete's first press asks for the second, Keep takes it back (qits-2351). No
+   * request, and names no pact.
+   */
+  'ask-delete-target': 'A target’s Delete asks to be pressed again before it deletes',
+  /**
+   * `target-card.ts` via `TARGET_DELETE` (qits-2351): the second press deletes the target; a
+   * `TARGET_BUSY` refusal opens its leases.
+   */
+  'delete-target': 'Deleting a target removes it, or names the lease that holds it',
+  /**
+   * `target-card.ts` via `TARGET_HEALTH_CHECK` (qits-2351): Run health check asks the runner for
+   * one; the list is read again (its result publishes no event).
+   */
+  'request-target-health-check': 'Running a target’s health check asks its runner for one',
+  /**
+   * `target-card.ts` via `TARGET_LOGIN_CHECK` (qits-2351): Check sign-in asks the runner to check
+   * each harness's sign-in; its answer arrives as `TargetLoginChanged`.
+   */
+  'request-target-login-check': 'Checking a target’s sign-in asks its runner to look again',
+  /**
+   * `target-sign-in.ts` via `TARGET_SIGN_IN_START` (qits-2351): Sign in to <harness> starts a
+   * sign-in on the target; a `SIGN_IN_RUNNING` refusal follows the running one.
+   */
+  'start-target-sign-in': 'Signing a target in to a harness starts a sign-in on it',
+  /**
+   * `target-sign-in.ts` via `TARGET_SIGN_IN_READ` (qits-2351): a sign-in that has not settled is read
+   * again every 2 s while its card is open (qits-system publishes no sign-in event).
+   */
+  'follow-target-sign-in': 'A running target sign-in is followed until it settles',
+  /**
+   * `target-sign-in.ts` via `TARGET_SIGN_IN_CODE` (qits-2351): Submit hands the code the browser
+   * showed to the sign-in, once per state.
+   */
+  'submit-target-sign-in-code': 'Submitting a sign-in code hands it to the target’s sign-in',
+  /** `target-sign-in.ts` via `TARGET_SIGN_IN_CANCEL` (qits-2351): Cancel ends a sign-in. */
+  'cancel-target-sign-in': 'Cancelling a target sign-in ends it',
+  /**
+   * `project-agents.page.ts`: the Targets link beside the Workspaces heading opens the System
+   * section's Targets page, `system/targets` (qits-2351). Navigates only, and names no pact.
+   */
+  'open-system-targets': 'The Agents page’s Targets link opens the Targets page',
   /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
@@ -1476,9 +1611,15 @@ export const INTERACTIONS = {
    */
   'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
   /**
+   * `shell.layout.ts`: the sidebar's Orchestrator, a global section shown with no project open,
+   * opens the Orchestrator section (`orchestrator`, which opens the gc process; qits-2359).
+   * Navigates only, and names no pact.
+   */
+  'open-sidebar-orchestrator': 'The sidebar’s Orchestrator entry opens the Orchestrator section',
+  /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
-   * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no
-   * pact.
+   * section is open, open their page (Services, Nodes; qits-2346; Configs, qits-2348; Targets,
+   * qits-2351). Navigates only, and names no pact.
    */
   'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**

@@ -12,7 +12,10 @@ export type RoutePath =
   | 'artifacts/repositories/:repo/maven-packages/:coordinate'
   | 'artifacts/repositories/:repo/packages/:package'
   | 'mirror'
+  | 'mirror/repositories/:repository'
   | 'mirror/upstreams'
+  | 'orchestrator'
+  | 'orchestrator/processes/:kind'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'
@@ -72,10 +75,12 @@ export type RoutePath =
   | 'projects/:slug/work/schedule'
   | 'projects/:slug/workspaces/:slotId'
   | 'system'
+  | 'system/swarm/configs'
   | 'system/swarm/nodes'
   | 'system/swarm/nodes/:id'
   | 'system/swarm/services'
-  | 'system/swarm/services/:id';
+  | 'system/swarm/services/:id'
+  | 'system/targets';
 
 declare module '@qits/angular' {
   interface QitsApp {

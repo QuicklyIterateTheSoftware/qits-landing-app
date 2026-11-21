@@ -40,9 +40,14 @@ its shape is bound by the list's pact (`LIST_EVENTS`, which reads `payload` for 
 
 It is also the app's one basis for staleness (qits-1270). The rule: one stream. Every store, menu
 or page holding platform state reads it again after the domain events that can change it, through
-`DomainEvents`; no polling, no timers, no second stream for staleness. The one exception is what no
-event can announce: a running CI run's live output, read again every 10 s while the run is
-RUNNING and the page visible (`pollWhile`, `core/events/poll-while.ts`, qits-2321). A subscriber narrows by
+`DomainEvents`; no polling, no timers, no second stream for staleness. The exceptions are what no
+event can announce, each while a person watches it: a running CI run's live output, read again
+every 10 s while the run is RUNNING and the page visible (`pollWhile`, `core/events/poll-while.ts`,
+qits-2321); the same way, a running orchestrator process run's steps, read without bodies
+(qits-2359: qits-orchestrator publishes no event); and a target sign-in that has not settled, read
+again every 2 s while its card is on the Targets page and the page visible (`app-target-sign-in`,
+`SIGN_IN_POLL_MS`, qits-2351): qits-system publishes no sign-in event, and the flow lasts seconds
+to minutes. A subscriber narrows by
 event name and by the ids the payload names (`payloadIds`: project, repository, request, run, work
 item, agent, slot; `payload` is a JSON string), and reads again only what the event can change:
 the one row it names, or the whole list when it can move the list (`changesReleaseRequestList`,
@@ -74,7 +79,9 @@ each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) b
 pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
-counts, a mirror upstream registered or deleted or an image pulled through (qits-2357).
+counts, a mirror upstream registered or deleted or an image pulled through (qits-2357), a mirror
+cache entry pulled through, evicted or swept (qits-2358), an orchestrator run started elsewhere
+(gc's deploy trigger, another operator; qits-2359, qits-2472).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
 `ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
@@ -164,7 +171,7 @@ own origin; pact on qits-edge-service in state `an open upstream pool`, qits-222
 opening; a refusal shows nothing.
 The lightning menu's top line (`patterns/system/runner-slots/`, its own `qitsResource` over
 `TARGET_LIST`, qits-2146) reads qits-system's targets on each opening until it loads, and again after `TARGET_EVENTS` (`TargetLeaseChanged`,
-`TargetLoginChanged`). qits-system sends no event when a runner connects or drops. A person whose
+`TargetLoginChanged`, `TargetConnectionChanged`: a runner connecting or dropping). A person whose
 roles may not read the targets gets a refusal, and the line stays hidden.
 The lightning menu's active-run chips (`patterns/release-requests/active-runs/`, `activeRunsOf`)
 read qits-ci's active runs (the menu's `qitsResource` over `ACTIVE_RUNS`, `/ci/api/runs/active`) on
@@ -181,7 +188,8 @@ the menu as an input (the trail names an agent from it too). Its waits' requests
 The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was Workspaces):
 `projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
 `agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
-under a Workspaces heading with the Targets link; `agents/<agent id>` (`AgentLayout`) reads the
+under a Workspaces heading with the Targets link (`open-system-targets`, the System section's
+Targets page, qits-2351); `agents/<agent id>` (`AgentLayout`) reads the
 agent by id through its own `qitsResource`s (qits-2146: `AGENT_DETAIL`, `getAgent`, and its slot's
 start by the agent, `AGENT_START`, `getAgentActiveProcess`), its waits and attention from the
 project's list (`ProjectActiveAgents`), shows its item (linked), its verbs, a Workspace field
@@ -334,9 +342,10 @@ no start running; it shows the slot lookup's recorded live start (the same `{ te
 This app has no runners page of its own (epic qits-1481, ahead of qits-workspaces-service dropping
 its runner doors in qits-1532): `WorkspaceRunnersPage`, `RunnersStore` and the
 `patterns/workspaces/{runner-card,register-runner-form,install-line-panel}/` it used are retired.
-Beside the Agents page's Workspaces heading, Targets links to qits-system's Targets page
-(`PlatformOrigins.page('system')` + `/system/targets`) instead, where execution targets are now
-managed. A slot's status strip no longer names which runner it is placed on
+Beside the Agents page's Workspaces heading, Targets opens the System section's Targets page
+instead (`system/targets`, the in-app exit `open-system-targets` `open`, qits-2351), where execution
+targets are now managed; its old cross-origin link (`PlatformOrigins.page('system')` +
+`/system/targets`) answered 404, as `/system` is qits-system's API prefix. A slot's status strip no longer names which runner it is placed on
 (`patterns/workspaces/slot-status/`, `placementNote` in `core/workspaces/agent-labels.ts`): the
 field it read, `workspace.runner`, is gone from what this app consumes, ahead of the service
 dropping it.
@@ -346,24 +355,26 @@ With no project open, the sidebar shows its global sections in the project's sec
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316), System
-(`open-sidebar-system`, `exit('system')`, qits-2344) and Mirror (`open-sidebar-mirror`,
-`exit('mirror')`, qits-2357). Such a section may list its own pages below it
+(`open-sidebar-system`, `exit('system')`, qits-2344), Mirror (`open-sidebar-mirror`,
+`exit('mirror')`, qits-2357) and Orchestrator (`open-sidebar-orchestrator`, `exit('orchestrator')`,
+qits-2359). Such a section may list its own pages below it
 (`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
 on its own page, `true` while one of its pages below it is the current one (that page `page`).
-System's are Services and Nodes (`open-sidebar-system-page`, `services`/`nodes`,
-`exit('system/swarm/services')`, `exit('system/swarm/nodes')`); qits-2347…qits-2356 add one each.
+System's are Services, Nodes, Configs and Targets (`open-sidebar-system-page`,
+`services`/`nodes`/`configs`/`targets`, `exit('system/swarm/services')`, `exit('system/swarm/nodes')`,
+`exit('system/swarm/configs')` (qits-2348), `exit('system/targets')` (qits-2351));
+qits-2347…qits-2356 add one each.
 Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
 `mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
-page below it.
+page below it; so does Orchestrator, whose one process (gc) is what `orchestrator` redirects to.
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
-no outcome. Orchestrator (qits-2359) adds one entry there with its own `outcomes(...)` exit (a
-`GlobalPath` of its own). With a project open the list is empty.
+no outcome. With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
@@ -527,8 +538,8 @@ that recording's status only.
 The System section (qits-2344) is qits-system's one swarm, which no project joins:
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
-under `system/...`, each listed below the sidebar's System while the section is open (Services
-and Nodes so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+under `system/...`, each listed below the sidebar's System while the section is open (Services,
+Nodes, Configs and Targets so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
 hands off to it with a full-document load; the sidebar's System exit names `system`, which
 redirects, and Services below it names it; a service's page
 leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
@@ -613,10 +624,81 @@ the `@qits/system-golden-masters` pin records the node's tasks. Its four resourc
 (containers, images, networks, volumes, local to the node qits-system runs on) are left to
 qits-2352…qits-2355, each a child route of this page with a tab of its own.
 
+`system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
+`swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
+(`listSwarmConfigs`, `docker config ls` on the manager), one table in the server's order: name
+(plain text until a config's page lands, qits-2349), docker's 12-character id (`shortSwarmId`, the
+whole id in `title`), the labels (each `key=value` on a neutral chip, sorted by key, "—" when `{}`;
+they say who owns a config, where the old page showed only their count), created and updated.
+Created and Updated are the door's text verbatim, through no date parser or formatter: real
+docker's `config ls` writes a humanized age (`2 months ago`), not an instant (only the fake docker
+ever printed a timestamp); the exact instants are the config's own page's (`config inspect`). An
+empty swarm is one sentence ("This swarm holds no configs.", what the estate shows today: nothing
+in it creates a config), a 503 and a 403 as the services page. Staleness: no `refreshOn`. No event
+names a config change, and no deployment creates or removes one, so the page is not followed at
+all: Refresh reads again; nothing polls. The pact reads it (`show-swarm-configs`) in "a single-node
+swarm" (one config, `qits-edge-vhosts`, labelled `qits.platform.deployments.target=platform`) and
+"a swarm holding no configs" (`[]`; the interaction and the `empty` screenshot skip themselves
+until the pin records it).
+
+`system/targets` (`SystemTargetsPage`, qits-2351, replacing qits-system-frontend's `targets`, an
+entry point too) is qits-system's execution targets. One read, `TARGET_ROWS` (`listTargets` with
+its own consumes, `LIST_TARGET_ROWS`, beside the lightning menu's `TARGET_LIST`, whose
+`show-runner-slots` row is unchanged; never `credentialVolume` or `engineId`), one card per target
+in the server's order (`li[app-target-card]`, `patterns/system/target-card/`, the row as its
+input): name, description and hostname; Connected / Disconnected, since when or last seen
+(`formatRelativeTime`), the runner's version; a Quarantined chip with its reason and time and
+Greenlight, only while quarantined; slots used of the total, and per type used, reserved and
+maximum (`—`: no ceiling; `core/system/target-rows.ts`); each harness's sign-in (PRESENT / ABSENT
+/ UNKNOWN, when checked), Check sign-in, the harness's sign-in flow (`app-target-sign-in`,
+`patterns/system/target-sign-in/`) and its manual `loginCommand` / `kimiLoginCommand` behind a
+disclosure with Copy (`app-copy-text`, `patterns/workspaces/copy-text/`); the last health check and
+Run health check, Details reading `TARGET_HEALTH` (`getTargetHealth`, its body typed `unknown`,
+read by `target-health.ts`; a 204 is "No health check has settled yet.") on opening; the node's
+memory, only while reported; Leases reading `TARGET_LEASES` (`listLeases?targetId=`,
+`core/system/leases.operations.ts`) on opening ("This target holds no leases." when none); Edit
+(description and reservations, Save sends only what changed, `targetPatch`), Rotate registration
+token (an optional slots total 0..1024, then the new one-time install line), and Delete, asked on
+the first press and sent on the second, never queued (`online-only`), a `TARGET_BUSY` refusal
+opening its leases. Below the cards, Declare a target (`patterns/system/declare-target/`: name,
+description, reservations, an optional slots total; on 201 the one-time install line once, with
+Copy, and the note that the token works once and is lost when the page is left, and that rotating
+gives a new one), and View install script (`TARGET_INSTALL_SCRIPT`, read on opening into a
+`<pre>`). The sign-in flow: Sign in to <harness> starts one (STARTING); AWAITING_BROWSER shows the
+link and the device code, AWAITING_CODE the link and a code field whose Submit posts once per
+state; Cancel until it settles; a terminal state is one sentence (`core/system/sign-in.ts`); a
+`SIGN_IN_RUNNING` refusal follows the sign-in its message names; SUCCEEDED reads the list once.
+Every write is an outcome of its own (`declare-target`, `edit-target`, `rotate-target-token`,
+`greenlight-target`, `ask-delete-target`, `delete-target`, `request-target-health-check`,
+`request-target-login-check`, `start-target-sign-in`, `submit-target-sign-in-code`,
+`cancel-target-sign-in`), and a refusal stays on the card in the page's words
+(`core/system/target-refusals.ts`: `TARGET_NAME_TAKEN`, `RESERVATIONS_EXCEED_TOTAL`,
+`MAXIMUM_BELOW_RESERVATION`, `TARGET_BUSY`, `TARGET_UNAVAILABLE`, `SIGN_IN_RUNNING`,
+`SIGN_IN_NOT_AWAITING_CODE`, `SIGN_IN_NOT_FOUND`, a 403's admin role, a 503's commissioning).
+`[]` is "No targets are declared yet." with the form still shown; a 403 names the read roles; any
+other failure says the targets could not be read, with Retry. Staleness: the list's `refreshOn`,
+`TARGET_EVENTS`, `TargetDeleted` and `TargetOomKilled` → the whole list, debounced 1 s; an open
+Leases follows `TargetLeaseChanged` naming its target (`payloadField(event, 'targetId')`). A
+created, patched or greenlit target, a rotated token and a health check's result publish no event:
+the page reads the list again after each of its own writes, and Refresh covers a change made
+elsewhere (the CLI, another person). A sign-in that has not settled is read again every 2 s
+(`pollWhile`, above), never otherwise. The pact (`targets.operations.pact.spec.ts`, beside the
+lightning menu's row; `leases.operations.pact.spec.ts` for the leases) reads the list in "a
+connected target with leases", "a declared target" and, empty, "no target"; declaring and the
+install script (status and media type: the recording holds the script as a JSON string, so no
+screenshot shows it) in "no target"; patch, greenlight, delete (204) and health in "a declared
+target", with the two checks' 409 TARGET_UNAVAILABLE as refusal rows; a rotation in "a registered
+runner"; a sign-in started in "a connected target", and followed, given its code and cancelled in
+"a connected target with a claude sign-in awaiting its code". The empty list, the filtered leases
+and the two checks' 202s (in "a connected target") skip themselves, with their screenshots, until
+the `@qits/system-golden-masters` pin records them; the provider states are named once, in
+`src/testing/system-states.ts`. No recording lists a quarantined target, so Greenlight's test (and
+its trigger's screenshot) skips itself until qits-system records `listTargets` in "a quarantined
+target".
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
-`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and qits-2358 adds
-`mirror/repositories/<repository>`. It is an entry point (`qitsEntry`): the old page hands off to it
+`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and one cache root's page is
+`mirror/repositories/<repository>` (below). It is an entry point (`qitsEntry`): the old page hands off to it
 with a full-document load, and the sidebar's Mirror exit names `mirror`, which redirects. It reads
 through `qitsResource` over `core/mirror/upstreams.operations.ts`: `UPSTREAM_LIST`
 (`listUpstreams`, `GET /mirror/api/upstreams`, `{ upstreams: [...] }` in namespace order), in the
@@ -629,10 +711,77 @@ operator deleted them) is one sentence; any failure (a 5xx when the database can
 an empty fallback) says the upstreams cannot be read right now, with Retry. Staleness: no
 `refreshOn`. qits-mirror sends no event when an upstream is registered or deleted or an image is
 pulled through, so none of it is followed: Refresh reads again (a known gap). The pact
-(`upstreams.operations.pact.spec.ts`, the whole mirror pact) reads it in "the default caches" (the
+(`upstreams.operations.pact.spec.ts`) reads it in "the default caches" (the
 three default registries) and "a mirror fronting no registries" (`upstreams: []`, recorded from
 `@qits/mirror-golden-masters` 2026.1120.232746 on; the interaction and the `empty` screenshot skip
-themselves on an older pin).
+themselves on an older pin), in its own part of the mirror pact (`assertPactPart`).
+
+`mirror/repositories/<repository>` (`MirrorRepositoryPage`, qits-2358, replacing
+qits-mirror-frontend's `repositories/:repository`, an entry point too: the old route hands off to
+it, and qits-2471's list at `mirror/repositories` will link here) is one pull-through cache root, at
+`https://qits.<domain>/mirror/repositories/<name>`. It reads `REPOSITORY_PACKAGES`
+(`core/mirror/repository-packages.operations.ts`, `listRepositoryPackages`,
+`GET /mirror/api/repositories/{repository}/packages`: the root's row and every package with its
+versions, not paged), in the browser only, and keeps the server's order. The header is the name
+(mono), the type on a chip, "a cache of <upstream>" (a null upstream, an OCI namespace whose
+upstream was deleted, says it serves what is cached and fetches nothing new) and
+"N packages · M cached versions · <size>" (`images` for `oci-mirror`, `coordinates` for
+`maven-proxy`; binary `formatBytes`). The eviction line is the type's window from the row's
+`evictionWindow` (ISO-8601, `evictionWindowWords` in `core/mirror/eviction-window.ts`: `P30D` is
+"30 days", anything but whole days shown as written): "Entries unused for 30 days are evicted by the
+next sweep.", or "This cache is not swept: nothing is evicted." when it is null (eviction off).
+Pins are a gap the page states rather than draws: an image pin from qits-maintenance reaches the
+mirror only in the body of each sweep, so for `oci-mirror` it says one sentence (a pinned tag is
+kept whatever its age; the pins are not shown here), and it claims no per-version verdict (only a
+`qits:system` dry run knows one). A name search (`searched`) narrows the packages table (name, versions,
+size, last used, `never` when null); a package's name is a button (`aria-pressed`,
+`select-mirror-package`, reads nothing) that shows its versions below (version, or for OCI the
+digest shortened to `sha256:` + 12 hex with the whole in `title`; tags as chips, `—` when none;
+files for `maven-proxy` only, the count with the names in `title`; size; cached; last used), the
+first shown package selected until another is pressed. `packages: []` (nobody pulled through yet,
+every root on a fresh deployment) is "Nothing is cached in <name> yet."; a 404 (an unknown name) is
+"The mirror has no cache root called <name>." with no Retry; any other failure is a load failure
+with Retry. Staleness: no `refreshOn`; qits-mirror sends no event when a client pulls through, an
+entry is evicted or a sweep runs, so Refresh reads again (a known gap). Its pact
+(`repository-packages.operations.pact.spec.ts`, `show-mirror-repository`, its own part of the
+mirror pact) reads it in "a mirror holding a pinned and an unpinned tag" (`hub`, two tagged
+digests), "a maven cache holding a cached artifact" (`central`, a jar and a pom), "an npm cache
+holding a package" (`npmjs`, `left-pad`), "the default caches" (`hub`, `packages: []`) and "no cache
+root of that name" (404, status only); all but the npm one, and their screenshots, skip themselves
+until the `@qits/mirror-golden-masters` pin records them (qits-mirror's qits-2358 release).
+
+The Orchestrator section (qits-2359) is qits-orchestrator's technical processes, which no project
+joins: `orchestrator/processes/<kind>` (`OrchestratorProcessPage`, replacing
+qits-orchestrator-frontend's `processes/:kind` and its `''`), at
+`https://qits.<domain>/orchestrator/processes/gc`; `orchestrator` and `orchestrator/processes`
+redirect to `processes/gc` (gc is the only process; a list page waits for a second). It is an entry
+point (`qitsEntry`), where the old pages hand off, and the sidebar's Orchestrator names
+`orchestrator`. It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
+the browser only: `PROCESS_LIST` (`listProcesses`: the title, the lede, whether the kind exists),
+`PROCESS_RUNS` (`listProcessRuns`, the latest 20, newest first: status, Started linking `?run=`
+(`open-orchestrator-run`), took, trigger with a "dry run" chip, the summary clamped to two lines)
+and `PROCESS_RUN` (`getProcessRun` with `bodies=false`, always: the old page re-read the whole run,
+2.8 MB for a running gc run, every 2 s). The shown run is `?run=` (else the newest), its steps a
+board in columns by dependency depth (`core/orchestrator/step-columns.ts`, ported from the old
+`board/layout.ts`, no wires); a card's press opens the step below (`?step=`,
+`open-orchestrator-step`, replaced, a second press closes it), whose call is one more read,
+`PROCESS_RUN_STEP` (`getProcessRunStep`: request body and response, the response collapsed behind
+"Show <responseBytes>"). Dry run starts `{ dryRun: true }` at once (`start-orchestrator-dry-run`);
+Run now asks first (`ask-orchestrator-run`) and its second press sends `{ dryRun: false }`
+(`start-orchestrator-run`), both through `qitsMutation`, `online-only`, never disabled while a run is
+active: a 409 is said in the service's words and the newest run shown, a 403 says the role, anything
+else that whether a run started is not known (`explainStart`, `core/orchestrator/process-runs.ts`).
+Staleness: qits-orchestrator publishes no event. A RUNNING shown run is read again every 10 s while
+the page is visible (`pollWhile`); when it leaves RUNNING the list is read again, and an open step
+whose status moved; a failed poll keeps the run and says so. The gap: a run started elsewhere (the
+deploy trigger, another operator) shows only after Refresh (qits-2472). The pact
+(`processes.operations.pact.spec.ts`, its own part of the orchestrator pact beside cleanup's,
+`assertPactPart`) reads the process in "the gc process", the runs, the run and `artifacts.plan`'s
+step in "a finished gc dry run", the runs in "the gc process before its first run" (`[]`), the runs
+and the run in "a running gc run", and Dry run's 202 in "no active gc run" and 409 in "a running gc
+run"; no recording holds a real start, so Run now's request is the page's plain spec's. Every
+interaction and screenshot skips itself until the `@qits/orchestrator-golden-masters` pin records
+these states.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
@@ -1162,13 +1311,13 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service}.operations*.ts`                                   | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases}.operations*.ts`                            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
-| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`                                                      | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/upstreams.operations*.ts`                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`        | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
+| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                 | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
