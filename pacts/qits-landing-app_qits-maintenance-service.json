@@ -512,7 +512,7 @@
             "app": "qits-landing-app",
             "interaction": "search-project-dependencies",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/dependencies"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/dependencies"
           }
         }
       },
@@ -928,7 +928,7 @@
             "app": "qits-landing-app",
             "interaction": "search-project-dependencies",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/dependencies"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/dependencies"
           }
         }
       },
@@ -2050,7 +2050,7 @@
             "app": "qits-landing-app",
             "interaction": "show-artifact-dependents",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/artifacts"
           }
         }
       },
@@ -2135,7 +2135,7 @@
             "app": "qits-landing-app",
             "interaction": "show-artifact-dependents",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/artifacts"
           }
         }
       },
@@ -4825,7 +4825,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "mirror/repositories/:repository"
           }
         }
       },
@@ -5002,7 +5003,7 @@
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/dependencies"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/dependencies"
           }
         }
       },
@@ -5353,7 +5354,7 @@
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/dependencies"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/dependencies"
           }
         }
       },
@@ -5417,7 +5418,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "mirror/repositories/:repository"
           }
         }
       },
@@ -5635,7 +5637,7 @@
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/artifacts"
           }
         }
       },
@@ -5720,7 +5722,7 @@
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts"
+            "route": "mirror/repositories/:repository, projects/:slug/maintenance/artifacts"
           }
         }
       },

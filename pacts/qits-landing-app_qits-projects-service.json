@@ -19801,7 +19801,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-work-board",
             "kind": "ui",
-            "route": "projects/:slug/work/detail/:id"
+            "route": "projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/work/detail/:id, projects/:slug/workspaces/:slotId"
           }
         }
       },
