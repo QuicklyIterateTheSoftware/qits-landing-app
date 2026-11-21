@@ -3380,5 +3380,13 @@
       "operationId": "listTargets",
       "route": "system/targets"
     }
+  ],
+  "src/app/routes/system/terminals/[id]/system-terminal.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "an open exec terminal",
+      "operationId": "getTerminal",
+      "route": "system/terminals/:id"
+    }
   ]
 }

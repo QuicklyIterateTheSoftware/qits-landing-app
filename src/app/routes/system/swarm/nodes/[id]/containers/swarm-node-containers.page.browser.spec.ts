@@ -39,6 +39,11 @@ const LOGS = `/system/api/nodes/${NODE}/containers/${RUNNING}/logs?tail=200`;
  *
  * The tab reached from the bare node page records `switch-swarm-node-tab:containers` and carries
  * `aria-current`; nothing announces a container change, so Refresh is its only second read.
+ *
+ * The running row's `bash`/`sh` (qits-2356) open a terminal: `sh` answered with qits-system's
+ * `openTerminal` of "no terminal" goes to the terminal's page with `?node=` (whose read that page's
+ * own spec answers; here a 404); a refusal is a status only until the pin records "a stopped
+ * container"'s 409 (its case waits, TODO(qits-2356)).
  */
 describe('SwarmNodeContainersPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -132,8 +137,17 @@ describe('SwarmNodeContainersPage (screenshots)', () => {
     expect(rows[0]).toMatch(
       /dev-qits-ci\.1\.k4g0nn1ld7o272jl7fciatg6m\s*b248472f7a8e .*qits-ci:3e501b6 running\s*healthy Up 4 hours \(healthy\) 23 Aug 2026 8080\/tcp Logs/,
     );
-    // No exec buttons: the terminal page and its buttons arrive with qits-2356.
-    expect(view.getByRole('button', { name: /^(bash|sh)$/ }).elements()).toHaveLength(0);
+    // The running row opens a shell in its container (qits-2356).
+    await expect
+      .element(
+        view.getByRole('button', { name: 'Open bash in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m' }),
+      )
+      .toBeVisible();
+    await expect
+      .element(
+        view.getByRole('button', { name: 'Open sh in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m' }),
+      )
+      .toBeVisible();
     // The tab row is the layout's, outside the routed tab.
     await expect
       .element(
@@ -158,8 +172,10 @@ describe('SwarmNodeContainersPage (screenshots)', () => {
     await opened.idle();
     expect(rowTexts(view)).toHaveLength(1);
     expect(rowTexts(view)[0]).toMatch(
-      /a-stopped-one\s*aa11bb22cc33 .*old:1 exited\s*— Exited \(137\) 3 days ago 20 Aug 2026 — Logs/,
+      /a-stopped-one\s*aa11bb22cc33 .*old:1 exited\s*— Exited \(137\) 3 days ago 20 Aug 2026 — Logs$/,
     );
+    // A stopped container has no shell to open (qits-2356).
+    expect(view.getByRole('button', { name: /^Open (bash|sh) in / }).elements()).toHaveLength(0);
     await expect.element(view).toMatchTextContent('1 stopped container, newest first.');
     await expect
       .element(page.elementLocator(opened.frame))
@@ -278,6 +294,71 @@ describe('SwarmNodeContainersPage (screenshots)', () => {
     await expect
       .element(view.getByRole('status'))
       .toHaveTextContent('This container is gone; it was removed after the list was read.');
+  });
+
+  it('open-system-terminal opened: sh opens a terminal and goes to it, the node kept', async (context) => {
+    if (!(await recorded(SWARM))) context.skip();
+    const { opened, view } = await render();
+    await view
+      .getByRole('button', { name: 'Open sh in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m' })
+      .click();
+    await opened.idle();
+    const post = http.expectOne((request) => request.method === 'POST');
+    expect(post.request.url).toBe('/system/api/terminals');
+    // The container by its id, as the old tab sent it and as qits-2356's 409 recording has it.
+    expect(post.request.body).toEqual({ kind: 'EXEC', container: RUNNING, shell: 'sh' });
+    const terminal = await goldenMaster('no terminal', 'openTerminal', SYSTEM);
+    post.flush(terminal, { status: 201, statusText: 'Created' });
+    await settleReads(opened);
+    expect(reached()).toEqual(['open-system-terminal:opened']);
+    expect(TestBed.inject(Router).url).toBe(`/system/terminals/${terminal.id}?node=${NODE}`);
+  });
+
+  it('open-system-terminal refused: a failed open says so above the table', async (context) => {
+    if (!(await recorded(SWARM))) context.skip();
+    const { opened, view } = await render();
+    await view
+      .getByRole('button', { name: 'Open bash in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m' })
+      .click();
+    await opened.idle();
+    http
+      .expectOne((request) => request.method === 'POST')
+      .flush(null, { status: 503, statusText: 'Service Unavailable' });
+    await opened.settled();
+    expect(reached()).toEqual(['open-system-terminal:refused']);
+    await expect
+      .element(view.getByRole('alert'))
+      .toHaveTextContent(
+        'Could not open bash in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m: qits-system answered 503',
+      );
+    expect(TestBed.inject(Router).url).toBe(`/system/swarm/nodes/${NODE}/containers`);
+  });
+
+  // TODO(qits-2356): enable once the `@qits/system-golden-masters` pin records qits-system-service's
+  // "a stopped container" (`openTerminal` 409, `{"message":"container a-stopped-one is not
+  // running"}`): flush that recording onto the stopped row's `sh` (the row has no button, so derive
+  // the press from the running one, or read the state's own container list) and shoot `exec-refused`.
+  it.skip('open-system-terminal refused: a 409 says the container is not running', async () => {
+    const { opened, view } = await render();
+    await view
+      .getByRole('button', { name: 'Open sh in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m' })
+      .click();
+    await opened.idle();
+    http
+      .expectOne((request) => request.method === 'POST')
+      .flush(await goldenMaster('a stopped container', 'openTerminal', SYSTEM), {
+        status: 409,
+        statusText: 'Conflict',
+      });
+    await opened.settled();
+    await expect
+      .element(view.getByRole('alert'))
+      .toHaveTextContent(
+        'Could not open sh in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m: container a-stopped-one is not running',
+      );
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('exec-refused', { kind: 'ERROR' });
   });
 
   it('switch-swarm-node-tab containers: the bare node page opens its Containers tab', async (context) => {
