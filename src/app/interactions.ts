@@ -910,6 +910,12 @@ export const INTERACTIONS = {
    */
   'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
+   * `swarm-configs.page.ts` via `SWARM_CONFIG_LIST` (qits-2348): the System section's configs page
+   * lists the configs of qits-system's swarm, each with its labels and docker's created and
+   * updated text. Refresh reads them again (no event announces a change).
+   */
+  'show-swarm-configs': 'The swarm configs page lists the swarm’s configs with their labels',
+  /**
    * `system-targets.page.ts` via `TARGET_ROWS` (qits-2351): the System section's Targets page lists
    * qits-system's execution targets, each with its connection, quarantine, slots, sign-ins, last
    * health check and memory. Refresh, and a target event (`TARGET_EVENTS`, `TargetDeleted`,
@@ -1585,8 +1591,8 @@ export const INTERACTIONS = {
   'open-sidebar-orchestrator': 'The sidebar’s Orchestrator entry opens the Orchestrator section',
   /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
-   * section is open, open their page (Services, Nodes; qits-2346; Targets, qits-2351). Navigates
-   * only, and names no pact.
+   * section is open, open their page (Services, Nodes; qits-2346; Configs, qits-2348; Targets,
+   * qits-2351). Navigates only, and names no pact.
    */
   'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**
