@@ -386,6 +386,11 @@
               "entry": true
             },
             {
+              "path": "swarm/configs/:id",
+              "fullPath": "system/swarm/configs/:id",
+              "entry": true
+            },
+            {
               "path": "swarm/secrets",
               "fullPath": "system/swarm/secrets",
               "entry": true
@@ -329632,6 +329637,2038 @@
       ]
     },
     {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding binary data does, never that it is empty",
+      "name": "binary",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding binary data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding binary data does, never that it is empty",
+      "name": "binary",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding binary data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding binary data does, never that it is empty",
+      "name": "binary",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding binary data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-config:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding binary data does, never that it is empty",
+      "name": "binary",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding binary data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-config:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding binary data does, never that it is empty",
+      "name": "binary",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding binary data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding binary data does, never that it is empty",
+      "name": "binary",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding binary data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=h7r2c9v4m1x8q5w3k6d0n2bze",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > shows a config: its id, instants, label and data verbatim",
+      "name": "config",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "data",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > shows a config: its id, instants, label and data verbatim",
+      "name": "config",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "data",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > shows a config: its id, instants, label and data verbatim",
+      "name": "config",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-config:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "data",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > shows a config: its id, instants, label and data verbatim",
+      "name": "config",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-config:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "data",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > shows a config: its id, instants, label and data verbatim",
+      "name": "config",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "data",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > shows a config: its id, instants, label and data verbatim",
+      "name": "config",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "data",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding no data is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding no data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "data",
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding no data is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding no data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "data",
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding no data is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding no data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-config:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "data",
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding no data is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding no data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "leave-swarm-config:back"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "data",
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding no data is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding no data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "data",
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says a config holding no data is empty",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm config holding no data",
+          "operationId": "getSwarmConfig"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "data",
+            "binary"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": null,
+          "derived": [
+            "updatedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "id",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#getSwarmConfig",
+          "item": "id=p3m8w2xq7v5k1d9c4n6b0t2ra",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says there is no such config",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says there is no such config",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says there is no such config",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says there is no such config",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says there is no such config",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says there is no such config",
+      "name": "not-found",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > says reading the swarm needs an admin role on a 403",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "leave-swarm-config:back"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+      "test": "SwarmConfigPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs/:id",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "leave-swarm-config:back",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:secrets",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system-page:targets",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
       "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-desktop-dark.html",
       "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
       "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
@@ -329661,7 +331698,8 @@
         "open-sidebar-system-page:secrets",
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
-        "open-sidebar-system:open"
+        "open-sidebar-system:open",
+        "open-swarm-config:config"
       ],
       "dataMarks": [
         {
@@ -329742,7 +331780,8 @@
         "open-sidebar-system-page:secrets",
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
-        "open-sidebar-system:open"
+        "open-sidebar-system:open",
+        "open-swarm-config:config"
       ],
       "dataMarks": [
         {
@@ -329810,7 +331849,9 @@
           "operationId": "listSwarmConfigs"
         }
       ],
-      "triggers": [],
+      "triggers": [
+        "open-swarm-config:config"
+      ],
       "dataMarks": [
         {
           "source": "qits-system-service#listSwarmConfigs",
@@ -329865,7 +331906,9 @@
           "operationId": "listSwarmConfigs"
         }
       ],
-      "triggers": [],
+      "triggers": [
+        "open-swarm-config:config"
+      ],
       "dataMarks": [
         {
           "source": "qits-system-service#listSwarmConfigs",
@@ -329933,7 +331976,8 @@
         "open-sidebar-system-page:secrets",
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
-        "open-sidebar-system:open"
+        "open-sidebar-system:open",
+        "open-swarm-config:config"
       ],
       "dataMarks": [
         {
@@ -330014,7 +332058,8 @@
         "open-sidebar-system-page:secrets",
         "open-sidebar-system-page:services",
         "open-sidebar-system-page:targets",
-        "open-sidebar-system:open"
+        "open-sidebar-system:open",
+        "open-swarm-config:config"
       ],
       "dataMarks": [
         {
@@ -360453,6 +362498,50 @@
       "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-tablet-dark.html",
       "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-tablet-light.html"
     ],
+    "system/swarm/configs/:id": [
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/binary-tablet-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/config-tablet-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/not-found-tablet-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/refused-tablet-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts/unavailable-tablet-light.html"
+    ],
     "system/swarm/nodes": [
       "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-light.html",
@@ -362181,6 +364270,26 @@
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/schedule/work-schedule.page.ts"
+      },
+      {
+        "route": "system/swarm/configs",
+        "interaction": "open-swarm-config",
+        "outcome": "config",
+        "kind": "exit",
+        "to": "system/swarm/configs/:id",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/swarm/configs/swarm-configs.page.ts"
+      },
+      {
+        "route": "system/swarm/configs/:id",
+        "interaction": "leave-swarm-config",
+        "outcome": "back",
+        "kind": "exit",
+        "to": "system/swarm/configs",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.ts"
       },
       {
         "route": "system/swarm/nodes",
@@ -365873,6 +367982,24 @@
         "route": null,
         "interaction": "leave-root",
         "outcome": "projects",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/swarm/configs/[id]/swarm-config.page.browser.spec.ts",
+        "test": "SwarmConfigPage (screenshots) > leads back to the swarm configs",
+        "route": "system/swarm/configs/:id",
+        "interaction": "leave-swarm-config",
+        "outcome": "back",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+        "test": "SwarmConfigsPage (screenshots) > opens a config’s page from its name",
+        "route": "system/swarm/configs",
+        "interaction": "open-swarm-config",
+        "outcome": "config",
         "kind": "exit",
         "freeze": null
       },
