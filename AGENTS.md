@@ -69,7 +69,7 @@ are `WEB_SOCKET`, outside the rule.
 What follows what (each store's comment has the detail). A release request's page follows only
 events about that request (`affectsReleaseRequest`: its `releaseRequestId`; a `SoftwareRelease` or
 build of its repository at its version or fold; a deployment of its version while RELEASED). The
-Repositories page and the project cards read a project's repositories again after a
+Components page and the project cards read a project's repositories again after a
 `SCMPublishCommit` to the wrapper's main branch (their resources' `refreshOn`, `movesWrapper`). The work pages read the
 open project's work again after `EntityTransitioned` naming it (`entities[].projectId`), and the work
 item page its own data when the event names the item (`entities[].entityId`), and again after
@@ -80,7 +80,8 @@ pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events 
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
 counts, a mirror upstream registered or deleted or an image pulled through (qits-2357), a mirror
-cache entry pulled through, evicted or swept (qits-2358), an orchestrator run started elsewhere
+cache entry pulled through, evicted or swept (qits-2358), a mirror cache root registered or deleted
+(qits-2471), an orchestrator run started elsewhere
 (gc's deploy trigger, another operator; qits-2359, qits-2472).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
@@ -160,7 +161,7 @@ wrapper's READY → RELEASED → FINALIZED sends; deployment events name no proj
 while a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
 shell's own copy of the open project's requests (the sidebar's line, the trail, the agents' waits)
 is `ProjectReleaseRequests` (`core/projects/`, qits-2146), a `qitsResource` over that request with
-those events as its `refreshOn`; the shell hands it to the lightning menu, and the Release Requests
+those events as its `refreshOn`; the shell hands it to the lightning menu, and the Releases section's Requests
 page reads it too, so the request is made once. The notifications menu reads the newest events through its own `qitsResource` on its first
 opening and puts every new event at the top of its list once it is loaded. The bumps menu (the
 lighthouse, `patterns/maintenance/bumps-menu/`) reads qits-maintenance's pending bumps
@@ -185,8 +186,9 @@ after `AGENT_STATUS_EVENTS` about the project (debounced 1 s): `ProjectActiveAge
 the menu as an input (the trail names an agent from it too). Its waits' requests and items, like
 `app-agent-status`'s, come from `OpenProjectWaits` (`ProjectReleaseRequests`, and the work
 `SelectedWork`'s resource already holds once a work page wanted it, never read for the lines).
-The agent pages (epic qits-1681; the sidebar's Agents, `AGENTS = 'agents'`, was Workspaces):
-`projects/<slug>/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
+The agent pages (epic qits-1681; Agents below the sidebar's Releases, `AGENTS = 'releases/agents'`,
+was Workspaces; qits-2482 moved them under `releases/`, and the old `agents/…` addresses redirect):
+`projects/<slug>/releases/agents` (`ProjectAgentsPage`) lists the ACTIVE agents, each linking
 `agents/<agent id>` with its waits and attention (`patterns/agents/agent-status/`), then the slots
 under a Workspaces heading with the Targets link (`open-system-targets`, the System section's
 Targets page, qits-2351); `agents/<agent id>` (`AgentLayout`) reads the
@@ -231,7 +233,7 @@ gives the daemon's generated call that address. How the agent runs is its own `g
 strip, its container verbs and its harness install (sign-in, plugins) are the workspace page's.
 The slot's hint channel (`WorkspaceHints`, `/workspaces/api/workspaces/{id}/events`) stays: it is a
 REST door of qits-workspaces, not the container proxy. `agent-doors.spec.ts` beside the layout
-holds it: it walks the imports of every source under `routes/projects/[slug]/agents/[agentId]/`
+holds it: it walks the imports of every source under `routes/projects/[slug]/releases/agents/[agentId]/`
 (the app's own, not `api/`) and fails on `workspaces/container`, `WorkspaceContainer`,
 `container-proxy` or `containerBase` in any of them, and it runs every operation the page calls,
 addressed as the page addresses it, and fails on any request not to the agent's doors. The container proxy's addresses live in
@@ -258,7 +260,7 @@ by the harness setup and handed to `app-sign-in-notice`; Open the sign-in termin
 `HOME_PLUGINS`, `listPlugins`, and `PLUGIN_INSTALL`, `installPlugin`), through the container proxy
 (`core/workspaces/agent-sign-in.operations.ts`, `agent-plugins.operations.ts`; qits-2146).
 
-The Repositories page's backup sign-in (qits-1268, from qits-projects-frontend's backup panel) is
+The Components page's backup sign-in (qits-1268, from qits-projects-frontend's backup panel) is
 the same `TerminalSocket` and `ui-terminal-screen` on another socket: qits-projects'
 `wss://projects.<domain>/projects/api/repositories/<repo id>/remote-login` (`remoteLoginSocketUrl`,
 `core/repositories/remote-login.ts`), drawn by `patterns/repositories/remote-login-panel/`. An
@@ -357,7 +359,7 @@ router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no para
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316), System
 (`open-sidebar-system`, `exit('system')`, qits-2344), Mirror (`open-sidebar-mirror`,
 `exit('mirror')`, qits-2357) and Orchestrator (`open-sidebar-orchestrator`, `exit('orchestrator')`,
-qits-2359). Such a section may list its own pages below it
+qits-2359), IdP admin (below). Such a section may list its own pages below it
 (`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
@@ -367,15 +369,20 @@ System's are Services, Nodes, Configs, Secrets and Targets (`open-sidebar-system
 `exit('system/swarm/nodes')`, `exit('system/swarm/configs')` (qits-2348),
 `exit('system/swarm/secrets')` (qits-2350), `exit('system/targets')` (qits-2351));
 qits-2347…qits-2356 add one each.
-Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
-`mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
-page below it; so does Orchestrator, whose one process (gc) is what `orchestrator` redirects to.
-`kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
-`external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
-(qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
-page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
-idp origin (the server render) it has no address, is hidden by class and names
-no outcome. With a project open the list is empty.
+Mirror's are Caches and OCI upstreams (`open-sidebar-mirror-page`, `caches`/`upstreams`,
+`exit('mirror/repositories')`, `exit('mirror/upstreams')`, qits-2479); Caches stays current on one
+cache root's page below it. Orchestrator lists its processes (qits-2480): Garbage collection
+(`open-sidebar-orchestrator-page`, `gc`, `exit('orchestrator/processes/:kind')` with `kind: 'gc'`,
+the page `orchestrator` redirects to), a static list, as the shell reads no processes.
+IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
+(qits-idp-frontend) inside this app: its pages are Clients, Users and Signed-in devices
+(`open-sidebar-idp-page`, `clients`/`users`/`devices`, `exit('idp/clients')`, `exit('idp/users')`,
+`exit('idp/devices')`), each a page (`routes/idp/<page>/`) that shows
+`PlatformOrigins.page('idp')` + `/idp/<page>` in a frame filling the main slot
+(`patterns/idp/idp-frame/`). The idp's admin pages draw no navigation of their own; this sidebar is
+theirs. The door and the idp are the same site, so the frame opens signed in. With no idp origin
+(the server render) there is no frame. `kind: 'external'` leaves the app at `href` through an
+`external(...)` outcome; no global section uses it today. With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
@@ -883,9 +890,9 @@ no request matches, so the row waits for one with no `?` in it). The provider st
 once, in `src/testing/system-states.ts`.
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
-`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and one cache root's page is
+`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to the Caches page (qits-2479, below), and one cache root's page is
 `mirror/repositories/<repository>` (below). It is an entry point (`qitsEntry`): the old page hands off to it
-with a full-document load, and the sidebar's Mirror exit names `mirror`, which redirects. It reads
+with a full-document load, and OCI upstreams below the sidebar's Mirror leads to it. It reads
 through `qitsResource` over `core/mirror/upstreams.operations.ts`: `UPSTREAM_LIST`
 (`listUpstreams`, `GET /mirror/api/upstreams`, `{ upstreams: [...] }` in namespace order), in the
 browser only, one table in the server's order: host (mono, the name a docker client uses, the row's
@@ -904,7 +911,7 @@ themselves on an older pin), in its own part of the mirror pact (`assertPactPart
 
 `mirror/repositories/<repository>` (`MirrorRepositoryPage`, qits-2358, replacing
 qits-mirror-frontend's `repositories/:repository`, an entry point too: the old route hands off to
-it, and qits-2471's list at `mirror/repositories` will link here) is one pull-through cache root, at
+it, and each name on the Caches list below links here, `open-mirror-repository`) is one pull-through cache root, at
 `https://qits.<domain>/mirror/repositories/<name>`. It reads `REPOSITORY_PACKAGES`
 (`core/mirror/repository-packages.operations.ts`, `listRepositoryPackages`,
 `GET /mirror/api/repositories/{repository}/packages`: the root's row and every package with its
@@ -936,13 +943,52 @@ holding a package" (`npmjs`, `left-pad`), "the default caches" (`hub`, `packages
 root of that name" (404, status only); all but the npm one, and their screenshots, skip themselves
 until the `@qits/mirror-golden-masters` pin records them (qits-mirror's qits-2358 release).
 
+Below the selected package's versions, `PackageReleases` (`patterns/mirror/package-releases/`,
+qits-2488) answers "are we affected by this version" where the package comes in, replacing
+Maintenance › Dependencies. It reads qits-maintenance twice per package shown, in the browser
+only: `MAINTENANCE_DEPENDENCIES` (`listDependencies?kind=EXTERNAL&name=`, the package's name, or for
+an image a glob on its upstream name, `*node`) for the pins, and `MAINTENANCE_DEPENDENTS`
+(`listDependencyDependents?ecosystem=&name=`) for the released artifacts of ours whose newest
+release embeds it. `core/mirror/package-releases.ts` holds the naming: npm and maven name a package
+as the mirror does; an image is held under its `FROM` spelling (`node`, `library/node` or
+`hub/library/node`), so the pins are cut to those names and an image's dependents are asked by the
+name its pin uses, after the pins answer. "Our releases that embed <name>" groups the artifacts by
+the version they embed: the artifact's name links its page in the Artifacts section
+(`open-mirror-package-release`, `image`/`npmPackage`/`mavenPackage`/`daemon`, the store
+repositories `qits`, `npm`, `maven`, `daemons` as `release-links.ts` addresses them), its version,
+its repository, direct or transitive. "Pinned by" lists each repository's pin (version, manifest,
+`behind <latest>` when pending). None either way is one sentence; a 403 says the staff roles;
+another failure is a load failure with Retry. Staleness: no event follows the inventory; the page's
+Refresh reads both again. Its pact interactions (`show-mirror-package-releases`, in
+`maintenance.operations.pact.spec.ts`) read "an external package our releases embed" (`left-pad`,
+recorded from qits-maintenance's qits-2488 release on; it and the `releases` screenshot skip
+themselves on an older pin), "released artifacts, some behind", "no released artifacts" and the
+external glob states.
+
+`mirror/repositories` (`MirrorRepositoriesPage`, qits-2471, replacing qits-mirror-frontend's root
+route `''`, "Cached repositories"; an entry point, where the old route hands off) lists every cache
+root the mirror holds, at `https://qits.<domain>/mirror/repositories`. It reads `REPOSITORY_LIST`
+(`core/mirror/repositories.operations.ts`, `listRepositories`, `GET /mirror/api/repositories`,
+`{ repositories: [...] }` by name), in the browser only, one table in the server's order: name
+(mono, a link to the root's page, `open-mirror-repository`), type (a chip), upstream (mono;
+`deleted` when an OCI namespace lost its upstream), "Evicts unused after" (`evictionWindowWords`;
+`not swept` when the window is null) and registered (`createdAt`, `formatInstant`), with
+"N cache roots" above it. `repositories: []` (only a mirror being reset: a running one re-seeds its
+npm and maven caches at boot) is one sentence; any failure is a load failure with Retry.
+Staleness: no `refreshOn`; qits-mirror sends no event when a root or an upstream is registered or
+deleted, so Refresh reads again (a known gap). Its pact (`repositories.operations.pact.spec.ts`,
+`show-mirror-repositories`, its own part of the mirror pact) reads it in "the default caches" and
+"a mirror holding no cache roots" (`repositories: []`; it and the `empty` screenshot skip
+themselves until the `@qits/mirror-golden-masters` pin records it, qits-mirror's qits-2471
+release).
+
 The Orchestrator section (qits-2359) is qits-orchestrator's technical processes, which no project
 joins: `orchestrator/processes/<kind>` (`OrchestratorProcessPage`, replacing
 qits-orchestrator-frontend's `processes/:kind` and its `''`), at
 `https://qits.<domain>/orchestrator/processes/gc`; `orchestrator` and `orchestrator/processes`
 redirect to `processes/gc` (gc is the only process; a list page waits for a second). It is an entry
 point (`qitsEntry`), where the old pages hand off, and the sidebar's Orchestrator names
-`orchestrator`. It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
+`orchestrator`, with Garbage collection below it while the section is open (qits-2480). It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
 the browser only: `PROCESS_LIST` (`listProcesses`: the title, the lede, whether the kind exists),
 `PROCESS_RUNS` (`listProcessRuns`, the latest 20, newest first: status, Started linking `?run=`
 (`open-orchestrator-run`), took, trigger with a "dry run" chip, the summary clamped to two lines)
@@ -973,10 +1019,10 @@ Network access (epic qits-1977) is not this app's any more (qits-2361): the page
 device and hands out its WireGuard config is qits-network-access' own frontend
 (qits-network-access-frontend), served at `https://network-access.<domain>/` by
 qits-network-access-service, which stays public so a person off the tunnel can still join it. The
-top bar's network icon (from 768px, `open-network-access`) and the sidebar's Network access entry
-below the project's sections (shown with or without a project open and in the phone's burger,
-`open-sidebar-network-access`, qits-2262) are plain links to it, `PlatformOrigins.page('network-access')`
-followed by `/`, each an `external('network-access')` outcome marked with `[qitsTriggers]`: a plain
+sidebar's Network access entry below the global sections (with no project open only, phones
+included: it is no project's concern, qits-2485; `open-sidebar-network-access`, qits-2262) is a
+plain link to it, `PlatformOrigins.page('network-access')` followed by `/`, an
+`external('network-access')` outcome marked with `[qitsTriggers]`: a plain
 primary click records it and leaves through `QITS_LEAVE_APP`, which the shell's browser spec replaces
 with a spy.
 
@@ -1010,38 +1056,93 @@ project linking its page (`open-related-project-event` `chain`). The walk is an 
 of its own, so its failure (with Retry) leaves the event on screen. A work item the event names is
 not linked here: no recording this page reads names one.
 
-A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
-between Observability and Events) reads qits-artifacts' whole docs catalog through its own
-`qitsResource` over `DOCS_CATALOG` (`listDocsSites` of the `docs` repository; never
-qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
-`shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
-rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
-A row opens the site's reader in this app (`open-docs-site`, `docs/read/<site>`, the newest of
-`main`). The docs store sends no domain
-event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
-empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
+The project's Docs section (qits-2318) is gone (qits-2486): docs belong to the repository that
+publishes them. `projects/<slug>/docs` redirects to the Repositories, `docs/repositories/<repo>` to
+`repositories/<repo>/docs`, and the reader's old `docs/read/<site>[/-/<version>]` and `read/**`
+(`DocsReadRedirectPage`, in `docs/read/[site]/`) read the catalog (`DOCS_CATALOG`) and replace the
+address with the reader under the site's publisher (`latestRepository`; `follow-moved-docs-site`),
+query and version kept; a site no repository is named for says so. `readerPath` (the release
+page's docs artifacts) still writes the old address, which redirects. `DOC_SECTIONS`, `kindOf` and
+`shortNameOf` (`core/docs/doc-sections.ts`) group the repository's sites; the repository page lists
+its categories, each opening its Docs page at `?section=` (`open-repository-docs-category`).
 
-A repository's Docs page (qits-2336, `projects/<slug>/docs/repositories/<repo>`,
-`RepositoryDocsPage`; a fixed `repositories` segment, so a name never reads as a reader path under
-`docs/`) lists the catalog's sites whose newest version the repository published: the catalog's
+The Components section (qits-2491, the sidebar's Repositories before it) is at
+`projects/<slug>/components` (`ProjectRepositoriesPage`), every page below it under
+`components/…`; the old `repositories/…` addresses redirect, child path and query kept (one relative
+redirect per page in `app.routes.ts`). While the section is open, its first entry is Search
+(`app-component-search`, `patterns/repositories/component-search/`): a combobox whose list holds the
+project's repositories whose name contains the typed text, ignoring case (`matchRepositories`); the
+arrow keys move through it, Enter or a click opens the repository's page (`open-component-search`
+`opened`), Escape closes it. It reads `PROJECT_REPOSITORY_NAMES` (`search-components`) once the field
+is first focused or typed in, never on a page render.
+
+A repository's page (qits-2478, `projects/<slug>/components/<repo>`, `RepositoryPage`, the
+index of the `[repo]` folder) is where a repository's own pages and the artifacts it publishes are
+reached. Three reads, each its own `qitsResource`, in the browser only: the project's repositories
+(`PROJECT_REPOSITORY_PAGE`, `listProjectRepositories` with consumes of its own, `REPOSITORY_PAGE`:
+names and archetypes; an unknown name says so), qits-maintenance's released artifacts
+(`MAINTENANCE_ARTIFACTS`, `listArtifacts`, kept by `repository`: `repositoryArtifacts` in
+`core/repositories/repository-artifacts.ts`, images first; a 403 says the staff roles and leaves the
+rest) and the docs catalog (`DOCS_CATALOG`, `publishedBy`). Links: Contracts and Entities for a
+SERVICE, UI builder for a FRONTEND or APP (`open-repository-pages`, as the card), Docs →
+(`open-repository-docs`); each artifact's name opens its artifact store page
+(`open-repository-artifact`: a docker `qits/<image>` the `qits` image store's `images/<image>`, npm
+`npm/packages`, maven `maven/maven-packages`, a daemon `daemons/daemons`, a docs site
+`docs/docs/<site>`). A repository card's name links it (`open-repository` `page`). The trail below
+Components is `Components › <repo> › Contracts › <state>` (`repositoryTrail` in the shell), each
+crumb before the last a link (`follow-breadcrumb` `components`, `repository`,
+`repositoryContracts`, `repositoryEntities`). Staleness: `SCMPublishCommit` to the wrapper's main
+(`movesWrapper`) → the repositories; nothing announces a release's artifacts, so Refresh reads all
+three again. The two lists are `app-repository-published` (`patterns/repositories/repository-published/`,
+which holds the artifacts' and the catalog's reads), mounted again by the repository's Artifacts page
+(`components/<repo>/artifacts`, `RepositoryArtifactsPage`, qits-2492). While a page of a repository
+is open (`repositoryTrail` finds one), the sidebar shows the repository's own entries in the
+project's sections' place (qits-2492, `repositoryLinks` in the shell, `open-sidebar-repository-page`):
+Overview, Artifacts, Docs, Contracts, Entities and UI builder, below "← Components"
+(`leave-sidebar-repository` `components`), the way back to the project's sidebar; the project's sections are then
+not rendered (`shownLinks`). Every entry shows for every repository (each page says when it has
+nothing); Dependencies waits for qits-2489. Its pact interactions (`show-repository`) read "a project with 3 repositories" and
+"two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
+naming contract repositories" and "a docs catalog of every kind".
+
+A repository's Release requests (qits-2506, `repositories/<repo>/release-requests`,
+`RepositoryReleaseRequestsPage`, the repository sidebar's last entry) lists only its requests, newest
+first: `REPOSITORY_RELEASE_REQUESTS` (`listRepositoryReleaseRequests`,
+`core/release-requests/repository-release-requests.*`) by the repository's id (found by name in
+`PROJECT_REPOSITORY_PAGE`). The state filter is `?state=` (`requestFilterOf`): all (the default,
+`state=all`, so past released requests show), open (the door's default), released (RELEASED,
+FINALIZED) and rejected or withdrawn, the last two narrowed in the page; rows show in chunks of
+`REQUESTS_CHUNK` with "Show more". It follows `RELEASE_REQUEST_EVENTS` naming the repository. A row
+opens the request under the repository (`open-repository-release-request`,
+`repositories/<repo>/release-requests/<requestId>`, `RepositoryReleaseRequestPage`), so the
+repository's sidebar and trail stay. Both request routes mount one body, `app-release-request-view`
+(`patterns/release-requests/release-request-view/`, the former page): set `repo`, and its back link
+and the requests it names stay under the repository (`leave-repository-release-request`,
+`open-related-repository-release-request`); the tabs only change `?tab=`. Its pact interactions
+(`show-repository-release-requests`) read "a repository with a release not merged to main"
+(`state=all`) and "a frozen release request with a queued next request" (open).
+
+A repository's Docs page (qits-2336, `projects/<slug>/repositories/<repo>/docs` since qits-2486,
+`RepositoryDocsPage`) lists the catalog's sites whose newest version the repository published: the catalog's
 `latestRepository` (the newest version's `git.repository.name`, `publishedBy`), never the site's
 name (`@contracts/qits-ci` is `qits-ci-service`'s) and never one `listDocsVersions` per site. It
 finds the address's name in the project's repositories (`PROJECT_REPOSITORY_NAMES`,
 `repositoryNamed`; an unknown name says so) and keeps `?section=`, which the docs app's old
-repository addresses redirect to. The project's Docs page names a row's repository when the project
-holds it (`projectRepositoryOf`), and every repository card has a `Docs →`; both are
-`open-repository-docs`. `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES` are `listDocsSites` and
+repository addresses redirect to. Every repository card, the repository page and the repository
+sidebar link it (`open-repository-docs`, `open-sidebar-repository-page` `docs`); "← <repo>" leads
+back to the repository (`leave-repository-docs`). `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES` are `listDocsSites` and
 `listProjectRepositories` with consumes of their own (`LIST_DOCS_CATALOG`, `REPOSITORY_NAMES`):
 the states the builder's and the cards' interactions are recorded in hold no `latestRepository`
 or `lastBackup`, and a path the recorded body lacks cannot be bound.
 
-The docs reader (qits-2337, `projects/<slug>/docs/read/<site>[/-/<version>]`, `DocsReaderPage` in
-`routes/projects/[slug]/docs/read/[site]/`) reads one site of qits-artifacts' public docs store,
+The docs reader (qits-2337, `projects/<slug>/repositories/<repo>/docs/<site>[/-/<version>]` since
+qits-2486, `DocsReaderPage` in `routes/projects/[slug]/repositories/[repo]/docs/[site]/`; `<repo>` is
+the address's, its back link's target) reads one site of qits-artifacts' public docs store,
 never qits-docs-service. The site spans segments: this app's links name it as one segment (`:site`,
-its `/` escaped, an exit's param) and `read/**` (an entry, `qitsEntry`) takes the split form the
-docs app's redirect writes; the page parses either off the URL (`parseReadPath`,
-`core/docs/doc-url.ts`), so all three routes load the one page, and `read/:site/-/:version` carries
-an `eslint-disable` of `qits/route-matches-directory`. Its outcomes are the `read/:site` route's;
+its `/` escaped, an exit's param) and `docs/**` takes the split form; the page parses either off
+the URL (`parseReadPath`, `core/docs/doc-url.ts`), so all three routes load the one page, and
+`docs/:site/-/:version` carries an `eslint-disable` of `qits/route-matches-directory`. Its outcomes
+are the `docs/:site` route's;
 the one shown only on a versioned address (an unknown version's link to the newest,
 `leave-docs-site` `newest`) is declared app-wide in `core/docs/reader-links.ts`. Markdown sites
 (userflows, guides, changelog) read `DOCS_VERSIONS`, `DOCS_VERSION` and each `.md` (`DOCS_FILE` as
@@ -1061,7 +1162,7 @@ followed by a spec); the UI builder's call popover and outbox link the provider'
 no docs link. Its pact interactions and screenshots skip themselves until the
 `@qits/artifacts-golden-masters` pin holds the reader's states.
 
-A CI run's page (qits-2321, `projects/<slug>/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
+A CI run's page (qits-2321, `projects/<slug>/releases/ci/runs/<runId>`, `CiRunPage`, declared ahead of every
 other CI page) reads the run once through its own `qitsResource` over `RUN` (`getRun`) and joins it
 to the project by `run.repoId` among `PROJECT_REPOSITORIES`' ids (never `projectId`); a run of
 another project, or a 404, is "No run <id> in this project". Step output keeps its colour:
@@ -1075,7 +1176,7 @@ pushed), else the first FAILED/TIMED_OUT step, the live step or the last (`openS
 (`core/ci/ci-run-links.ts`, the one app-wide exit `open-ci-run:run`): the project's CI page, a
 repository's CI page (rows and "newer run"), a release request's builds, lifecycle, automations,
 reports and active-run chips. Its repository name opens that repository's CI page
-(`projects/<slug>/ci/<repository>`, qits-2320). It follows
+(`projects/<slug>/releases/ci/<repository>`, qits-2320). It follows
 `BUILD_EVENTS` naming the run (`buildOfRun`), and, the one poll qits-1270 allows, reads a RUNNING
 run again every 10 s while the document is visible (`pollWhile` in `core/events/poll-while.ts`):
 the live step's output has no event. A queued or finished run is never polled.
@@ -1278,7 +1379,7 @@ and `trace-layout.spec.ts`'s, and the no-source page is the route's no-data scre
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,
-and the sidebar's Deployments entry (between Repositories and Observability) lists its pages below
+and the sidebar's Deployments entry (between Components and Observability) lists its pages below
 it while one is open (`open-sidebar-deployments-page`). `deployments/requests`
 (`DeploymentRequestsPage`, the retired qits-deployments-frontend's `deployment-requests` page)
 reads qits-deployments' `listDeploymentRequests?projectId=` through `qitsResource` over
@@ -1393,7 +1494,7 @@ no project filter: the id is the whole address), again after `BUMP_EVENTS`
 (`core/maintenance/bump-events.ts`, shared with the bumps menu) only while the bump is REQUESTED
 or RUNNING. It shows the group and repository (linked to its repository page) with the status as a chip (any status, SUPERSEDED
 or unknown, as its word), the facts, the release request (a uuid links
-`projects/<slug>/release-requests/<id>`, `open-bump-release-request`; the sentinels `converged`
+`projects/<slug>/releases/requests/<id>`, `open-bump-release-request`; the sentinels `converged`
 and `refused` are words with what they mean; null is none), `releaseState` and `releaseDetail`
 verbatim as of `releaseStateAt` (only REJECTED, FAILED and CONFLICTED say the release is not
 coming: every automation bump that succeeded is REQUESTED), one link per CI run (`ciRunIds`, else
@@ -1503,7 +1604,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
 | qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`                                              | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| qits-mirror-service        | `core/mirror/{upstreams,repositories,repository-packages}.operations*.ts`                                                          | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
@@ -1682,7 +1783,7 @@ commits them beside the references. A changed page, component or style changes i
 fails a freeze that differs from what the run writes as stale `screenshot-baselines`. Never edit a
 freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
 
-The UI builder (qits-1951, `projects/<slug>/repositories/<repo>/ui-builder`, linked from the cards
+The UI builder (qits-1951, `projects/<slug>/components/<repo>/ui-builder`, linked from the cards
 of FRONTEND and APP repositories) reads a frontend's published freezes back through
 `RoutesBundles` (`core/ui-builder/routes-bundles.ts`, `qitsResource`s over `docs.operations.ts`): the `@routes/` site whose newest version's
 `git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
@@ -1764,7 +1865,7 @@ No recording pitches a screenshot of `@routes/qits-landing`, so the browser spec
 empty Pitched tab; a drawn pitch and its diff are the plain spec's (the recording moved onto the
 spec's screenshot).
 
-A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/repositories/<repo>/contracts`
+A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/components/<repo>/contracts`
 (its provider states, filtered by name), `contracts/<state slug>` (params, dependencies, each operation
 with its recorded response), `entities` (its `entities.json` by marking) and `entities/<class name>`
 (DTOs and operations with their link kinds, the states recording each operation). The bundle is the

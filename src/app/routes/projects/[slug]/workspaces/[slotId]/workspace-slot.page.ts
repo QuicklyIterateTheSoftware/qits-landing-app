@@ -1,5 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -11,6 +18,7 @@ import {
 } from '@qits/angular';
 import { map } from 'rxjs';
 import { SelectedProject } from '$core/projects/selected-project';
+import { SelectedWork } from '$core/work/selected-work';
 import { loadState } from '$core/resources/load-state';
 import { isMissing } from '$core/resources/resource-family';
 import { notRemoved } from '$core/workspaces/agent-lists';
@@ -132,6 +140,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 export class WorkspaceSlotPage {
   private readonly selected = inject(SelectedProject);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** Keeps the project's work, and with it the needs its agent rows show (qits-2494), current. */
+  constructor() {
+    inject(SelectedWork).followTransitions(inject(DestroyRef));
+  }
 
   protected readonly slug = computed(() => this.selected.slug());
 

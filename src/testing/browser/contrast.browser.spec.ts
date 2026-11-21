@@ -142,8 +142,8 @@ const CASES: Case[] = [
       const recorded = await goldenMaster(state, 'getReleaseRequest');
       const { id, repoId } = recorded.request;
       const opened = await openRoute(
-        (project) => `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}`,
-        // The sidebar's Release Requests note (qits-2086): a request, so the note under the
+        (project) => `/projects/${project.slug}/releases/requests/${encodeURIComponent(id)}`,
+        // The sidebar's Releases note (qits-2086): a request, so the note under the
         // current section renders and its contrast is checked, not left empty by the frame's
         // default ('a project with no release requests').
         { releaseRequests: 'a project with pending release requests' },
@@ -172,13 +172,13 @@ const CASES: Case[] = [
       }
       // qits-ci's runs and reports: an error, as the page's own spec answers them.
       await failTheRest(http, opened);
-      // The note renders below the current Release Requests entry: the coverage this case
+      // The note renders below the Releases entry: the coverage this case
       // exists for cannot silently vanish (qits-2086).
       await expect
         .element(
           page
             .elementLocator(opened.frame)
-            .getByRole('link', { name: /^Release Requests/ })
+            .getByRole('link', { name: /^Releases/ })
             .getByText('contract-service'),
         )
         .toBeVisible();
@@ -197,7 +197,7 @@ const CASES: Case[] = [
       const { id, repoId } = recorded.request;
       const opened = await openRoute(
         (project) =>
-          `/projects/${project.slug}/release-requests/${encodeURIComponent(id)}?tab=commits`,
+          `/projects/${project.slug}/releases/requests/${encodeURIComponent(id)}?tab=commits`,
       );
       http
         .expectOne(`/projects/api/projects/${opened.project.id}/repositories`)
@@ -229,7 +229,7 @@ const CASES: Case[] = [
       await page.viewport(1520, 800);
       const bundle = 'a published routes bundle';
       const opened = await openRoute(
-        (project) => `/projects/${project.slug}/repositories/qits-landing-app/ui-builder`,
+        (project) => `/projects/${project.slug}/components/qits-landing-app/ui-builder`,
       );
       http
         .expectOne(`/projects/api/projects/${opened.project.id}/repositories`)
@@ -279,7 +279,7 @@ const CASES: Case[] = [
       const drafted = 'an agent with a saved prompt draft';
       const agent = await goldenMaster(drafted, 'getAgent', 'qits-workspaces');
       const opened = await openRoute(
-        (project) => `/projects/${project.slug}/agents/${agent.agentId}/chat`,
+        (project) => `/projects/${project.slug}/releases/agents/${agent.agentId}/chat`,
         { agents: 'an agent whose workspace is starting' },
       );
       http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);

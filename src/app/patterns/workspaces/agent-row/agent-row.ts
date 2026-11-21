@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { exit, outcomes, QitsEntity, QitsExit, QitsField } from '@qits/angular';
+import { SelectedWork } from '$core/work/selected-work';
+import { unmetNeeds } from '$core/work/work-needs';
 import {
   activityLabel,
   agentName,
@@ -7,6 +9,7 @@ import {
   runStateLabel,
 } from '$core/workspaces/agent-labels';
 import type { ProjectStatusAgent, SlotAgent } from '$core/workspaces/agents.consumes';
+import { AgentNeeds } from '$patterns/workspaces/agent-needs/agent-needs';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 
 /**
@@ -24,7 +27,9 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
  * work item's qualified id, a link to the agent's page (`/projects/<slug>/agents/<agent id>`, epic
  * qits-1681; the declared exit `open-agent-row` `open`, epic qits-2000), the item's title, its state and run state, what it is doing, and — on a line of its own
  * — what it waits on and since when (qits-1229). "waiting on you" only when it waits for input and
- * declared no wait: a wait on a release request, a CI run or a work item is not a person's.
+ * declared no wait and its item has no need left unmet: a wait on a release request, a CI run or a
+ * work item is not a person's, and an unmet need (qits-2494) shows as what it waits on instead
+ * (`app-agent-needs`, from `SelectedWork`'s one read of the project's work).
  * `wrapperBranch` and `harness` show when given. Projected content (the Agents page's waits and
  * attention, `app-agent-status`) goes last.
  *
@@ -35,7 +40,7 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
 @Component({
   selector: 'app-agent-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, QitsEntity, QitsExit, QitsField],
+  imports: [AgentNeeds, Chip, QitsEntity, QitsExit, QitsField],
   host: { class: 'block' },
   template: `
     <div
@@ -110,6 +115,7 @@ const STATE_TONES: Readonly<Record<string, ChipTone>> = { ACTIVE: 'ok', OBSOLETE
           {{ wait }}
         </p>
       }
+      <app-agent-needs [agent]="agent()" />
       @if (agent().wrapperBranch; as branch) {
         <code
           class="font-mono text-xs text-fg-soft"
@@ -133,12 +139,15 @@ export class AgentRow {
     (): ChipTone => STATE_TONES[this.agent().state ?? ''] ?? 'neutral',
   );
   protected readonly runState = computed(() => runStateLabel(this.agent()));
-  protected readonly doing = computed(() =>
-    activityLabel(this.agent().activity, this.agent().waitingOn, this.agent().entityStatus),
-  );
+  private readonly work = inject(SelectedWork);
+  protected readonly doing = computed(() => {
+    const agent = this.agent();
+    const needs = unmetNeeds(this.work.entryOf(agent.entityId)?.needs).length;
+    return activityLabel(agent.activity, agent.waitingOn, agent.entityStatus, needs);
+  });
   protected readonly wait = computed(() => agentWaitLabel(this.agent()));
   protected readonly opening = outcomes('open-agent-row', {
-    open: exit('projects/:slug/agents/:agentId'),
+    open: exit('projects/:slug/releases/agents/:agentId'),
   });
 
   /** The agent page's exit params; none without the slug and the agent's id. */

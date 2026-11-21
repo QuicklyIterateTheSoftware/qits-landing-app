@@ -163,7 +163,7 @@ describe('MaintenanceBumpPage (screenshots)', () => {
     await view.getByRole('link', { name: '00000000-0000-4000-8000-000000000008' }).click();
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/release-requests/00000000-0000-4000-8000-000000000008`,
+      `/projects/${opened.project.slug}/releases/requests/00000000-0000-4000-8000-000000000008`,
     );
   });
 
@@ -181,7 +181,7 @@ describe('MaintenanceBumpPage (screenshots)', () => {
     await view.getByRole('link', { name: 'run-contract-2' }).click();
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/ci/runs/run-contract-2`,
+      `/projects/${opened.project.slug}/releases/ci/runs/run-contract-2`,
     );
   });
 });

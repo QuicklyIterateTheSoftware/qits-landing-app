@@ -10,6 +10,6 @@ import { exit, outcomes } from '@qits/angular';
  */
 export function contractsPageOutcomes() {
   return outcomes('open-call-contract', {
-    contracts: exit('projects/:slug/repositories/:repo/contracts'),
+    contracts: exit('projects/:slug/components/:repo/contracts'),
   });
 }

@@ -11,6 +11,9 @@ import {
 } from '../../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
+/** The project's work the agent pages read for their items' needs (qits-2494). */
+const WORK_WITH_NEEDS = 'a ticket that needs another';
+
 /**
  * Screenshots of one workspace slot's page inside the shell (`openRoute`), answered with
  * qits-workspaces' "a workspace slot hosting agents": the slot RUNNING on runner `localhost` (its
@@ -69,7 +72,9 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     // As wide as the page was, plus the sidebar; tall enough for the whole page, as the shell shows
     // only what is in the viewport.
     await page.viewport(1140, 1040);
-    const opened = await openRoute((project) => `/projects/${project.slug}/workspaces/${slotId}`);
+    const opened = await openRoute((project) => `/projects/${project.slug}/workspaces/${slotId}`, {
+      work: WORK_WITH_NEEDS,
+    });
     return { opened, element: opened.page, project: opened.project };
   }
 
@@ -127,7 +132,7 @@ describe('WorkspaceSlotPage (screenshots)', () => {
     ).agentId;
     await expect
       .element(view.getByRole('link', { name: 'contract-00000001-1' }))
-      .toHaveAttribute('href', `/projects/${project.slug}/agents/${agentId}`);
+      .toHaveAttribute('href', `/projects/${project.slug}/releases/agents/${agentId}`);
     await expect.element(view).toMatchTextContent('yielded — idle, terminal stays live');
     await expect
       .element(view.getByRole('group', { name: 'Container' }).getByRole('button', { name: 'Stop' }))

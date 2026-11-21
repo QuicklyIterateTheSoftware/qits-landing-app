@@ -1,9 +1,11 @@
 import {
   activityLabel,
   agentName,
+  agentNeedsWait,
   agentWaitLabel,
   daemonState,
   itemDoneLabel,
+  needsWaitLabel,
   NONE,
   placementNote,
   relativeSince,
@@ -89,6 +91,33 @@ describe('agent labels', () => {
     expect(waitsOnYou({ activity: 'WAITING', entityStatus: 'VERIFIED' })).toBe(false);
     expect(waitsOnYou({ activity: 'WAITING', entityStatus: 'DONE' })).toBe(false);
     expect(waitsOnYou({ activity: 'WAITING', entityStatus: 'IMPLEMENTING' })).toBe(true);
+  });
+
+  it('waits on the unmet needs of its item, not on you (qits-2494)', () => {
+    const needs = [
+      {
+        qualifiedId: 'qits-2347',
+        status: 'IMPLEMENTED',
+        currentStatus: 'IMPLEMENTING',
+        met: false,
+      },
+      { qualifiedId: 'qits-2000', status: 'REFINED', currentStatus: 'DONE', met: true },
+    ];
+    const agent = { activity: 'WAITING', entityStatus: 'REFINED' };
+    expect(agentNeedsWait(agent, needs).map((n) => n.qualifiedId)).toEqual(['qits-2347']);
+    expect(needsWaitLabel(agentNeedsWait(agent, needs))).toBe('waits on qits-2347 (IMPLEMENTING)');
+    expect(activityLabel('WAITING', null, 'REFINED', 1)).toBeNull();
+    expect(waitsOnYou(agent, needs)).toBe(false);
+    // Every need met, or none: waiting on you again.
+    expect(waitsOnYou(agent, [needs[1]])).toBe(true);
+    expect(waitsOnYou(agent, [])).toBe(true);
+    // A declared wait wins; a working, ended or finished agent shows no needs.
+    expect(agentNeedsWait({ ...agent, waitingOn: 'ci-run 7' }, needs)).toEqual([]);
+    expect(agentNeedsWait({ ...agent, activity: 'BUSY' }, needs)).toEqual([]);
+    expect(agentNeedsWait({ ...agent, activity: 'ENDED' }, needs)).toEqual([]);
+    expect(agentNeedsWait({ ...agent, entityStatus: 'VERIFIED' }, needs)).toEqual([]);
+    expect(agentNeedsWait({ ...agent, activity: 'IDLE' }, needs)).toHaveLength(1);
+    expect(needsWaitLabel([])).toBeNull();
   });
 
   it('names an agent by its item, else by its id', () => {

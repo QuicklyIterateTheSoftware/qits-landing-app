@@ -415,7 +415,7 @@ describe('WorkItemPage (screenshots)', () => {
       .element(line.getByRole('link', { name: 'contract-00000001-contract-00000001-rr-1' }))
       .toHaveAttribute(
         'href',
-        '/projects/contract-00000001/release-requests/contract-00000001-contract-00000001-rr-1',
+        '/projects/contract-00000001/releases/requests/contract-00000001-contract-00000001-rr-1',
       );
     await fitWholePage(opened);
     await expect

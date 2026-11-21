@@ -12,11 +12,11 @@ import { WorkItemPage } from './routes/projects/[slug]/work/detail/[id]/work-ite
 import { WorkInProgressPage } from './routes/projects/[slug]/work/in-progress/work-in-progress.page';
 import { WorkRefinementPage } from './routes/projects/[slug]/work/refinement/work-refinement.page';
 import { WorkLayout } from './routes/projects/[slug]/work/work.layout';
-import { AgentChatPage } from './routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page';
-import { AgentFilesPage } from './routes/projects/[slug]/agents/[agentId]/files/agent-files.page';
-import { AgentLayout } from './routes/projects/[slug]/agents/[agentId]/agent.layout';
-import { AgentTerminalPage } from './routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page';
-import { ProjectAgentsPage } from './routes/projects/[slug]/agents/project-agents.page';
+import { AgentChatPage } from './routes/projects/[slug]/releases/agents/[agentId]/chat/agent-chat.page';
+import { AgentFilesPage } from './routes/projects/[slug]/releases/agents/[agentId]/files/agent-files.page';
+import { AgentLayout } from './routes/projects/[slug]/releases/agents/[agentId]/agent.layout';
+import { AgentTerminalPage } from './routes/projects/[slug]/releases/agents/[agentId]/terminal/agent-terminal.page';
+import { ProjectAgentsPage } from './routes/projects/[slug]/releases/agents/project-agents.page';
 import { WorkAgentLayout } from './routes/projects/[slug]/work/detail/[id]/agent/work-agent.layout';
 import { WorkspaceSlotPage } from './routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page';
 import { ProjectPickerPage } from './routes/projects/project-picker.page';
@@ -25,6 +25,9 @@ import { ProjectIdeasPage } from './routes/projects/[slug]/ideas/project-ideas.p
 import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-create.page';
 import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
+import { DocsReadRedirectPage } from './routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page';
+import { DocsReaderPage } from './routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page';
+import { RepositoryDocsPage } from './routes/projects/[slug]/components/[repo]/docs/repository-docs.page';
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
 import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
@@ -34,8 +37,12 @@ import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/do
 import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
 import { MirrorRepositoryPage } from './routes/mirror/repositories/[repository]/mirror-repository.page';
+import { MirrorRepositoriesPage } from './routes/mirror/repositories/mirror-repositories.page';
 import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
 import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/orchestrator-process.page';
+import { IdpClientsPage } from './routes/idp/clients/idp-clients.page';
+import { IdpUsersPage } from './routes/idp/users/idp-users.page';
+import { IdpDevicesPage } from './routes/idp/devices/idp-devices.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
 import { SwarmNodeLayout } from './routes/system/swarm/nodes/[id]/swarm-node.layout';
@@ -52,13 +59,16 @@ import { SystemTerminalPage } from './routes/system/terminals/[id]/system-termin
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
 
-/** Navigates to `url` and answers the components it renders, outermost first. */
+/**
+ * Navigates to `url` and answers the components it renders, outermost first; a parent with no
+ * component of its own (a section such as Releases) renders none.
+ */
 async function opened(url: string): Promise<unknown[]> {
   const harness = await RouterTestingHarness.create();
   await harness.navigateByUrl(url);
   const components: unknown[] = [];
   for (let r = TestBed.inject(Router).routerState.snapshot.root.firstChild; r; r = r.firstChild) {
-    components.push(r.component);
+    if (r.component) components.push(r.component);
   }
   return components;
 }
@@ -133,17 +143,69 @@ describe('agents and workspaces routes', () => {
     }),
   );
 
+  it.each([
+    ['/projects/x/agents', '/projects/x/releases/agents'],
+    ['/projects/x/agents/a-1?y=1', '/projects/x/releases/agents/a-1?y=1'],
+    ['/projects/x/agents/a-1/chat', '/projects/x/releases/agents/a-1/chat'],
+    ['/projects/x/release-requests', '/projects/x/releases/requests'],
+    ['/projects/x/release-requests/x-rr-1#c', '/projects/x/releases/requests/x-rr-1#c'],
+    ['/projects/x/ci?status=SUCCESS', '/projects/x/releases/ci?status=SUCCESS'],
+    ['/projects/x/ci/runs/r-1?step=0', '/projects/x/releases/ci/runs/r-1?step=0'],
+    ['/projects/x/ci/x-service', '/projects/x/releases/ci/x-service'],
+    ['/projects/x/releases', '/projects/x/releases/requests'],
+    // qits-2491: Repositories became Components.
+    ['/projects/x/repositories', '/projects/x/components'],
+    ['/projects/x/repositories/x-service?y=1', '/projects/x/components/x-service?y=1'],
+    [
+      '/projects/x/repositories/x-service/contracts/a',
+      '/projects/x/components/x-service/contracts/a',
+    ],
+    [
+      '/projects/x/repositories/x-service/ui-builder',
+      '/projects/x/components/x-service/ui-builder',
+    ],
+  ])('redirects %s to %s (qits-2482, qits-2491), keeping the query', async (from, to) => {
+    await opened(from);
+    expect(TestBed.inject(Router).url).toBe(to);
+  });
+
   it('opens the project’s agents at agents', async () => {
-    expect(await opened('/projects/x/agents')).toEqual([ProjectAgentsPage]);
+    expect(await opened('/projects/x/releases/agents')).toEqual([ProjectAgentsPage]);
   });
 
   it('redirects workspaces to agents', async () => {
     expect(await opened('/projects/x/workspaces')).toEqual([ProjectAgentsPage]);
-    expect(TestBed.inject(Router).url).toBe('/projects/x/agents');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/releases/agents');
   });
 
+  it('redirects the project’s old Docs page to its Components (qits-2486, qits-2491)', async () => {
+    await opened('/projects/x/docs');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/components');
+  });
+
+  it('redirects a repository’s old Docs page under the repository, keeping the query (qits-2486)', async () => {
+    expect(await opened('/projects/x/docs/repositories/r?section=apidocs')).toEqual([
+      RepositoryDocsPage,
+    ]);
+    expect(TestBed.inject(Router).url).toBe('/projects/x/components/r/docs?section=apidocs');
+  });
+
+  it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
+    'opens the reader’s old address read%s on the page that moves it (qits-2486)',
+    async (rest) => {
+      expect(await opened(`/projects/x/docs/read${rest}`)).toEqual([DocsReadRedirectPage]);
+    },
+  );
+
+  it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
+    'opens the reader under its repository at docs%s (qits-2486)',
+    async (rest) => {
+      expect(await opened(`/projects/x/components/r/docs${rest}`)).toEqual([DocsReaderPage]);
+    },
+  );
+
   it('opens an agent at agents/<agent id>', async () => {
-    expect((await opened('/projects/x/agents/a-1'))[0]).toBe(AgentLayout);
+    expect((await opened('/projects/x/releases/agents/a-1'))[0]).toBe(AgentLayout);
   });
 
   it.each([
@@ -151,7 +213,7 @@ describe('agents and workspaces routes', () => {
     ['files', AgentFilesPage],
     ['terminal', AgentTerminalPage],
   ])('opens its %s tab below it', async (tab, page) => {
-    expect(await opened(`/projects/x/agents/a-1/${tab}`)).toEqual([AgentLayout, page]);
+    expect(await opened(`/projects/x/releases/agents/a-1/${tab}`)).toEqual([AgentLayout, page]);
   });
 
   it.each(['', '/chat', '/files', '/terminal'])(
@@ -405,9 +467,14 @@ describe('mirror routes (qits-2357)', () => {
     expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
   });
 
-  it('opens the OCI upstreams at mirror', async () => {
-    expect(await pages('/mirror')).toEqual([MirrorUpstreamsPage]);
-    expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
+  it('opens every cache root at mirror (qits-2479)', async () => {
+    expect(await pages('/mirror')).toEqual([MirrorRepositoriesPage]);
+    expect(TestBed.inject(Router).url).toBe('/mirror/repositories');
+  });
+
+  it('opens every cache root at mirror/repositories (qits-2471)', async () => {
+    expect(await pages('/mirror/repositories')).toEqual([MirrorRepositoriesPage]);
+    expect(TestBed.inject(Router).url).toBe('/mirror/repositories');
   });
 
   it('opens a cache root’s page at mirror/repositories/:repository (qits-2358)', async () => {
@@ -442,6 +509,34 @@ describe('orchestrator routes (qits-2359)', () => {
   });
 });
 
+describe('idp routes (qits-2481)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens the clients at idp/clients', async () => {
+    expect(await pages('/idp/clients')).toEqual([IdpClientsPage]);
+  });
+
+  it('opens the users at idp/users', async () => {
+    expect(await pages('/idp/users')).toEqual([IdpUsersPage]);
+  });
+
+  it('opens the signed-in devices at idp/devices', async () => {
+    expect(await pages('/idp/devices')).toEqual([IdpDevicesPage]);
+  });
+
+  it('opens the clients at idp', async () => {
+    expect(await pages('/idp')).toEqual([IdpClientsPage]);
+    expect(TestBed.inject(Router).url).toBe('/idp/clients');
+  });
+});
+
 describe('entry points (qits-2049)', () => {
   /** The full paths of the routes whose data marks them an entry, as `describeRoutes` reads it. */
   function entries(list: typeof routes, parent = ''): string[] {
@@ -454,16 +549,16 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door, the old agent address, the docs reader’s split form, the System pages, the OCI upstreams, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
+  it('marks the front door, the old agent address, the docs reader’s split form, the System pages, the OCI upstreams, the cache roots, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
     // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
     // nodes, configs and secrets, one service's page, one node's page, its Containers, Images,
     // Volumes and Networks tabs, one config's page, the targets and a terminal where
     // qits-system-frontend's old pages hand off (qits-2344, qits-2345, qits-2346, qits-2347,
     // qits-2348, qits-2349, qits-2350, qits-2351, qits-2352, qits-2353, qits-2354, qits-2355,
-    // qits-2356), the OCI upstreams and a
+    // qits-2356), the OCI upstreams, the cache roots and a
     // cache root's page where
-    // qits-mirror-frontend's do (qits-2357, qits-2358), a process where qits-orchestrator-frontend's
+    // qits-mirror-frontend's do (qits-2357, qits-2471, qits-2358), a process where qits-orchestrator-frontend's
     // `''` and `processes/:kind` do (qits-2359).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
@@ -483,6 +578,7 @@ describe('entry points (qits-2049)', () => {
       'system/targets',
       'system/terminals/:id',
       'mirror/upstreams',
+      'mirror/repositories',
       'mirror/repositories/:repository',
       'orchestrator/processes/:kind',
     ]);

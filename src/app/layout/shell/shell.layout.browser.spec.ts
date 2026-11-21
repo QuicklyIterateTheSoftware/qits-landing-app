@@ -83,7 +83,7 @@ class PinnedPage {}
  * Screenshots of the layout in a real browser: the wide sidebar, and the narrow burger closed and
  * open, with no project open; and the sidebar of an open project. The open project is qits-projects'
  * recorded one ("a project exists"), named by the URL; its release requests (the lightning menu and
- * the sidebar's Release Requests entry) are the recorded "a project with no release requests", or
+ * the sidebar's Releases entry) are the recorded "a project with no release requests", or
  * "a project with pending release requests" where a case says so. The event stream never connects.
  * Each top-bar menu is also opened on a phone and on a wide screen, its reads answered with the
  * golden masters its own browser spec uses, to show where its panel lies.
@@ -96,10 +96,11 @@ class PinnedPage {}
  * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, Mirror,
  * `open-sidebar-mirror`, qits-2357, and Orchestrator, `open-sidebar-orchestrator`, qits-2359, each
  * to a stand-in route, with System's own pages below it
- * while it is open, `open-sidebar-system-page`, qits-2346) or leave the app (IdP admin,
- * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
- * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
- * and with one, qits-2262) and the network icon (`open-network-access`) are pressed once each. The
+ * while it is open, `open-sidebar-system-page`, qits-2346, Mirror's, `open-sidebar-mirror-page`,
+ * qits-2479, and IdP admin, `open-sidebar-idp`, qits-2481, with its pages,
+ * `open-sidebar-idp-page`). Network access leaves the app for qits-network-access' own
+ * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, qits-2262), shown with
+ * no project open only (qits-2485), is pressed once. The
  * page origins are under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
  */
 describe('ShellLayout (screenshots)', () => {
@@ -121,7 +122,14 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'system/swarm/secrets', component: TestPage },
           { path: 'system/targets', component: TestPage },
           { path: 'mirror', component: TestPage },
+          { path: 'mirror/repositories', component: TestPage },
+          { path: 'mirror/upstreams', component: TestPage },
           { path: 'orchestrator', component: TestPage },
+          { path: 'idp', component: TestPage },
+          { path: 'idp/clients', component: TestPage },
+          { path: 'idp/users', component: TestPage },
+          { path: 'idp/devices', component: TestPage },
+          { path: 'orchestrator/processes/:kind', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -132,13 +140,16 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/work/archive', component: TestPage },
           { path: 'projects/:slug/work/detail/:item', component: TestPage },
           { path: 'projects/:slug/ideas', component: TestPage },
-          { path: 'projects/:slug/agents', component: TestPage },
-          { path: 'projects/:slug/agents/:agentId', component: TestPage },
-          { path: 'projects/:slug/release-requests', component: TestPage },
-          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
-          { path: 'projects/:slug/ci', component: TestPage },
+          { path: 'projects/:slug/releases', component: TestPage },
+          { path: 'projects/:slug/releases/agents', component: TestPage },
+          { path: 'projects/:slug/releases/agents/:agentId', component: TestPage },
+          { path: 'projects/:slug/releases/requests', component: TestPage },
+          { path: 'projects/:slug/releases/requests/:requestId', component: TestPage },
+          { path: 'projects/:slug/releases/ci', component: TestPage },
+          { path: 'projects/:slug/releases/ci/runs/:runId', component: TestPage },
           { path: 'projects/:slug/desk', component: TestPage },
-          { path: 'projects/:slug/repositories', component: TestPage },
+          { path: 'projects/:slug/components', component: TestPage },
+          { path: 'projects/:slug/components/:repo', component: TestPage },
           { path: 'projects/:slug/deployments', component: TestPage },
           { path: 'projects/:slug/deployments/requests', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
@@ -233,7 +244,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
     // At the root the navigation holds no project's sections: the global sections (Artifacts,
     // qits-2316; System, qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
-    // qits-2319), then Network access, the phone's way there (qits-2262); the "qits" brand leads
+    // qits-2481), then Network access, the phone's way there (qits-2262); the "qits" brand leads
     // home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
@@ -306,7 +317,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'page');
-    await expect.element(navigation.getByRole('link', { name: 'Repositories' })).toBeVisible();
+    await expect.element(navigation.getByRole('link', { name: 'Components' })).toBeVisible();
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(project.name);
@@ -332,7 +343,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(layout).toMatchScreenshot('work-tab', { kind: 'DATA' });
   });
 
-  it('lists Refinement first below Work, no Campaigns or Milestones, and marks it when open', async () => {
+  it('lists Ideas, then Refinement first of the work pages below Work, no Campaigns or Milestones, and marks it when open', async () => {
     await renderProject('/work/refinement');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
@@ -341,13 +352,15 @@ describe('ShellLayout (screenshots)', () => {
     const refinement = navigation.getByRole('link', { name: 'Refinement' });
     await expect.element(refinement).toBeVisible();
     await expect.element(refinement).toHaveAttribute('aria-current', 'page');
-    // First of the work section's pages, right below Work (epic qits-1899: no Campaigns).
+    // First of the work section's pages, below Work and Ideas (epic qits-1899: no Campaigns;
+    // qits-2483: Ideas).
     const labels = navigation
       .getByRole('link')
       .elements()
       .map((a) => a.textContent?.trim());
-    expect(labels.slice(labels.indexOf('Work'), labels.indexOf('Work') + 3)).toEqual([
+    expect(labels.slice(labels.indexOf('Work'), labels.indexOf('Work') + 4)).toEqual([
       'Work',
+      'Ideas',
       'Refinement',
       'Schedule',
     ]);
@@ -358,14 +371,17 @@ describe('ShellLayout (screenshots)', () => {
       .toMatchTextContent('Refinement');
   });
 
-  it('shows the newest release request below Release Requests, between Work and Repositories', async () => {
+  it('shows the newest release request below Releases, with its pages below it', async () => {
     const { project, layout } = await renderProject(
-      '/release-requests',
+      '/releases/requests',
       'a project with pending release requests',
     );
     const navigation = page.getByRole('navigation', { name: 'qits' });
-    const entry = navigation.getByRole('link', { name: /^Release Requests/ });
-    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    const entry = navigation.getByRole('link', { name: /^Releases/ });
+    await expect.element(entry).toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Requests', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
     // Recorded: every request changed at the same instant, so the first listed is the newest.
     await expect.element(entry).toMatchTextContent('contract-service');
     await expect.element(entry).toMatchTextContent('pending');
@@ -375,32 +391,30 @@ describe('ShellLayout (screenshots)', () => {
       .map((a) => a.firstChild?.textContent?.trim());
     expect(labels).toEqual([
       'Work',
-      'Ideas',
+      'Releases',
+      // Its pages, while it is open (qits-2482).
+      'Requests',
       'Agents',
-      'Release Requests',
       'CI',
-      'Desk',
-      'Repositories',
+      'Components',
       'Deployments',
       'Observability',
-      'Docs',
       'Events',
       'Maintenance',
-      // The platform's pages, below the project's sections (qits-2262).
-      'Network access',
+      // No Network access with a project open (qits-2485).
     ]);
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toMatchTextContent(`${project.name}›Release Requests`);
+      .toMatchTextContent(`${project.name}›Releases›Requests`);
     await expect.element(layout).toMatchScreenshot('release-requests', { kind: 'DATA' });
   });
 
-  it('shows no line below Release Requests for a project without any', async () => {
+  it('shows no line below Releases for a project without any', async () => {
     await renderProject('/work');
     const entry = page
       .getByRole('navigation', { name: 'qits' })
-      .getByRole('link', { name: 'Release Requests' });
-    await expect.element(entry).toMatchTextContent(/^Release Requests$/);
+      .getByRole('link', { name: 'Releases' });
+    await expect.element(entry).toMatchTextContent(/^Releases$/);
   });
 
   it('shows the whole breadcrumb trail of a work item on a wide screen', async () => {
@@ -557,10 +571,10 @@ describe('ShellLayout (screenshots)', () => {
       const box = element.getBoundingClientRect();
       return document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
     };
-    // Work lies where the page's pinned bar (z-45) pins, Refinement, Events and Network access over
-    // its raised content: the sidebar is drawn over all of it (qits-2224).
+    // Work lies where the page's pinned bar (z-45) pins, Refinement, Events and Desk over its
+    // raised content: the sidebar is drawn over all of it (qits-2224).
     const links = [...nav.querySelectorAll('a')];
-    for (const label of ['Work', 'Refinement', 'Events', 'Network access']) {
+    for (const label of ['Work', 'Refinement', 'Events', 'Desk']) {
       const link = links.find((a) => a.textContent?.trim() === label)!;
       expect(link, label).toBeDefined();
       expect(nav.contains(atCentre(link)), label).toBe(true);
@@ -589,15 +603,10 @@ describe('ShellLayout (screenshots)', () => {
   /** The sidebar's sections, by label, with their segment below the project and their outcome. */
   const SECTIONS = [
     { label: 'Work', segment: 'work', outcome: 'work' },
-    { label: 'Ideas', segment: 'ideas', outcome: 'ideas' },
-    { label: 'Agents', segment: 'agents', outcome: 'agents' },
-    { label: /^Release Requests/, segment: 'release-requests', outcome: 'releaseRequests' },
-    { label: 'CI', segment: 'ci', outcome: 'ci' },
-    { label: 'Desk', segment: 'desk', outcome: 'desk' },
-    { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
+    { label: /^Releases/, segment: 'releases', outcome: 'releases' },
+    { label: 'Components', segment: 'components', outcome: 'components' },
     { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
-    { label: 'Docs', segment: 'docs', outcome: 'docs' },
     { label: 'Events', segment: 'events', outcome: 'events' },
     { label: 'Maintenance', segment: 'maintenance', outcome: 'maintenance' },
   ] as const;
@@ -640,6 +649,148 @@ describe('ShellLayout (screenshots)', () => {
         .toHaveAttribute('aria-current', 'true');
     });
   }
+
+  /** The Releases pages below Releases in the sidebar (qits-2482), with their segment and outcome. */
+  const RELEASES_PAGES = [
+    { label: 'Requests', segment: 'requests', from: '/releases/ci' },
+    { label: 'Agents', segment: 'agents', from: '/releases/requests' },
+    { label: 'CI', segment: 'ci', from: '/releases/requests' },
+  ] as const;
+
+  for (const releases of RELEASES_PAGES) {
+    it(`open-sidebar-releases-page ${releases.segment}: ${releases.label} below Releases opens it`, async () => {
+      // On a Releases page already, so its pages show below Releases.
+      const { fixture, project } = await renderProject(releases.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: releases.label, exact: true });
+      expect(await follow(fixture, link)).toBe(
+        `/projects/${project.slug}/releases/${releases.segment}`,
+      );
+      expect(reached()).toEqual([`open-sidebar-releases-page:${releases.segment}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: /^Releases/ }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
+
+  it('open-sidebar-work-page ideas: Ideas, first below Work and set apart, opens the ideas', async () => {
+    const { fixture, project } = await renderProject('/work/archive');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const link = navigation.getByRole('link', { name: 'Ideas', exact: true });
+    const work = navigation.getByRole('link', { name: 'Work', exact: true });
+    // Work's first page, with a gap below it before the work pages (qits-2483).
+    const pages = work.element().parentElement?.querySelectorAll(':scope > ul a') ?? [];
+    expect([...pages].map((a) => a.textContent?.trim())).toEqual([
+      'Ideas',
+      ...WORK_PAGES.map((page) => page.label),
+    ]);
+    const gap = (a: Element) =>
+      parseFloat(getComputedStyle(a.parentElement as Element).marginBottom);
+    expect(gap(pages[0])).toBeGreaterThan(0);
+    expect(gap(pages[1])).toBe(0);
+    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/ideas`);
+    expect(reached()).toEqual(['open-sidebar-work-page:ideas']);
+    await expect.element(link).toHaveAttribute('aria-current', 'page');
+    await expect.element(work).toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toMatchTextContent(`${project.name}›Work›Ideas`);
+  });
+
+  /** The Components section open, its search's repositories read once the field is focused. */
+  async function openSearch() {
+    const rendered = await renderProject('/components');
+    const field = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('combobox', { name: 'Search components' });
+    await userEvent.click(field);
+    await settle();
+    const repositories = await goldenMaster('two projects exist', 'listProjectRepositories');
+    http
+      .expectOne(`/projects/api/projects/${rendered.project.id}/repositories`)
+      .flush(repositories);
+    await settle();
+    rendered.fixture.detectChanges();
+    const entries = (repositories as { entries?: { repository?: { name?: string } }[] }).entries;
+    const names = (entries ?? []).map((entry) => entry.repository?.name ?? '');
+    return { ...rendered, field, names };
+  }
+
+  it('lists Search first below Components while it is open, and reads nothing before (qits-2491)', async () => {
+    await renderProject('/components');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect
+      .element(navigation.getByRole('combobox', { name: 'Search components' }))
+      .toBeVisible();
+    http.expectNone((request) => request.url.endsWith('/repositories'));
+    await expect
+      .element(navigation.getByRole('link', { name: 'Components', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+  });
+
+  it('shows no Search while Components is closed', async () => {
+    await renderProject('/work');
+    await expect
+      .element(page.getByRole('combobox', { name: 'Search components', includeHidden: true }))
+      .not.toBeInTheDocument();
+  });
+
+  it('open-component-search opened: typing part of a name lists the matching repositories, Enter opens the highlighted one', async () => {
+    const { fixture, project, field, names } = await openSearch();
+    const name = names[0];
+    // Part of the name, in other case: the match ignores case.
+    const part = name.slice(1, 5).toUpperCase();
+    await userEvent.type(field, part);
+    fixture.detectChanges();
+    const list = page.getByRole('listbox', { name: 'Matching components' });
+    await expect.element(list).toBeVisible();
+    const options = list.getByRole('option').elements();
+    expect(options.map((option) => option.textContent?.trim())).toEqual(
+      names.filter((other: string) => other.toLowerCase().includes(part.toLowerCase())),
+    );
+    await expect.element(field).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.keyboard('{ArrowDown}');
+    fixture.detectChanges();
+    await expect.element(list.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+    await fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${project.slug}/components/${encodeURIComponent(name)}`,
+    );
+    expect(reached()).toEqual(['open-component-search:opened']);
+  });
+
+  it('open-component-search opened: a click on a match opens it; Escape closes the list', async () => {
+    const { fixture, project, field, names } = await openSearch();
+    await userEvent.type(field, names[1]);
+    fixture.detectChanges();
+    const list = page.getByRole('listbox', { name: 'Matching components' });
+    await expect.element(list).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    fixture.detectChanges();
+    await expect
+      .element(page.getByRole('listbox', { name: 'Matching components', includeHidden: true }))
+      .not.toBeVisible();
+    await expect.element(field).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.type(field, '{ArrowDown}');
+    fixture.detectChanges();
+    const option = list.getByRole('option', { name: names[1], exact: true });
+    expect(await follow(fixture, option)).toBe(
+      `/projects/${project.slug}/components/${encodeURIComponent(names[1])}`,
+    );
+    expect(reached()).toEqual(['open-component-search:opened']);
+  });
+
+  it('says when no component matches', async () => {
+    const { fixture, field } = await openSearch();
+    await userEvent.type(field, 'no-such-component');
+    fixture.detectChanges();
+    await expect
+      .element(page.getByRole('listbox', { name: 'Matching components' }))
+      .toMatchTextContent('No component matches.');
+  });
 
   it('open-sidebar-deployments-page requests: Requests below Deployments opens it', async () => {
     // On the section's page already, so its pages show below Deployments.
@@ -752,14 +903,45 @@ describe('ShellLayout (screenshots)', () => {
       .toMatchTextContent(`${project.name}›Setup`);
   });
 
-  it('open-network-access open: the network icon leaves for the Network access frontend', async () => {
-    const { fixture } = await renderProject('/work/acceptance');
-    const icon = page.getByRole('banner').getByRole('link', { name: 'Network access' });
-    await expect.element(icon).toHaveAttribute('href', `${NETWORK_ACCESS}/`);
-    const before = TestBed.inject(Router).url;
-    expect(await follow(fixture, icon)).toBe(before);
-    expect(leave).toHaveBeenCalledExactlyOnceWith(`${NETWORK_ACCESS}/`);
-    expect(reached()).toEqual(['open-network-access:open']);
+  it('open-project-desk open: the desk icon opens the project’s desk, marked current there', async () => {
+    const { fixture, project } = await renderProject('/work/acceptance');
+    const icon = page.getByRole('banner').getByRole('link', { name: 'Desk' });
+    await expect.element(icon).toHaveAttribute('title', 'Desk');
+    await expect.element(icon).not.toHaveAttribute('aria-current');
+    // No sidebar entry of its own from 768px (qits-2484).
+    await expect
+      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Desk' }))
+      .not.toBeInTheDocument();
+    expect(await follow(fixture, icon)).toBe(`/projects/${project.slug}/desk`);
+    expect(reached()).toEqual(['open-project-desk:open']);
+    await expect.element(icon).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toMatchTextContent(`${project.name}›Desk`);
+  });
+
+  it('open-sidebar-desk open: on a phone the burger’s Desk entry opens the project’s desk', async () => {
+    await page.viewport(390, 844);
+    const { fixture, project } = await renderProject('/work/acceptance');
+    // The top bar has no room for the icon below 768px.
+    await expect
+      .element(page.getByRole('banner').getByRole('link', { name: 'Desk', includeHidden: true }))
+      .not.toBeVisible();
+    await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
+    fixture.detectChanges();
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Desk' });
+    await expect.element(entry).toBeVisible();
+    expect(await follow(fixture, entry)).toBe(`/projects/${project.slug}/desk`);
+    expect(reached()).toEqual(['open-sidebar-desk:open']);
+  });
+
+  it('shows no desk icon with no project open', async () => {
+    await render();
+    await expect
+      .element(page.getByRole('banner').getByRole('link', { name: 'Desk', includeHidden: true }))
+      .not.toBeInTheDocument();
   });
 
   it('open-sidebar-network-access networkAccess: the sidebar’s Network access leaves for its frontend with no project open', async () => {
@@ -842,6 +1024,26 @@ describe('ShellLayout (screenshots)', () => {
     expect(await follow(fixture, entry)).toBe('/orchestrator');
     expect(reached()).toEqual(['open-sidebar-orchestrator:open']);
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('open-sidebar-orchestrator-page gc: Garbage collection below Orchestrator opens the gc process (qits-2480)', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render('/orchestrator');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(
+      labels.slice(labels.indexOf('Orchestrator'), labels.indexOf('Orchestrator') + 2),
+    ).toEqual(['Orchestrator', 'Garbage collection']);
+    const gc = navigation.getByRole('link', { name: 'Garbage collection', exact: true });
+    expect(await follow(fixture, gc)).toBe('/orchestrator/processes/gc');
+    expect(reached()).toEqual(['open-sidebar-orchestrator-page:gc']);
+    await expect.element(gc).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
   });
 
   it('lists the System section’s pages below System while it is open, and marks the current one', async () => {
@@ -948,34 +1150,154 @@ describe('ShellLayout (screenshots)', () => {
     });
   }
 
+  it('lists the Mirror section’s pages below Mirror while it is open, and marks the current one (qits-2479)', async () => {
+    await page.viewport(1280, 800);
+    await render('/mirror/repositories');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels).toEqual([
+      'Artifacts',
+      'System',
+      'Mirror',
+      'Caches',
+      'OCI upstreams',
+      'Orchestrator',
+      'IdP admin',
+      'Network access',
+    ]);
+    await expect
+      .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Caches', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'OCI upstreams', exact: true }))
+      .not.toHaveAttribute('aria-current');
+  });
+
+  /** The Mirror section's pages below Mirror in the sidebar (qits-2479), each from the other. */
+  const MIRROR_PAGES = [
+    {
+      label: 'Caches',
+      path: '/mirror/repositories',
+      from: '/mirror/upstreams',
+      outcome: 'caches',
+    },
+    {
+      label: 'OCI upstreams',
+      path: '/mirror/upstreams',
+      from: '/mirror/repositories',
+      outcome: 'upstreams',
+    },
+  ] as const;
+
+  for (const mirror of MIRROR_PAGES) {
+    it(`open-sidebar-mirror-page ${mirror.outcome}: ${mirror.label} below Mirror opens it`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(mirror.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: mirror.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', mirror.path);
+      expect(await follow(fixture, link)).toBe(mirror.path);
+      expect(reached()).toEqual([`open-sidebar-mirror-page:${mirror.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
+
   it('renders no System page outside the System section', async () => {
     await render('/artifacts');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true }))
       .not.toHaveAttribute('aria-current');
-    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets', 'Targets']) {
+    for (const label of [
+      'Services',
+      'Nodes',
+      'Configs',
+      'Secrets',
+      'Targets',
+      'Caches',
+      'OCI upstreams',
+    ]) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();
     }
   });
 
-  it('open-sidebar-idp-admin open: the sidebar’s IdP admin leaves for the idp’s admin, in this tab', async () => {
-    await render();
-    const href = `https://idp.${PLATFORM_DOMAIN}/idp/`;
+  it('open-sidebar-idp open: the sidebar’s IdP admin opens the IdP admin section, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render();
     const entry = page
       .getByRole('navigation', { name: 'qits' })
-      .getByRole('link', { name: 'IdP admin' });
-    await expect.element(entry).toHaveAttribute('href', href);
-    await expect.element(entry).not.toHaveAttribute('target');
-    await userEvent.click(entry);
-    expect(reached()).toEqual(['open-sidebar-idp-admin:open']);
-    expect(leave).toHaveBeenCalledTimes(1);
-    expect(leave).toHaveBeenCalledWith(href);
-    // The click left through the spy, not the link: the router stays where it was.
-    expect(TestBed.inject(Router).url).toBe('/');
+      .getByRole('link', { name: 'IdP admin', exact: true });
+    await expect.element(entry).toHaveAttribute('href', '/idp');
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/idp');
+    expect(reached()).toEqual(['open-sidebar-idp:open']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
+    expect(leave).not.toHaveBeenCalled();
   });
+
+  it('lists the IdP admin section’s pages below IdP admin while it is open (qits-2481)', async () => {
+    await page.viewport(1280, 800);
+    const { layout } = await render('/idp/users');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels).toEqual([
+      'Artifacts',
+      'System',
+      'Mirror',
+      'Orchestrator',
+      'IdP admin',
+      'Clients',
+      'Users',
+      'Signed-in devices',
+      'Network access',
+    ]);
+    await expect
+      .element(navigation.getByRole('link', { name: 'IdP admin', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Users', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    await expect.element(layout).toMatchScreenshot('idp-sidebar', { kind: 'DATA' });
+  });
+
+  /** The IdP admin section's pages below IdP admin in the sidebar (qits-2481), each from another. */
+  const IDP_PAGES = [
+    { label: 'Clients', path: '/idp/clients', from: '/idp/users', outcome: 'clients' },
+    { label: 'Users', path: '/idp/users', from: '/idp/clients', outcome: 'users' },
+    {
+      label: 'Signed-in devices',
+      path: '/idp/devices',
+      from: '/idp/clients',
+      outcome: 'devices',
+    },
+  ] as const;
+
+  for (const idp of IDP_PAGES) {
+    it(`open-sidebar-idp-page ${idp.outcome}: ${idp.label} below IdP admin opens it`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(idp.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: idp.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', idp.path);
+      expect(await follow(fixture, link)).toBe(idp.path);
+      expect(reached()).toEqual([`open-sidebar-idp-page:${idp.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+    });
+  }
 
   it('shows no global sections with a project open', async () => {
     await renderProject('/work/acceptance');
@@ -1005,41 +1327,43 @@ describe('ShellLayout (screenshots)', () => {
     }
   });
 
-  it('open-sidebar-network-access networkAccess: the sidebar’s Network access leaves for its frontend from a project, below its sections', async () => {
-    const { fixture } = await renderProject('/work/acceptance');
-    const navigation = page.getByRole('navigation', { name: 'qits' });
-    const labels = navigation
+  it('links no Network access with a project open, in the top bar or the sidebar (qits-2485)', async () => {
+    await page.viewport(1280, 800);
+    await renderProject('/work/acceptance');
+    await expect
+      .element(page.getByRole('link', { name: 'Network access', includeHidden: true }))
+      .not.toBeInTheDocument();
+    const labels = page
+      .getByRole('navigation', { name: 'qits' })
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels.at(-1)).toBe('Network access');
-    expect(labels).toContain('Events');
-    const entry = navigation.getByRole('link', { name: 'Network access' });
-    const before = TestBed.inject(Router).url;
-    expect(await follow(fixture, entry)).toBe(before);
-    expect(leave).toHaveBeenCalledExactlyOnceWith(`${NETWORK_ACCESS}/`);
-    expect(reached()).toEqual(['open-sidebar-network-access:networkAccess']);
+    expect(labels.at(-1)).toBe('Maintenance');
   });
 
-  it('marks Agents current on a slot’s page, with the slot below it in the trail', async () => {
+  it('marks Releases › Agents current on a slot’s page, with the slot below it in the trail', async () => {
     const { layout } = await renderProject('/workspaces/3');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
-      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Agents' }))
+      .element(navigation.getByRole('link', { name: 'Agents', exact: true }))
       .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: /^Releases/ }))
+      .toHaveAttribute('aria-current', 'true');
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect.element(breadcrumb.getByRole('link', { name: 'Agents' })).toBeVisible();
-    await expect.element(breadcrumb).toMatchTextContent('Agents›ws-3');
+    await expect.element(breadcrumb).toMatchTextContent('Releases›Agents›ws-3');
     await expect.element(layout).toMatchScreenshot('slot', { kind: 'DATA' });
   });
 
-  it('shows a release request’s trail below Release Requests', async () => {
+  it('shows a release request’s trail below Releases › Requests', async () => {
     const { layout } = await renderProject(
-      '/release-requests/contract-frontend-rr-1',
+      '/releases/requests/contract-frontend-rr-1',
       'a project with pending release requests',
     );
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
-    await expect.element(breadcrumb.getByRole('link', { name: 'Release Requests' })).toBeVisible();
-    await expect.element(breadcrumb).toMatchTextContent('Release Requests›contract-frontend-rr-1');
+    await expect.element(breadcrumb.getByRole('link', { name: 'Requests' })).toBeVisible();
+    await expect.element(breadcrumb).toMatchTextContent('Releases›Requests›contract-frontend-rr-1');
     await expect.element(layout).toMatchScreenshot('release-request', { kind: 'DATA' });
   });
 
@@ -1060,16 +1384,28 @@ describe('ShellLayout (screenshots)', () => {
       outcome: 'work',
     },
     {
-      from: '/workspaces/3',
-      name: 'Agents',
-      to: (slug: string) => `/projects/${slug}/agents`,
-      outcome: 'agents',
+      from: '/releases/requests',
+      name: 'Releases',
+      to: (slug: string) => `/projects/${slug}/releases`,
+      outcome: 'releases',
     },
     {
-      from: '/release-requests/contract-frontend-rr-1',
-      name: 'Release Requests',
-      to: (slug: string) => `/projects/${slug}/release-requests`,
-      outcome: 'releaseRequests',
+      from: '/releases/requests/contract-frontend-rr-1',
+      name: 'Requests',
+      to: (slug: string) => `/projects/${slug}/releases/requests`,
+      outcome: 'releasesRequests',
+    },
+    {
+      from: '/workspaces/3',
+      name: 'Agents',
+      to: (slug: string) => `/projects/${slug}/releases/agents`,
+      outcome: 'releasesAgents',
+    },
+    {
+      from: '/releases/ci/runs/r-1',
+      name: 'CI',
+      to: (slug: string) => `/projects/${slug}/releases/ci`,
+      outcome: 'releasesCi',
     },
   ] as const;
 

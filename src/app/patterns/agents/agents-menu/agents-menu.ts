@@ -511,26 +511,26 @@ export class AgentsMenu {
 
   /** An agent's item, linked to the agent's page (epic qits-2000). */
   protected readonly opening = outcomes('open-menu-agent', {
-    agent: exit('projects/:slug/agents/:agentId'),
+    agent: exit('projects/:slug/releases/agents/:agentId'),
   });
 
   /** A wait's subject, one exit per kind that has a page here (epic qits-2000). */
   protected readonly waiting = outcomes('open-menu-agent-wait', {
-    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    releaseRequest: exit('projects/:slug/releases/requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
     comments: exit('projects/:slug/work/detail/:id'),
   });
 
   /** What to do about an agent's attention, one exit per action (epic qits-2000). */
   protected readonly acting = outcomes('act-on-menu-agent-attention', {
-    prompt: exit('projects/:slug/agents/:agentId/chat'),
+    prompt: exit('projects/:slug/releases/agents/:agentId/chat'),
     openItem: exit('projects/:slug/work/detail/:id'),
-    overdueRequest: exit('projects/:slug/release-requests/:requestId'),
+    overdueRequest: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   /** The footer's "All agents" (epic qits-2000). */
   protected readonly all = outcomes('open-all-agents', {
-    agents: exit('projects/:slug/agents'),
+    agents: exit('projects/:slug/releases/agents'),
   });
 
   /** The agents' answer, once read; an empty one before. */

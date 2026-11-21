@@ -16,8 +16,8 @@ import type { Consumed } from '@qits/angular';
  * `WorkStore.load(projectId)`: the project's whole planning tree, unfiltered (`listProjectWork`), one
  * request shared by the card and the work section. The card counts entries by status ({@link countsAsWork}); the work
  * section shows each entity as a small card (qualified id, title, archetype), placed by its own status,
- * nested under its `parent` and ranked among its siblings by its `priority` (qits-753; null when
- * nobody ranked it). Each card says how many of the items the entity needs are not at their
+ * nested under its `parent` and ranked among its siblings by its `priority` (qits-753; 0 when
+ * nobody ranked it, qits-2496). Each card says how many of the items the entity needs are not at their
  * status yet (`app-work-needs`, epic qits-1899): `unmetNeeds`, and each need's item (`qualifiedId`),
  * the status it needs and whether it is `met`, for the badge's tooltip.
  */

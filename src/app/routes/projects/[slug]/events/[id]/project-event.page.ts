@@ -308,7 +308,7 @@ export class ProjectEventPage {
   });
   /** A release request the event names: its page. */
   protected readonly opening = outcomes('open-project-event-subject', {
-    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    releaseRequest: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   private readonly params = toSignal(this.route.paramMap, {

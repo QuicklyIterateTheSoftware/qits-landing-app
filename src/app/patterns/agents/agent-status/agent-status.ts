@@ -215,16 +215,16 @@ export class AgentStatus {
 
   /** A wait's subject, one exit per kind that has a page here (epic qits-2000). */
   protected readonly opening = outcomes('open-agent-wait', {
-    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    releaseRequest: exit('projects/:slug/releases/requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
     comments: exit('projects/:slug/work/detail/:id'),
   });
 
   /** What to do about the agent's attention, one exit per action (epic qits-2000). */
   protected readonly acting = outcomes('act-on-agent-attention', {
-    prompt: exit('projects/:slug/agents/:agentId/chat'),
+    prompt: exit('projects/:slug/releases/agents/:agentId/chat'),
     openItem: exit('projects/:slug/work/detail/:id'),
-    overdueRequest: exit('projects/:slug/release-requests/:requestId'),
+    overdueRequest: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   /** The open project's slug, the exits' param. */

@@ -167,17 +167,17 @@ describe('CallDetails', () => {
     const state = element.querySelector<HTMLAnchorElement>('.call-popover a.state-link');
     expect(state?.textContent?.trim()).toBe(CALL.state);
     expect(state?.getAttribute('href')).toBe(
-      '/projects/qits/repositories/qits-ci-service/contracts/a-commit-with-a-run-in-flight',
+      '/projects/qits/components/qits-ci-service/contracts/a-commit-with-a-run-in-flight',
     );
     const entity = element.querySelector<HTMLAnchorElement>('.call-popover a.entity-link');
     expect(entity?.getAttribute('href')).toBe(
-      '/projects/qits/repositories/qits-ci-service/entities/eu.wohlben.qits.ci.CiRun',
+      '/projects/qits/components/qits-ci-service/entities/eu.wohlben.qits.ci.CiRun',
     );
     expect(entity?.getAttribute('aria-label')).toBe('Open CiRun entity page');
     // The provider repository's Contracts page, in this app (qits-2337).
     expect(
       element.querySelector<HTMLAnchorElement>('.call-popover a.docs')?.getAttribute('href'),
-    ).toBe('/projects/qits/repositories/qits-ci-service/contracts');
+    ).toBe('/projects/qits/components/qits-ci-service/contracts');
     // The pick stays beside the link.
     const buttons = [...element.querySelectorAll('.call-popover button')];
     expect(buttons.some((b) => b.textContent?.trim() === 'CiRun')).toBe(true);

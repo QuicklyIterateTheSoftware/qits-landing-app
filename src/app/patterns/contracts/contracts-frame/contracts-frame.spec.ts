@@ -24,8 +24,8 @@ describe('ContractsFrame', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
-          { path: 'projects/:slug/repositories/:repo/entities', children: [] },
+          { path: 'projects/:slug/components/:repo/contracts', children: [] },
+          { path: 'projects/:slug/components/:repo/entities', children: [] },
         ]),
         provideTestPlatformOrigins({}, { docs: 'https://docs.example' }),
       ],
@@ -41,7 +41,7 @@ describe('ContractsFrame', () => {
 
   it('shows the bundle, the two lists and the content once found', async () => {
     // The open list's tab is marked current by its exit, from the router's URL.
-    await TestBed.inject(Router).navigateByUrl('/projects/qits/repositories/r/entities');
+    await TestBed.inject(Router).navigateByUrl('/projects/qits/components/r/entities');
     const element = render({
       status: 'loaded',
       site: { site: '@contracts/qits-r', version: '1.0', repository: 'r' },
@@ -54,8 +54,8 @@ describe('ContractsFrame', () => {
     expect(
       sections.map((a) => [text(a), a.getAttribute('href'), a.getAttribute('aria-current')]),
     ).toEqual([
-      ['Contracts', '/projects/qits/repositories/r/contracts', null],
-      ['Entities', '/projects/qits/repositories/r/entities', 'page'],
+      ['Contracts', '/projects/qits/components/r/contracts', null],
+      ['Entities', '/projects/qits/components/r/entities', 'page'],
     ]);
     expect(element.querySelector('.content')).not.toBeNull();
   });

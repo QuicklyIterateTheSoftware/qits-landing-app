@@ -32,7 +32,9 @@ describe('AgentRow', () => {
       harness: 'CLAUDE',
       activity: 'BUSY',
     });
-    expect(element.querySelector('a')?.getAttribute('href')).toBe('/projects/qits/agents/a-617');
+    expect(element.querySelector('a')?.getAttribute('href')).toBe(
+      '/projects/qits/releases/agents/a-617',
+    );
     expect(element.textContent).toContain('Fix it');
     expect(element.textContent).toContain('active');
     expect(element.textContent).toContain('running');
@@ -86,7 +88,9 @@ describe('AgentRow', () => {
 
   it('names an agent without an item by its id, and links it', () => {
     const element = render({ agentId: 'a1' });
-    expect(element.querySelector('a')?.getAttribute('href')).toBe('/projects/qits/agents/a1');
+    expect(element.querySelector('a')?.getAttribute('href')).toBe(
+      '/projects/qits/releases/agents/a1',
+    );
     expect(element.textContent).toContain('a1');
   });
 });
