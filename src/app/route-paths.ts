@@ -73,6 +73,7 @@ export type RoutePath =
   | 'projects/:slug/workspaces/:slotId'
   | 'system'
   | 'system/swarm/nodes'
+  | 'system/swarm/nodes/:id'
   | 'system/swarm/services'
   | 'system/swarm/services/:id';
 

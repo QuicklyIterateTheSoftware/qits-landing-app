@@ -341,6 +341,7 @@ export type NodeDetail = {
     };
     createdAt?: string;
     updatedAt?: string;
+    self?: boolean;
 };
 
 export type NodeSummary = {
@@ -407,6 +408,7 @@ export type SecretSummary = {
     labels?: {
         [key: string]: string;
     };
+    usedBy?: Array<string>;
 };
 
 export type ServiceDetail = {
@@ -1279,6 +1281,10 @@ export type GetSwarmNodeErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * No such node
+     */
+    404: unknown;
 };
 
 export type GetSwarmNodeResponses = {
@@ -1289,6 +1295,39 @@ export type GetSwarmNodeResponses = {
 };
 
 export type GetSwarmNodeResponse = GetSwarmNodeResponses[keyof GetSwarmNodeResponses];
+
+export type ListSwarmNodeTasksData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/system/api/swarm/nodes/{id}/tasks';
+};
+
+export type ListSwarmNodeTasksErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such node
+     */
+    404: unknown;
+};
+
+export type ListSwarmNodeTasksResponses = {
+    /**
+     * OK
+     */
+    200: Array<TaskSummary>;
+};
+
+export type ListSwarmNodeTasksResponse = ListSwarmNodeTasksResponses[keyof ListSwarmNodeTasksResponses];
 
 export type ListSwarmSecretsData = {
     body?: never;

@@ -1,6 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsApiError,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import { plural } from '$core/artifacts/artifact-listings';
 import { loadState } from '$core/resources/load-state';
 import type { SwarmNode } from '$core/system/swarm.consumes';
@@ -26,10 +35,10 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * render has no session).
  *
  * - Header: "Swarm nodes", Refresh, and "N nodes".
- * - Rows: hostname (plain text: a node's own page is qits-2347's), "this node" beside the one
- *   qits-system runs on (`self`), docker's 12-character id (the whole id on hover), role, status,
- *   availability, manager status and engine version ("—" when empty: a worker has no manager
- *   status).
+ * - Rows: hostname (linking the node's page here by its id, `open-swarm-node`, qits-2347), "this
+ *   node" beside the one qits-system runs on (`self`), docker's 12-character id (the whole id on
+ *   hover), role, status, availability, manager status and engine version ("—" when empty: a
+ *   worker has no manager status).
  * - Status and availability are docker's own words, each on a chip whose tone
  *   (`swarmNodeStatusTone`, `swarmNodeAvailabilityTone`) says how it stands: Ready / Active ok,
  *   Down failed, Unknown / Disconnected / Pause waiting, Drain and anything else neutral.
@@ -50,7 +59,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-swarm-nodes-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsEntityList, QitsField, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -105,9 +123,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         entityKey="id"
                       >
                         <td class="py-1.5 pr-3 whitespace-nowrap">
-                          <span class="font-medium" [fieldOf]="row" qitsField="hostname">{{
-                            row.hostname
-                          }}</span>
+                          <a
+                            class="font-medium text-accent no-underline hover:underline"
+                            [qitsExit]="opening.node"
+                            [exitParams]="{ id: row.id ?? '' }"
+                            [fieldOf]="row"
+                            qitsField="hostname"
+                            >{{ row.hostname }}</a
+                          >
                           @if (row.self) {
                             <!-- A space, so the cell reads "fake-host this node". -->
                             &ngsp;<ui-chip
@@ -178,6 +201,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class SwarmNodesPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** A row's hostname: the node's page here (qits-2347), addressed by its id. */
+  protected readonly opening = outcomes('open-swarm-node', {
+    node: exit('system/swarm/nodes/:id'),
+  });
 
   /** The swarm's nodes; read again on Refresh only (no event names a node change). */
   protected readonly nodes = qitsResource(SWARM_NODE_LIST, () => (this.browser ? {} : undefined));

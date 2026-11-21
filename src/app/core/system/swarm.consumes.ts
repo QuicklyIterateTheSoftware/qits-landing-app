@@ -1,10 +1,16 @@
-import type { ListSwarmNodesResponses, ListSwarmServicesResponses } from '../../api/system';
+import type {
+  GetSwarmNodeResponses,
+  ListSwarmNodesResponses,
+  ListSwarmNodeTasksResponses,
+  ListSwarmServicesResponses,
+} from '../../api/system';
 import type { Consumed } from '@qits/angular';
 
 /**
- * What the app reads of qits-system's swarm (qits-2344, qits-2346): `SWARM_SERVICE_LIST` and
- * `SWARM_NODE_LIST` (`swarm.operations.ts`) declare it as `consumes`, so nothing else can be read,
- * and their pact spec binds the same lists. To read another field, add it here.
+ * What the app reads of qits-system's swarm (qits-2344, qits-2346, qits-2347): `SWARM_SERVICE_LIST`,
+ * `SWARM_NODE_LIST`, `SWARM_NODE` and `SWARM_NODE_TASKS` (`swarm.operations.ts`) declare it as
+ * `consumes`, so nothing else can be read, and their pact spec binds the same lists. To read another
+ * field, add it here.
  */
 
 /**
@@ -44,3 +50,48 @@ export const LIST_SWARM_NODES = [
 
 /** One swarm node, cut to what the page reads. */
 export type SwarmNode = Consumed<ListSwarmNodesResponses[200], typeof LIST_SWARM_NODES>[number];
+
+/**
+ * `SWARM_NODE` (qits-2347): one node, for its page. Not `updatedAt`: the page shows when the node
+ * joined, not when docker last touched its record.
+ */
+export const GET_SWARM_NODE = [
+  'id',
+  'hostname',
+  'role',
+  'status',
+  'availability',
+  'managerStatus',
+  'engineVersion',
+  'address',
+  'os',
+  'architecture',
+  'cpus',
+  'memoryBytes',
+  'labels',
+  'createdAt',
+  'self',
+] as const;
+
+/** One swarm node, cut to what its page reads. */
+export type SwarmNodeDetail = Consumed<GetSwarmNodeResponses[200], typeof GET_SWARM_NODE>;
+
+/**
+ * `SWARM_NODE_TASKS` (qits-2347): the tasks swarm placed on one node, for its page. Not `nodeId` or
+ * `updatedAt` (the door always answers both `null`), nor `nodeHostname` (it is the page's node).
+ */
+export const LIST_SWARM_NODE_TASKS = [
+  '[].id',
+  '[].name',
+  '[].slot',
+  '[].state',
+  '[].desiredState',
+  '[].error',
+  '[].image',
+] as const;
+
+/** One of a node's tasks, as its page reads it. */
+export type SwarmNodeTask = Consumed<
+  ListSwarmNodeTasksResponses[200],
+  typeof LIST_SWARM_NODE_TASKS
+>[number];

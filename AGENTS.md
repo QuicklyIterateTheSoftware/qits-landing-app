@@ -575,8 +575,8 @@ only), the last two (and their screenshots) skipping themselves until the
 
 `system/swarm/nodes` (`SwarmNodesPage`, qits-2346, replacing qits-system-frontend's `swarm/nodes`,
 an entry point too) is the same swarm's nodes: `SWARM_NODE_LIST` (`listSwarmNodes`, `docker node
-ls` on the manager), one table in the server's order: hostname (plain text until a node's page
-lands, qits-2347) with a neutral "this node" chip on the one qits-system runs on (`self`), docker's
+ls` on the manager), one table in the server's order: hostname (linking the node's page by its
+id, `open-swarm-node`, qits-2347) with a neutral "this node" chip on the one qits-system runs on (`self`), docker's
 12-character id (`shortSwarmId`, the whole id in `title`), role, status and availability (docker's
 own words, each on a chip), manager status and engine version ("—" when empty: a worker has no
 manager status). No Address column and no `address` in `LIST_SWARM_NODES`: the list door always
@@ -588,6 +588,31 @@ node change (a join, a leave, a drain, a node going Down), so the page is not fo
 Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a single-node swarm"
 (one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
 the interaction and the `empty` screenshot skip themselves until the pin records it).
+
+`system/swarm/nodes/<id>` (`SwarmNodePage`, qits-2347, replacing qits-system-frontend's
+`swarm/nodes/:id`, an entry point too) is one node, `<id>` its id; the sidebar keeps System ›
+Nodes current on it. Two reads in parallel, by the address's id, nothing per row: `SWARM_NODE`
+(`getSwarmNode`, `docker node inspect`) and `SWARM_NODE_TASKS` (`listSwarmNodeTasks`, `docker node
+ps`), both in `swarm.operations.ts`. The title is the hostname, "← Nodes" leads back
+(`leave-swarm-node`); the full id in monospace with "this node" (neutral) when `self`; status and
+availability on chips toned by `swarm-node-tones.ts` (the detail door answers the list's words,
+`Ready`, `Active`, since qits-2347) and the manager status ("—" for a worker); facts: role, engine,
+OS, architecture, CPUs (`8`, never `8.0`), memory (`formatBytes`), address ("—" when none) and
+joined (`createdAt`, `formatInstant`; no `updatedAt`); the labels as `key=value` sorted by key,
+none "No labels."; the tasks in the served order (newest first per slot, shut-down ones kept as
+history, as the caption "N tasks …" says): name, slot ("—"), state as docker phrases it, desired
+state, the error (red only when non-empty) and the image. No task is "Swarm runs no task on this
+node.", a 404 "No swarm node <id>." (and nothing else), a 403 the roles, a 503 the swarm not
+answering, with Retry; the tasks read fails on its own (its failure and Retry in the Tasks
+section), the node's facts staying. Staleness: no `refreshOn`. No event names a node change or a
+task moving, so neither is followed: Refresh reads both again; nothing polls. The pact reads both
+(`show-swarm-node`) in "a single-node swarm" (`fake-host`, two labels, `self`, two tasks, the
+second Failed and shut down), "a swarm node running no tasks" (its tasks `[]`) and "no such swarm
+node" (`getSwarmNode` a 404, status only); its interactions and screenshots skip themselves until
+the `@qits/system-golden-masters` pin records the node's tasks. Its four resource tabs
+(containers, images, networks, volumes, local to the node qits-system runs on) are left to
+qits-2352…qits-2355, each a child route of this page with a tab of its own.
+
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
 `https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and qits-2358 adds
