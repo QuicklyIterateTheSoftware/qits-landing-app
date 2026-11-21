@@ -660,6 +660,33 @@ swarm" (one running and healthy row, one exited and unhealthy), "a node running 
 logs (`show-swarm-node-container-logs`) in "a single-node swarm"; each skips itself until the
 `@qits/system-golden-masters` pin records the list at `?all=true`. A node that is not `self` is in
 no recording, so the plain spec derives it.
+`system/swarm/nodes/<id>/volumes` (`SwarmNodeVolumesPage`, qits-2355, replacing
+qits-system-frontend's node volumes tab, an entry point too) is the node's Volumes tab. One read,
+`NODE_VOLUME_LIST` (`listNodeVolumes`, `core/system/node-volumes.operations.ts`, `docker volume ls`
+on the node qits-system runs on), by the layout's `:id`, in the browser only; its consumes leave out
+`createdAt` (always null: no Created column) and `scope`. Volumes are local to that node: while the
+open node is not `self`, the tab reads nothing and says "Only the node qits-system runs on can be
+read; this is another node."; a 409 `NODE_REMOTE` (its `errorConsumes`, `code` and `message`) says
+the same in the service's words, never as a failure. A volume is anonymous when its labels carry
+`com.docker.volume.anonymous` (`isAnonymousVolume`, `core/system/node-volumes.ts`); anonymous ones
+are hidden until "Show anonymous volumes" (`toggle-anonymous-volumes`, a stay), kept in the address
+as `?anonymous=1` (merged, replacing the entry), and the caption counts the shown rows ("N volumes",
+" · M anonymous hidden" while some are). Rows in the server's order: the name (mono; an anonymous
+one's first 12 characters, the whole in `title`, with an "anonymous" chip), an "unused" chip
+(`waiting`) when `unused`, the driver, the labels as `key=value` chips sorted by key without the
+anonymous marker ("—" when none), the mountpoint. `unused` is qits-system's: no container on the
+node references the volume right now, which is not "safe to delete" (nothing says it is no longer
+wanted). `[]` is "This node holds no volumes.", only anonymous ones hidden "This node
+holds only anonymous volumes." (the checkbox stays), a 403 the roles, a 503 or anything else "The
+node's volumes cannot be read right now." with Retry. Staleness: no `refreshOn`; no event names a
+volume change (a lease's work volume created or purged, a deploy's named volume), so the tab's own
+Refresh reads again; nothing polls. The pact (`node-volumes.operations.pact.spec.ts`,
+`show-swarm-node-volumes`, its own part of the system pact) reads it in "a single-node swarm" (three
+volumes, the runner's work volume and the anonymous one unused), "a node holding no volumes" (`[]`)
+and "a swarm node this service cannot reach" (409 `NODE_REMOTE`), each recorded with the node
+addressed as `local`; its rows, the page's plain cases and its screenshots skip themselves until the
+`@qits/system-golden-masters` pin records qits-2355's states (an older pin records "a single-node
+swarm"'s volumes with one row and no `unused`).
 
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
@@ -1381,19 +1408,19 @@ changes. Every screenshot is taken, and frozen, in both schemes (`colorSchemes` 
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                   | Store and pact spec                                                                          | Pact file                                                | Golden masters                          |
-| -------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------- |
-| qits-projects-service      | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                           | `pacts/qits-landing-app_qits-projects-service.json`      | `@qits/projects-golden-masters`         |
-| qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
-| qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-containers}.operations*.ts`            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
-| qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
-| qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
-| qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
-| qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
-| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`        | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                 | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| Provider                   | Store and pact spec                                                                            | Pact file                                                | Golden masters                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------- |
+| qits-projects-service      | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                             | `pacts/qits-landing-app_qits-projects-service.json`      | `@qits/projects-golden-masters`         |
+| qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                        | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
+| qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`   | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`               | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-containers,node-volumes}.operations*.ts` | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`               | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
+| qits-observability-service | `core/observability/observability.operations*.ts`                                              | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
+| qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                  | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
+| qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                  | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`          | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
+| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                   | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

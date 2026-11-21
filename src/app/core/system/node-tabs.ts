@@ -16,4 +16,8 @@ export interface NodeTab {
  * literal path the route tree must know (`route-paths.ts`). The tabs: qits-2352 containers,
  * qits-2353 images, qits-2355 volumes, qits-2354 networks.
  */
-export const NODE_TABS: readonly NodeTab[] = [{ segment: 'containers', label: 'Containers' }];
+export const NODE_TABS: readonly NodeTab[] = [
+  // One entry per line, in the order above.
+  { segment: 'containers', label: 'Containers' },
+  { segment: 'volumes', label: 'Volumes' },
+];

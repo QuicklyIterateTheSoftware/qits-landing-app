@@ -181,6 +181,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `system/swarm/nodes/<id>/containers` (`SwarmNodeContainersPage`, qits-2352) is its first tab:
  * the containers of the node qits-system runs on (none read for another node), Running by default,
  * with each one's log tail; an entry point, where the old `swarm/nodes/:id/containers` hands off.
+ * `system/swarm/nodes/<id>/volumes` (`SwarmNodeVolumesPage`, qits-2355) is the node's Volumes tab:
+ * the volumes of the node qits-system runs on, the unused ones marked, the anonymous ones hidden
+ * unless `?anonymous=1`; an entry point too, where the old node volumes tab hands off.
  * `system/swarm/configs/<id>` (`SwarmConfigPage`, qits-2349) is one config of that swarm, by its
  * id or name: its id, exact created and updated instants, labels and its data verbatim (a note
  * for a binary or an empty config); each configs row's name opens it, the sidebar keeps Configs
@@ -780,6 +783,15 @@ export const routes: Routes = [
                 loadComponent: () =>
                   import('./routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page').then(
                     (m) => m.SwarmNodeContainersPage,
+                  ),
+              },
+              {
+                path: 'volumes',
+                // An entry point (qits-2355): qits-system-frontend's node volumes tab hands off here.
+                data: { qitsEntry: true },
+                loadComponent: () =>
+                  import('./routes/system/swarm/nodes/[id]/volumes/swarm-node-volumes.page').then(
+                    (m) => m.SwarmNodeVolumesPage,
                   ),
               },
             ],

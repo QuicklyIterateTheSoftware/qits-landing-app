@@ -682,6 +682,7 @@ export type VolumeSummary = {
     labels?: {
         [key: string]: string;
     };
+    unused?: boolean;
 };
 
 export type WarmImage = {
@@ -1162,6 +1163,10 @@ export type ListNodeVolumesErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * NODE_REMOTE: not the node this service runs on
+     */
+    409: unknown;
 };
 
 export type ListNodeVolumesResponses = {
