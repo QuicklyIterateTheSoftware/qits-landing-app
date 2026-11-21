@@ -394,7 +394,6 @@ describe('ShellLayout (screenshots)', () => {
       'Requests',
       'Agents',
       'CI',
-      'Desk',
       'Repositories',
       'Deployments',
       'Observability',
@@ -604,7 +603,6 @@ describe('ShellLayout (screenshots)', () => {
   const SECTIONS = [
     { label: 'Work', segment: 'work', outcome: 'work' },
     { label: /^Releases/, segment: 'releases', outcome: 'releases' },
-    { label: 'Desk', segment: 'desk', outcome: 'desk' },
     { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
     { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
@@ -808,6 +806,47 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(`${project.name}›Setup`);
+  });
+
+  it('open-project-desk open: the desk icon opens the project’s desk, marked current there', async () => {
+    const { fixture, project } = await renderProject('/work/acceptance');
+    const icon = page.getByRole('banner').getByRole('link', { name: 'Desk' });
+    await expect.element(icon).toHaveAttribute('title', 'Desk');
+    await expect.element(icon).not.toHaveAttribute('aria-current');
+    // No sidebar entry of its own from 768px (qits-2484).
+    await expect
+      .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Desk' }))
+      .not.toBeInTheDocument();
+    expect(await follow(fixture, icon)).toBe(`/projects/${project.slug}/desk`);
+    expect(reached()).toEqual(['open-project-desk:open']);
+    await expect.element(icon).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
+      .toMatchTextContent(`${project.name}›Desk`);
+  });
+
+  it('open-sidebar-desk open: on a phone the burger’s Desk entry opens the project’s desk', async () => {
+    await page.viewport(390, 844);
+    const { fixture, project } = await renderProject('/work/acceptance');
+    // The top bar has no room for the icon below 768px.
+    await expect
+      .element(page.getByRole('banner').getByRole('link', { name: 'Desk', includeHidden: true }))
+      .not.toBeVisible();
+    await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
+    fixture.detectChanges();
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Desk' });
+    await expect.element(entry).toBeVisible();
+    expect(await follow(fixture, entry)).toBe(`/projects/${project.slug}/desk`);
+    expect(reached()).toEqual(['open-sidebar-desk:open']);
+  });
+
+  it('shows no desk icon with no project open', async () => {
+    await render();
+    await expect
+      .element(page.getByRole('banner').getByRole('link', { name: 'Desk', includeHidden: true }))
+      .not.toBeInTheDocument();
   });
 
   it('open-network-access open: the network icon leaves for the Network access frontend', async () => {

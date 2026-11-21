@@ -1711,7 +1711,7 @@ export const INTERACTIONS = {
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Releases,
-   * Desk, Repositories, Deployments, Observability, Docs, Events, Maintenance). Navigates only, and
+   * Repositories, Deployments, Observability, Docs, Events, Maintenance). Navigates only, and
    * names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
@@ -1745,6 +1745,17 @@ export const INTERACTIONS = {
    */
   'open-sidebar-maintenance-page':
     'A Maintenance page below Maintenance in the sidebar opens that page',
+  /**
+   * `shell.layout.ts`: the top bar's desk icon, beside the gear, opens the open project's desk
+   * (qits-2484). Navigates only, and names no pact.
+   */
+  'open-project-desk': 'The top bar’s desk icon opens the project’s desk',
+  /**
+   * `shell.layout.ts`: below 768px, where the top bar has no desk icon, the Desk entry at the foot
+   * of the project's sections in the burger's navigation opens the project's desk (qits-2484).
+   * Navigates only, and names no pact.
+   */
+  'open-sidebar-desk': 'The sidebar’s Desk entry, below 768px, opens the project’s desk',
   /**
    * `shell.layout.ts`: the top bar's gear opens the open project's settings (`setup`). Navigates
    * only, and names no pact (epic qits-2000).

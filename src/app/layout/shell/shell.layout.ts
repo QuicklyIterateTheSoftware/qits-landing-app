@@ -51,7 +51,7 @@ export interface NavPage {
   readonly marks?: CrumbMarks;
 }
 
-/** The shell's sections: one per sidebar entry, and Setup from the gear. */
+/** The shell's sections: one per sidebar entry, Desk from its icon and Setup from the gear. */
 type SectionKey =
   | 'work'
   | 'releases'
@@ -340,6 +340,29 @@ export interface NavNote {
           <app-theme-menu class="max-md:hidden" />
           @if (slug()) {
             <a
+              class="hidden size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:bg-surface-active aria-[current=page]:text-fg md:inline-flex"
+              [qitsExit]="desk.open"
+              [exitParams]="{ slug: slug() }"
+              aria-label="Desk"
+              title="Desk"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="size-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                <path
+                  d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                />
+              </svg>
+            </a>
+            <a
               class="inline-flex size-9 items-center justify-center rounded-md text-fg-muted no-underline hover:bg-surface-muted hover:text-fg aria-[current=page]:text-fg"
               [qitsExit]="settings.open"
               [exitParams]="{ slug: slug() }"
@@ -504,6 +527,19 @@ export interface NavNote {
               </ul>
             </li>
           }
+          <!-- Below 768px the top bar has no room for the desk icon: its entry sits here instead
+               (qits-2484). -->
+          @if (slug()) {
+            <li class="md:hidden">
+              <a
+                class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                [qitsExit]="phoneDesk.open"
+                [exitParams]="{ slug: slug() }"
+                (click)="closeNav()"
+                >Desk</a
+              >
+            </li>
+          }
         </ul>
         <!-- The platform's own pages, with or without a project open: Network access (qits-2262),
              also the phone's way there, where the top bar's icon does not show; qits-network-access'
@@ -559,7 +595,6 @@ export class ShellLayout {
   private readonly sections = outcomes('open-sidebar-section', {
     work: exit('projects/:slug/work'),
     releases: exit('projects/:slug/releases'),
-    desk: exit('projects/:slug/desk'),
     repositories: exit('projects/:slug/repositories'),
     deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
@@ -644,6 +679,22 @@ export class ShellLayout {
     acceptance: this.workPages.acceptance,
     archive: this.workPages.archive,
   };
+
+  /**
+   * The desk icon, beside the gear: the open project's delivery desk (qits-2484), shown from 768px
+   * while a project is open.
+   */
+  protected readonly desk = outcomes('open-project-desk', {
+    open: exit('projects/:slug/desk'),
+  });
+
+  /**
+   * The desk below 768px, where the top bar has no room for its icon: an entry at the foot of the
+   * project's sections in the burger's navigation (qits-2484).
+   */
+  protected readonly phoneDesk = outcomes('open-sidebar-desk', {
+    open: exit('projects/:slug/desk'),
+  });
 
   /** The gear: the open project's settings (epic qits-2000). */
   protected readonly settings = outcomes('open-project-settings', {
@@ -930,7 +981,6 @@ export class ShellLayout {
           },
         ],
       },
-      link('desk', 'Desk', sections.desk),
       link('repositories', 'Repositories', sections.repositories),
       {
         ...link('deployments', 'Deployments', sections.deployments),
@@ -1101,7 +1151,8 @@ export class ShellLayout {
   });
 
   /**
-   * The section the URL is in (its page or one below it): a sidebar link, or Setup from the gear.
+   * The section the URL is in (its page or one below it): a sidebar link, Desk from its icon
+   * (qits-2484), or Setup from the gear.
    * A slot's page (`workspaces/<slot id>`) is in Releases (its Agents), an idea's (`ideas/…`) in
    * Work (qits-2483).
    */
@@ -1121,7 +1172,13 @@ export class ShellLayout {
       exit: this.settings.open,
       path: this.settings.open.url({ slug }),
     };
-    return [...this.links(), setup].find((link) => within(url, link.path));
+    const desk: NavLink = {
+      key: 'desk',
+      label: 'Desk',
+      exit: this.desk.open,
+      path: this.desk.open.url({ slug }),
+    };
+    return [...this.links(), desk, setup].find((link) => within(url, link.path));
   });
 
   /** Whether the URL is `page` or one below it. */
