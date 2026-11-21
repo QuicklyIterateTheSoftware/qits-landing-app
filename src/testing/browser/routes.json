@@ -387,6 +387,56 @@
       "route": "mirror/upstreams"
     }
   ],
+  "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts": [
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished gc dry run",
+      "operationId": "getProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished gc dry run",
+      "operationId": "getProcessRunStep",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished gc dry run",
+      "operationId": "listProcessRuns",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a running gc run",
+      "operationId": "getProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a running gc run",
+      "operationId": "listProcessRuns",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "no active gc run",
+      "operationId": "startProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "the gc process",
+      "operationId": "listProcesses",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "the gc process before its first run",
+      "operationId": "listProcessRuns",
+      "route": "orchestrator/processes/:kind"
+    }
+  ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
