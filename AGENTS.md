@@ -357,8 +357,9 @@ qits-2359). Such a section may list its own pages below it
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
 on its own page, `true` while one of its pages below it is the current one (that page `page`).
-System's are Services and Nodes (`open-sidebar-system-page`, `services`/`nodes`,
-`exit('system/swarm/services')`, `exit('system/swarm/nodes')`); qits-2347…qits-2356 add one each.
+System's are Services, Nodes and Configs (`open-sidebar-system-page`, `services`/`nodes`/`configs`,
+`exit('system/swarm/services')`, `exit('system/swarm/nodes')`, `exit('system/swarm/configs')`,
+qits-2348); qits-2347…qits-2356 add one each.
 Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
 `mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
 page below it; so does Orchestrator, whose one process (gc) is what `orchestrator` redirects to.
@@ -532,7 +533,7 @@ The System section (qits-2344) is qits-system's one swarm, which no project join
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
 under `system/...`, each listed below the sidebar's System while the section is open (Services
-and Nodes so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+Nodes and Configs so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
 hands off to it with a full-document load; the sidebar's System exit names `system`, which
 redirects, and Services below it names it; a service's page
 leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
@@ -592,6 +593,23 @@ node change (a join, a leave, a drain, a node going Down), so the page is not fo
 Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a single-node swarm"
 (one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
 the interaction and the `empty` screenshot skip themselves until the pin records it).
+
+`system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
+`swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
+(`listSwarmConfigs`, `docker config ls` on the manager), one table in the server's order: name
+(plain text until a config's page lands, qits-2349), docker's 12-character id (`shortSwarmId`, the
+whole id in `title`), the labels (each `key=value` on a neutral chip, sorted by key, "—" when `{}`;
+they say who owns a config, where the old page showed only their count), created and updated.
+Created and Updated are the door's text verbatim, through no date parser or formatter: real
+docker's `config ls` writes a humanized age (`2 months ago`), not an instant (only the fake docker
+ever printed a timestamp); the exact instants are the config's own page's (`config inspect`). An
+empty swarm is one sentence ("This swarm holds no configs.", what the estate shows today: nothing
+in it creates a config), a 503 and a 403 as the services page. Staleness: no `refreshOn`. No event
+names a config change, and no deployment creates or removes one, so the page is not followed at
+all: Refresh reads again; nothing polls. The pact reads it (`show-swarm-configs`) in "a single-node
+swarm" (one config, `qits-edge-vhosts`, labelled `qits.platform.deployments.target=platform`) and
+"a swarm holding no configs" (`[]`; the interaction and the `empty` screenshot skip themselves
+until the pin records it).
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
 `https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and one cache root's page is
