@@ -921,21 +921,57 @@ export const INTERACTIONS = {
    */
   'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
-   * `swarm-node.page.ts` via `SWARM_NODE` and `SWARM_NODE_TASKS` (qits-2347): one swarm node's
+   * `swarm-node.layout.ts` via `SWARM_NODE` and `SWARM_NODE_TASKS` (qits-2347): one swarm node's
    * page shows its status, facts and labels, and the tasks swarm placed on it. Refresh reads both
    * again (no event announces a node change).
    */
   'show-swarm-node': 'A swarm node’s page shows its facts, labels and tasks',
+  /**
+   * `swarm-node-images.page.ts` via `NODE_IMAGE_LIST` (qits-2353): a swarm node's Images tab lists
+   * the images the node holds, with the containers using each and their total size; a node other
+   * than the one qits-system runs on is not read (or answers 409 `NODE_REMOTE`). Refresh reads
+   * again, and so does a deployment going live or failing.
+   */
+  'show-swarm-node-images': 'A swarm node’s Images tab lists the images the node holds',
+  /**
+   * `swarm-node-networks.page.ts` via `NODE_NETWORK_LIST` (qits-2354): a swarm node's Networks tab
+   * lists the docker networks of the node qits-system runs on (another node is not read). Refresh
+   * reads them again (no event announces a network change).
+   */
+  'show-swarm-node-networks': 'A swarm node’s Networks tab lists the node’s docker networks',
   /**
    * `swarm-nodes.page.ts`: a node row's hostname opens the node's page in this app,
    * `system/swarm/nodes/:id` (qits-2347). Navigates only, and names no pact.
    */
   'open-swarm-node': 'A node of the swarm nodes list opens its page',
   /**
-   * `swarm-node.page.ts`: the crumb back opens the swarm nodes list (qits-2347). Navigates only,
+   * `swarm-node.layout.ts`: the crumb back opens the swarm nodes list (qits-2347). Navigates only,
    * and names no pact.
    */
   'leave-swarm-node': 'A swarm node’s page leads back to the nodes list',
+  /**
+   * `swarm-node-containers.page.ts` via `NODE_CONTAINER_LIST` (qits-2352): a swarm node's
+   * Containers tab lists every container on the node qits-system runs on (`all=true`), filtered to
+   * the running ones by default; a node that is not that one is not read. Refresh reads it again
+   * (no event announces a container start, stop or death).
+   */
+  'show-swarm-node-containers': 'A swarm node’s Containers tab lists the node’s containers',
+  /**
+   * `swarm-node-containers.page.ts` via `NODE_CONTAINER_LOGS` (qits-2352): a container row's Logs
+   * opens a panel with the container's last 200 lines.
+   */
+  'show-swarm-node-container-logs': 'A container’s Logs on a swarm node shows its last 200 lines',
+  /**
+   * `swarm-node-volumes.page.ts` via `NODE_VOLUME_LIST` (qits-2355): a swarm node page's Volumes
+   * tab lists the volumes of the node qits-system runs on, the unused ones marked, the anonymous
+   * ones hidden until asked for. Refresh reads them again (no event announces a volume change).
+   */
+  'show-swarm-node-volumes': 'A swarm node’s Volumes tab lists the node’s volumes',
+  /**
+   * `swarm-node-volumes.page.ts`: "Show anonymous volumes" shows or hides the node's anonymous
+   * volumes, kept in the address as `?anonymous=1` (qits-2355). Reads nothing, and names no pact.
+   */
+  'toggle-anonymous-volumes': 'A swarm node’s Volumes tab shows or hides its anonymous volumes',
   /**
    * `swarm-configs.page.ts` via `SWARM_CONFIG_LIST` (qits-2348): the System section's configs page
    * lists the configs of qits-system's swarm, each with its labels and docker's created and
@@ -1186,6 +1222,11 @@ export const INTERACTIONS = {
    * and names no pact (epic qits-2000).
    */
   'switch-agent-tab': 'An agent’s tabs open its Chat, Files or Terminal',
+  /**
+   * `swarm-node.layout.ts`: a swarm node page's tabs (`NODE_TABS`: Containers, Images, Volumes,
+   * Networks, qits-2352…qits-2355), one exit each (qits-2354). Navigates only, and names no pact.
+   */
+  'switch-swarm-node-tab': 'A swarm node’s tabs open its Containers, Images, Volumes or Networks',
   /**
    * `agent-chat.page.ts`: a picked reference's ↗ in the prompt composer opens its lines in the
    * Files tab (`path`, `lines` query params). Navigates only, and names no pact (epic qits-2000).

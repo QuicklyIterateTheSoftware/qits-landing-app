@@ -601,7 +601,7 @@ Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a
 (one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
 the interaction and the `empty` screenshot skip themselves until the pin records it).
 
-`system/swarm/nodes/<id>` (`SwarmNodePage`, qits-2347, replacing qits-system-frontend's
+`system/swarm/nodes/<id>` (`SwarmNodeLayout`, qits-2347, replacing qits-system-frontend's
 `swarm/nodes/:id`, an entry point too) is one node, `<id>` its id; the sidebar keeps System ›
 Nodes current on it. Two reads in parallel, by the address's id, nothing per row: `SWARM_NODE`
 (`getSwarmNode`, `docker node inspect`) and `SWARM_NODE_TASKS` (`listSwarmNodeTasks`, `docker node
@@ -621,9 +621,122 @@ task moving, so neither is followed: Refresh reads both again; nothing polls. Th
 (`show-swarm-node`) in "a single-node swarm" (`fake-host`, two labels, `self`, two tasks, the
 second Failed and shut down), "a swarm node running no tasks" (its tasks `[]`) and "no such swarm
 node" (`getSwarmNode` a 404, status only); its interactions and screenshots skip themselves until
-the `@qits/system-golden-masters` pin records the node's tasks. Its four resource tabs
-(containers, images, networks, volumes, local to the node qits-system runs on) are left to
-qits-2352…qits-2355, each a child route of this page with a tab of its own.
+the `@qits/system-golden-masters` pin records the node's tasks. The page is a layout (qits-2354):
+its four resource tabs (`NODE_TABS`, `core/system/node-tabs.ts`: containers, images, volumes,
+networks, local to the node qits-system runs on, qits-2352…qits-2355) are each an entry there, a
+child route and a `switch-swarm-node-tab` exit, and read the node it read through `OPEN_SWARM_NODE`
+(`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all). The tab row and
+the open tab sit below the labels, and the Tasks section shows on the bare node URL only.
+
+`system/swarm/nodes/<id>/containers` (`SwarmNodeContainersPage`, qits-2352, replacing
+qits-system-frontend's `NodeContainersTab` at `swarm/nodes/:id/containers`, an entry point too) is
+the node's first tab, Containers. Two doors, `core/system/node-containers.operations.ts` (consumes
+in `node-containers.consumes.ts`): `NODE_CONTAINER_LIST` (`listNodeContainers`, always `all=true`,
+`docker ps -a` on the local daemon, newest first; its `errorConsumes` read a 409's `code` and
+`message`) and, per Logs press, `NODE_CONTAINER_LOGS` (`getContainerLogs?tail=200`, by the
+container's id). The remote-node rule: qits-system reaches only the daemon it runs on, so the tab
+reads nothing while the open node (`OPEN_SWARM_NODE`) is not `self`, and says "Only the node
+qits-system runs on can be read; this is another node."; a 409 `NODE_REMOTE` says the same (with
+the service's `message`), never a load failure. The state filter ("Show", `aria-pressed`) is
+Running (the default), Stopped and All, each counted from the one read and filtered client-side;
+the caption follows it (`core/system/node-container-rows.ts`). The table in the server's order:
+name with docker's 12-character short id (the full id in `title`), image, state on a chip (running
+ok, restarting/paused waiting, dead failed, else neutral), health only while running (docker keeps
+a dead container's last probe, which painted 89 of 90 exited containers "unhealthy"; `—`
+otherwise and for `none`), docker's status sentence, created (`formatRelativeTime` of
+`dockerInstant`, `core/system/docker-date.ts`, which reads docker's Go date `2026-11-20 21:56:36
++0000 UTC` by its numeric offset, never by `new Date()`'s leniency; the absolute instant in
+`title`, `—` when it does not parse), ports and Logs. Logs opens one panel under the table ("<name>,
+last 200 lines", `show-swarm-node-container-logs`), closed by Close or a second press; truncated,
+empty, a 404 (the container is gone) and other failures (with Retry) each say so, and Refresh
+leaves it open. `[]` under a filter is that filter's sentence, a 403 names the admin role, a 503 or
+anything else says the node's containers cannot be read right now, with Retry. Staleness: no
+`refreshOn`. No event names a container start, stop or death (qits-system publishes target events
+only), so the tab's Refresh reads again; nothing polls. It ships no exec buttons: `bash`/`sh` and
+the terminal page arrive with qits-2356. The pact (`node-containers.operations.pact.spec.ts`, its
+own part of the system pact) reads the list (`show-swarm-node-containers`) in "a single-node
+swarm" (one running and healthy row, one exited and unhealthy), "a node running no containers"
+(`[]`) and "a swarm node this service cannot reach" (409 `NODE_REMOTE` at `no-such-node`), and the
+logs (`show-swarm-node-container-logs`) in "a single-node swarm"; each skips itself until the
+`@qits/system-golden-masters` pin records the list at `?all=true`. A node that is not `self` is in
+no recording, so the plain spec derives it.
+
+`system/swarm/nodes/<id>/images` (`SwarmNodeImagesPage`, qits-2353, replacing qits-system-frontend's
+`swarm/nodes/:id/images` tab, an entry point too) is the node page's Images tab. One read,
+`NODE_IMAGE_LIST` (`listNodeImages`, `core/system/node-images.operations.ts`, its consumes in
+`node-images.consumes.ts`: `docker image ls` on the daemon qits-system runs on), by the layout's
+node id, made only once the layout has read the node and found it `self`: the door reads the local
+daemon alone and answers any other node 409 `NODE_REMOTE`. So a node that is not `self` is not read
+and shows "Only the node qits-system runs on can be read; this is another node." (the wording the
+node's other tabs share), and a 409 shows the same note with the door's message, never a failure
+and with no Retry. The table is docker's order (newest first): repository and tag (a dangling
+image's `<none>` a neutral "dangling" chip, its tag "—"), docker's short id (`imageShortId`,
+`core/system/node-images.ts`: the 12 hex digits after `sha256:`, the whole id in `title`), created,
+size (`formatBytes`) and in use (`inUse`: docker's string count, `N/A` "—", 0 a neutral "unused"
+chip); the caption is "N images, <total>" (`totalBytes`, Σ `sizeBytes`). Created is docker's Go
+date (`2026-08-18 04:46:43 +0200 CEST`, never ISO), read by its numeric offset with `dockerInstant`
+(`core/system/docker-date.ts`) and drawn with `formatInstant`, "—" when it is no date; `new Date()`
+reads it only by luck (never with a zone like `CEST`). No digest (`<none>` on every row: the door
+does not ask for `--digests`), no `size` text and no "created since" (docker's phrase frozen at the
+read). None is "This node holds no images.", a 403 the roles, a 503 (the daemon not answering) and
+anything else "The node's images cannot be read right now." with Retry. Staleness: `refreshOn`
+`DEPLOYMENT_EVENTS`, debounced 1 s (an image arrives when something deploys); nothing announces an
+image leaving (runner housekeeping's dangling and lease image passes, a prune by hand), so "Refresh
+images" reads again; nothing polls. The pact reads it (`show-swarm-node-images`,
+`node-images.operations.pact.spec.ts`, its own part of the system pact) in "a single-node swarm"
+(one image, `qits-ci:3e501b6`, three containers), "a swarm node holding no images" (`[]`) and "a
+swarm node this service cannot reach" (the 409, binding `code` and `message`); the last two, and
+their `empty` and `remote` screenshots, skip themselves until the `@qits/system-golden-masters` pin
+records them.
+
+`system/swarm/nodes/<id>/volumes` (`SwarmNodeVolumesPage`, qits-2355, replacing
+qits-system-frontend's node volumes tab, an entry point too) is the node's Volumes tab. One read,
+`NODE_VOLUME_LIST` (`listNodeVolumes`, `core/system/node-volumes.operations.ts`, `docker volume ls`
+on the node qits-system runs on), by the layout's `:id`, in the browser only; its consumes leave out
+`createdAt` (always null: no Created column) and `scope`. Volumes are local to that node: while the
+open node is not `self`, the tab reads nothing and says "Only the node qits-system runs on can be
+read; this is another node."; a 409 `NODE_REMOTE` (its `errorConsumes`, `code` and `message`) says
+the same in the service's words, never as a failure. A volume is anonymous when its labels carry
+`com.docker.volume.anonymous` (`isAnonymousVolume`, `core/system/node-volumes.ts`); anonymous ones
+are hidden until "Show anonymous volumes" (`toggle-anonymous-volumes`, a stay), kept in the address
+as `?anonymous=1` (merged, replacing the entry), and the caption counts the shown rows ("N volumes",
+" · M anonymous hidden" while some are). Rows in the server's order: the name (mono; an anonymous
+one's first 12 characters, the whole in `title`, with an "anonymous" chip), an "unused" chip
+(`waiting`) when `unused`, the driver, the labels as `key=value` chips sorted by key without the
+anonymous marker ("—" when none), the mountpoint. `unused` is qits-system's: no container on the
+node references the volume right now, which is not "safe to delete" (nothing says it is no longer
+wanted). `[]` is "This node holds no volumes.", only anonymous ones hidden "This node
+holds only anonymous volumes." (the checkbox stays), a 403 the roles, a 503 or anything else "The
+node's volumes cannot be read right now." with Retry. Staleness: no `refreshOn`; no event names a
+volume change (a lease's work volume created or purged, a deploy's named volume), so the tab's own
+Refresh reads again; nothing polls. The pact (`node-volumes.operations.pact.spec.ts`,
+`show-swarm-node-volumes`, its own part of the system pact) reads it in "a single-node swarm" (three
+volumes, the runner's work volume and the anonymous one unused), "a node holding no volumes" (`[]`)
+and "a swarm node this service cannot reach" (409 `NODE_REMOTE`), each recorded with the node
+addressed as `local`; its rows, the page's plain cases and its screenshots skip themselves until the
+`@qits/system-golden-masters` pin records qits-2355's states (an older pin records "a single-node
+swarm"'s volumes with one row and no `unused`).
+
+`system/swarm/nodes/<id>/networks` (`SwarmNodeNetworksPage`, qits-2354, replacing
+qits-system-frontend's `swarm/nodes/:id/networks`, `NodeNetworksTab`, an entry point too) is the
+node's Networks tab: `NODE_NETWORK_LIST` (`listNodeNetworks`, `docker network ls`,
+`core/system/node-networks.operations.ts`, its consumes in `node-networks.consumes.ts`, not
+`ipv6`), by the layout's node id. Docker's networks are local to a daemon and qits-system reaches
+only its own: the tab reads nothing until the layout has read the node, and only while it is
+`self`; another node is one sentence ("Only the node qits-system runs on can be read; this is
+another node."), and so is the door's own 409 (`NODE_REMOTE`, its `message` beside it, the
+operation's `errorConsumes`), never a load failure. One table in the server's order: name (a
+neutral "internal" chip when `internal`), docker's id in monospace, driver, scope, the labels as
+`key=value` chips sorted by key (`nodeLabelPairs`, "—" for none) and created (`dockerInstant` then
+`formatInstant`, "—" when unparseable); "N networks". `[]` is one sentence (a running daemon always
+has bridge, host and none), a 403 the roles, a 503 or any other failure "The node's networks cannot
+be read right now." with Retry. Staleness: no `refreshOn`. No event names a network change (an
+overlay a deploy creates, a runner's lease bridge created or removed), so the tab has its own
+Refresh (the layout's reads the node and its tasks only); nothing polls. The pact reads it
+(`show-swarm-node-networks`, `node-networks.operations.pact.spec.ts`, `assertPactPart`) in "a
+single-node swarm", "a node listing no networks" (`[]`) and "a swarm node this service cannot reach"
+(409 `NODE_REMOTE`, binding `code` and `message`); the last two, and their screenshots (`empty`,
+`remote`), skip themselves until the `@qits/system-golden-masters` pin records them.
 
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
@@ -1345,19 +1458,19 @@ changes. Every screenshot is taken, and frozen, in both schemes (`colorSchemes` 
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                   | Store and pact spec                                                                          | Pact file                                                | Golden masters                          |
-| -------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------- |
-| qits-projects-service      | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                           | `pacts/qits-landing-app_qits-projects-service.json`      | `@qits/projects-golden-masters`         |
-| qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
-| qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases}.operations*.ts`                            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
-| qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
-| qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
-| qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
-| qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
-| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`        | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                 | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| Provider                   | Store and pact spec                                                                                          | Pact file                                                | Golden masters                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------- |
+| qits-projects-service      | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                                           | `pacts/qits-landing-app_qits-projects-service.json`      | `@qits/projects-golden-masters`         |
+| qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
+| qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`                 | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-containers,node-images,node-volumes,node-networks}.operations*.ts` | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`                             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
+| qits-observability-service | `core/observability/observability.operations*.ts`                                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
+| qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
+| qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`                        | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
+| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                                 | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

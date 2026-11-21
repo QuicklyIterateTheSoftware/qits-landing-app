@@ -8,9 +8,11 @@ import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../../api/system/client.gen';
 import { provideHeyApiClient } from '../../../../../api/system/client/client.gen';
+import { NODE_TABS } from '$core/system/node-tabs';
+import { OPEN_SWARM_NODE } from '$core/system/open-swarm-node';
 import type { SwarmNodeDetail, SwarmNodeTask } from '$core/system/swarm.consumes';
 import { isRecorded, systemGoldenMasters } from '../../../../../../testing/golden-masters';
-import { cpuCount, memorySize, nodeLabelPairs, SwarmNodePage } from './swarm-node.page';
+import { cpuCount, memorySize, nodeLabelPairs, SwarmNodeLayout } from './swarm-node.layout';
 
 /**
  * One swarm node's page (qits-2347), its two reads answered with qits-system's recordings: "a
@@ -38,14 +40,22 @@ const RECORDED = isRecorded(SWARM, 'listSwarmNodeTasks', systemGoldenMasters);
 @Component({ template: 'stub' })
 class Stub {}
 
-describe('SwarmNodePage', () => {
+describe('SwarmNodeLayout', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'system/swarm/nodes/:id', component: SwarmNodePage },
+          {
+            path: 'system/swarm/nodes/:id',
+            component: SwarmNodeLayout,
+            // The bare node, and a stand-in tab (no tab has landed yet, qits-2354).
+            children: [
+              { path: '', children: [] },
+              { path: 'tab', component: Stub },
+            ],
+          },
           { path: 'system/swarm/nodes', component: Stub },
         ]),
         provideHttpClient(),
@@ -71,10 +81,10 @@ describe('SwarmNodePage', () => {
 
   type Answer = { body: object | null; status?: number };
 
-  /** The page of node `id`, its reads answered with `node` and `tasks`. */
-  async function render(id: string, node: Answer, tasks: Answer) {
+  /** The page of node `id` (at its child `tab`, if one), its reads answered with `node` and `tasks`. */
+  async function render(id: string, node: Answer, tasks: Answer, tab = '') {
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl(`/system/swarm/nodes/${id}`);
+    await harness.navigateByUrl(`/system/swarm/nodes/${id}${tab && `/${tab}`}`);
     await answered(harness);
     for (const [url, answer] of [
       [`/system/api/swarm/nodes/${id}`, node],
@@ -107,6 +117,59 @@ describe('SwarmNodePage', () => {
       'qits.edge=true',
       'zone=fsn1',
     ]);
+  });
+
+  it.skipIf(!RECORDED)(
+    'provides itself as OPEN_SWARM_NODE, the node its tabs read (qits-2354)',
+    async () => {
+      const { harness, element } = await render(
+        NODE,
+        { body: nodeOf(SWARM) },
+        { body: tasksOf(SWARM) },
+      );
+      const open = harness.routeDebugElement!.injector.get(OPEN_SWARM_NODE);
+      expect(open.nodeId()).toBe(NODE);
+      expect(open.node()?.id).toBe(NODE);
+      expect(open.node()?.self).toBe(true);
+      // The tab row shows once the node is read, and only while a tab exists (`NODE_TABS`).
+      const links = [...element.querySelectorAll('nav[aria-label="Swarm node"] a')];
+      expect(links.map((link) => text(link))).toEqual(NODE_TABS.map((tab) => tab.label));
+    },
+  );
+
+  it.skipIf(!RECORDED)(
+    'draws the tasks on the bare node only, not while a tab is open (qits-2354)',
+    async () => {
+      const { harness, element } = await render(
+        NODE,
+        { body: nodeOf(SWARM) },
+        { body: tasksOf(SWARM) },
+      );
+      expect(element.querySelector('[data-tasks]')).not.toBeNull();
+
+      await harness.navigateByUrl(`/system/swarm/nodes/${NODE}/tab`);
+      await answered(harness);
+      const onTab = harness.routeNativeElement as HTMLElement;
+      expect(onTab.querySelector('[data-node]')).not.toBeNull();
+      expect(onTab.querySelector('[data-tasks]')).toBeNull();
+
+      await harness.navigateByUrl(`/system/swarm/nodes/${NODE}`);
+      await answered(harness);
+      expect(
+        (harness.routeNativeElement as HTMLElement).querySelector('[data-tasks]'),
+      ).not.toBeNull();
+    },
+  );
+
+  it.skipIf(!RECORDED)('opens on a tab without the tasks section (qits-2354)', async () => {
+    const { element } = await render(
+      NODE,
+      { body: nodeOf(SWARM) },
+      { body: tasksOf(SWARM) },
+      'tab',
+    );
+    expect(element.querySelector('[data-node]')).not.toBeNull();
+    expect(element.querySelector('[data-tasks]')).toBeNull();
   });
 
   it.skipIf(!RECORDED)('shows the recorded node, its labels and its tasks', async () => {

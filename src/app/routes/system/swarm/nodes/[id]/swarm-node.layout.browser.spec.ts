@@ -1,7 +1,9 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page } from 'vitest/browser';
+import { NODE_TABS } from '$core/system/node-tabs';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -28,11 +30,12 @@ const MISSING = 'no-such-node';
  * 404s; `not-found`). Each skips itself until the `@qits/system-golden-masters` pin records it. A
  * read still open (`loading`), a 503 (`unavailable`) and a 403 (`refused`) are statuses only.
  *
- * The page's one outcome, the crumb back to the nodes list, is followed once; the shell's are shot
- * once (`shootShellMenus`). Nothing announces a node change, so the page has no `refreshOn`:
+ * The page's outcomes, the crumb back to the nodes list and each tab of the tab row
+ * (`switch-swarm-node-tab`, `NODE_TABS`), are followed once each; the shell's are shot once
+ * (`shootShellMenus`). Nothing announces a node change, so the page has no `refreshOn`:
  * Refresh is its only second read of each.
  */
-describe('SwarmNodePage (screenshots)', () => {
+describe('SwarmNodeLayout (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
@@ -211,4 +214,21 @@ describe('SwarmNodePage (screenshots)', () => {
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe('/system/swarm/nodes');
   });
+
+  it.each(NODE_TABS.map((tab) => [tab.segment, tab.label]))(
+    'switch-swarm-node-tab %s: the %s tab opens, marked current',
+    async (segment, label) => {
+      const { opened, view } = await render(SWARM);
+      const tab = view
+        .getByRole('navigation', { name: 'Swarm node' })
+        .getByRole('link', { name: label, exact: true });
+      await tab.click();
+      await leftFor(opened);
+      expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+        `switch-swarm-node-tab:${segment}`,
+      ]);
+      expect(TestBed.inject(Router).url).toBe(`/system/swarm/nodes/${NODE}/${segment}`);
+      await expect.element(tab).toHaveAttribute('aria-current', 'page');
+    },
+  );
 });
