@@ -1042,7 +1042,15 @@ Repositories is `Repositories › <repo> › Contracts › <state>` (`repository
 crumb before the last a link (`follow-breadcrumb` `repositories`, `repository`,
 `repositoryContracts`, `repositoryEntities`). Staleness: `SCMPublishCommit` to the wrapper's main
 (`movesWrapper`) → the repositories; nothing announces a release's artifacts, so Refresh reads all
-three again. Its pact interactions (`show-repository`) read "a project with 3 repositories" and
+three again. The two lists are `app-repository-published` (`patterns/repositories/repository-published/`,
+which holds the artifacts' and the catalog's reads), mounted again by the repository's Artifacts page
+(`repositories/<repo>/artifacts`, `RepositoryArtifactsPage`, qits-2492). While a page of a repository
+is open (`repositoryTrail` finds one), the sidebar shows the repository's own entries in the
+project's sections' place (qits-2492, `repositoryLinks` in the shell, `open-sidebar-repository-page`):
+Overview, Artifacts, Docs, Contracts, Entities and UI builder, below "← Repositories"
+(`leave-sidebar-repository`), the way back to the project's sidebar; the project's sections are then
+not rendered (`shownLinks`). Every entry shows for every repository (each page says when it has
+nothing); Dependencies waits for qits-2489. Its pact interactions (`show-repository`) read "a project with 3 repositories" and
 "two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
 naming contract repositories" and "a docs catalog of every kind".
 

@@ -401,9 +401,43 @@ export interface NavNote {
             }
           }
         </ul>
+        <!-- With a repository open (qits-2492), its own pages in the project's sections' place,
+             below a way back to the project's Repositories; rendered only then (qits-2225). -->
+        @if (repository(); as repo) {
+          <ul class="m-0 list-none px-2 py-3" aria-label="Repository">
+            <li>
+              <a
+                class="block rounded-md px-3 py-[0.4rem] text-sm text-fg-muted no-underline hover:bg-surface-muted"
+                [qitsExit]="repositoryBack.repositories"
+                [exitParams]="{ slug: slug() }"
+                [exitCurrent]="null"
+                (click)="closeNav()"
+                >← Repositories</a
+              >
+            </li>
+            <li
+              class="truncate px-3 pt-2 pb-1 font-mono text-xs font-semibold text-fg"
+              [title]="repo"
+            >
+              {{ repo }}
+            </li>
+            @for (entry of repositoryLinks(); track entry.label) {
+              <li>
+                <a
+                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                  [qitsExit]="entry.exit"
+                  [exitParams]="{ slug: slug(), repo: repo }"
+                  [exitCurrent]="entry.current"
+                  (click)="closeNav()"
+                  >{{ entry.label }}</a
+                >
+              </li>
+            }
+          </ul>
+        }
         <!-- The open project's sections; switched by class while there are none. -->
-        <ul class="m-0 list-none px-2 py-3" [class.hidden]="links().length === 0">
-          @for (link of links(); track link.key) {
+        <ul class="m-0 list-none px-2 py-3" [class.hidden]="shownLinks().length === 0">
+          @for (link of shownLinks(); track link.key) {
             <li>
               <a
                 class="group block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg aria-[current=true]:font-semibold aria-[current=true]:text-fg"
@@ -550,6 +584,24 @@ export class ShellLayout {
   private readonly maintenancePages = outcomes('open-sidebar-maintenance-page', {
     dependencies: exit('projects/:slug/maintenance/dependencies'),
     artifacts: exit('projects/:slug/maintenance/artifacts'),
+  });
+
+  /**
+   * The repository sidebar's entries (qits-2492), one exit per page of the open repository:
+   * Overview, Artifacts, Docs, Contracts, Entities and UI builder.
+   */
+  private readonly repositoryPages = outcomes('open-sidebar-repository-page', {
+    overview: exit('projects/:slug/repositories/:repo'),
+    artifacts: exit('projects/:slug/repositories/:repo/artifacts'),
+    docs: exit('projects/:slug/docs/repositories/:repo'),
+    contracts: exit('projects/:slug/repositories/:repo/contracts'),
+    entities: exit('projects/:slug/repositories/:repo/entities'),
+    uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
+  });
+
+  /** The repository sidebar's way back to the project's sidebar (qits-2492). */
+  protected readonly repositoryBack = outcomes('leave-sidebar-repository', {
+    repositories: exit('projects/:slug/repositories'),
   });
 
   /** Each work page's exit, by its segment (`WORK_TABS`). */
@@ -843,6 +895,39 @@ export class ShellLayout {
       },
     ];
   });
+
+  /** The open repository's name while the URL is one of its pages (qits-2492), else undefined. */
+  protected readonly repository = computed((): string | undefined => {
+    const slug = this.selected.slug();
+    if (slug === undefined) return undefined;
+    return repositoryTrail(this.selected.url(), `/projects/${slug}`)?.repo;
+  });
+
+  /**
+   * The repository sidebar's entries (qits-2492): each page with its exit and its `aria-current`
+   * (Overview `page` on the repository's own page only, the others by `[qitsExit]`'s path rule, so
+   * Contracts stays current on a state's page). Every entry shows for every repository: each page
+   * says itself when the repository has nothing for it. Dependencies waits for qits-2489.
+   */
+  protected readonly repositoryLinks = computed(() => {
+    const slug = this.selected.slug();
+    const repo = this.repository();
+    if (slug === undefined || repo === undefined) return [];
+    const pages = this.repositoryPages;
+    const overview = pages.overview.url({ slug, repo });
+    const atOverview = this.selected.url().split(/[?#]/)[0] === overview;
+    return [
+      { label: 'Overview', exit: pages.overview, current: atOverview ? ('page' as const) : null },
+      { label: 'Artifacts', exit: pages.artifacts, current: undefined },
+      { label: 'Docs', exit: pages.docs, current: undefined },
+      { label: 'Contracts', exit: pages.contracts, current: undefined },
+      { label: 'Entities', exit: pages.entities, current: undefined },
+      { label: 'UI builder', exit: pages.uiBuilder, current: undefined },
+    ];
+  });
+
+  /** The project's sections as the sidebar renders them: none while a repository is open. */
+  protected readonly shownLinks = computed(() => (this.repository() ? [] : this.links()));
 
   /**
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
@@ -1161,6 +1246,7 @@ export const REPOSITORIES = 'repositories';
 
 /** A repository's pages that have a crumb of their own, by segment (qits-2478). */
 const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
+  artifacts: 'Artifacts',
   contracts: 'Contracts',
   entities: 'Entities',
   'ui-builder': 'UI builder',

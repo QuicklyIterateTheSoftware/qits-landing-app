@@ -58,6 +58,7 @@ export type RoutePath =
   | 'projects/:slug/release-requests/:requestId'
   | 'projects/:slug/repositories'
   | 'projects/:slug/repositories/:repo'
+  | 'projects/:slug/repositories/:repo/artifacts'
   | 'projects/:slug/repositories/:repo/contracts'
   | 'projects/:slug/repositories/:repo/contracts/:state'
   | 'projects/:slug/repositories/:repo/entities'

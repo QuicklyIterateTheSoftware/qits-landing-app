@@ -112,10 +112,10 @@ describe('RepositoryPage (screenshots)', () => {
         '/artifacts/repositories/maven/maven-packages/eu.wohlben.qits:contract-service-client',
       );
     expect(names(opened, 'Docs sites')).toEqual(['@contracts/contract-service']);
-    // The sidebar's Repositories stays current, and the trail names the repository.
+    // The repository sidebar is open, its Overview current (qits-2492), and the trail names it.
     await expect
       .element(
-        page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Repositories' }),
+        page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Overview' }),
       )
       .toHaveAttribute('aria-current', 'page');
     await expect

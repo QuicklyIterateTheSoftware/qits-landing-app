@@ -1542,6 +1542,16 @@ export const INTERACTIONS = {
    */
   'leave-repository': '“← Repositories” on a repository’s page goes back to the Repositories page',
   /**
+   * `shell.layout.ts`: the repository sidebar's entries, shown while a repository's page is open
+   * (qits-2492). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-sidebar-repository-page': 'The repository sidebar opens one of the repository’s pages',
+  /**
+   * `shell.layout.ts`: “← Repositories” at the top of the repository sidebar goes back to the
+   * project's Repositories page, and its sidebar (qits-2492). Navigates only, and names no pact.
+   */
+  'leave-sidebar-repository': 'The repository sidebar’s “← Repositories” goes back to the project',
+  /**
    * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
    * pages, one exit each. Navigates only, and names no pact (epic qits-2000).
    */

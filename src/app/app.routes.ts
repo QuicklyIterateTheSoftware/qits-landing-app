@@ -448,6 +448,14 @@ export const routes: Routes = [
           ),
       },
       {
+        // A repository's Artifacts (qits-2492): what it publishes.
+        path: 'projects/:slug/repositories/:repo/artifacts',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/artifacts/repository-artifacts.page').then(
+            (m) => m.RepositoryArtifactsPage,
+          ),
+      },
+      {
         path: 'projects/:slug/repositories/:repo/ui-builder',
         loadComponent: () =>
           import('./routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page').then(

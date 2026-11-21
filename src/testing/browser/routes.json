@@ -1947,6 +1947,32 @@
       "route": "projects/:slug/release-requests"
     }
   ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/artifacts/repository-artifacts.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog naming contract repositories",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/repositories/:repo/artifacts"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/artifacts"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/artifacts"
+    }
+  ],
   "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",
