@@ -7,6 +7,7 @@ import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../api/system/client.gen';
 import { provideHeyApiClient } from '../../../../api/system/client/client.gen';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import type { SwarmConfig } from '$core/system/swarm.consumes';
 import { systemGoldenMaster } from '../../../../../testing/golden-masters';
 import { SwarmConfigsPage } from './swarm-configs.page';
@@ -24,9 +25,9 @@ const recorded = (): SwarmConfig[] =>
  * The swarm configs page (qits-2348) on answers its screenshots cannot show yet, each derived from
  * qits-system's recorded swarm ("a single-node swarm"): an empty listing (the recording with no
  * rows), and a config with no labels and one with several (the recorded row with its labels
- * changed). Created and Updated are docker's text, shown as served: the assertions read it from
- * the recording rather than spelling it. The page has no `refreshOn`; the live stream is one that
- * never sends.
+ * changed). Created and Updated are `formatInstant` of the recorded instants, the raw value on
+ * hover: the assertions derive it from the recording rather than spelling it out. The page has no
+ * `refreshOn`; the live stream is one that never sends.
  */
 describe('SwarmConfigsPage', () => {
   let http: HttpTestingController;
@@ -76,7 +77,7 @@ describe('SwarmConfigsPage', () => {
       [...row.querySelectorAll('td')].map((cell) => text(cell)),
     );
 
-  it('lists the recorded config with its label and docker’s dates as given', async () => {
+  it('lists the recorded config with its label and formatted instants', async () => {
     const [config] = recorded();
     const element = await shown(recorded());
     expect([...element.querySelectorAll('thead th')].map((heading) => text(heading))).toEqual([
@@ -91,14 +92,15 @@ describe('SwarmConfigsPage', () => {
         'qits-edge-vhosts',
         'ktnbjxoalbkv',
         'qits.platform.deployments.target=platform',
-        config.createdAt,
-        config.updatedAt,
+        formatInstant(config.createdAt),
+        formatInstant(config.updatedAt),
       ],
     ]);
-    // The whole id on hover; the label on a chip; the name links the config's page by its id.
-    expect(element.querySelector('tbody td[title]')?.getAttribute('title')).toBe(
-      'ktnbjxoalbkvbvedmg1urrz8h',
-    );
+    // The whole id, and the served instants, on hover; the label on a chip; the name links the
+    // config's page by its id.
+    expect(
+      [...element.querySelectorAll('tbody td[title]')].map((cell) => cell.getAttribute('title')),
+    ).toEqual(['ktnbjxoalbkvbvedmg1urrz8h', config.createdAt, config.updatedAt]);
     expect(element.querySelector('tbody ui-chip')?.textContent?.trim()).toBe(
       'qits.platform.deployments.target=platform',
     );

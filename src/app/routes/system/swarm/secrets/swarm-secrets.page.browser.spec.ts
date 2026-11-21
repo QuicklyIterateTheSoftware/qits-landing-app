@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
 import { EVENT_SOURCE, REOPEN_DEBOUNCE_MS } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -112,11 +113,20 @@ describe('SwarmSecretsPage (screenshots)', () => {
     expect(rows).toHaveLength(3);
     expect(rows[0].textContent).toMatch(/Name\s*ID\s*Used by\s*Labels\s*Created\s*Updated/);
     expect(rows[0].textContent).not.toContain('Driver');
+    // The recorded dates are docker's age text ("2 months ago"), which `formatInstant` cannot
+    // parse (qits-2487): it draws the dash, the raw text staying on the cell's `title`, until the
+    // golden masters carry real instants.
+    const created = formatInstant('2 months ago');
+    const updated = formatInstant('3 months ago');
     expect(rows[1].textContent).toMatch(
-      /qits-dns-hetzner-token-2d945672e91b\s*x4kq7v2m9p1c\s*Unused\s*qits\.platform\.deployments\.target=platform\s*2 months ago\s*2 months ago/,
+      new RegExp(
+        `qits-dns-hetzner-token-2d945672e91b\\s*x4kq7v2m9p1c\\s*Unused\\s*qits\\.platform\\.deployments\\.target=platform\\s*${created}\\s*${created}`,
+      ),
     );
     expect(rows[2].textContent).toMatch(
-      /qits-platform-idp-signing-key\s*jvbcnrfhrbn8\s*dev-qits-artifacts\s*—\s*3 months ago\s*3 months ago/,
+      new RegExp(
+        `qits-platform-idp-signing-key\\s*jvbcnrfhrbn8\\s*dev-qits-artifacts\\s*—\\s*${updated}\\s*${updated}`,
+      ),
     );
     expect(rows[2].textContent).not.toContain('Unused');
     // The root sidebar's System stays current below the section, Secrets below it the page.

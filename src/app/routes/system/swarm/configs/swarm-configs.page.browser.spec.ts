@@ -9,6 +9,7 @@ import {
   type OpenedRoute,
 } from '../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
+import { formatInstant } from '$core/release-requests/release-request-model';
 
 const SWARM = 'a single-node swarm';
 const NO_CONFIGS = 'a swarm holding no configs';
@@ -84,11 +85,18 @@ describe('SwarmConfigsPage (screenshots)', () => {
     expect(rows[1].textContent).toMatch(
       /qits-edge-vhosts\s*ktnbjxoalbkv\s*qits\.platform\.deployments\.target=platform/,
     );
-    // Created and Updated are the recording's text, as served.
-    const dates = [...rows[1].querySelectorAll('td')]
-      .slice(3)
-      .map((cell) => cell.textContent?.trim());
-    expect(dates).toEqual([config.createdAt, config.updatedAt]);
+    // Created and Updated are `formatInstant` of the recorded instants, the raw value on hover
+    // (qits-2487; the recording still holds docker's age text, which `formatInstant` draws as a
+    // dash, until the golden masters carry real instants).
+    const dateCells = [...rows[1].querySelectorAll('td')].slice(3);
+    expect(dateCells.map((cell) => cell.textContent?.trim())).toEqual([
+      formatInstant(config.createdAt),
+      formatInstant(config.updatedAt),
+    ]);
+    expect(dateCells.map((cell) => cell.getAttribute('title'))).toEqual([
+      config.createdAt,
+      config.updatedAt,
+    ]);
     // The root sidebar's System stays current below the section, Configs below it the page.
     const navigation = page.elementLocator(opened.frame).getByRole('navigation', { name: 'qits' });
     await expect

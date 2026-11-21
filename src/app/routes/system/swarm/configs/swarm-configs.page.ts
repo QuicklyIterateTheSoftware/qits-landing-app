@@ -11,6 +11,7 @@ import {
   qitsResource,
 } from '@qits/angular';
 import { plural } from '$core/artifacts/artifact-listings';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
 import type { SwarmConfig } from '$core/system/swarm.consumes';
 import { SWARM_CONFIG_LIST } from '$core/system/swarm.operations';
@@ -35,9 +36,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * - Rows: name (linking the config's page here by its id, `open-swarm-config`, qits-2349),
  *   docker's 12-character id (the whole id on hover), the labels (each `key=value` on a neutral
  *   chip, sorted by key, "—" when none), created and updated.
- * - Created and Updated are the door's text verbatim: real docker's `config ls` writes a humanized
- *   age (`2 months ago`), not an instant, so nothing parses or formats it. The exact instants are
- *   the config's own page's (`config inspect`).
+ * - Created and Updated are formatted the same way as the config detail page (`formatInstant`),
+ *   the served instant on hover.
  *
  * States: loading; a swarm holding no configs is one sentence; a 403 says the swarm needs an admin
  * role; a 503 (the swarm is inactive, docker's socket missing or timing out: qits-system never
@@ -45,8 +45,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * failure, with Retry.
  *
  * Marks (qits-2141): the table is the configs' read, each row a config by its `id`; the short id
- * is derived from `id`, the labels cell from `labels`, name, created and updated are their fields
- * as served, the count from the whole answer.
+ * is derived from `id`, the labels cell from `labels`, name is its field as served, created and
+ * updated derived from `createdAt`/`updatedAt`, the count from the whole answer.
  *
  * Staleness (qits-1270): no `refreshOn`. No event names a config change: qits-system sends none
  * for the swarm's configs, a deployment creates or removes none, and nothing in the estate creates
@@ -148,17 +148,19 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         </td>
                         <td
                           class="py-1.5 pr-3 whitespace-nowrap text-fg-soft"
+                          [attr.title]="row.createdAt"
                           [fieldOf]="row"
-                          qitsField="createdAt"
+                          [qitsField]="marks.createdAt"
                         >
-                          {{ row.createdAt }}
+                          {{ instant(row.createdAt) }}
                         </td>
                         <td
                           class="py-1.5 whitespace-nowrap text-fg-soft"
+                          [attr.title]="row.updatedAt"
                           [fieldOf]="row"
-                          qitsField="updatedAt"
+                          [qitsField]="marks.updatedAt"
                         >
-                          {{ row.updatedAt }}
+                          {{ instant(row.updatedAt) }}
                         </td>
                       </tr>
                     }
@@ -224,6 +226,8 @@ export class SwarmConfigsPage {
 
   protected readonly shortId = shortSwarmId;
 
+  protected readonly instant = formatInstant;
+
   /** A config's labels as `key=value`, sorted by key; none for `{}`. */
   protected labels(labels: Readonly<Record<string, string>> | undefined): string[] {
     return Object.entries(labels ?? {})
@@ -237,4 +241,6 @@ const MARKS = {
   count: { derived: [] },
   id: { derived: ['id'] },
   labels: { derived: ['labels'] },
+  createdAt: { derived: ['createdAt'] },
+  updatedAt: { derived: ['updatedAt'] },
 } as const;
