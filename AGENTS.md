@@ -628,6 +628,27 @@ child route and a `switch-swarm-node-tab` exit, and read the node it read throug
 (`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all). The tab row and
 the open tab sit below the labels, and the Tasks section shows on the bare node URL only.
 
+`system/swarm/nodes/<id>/networks` (`SwarmNodeNetworksPage`, qits-2354, replacing
+qits-system-frontend's `swarm/nodes/:id/networks`, `NodeNetworksTab`, an entry point too) is the
+node's Networks tab: `NODE_NETWORK_LIST` (`listNodeNetworks`, `docker network ls`,
+`core/system/node-networks.operations.ts`, its consumes in `node-networks.consumes.ts`, not
+`ipv6`), by the layout's node id. Docker's networks are local to a daemon and qits-system reaches
+only its own: the tab reads nothing until the layout has read the node, and only while it is
+`self`; another node is one sentence ("Only the node qits-system runs on can be read; this is
+another node."), and so is the door's own 409 (`NODE_REMOTE`, its `message` beside it, the
+operation's `errorConsumes`), never a load failure. One table in the server's order: name (a
+neutral "internal" chip when `internal`), docker's id in monospace, driver, scope, the labels as
+`key=value` chips sorted by key (`nodeLabelPairs`, "—" for none) and created (`dockerInstant` then
+`formatInstant`, "—" when unparseable); "N networks". `[]` is one sentence (a running daemon always
+has bridge, host and none), a 403 the roles, a 503 or any other failure "The node's networks cannot
+be read right now." with Retry. Staleness: no `refreshOn`. No event names a network change (an
+overlay a deploy creates, a runner's lease bridge created or removed), so the tab has its own
+Refresh (the layout's reads the node and its tasks only); nothing polls. The pact reads it
+(`show-swarm-node-networks`, `node-networks.operations.pact.spec.ts`, `assertPactPart`) in "a
+single-node swarm", "a node listing no networks" (`[]`) and "a swarm node this service cannot reach"
+(409 `NODE_REMOTE`, binding `code` and `message`); the last two, and their screenshots (`empty`,
+`remote`), skip themselves until the `@qits/system-golden-masters` pin records them.
+
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
 (`listSwarmConfigs`, `docker config ls` on the manager), one table in the server's order: name
@@ -1333,7 +1354,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases}.operations*.ts`                            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-networks}.operations*.ts`              | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
