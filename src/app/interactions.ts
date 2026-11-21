@@ -943,6 +943,14 @@ export const INTERACTIONS = {
    */
   'show-swarm-configs': 'The swarm configs page lists the swarm’s configs with their labels',
   /**
+   * `swarm-secrets.page.ts` via `SWARM_SECRET_LIST` (qits-2350): the System section's secrets page
+   * lists the secrets of qits-system's swarm, each with its labels, docker's created and updated
+   * text and the services whose spec references it (`Unused` when none), never a value. Refresh,
+   * and a deployment going live or failing, read them again.
+   */
+  'show-swarm-secrets':
+    'The swarm secrets page lists the swarm’s secrets and the services using them',
+  /**
    * `system-targets.page.ts` via `TARGET_ROWS` (qits-2351): the System section's Targets page lists
    * qits-system's execution targets, each with its connection, quarantine, slots, sign-ins, last
    * health check and memory. Refresh, and a target event (`TARGET_EVENTS`, `TargetDeleted`,

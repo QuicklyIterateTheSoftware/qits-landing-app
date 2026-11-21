@@ -119,6 +119,7 @@ export type GlobalPath =
   | 'system/swarm/services'
   | 'system/swarm/nodes'
   | 'system/swarm/configs'
+  | 'system/swarm/secrets'
   | 'system/targets'
   | 'mirror'
   | 'orchestrator';
@@ -137,8 +138,8 @@ export interface GlobalChild {
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
  * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System; qits-2357: Mirror; qits-2359:
  * Orchestrator), with its own pages listed below it while it is open (`children`, qits-2346:
- * System's Services and Nodes), or a site of its own the app leaves for at `href`, through its
- * declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
+ * System's Services, Nodes, Configs and Secrets), or a site of its own the app leaves for at
+ * `href`, through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
  */
 export type GlobalLink =
   | {
@@ -217,7 +218,7 @@ export interface NavNote {
  * Orchestrator, a work page and a global section's page are marked current by `[qitsExit]`; a section keeps its own rule
  * (`currentOf`: `true` while one of its pages below it is open, and Agents on a slot's page), and so
  * does a global section with pages of its own (`globalCurrentOf`, the same rule: System is `true`
- * on Services or Nodes, qits-2346), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
+ * on Services, Nodes, Configs or Secrets, qits-2346), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
@@ -617,6 +618,7 @@ export class ShellLayout {
     services: exit('system/swarm/services'),
     nodes: exit('system/swarm/nodes'),
     configs: exit('system/swarm/configs'),
+    secrets: exit('system/swarm/secrets'),
     targets: exit('system/targets'),
   });
 
@@ -640,10 +642,11 @@ export class ShellLayout {
    * project's sections' place while no project is open, and not at all while one is: Artifacts
    * (qits-2316), System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359), in-app
    * sections, and IdP admin (qits-2319, leaving the app). An in-app section may list its own pages
-   * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348) and Targets
-   * (qits-2351), one exit each of `open-sidebar-system-page`; qits-2347…qits-2356 each add one
-   * child there. Mirror lists none: its one listable page is the OCI upstreams, which `mirror`
-   * opens; nor does Orchestrator: its one process (gc) is what `orchestrator` opens.
+   * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348), Secrets
+   * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`;
+   * qits-2347…qits-2356 each add one child there. Mirror lists none: its one listable page is the
+   * OCI upstreams, which `mirror` opens; nor does Orchestrator: its one process (gc) is what
+   * `orchestrator` opens.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
@@ -658,6 +661,7 @@ export class ShellLayout {
           { label: 'Services', exit: system.services, path: system.services.url() },
           { label: 'Nodes', exit: system.nodes, path: system.nodes.url() },
           { label: 'Configs', exit: system.configs, path: system.configs.url() },
+          { label: 'Secrets', exit: system.secrets, path: system.secrets.url() },
           { label: 'Targets', exit: system.targets, path: system.targets.url() },
         ],
       },

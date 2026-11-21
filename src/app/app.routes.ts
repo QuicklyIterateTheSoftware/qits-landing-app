@@ -160,12 +160,14 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `system/swarm/nodes` (`SwarmNodesPage`, qits-2346) is the same swarm's nodes, an entry point too,
  * where the old `swarm/nodes` hands off. `system/swarm/configs` (`SwarmConfigsPage`, qits-2348) is
  * its configs, with their labels and docker's own created/updated text, an entry point too, where
- * the old `swarm/configs` hands off. `system/targets` (`SystemTargetsPage`, qits-2351) is
+ * the old `swarm/configs` hands off. `system/swarm/secrets` (`SwarmSecretsPage`, qits-2350) is
+ * its secrets, never a value, each with the services whose spec references it, an entry point too,
+ * where the old `swarm/secrets` hands off. `system/targets` (`SystemTargetsPage`, qits-2351) is
  * qits-system's execution targets, each with its slots, sign-ins, health and leases, and the
  * writes that declare, edit, commission and delete them; an entry point too, where the old
  * `targets` hands off. Below the root sidebar's System, its pages are listed while the section is
- * open (Services, Nodes, Configs, Targets); qits-2345…qits-2356 add the section's other pages under
- * `system/...`, qits-2347…qits-2356 each with its own entry there.
+ * open (Services, Nodes, Configs, Secrets, Targets); qits-2345…qits-2356 add the section's other
+ * pages under `system/...`, qits-2347…qits-2356 each with its own entry there.
  * `system/swarm/services/<id>` (`SwarmServicePage`, qits-2345) is one service of that swarm, by
  * its name or id: its facts, rollout, environment keys, labels, mounts, networks and tasks; each
  * services row's name opens it, and it is an entry point too, where the old `swarm/services/:id`
@@ -766,6 +768,17 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/system/swarm/configs/swarm-configs.page').then(
                 (m) => m.SwarmConfigsPage,
+              ),
+          },
+          {
+            path: 'swarm/secrets',
+            // An entry point (qits-2049, qits-2350): qits-system-frontend's old `swarm/secrets`
+            // hands off here with a full-document load, and its bookmarks follow; Secrets below the
+            // sidebar's System leads here too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/secrets/swarm-secrets.page').then(
+                (m) => m.SwarmSecretsPage,
               ),
           },
           {

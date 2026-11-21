@@ -15,6 +15,7 @@ import {
   SWARM_NODE,
   SWARM_NODE_LIST,
   SWARM_NODE_TASKS,
+  SWARM_SECRET_LIST,
   SWARM_SERVICE_LIST,
 } from './swarm.operations';
 
@@ -35,8 +36,11 @@ import {
  * body). They skip themselves until the `@qits/system-golden-masters` pin records the node's
  * tasks. Its configs page lists the swarm's configs (`show-swarm-configs`,
  * qits-2348): in "a single-node swarm" (one config with one label), and in "a swarm holding no
- * configs" (`[]`), which skips itself the same way. Each test runs the operation's own `fetch`; the
- * interaction's `operationId` and `consumes` are the operation's.
+ * configs" (`[]`), which skips itself the same way. Its secrets page lists the swarm's secrets with
+ * the services that use them (`show-swarm-secrets`, qits-2350): in "a single-node swarm" (two
+ * secrets, one used by `dev-qits-artifacts`, one by none), and in "a swarm holding no secrets"
+ * (`[]`). Each test runs the operation's own `fetch`; the interaction's `operationId` and
+ * `consumes` are the operation's.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-system-service';
@@ -49,6 +53,7 @@ const OPERATIONS = [
   'getSwarmNode',
   'listSwarmNodeTasks',
   'listSwarmConfigs',
+  'listSwarmSecrets',
 ];
 
 const SWARM = 'a single-node swarm';
@@ -78,6 +83,8 @@ const givenNode = (state: string, operationId: string, consumes: readonly string
     trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-node' },
     consumes,
   });
+
+const NO_SECRETS = 'a swarm holding no secrets';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-swarm-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -289,4 +296,35 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
         expect(data).toEqual([]);
       }),
   );
+
+  it('show-swarm-secrets: the page lists the swarm’s secrets, each with the services using it', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: SWARM,
+      operationId: SWARM_SECRET_LIST.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-secrets' },
+      consumes: SWARM_SECRET_LIST.consumes,
+    }).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => SWARM_SECRET_LIST.fetch({}));
+      expect(error).toBeUndefined();
+      const secrets = data ?? [];
+      expect(secrets).toHaveLength(2);
+      // One secret no service uses, one `dev-qits-artifacts` mounts.
+      expect(secrets.map((secret) => secret.usedBy?.length)).toEqual([0, 1]);
+      // No value: the door answers none, and the page reads none.
+      expect(secrets.every((secret) => !('value' in secret))).toBe(true);
+    }));
+
+  it('show-swarm-secrets: a swarm holding no secrets lists none', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: NO_SECRETS,
+      operationId: SWARM_SECRET_LIST.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-secrets' },
+      consumes: SWARM_SECRET_LIST.consumes,
+    }).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => SWARM_SECRET_LIST.fetch({}));
+      expect(error).toBeUndefined();
+      expect(data).toEqual([]);
+    }));
 });

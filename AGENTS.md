@@ -362,9 +362,10 @@ qits-2359). Such a section may list its own pages below it
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
 on its own page, `true` while one of its pages below it is the current one (that page `page`).
-System's are Services, Nodes, Configs and Targets (`open-sidebar-system-page`,
-`services`/`nodes`/`configs`/`targets`, `exit('system/swarm/services')`, `exit('system/swarm/nodes')`,
-`exit('system/swarm/configs')` (qits-2348), `exit('system/targets')` (qits-2351));
+System's are Services, Nodes, Configs, Secrets and Targets (`open-sidebar-system-page`,
+`services`/`nodes`/`configs`/`secrets`/`targets`, `exit('system/swarm/services')`,
+`exit('system/swarm/nodes')`, `exit('system/swarm/configs')` (qits-2348),
+`exit('system/swarm/secrets')` (qits-2350), `exit('system/targets')` (qits-2351));
 qits-2347…qits-2356 add one each.
 Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
 `mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
@@ -539,7 +540,7 @@ The System section (qits-2344) is qits-system's one swarm, which no project join
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
 under `system/...`, each listed below the sidebar's System while the section is open (Services,
-Nodes, Configs and Targets so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+Nodes, Configs, Secrets and Targets so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
 hands off to it with a full-document load; the sidebar's System exit names `system`, which
 redirects, and Services below it names it; a service's page
 leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
@@ -640,6 +641,24 @@ all: Refresh reads again; nothing polls. The pact reads it (`show-swarm-configs`
 swarm" (one config, `qits-edge-vhosts`, labelled `qits.platform.deployments.target=platform`) and
 "a swarm holding no configs" (`[]`; the interaction and the `empty` screenshot skip themselves
 until the pin records it).
+
+`system/swarm/secrets` (`SwarmSecretsPage`, qits-2350, replacing qits-system-frontend's
+`swarm/secrets`, an entry point too) is the same swarm's secrets, never a value (a lede says so:
+the swarm returns a value to no one). `SWARM_SECRET_LIST` (`listSwarmSecrets`, `docker secret ls`
+on the manager; `LIST_SWARM_SECRETS` leaves out `driver`, always empty here), one table in the
+server's order: name, docker's 12-character id (`shortSwarmId`, the whole id in `title`), Used by
+(each service whose spec references the secret, a neutral chip; `Unused`, a waiting chip derived
+from `usedBy`, when none: qits-system reads the usage from the services' specs, never from the
+secret, which it never inspects), labels (`key=value` neutral chips, "—" for none), Created and
+Updated. Those two are docker's `secret ls` text ("2 months ago"), not timestamps: shown as given,
+never parsed (absolute dates would need `secret inspect`, which qits-system refuses by design). The
+caption is "N secrets", plus ", M unused" while any is. An empty swarm is one sentence ("This swarm
+holds no secrets."), a 503 and a 403 as the services page. Staleness: `DEPLOYMENT_EVENTS` → the
+whole list, debounced 1 s (a deployment changes which services use a secret); a secret created or
+removed by hand (or by bootstrap) sends no event, so Refresh reads again; nothing polls. The pact
+reads it (`show-swarm-secrets`) in "a single-node swarm" (`qits-dns-hetzner-token-…`, labelled and
+unused, and `qits-platform-idp-signing-key`, used by `dev-qits-artifacts`) and "a swarm holding no
+secrets" (`[]`).
 
 `system/targets` (`SystemTargetsPage`, qits-2351, replacing qits-system-frontend's `targets`, an
 entry point too) is qits-system's execution targets. One read, `TARGET_ROWS` (`listTargets` with
