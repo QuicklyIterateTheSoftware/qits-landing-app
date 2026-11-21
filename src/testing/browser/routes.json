@@ -375,6 +375,42 @@
   ],
   "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts": [
     {
+      "provider": "qits-maintenance-service",
+      "state": "an external package our releases embed",
+      "operationId": "listDependencies",
+      "route": "mirror/repositories/:repository"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "an external package our releases embed",
+      "operationId": "listDependencyDependents",
+      "route": "mirror/repositories/:repository"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "external dependencies matching a glob, some behind",
+      "operationId": "listDependencies",
+      "route": "mirror/repositories/:repository"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no external dependencies matching a glob",
+      "operationId": "listDependencies",
+      "route": "mirror/repositories/:repository"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listDependencyDependents",
+      "route": "mirror/repositories/:repository"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listDependencyDependents",
+      "route": "mirror/repositories/:repository"
+    },
+    {
       "provider": "qits-mirror-service",
       "state": "a maven cache holding a cached artifact",
       "operationId": "listRepositoryPackages",
@@ -391,6 +427,26 @@
       "state": "an npm cache holding a package",
       "operationId": "listRepositoryPackages",
       "route": "mirror/repositories/:repository"
+    },
+    {
+      "provider": "qits-mirror-service",
+      "state": "the default caches",
+      "operationId": "listRepositoryPackages",
+      "route": "mirror/repositories/:repository"
+    }
+  ],
+  "src/app/routes/mirror/repositories/mirror-repositories.page.browser.spec.ts": [
+    {
+      "provider": "qits-mirror-service",
+      "state": "a mirror holding no cache roots",
+      "operationId": "listRepositories",
+      "route": "mirror/repositories"
+    },
+    {
+      "provider": "qits-mirror-service",
+      "state": "the default caches",
+      "operationId": "listRepositories",
+      "route": "mirror/repositories"
     },
     {
       "provider": "qits-mirror-service",
@@ -477,6 +533,12 @@
       "route": "projects/:slug/agents/:agentId/chat"
     },
     {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/agents/:agentId/chat"
+    },
+    {
       "provider": "qits-workspace-daemon",
       "state": "a workspace daemon with an agent that has taken turns",
       "operationId": "getCommandLog",
@@ -518,6 +580,12 @@
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
       "route": "projects/:slug/agents/:agentId/files"
     },
     {
@@ -577,6 +645,12 @@
       "route": "projects/:slug/agents/:agentId/terminal"
     },
     {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/agents/:agentId/terminal"
+    },
+    {
       "provider": "qits-workspaces-service",
       "state": "a workspace slot hosting agents",
       "operationId": "getAgentActiveProcess",
@@ -612,6 +686,12 @@
       "provider": "qits-projects-service",
       "state": "a project with repositories in components",
       "operationId": "listProjectRepositories",
+      "route": "projects/:slug/agents"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
       "route": "projects/:slug/agents"
     },
     {
@@ -3098,6 +3178,12 @@
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/workspaces/:slotId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
       "route": "projects/:slug/workspaces/:slotId"
     },
     {
