@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetOrchestratorApiProcessesByKindRunsData, GetOrchestratorApiProcessesByKindRunsErrors, GetOrchestratorApiProcessesByKindRunsResponses, GetOrchestratorApiProcessesData, GetOrchestratorApiProcessesErrors, GetOrchestratorApiProcessesResponses, GetOrchestratorApiRunsByIdData, GetOrchestratorApiRunsByIdErrors, GetOrchestratorApiRunsByIdResponses, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesErrors, ListArtifactsCleanupRepositoriesResponses, PlanArtifactsCleanupRepositoryData, PlanArtifactsCleanupRepositoryErrors, PlanArtifactsCleanupRepositoryResponses, PostOrchestratorApiProcessesByKindRunsData, PostOrchestratorApiProcessesByKindRunsErrors, PostOrchestratorApiProcessesByKindRunsResponses, SweepArtifactsCleanupRepositoryData, SweepArtifactsCleanupRepositoryErrors, SweepArtifactsCleanupRepositoryResponses } from './types.gen';
+import type { GetProcessRunData, GetProcessRunErrors, GetProcessRunResponses, GetProcessRunStepData, GetProcessRunStepErrors, GetProcessRunStepResponses, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesErrors, ListArtifactsCleanupRepositoriesResponses, ListProcessesData, ListProcessesErrors, ListProcessesResponses, ListProcessRunsData, ListProcessRunsErrors, ListProcessRunsResponses, PlanArtifactsCleanupRepositoryData, PlanArtifactsCleanupRepositoryErrors, PlanArtifactsCleanupRepositoryResponses, StartProcessRunData, StartProcessRunErrors, StartProcessRunResponses, SweepArtifactsCleanupRepositoryData, SweepArtifactsCleanupRepositoryErrors, SweepArtifactsCleanupRepositoryResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -54,7 +54,7 @@ export const sweepArtifactsCleanupRepository = <ThrowOnError extends boolean = f
 /**
  * Every technical process, with its steps and their dependencies
  */
-export const getOrchestratorApiProcesses = <ThrowOnError extends boolean = false>(options?: Options<GetOrchestratorApiProcessesData, ThrowOnError>): RequestResult<GetOrchestratorApiProcessesResponses, GetOrchestratorApiProcessesErrors, ThrowOnError> => (options?.client ?? client).get<GetOrchestratorApiProcessesResponses, GetOrchestratorApiProcessesErrors, ThrowOnError>({
+export const listProcesses = <ThrowOnError extends boolean = false>(options?: Options<ListProcessesData, ThrowOnError>): RequestResult<ListProcessesResponses, ListProcessesErrors, ThrowOnError> => (options?.client ?? client).get<ListProcessesResponses, ListProcessesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/orchestrator/api/processes',
     ...options
@@ -63,7 +63,7 @@ export const getOrchestratorApiProcesses = <ThrowOnError extends boolean = false
 /**
  * One process's runs, newest first
  */
-export const getOrchestratorApiProcessesByKindRuns = <ThrowOnError extends boolean = false>(options: Options<GetOrchestratorApiProcessesByKindRunsData, ThrowOnError>): RequestResult<GetOrchestratorApiProcessesByKindRunsResponses, GetOrchestratorApiProcessesByKindRunsErrors, ThrowOnError> => (options.client ?? client).get<GetOrchestratorApiProcessesByKindRunsResponses, GetOrchestratorApiProcessesByKindRunsErrors, ThrowOnError>({
+export const listProcessRuns = <ThrowOnError extends boolean = false>(options: Options<ListProcessRunsData, ThrowOnError>): RequestResult<ListProcessRunsResponses, ListProcessRunsErrors, ThrowOnError> => (options.client ?? client).get<ListProcessRunsResponses, ListProcessRunsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/orchestrator/api/processes/{kind}/runs',
     ...options
@@ -72,7 +72,7 @@ export const getOrchestratorApiProcessesByKindRuns = <ThrowOnError extends boole
 /**
  * Start a run of this process
  */
-export const postOrchestratorApiProcessesByKindRuns = <ThrowOnError extends boolean = false>(options: Options<PostOrchestratorApiProcessesByKindRunsData, ThrowOnError>): RequestResult<PostOrchestratorApiProcessesByKindRunsResponses, PostOrchestratorApiProcessesByKindRunsErrors, ThrowOnError> => (options.client ?? client).post<PostOrchestratorApiProcessesByKindRunsResponses, PostOrchestratorApiProcessesByKindRunsErrors, ThrowOnError>({
+export const startProcessRun = <ThrowOnError extends boolean = false>(options: Options<StartProcessRunData, ThrowOnError>): RequestResult<StartProcessRunResponses, StartProcessRunErrors, ThrowOnError> => (options.client ?? client).post<StartProcessRunResponses, StartProcessRunErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/orchestrator/api/processes/{kind}/runs',
     ...options,
@@ -85,8 +85,17 @@ export const postOrchestratorApiProcessesByKindRuns = <ThrowOnError extends bool
 /**
  * One run with its steps
  */
-export const getOrchestratorApiRunsById = <ThrowOnError extends boolean = false>(options: Options<GetOrchestratorApiRunsByIdData, ThrowOnError>): RequestResult<GetOrchestratorApiRunsByIdResponses, GetOrchestratorApiRunsByIdErrors, ThrowOnError> => (options.client ?? client).get<GetOrchestratorApiRunsByIdResponses, GetOrchestratorApiRunsByIdErrors, ThrowOnError>({
+export const getProcessRun = <ThrowOnError extends boolean = false>(options: Options<GetProcessRunData, ThrowOnError>): RequestResult<GetProcessRunResponses, GetProcessRunErrors, ThrowOnError> => (options.client ?? client).get<GetProcessRunResponses, GetProcessRunErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/orchestrator/api/runs/{id}',
+    ...options
+});
+
+/**
+ * One step of a run, with its bodies
+ */
+export const getProcessRunStep = <ThrowOnError extends boolean = false>(options: Options<GetProcessRunStepData, ThrowOnError>): RequestResult<GetProcessRunStepResponses, GetProcessRunStepErrors, ThrowOnError> => (options.client ?? client).get<GetProcessRunStepResponses, GetProcessRunStepErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/orchestrator/api/runs/{id}/steps/{stepId}',
     ...options
 });
