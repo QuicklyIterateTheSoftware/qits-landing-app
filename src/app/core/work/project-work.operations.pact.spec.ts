@@ -16,6 +16,7 @@ import {
   projectsGoldenMasters as masters,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
+import { numericPriority } from '../../../testing/numeric-priority';
 import type { WorkEntry } from './work.consumes';
 import { workRef, type DispatchMode, type WorkStatus } from './moves';
 import type { DropMove, WorkOutcome } from './work-outcome';
@@ -301,6 +302,7 @@ describe('qits-landing-app → qits-projects-service pact: the project work oper
     projectsClient.setConfig({ baseUrl: '' });
     try {
       openEndedWork(join(dir, `${CONSUMER}-${PROVIDER}.json`));
+      numericPriority(join(dir, `${CONSUMER}-${PROVIDER}.json`));
       assertPactPart(
         join(dir, `${CONSUMER}-${PROVIDER}.json`),
         COMMITTED,

@@ -11,6 +11,7 @@ import { provideHeyApiClient } from '../../api/projects/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { heldBy, projectsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
+import { numericPriority } from '../../../testing/numeric-priority';
 import { countsAsWork } from './work.consumes';
 import {
   ADD_WORK_COMMENT,
@@ -159,6 +160,7 @@ describe('qits-landing-app → qits-projects-service pact: the work operations',
     projectsClient.setConfig({ baseUrl: '' });
     try {
       openEndedNeeds(join(dir, `${CONSUMER}-${PROVIDER}.json`));
+      numericPriority(join(dir, `${CONSUMER}-${PROVIDER}.json`));
       assertPactPart(
         join(dir, `${CONSUMER}-${PROVIDER}.json`),
         COMMITTED,

@@ -12771,7 +12771,7 @@
                 "archetype": "ISSUE",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "OPEN",
                 "title": "Lift the runner lease",
@@ -12845,6 +12845,17 @@
               "matchers": [
                 {
                   "match": "number"
+                }
+              ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
                 }
               ]
             }
@@ -17141,7 +17152,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000005",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Export invoices for the accountants",
@@ -17151,7 +17162,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000005",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "CSV export",
@@ -17226,6 +17237,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -17287,6 +17309,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -17365,7 +17398,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "DONE",
                 "title": "Done epic",
@@ -17375,7 +17408,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000002",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "DONE",
                 "title": "Shipped feature",
@@ -17450,6 +17483,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -17511,6 +17555,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -17592,7 +17647,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "DROPPED",
                 "title": "Database runs out of connection slots during deploys",
@@ -17666,6 +17721,17 @@
               "matchers": [
                 {
                   "match": "number"
+                }
+              ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
                 }
               ]
             }
@@ -17756,7 +17822,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000005",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Export invoices for the accountants",
@@ -17766,7 +17832,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000005",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "CSV export",
@@ -17841,6 +17907,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -17902,6 +17979,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -17998,7 +18086,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000005",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Export invoices for the accountants",
@@ -18008,7 +18096,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000005",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "CSV export",
@@ -18083,6 +18171,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -18144,6 +18243,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -18224,7 +18334,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Nothing asked for yet",
@@ -18234,7 +18344,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Nothing asked for yet",
@@ -18244,7 +18354,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Nothing asked for yet",
@@ -18254,7 +18364,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Nothing asked for yet",
@@ -18264,7 +18374,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Nothing asked for yet",
@@ -18274,7 +18384,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Nothing asked for yet",
@@ -18445,6 +18555,17 @@
                   "match": "number"
                 }
               ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
             }
           },
           "header": {
@@ -18516,7 +18637,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REPORTED",
                 "title": "Reported epic",
@@ -18526,7 +18647,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000015",
                 "parent": "00000000-0000-4000-8000-000000000014",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-20",
                 "status": "IMPLEMENTING",
                 "title": "Started feature",
@@ -18601,6 +18722,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -18662,6 +18794,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -18743,7 +18886,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "READY_FOR_DEV",
                 "title": "Work item actions",
@@ -18819,6 +18962,17 @@
                   "match": "number"
                 }
               ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
             }
           },
           "header": {
@@ -18892,7 +19046,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Work item actions",
@@ -18968,6 +19122,17 @@
                   "match": "number"
                 }
               ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
             }
           },
           "header": {
@@ -19041,7 +19206,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REPORTED",
                 "title": "Database runs out of connection slots during deploys",
@@ -19115,6 +19280,17 @@
               "matchers": [
                 {
                   "match": "number"
+                }
+              ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
                 }
               ]
             }
@@ -19205,7 +19381,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000005",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Export invoices for the accountants",
@@ -19215,7 +19391,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000005",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "CSV export",
@@ -19290,6 +19466,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -19351,6 +19538,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -19429,7 +19627,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Bug ticket",
@@ -19439,7 +19637,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Bug ticket",
@@ -19449,7 +19647,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Bug ticket",
@@ -19563,6 +19761,17 @@
                   "match": "number"
                 }
               ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
             }
           },
           "header": {
@@ -19640,7 +19849,7 @@
                 "id": "00000000-0000-4000-8000-000000000003",
                 "needs": [],
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Shared work-id renderer",
@@ -19658,7 +19867,7 @@
                   }
                 ],
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "READY_FOR_DEV",
                 "title": "Render work ids in the list",
@@ -19669,7 +19878,7 @@
                 "id": "00000000-0000-4000-8000-000000000005",
                 "needs": [],
                 "parent": "00000000-0000-4000-8000-000000000004",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-4",
                 "status": "READY_FOR_DEV",
                 "title": "First part",
@@ -19687,7 +19896,7 @@
                   }
                 ],
                 "parent": "00000000-0000-4000-8000-000000000008",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-7",
                 "status": "READY_FOR_DEV",
                 "title": "Next step",
@@ -19769,6 +19978,17 @@
                             {
                               "match": "type",
                               "min": 0
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -19866,6 +20086,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -19936,6 +20167,17 @@
                             {
                               "match": "type",
                               "min": 0
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -20042,6 +20284,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     }
@@ -20119,7 +20372,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Verified epic",
@@ -20129,7 +20382,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000002",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "Shipped feature",
@@ -20204,6 +20457,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -20265,6 +20529,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -20346,7 +20621,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "VERIFIED",
                 "title": "Verified ticket",
@@ -20420,6 +20695,17 @@
               "matchers": [
                 {
                   "match": "number"
+                }
+              ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
                 }
               ]
             }
@@ -20510,7 +20796,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000005",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Export invoices for the accountants",
@@ -20520,7 +20806,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000005",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "CSV export",
@@ -20595,6 +20881,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -20656,6 +20953,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -20735,7 +21043,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic in flight",
@@ -20745,7 +21053,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "READY_FOR_DEV",
                 "title": "Feature pending verification",
@@ -20820,6 +21128,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -20881,6 +21200,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -20960,7 +21290,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic in flight",
@@ -20970,7 +21300,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "VERIFIED",
                 "title": "Verified feature",
@@ -21045,6 +21375,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -21106,6 +21447,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -21186,7 +21538,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "READY_FOR_DEV",
                 "title": "Nested epic",
@@ -21196,7 +21548,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000002",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "Shipped feature",
@@ -21271,6 +21623,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -21332,6 +21695,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -21411,7 +21785,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic in flight",
@@ -21421,7 +21795,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTING",
                 "title": "Feature in flight",
@@ -21496,6 +21870,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -21557,6 +21942,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -21638,7 +22034,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTED",
                 "title": "Database runs out of connection slots during deploys",
@@ -21714,6 +22110,17 @@
                   "match": "number"
                 }
               ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
             }
           },
           "header": {
@@ -21786,7 +22193,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000001",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Epic with mixed features",
@@ -21796,7 +22203,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000001",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "VERIFIED",
                 "title": "Verified feature",
@@ -21871,6 +22278,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -21932,6 +22350,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -22028,7 +22457,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000005",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "IMPLEMENTING",
                 "title": "Export invoices for the accountants",
@@ -22038,7 +22467,7 @@
                 "archetype": "FEATURE",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": "00000000-0000-4000-8000-000000000005",
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "IMPLEMENTED",
                 "title": "CSV export",
@@ -22113,6 +22542,17 @@
                               "match": "number"
                             }
                           ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
                         }
                       }
                     },
@@ -22174,6 +22614,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -22265,7 +22716,7 @@
                 "archetype": "TICKET",
                 "id": "00000000-0000-4000-8000-000000000004",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-2",
                 "status": "REPORTED",
                 "title": "Invoice totals round the wrong way",
@@ -22310,10 +22761,13 @@
                           ]
                         },
                         "$.priority": {
-                          "combine": "AND",
+                          "combine": "OR",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         },
@@ -22400,6 +22854,17 @@
                           "matchers": [
                             {
                               "match": "number"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         }
@@ -22553,7 +23018,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic",
@@ -22563,7 +23028,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic",
@@ -22573,7 +23038,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic",
@@ -22583,7 +23048,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic",
@@ -22593,7 +23058,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000002",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "contract-00000001-1",
                 "status": "REFINED",
                 "title": "Refined epic",
@@ -22745,6 +23210,17 @@
                   "match": "number"
                 }
               ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
             }
           },
           "header": {
@@ -22817,7 +23293,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "qits-00000001-1",
                 "status": "REFINED",
                 "title": "Unified SPA",
@@ -22827,7 +23303,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "qits-00000001-1",
                 "status": "REFINED",
                 "title": "Unified SPA",
@@ -22837,7 +23313,7 @@
                 "archetype": "EPIC",
                 "id": "00000000-0000-4000-8000-000000000003",
                 "parent": null,
-                "priority": null,
+                "priority": 0,
                 "qualifiedId": "qits-00000001-1",
                 "status": "REFINED",
                 "title": "Unified SPA",
@@ -22949,6 +23425,17 @@
                 },
                 {
                   "match": "number"
+                }
+              ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
                 }
               ]
             }
