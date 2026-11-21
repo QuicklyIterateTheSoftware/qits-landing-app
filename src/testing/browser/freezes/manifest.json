@@ -378,6 +378,22 @@
           ]
         },
         {
+          "path": "mirror",
+          "fullPath": "mirror",
+          "children": [
+            {
+              "path": "",
+              "fullPath": "mirror",
+              "redirectTo": "upstreams"
+            },
+            {
+              "path": "upstreams",
+              "fullPath": "mirror/upstreams",
+              "entry": true
+            }
+          ]
+        },
+        {
           "path": "**",
           "fullPath": "**"
         }
@@ -4777,6 +4793,7 @@
       "triggers": [
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -4795,6 +4812,7 @@
       "triggers": [
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -5313,6 +5331,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -5333,6 +5352,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -5457,6 +5477,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -5477,6 +5498,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -21598,6 +21620,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -21793,6 +21816,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -22366,6 +22390,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -22561,6 +22586,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -22756,6 +22782,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -22951,6 +22978,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -23524,6 +23552,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -23719,6 +23748,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -23913,6 +23943,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -24066,6 +24097,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -24513,6 +24545,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -24666,6 +24699,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -24807,6 +24841,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -24827,6 +24862,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -24873,6 +24909,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -24893,6 +24930,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -24926,6 +24964,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -25115,6 +25154,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -25668,6 +25708,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -25857,6 +25898,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -26033,6 +26075,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -26053,6 +26096,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -26099,6 +26143,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -26119,6 +26164,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -26152,6 +26198,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -26338,6 +26385,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -26882,6 +26930,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -27068,6 +27117,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -27248,6 +27298,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -27396,6 +27447,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -27828,6 +27880,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -27976,6 +28029,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -28130,6 +28184,7 @@
         "open-npm-package:npmPackage",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -28316,6 +28371,7 @@
         "open-npm-package:npmPackage",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -28862,6 +28918,7 @@
         "open-npm-package:npmPackage",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -29048,6 +29105,7 @@
         "open-npm-package:npmPackage",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -29227,6 +29285,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -29358,6 +29417,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -29739,6 +29799,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -29870,6 +29931,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "switch-artifacts-repository:repository"
@@ -30003,6 +30065,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -30223,6 +30286,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -30870,6 +30934,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -31078,6 +31143,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -31280,6 +31346,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -31302,6 +31369,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -31356,6 +31424,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -31378,6 +31447,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -31407,6 +31477,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -31661,6 +31732,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -32410,6 +32482,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -32631,6 +32704,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -32846,6 +32920,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -32868,6 +32943,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -32922,6 +32998,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -32944,6 +33021,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -32972,6 +33050,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -33152,6 +33231,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -33680,6 +33760,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -33860,6 +33941,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -34041,6 +34123,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -34259,6 +34342,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -34901,6 +34985,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -35119,6 +35204,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -35341,6 +35427,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -35444,6 +35531,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -35741,6 +35829,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -35844,6 +35933,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -35936,6 +36026,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -35958,6 +36049,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -36012,6 +36104,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -36034,6 +36127,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -36063,6 +36157,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -36281,6 +36376,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -36923,6 +37019,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -37141,6 +37238,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -37359,6 +37457,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -37577,6 +37676,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -38219,6 +38319,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -38437,6 +38538,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread",
@@ -38648,6 +38750,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -38670,6 +38773,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -38724,6 +38828,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -38746,6 +38851,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "reread-artifacts-cleanup-plan:reread"
@@ -38775,6 +38881,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -38907,6 +39014,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -39291,6 +39399,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -39423,6 +39532,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -39555,6 +39665,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -39687,6 +39798,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40071,6 +40183,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40203,6 +40316,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40334,6 +40448,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40377,6 +40492,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40494,6 +40610,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40537,6 +40654,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -40574,6 +40692,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40595,6 +40714,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40646,6 +40766,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40667,6 +40788,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40688,6 +40810,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40709,6 +40832,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40760,6 +40884,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40781,6 +40906,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40803,6 +40929,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40825,6 +40952,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40877,6 +41005,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40899,6 +41028,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40920,6 +41050,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40941,6 +41072,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -40992,6 +41124,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41013,6 +41146,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41040,6 +41174,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -41083,6 +41218,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -41200,6 +41336,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -41243,6 +41380,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -41280,6 +41418,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41301,6 +41440,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41352,6 +41492,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41373,6 +41514,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41394,6 +41536,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41415,6 +41558,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41466,6 +41610,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41487,6 +41632,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41509,6 +41655,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41531,6 +41678,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41583,6 +41731,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41605,6 +41754,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -41632,6 +41782,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -41726,6 +41877,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -41978,6 +42130,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -42072,6 +42225,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -42166,6 +42320,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -42310,6 +42465,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -42696,6 +42852,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -42840,6 +42997,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "read-artifact-docs-version:read"
@@ -42978,6 +43136,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -42999,6 +43158,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43050,6 +43210,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43071,6 +43232,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43108,6 +43270,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43145,6 +43308,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43244,6 +43408,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43281,6 +43446,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43302,6 +43468,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43323,6 +43490,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43374,6 +43542,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43395,6 +43564,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -43432,6 +43602,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -43596,6 +43767,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -44044,6 +44216,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -44208,6 +44381,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -44372,6 +44546,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -44536,6 +44711,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -44984,6 +45160,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -45148,6 +45325,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -45296,6 +45474,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45317,6 +45496,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45368,6 +45548,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45389,6 +45570,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45411,6 +45593,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45433,6 +45616,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45485,6 +45669,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45507,6 +45692,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45528,6 +45714,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45549,6 +45736,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45600,6 +45788,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45621,6 +45810,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -45658,6 +45848,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -45874,6 +46065,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -46462,6 +46654,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -46678,6 +46871,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open",
         "toggle-image-digests:toggled"
@@ -46891,6 +47085,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -47020,6 +47215,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -47361,6 +47557,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -47490,6 +47687,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -47612,6 +47810,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47639,6 +47838,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47708,6 +47908,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47735,6 +47936,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47756,6 +47958,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47777,6 +47980,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47828,6 +48032,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47849,6 +48054,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47870,6 +48076,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47891,6 +48098,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47942,6 +48150,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47963,6 +48172,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -47990,6 +48200,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -48061,6 +48272,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -48262,6 +48474,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -48333,6 +48546,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -48399,6 +48613,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -48421,6 +48636,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -48473,6 +48689,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -48495,6 +48712,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -48534,6 +48752,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -48668,6 +48887,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49024,6 +49244,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49158,6 +49379,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49280,6 +49502,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49387,6 +49610,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49696,6 +49920,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49803,6 +50028,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -49904,6 +50130,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -49925,6 +50152,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -49976,6 +50204,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -49997,6 +50226,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50031,6 +50261,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -50160,6 +50391,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -50531,6 +50763,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -50660,6 +50893,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -50782,6 +51016,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50809,6 +51044,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50878,6 +51114,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50905,6 +51142,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50926,6 +51164,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50947,6 +51186,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -50998,6 +51238,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51019,6 +51260,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51040,6 +51282,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51061,6 +51304,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51112,6 +51356,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51133,6 +51378,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51160,6 +51406,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -51231,6 +51478,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -51432,6 +51680,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -51503,6 +51752,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -51569,6 +51819,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51591,6 +51842,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51643,6 +51895,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51665,6 +51918,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -51704,6 +51958,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -51838,6 +52093,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -52224,6 +52480,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -52358,6 +52615,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -52480,6 +52738,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -52587,6 +52846,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -52896,6 +53156,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -53003,6 +53264,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -53104,6 +53366,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -53125,6 +53388,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -53176,6 +53440,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -53197,6 +53462,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -53727,6 +53993,1190 @@
       "records": [],
       "triggers": [
         "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > says a mirror fronting no registry fronts none",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror fronting no registries",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > says a mirror fronting no registry fronts none",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror fronting no registries",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > says a mirror fronting no registry fronts none",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror fronting no registries",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > says a mirror fronting no registry fronts none",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror fronting no registries",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > says a mirror fronting no registry fronts none",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror fronting no registries",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > says a mirror fronting no registry fronts none",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror fronting no registries",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > marks the page as loading, then says the upstreams cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-desktop-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > lists the registries the mirror fronts, in the server’s order",
+      "name": "upstreams",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "namespace",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-desktop-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > lists the registries the mirror fronts, in the server’s order",
+      "name": "upstreams",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "namespace",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-phone-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > lists the registries the mirror fronts, in the server’s order",
+      "name": "upstreams",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "namespace",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-phone-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > lists the registries the mirror fronts, in the server’s order",
+      "name": "upstreams",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "namespace",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-tablet-dark.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > lists the registries the mirror fronts, in the server’s order",
+      "name": "upstreams",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "namespace",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-tablet-light.html",
+      "spec": "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts",
+      "test": "MirrorUpstreamsPage (screenshots) > lists the registries the mirror fronts, in the server’s order",
+      "name": "upstreams",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/upstreams",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listUpstreams"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=docker.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=quay.io",
+          "field": "namespace",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": null,
+          "derived": [
+            "createdAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "cachedImages",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "host",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listUpstreams",
+          "item": "host=registry.access.redhat.com",
+          "field": "namespace",
+          "derived": []
+        }
       ]
     },
     {
@@ -295513,6 +296963,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295539,6 +296990,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295603,6 +297055,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295629,6 +297082,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295649,6 +297103,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295669,6 +297124,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295715,6 +297171,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295735,6 +297192,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -295782,6 +297240,7 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -295917,6 +297376,7 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -296310,6 +297770,7 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -296445,6 +297906,7 @@
         "open-project-card:project",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ],
@@ -296553,6 +298015,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -296573,6 +298036,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -296619,6 +298083,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -296639,6 +298104,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system:open"
       ]
@@ -296665,6 +298131,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296701,6 +298168,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296791,6 +298259,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296827,6 +298296,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296857,6 +298327,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296879,6 +298350,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296927,6 +298399,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296949,6 +298422,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -296977,6 +298451,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297077,6 +298552,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297311,6 +298787,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297411,6 +298888,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297505,6 +298983,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297527,6 +299006,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297575,6 +299055,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297597,6 +299078,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297620,6 +299102,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297643,6 +299126,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297696,6 +299180,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297719,6 +299204,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297748,6 +299234,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -297924,6 +299411,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298436,6 +299924,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298612,6 +300101,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298782,6 +300272,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298805,6 +300296,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298858,6 +300350,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298881,6 +300374,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298904,6 +300398,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298927,6 +300422,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -298980,6 +300476,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -299003,6 +300500,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -299032,6 +300530,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -299336,6 +300835,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300232,6 +301732,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300536,6 +302037,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300834,6 +302336,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300857,6 +302360,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300910,6 +302414,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300933,6 +302438,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300961,6 +302467,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -300997,6 +302504,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301087,6 +302595,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301123,6 +302632,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301153,6 +302663,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301175,6 +302686,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301223,6 +302735,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301245,6 +302758,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301273,6 +302787,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301402,6 +302917,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301741,6 +303257,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301870,6 +303387,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -301993,6 +303511,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -302015,6 +303534,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -302063,6 +303583,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -302085,6 +303606,7 @@
         "open-network-access:open",
         "open-sidebar-artifacts:open",
         "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
@@ -304018,6 +305540,32 @@
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-phone-light.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-tablet-dark.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-tablet-light.html"
+    ],
+    "mirror/upstreams": [
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/unavailable-tablet-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-desktop-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-desktop-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-phone-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-phone-light.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-tablet-dark.html",
+      "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/upstreams-tablet-light.html"
     ],
     "projects": [
       "src/app/routes/projects/project-picker.page.browser.spec.ts/empty-desktop-dark.html",
@@ -307892,6 +309440,16 @@
       },
       {
         "route": null,
+        "interaction": "open-sidebar-mirror",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "mirror",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-sidebar-network-access",
         "outcome": "networkAccess",
         "kind": "external",
@@ -308441,6 +309999,15 @@
         "route": null,
         "interaction": "open-sidebar-maintenance-page",
         "outcome": "dependencies",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-mirror open: the sidebar’s Mirror opens the Mirror section, marked current there",
+        "route": null,
+        "interaction": "open-sidebar-mirror",
+        "outcome": "open",
         "kind": "exit",
         "freeze": null
       },

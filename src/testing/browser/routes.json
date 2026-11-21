@@ -373,6 +373,20 @@
       "route": "artifacts/repositories/:repo/packages/:package"
     }
   ],
+  "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts": [
+    {
+      "provider": "qits-mirror-service",
+      "state": "a mirror fronting no registries",
+      "operationId": "listUpstreams",
+      "route": "mirror/upstreams"
+    },
+    {
+      "provider": "qits-mirror-service",
+      "state": "the default caches",
+      "operationId": "listUpstreams",
+      "route": "mirror/upstreams"
+    }
+  ],
   "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
