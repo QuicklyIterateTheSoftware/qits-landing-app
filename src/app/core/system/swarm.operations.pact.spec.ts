@@ -11,6 +11,7 @@ import { addGoldenInteraction, assertPactPart } from '@qits/angular/testing';
 import { isRecorded, systemGoldenMasters as masters } from '../../../testing/golden-masters';
 import { swarmServiceState } from './swarm-service-state';
 import {
+  SWARM_CONFIG,
   SWARM_CONFIG_LIST,
   SWARM_NODE,
   SWARM_NODE_LIST,
@@ -36,7 +37,9 @@ import {
  * body). They skip themselves until the `@qits/system-golden-masters` pin records the node's
  * tasks. Its configs page lists the swarm's configs (`show-swarm-configs`,
  * qits-2348): in "a single-node swarm" (one config with one label), and in "a swarm holding no
- * configs" (`[]`), which skips itself the same way. Its secrets page lists the swarm's secrets with
+ * configs" (`[]`), which skips itself the same way. A config's page reads the config
+ * (`show-swarm-config`, qits-2349): in "a single-node swarm" (`qits-edge-vhosts`, one label, its
+ * data as text, `binary: false`). Its secrets page lists the swarm's secrets with
  * the services that use them (`show-swarm-secrets`, qits-2350): in "a single-node swarm" (two
  * secrets, one used by `dev-qits-artifacts`, one by none), and in "a swarm holding no secrets"
  * (`[]`). Each test runs the operation's own `fetch`; the interaction's `operationId` and
@@ -53,6 +56,7 @@ const OPERATIONS = [
   'getSwarmNode',
   'listSwarmNodeTasks',
   'listSwarmConfigs',
+  'getSwarmConfig',
   'listSwarmSecrets',
 ];
 
@@ -123,6 +127,7 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
     expect(SWARM_NODE.provider).toBe(PROVIDER);
     expect(SWARM_NODE_TASKS.provider).toBe(PROVIDER);
     expect(SWARM_CONFIG_LIST.provider).toBe(PROVIDER);
+    expect(SWARM_CONFIG.provider).toBe(PROVIDER);
   });
 
   it('show-swarm-services: the page lists the swarm’s services, each with its replicas', () =>
@@ -296,6 +301,26 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
         expect(data).toEqual([]);
       }),
   );
+
+  it('show-swarm-config: a config with its exact instants, its labels and its data as text', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: SWARM,
+      operationId: SWARM_CONFIG.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-config' },
+      consumes: SWARM_CONFIG.consumes,
+    }).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        SWARM_CONFIG.fetch({
+          path: { id: masters.operation(SWARM, SWARM_CONFIG.operationId).params['configId'] },
+        }),
+      );
+      expect(error).toBeUndefined();
+      expect(data).toEqual(masters.body(SWARM, 'getSwarmConfig'));
+      expect(data?.binary).toBe(false);
+      expect(data?.data).not.toBe('');
+      expect(Object.keys(data?.labels ?? {})).not.toHaveLength(0);
+    }));
 
   it('show-swarm-secrets: the page lists the swarm’s secrets, each with the services using it', () =>
     addGoldenInteraction(pact, masters, {
