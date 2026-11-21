@@ -18,6 +18,7 @@ import {
   LIST_PROJECT_WRAPPER,
   PROJECT_REPOSITORIES,
   PROJECT_REPOSITORY_NAMES,
+  PROJECT_REPOSITORY_PAGE,
 } from './repositories.operations';
 
 /**
@@ -41,6 +42,10 @@ import {
  *   names the project's repository that published a site, in "two projects exist" (whose
  *   repositories are `qits-ci-service` and `qits-ci-frontend`, the publishers qits-artifacts'
  *   docs catalog recording names).
+ * - `show-repository` (`PROJECT_REPOSITORY_PAGE`, qits-2478): a repository's page finds the
+ *   address's repository by name and reads its archetype, in "a project with 3 repositories"
+ *   (the `contract-*` names qits-maintenance's recordings publish from) and "two projects exist"
+ *   (the publishers of qits-artifacts' docs catalog recording).
  * - `show-docs-site` (`PROJECT_REPOSITORY_NAMES`, qits-2337): the docs reader hands a contracts or
  *   routes site off only to a repository of the project, in "two projects exist" (`qits-ci-service`,
  *   `@contracts/qits-ci`'s publisher) and "a project with 3 repositories" (`contract-frontend`,
@@ -199,6 +204,20 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
           expect(repositoryNamed(entries, 'no-such-repository')).toBeUndefined();
         },
       ),
+  );
+
+  it.each(['a project with 3 repositories', 'two projects exist'])(
+    'show-repository: the project’s repositories, the address’s found by name (%s)',
+    (state) =>
+      given(PROJECT_REPOSITORY_PAGE, state, 'show-repository').executeTest(async (server) => {
+        const { data } = await at(server.url, () =>
+          PROJECT_REPOSITORY_PAGE.fetch({ path: { projectId: projectOf(state) } }),
+        );
+        const entries = data?.entries ?? [];
+        expect(entries.length).toBeGreaterThan(0);
+        const name = entries[0].repository?.name ?? '';
+        expect(repositoryNamed(entries, name)?.archetype).toBeTruthy();
+      }),
   );
 
   it.each(['two projects exist', 'a project with 3 repositories'])(

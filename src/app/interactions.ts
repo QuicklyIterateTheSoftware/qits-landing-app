@@ -1518,7 +1518,29 @@ export const INTERACTIONS = {
    * pact (epic qits-2000).
    */
   'open-repository-pages':
-    'A repository’s card opens its UI builder, or its contracts or entities page',
+    'A repository’s card or page opens its UI builder, or its contracts or entities page',
+  /**
+   * `repository.page.ts` via `PROJECT_REPOSITORIES`, `MAINTENANCE_ARTIFACTS` and `DOCS_CATALOG`
+   * (qits-2478): a repository's page finds the repository in the project and lists the artifacts
+   * it publishes and the docs sites whose newest version it published.
+   */
+  'show-repository': 'A repository’s page lists the artifacts and docs sites it publishes',
+  /**
+   * `repository-card.ts`: a repository's name on its card opens the repository's page
+   * (qits-2478). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository': 'A repository’s name on its card opens the repository’s page',
+  /**
+   * `repository.page.ts`: a published artifact's name opens its page in the artifact store
+   * (qits-2478). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-artifact': 'A published artifact on a repository’s page opens its store page',
+  /**
+   * `repository.page.ts`: “← Repositories” on a repository's page (and the link beside an
+   * unknown repository) goes back to the project's Repositories page (qits-2478). Navigates only,
+   * and names no pact (epic qits-2000).
+   */
+  'leave-repository': '“← Repositories” on a repository’s page goes back to the Repositories page',
   /**
    * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
    * pages, one exit each. Navigates only, and names no pact (epic qits-2000).

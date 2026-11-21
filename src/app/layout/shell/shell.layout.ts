@@ -698,6 +698,10 @@ export class ShellLayout {
     work: exit('projects/:slug/work'),
     agents: exit('projects/:slug/agents'),
     releaseRequests: exit('projects/:slug/release-requests'),
+    repositories: exit('projects/:slug/repositories'),
+    repository: exit('projects/:slug/repositories/:repo'),
+    repositoryContracts: exit('projects/:slug/repositories/:repo/contracts'),
+    repositoryEntities: exit('projects/:slug/repositories/:repo/entities'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
@@ -705,6 +709,13 @@ export class ShellLayout {
     work: this.trail.work,
     agents: this.trail.agents,
     releaseRequests: this.trail.releaseRequests,
+    repositories: this.trail.repositories,
+  };
+
+  /** A repository page's crumb's exit, for the pages with a page below them (qits-2478). */
+  private readonly repositoryPageCrumbExits: Readonly<Record<string, ExitOutcome | undefined>> = {
+    contracts: this.trail.repositoryContracts,
+    entities: this.trail.repositoryEntities,
   };
 
   /** The trail's brand, home. */
@@ -866,9 +877,29 @@ export class ShellLayout {
       exit: this.sectionCrumbExits[found.key],
       params,
     };
+    const url = this.selected.url();
+    // A repository and its pages (qits-2478): Repositories › <repo> › Contracts › <state>, each
+    // crumb before the last leading to its page.
+    const repository = repositoryTrail(url, `/projects/${slug}`);
+    if (found.key === 'repositories' && repository) {
+      const repoParams = { slug, repo: repository.repo };
+      const steps: Crumb[] = [
+        { label: repository.repo, exit: this.trail.repository, params: repoParams },
+      ];
+      if (repository.page) {
+        steps.push({
+          label: repository.page.label,
+          exit: this.repositoryPageCrumbExits[repository.page.segment],
+          params: repoParams,
+        });
+      }
+      if (repository.leaf) steps.push({ label: repository.leaf });
+      const last = steps[steps.length - 1];
+      steps[steps.length - 1] = { label: last.label };
+      return [...crumbs, section, ...steps];
+    }
     // A section's own subpages, one level deep: Work › In Progress, Work › <item id>,
     // Release Requests › <request id>.
-    const url = this.selected.url();
     const requests = this.releaseRequests.requests();
     const agents = this.activeAgents.agents();
     const sub =
@@ -1122,6 +1153,42 @@ export function releaseRequestSubpage(
           field: 'qualifiedId',
         }
       : undefined,
+  };
+}
+
+/** The repositories section's segment below a project: `/projects/<slug>/repositories`. */
+export const REPOSITORIES = 'repositories';
+
+/** A repository's pages that have a crumb of their own, by segment (qits-2478). */
+const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
+  contracts: 'Contracts',
+  entities: 'Entities',
+  'ui-builder': 'UI builder',
+};
+
+/** Where in a repository the URL is: the repository, one of its pages, and a page below that. */
+export interface RepositoryTrail {
+  readonly repo: string;
+  readonly page?: { readonly segment: string; readonly label: string };
+  readonly leaf?: string;
+}
+
+/**
+ * The trail below the Repositories section of the project at `project` (`/projects/<slug>`,
+ * qits-2478): `<project>/repositories/<repo>` is the repository, `…/<repo>/contracts` one of its
+ * pages, `…/contracts/<state>` a page below that (its segment, decoded). Undefined for the list
+ * itself and anything outside it.
+ */
+export function repositoryTrail(url: string, project: string): RepositoryTrail | undefined {
+  const prefix = `${project}/${REPOSITORIES}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const [repo, segment, leaf] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  if (!repo) return undefined;
+  const label = segment ? REPOSITORY_PAGES[segment] : undefined;
+  return {
+    repo: decodeURIComponent(repo),
+    page: segment ? { segment, label: label ?? decodeURIComponent(segment) } : undefined,
+    leaf: segment && leaf ? decodeURIComponent(leaf) : undefined,
   };
 }
 

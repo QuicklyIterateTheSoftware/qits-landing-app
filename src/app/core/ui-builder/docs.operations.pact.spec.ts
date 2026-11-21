@@ -940,6 +940,8 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
 
   const EVERY_KIND = 'a docs catalog of every kind';
   const EMPTY = 'an empty docs catalog';
+  /** `contract-service`'s and `contract-frontend`'s sites: the repository page's (qits-2478). */
+  const CONTRACT_REPOSITORIES = 'a docs catalog naming contract repositories';
 
   /**
    * Whether the installed golden masters record the catalog's publishers (`latestRepository` in
@@ -1079,6 +1081,27 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
       given(EMPTY).executeTest(async (server) => {
         const sites = (await at(server.url, () => catalogRead())) ?? [];
         expect(docBlocks(publishedBy(sites, 'qits-ci-service'))).toEqual([]);
+      }),
+    );
+  });
+
+  part('show-repository', 'a repository’s page (qits-2478)', (given) => {
+    it.skipIf(!current)('show-repository: keeps the docs sites the repository published', () =>
+      given(EVERY_KIND).executeTest(async (server) => {
+        const sites = (await at(server.url, () => catalogRead())) ?? [];
+        expectRecorded(sites, EVERY_KIND);
+        const publisher = sites.find((site) => !!site.latestRepository)?.latestRepository ?? '';
+        expect(publisher).toBeTruthy();
+        expect(publishedBy(sites, publisher).length).toBeGreaterThan(0);
+        expect(publishedBy(sites, 'no-such-repository')).toEqual([]);
+      }),
+    );
+
+    it.skipIf(!current)('show-repository: a contract service’s own docs sites', () =>
+      given(CONTRACT_REPOSITORIES).executeTest(async (server) => {
+        const sites = (await at(server.url, () => catalogRead())) ?? [];
+        expectRecorded(sites, CONTRACT_REPOSITORIES);
+        expect(sites.every((site) => !!site.latestRepository)).toBe(true);
       }),
     );
   });

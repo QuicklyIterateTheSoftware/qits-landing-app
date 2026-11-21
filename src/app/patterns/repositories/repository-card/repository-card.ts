@@ -34,6 +34,8 @@ interface Backup {
  * `open-repository-pages` `uiBuilder`, `contracts` and `entities` (epic qits-2000), and
  * `open-repository-docs` `repository`.
  *
+ * Its name links the repository's own page (`open-repository` `page`, qits-2478).
+ *
  * It marks what it shows (qits-2146): the card is the repository (`qitsEntity`, by `id`), its
  * name, clone URL, backup URL and main branch are fields, and the backup state and the archetype
  * are marked derived from the fields they read. The entry is typed from the consumed client
@@ -56,12 +58,16 @@ interface Backup {
   template: `
     @let repository = shown();
     <ui-card-silent [qitsEntity]="repository" entityKey="id">
-      <card-header
-        class="bg-surface-muted text-center font-mono text-fg"
-        [fieldOf]="repository"
-        qitsField="name"
-        >{{ repository.name ?? '' }}</card-header
-      >
+      <card-header class="bg-surface-muted text-center font-mono text-fg">
+        <a
+          class="name text-fg no-underline hover:underline"
+          [qitsExit]="opening.page"
+          [exitParams]="params()"
+          [fieldOf]="repository"
+          qitsField="name"
+          >{{ repository.name ?? '' }}</a
+        >
+      </card-header>
       <card-body flush>
         <div class="grid grid-cols-2">
           <ui-stat class="backup w-full" label="Backup" mirrored>
@@ -166,6 +172,11 @@ export class RepositoryCard {
     uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
     contracts: exit('projects/:slug/repositories/:repo/contracts'),
     entities: exit('projects/:slug/repositories/:repo/entities'),
+  });
+
+  /** The name: the repository's own page (qits-2478). */
+  protected readonly opening = outcomes('open-repository', {
+    page: exit('projects/:slug/repositories/:repo'),
   });
 
   /** Every card: the repository's Docs page (qits-2336). */

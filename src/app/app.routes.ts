@@ -440,6 +440,14 @@ export const routes: Routes = [
           ),
       },
       {
+        // One repository's page (qits-2478): its own pages and the artifacts it publishes.
+        path: 'projects/:slug/repositories/:repo',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/repository.page').then(
+            (m) => m.RepositoryPage,
+          ),
+      },
+      {
         path: 'projects/:slug/repositories/:repo/ui-builder',
         loadComponent: () =>
           import('./routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page').then(

@@ -8,6 +8,7 @@ import {
   LIST_PROJECT_REPOSITORIES,
   PROJECT_WRAPPER,
   REPOSITORY_NAMES,
+  REPOSITORY_PAGE,
 } from './repositories.consumes';
 
 /**
@@ -64,4 +65,16 @@ export const BACKUP_SYNC = qitsOperation({
   method: 'POST',
   call: postProjectsApiProjectsByProjectIdRepositoriesBackupSync,
   consumes: BACKUP_SYNC_PROJECT,
+});
+
+/**
+ * The project's repositories (`listProjectRepositories`), as far as a repository's page reads them
+ * (`REPOSITORY_PAGE`, qits-2478): each one's name and archetype, and the wrapper and its main branch.
+ */
+export const PROJECT_REPOSITORY_PAGE = qitsOperation({
+  provider: 'qits-projects-service',
+  operationId: 'listProjectRepositories',
+  method: 'GET',
+  call: listProjectRepositories,
+  consumes: REPOSITORY_PAGE,
 });

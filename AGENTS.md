@@ -1025,6 +1025,27 @@ A row opens the site's reader in this app (`open-docs-site`, `docs/read/<site>`,
 event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
 empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
 
+A repository's page (qits-2478, `projects/<slug>/repositories/<repo>`, `RepositoryPage`, the
+index of the `[repo]` folder) is where a repository's own pages and the artifacts it publishes are
+reached. Three reads, each its own `qitsResource`, in the browser only: the project's repositories
+(`PROJECT_REPOSITORY_PAGE`, `listProjectRepositories` with consumes of its own, `REPOSITORY_PAGE`:
+names and archetypes; an unknown name says so), qits-maintenance's released artifacts
+(`MAINTENANCE_ARTIFACTS`, `listArtifacts`, kept by `repository`: `repositoryArtifacts` in
+`core/repositories/repository-artifacts.ts`, images first; a 403 says the staff roles and leaves the
+rest) and the docs catalog (`DOCS_CATALOG`, `publishedBy`). Links: Contracts and Entities for a
+SERVICE, UI builder for a FRONTEND or APP (`open-repository-pages`, as the card), Docs →
+(`open-repository-docs`); each artifact's name opens its artifact store page
+(`open-repository-artifact`: a docker `qits/<image>` the `qits` image store's `images/<image>`, npm
+`npm/packages`, maven `maven/maven-packages`, a daemon `daemons/daemons`, a docs site
+`docs/docs/<site>`). A repository card's name links it (`open-repository` `page`). The trail below
+Repositories is `Repositories › <repo> › Contracts › <state>` (`repositoryTrail` in the shell), each
+crumb before the last a link (`follow-breadcrumb` `repositories`, `repository`,
+`repositoryContracts`, `repositoryEntities`). Staleness: `SCMPublishCommit` to the wrapper's main
+(`movesWrapper`) → the repositories; nothing announces a release's artifacts, so Refresh reads all
+three again. Its pact interactions (`show-repository`) read "a project with 3 repositories" and
+"two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
+naming contract repositories" and "a docs catalog of every kind".
+
 A repository's Docs page (qits-2336, `projects/<slug>/docs/repositories/<repo>`,
 `RepositoryDocsPage`; a fixed `repositories` segment, so a name never reads as a reader path under
 `docs/`) lists the catalog's sites whose newest version the repository published: the catalog's

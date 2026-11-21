@@ -2141,6 +2141,44 @@
       "route": "projects/:slug/repositories/:repo/entities"
     }
   ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/repository.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog naming contract repositories",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/repositories/:repo"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/repositories/:repo"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/repositories/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo"
+    }
+  ],
   "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",

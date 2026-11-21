@@ -1,3 +1,4 @@
+import { repositoryArtifacts } from '$core/repositories/repository-artifacts';
 import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
@@ -323,6 +324,26 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
 
   it('show-project-artifacts: no artifacts when nothing was released', () =>
     given(MAINTENANCE_ARTIFACTS, NOTHING_RELEASED, 'show-project-artifacts').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
+        expect(data).toEqual([]);
+      },
+    ));
+
+  it('show-repository: the released artifacts, kept by the repository that publishes them', () =>
+    given(MAINTENANCE_ARTIFACTS, RELEASED, 'show-repository').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
+      expect(error).toBeUndefined();
+      // The mock answers each row with the recorded first one (a type match per element).
+      const artifacts = data ?? [];
+      expect(artifacts.length).toBeGreaterThan(0);
+      const repository = artifacts[0]?.repository ?? '';
+      expect(repositoryArtifacts(artifacts, repository).length).toBeGreaterThan(0);
+      expect(repositoryArtifacts(artifacts, 'no-such-repository')).toEqual([]);
+    }));
+
+  it('show-repository: no artifacts when nothing was released', () =>
+    given(MAINTENANCE_ARTIFACTS, NOTHING_RELEASED, 'show-repository').executeTest(
       async (server) => {
         const { data } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
         expect(data).toEqual([]);

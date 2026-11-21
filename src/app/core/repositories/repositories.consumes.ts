@@ -60,6 +60,17 @@ export const REPOSITORY_NAMES = [
   'entries[].repository.name',
 ] as const satisfies readonly (typeof LIST_PROJECT_REPOSITORIES)[number][];
 
+/**
+ * `PROJECT_REPOSITORY_PAGE` (`repositories.operations.ts`, qits-2478), a repository page's read of
+ * the project's repositories: each one's name (the address's is found by it) and archetype (which
+ * decides the page's links), and what `movesWrapper` reads. A part of `LIST_PROJECT_REPOSITORIES`,
+ * so its pact interactions bind only these.
+ */
+export const REPOSITORY_PAGE = [
+  ...REPOSITORY_NAMES,
+  'entries[].repository.archetype',
+] as const satisfies readonly (typeof LIST_PROJECT_REPOSITORIES)[number][];
+
 type Answer = Consumed<ListProjectRepositoriesResponses[200], typeof LIST_PROJECT_REPOSITORIES>;
 
 /** One repository entry, cut to what the store reads. */
