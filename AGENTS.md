@@ -540,7 +540,8 @@ The System section (qits-2344) is qits-system's one swarm, which no project join
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages
 under `system/...`, each listed below the sidebar's System while the section is open (Services,
-Nodes, Configs, Secrets and Targets so far, `open-sidebar-system-page`). It is an entry point (`qitsEntry`): the old page
+Nodes, Configs, Secrets and Targets so far, `open-sidebar-system-page`; Nodes stays current on a
+terminal's page too). It is an entry point (`qitsEntry`): the old page
 hands off to it with a full-document load; the sidebar's System exit names `system`, which
 redirects, and Services below it names it; a service's page
 leads back to it by name (`leave-swarm-service`). It reads through `qitsResource` over `core/system/swarm.operations.ts`:
@@ -652,14 +653,50 @@ empty, a 404 (the container is gone) and other failures (with Retry) each say so
 leaves it open. `[]` under a filter is that filter's sentence, a 403 names the admin role, a 503 or
 anything else says the node's containers cannot be read right now, with Retry. Staleness: no
 `refreshOn`. No event names a container start, stop or death (qits-system publishes target events
-only), so the tab's Refresh reads again; nothing polls. It ships no exec buttons: `bash`/`sh` and
-the terminal page arrive with qits-2356. The pact (`node-containers.operations.pact.spec.ts`, its
+only), so the tab's Refresh reads again; nothing polls. Every running row has `bash` and `sh`
+(qits-2356, `aria-label` "Open bash in <name>"; a stopped row has neither): a press posts
+`OPEN_SYSTEM_TERMINAL` (`{kind: 'EXEC', container: <id>, shell}`) and goes to the terminal's page
+with `?node=` (`open-system-terminal`); only the pressed button is busy, one open runs at a time,
+and a refusal is an alert above the table, "Could not open <shell> in <name>: <the service's
+`message`>" (409 not running or the terminal limit, 404 gone). The pact (`node-containers.operations.pact.spec.ts`, its
 own part of the system pact) reads the list (`show-swarm-node-containers`) in "a single-node
 swarm" (one running and healthy row, one exited and unhealthy), "a node running no containers"
 (`[]`) and "a swarm node this service cannot reach" (409 `NODE_REMOTE` at `no-such-node`), and the
 logs (`show-swarm-node-container-logs`) in "a single-node swarm"; each skips itself until the
 `@qits/system-golden-masters` pin records the list at `?all=true`. A node that is not `self` is in
 no recording, so the plain spec derives it.
+
+`system/terminals/<id>` (`SystemTerminalPage`, qits-2356, replacing qits-system-frontend's
+`terminals/:id`, an entry point too) is one of qits-system's terminals: a shell in a container of
+the node qits-system runs on. Three doors, `core/system/terminals.operations.ts` (consumes in
+`terminals.consumes.ts`): `SYSTEM_TERMINAL` (`getTerminal`; not `attachedClients`, stale on read,
+nor `socketPath`; its `errorConsumes` the `message`), `OPEN_SYSTEM_TERMINAL` (`openTerminal`, the
+Containers tab's) and `CLOSE_SYSTEM_TERMINAL` (`closeTerminal`). The page reads the terminal once,
+in the browser only, and only after a 200 attaches the screen (`ui-terminal-screen`, labelled with
+the title) to its socket, `wss://system.<domain>/system/api/terminals/<id>`
+(`systemTerminalSocketUrl`, `core/system/terminal-socket-url.ts`), through `WEB_SOCKET` and the
+workspaces' `TerminalSocket` (same frames and reconnects as the agent's terminal; a close with 1000
+is final, "This terminal is no longer running."). Leaving detaches; it never ends the terminal. The
+title is `<shell> in <container name>` (`glances` for the overview's, `Terminal` while loading or
+failed), the lede in mono the 12-character container id, `opened by <createdBy>` and the relative
+`createdAt`. The back link (`leave-system-terminal`) is "Back to the containers" of `?node=`'s tab,
+else "Back to the nodes"; the sidebar keeps System › Nodes current on the page (the child's
+`alsoOn`). Terminate (`terminate-system-terminal`, one press) goes where the back link goes on a 204
+or a 404, and says "The terminal could not be ended right now." on anything else; it is disabled
+while it runs and once the socket says the terminal ended. A terminal lives in qits-system's memory
+only and ends 60 s after its last viewer detaches (`qits.system.terminals.linger`) and on every
+restart, so a bookmark almost always lands on a gone one: the 404 is the page's empty state, a
+note ("This terminal is no longer running. A terminal ends a minute after its last viewer leaves,
+and when qits-system restarts."), with no socket and no Terminate; a 403 says opening a terminal
+needs an admin role; a 503 or anything else cannot read it right now, with Retry. Staleness: no
+`refreshOn` (no event names a terminal): the row is read once, the socket is the live part. The
+page depends on qits-system's socket admitting this app's origin: `TerminalOriginUpgradeCheck`
+permits a handshake whose `https` `Origin` is `qits.<domain>` or a name under it (qits-2356), beside
+the same-host rule, and refuses every other site (the CSWSH guard of a root shell). The pact
+(`terminals.operations.pact.spec.ts`, its own part of the system pact) opens one in "no terminal"
+(`open-system-terminal`, 201, the recorded request), reads it in "an open exec terminal"
+(`show-system-terminal`) and ends it there (`terminate-system-terminal`, 204); `getTerminal` 404 in
+"no terminal" and `openTerminal` 409 in "a stopped container" are read there too.
 
 `system/swarm/nodes/<id>/images` (`SwarmNodeImagesPage`, qits-2353, replacing qits-system-frontend's
 `swarm/nodes/:id/images` tab, an entry point too) is the node page's Images tab. One read,
@@ -1458,19 +1495,19 @@ changes. Every screenshot is taken, and frozen, in both schemes (`colorSchemes` 
 This app is a consumer of several providers. What it relies on from each is written down as a Pact V4
 file in a folder of that provider's, and published as a jar the provider verifies in its own gate:
 
-| Provider                   | Store and pact spec                                                                                                      | Pact file                                                | Golden masters                          |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------- |
-| qits-projects-service      | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                                                       | `pacts/qits-landing-app_qits-projects-service.json`      | `@qits/projects-golden-masters`         |
-| qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                                                  | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
-| qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`                             | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
-| qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                                         | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-containers,node-images,node-volumes,node-networks}.operations*.ts` | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
-| qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`                                         | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
-| qits-observability-service | `core/observability/observability.operations*.ts`                                                                        | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
-| qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                                            | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
-| qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                                            | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
-| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`                                    | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                                             | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| Provider                   | Store and pact spec                                                                                                                | Pact file                                                | Golden masters                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------- |
+| qits-projects-service      | `core/*/*.operations*.ts`, `core/work/*.store*.ts`                                                                                 | `pacts/qits-landing-app_qits-projects-service.json`      | `@qits/projects-golden-masters`         |
+| qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                                                            | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
+| qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts`                                       | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
+| qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`                                                   | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-containers,node-images,node-volumes,node-networks,terminals}.operations*.ts` | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`                                                   | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
+| qits-observability-service | `core/observability/observability.operations*.ts`                                                                                  | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
+| qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
+| qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`                                              | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
+| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

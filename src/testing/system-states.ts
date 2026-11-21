@@ -27,3 +27,18 @@ export const REGISTERED_RUNNER = 'a registered runner';
  * the Greenlight test skips itself until qits-system records `listTargets` in this state.
  */
 export const QUARANTINED = 'a quarantined target';
+
+/**
+ * The terminals' states (qits-2356): no terminal is open (`openTerminal` 201; `getTerminal` 404
+ * from the pin that records qits-2356's states).
+ */
+export const NO_TERMINAL = 'no terminal';
+
+/** One open exec terminal, `sh` in `dev-qits-ci.1.…`: `getTerminal` 200 and `closeTerminal` 204. */
+export const AN_OPEN_EXEC_TERMINAL = 'an open exec terminal';
+
+/**
+ * A stopped container, `a-stopped-one`: `openTerminal` 409 (`container a-stopped-one is not
+ * running`), from the pin that records qits-2356's states.
+ */
+export const A_STOPPED_CONTAINER = 'a stopped container';

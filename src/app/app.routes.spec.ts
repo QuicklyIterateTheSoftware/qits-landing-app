@@ -47,6 +47,7 @@ import { SwarmConfigsPage } from './routes/system/swarm/configs/swarm-configs.pa
 import { SwarmConfigPage } from './routes/system/swarm/configs/[id]/swarm-config.page';
 import { SwarmSecretsPage } from './routes/system/swarm/secrets/swarm-secrets.page';
 import { SystemTargetsPage } from './routes/system/targets/system-targets.page';
+import { SystemTerminalPage } from './routes/system/terminals/[id]/system-terminal.page';
 
 /** The work section's own routes, under the layout, without its session guard. */
 const work = routes.find((route) => route.path === '')?.children ?? [];
@@ -380,6 +381,13 @@ describe('system routes (qits-2344)', () => {
     expect(await pages('/system/targets')).toEqual([SystemTargetsPage]);
     expect(TestBed.inject(Router).url).toBe('/system/targets');
   });
+
+  it('opens one terminal at system/terminals/:id, its ?node= kept (qits-2356)', async () => {
+    const url =
+      '/system/terminals/00000000-0000-4000-8000-000000000003?node=iwbwrdui2z0n62kqcjfo1erwh';
+    expect(await pages(url)).toEqual([SystemTerminalPage]);
+    expect(TestBed.inject(Router).url).toBe(url);
+  });
 });
 
 describe('mirror routes (qits-2357)', () => {
@@ -450,9 +458,10 @@ describe('entry points (qits-2049)', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
     // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
     // nodes, configs and secrets, one service's page, one node's page, its Containers, Images,
-    // Volumes and Networks tabs, one config's page and the targets where qits-system-frontend's
-    // old pages hand off (qits-2344, qits-2345, qits-2346, qits-2347, qits-2348, qits-2349,
-    // qits-2350, qits-2351, qits-2352, qits-2353, qits-2354, qits-2355), the OCI upstreams and a
+    // Volumes and Networks tabs, one config's page, the targets and a terminal where
+    // qits-system-frontend's old pages hand off (qits-2344, qits-2345, qits-2346, qits-2347,
+    // qits-2348, qits-2349, qits-2350, qits-2351, qits-2352, qits-2353, qits-2354, qits-2355,
+    // qits-2356), the OCI upstreams and a
     // cache root's page where
     // qits-mirror-frontend's do (qits-2357, qits-2358), a process where qits-orchestrator-frontend's
     // `''` and `processes/:kind` do (qits-2359).
@@ -472,6 +481,7 @@ describe('entry points (qits-2049)', () => {
       'system/swarm/configs/:id',
       'system/swarm/secrets',
       'system/targets',
+      'system/terminals/:id',
       'mirror/upstreams',
       'mirror/repositories/:repository',
       'orchestrator/processes/:kind',

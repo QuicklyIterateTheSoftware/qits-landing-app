@@ -491,6 +491,166 @@
         "references": {
           "qits-call": {
             "app": "qits-system-service",
+            "operationId": "openTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-system-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-system-terminal: openTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a stopped container"
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "container": "aa11bb22cc33dd44ee55ff6677889900aabbccddeeff00112233445566778899",
+            "kind": "EXEC",
+            "shell": "sh"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/system/api/terminals"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "container a-stopped-one is not running"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "openTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-system-terminal",
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/containers"
+          }
+        }
+      },
+      "description": "open-system-terminal: openTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no terminal"
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "container": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+            "kind": "EXEC",
+            "shell": "sh"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/system/api/terminals"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": "00000000-0000-4000-8000-000000000003"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
             "operationId": "requestTargetHealthCheck"
           },
           "qits-trigger": {
@@ -5110,6 +5270,214 @@
         "references": {
           "qits-call": {
             "app": "qits-system-service",
+            "operationId": "getTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-system-terminal",
+            "kind": "ui",
+            "route": "system/terminals/:id"
+          }
+        }
+      },
+      "description": "show-system-terminal: getTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an open exec terminal",
+          "params": {
+            "terminalId": "00000000-0000-4000-8000-000000000003"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/system/api/terminals/${terminalId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/system/api/terminals/00000000-0000-4000-8000-000000000003"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "container": {
+              "id": "b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+              "name": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m"
+            },
+            "createdAt": "2026-01-01T00:00:00Z",
+            "createdBy": "an-operator",
+            "id": "00000000-0000-4000-8000-000000000003",
+            "kind": "EXEC",
+            "shell": "sh"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.container.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.container.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.createdBy": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.shell": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "getTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-system-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-system-terminal: getTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no terminal"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/terminals/00000000-0000-4000-8000-000000000003"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "no such terminal: 00000000-0000-4000-8000-000000000003"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
             "operationId": "getTargetHealth"
           },
           "qits-trigger": {
@@ -6644,6 +7012,55 @@
           }
         },
         "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "closeTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "terminate-system-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "terminate-system-terminal: closeTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an open exec terminal",
+          "params": {
+            "terminalId": "00000000-0000-4000-8000-000000000003"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/system/api/terminals/${terminalId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "DELETE",
+        "path": "/system/api/terminals/00000000-0000-4000-8000-000000000003"
+      },
+      "response": {
+        "status": 204
       },
       "type": "Synchronous/HTTP"
     }

@@ -195,6 +195,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * id or name: its id, exact created and updated instants, labels and its data verbatim (a note
  * for a binary or an empty config); each configs row's name opens it, the sidebar keeps Configs
  * current on it, and it is an entry point too, where the old `swarm/configs/:id` hands off.
+ * `system/terminals/<id>` (`SystemTerminalPage`, qits-2356) is one exec terminal in a container of
+ * the node qits-system runs on, opened by a running row's `bash`/`sh` on the Containers tab: its
+ * screen on the terminal's socket, Terminate, and a note once the terminal is gone (a 404); the
+ * back link leads to `?node=`'s containers, else the nodes, the sidebar keeps Nodes current on it,
+ * and it is an entry point too, where the old `terminals/:id` hands off.
  *
  * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
  * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
@@ -864,6 +869,17 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/system/targets/system-targets.page').then(
                 (m) => m.SystemTargetsPage,
+              ),
+          },
+          {
+            path: 'terminals/:id',
+            // An entry point (qits-2049, qits-2356): qits-system-frontend's old `terminals/:id`
+            // hands off here with a full-document load, its `?node=` kept; a running container's
+            // `bash`/`sh` on a node's Containers tab opens it too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/terminals/[id]/system-terminal.page').then(
+                (m) => m.SystemTerminalPage,
               ),
           },
         ],

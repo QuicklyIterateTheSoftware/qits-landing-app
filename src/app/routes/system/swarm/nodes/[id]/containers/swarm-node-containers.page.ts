@@ -8,11 +8,13 @@ import {
   signal,
 } from '@angular/core';
 import {
+  exit,
   outcomes,
   QitsApiError,
   QitsEntity,
   QitsEntityList,
   QitsField,
+  qitsMutation,
   qitsResource,
   QitsTriggers,
   stay,
@@ -40,6 +42,12 @@ import {
   nodeContainersParams,
 } from '$core/system/node-containers.operations';
 import { OPEN_SWARM_NODE } from '$core/system/open-swarm-node';
+import {
+  execTerminalBody,
+  OPEN_SYSTEM_TERMINAL,
+  TERMINAL_SHELLS,
+  type TerminalShell,
+} from '$core/system/terminals.operations';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -55,10 +63,10 @@ interface OpenLog {
 
 /**
  * A swarm node's Containers tab (qits-2352), at `/system/swarm/nodes/<id>/containers`, the first of
- * the node page's tabs (`NODE_TABS`). It replaces qits-system-frontend's `NodeContainersTab`,
- * without its `bash`/`sh` buttons: exec and the terminal page arrive with qits-2356.
+ * the node page's tabs (`NODE_TABS`). It replaces qits-system-frontend's `NodeContainersTab`, with
+ * its `bash`/`sh` buttons (qits-2356).
  *
- * **Load budget: 1, plus 1 per Logs press.** `NODE_CONTAINER_LIST` (`listNodeContainers`, always
+ * **Load budget: 1, plus 1 per Logs press, plus 1 per exec press.** `NODE_CONTAINER_LIST` (`listNodeContainers`, always
  * `all=true`: `docker ps -a` on the node qits-system runs on), keyed on the layout's `:id`, in the
  * browser only, and only while the open node (`OPEN_SWARM_NODE`, no second read of the node) is
  * `self`: the service reaches only its own daemon, so another node is not read at all, and the tab
@@ -78,6 +86,12 @@ interface OpenLog {
  *   the container's id; `show-swarm-node-container-logs`): "<name>, last 200 lines", the text, and
  *   Close; Logs again on the same row closes it, another row's moves it. Truncated, empty, a 404
  *   (the container is gone) and any other failure (with Retry) each say so. Refresh leaves it open.
+ * - Exec (qits-2356): every running row has `bash` and `sh` (`aria-label` "Open bash in <name>");
+ *   a stopped one has neither. A press opens an exec terminal (`OPEN_SYSTEM_TERMINAL`, the
+ *   container by its id) and goes to its page,
+ *   `/system/terminals/<id>?node=<node id>` (`open-system-terminal`). Only the pressed button is
+ *   busy, and one open runs at a time. A refusal says "Could not open <shell> in <name>: <the
+ *   service's message>" above the table (409: not running, or the terminal limit; 404: gone).
  *
  * States: loading; `[]` under any filter is one sentence; a 403 names the roles; a 503 or any other
  * failure says the node's containers cannot be read right now, with Retry.
@@ -156,6 +170,16 @@ interface OpenLog {
             }
           </div>
 
+          @if (execFailure(); as failure) {
+            <p
+              role="alert"
+              class="mt-0 mb-2 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
+              data-exec-failure
+            >
+              {{ failure }}
+            </p>
+          }
+
           @if (rows().length) {
             <p class="mt-0 mb-2 text-xs text-fg-muted" [qitsEntityList]="containers" data-caption>
               <span [fieldOf]="answer()" [qitsField]="marks.count">{{ caption() }}</span
@@ -172,7 +196,9 @@ interface OpenLog {
                     <th class="py-1.5 pr-3 font-semibold">Status</th>
                     <th class="py-1.5 pr-3 font-semibold">Created</th>
                     <th class="py-1.5 pr-3 font-semibold">Ports</th>
-                    <th class="py-1.5 font-semibold"><span class="sr-only">Logs</span></th>
+                    <th class="py-1.5 font-semibold">
+                      <span class="sr-only">Logs and shells</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody [qitsEntityList]="containers">
@@ -246,7 +272,7 @@ interface OpenLog {
                       >
                         {{ row.ports || none }}
                       </td>
-                      <td class="py-1.5">
+                      <td class="py-1.5 whitespace-nowrap">
                         <button
                           type="button"
                           class="cursor-pointer rounded-md border border-line bg-surface px-2 py-0.5 text-xs font-semibold text-fg-soft hover:bg-surface-muted aria-expanded:bg-accent-soft aria-expanded:text-fg"
@@ -257,6 +283,22 @@ interface OpenLog {
                         >
                           Logs
                         </button>
+                        @if (row.state === 'running') {
+                          @for (shell of shells; track shell) {
+                            <button
+                              type="button"
+                              class="ml-1 cursor-pointer rounded-md border border-line bg-surface px-2 py-0.5 font-mono text-xs font-semibold text-fg-soft hover:bg-surface-muted disabled:cursor-default disabled:opacity-60"
+                              [attr.aria-label]="'Open ' + shell + ' in ' + row.name"
+                              [attr.aria-busy]="isOpening(row, shell) || null"
+                              [disabled]="!!opening()"
+                              [qitsTriggers]="[execing.opened, execing.refused]"
+                              (click)="exec(row, shell)"
+                              data-exec
+                            >
+                              {{ shell }}
+                            </button>
+                          }
+                        }
                       </td>
                     </tr>
                   }
@@ -353,6 +395,22 @@ export class SwarmNodeContainersPage {
 
   /** Logs opens (or closes) a container's log tail on this tab. */
   protected readonly showingLogs = outcomes('show-swarm-node-container-logs', { opened: stay() });
+
+  /** `bash`/`sh`: the new terminal's page, or the tab kept with the refusal. */
+  protected readonly execing = outcomes('open-system-terminal', {
+    opened: exit('system/terminals/:id'),
+    refused: stay(),
+  });
+
+  private readonly opener = qitsMutation(OPEN_SYSTEM_TERMINAL);
+
+  protected readonly shells = TERMINAL_SHELLS;
+
+  /** The exec on its way, `<container id>:<shell>`; none while none is. */
+  protected readonly opening = signal<string | null>(null);
+
+  /** The last exec's refusal, in the tab's words; none until one fails. */
+  protected readonly execFailure = signal<string | null>(null);
 
   /** The open node, as the layout read it; undefined while it has not. */
   private readonly node = computed(() => this.open.node());
@@ -463,6 +521,36 @@ export class SwarmNodeContainersPage {
     this.openLog.set(undefined);
   }
 
+  /** Whether `shell` in `row` is the exec on its way. */
+  protected isOpening(row: NodeContainer, shell: TerminalShell): boolean {
+    return this.opening() === `${row.id}:${shell}`;
+  }
+
+  /**
+   * `bash`/`sh`: opens `shell` in `row`'s container, then goes to the terminal's page with the
+   * node as `?node=`, which the page's back link reads. One at a time.
+   */
+  protected async exec(row: NodeContainer, shell: TerminalShell): Promise<void> {
+    const node = this.open.nodeId();
+    const container = row.id;
+    if (this.opening() || !node || !container) return;
+    this.opening.set(`${row.id}:${shell}`);
+    this.execFailure.set(null);
+    const outcome: { readonly id: string } | { readonly message: string } = await this.opener
+      .run(execTerminalBody(container, shell))
+      .then(
+        (terminal) => (terminal?.id ? { id: terminal.id } : { message: 'no terminal was opened' }),
+        (error: unknown) => ({ message: refusalMessage(error) }),
+      );
+    this.opening.set(null);
+    if ('message' in outcome) {
+      this.execing.refused.reach();
+      this.execFailure.set(`Could not open ${shell} in ${row.name || row.id}: ${outcome.message}`);
+      return;
+    }
+    void this.execing.opened.go({ id: outcome.id }, { queryParams: { node } });
+  }
+
   protected stateTone(row: NodeContainer): ChipTone {
     return containerStateTone(row.state);
   }
@@ -478,6 +566,15 @@ export class SwarmNodeContainersPage {
     const instant = dockerInstant(row.createdAt);
     return instant ? formatInstant(instant) : null;
   }
+}
+
+/** What a refused exec says: the service's `message`, else the answer's status. */
+function refusalMessage(error: unknown): string {
+  if (!(error instanceof QitsApiError)) return 'qits-system did not answer';
+  const message = (error.error as { message?: unknown } | undefined)?.message;
+  return typeof message === 'string' && message
+    ? message
+    : `qits-system answered ${error.status || 'nothing'}`;
 }
 
 /** The data marks of what the tab derives (each a class constant, as the rule reads). */
