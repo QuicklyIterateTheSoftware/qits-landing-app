@@ -642,8 +642,8 @@ export class ShellLayout {
    * sections, and IdP admin (qits-2319, leaving the app). An in-app section may list its own pages
    * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348) and Targets
    * (qits-2351), one exit each of `open-sidebar-system-page`; qits-2347…qits-2356 each add one
-   * child there. Mirror lists none: its one listable page is the OCI upstreams, which `mirror` opens; nor does Orchestrator:
-   * its one process (gc) is what `orchestrator` opens.
+   * child there. Mirror lists none: its one listable page is the OCI upstreams, which `mirror`
+   * opens; nor does Orchestrator: its one process (gc) is what `orchestrator` opens.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];

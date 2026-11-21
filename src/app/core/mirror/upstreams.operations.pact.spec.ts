@@ -7,13 +7,14 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { client as mirrorClient } from '../../api/mirror/client.gen';
 import { provideHeyApiClient } from '../../api/mirror/client/client.gen';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction, assertPactPart } from '@qits/angular/testing';
 import { isRecorded, mirrorGoldenMasters as masters } from '../../../testing/golden-masters';
 import { UPSTREAM_LIST } from './upstreams.operations';
 
 /**
- * qits-landing-app's pact with qits-mirror-service (qits-2357, `upstreams.operations.ts`), in
- * `pacts/qits-landing-app_qits-mirror-service.json`, which this spec owns alone.
+ * The upstreams' part of qits-landing-app's pact with qits-mirror-service (qits-2357,
+ * `upstreams.operations.ts`), in `pacts/qits-landing-app_qits-mirror-service.json` — the same file
+ * `repository-packages.operations.pact.spec.ts` owns its operation of (`assertPactPart`).
  *
  * The Mirror section's upstreams page lists the image registries the mirror fronts
  * (`show-mirror-upstreams`): in "the default caches" (docker.io, quay.io and
@@ -24,6 +25,9 @@ import { UPSTREAM_LIST } from './upstreams.operations';
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-mirror-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
+
+/** The operations this spec owns in that file. */
+const OPERATIONS = ['listUpstreams'];
 
 const DEFAULT_CACHES = 'the default caches';
 const NO_REGISTRIES = 'a mirror fronting no registries';
@@ -44,11 +48,16 @@ function at<T>(url: string, call: () => Promise<T>): Promise<T> {
   return TestBed.runInInjectionContext(call);
 }
 
-describe('qits-landing-app → qits-mirror-service pact', () => {
+describe('qits-landing-app → qits-mirror-service pact: the OCI upstreams', () => {
   afterAll(() => {
     mirrorClient.setConfig({ baseUrl: '' });
     try {
-      assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      assertPactPart(
+        join(dir, `${CONSUMER}-${PROVIDER}.json`),
+        COMMITTED,
+        OPERATIONS,
+        'QITS_GOLDEN_UPDATE',
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

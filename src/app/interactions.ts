@@ -867,6 +867,17 @@ export const INTERACTIONS = {
    */
   'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
   /**
+   * `mirror-repository.page.ts` via `REPOSITORY_PACKAGES` (qits-2358): the Mirror section's
+   * repository page shows one cache root's type, upstream and eviction rule, its packages and the
+   * selected package's versions. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-repository': 'A cache root’s page lists what the mirror holds in it',
+  /**
+   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358). Changes the page
+   * only: no request, and names no pact.
+   */
+  'select-mirror-package': 'A cache root’s page shows the versions of the package chosen',
+  /**
    * `orchestrator-process.page.ts` via `PROCESS_LIST`, `PROCESS_RUNS` and `PROCESS_RUN` (qits-2359):
    * the Orchestrator section's process page shows the process, its latest runs and the shown run's
    * steps, the run read without bodies (`bodies=false`). Refresh reads them again, and a running
