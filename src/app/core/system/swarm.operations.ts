@@ -1,5 +1,6 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  getSwarmConfig,
   getSwarmNode,
   listSwarmConfigs,
   listSwarmNodes,
@@ -8,6 +9,7 @@ import {
   listSwarmServices,
 } from '../../api/system';
 import {
+  GET_SWARM_CONFIG,
   GET_SWARM_NODE,
   LIST_SWARM_CONFIGS,
   LIST_SWARM_NODE_TASKS,
@@ -17,7 +19,7 @@ import {
 } from './swarm.consumes';
 
 /**
- * qits-system's swarm (qits-2344, qits-2346, qits-2347, qits-2348, qits-2350) declared as operations, read by the System section's pages
+ * qits-system's swarm (qits-2344, qits-2346, qits-2347, qits-2348, qits-2349, qits-2350) declared as operations, read by the System section's pages
  * through their own `qitsResource`; `swarm.operations.pact.spec.ts` binds them.
  *
  * `SWARM_SERVICE_LIST`: `docker service ls` on the manager qits-system runs on, one swarm, not per
@@ -82,6 +84,20 @@ export const SWARM_CONFIG_LIST = qitsOperation({
   method: 'GET',
   call: listSwarmConfigs,
   consumes: LIST_SWARM_CONFIGS,
+});
+
+/**
+ * `SWARM_CONFIG` (qits-2349): `docker config inspect` on the manager qits-system runs on, by the
+ * config's id or name: its exact created and updated instants, its labels and its data as text
+ * (`""` with `binary: true` when the bytes are not UTF-8); a 404 when the swarm has no such config,
+ * a 503 when the swarm cannot be read, a 403 for a role that may not read it.
+ */
+export const SWARM_CONFIG = qitsOperation({
+  provider: 'qits-system-service',
+  operationId: 'getSwarmConfig',
+  method: 'GET',
+  call: getSwarmConfig,
+  consumes: GET_SWARM_CONFIG,
 });
 
 /**
