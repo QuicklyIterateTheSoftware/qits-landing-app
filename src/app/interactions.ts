@@ -937,6 +937,17 @@ export const INTERACTIONS = {
    */
   'leave-swarm-node': 'A swarm node’s page leads back to the nodes list',
   /**
+   * `swarm-node-volumes.page.ts` via `NODE_VOLUME_LIST` (qits-2355): a swarm node page's Volumes
+   * tab lists the volumes of the node qits-system runs on, the unused ones marked, the anonymous
+   * ones hidden until asked for. Refresh reads them again (no event announces a volume change).
+   */
+  'show-swarm-node-volumes': 'A swarm node’s Volumes tab lists the node’s volumes',
+  /**
+   * `swarm-node-volumes.page.ts`: "Show anonymous volumes" shows or hides the node's anonymous
+   * volumes, kept in the address as `?anonymous=1` (qits-2355). Reads nothing, and names no pact.
+   */
+  'toggle-anonymous-volumes': 'A swarm node’s Volumes tab shows or hides its anonymous volumes',
+  /**
    * `swarm-configs.page.ts` via `SWARM_CONFIG_LIST` (qits-2348): the System section's configs page
    * lists the configs of qits-system's swarm, each with its labels and docker's created and
    * updated text. Refresh reads them again (no event announces a change).
