@@ -921,7 +921,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-configs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/configs"
           }
         }
       },
@@ -946,13 +947,13 @@
         "body": {
           "content": [
             {
-              "createdAt": "2026-08-18 04:31:02 +0000 UTC",
+              "createdAt": "3 months ago",
               "id": "ktnbjxoalbkvbvedmg1urrz8h",
               "labels": {
                 "qits.platform.deployments.target": "platform"
               },
               "name": "qits-edge-vhosts",
-              "updatedAt": "2026-08-18 04:31:02 +0000 UTC"
+              "updatedAt": "3 months ago"
             }
           ],
           "contentType": "application/json",
@@ -1016,6 +1017,60 @@
               ]
             }
           },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listSwarmConfigs"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-configs",
+            "kind": "ui",
+            "route": "system/swarm/configs"
+          }
+        }
+      },
+      "description": "show-swarm-configs: listSwarmConfigs",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a swarm holding no configs"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/swarm/configs"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
           "header": {
             "Content-Type": {
               "combine": "AND",
