@@ -562,7 +562,8 @@ title, and the VIP address); tasks in the served order, shut-down ones kept as t
 history (the caption says so): slot, node hostname (plain text: `nodeId` is always null), state,
 desired state, the error (red only when non-empty), and an Image column only when some task runs
 another image than the service's; no Updated column (`updatedAt` is always null). No task is "Swarm
-has placed no task for this service…", a 404 "No swarm service <id>.", a 403 the roles, a 503 the
+has placed no task for this service…", a scheduling problem only when a replicated service asks for
+replicas (`asksForTasks`) and "it asks for none" when scaled to 0, a 404 "No swarm service <id>.", a 403 the roles, a 503 the
 swarm not answering, with Retry. Staleness: `DEPLOYMENT_EVENTS` of the application the service's
 `qits.platform.deployments.app-name` label names (`concernsSwarmService`, `core/system/swarm-service.ts`;
 every deployment while it has none or nothing is shown), debounced 1 s; Refresh reads again. The

@@ -169,8 +169,7 @@ describe('SwarmServicePage', () => {
       const { element } = await render(idOf(NO_TASKS), serviceOf(NO_TASKS));
       expect(text(element.querySelector('h2'))).toBe('dev-qits-idle');
       expect(text(element.querySelector('[data-no-tasks]'))).toBe(
-        'Swarm has placed no task for this service. For a replicated service that is a ' +
-          'scheduling problem, not an empty list.',
+        'Swarm has placed no task for this service, and it asks for none.',
       );
       expect(element.querySelector('table[aria-label="Tasks"]')).toBeNull();
       expect(text(element.querySelector('[data-no-mounts]'))).toBe('This service mounts nothing.');
