@@ -58,6 +58,7 @@ export type MirrorRepositoryRow = {
     type?: string;
     upstream?: string;
     createdAt?: Instant;
+    evictionWindow?: string;
 };
 
 export type MirrorSweepReport = {
