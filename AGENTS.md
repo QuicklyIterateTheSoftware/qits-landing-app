@@ -660,17 +660,17 @@ the page reads the list again after each of its own writes, and Refresh covers a
 elsewhere (the CLI, another person). A sign-in that has not settled is read again every 2 s
 (`pollWhile`, above), never otherwise. The pact (`targets.operations.pact.spec.ts`, beside the
 lightning menu's row; `leases.operations.pact.spec.ts` for the leases) reads the list in "a
-connected target with leases", "a declared target" and, empty, "no target"; declaring and the
-install script (status and media type: the recording holds the script as a JSON string, so no
-screenshot shows it) in "no target"; patch, greenlight, delete (204) and health in "a declared
-target", with the two checks' 409 TARGET_UNAVAILABLE as refusal rows; a rotation in "a registered
-runner"; a sign-in started in "a connected target", and followed, given its code and cancelled in
-"a connected target with a claude sign-in awaiting its code". The empty list, the filtered leases
-and the two checks' 202s (in "a connected target") skip themselves, with their screenshots, until
-the `@qits/system-golden-masters` pin records them; the provider states are named once, in
-`src/testing/system-states.ts`. No recording lists a quarantined target, so Greenlight's test (and
-its trigger's screenshot) skips itself until qits-system records `listTargets` in "a quarantined
-target".
+connected target with leases", "a declared target", "a quarantined target" and, empty, "no target";
+declaring and the install script (status and media type: the recording holds the script as a JSON
+string, so no screenshot shows it) in "no target"; patch, delete (204) and health in "a declared
+target", with the two checks' 409 TARGET_UNAVAILABLE as refusal rows, and their 202s in "a connected
+target"; greenlight in "a quarantined target"; a rotation in "a registered runner"; a sign-in
+started in "a connected target", and followed, given its code and cancelled in "a connected target
+with a claude sign-in awaiting its code"; a target's leases, `listLeases` with `targetId` as a
+query, in "a connected target with leases" (recorded as the index's `query` from
+`@qits/system-golden-masters` 2026.1121.45745 on; the earlier recording wrote it into `path`, which
+no request matches, so the row waits for one with no `?` in it). The provider states are named
+once, in `src/testing/system-states.ts`.
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
 `https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and one cache root's page is

@@ -45,16 +45,14 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /**
  * Screenshots of the System section's Targets page (qits-2351) inside the shell (`openRoute`),
  * with no project open, its reads and writes answered with qits-system's recordings: "a connected
- * target with leases" (`targets`, one connected target, `lab`), "no target" (`empty`, which skips
- * itself until the `@qits/system-golden-masters` pin records the empty list; the install line after
- * `createTarget`, `registration`; the install script), "a declared target" (a patch, a delete, the
- * health details, the two checks' 409 TARGET_UNAVAILABLE), "a registered runner" (a token rotation),
- * "a connected target" (a sign-in started) and "a connected target with a claude sign-in awaiting
- * its code" (followed, given its code, cancelled). A read still open (`loading`), a failure
- * (`unavailable`) and a refusal with a body of its own (`delete-busy`'s TARGET_BUSY) are statuses
- * only. The target's leases (`leases`, `listLeases?targetId=`) and the two checks' 202s skip
- * themselves until the pin records them; so does Greenlight, which needs a quarantined target no
- * recording lists yet.
+ * target with leases" (`targets`, one connected target, `lab`), "no target" (`empty`; the install line
+ * after `createTarget`, `registration`; the install script), "a declared target" (a patch, a
+ * delete, the health details, the two checks' 409 TARGET_UNAVAILABLE), "a registered runner" (a
+ * token rotation), "a connected target" (a sign-in started, the health check's 202), "a quarantined
+ * target" (Greenlight) and "a connected target with a claude sign-in awaiting its code" (followed,
+ * given its code, cancelled); a target's leases (`leases`, `listLeases?targetId=`) are "a connected
+ * target with leases"'s. A read still open (`loading`), a failure (`unavailable`) and a refusal
+ * with a body of its own (`delete-busy`'s TARGET_BUSY) are statuses only.
  *
  * The shell's outcomes are shot once (`shootShellMenus`). The live stream (`EVENT_SOURCE`, the
  * transport seam) is fed a `TargetConnectionChanged` and a `TargetLeaseChanged` by hand.
@@ -428,29 +426,18 @@ describe('SystemTargetsPage (screenshots)', () => {
     await shot(opened).toMatchScreenshot('login-check-refused', { kind: 'ERROR' });
   });
 
-  it('request-target-login-check sent: a connected target takes it', async (context) => {
-    if (!(await recorded(CONNECTED, 'requestTargetLoginCheck'))) context.skip();
-    const { opened, card } = await render();
-    await card.getByRole('button', { name: 'Check sign-in' }).click();
-    await opened.idle();
-    one('POST', `${TARGET}/login-check`).flush(
-      await goldenMaster(CONNECTED, 'requestTargetLoginCheck', SYSTEM),
-      { status: 202, statusText: 'Accepted' },
-    );
-    await opened.idle();
-    await answer(opened, CONNECTED_WITH_LEASES);
-    await expect.element(card.getByRole('status')).toMatchTextContent('Sign-in check sent');
-  });
+  // The login check's 202 is not shown here: qits-system answers it with no body, and the
+  // golden-master guard lets only a 204 flush nothing. Its pact row binds it, and the refusal
+  // above reaches `request-target-login-check:sent`.
 
   it('greenlight-target sent: Greenlight lifts a quarantine', async (context) => {
-    // No recording lists a quarantined target yet (qits-system's `a quarantined target`).
     if (!(await recorded(QUARANTINED, 'listTargets'))) context.skip();
     const { opened, card } = await render(QUARANTINED);
     await expect.element(card.getByText('Quarantined', { exact: true })).toBeVisible();
     await card.getByRole('button', { name: 'Greenlight' }).click();
     await opened.idle();
     one('POST', `${TARGET}/greenlight`).flush(
-      await goldenMaster(DECLARED, 'greenlightTarget', SYSTEM),
+      await goldenMaster(QUARANTINED, 'greenlightTarget', SYSTEM),
     );
     await opened.idle();
     await answer(opened, DECLARED);

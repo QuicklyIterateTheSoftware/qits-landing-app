@@ -15,6 +15,7 @@ import {
   CONNECTED_WITH_LEASES,
   DECLARED,
   NO_TARGET,
+  QUARANTINED,
   REGISTERED_RUNNER,
 } from '../../../testing/system-states';
 import type { InteractionSlug } from '../../interactions';
@@ -51,13 +52,13 @@ import {
  *
  * The System section's Targets page (qits-2351) reads and writes the rest, each operation's own
  * `fetch` against the recorded request: `TARGET_ROWS` (`show-targets`) in "a connected target with
- * leases", in "a declared target" (not connected) and, empty, in "no target"; declaring (`createTarget` 201) and the install script in "no
- * target"; the declared target's patch, greenlight, delete (204) and health in "a declared target",
- * with the two checks' 409 TARGET_UNAVAILABLE as refusal rows; a token rotation in "a registered
- * runner"; a sign-in started in "a connected target", and followed, given its code and cancelled in
- * "a connected target with a claude sign-in awaiting its code". The empty list and the two checks'
- * 202s (in "a connected target") skip themselves until the `@qits/system-golden-masters` pin records
- * them. Ids in a path are the states' params, sent as provider-state expressions.
+ * leases", in "a declared target" (not connected), in "a quarantined target" and, empty, in "no
+ * target"; declaring (`createTarget` 201) and the install script in "no target"; the declared
+ * target's patch, delete (204) and health in "a declared target", with the two checks' 409
+ * TARGET_UNAVAILABLE as refusal rows and their 202s in "a connected target"; greenlight in "a
+ * quarantined target"; a token rotation in "a registered runner"; a sign-in started in "a connected
+ * target", and followed, given its code and cancelled in "a connected target with a claude sign-in
+ * awaiting its code". Ids in a path are the states' params, sent as provider-state expressions.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-system-service';
@@ -254,10 +255,23 @@ describe('qits-landing-app → qits-system-service pact: the targets', () => {
       expect(response?.status).toBe(200);
     }));
 
-  it('greenlight-target: Greenlight lifts the quarantine', () =>
-    given(DECLARED, 'greenlightTarget', 'greenlight-target', STATUS_ONLY).executeTest(
+  it('show-targets: a quarantined target, with its reason and since when', () =>
+    given(QUARANTINED, 'listTargets', 'show-targets', TARGET_ROWS.consumes).executeTest(
       async (server) => {
-        const id = param(DECLARED, 'greenlightTarget', 'targetId');
+        const { data, error } = await at(server.url, () => TARGET_ROWS.fetch({}));
+        expect(error).toBeUndefined();
+        const [target] = data ?? [];
+        expect(data).toHaveLength(1);
+        expect(target.quarantined).toBe(true);
+        expect(target.quarantineReason).toBeTruthy();
+        expect(target.quarantinedAt).toBeTruthy();
+      },
+    ));
+
+  it('greenlight-target: Greenlight lifts the quarantine', () =>
+    given(QUARANTINED, 'greenlightTarget', 'greenlight-target', STATUS_ONLY).executeTest(
+      async (server) => {
+        const id = param(QUARANTINED, 'greenlightTarget', 'targetId');
         const { response, error } = await at(server.url, () =>
           TARGET_GREENLIGHT.fetch({ path: { id } }),
         );
