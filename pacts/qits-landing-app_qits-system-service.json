@@ -2062,7 +2062,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node-images",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/images"
           }
         }
       },
@@ -2190,7 +2191,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node-images",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/images"
           }
         }
       },
@@ -2317,7 +2319,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node-networks",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/networks"
           }
         }
       },
@@ -2370,7 +2373,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node-networks",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/networks"
           }
         }
       },
@@ -2650,7 +2654,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node-volumes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/volumes"
           }
         }
       },
@@ -2703,7 +2708,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node-volumes",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/volumes"
           }
         }
       },
@@ -3011,7 +3017,7 @@
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
             "kind": "ui",
-            "route": "system/swarm/nodes/:id, system/swarm/nodes/:id/containers"
+            "route": "system/swarm/nodes/:id, system/swarm/nodes/:id/containers, system/swarm/nodes/:id/images, system/swarm/nodes/:id/networks, system/swarm/nodes/:id/volumes"
           }
         }
       },
@@ -3490,7 +3496,7 @@
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
             "kind": "ui",
-            "route": "system/swarm/nodes/:id, system/swarm/nodes/:id/containers"
+            "route": "system/swarm/nodes/:id, system/swarm/nodes/:id/containers, system/swarm/nodes/:id/images, system/swarm/nodes/:id/networks, system/swarm/nodes/:id/volumes"
           }
         }
       },
