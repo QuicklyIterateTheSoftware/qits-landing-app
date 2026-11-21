@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, viewChild } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { SelectedProject } from '$core/projects/selected-project';
 import { RepositoryPublished } from '$patterns/repositories/repository-published/repository-published';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
@@ -22,13 +23,14 @@ import type { Action } from '$ui/components/action-button/action';
         <p class="mt-0 mb-4 text-sm text-fg-soft">
           What {{ repo() }} publishes: its images, packages, daemons and docs sites.
         </p>
-        <app-repository-published [repo]="repo()" />
+        <app-repository-published [repo]="repo()" [slug]="slug()" />
       </app-page-layout>
     </div>
   `,
 })
 export class RepositoryArtifactsPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly selected = inject(SelectedProject);
 
   private readonly paramMap = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
@@ -36,6 +38,11 @@ export class RepositoryArtifactsPage {
 
   /** The address's repository name. */
   protected readonly repo = computed(() => this.paramMap().get('repo') ?? '');
+
+  /** The open project's slug. */
+  protected readonly slug = computed(
+    () => this.selected.slug() ?? this.paramMap().get('slug') ?? '',
+  );
 
   private readonly published = viewChild(RepositoryPublished);
 

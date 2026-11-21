@@ -50,7 +50,7 @@ describe('RepositoryCard (screenshots)', () => {
           { path: 'projects/:slug/repositories/:repo/ui-builder', children: [] },
           { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
           { path: 'projects/:slug/repositories/:repo/entities', children: [] },
-          { path: 'projects/:slug/docs/repositories/:repo', children: [] },
+          { path: 'projects/:slug/repositories/:repo/docs', children: [] },
         ]),
       ],
     });
@@ -117,7 +117,7 @@ describe('RepositoryCard (screenshots)', () => {
     const locator = await shown();
     await userEvent.click(locator.getByRole('link', { name: 'Docs →' }).last());
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/docs/repositories/contract-service`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/repositories/contract-service/docs`);
     expect(fired()).toEqual(['open-repository-docs:repository']);
   });
 });

@@ -25,6 +25,9 @@ import { ProjectIdeasPage } from './routes/projects/[slug]/ideas/project-ideas.p
 import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-create.page';
 import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
+import { DocsReadRedirectPage } from './routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page';
+import { DocsReaderPage } from './routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page';
+import { RepositoryDocsPage } from './routes/projects/[slug]/repositories/[repo]/docs/repository-docs.page';
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
 import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
@@ -141,6 +144,32 @@ describe('agents and workspaces routes', () => {
     expect(await opened('/projects/x/workspaces')).toEqual([ProjectAgentsPage]);
     expect(TestBed.inject(Router).url).toBe('/projects/x/agents');
   });
+
+  it('redirects the project’s old Docs page to its Repositories (qits-2486)', async () => {
+    await opened('/projects/x/docs');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/repositories');
+  });
+
+  it('redirects a repository’s old Docs page under the repository, keeping the query (qits-2486)', async () => {
+    expect(await opened('/projects/x/docs/repositories/r?section=apidocs')).toEqual([
+      RepositoryDocsPage,
+    ]);
+    expect(TestBed.inject(Router).url).toBe('/projects/x/repositories/r/docs?section=apidocs');
+  });
+
+  it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
+    'opens the reader’s old address read%s on the page that moves it (qits-2486)',
+    async (rest) => {
+      expect(await opened(`/projects/x/docs/read${rest}`)).toEqual([DocsReadRedirectPage]);
+    },
+  );
+
+  it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
+    'opens the reader under its repository at docs%s (qits-2486)',
+    async (rest) => {
+      expect(await opened(`/projects/x/repositories/r/docs${rest}`)).toEqual([DocsReaderPage]);
+    },
+  );
 
   it('opens an agent at agents/<agent id>', async () => {
     expect((await opened('/projects/x/agents/a-1'))[0]).toBe(AgentLayout);

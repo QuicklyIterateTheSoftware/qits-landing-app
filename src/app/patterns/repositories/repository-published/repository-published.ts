@@ -227,6 +227,28 @@ function refused(read: { status(): string; error(): unknown }): boolean {
         (retry)="sites.reload()"
       />
       <ui-spinner [state]="sitesState()" class="min-h-16" [class.hidden]="sitesState() === 'error'">
+        <!-- The repository's docs by category (qits-2486): each section holding one of its sites
+             opens its Docs page narrowed to that section. -->
+        <nav
+          class="mb-3 flex-wrap gap-1"
+          [class]="categories().length ? 'flex' : 'hidden'"
+          aria-label="Docs by category"
+        >
+          @for (block of categories(); track block.section.kind) {
+            <a
+              class="flex h-7 items-center gap-1 rounded-md border border-line bg-surface px-2 text-xs font-semibold text-fg-soft no-underline hover:bg-surface-muted"
+              [qitsExit]="byCategory.section"
+              [exitParams]="{ slug: slug(), repo: repo() }"
+              [exitQueryParams]="{ section: block.section.route }"
+              [fieldOf]="catalog()"
+              [qitsField]="marks.sites"
+              >{{ block.section.label }}
+              <span class="font-normal text-fg-muted tabular-nums">{{
+                block.sites.length
+              }}</span></a
+            >
+          }
+        </nav>
         <ul
           class="m-0 flex list-none flex-col divide-y divide-line rounded-md border border-line bg-surface p-0 text-sm"
           aria-label="Docs sites"
@@ -281,6 +303,14 @@ export class RepositoryPublished {
   /** The repository's name. */
   readonly repo = input.required<string>();
 
+  /** The open project's slug, for the links to the repository's docs. */
+  readonly slug = input.required<string>();
+
+  /** The repository's Docs page, narrowed to one category (qits-2486). */
+  protected readonly byCategory = outcomes('open-repository-docs-category', {
+    section: exit('projects/:slug/repositories/:repo/docs'),
+  });
+
   /** A published artifact's page in the artifact store (qits-2324…qits-2328). */
   protected readonly opening = outcomes('open-repository-artifact', {
     image: exit('artifacts/repositories/:repo/images/:image'),
@@ -329,6 +359,11 @@ export class RepositoryPublished {
   /** The docs sites whose newest version this repository published, in the Docs pages' order. */
   protected readonly mySites = computed((): readonly DocsCatalogSite[] =>
     docBlocks(publishedBy(this.catalog().sites ?? [], this.repo())).flatMap((block) => block.sites),
+  );
+
+  /** The categories holding one of the repository's sites, in `DOC_SECTIONS` order. */
+  protected readonly categories = computed(() =>
+    docBlocks(publishedBy(this.catalog().sites ?? [], this.repo())),
   );
 
   protected readonly artifactsState = computed((): LoadState => loadState(this.artifacts));

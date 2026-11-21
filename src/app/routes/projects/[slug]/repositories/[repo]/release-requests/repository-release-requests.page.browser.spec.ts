@@ -155,7 +155,7 @@ describe('RepositoryReleaseRequestsPage (screenshots)', () => {
 
   it.each([
     ['artifacts', 'Artifacts', '/artifacts'],
-    ['docs', 'Docs', ''],
+    ['docs', 'Docs', '/docs'],
     ['contracts', 'Contracts', '/contracts'],
     ['entities', 'Entities', '/entities'],
     ['uiBuilder', 'UI builder', '/ui-builder'],
@@ -164,9 +164,7 @@ describe('RepositoryReleaseRequestsPage (screenshots)', () => {
     await userEvent.click(sidebar().getByRole('link', { name: label, exact: true }));
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      key === 'docs'
-        ? `/projects/${opened.project.slug}/docs/repositories/contract-service`
-        : `/projects/${opened.project.slug}/repositories/contract-service${rest}`,
+      `/projects/${opened.project.slug}/repositories/contract-service${rest}`,
     );
     expect(reached()).toEqual([`open-sidebar-repository-page:${key}`]);
   });

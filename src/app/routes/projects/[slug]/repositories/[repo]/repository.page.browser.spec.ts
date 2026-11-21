@@ -277,9 +277,24 @@ describe('RepositoryPage (screenshots)', () => {
     await userEvent.click(page.elementLocator(opened.page).getByRole('link', { name: 'Docs →' }));
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/docs/repositories/contract-service`,
+      `/projects/${opened.project.slug}/repositories/contract-service/docs`,
     );
     expect(reached()).toEqual(['open-repository-docs:repository']);
+  });
+
+  it('open-repository-docs-category section: a docs category opens the Docs page at that section', async () => {
+    const opened = await render('contract-service');
+    await userEvent.click(
+      page
+        .elementLocator(opened.page)
+        .getByRole('navigation', { name: 'Docs by category' })
+        .getByRole('link', { name: /^Contracts/ }),
+    );
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/contract-service/docs?section=contracts`,
+    );
+    expect(reached()).toEqual(['open-repository-docs-category:section']);
   });
 
   it('leave-repository repositories: “← Repositories” goes back to the list', async () => {

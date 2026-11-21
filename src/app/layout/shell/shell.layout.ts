@@ -62,7 +62,6 @@ type SectionKey =
   | 'repositories'
   | 'deployments'
   | 'observability'
-  | 'docs'
   | 'events'
   | 'maintenance'
   | 'setup';
@@ -89,7 +88,6 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'observability/metrics'
   | 'observability/slow-spans'
   | 'observability/traces'
-  | 'docs'
   | 'events'
   | 'maintenance'
   | 'maintenance/dependencies'
@@ -546,7 +544,6 @@ export class ShellLayout {
     repositories: exit('projects/:slug/repositories'),
     deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
-    docs: exit('projects/:slug/docs'),
     events: exit('projects/:slug/events'),
     maintenance: exit('projects/:slug/maintenance'),
   });
@@ -593,7 +590,7 @@ export class ShellLayout {
   private readonly repositoryPages = outcomes('open-sidebar-repository-page', {
     overview: exit('projects/:slug/repositories/:repo'),
     artifacts: exit('projects/:slug/repositories/:repo/artifacts'),
-    docs: exit('projects/:slug/docs/repositories/:repo'),
+    docs: exit('projects/:slug/repositories/:repo/docs'),
     contracts: exit('projects/:slug/repositories/:repo/contracts'),
     entities: exit('projects/:slug/repositories/:repo/entities'),
     uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
@@ -756,6 +753,7 @@ export class ShellLayout {
     repositoryContracts: exit('projects/:slug/repositories/:repo/contracts'),
     repositoryEntities: exit('projects/:slug/repositories/:repo/entities'),
     repositoryReleaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
+    repositoryDocs: exit('projects/:slug/repositories/:repo/docs'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
@@ -771,6 +769,7 @@ export class ShellLayout {
     contracts: this.trail.repositoryContracts,
     entities: this.trail.repositoryEntities,
     'release-requests': this.trail.repositoryReleaseRequests,
+    docs: this.trail.repositoryDocs,
   };
 
   /** The trail's brand, home. */
@@ -879,7 +878,6 @@ export class ShellLayout {
           },
         ],
       },
-      link('docs', 'Docs', sections.docs),
       link('events', 'Events', sections.events),
       {
         ...link('maintenance', 'Maintenance', sections.maintenance),
@@ -1255,6 +1253,7 @@ const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
   entities: 'Entities',
   'ui-builder': 'UI builder',
   'release-requests': 'Release requests',
+  docs: 'Docs',
 };
 
 /** Where in a repository the URL is: the repository, one of its pages, and a page below that. */

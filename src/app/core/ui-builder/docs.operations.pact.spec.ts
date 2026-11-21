@@ -922,7 +922,8 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
    * (qits-2318) lists the whole catalog (`DOCS_CATALOG`) and groups it by section (`docBlocks`),
    * naming each site's publisher when the project holds it; `RepositoryDocsPage` (qits-2336) keeps
    * the sites whose newest version the repository published (`latestRepository`, `publishedBy`).
-   * Each part owns `listDocsSites`' interactions for its own trigger alone: `show-project-docs`,
+   * Each part owns `listDocsSites`' interactions for its own trigger alone (the project's Docs page and
+   * its `show-project-docs` are gone, qits-2486):
    * `show-repository-docs`.
    *
    * Against qits-artifacts' recordings of `a docs catalog of every kind` (a site of every section:
@@ -1035,28 +1036,6 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
       tests(given);
     });
   }
-
-  part('show-project-docs', 'the Docs page', (given) => {
-    it.skipIf(!current)(
-      'show-project-docs: groups the catalog’s sites by section, each with its versions and publisher',
-      () =>
-        given(EVERY_KIND).executeTest(async (server) => {
-          const sites = (await at(server.url, () => catalogRead())) ?? [];
-          const blocks = docBlocks(sites);
-          expect(blocks.length).toBeGreaterThan(0);
-          expectRecorded(sites, EVERY_KIND);
-          // A site with a publisher, and one without (`qits-storybook`): the page links the first only.
-          expect(sites.some((site) => !!site.latestRepository)).toBe(true);
-          expect(sites.some((site) => !site.latestRepository)).toBe(true);
-        }),
-    );
-
-    it.skipIf(!current)('show-project-docs: an empty catalog makes no block', () =>
-      given(EMPTY).executeTest(async (server) => {
-        expect(docBlocks((await at(server.url, () => catalogRead())) ?? [])).toEqual([]);
-      }),
-    );
-  });
 
   part('show-repository-docs', 'a repository’s Docs page', (given) => {
     it.skipIf(!current)(

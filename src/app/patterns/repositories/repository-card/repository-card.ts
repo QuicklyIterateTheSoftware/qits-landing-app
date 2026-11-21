@@ -181,7 +181,7 @@ export class RepositoryCard {
 
   /** Every card: the repository's Docs page (qits-2336). */
   protected readonly docs = outcomes('open-repository-docs', {
-    repository: exit('projects/:slug/docs/repositories/:repo'),
+    repository: exit('projects/:slug/repositories/:repo/docs'),
   });
 
   /** The repository's pages' exit params. */

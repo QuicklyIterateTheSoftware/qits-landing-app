@@ -1106,13 +1106,7 @@ export const INTERACTIONS = {
    */
   'open-system-targets': 'The Agents page’s Targets link opens the Targets page',
   /**
-   * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
-   * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
-   * project's repository that published each site's newest version.
-   */
-  'show-project-docs': 'The Docs page lists every published docs site, by section',
-  /**
-   * `project-docs.page.ts` and `repository-docs.page.ts`: a docs site's row opens its reader,
+   * `repository-docs.page.ts`: a docs site's row opens its reader under the repository,
    * `docs-reader.page.ts` (qits-2337), at the site's newest version. Navigates only, and names no
    * pact (epic qits-2000).
    */
@@ -1137,7 +1131,7 @@ export const INTERACTIONS = {
   'open-docs-handoff':
     'A contracts, routes or Storybook site in the docs reader opens where it is read',
   /**
-   * `docs-reader.page.ts`: “← Docs” and an unknown site's link go back to the project's Docs page,
+   * `docs-reader.page.ts`: “← Docs” and an unknown site's link go back to the repository's Docs page,
    * an unknown version's to the site's newest (qits-2337). Navigates only, and names no pact.
    */
   'leave-docs-site': 'The docs reader goes back to the Docs page, or to the site’s newest version',
@@ -1148,17 +1142,16 @@ export const INTERACTIONS = {
    */
   'show-repository-docs': 'A repository’s Docs page lists the docs sites it published, by section',
   /**
-   * `project-docs.page.ts` (a row's repository) and `repository-card.ts` (“Docs →”): opens a
+   * `repository-card.ts`, `repository.page.ts` and the repository sidebar (“Docs”): opens a
    * repository's Docs page (qits-2336). Navigates only, and names no pact (epic qits-2000).
    */
-  'open-repository-docs': 'A repository’s name on the Docs page, or its card, opens its Docs page',
+  'open-repository-docs': 'A repository’s card or page opens its Docs page',
   /**
-   * `repository-docs.page.ts`: “← Docs” on a repository's Docs page (and the link beside an
-   * unknown repository) goes back to the project's Docs page (qits-2336). Navigates only, and
-   * names no pact (epic qits-2000).
+   * `repository-docs.page.ts`: “← <repo>” on a repository's Docs page goes back to the
+   * repository's page, the link beside an unknown repository to the Repositories (qits-2336,
+   * qits-2486). Navigates only, and names no pact (epic qits-2000).
    */
-  'leave-repository-docs':
-    '“← Docs” on a repository’s Docs page goes back to the project’s Docs page',
+  'leave-repository-docs': 'A repository’s Docs page goes back to the repository',
   /**
    * The work pages (`work.layout.ts`, `work-item.page.ts`) via `WorkspaceActivity`
    * (`OPEN_WORKSPACES`, qits-2146): the ACTIVE workspaces bound to work items, one request per
@@ -1567,6 +1560,17 @@ export const INTERACTIONS = {
    */
   'open-related-repository-release-request':
     'A request under a repository opens the requests it names under the same repository',
+  /**
+   * `docs-read-redirect.page.ts` via `DOCS_CATALOG` (qits-2486): the docs reader's old address
+   * replaces itself with the reader under the site's publisher, or links the Repositories. Navigates
+   * only, and names no pact (epic qits-2000).
+   */
+  /**
+   * `repository-published.ts`: a docs category of a repository opens its Docs page narrowed to that
+   * section (qits-2486). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-docs-category': 'A docs category on a repository’s page opens its Docs there',
+  'follow-moved-docs-site': 'The docs reader’s old address goes to the reader under its repository',
   'open-sidebar-repository-page': 'The repository sidebar opens one of the repository’s pages',
   /**
    * `shell.layout.ts`: “← Repositories” at the top of the repository sidebar goes back to the

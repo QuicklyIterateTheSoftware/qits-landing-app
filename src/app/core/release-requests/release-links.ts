@@ -94,7 +94,8 @@ export function artifactLinks(
 /**
  * The docs reader's address of `site` at `version` in project `slug` (qits-2337):
  * `/projects/<slug>/docs/read/<site>/-/<version>`, the site one segment with its `/` escaped, as
- * the reader's own links name it (`@` stays literal, as the router writes it).
+ * the reader's own links name it (`@` stays literal, as the router writes it). That address redirects
+ * to the reader under the site's publisher (qits-2486), which this page does not need to know.
  */
 export function readerPath(slug: string, site: string, version: string): string {
   const segment = (value: string) => encodeURIComponent(value).replace(/%40/g, '@');

@@ -383,7 +383,6 @@ describe('ShellLayout (screenshots)', () => {
       'Repositories',
       'Deployments',
       'Observability',
-      'Docs',
       'Events',
       'Maintenance',
       // The platform's pages, below the project's sections (qits-2262).
@@ -597,7 +596,6 @@ describe('ShellLayout (screenshots)', () => {
     { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
     { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
-    { label: 'Docs', segment: 'docs', outcome: 'docs' },
     { label: 'Events', segment: 'events', outcome: 'events' },
     { label: 'Maintenance', segment: 'maintenance', outcome: 'maintenance' },
   ] as const;

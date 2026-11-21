@@ -1014,16 +1014,15 @@ project linking its page (`open-related-project-event` `chain`). The walk is an 
 of its own, so its failure (with Retry) leaves the event on screen. A work item the event names is
 not linked here: no recording this page reads names one.
 
-A project's Docs page (qits-2318, `projects/<slug>/docs`, `ProjectDocsPage`, the sidebar's Docs
-between Observability and Events) reads qits-artifacts' whole docs catalog through its own
-`qitsResource` over `DOCS_CATALOG` (`listDocsSites` of the `docs` repository; never
-qits-docs-service) and groups it by `core/docs/doc-sections.ts` (`DOC_SECTIONS`, `kindOf`,
-`shortNameOf`, ported from qits-docs-frontend: a section claims its scope, Storybook gets the
-rest). The view lives in the query (`?section=<route segment>`, `?q=`), pushed, so Back undoes it.
-A row opens the site's reader in this app (`open-docs-site`, `docs/read/<site>`, the newest of
-`main`). The docs store sends no domain
-event: Refresh reads again. Its pact interactions (states "a docs catalog of every kind" and "an
-empty docs catalog") skip themselves on an older `@qits/artifacts-golden-masters` pin.
+The project's Docs section (qits-2318) is gone (qits-2486): docs belong to the repository that
+publishes them. `projects/<slug>/docs` redirects to the Repositories, `docs/repositories/<repo>` to
+`repositories/<repo>/docs`, and the reader's old `docs/read/<site>[/-/<version>]` and `read/**`
+(`DocsReadRedirectPage`, in `docs/read/[site]/`) read the catalog (`DOCS_CATALOG`) and replace the
+address with the reader under the site's publisher (`latestRepository`; `follow-moved-docs-site`),
+query and version kept; a site no repository is named for says so. `readerPath` (the release
+page's docs artifacts) still writes the old address, which redirects. `DOC_SECTIONS`, `kindOf` and
+`shortNameOf` (`core/docs/doc-sections.ts`) group the repository's sites; the repository page lists
+its categories, each opening its Docs page at `?section=` (`open-repository-docs-category`).
 
 A repository's page (qits-2478, `projects/<slug>/repositories/<repo>`, `RepositoryPage`, the
 index of the `[repo]` folder) is where a repository's own pages and the artifacts it publishes are
@@ -1071,27 +1070,27 @@ and the requests it names stay under the repository (`leave-repository-release-r
 (`show-repository-release-requests`) read "a repository with a release not merged to main"
 (`state=all`) and "a frozen release request with a queued next request" (open).
 
-A repository's Docs page (qits-2336, `projects/<slug>/docs/repositories/<repo>`,
-`RepositoryDocsPage`; a fixed `repositories` segment, so a name never reads as a reader path under
-`docs/`) lists the catalog's sites whose newest version the repository published: the catalog's
+A repository's Docs page (qits-2336, `projects/<slug>/repositories/<repo>/docs` since qits-2486,
+`RepositoryDocsPage`) lists the catalog's sites whose newest version the repository published: the catalog's
 `latestRepository` (the newest version's `git.repository.name`, `publishedBy`), never the site's
 name (`@contracts/qits-ci` is `qits-ci-service`'s) and never one `listDocsVersions` per site. It
 finds the address's name in the project's repositories (`PROJECT_REPOSITORY_NAMES`,
 `repositoryNamed`; an unknown name says so) and keeps `?section=`, which the docs app's old
-repository addresses redirect to. The project's Docs page names a row's repository when the project
-holds it (`projectRepositoryOf`), and every repository card has a `Docs →`; both are
-`open-repository-docs`. `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES` are `listDocsSites` and
+repository addresses redirect to. Every repository card, the repository page and the repository
+sidebar link it (`open-repository-docs`, `open-sidebar-repository-page` `docs`); "← <repo>" leads
+back to the repository (`leave-repository-docs`). `DOCS_CATALOG` and `PROJECT_REPOSITORY_NAMES` are `listDocsSites` and
 `listProjectRepositories` with consumes of their own (`LIST_DOCS_CATALOG`, `REPOSITORY_NAMES`):
 the states the builder's and the cards' interactions are recorded in hold no `latestRepository`
 or `lastBackup`, and a path the recorded body lacks cannot be bound.
 
-The docs reader (qits-2337, `projects/<slug>/docs/read/<site>[/-/<version>]`, `DocsReaderPage` in
-`routes/projects/[slug]/docs/read/[site]/`) reads one site of qits-artifacts' public docs store,
+The docs reader (qits-2337, `projects/<slug>/repositories/<repo>/docs/<site>[/-/<version>]` since
+qits-2486, `DocsReaderPage` in `routes/projects/[slug]/repositories/[repo]/docs/[site]/`; `<repo>` is
+the address's, its back link's target) reads one site of qits-artifacts' public docs store,
 never qits-docs-service. The site spans segments: this app's links name it as one segment (`:site`,
-its `/` escaped, an exit's param) and `read/**` (an entry, `qitsEntry`) takes the split form the
-docs app's redirect writes; the page parses either off the URL (`parseReadPath`,
-`core/docs/doc-url.ts`), so all three routes load the one page, and `read/:site/-/:version` carries
-an `eslint-disable` of `qits/route-matches-directory`. Its outcomes are the `read/:site` route's;
+its `/` escaped, an exit's param) and `docs/**` takes the split form; the page parses either off
+the URL (`parseReadPath`, `core/docs/doc-url.ts`), so all three routes load the one page, and
+`docs/:site/-/:version` carries an `eslint-disable` of `qits/route-matches-directory`. Its outcomes
+are the `docs/:site` route's;
 the one shown only on a versioned address (an unknown version's link to the newest,
 `leave-docs-site` `newest`) is declared app-wide in `core/docs/reader-links.ts`. Markdown sites
 (userflows, guides, changelog) read `DOCS_VERSIONS`, `DOCS_VERSION` and each `.md` (`DOCS_FILE` as

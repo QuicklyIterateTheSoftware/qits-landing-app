@@ -144,7 +144,7 @@ const NO_REPOSITORY: NonNullable<RepositoryEntry['repository']> = {};
               >
             </nav>
 
-            <app-repository-published [repo]="repo()" />
+            <app-repository-published [repo]="repo()" [slug]="slug()" />
           </div>
         </ui-spinner>
       </app-page-layout>
@@ -182,7 +182,7 @@ export class RepositoryPage {
 
   /** The repository's Docs page (qits-2336). */
   protected readonly docs = outcomes('open-repository-docs', {
-    repository: exit('projects/:slug/docs/repositories/:repo'),
+    repository: exit('projects/:slug/repositories/:repo/docs'),
   });
 
   /** Back to the project's Repositories page. */
