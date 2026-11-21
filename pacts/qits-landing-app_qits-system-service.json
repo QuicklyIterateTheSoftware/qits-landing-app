@@ -504,6 +504,86 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a stopped container"
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "container": "aa11bb22cc33dd44ee55ff6677889900aabbccddeeff00112233445566778899",
+            "kind": "EXEC",
+            "shell": "sh"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "path": "/system/api/terminals"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "container a-stopped-one is not running"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "openTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-system-terminal",
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/containers"
+          }
+        }
+      },
+      "description": "open-system-terminal: openTerminal",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "no terminal"
         }
       ],
@@ -5325,6 +5405,71 @@
           }
         },
         "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "getTerminal"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-system-terminal",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-system-terminal: getTerminal",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no terminal"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/terminals/00000000-0000-4000-8000-000000000003"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "no such terminal: 00000000-0000-4000-8000-000000000003"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 404
       },
       "type": "Synchronous/HTTP"
     },

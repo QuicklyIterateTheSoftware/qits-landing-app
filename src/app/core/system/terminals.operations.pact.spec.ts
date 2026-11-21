@@ -33,10 +33,9 @@ import {
  * (`terminate-system-terminal`, `closeTerminal` 204 there). The terminal's id in a path is the
  * state's `terminalId`, sent as a provider-state expression.
  *
- * Waiting (TODO(qits-2356)): `getTerminal` 404 in "no terminal" (the page's gone state) and
- * `openTerminal` 409 in "a stopped container" (the Containers tab's refusal) are recorded by
- * qits-system-service's qits-2356 change, which publishes with its release request; their rows are
- * written below and skipped until the `@qits/system-golden-masters` pin records them.
+ * `getTerminal` 404 in "no terminal" (the page's gone state) and `openTerminal` 409 in "a stopped
+ * container" (the Containers tab's refusal) are recorded too, by qits-system-service's qits-2356
+ * change.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-system-service';
@@ -126,10 +125,7 @@ describe('qits-landing-app → qits-system-service pact: the terminals', () => {
       expect(data?.id).toBeTruthy();
     }));
 
-  // TODO(qits-2356): enable once the `@qits/system-golden-masters` pin records qits-system-service's
-  // "a stopped container" (`openTerminal` 409, body `{"kind":"EXEC","container":"aa11bb22…8899",
-  // "shell":"sh"}`, answer `{"message":"container a-stopped-one is not running"}`).
-  it.skip('open-system-terminal: a stopped container is a 409 with the service’s message', () =>
+  it('open-system-terminal: a stopped container is a 409 with the service’s message', () =>
     given(
       A_STOPPED_CONTAINER,
       'openTerminal',
@@ -161,10 +157,7 @@ describe('qits-landing-app → qits-system-service pact: the terminals', () => {
       expect(data?.createdBy).toBeTruthy();
     }));
 
-  // TODO(qits-2356): enable once the `@qits/system-golden-masters` pin records qits-system-service's
-  // `getTerminal` 404 in "no terminal" (`/system/api/terminals/00000000-0000-4000-8000-000000000003`,
-  // answer `{"message":"no such terminal: 00000000-0000-4000-8000-000000000003"}`).
-  it.skip('show-system-terminal: a terminal that has ended is a 404', () =>
+  it('show-system-terminal: a terminal that has ended is a 404', () =>
     given(NO_TERMINAL, 'getTerminal', 'show-system-terminal', TERMINAL_REFUSAL).executeTest(
       async (server) => {
         const id = terminalIdOf(NO_TERMINAL, 'getTerminal');

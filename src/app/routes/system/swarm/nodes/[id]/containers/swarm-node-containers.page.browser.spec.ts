@@ -42,8 +42,8 @@ const LOGS = `/system/api/nodes/${NODE}/containers/${RUNNING}/logs?tail=200`;
  *
  * The running row's `bash`/`sh` (qits-2356) open a terminal: `sh` answered with qits-system's
  * `openTerminal` of "no terminal" goes to the terminal's page with `?node=` (whose read that page's
- * own spec answers; here a 404); a refusal is a status only until the pin records "a stopped
- * container"'s 409 (its case waits, TODO(qits-2356)).
+ * own spec answers; here a 404); a refusal is "a stopped container"'s 409 (`openTerminal`), the
+ * service's message shown above the table.
  */
 describe('SwarmNodeContainersPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -334,11 +334,8 @@ describe('SwarmNodeContainersPage (screenshots)', () => {
     expect(TestBed.inject(Router).url).toBe(`/system/swarm/nodes/${NODE}/containers`);
   });
 
-  // TODO(qits-2356): enable once the `@qits/system-golden-masters` pin records qits-system-service's
-  // "a stopped container" (`openTerminal` 409, `{"message":"container a-stopped-one is not
-  // running"}`): flush that recording onto the stopped row's `sh` (the row has no button, so derive
-  // the press from the running one, or read the state's own container list) and shoot `exec-refused`.
-  it.skip('open-system-terminal refused: a 409 says the container is not running', async () => {
+  it('open-system-terminal refused: a 409 says the container is not running', async (context) => {
+    if (!(await recorded(SWARM))) context.skip();
     const { opened, view } = await render();
     await view
       .getByRole('button', { name: 'Open sh in dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m' })

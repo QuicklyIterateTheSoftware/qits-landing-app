@@ -695,9 +695,8 @@ permits a handshake whose `https` `Origin` is `qits.<domain>` or a name under it
 the same-host rule, and refuses every other site (the CSWSH guard of a root shell). The pact
 (`terminals.operations.pact.spec.ts`, its own part of the system pact) opens one in "no terminal"
 (`open-system-terminal`, 201, the recorded request), reads it in "an open exec terminal"
-(`show-system-terminal`) and ends it there (`terminate-system-terminal`, 204); the 404 in "no
-terminal" and the 409 in "a stopped container" are written and skipped (`TODO(qits-2356)`) until
-the `@qits/system-golden-masters` pin records them.
+(`show-system-terminal`) and ends it there (`terminate-system-terminal`, 204); `getTerminal` 404 in
+"no terminal" and `openTerminal` 409 in "a stopped container" are read there too.
 
 `system/swarm/nodes/<id>/images` (`SwarmNodeImagesPage`, qits-2353, replacing qits-system-frontend's
 `swarm/nodes/:id/images` tab, an entry point too) is the node page's Images tab. One read,

@@ -3111,6 +3111,12 @@
       "state": "a single-node swarm",
       "operationId": "listSwarmNodeTasks",
       "route": "system/swarm/nodes/:id/containers"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "no terminal",
+      "operationId": "openTerminal",
+      "route": "system/swarm/nodes/:id/containers"
     }
   ],
   "src/app/routes/system/swarm/nodes/[id]/images/swarm-node-images.page.browser.spec.ts": [
