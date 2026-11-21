@@ -80,7 +80,8 @@ pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events 
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
 counts, a mirror upstream registered or deleted or an image pulled through (qits-2357), a mirror
-cache entry pulled through, evicted or swept (qits-2358), an orchestrator run started elsewhere
+cache entry pulled through, evicted or swept (qits-2358), a mirror cache root registered or deleted
+(qits-2471), an orchestrator run started elsewhere
 (gc's deploy trigger, another operator; qits-2359, qits-2472).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
@@ -908,7 +909,7 @@ themselves on an older pin), in its own part of the mirror pact (`assertPactPart
 
 `mirror/repositories/<repository>` (`MirrorRepositoryPage`, qits-2358, replacing
 qits-mirror-frontend's `repositories/:repository`, an entry point too: the old route hands off to
-it, and qits-2471's list at `mirror/repositories` will link here) is one pull-through cache root, at
+it, and each name on the Caches list below links here, `open-mirror-repository`) is one pull-through cache root, at
 `https://qits.<domain>/mirror/repositories/<name>`. It reads `REPOSITORY_PACKAGES`
 (`core/mirror/repository-packages.operations.ts`, `listRepositoryPackages`,
 `GET /mirror/api/repositories/{repository}/packages`: the root's row and every package with its
@@ -939,6 +940,23 @@ digests), "a maven cache holding a cached artifact" (`central`, a jar and a pom)
 holding a package" (`npmjs`, `left-pad`), "the default caches" (`hub`, `packages: []`) and "no cache
 root of that name" (404, status only); all but the npm one, and their screenshots, skip themselves
 until the `@qits/mirror-golden-masters` pin records them (qits-mirror's qits-2358 release).
+
+`mirror/repositories` (`MirrorRepositoriesPage`, qits-2471, replacing qits-mirror-frontend's root
+route `''`, "Cached repositories"; an entry point, where the old route hands off) lists every cache
+root the mirror holds, at `https://qits.<domain>/mirror/repositories`. It reads `REPOSITORY_LIST`
+(`core/mirror/repositories.operations.ts`, `listRepositories`, `GET /mirror/api/repositories`,
+`{ repositories: [...] }` by name), in the browser only, one table in the server's order: name
+(mono, a link to the root's page, `open-mirror-repository`), type (a chip), upstream (mono;
+`deleted` when an OCI namespace lost its upstream), "Evicts unused after" (`evictionWindowWords`;
+`not swept` when the window is null) and registered (`createdAt`, `formatInstant`), with
+"N cache roots" above it. `repositories: []` (only a mirror being reset: a running one re-seeds its
+npm and maven caches at boot) is one sentence; any failure is a load failure with Retry.
+Staleness: no `refreshOn`; qits-mirror sends no event when a root or an upstream is registered or
+deleted, so Refresh reads again (a known gap). Its pact (`repositories.operations.pact.spec.ts`,
+`show-mirror-repositories`, its own part of the mirror pact) reads it in "the default caches" and
+"a mirror holding no cache roots" (`repositories: []`; it and the `empty` screenshot skip
+themselves until the `@qits/mirror-golden-masters` pin records it, qits-mirror's qits-2471
+release).
 
 The Orchestrator section (qits-2359) is qits-orchestrator's technical processes, which no project
 joins: `orchestrator/processes/<kind>` (`OrchestratorProcessPage`, replacing
@@ -1507,7 +1525,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
 | qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`                                              | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| qits-mirror-service        | `core/mirror/{upstreams,repositories,repository-packages}.operations*.ts`                                                          | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

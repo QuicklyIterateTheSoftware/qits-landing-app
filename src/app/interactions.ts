@@ -873,6 +873,17 @@ export const INTERACTIONS = {
    */
   'show-mirror-repository': 'A cache root’s page lists what the mirror holds in it',
   /**
+   * `mirror-repositories.page.ts` via `REPOSITORY_LIST` (qits-2471): the Mirror section's Caches
+   * page lists every cache root qits-mirror holds, each with its type, upstream, eviction window
+   * and registration date. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-repositories': 'The Caches page lists every cache root the mirror holds',
+  /**
+   * `mirror-repositories.page.ts`: a cache root's name opens its page (qits-2471). Navigates only,
+   * and names no pact.
+   */
+  'open-mirror-repository': 'A cache root of the Caches list opens its page',
+  /**
    * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358). Changes the page
    * only: no request, and names no pact.
    */

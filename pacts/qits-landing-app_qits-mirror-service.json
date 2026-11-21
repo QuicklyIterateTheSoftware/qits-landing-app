@@ -8,6 +8,217 @@
         "references": {
           "qits-call": {
             "app": "qits-mirror-service",
+            "operationId": "listRepositories"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repositories",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-repositories: listRepositories",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the default caches",
+          "params": {
+            "repository": "hub"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/mirror/api/repositories"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "repositories": [
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "evictionWindow": "P90D",
+                "name": "central",
+                "type": "maven-proxy",
+                "upstream": "https://repo1.maven.org/maven2"
+              },
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "evictionWindow": "P90D",
+                "name": "central",
+                "type": "maven-proxy",
+                "upstream": "https://repo1.maven.org/maven2"
+              },
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "evictionWindow": "P90D",
+                "name": "central",
+                "type": "maven-proxy",
+                "upstream": "https://repo1.maven.org/maven2"
+              },
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "evictionWindow": "P90D",
+                "name": "central",
+                "type": "maven-proxy",
+                "upstream": "https://repo1.maven.org/maven2"
+              },
+              {
+                "createdAt": "2026-01-01T00:00:00Z",
+                "evictionWindow": "P90D",
+                "name": "central",
+                "type": "maven-proxy",
+                "upstream": "https://repo1.maven.org/maven2"
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.repositories": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 5,
+                  "min": 5
+                }
+              ]
+            },
+            "$.repositories[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.repositories[*].evictionWindow": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repositories[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repositories[*].type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repositories[*].upstream": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
             "operationId": "listRepositoryPackages"
           },
           "qits-trigger": {

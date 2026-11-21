@@ -12,6 +12,7 @@ export type RoutePath =
   | 'artifacts/repositories/:repo/maven-packages/:coordinate'
   | 'artifacts/repositories/:repo/packages/:package'
   | 'mirror'
+  | 'mirror/repositories'
   | 'mirror/repositories/:repository'
   | 'mirror/upstreams'
   | 'orchestrator'

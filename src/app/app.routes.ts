@@ -206,7 +206,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * open. `mirror` redirects to it by a relative `redirectTo`; it is an entry point, where
  * qits-mirror-frontend's old `upstreams` hands off. One cache root's contents are at
  * `mirror/repositories/:repository` (`MirrorRepositoryPage`, qits-2358), an entry point too, where
- * the old `repositories/:repository` hands off; qits-2471 adds the list at `mirror/repositories`.
+ * the old `repositories/:repository` hands off. Every cache root is listed at `mirror/repositories`
+ * (`MirrorRepositoriesPage`, qits-2471), an entry point where the old root route hands off.
  *
  * The Orchestrator section (qits-2359) is at `orchestrator/processes/<kind>`
  * (`OrchestratorProcessPage`): one of qits-orchestrator's technical processes, its latest runs,
@@ -902,10 +903,20 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'repositories',
+            // An entry point (qits-2049): qits-mirror-frontend's old root route (`''`, its cached
+            // repositories) hands off here with a full-document load (qits-2471).
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/mirror/repositories/mirror-repositories.page').then(
+                (m) => m.MirrorRepositoriesPage,
+              ),
+          },
+          {
             path: 'repositories/:repository',
             // An entry point (qits-2049): qits-mirror-frontend's old `repositories/:repository`
-            // hands off here with a full-document load (qits-2358). No outcome of this app names it
-            // yet: qits-2471's list at `mirror/repositories` will link here.
+            // hands off here with a full-document load (qits-2358); the Caches list at
+            // `mirror/repositories` links here (`open-mirror-repository`, qits-2471).
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/mirror/repositories/[repository]/mirror-repository.page').then(
