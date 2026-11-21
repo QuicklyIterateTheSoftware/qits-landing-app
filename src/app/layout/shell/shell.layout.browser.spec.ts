@@ -119,6 +119,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'system/swarm/nodes', component: TestPage },
           { path: 'system/swarm/configs', component: TestPage },
           { path: 'system/swarm/secrets', component: TestPage },
+          { path: 'system/targets', component: TestPage },
           { path: 'mirror', component: TestPage },
           { path: 'orchestrator', component: TestPage },
           { path: 'projects', component: TestPage },
@@ -858,6 +859,7 @@ describe('ShellLayout (screenshots)', () => {
       'Nodes',
       'Configs',
       'Secrets',
+      'Targets',
       'Mirror',
       'Orchestrator',
       'IdP admin',
@@ -879,7 +881,24 @@ describe('ShellLayout (screenshots)', () => {
       .not.toHaveAttribute('aria-current');
   });
 
-  /** The System section's pages below System in the sidebar (qits-2346, qits-2348, qits-2350), each from another. */
+  it('marks Targets below System current on the targets page (qits-2351)', async () => {
+    await page.viewport(1280, 800);
+    await render('/system/targets');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect
+      .element(navigation.getByRole('link', { name: 'System', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Targets', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets']) {
+      await expect
+        .element(navigation.getByRole('link', { name: label, exact: true }))
+        .not.toHaveAttribute('aria-current');
+    }
+  });
+
+  /** The System section's pages below System in the sidebar (qits-2346, qits-2348, qits-2350, qits-2351), each from another. */
   const SYSTEM_PAGES = [
     {
       label: 'Services',
@@ -905,6 +924,12 @@ describe('ShellLayout (screenshots)', () => {
       from: '/system/swarm/nodes',
       outcome: 'secrets',
     },
+    {
+      label: 'Targets',
+      path: '/system/targets',
+      from: '/system/swarm/services',
+      outcome: 'targets',
+    },
   ] as const;
 
   for (const system of SYSTEM_PAGES) {
@@ -929,7 +954,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true }))
       .not.toHaveAttribute('aria-current');
-    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets']) {
+    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets', 'Targets']) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();
@@ -973,7 +998,7 @@ describe('ShellLayout (screenshots)', () => {
         navigation.getByRole('link', { name: 'Orchestrator', exact: true, includeHidden: true }),
       )
       .not.toBeInTheDocument();
-    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets']) {
+    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets', 'Targets']) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();

@@ -120,6 +120,7 @@ export type GlobalPath =
   | 'system/swarm/nodes'
   | 'system/swarm/configs'
   | 'system/swarm/secrets'
+  | 'system/targets'
   | 'mirror'
   | 'orchestrator';
 
@@ -610,13 +611,15 @@ export class ShellLayout {
 
   /**
    * The System section's pages below the sidebar's System, one exit per page (qits-2346), listed
-   * while the section is open. qits-2347…qits-2356 each add one more.
+   * while the section is open: the swarm's Services, Nodes and Configs (qits-2348), then Targets
+   * (qits-2351). qits-2347…qits-2356 each add one more.
    */
   private readonly systemPages = outcomes('open-sidebar-system-page', {
     services: exit('system/swarm/services'),
     nodes: exit('system/swarm/nodes'),
     configs: exit('system/swarm/configs'),
     secrets: exit('system/swarm/secrets'),
+    targets: exit('system/targets'),
   });
 
   /**
@@ -639,10 +642,11 @@ export class ShellLayout {
    * project's sections' place while no project is open, and not at all while one is: Artifacts
    * (qits-2316), System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359), in-app
    * sections, and IdP admin (qits-2319, leaving the app). An in-app section may list its own pages
-   * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348) and Secrets
-   * (qits-2350), one exit each of `open-sidebar-system-page`; qits-2347…qits-2356 each add one child
-   * there. Mirror lists none: its one listable page is the OCI upstreams, which `mirror` opens; nor
-   * does Orchestrator: its one process (gc) is what `orchestrator` opens.
+   * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348), Secrets
+   * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`;
+   * qits-2347…qits-2356 each add one child there. Mirror lists none: its one listable page is the
+   * OCI upstreams, which `mirror` opens; nor does Orchestrator: its one process (gc) is what
+   * `orchestrator` opens.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
@@ -658,6 +662,7 @@ export class ShellLayout {
           { label: 'Nodes', exit: system.nodes, path: system.nodes.url() },
           { label: 'Configs', exit: system.configs, path: system.configs.url() },
           { label: 'Secrets', exit: system.secrets, path: system.secrets.url() },
+          { label: 'Targets', exit: system.targets, path: system.targets.url() },
         ],
       },
       { kind: 'exit', label: 'Mirror', exit: this.mirror.open },
