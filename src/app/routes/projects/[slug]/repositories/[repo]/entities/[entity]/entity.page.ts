@@ -93,6 +93,7 @@ import { Chip } from '$ui/components/chip/chip';
                     class="back text-xs font-semibold"
                     [qitsExit]="leaving.allEntities"
                     [exitParams]="{ slug: slug(), repo: repo() }"
+                    [exitCurrent]="null"
                     >← All entities</a
                   >
                 </p>
@@ -251,6 +252,7 @@ import { Chip } from '$ui/components/chip/chip';
                 class="back font-semibold"
                 [qitsExit]="leaving.allEntities"
                 [exitParams]="{ slug: slug(), repo: repo() }"
+                [exitCurrent]="null"
                 >All entities</a
               >
             </p>

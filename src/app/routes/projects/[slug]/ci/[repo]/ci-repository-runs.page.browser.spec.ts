@@ -103,6 +103,9 @@ describe('CiRepositoryRunsPage (screenshots)', () => {
       .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'CI' }))
       .toHaveAttribute('aria-current', 'page');
     await expect
+      .element(view.getByRole('link', { name: '← CI' }))
+      .not.toHaveAttribute('aria-current');
+    await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('runs', { kind: 'DATA' });
     await shootShellMenus(opened, 'runs');
@@ -164,6 +167,9 @@ describe('CiRepositoryRunsPage (screenshots)', () => {
       .element(view)
       .toMatchTextContent('No repository no-such-repository in this project.');
     await expect.element(view.getByRole('link', { name: 'Back to CI' })).toBeVisible();
+    await expect
+      .element(view.getByRole('link', { name: 'Back to CI' }))
+      .not.toHaveAttribute('aria-current');
     await expect
       .element(page.elementLocator(reads.opened.frame))
       .toMatchScreenshot('unknown-repository', { kind: 'NO_DATA' });

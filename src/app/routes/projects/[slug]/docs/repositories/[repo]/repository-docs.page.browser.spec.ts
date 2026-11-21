@@ -119,6 +119,9 @@ describe('RepositoryDocsPage (screenshots)', () => {
       .element(page.getByRole('navigation', { name: 'qits' }).getByRole('link', { name: 'Docs' }))
       .toHaveAttribute('aria-current', 'page');
     await expect
+      .element(view.getByRole('link', { name: '← Docs' }))
+      .not.toHaveAttribute('aria-current');
+    await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('populated', { kind: 'DATA' });
     await shootShellMenus(opened, 'populated');
@@ -174,6 +177,9 @@ describe('RepositoryDocsPage (screenshots)', () => {
       .element(view)
       .toMatchTextContent('This project has no repository no-such-repository.');
     await expect.element(view.getByRole('link', { name: 'Back to Docs' })).toBeVisible();
+    await expect
+      .element(view.getByRole('link', { name: 'Back to Docs' }))
+      .not.toHaveAttribute('aria-current');
     expect(shown(opened)).toEqual([]);
     await expect
       .element(page.elementLocator(opened.frame))

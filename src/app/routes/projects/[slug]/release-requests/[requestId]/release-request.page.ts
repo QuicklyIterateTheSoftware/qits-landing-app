@@ -242,6 +242,7 @@ const UNATTENDED_TITLE =
             class="text-accent no-underline hover:underline"
             [qitsExit]="leaving.list"
             [exitParams]="{ slug: slug() }"
+            [exitCurrent]="null"
             >← Release requests</a
           >
         </p>

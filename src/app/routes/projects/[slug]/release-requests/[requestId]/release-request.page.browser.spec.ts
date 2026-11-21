@@ -219,6 +219,9 @@ describe('ReleaseRequestPage (screenshots)', () => {
       .toBeVisible();
     await expect.element(view.getByRole('link', { name: '← Release requests' })).toBeVisible();
     await expect
+      .element(view.getByRole('link', { name: '← Release requests' }))
+      .not.toHaveAttribute('aria-current');
+    await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('obsolete', { kind: 'DATA' });
     await shootShellMenus(opened, 'obsolete');
