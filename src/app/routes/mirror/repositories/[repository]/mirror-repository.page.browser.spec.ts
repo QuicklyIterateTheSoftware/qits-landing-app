@@ -101,14 +101,13 @@ describe('MirrorRepositoryPage (screenshots)', () => {
     expect(versions.element().textContent).not.toContain(DIGEST);
     expect(versions.element().querySelector(`[title="${DIGEST}"]`)).not.toBeNull();
     expect(versions.element().textContent).not.toContain('Files');
-    // The root sidebar's Mirror stays current below the section.
+    // The root sidebar's Mirror stays current below the section, and Caches below it (qits-2479).
+    const navigation = page.elementLocator(opened.frame).getByRole('navigation', { name: 'qits' });
     await expect
-      .element(
-        page
-          .elementLocator(opened.frame)
-          .getByRole('navigation', { name: 'qits' })
-          .getByRole('link', { name: 'Mirror', exact: true }),
-      )
+      .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Caches', exact: true }))
       .toHaveAttribute('aria-current', 'page');
     await expect
       .element(page.elementLocator(opened.frame))

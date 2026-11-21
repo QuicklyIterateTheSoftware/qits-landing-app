@@ -1704,7 +1704,7 @@ export const INTERACTIONS = {
   'open-sidebar-system': 'The sidebar’s System entry opens the System section',
   /**
    * `shell.layout.ts`: the sidebar's Mirror, a global section shown with no project open, opens
-   * the Mirror section (`mirror`, which opens the OCI upstreams; qits-2357). Navigates only, and
+   * the Mirror section (`mirror`, which opens the Caches page; qits-2357, qits-2479). Navigates only, and
    * names no pact.
    */
   'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
@@ -1714,6 +1714,12 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact.
    */
   'open-sidebar-orchestrator': 'The sidebar’s Orchestrator entry opens the Orchestrator section',
+  /**
+   * `shell.layout.ts`: the Mirror section's pages, listed below the sidebar's Mirror while the
+   * section is open, open their page (Caches, OCI upstreams; qits-2479). Navigates only, and names
+   * no pact.
+   */
+  'open-sidebar-mirror-page': 'A Mirror page below the sidebar’s Mirror entry opens that page',
   /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
    * section is open, open their page (Services, Nodes; qits-2346; Configs, qits-2348; Targets,

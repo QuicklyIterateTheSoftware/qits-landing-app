@@ -122,6 +122,8 @@ export type GlobalPath =
   | 'system/swarm/secrets'
   | 'system/targets'
   | 'mirror'
+  | 'mirror/repositories'
+  | 'mirror/upstreams'
   | 'orchestrator';
 
 /** One of a global section's own pages, below it in the sidebar while the section is open. */
@@ -143,7 +145,7 @@ export interface GlobalChild {
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
  * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System; qits-2357: Mirror; qits-2359:
  * Orchestrator), with its own pages listed below it while it is open (`children`, qits-2346:
- * System's Services, Nodes, Configs and Secrets), or a site of its own the app leaves for at
+ * System's Services, Nodes, Configs and Secrets; qits-2479: Mirror's Caches and OCI upstreams), or a site of its own the app leaves for at
  * `href`, through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
  */
 export type GlobalLink =
@@ -213,17 +215,19 @@ export interface NavNote {
  * (`open-sidebar-network-access`, external), the global sections shown with no project open
  * (Artifacts, `open-sidebar-artifacts`, System, `open-sidebar-system`, Mirror,
  * `open-sidebar-mirror`, and Orchestrator, `open-sidebar-orchestrator`, in-app sections, with
- * System's own pages below it while it is open, `open-sidebar-system-page`; IdP admin, `open-sidebar-idp-admin`, which leaves the app for the
+ * System's own pages below it while it is open, `open-sidebar-system-page`, and Mirror's,
+ * `open-sidebar-mirror-page`; IdP admin, `open-sidebar-idp-admin`, which leaves the app for the
  * idp's own admin), the gear (`open-project-settings`), the network icon (`open-network-access`,
  * external), and the trail's brand and crumbs (`follow-breadcrumb`),
  * handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare
  * their own, being patterns (app-wide too). The two Network access links and IdP admin are plain
  * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
- * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts, Mirror and
+ * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts and
  * Orchestrator, a work page and a global section's page are marked current by `[qitsExit]`; a section keeps its own rule
  * (`currentOf`: `true` while one of its pages below it is open, and Agents on a slot's page), and so
  * does a global section with pages of its own (`globalCurrentOf`, the same rule: System is `true`
- * on Services, Nodes, Configs or Secrets, qits-2346), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
+ * on Services, Nodes, Configs or Secrets, qits-2346, and Mirror on Caches or OCI upstreams,
+ * qits-2479), given to `[qitsExit]` through `[exitCurrent]` (qits-2064).
  *
  * What the shell shows of the platform comes from root services, each one `qitsResource` the shell
  * and the project pages share (qits-2146), never a store: the open project (`SelectedProject`),
@@ -599,8 +603,8 @@ export class ShellLayout {
 
   /**
    * The sidebar's Mirror (qits-2357): the Mirror section, qits-mirror's pull-through caches, which
-   * belong to no project. `mirror` opens the OCI upstreams (a redirect), and the entry stays
-   * current on every page below it.
+   * belong to no project. `mirror` opens the Caches page (a redirect, qits-2479), and the entry
+   * stays current on every page below it.
    */
   protected readonly mirror = outcomes('open-sidebar-mirror', {
     open: exit('mirror'),
@@ -629,6 +633,15 @@ export class ShellLayout {
   });
 
   /**
+   * The Mirror section's pages below the sidebar's Mirror, one exit per page (qits-2479), listed
+   * while the section is open: Caches (every cache root, qits-2471) and OCI upstreams (qits-2357).
+   */
+  private readonly mirrorPages = outcomes('open-sidebar-mirror-page', {
+    caches: exit('mirror/repositories'),
+    upstreams: exit('mirror/upstreams'),
+  });
+
+  /**
    * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
    * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
    * (owner, 2026-11-18). Same tab.
@@ -650,13 +663,14 @@ export class ShellLayout {
    * sections, and IdP admin (qits-2319, leaving the app). An in-app section may list its own pages
    * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348), Secrets
    * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`;
-   * qits-2347…qits-2356 each add one child there. Mirror lists none: its one listable page is the
-   * OCI upstreams, which `mirror` opens; nor does Orchestrator: its one process (gc) is what
-   * `orchestrator` opens.
+   * qits-2347…qits-2356 each add one child there. Mirror lists Caches and OCI upstreams
+   * (qits-2479), one exit each of `open-sidebar-mirror-page`; Orchestrator lists none: its one
+   * process (gc) is what `orchestrator` opens.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     const system = this.systemPages;
+    const mirror = this.mirrorPages;
     return [
       { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
       {
@@ -676,7 +690,15 @@ export class ShellLayout {
           { label: 'Targets', exit: system.targets, path: system.targets.url() },
         ],
       },
-      { kind: 'exit', label: 'Mirror', exit: this.mirror.open },
+      {
+        kind: 'exit',
+        label: 'Mirror',
+        exit: this.mirror.open,
+        children: [
+          { label: 'Caches', exit: mirror.caches, path: mirror.caches.url() },
+          { label: 'OCI upstreams', exit: mirror.upstreams, path: mirror.upstreams.url() },
+        ],
+      },
       { kind: 'exit', label: 'Orchestrator', exit: this.orchestrator.open },
       { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
     ];

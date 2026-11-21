@@ -82,14 +82,13 @@ describe('MirrorRepositoriesPage (screenshots)', () => {
     expect(rows[4].textContent).toContain('quay');
     expect(rows[5].textContent).toContain('redhat');
     await expect.element(table).toMatchTextContent('1 Jan 2026 00:00:00Z');
-    // The root sidebar's Mirror stays current below the section.
+    // The root sidebar's Mirror stays current below the section, and Caches below it (qits-2479).
+    const navigation = page.elementLocator(opened.frame).getByRole('navigation', { name: 'qits' });
     await expect
-      .element(
-        page
-          .elementLocator(opened.frame)
-          .getByRole('navigation', { name: 'qits' })
-          .getByRole('link', { name: 'Mirror', exact: true }),
-      )
+      .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Caches', exact: true }))
       .toHaveAttribute('aria-current', 'page');
     await expect
       .element(page.elementLocator(opened.frame))

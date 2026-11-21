@@ -406,9 +406,9 @@ describe('mirror routes (qits-2357)', () => {
     expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
   });
 
-  it('opens the OCI upstreams at mirror', async () => {
-    expect(await pages('/mirror')).toEqual([MirrorUpstreamsPage]);
-    expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
+  it('opens every cache root at mirror (qits-2479)', async () => {
+    expect(await pages('/mirror')).toEqual([MirrorRepositoriesPage]);
+    expect(TestBed.inject(Router).url).toBe('/mirror/repositories');
   });
 
   it('opens every cache root at mirror/repositories (qits-2471)', async () => {

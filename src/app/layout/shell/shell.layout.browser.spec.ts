@@ -96,7 +96,8 @@ class PinnedPage {}
  * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, Mirror,
  * `open-sidebar-mirror`, qits-2357, and Orchestrator, `open-sidebar-orchestrator`, qits-2359, each
  * to a stand-in route, with System's own pages below it
- * while it is open, `open-sidebar-system-page`, qits-2346) or leave the app (IdP admin,
+ * while it is open, `open-sidebar-system-page`, qits-2346, and Mirror's,
+ * `open-sidebar-mirror-page`, qits-2479) or leave the app (IdP admin,
  * `open-sidebar-idp-admin`, qits-2319). Network access leaves the app for qits-network-access' own
  * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, with no project open
  * and with one, qits-2262) and the network icon (`open-network-access`) are pressed once each. The
@@ -121,6 +122,8 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'system/swarm/secrets', component: TestPage },
           { path: 'system/targets', component: TestPage },
           { path: 'mirror', component: TestPage },
+          { path: 'mirror/repositories', component: TestPage },
+          { path: 'mirror/upstreams', component: TestPage },
           { path: 'orchestrator', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
@@ -948,13 +951,82 @@ describe('ShellLayout (screenshots)', () => {
     });
   }
 
+  it('lists the Mirror section’s pages below Mirror while it is open, and marks the current one (qits-2479)', async () => {
+    await page.viewport(1280, 800);
+    await render('/mirror/repositories');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(labels).toEqual([
+      'Artifacts',
+      'System',
+      'Mirror',
+      'Caches',
+      'OCI upstreams',
+      'Orchestrator',
+      'IdP admin',
+      'Network access',
+    ]);
+    await expect
+      .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Caches', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'OCI upstreams', exact: true }))
+      .not.toHaveAttribute('aria-current');
+  });
+
+  /** The Mirror section's pages below Mirror in the sidebar (qits-2479), each from the other. */
+  const MIRROR_PAGES = [
+    {
+      label: 'Caches',
+      path: '/mirror/repositories',
+      from: '/mirror/upstreams',
+      outcome: 'caches',
+    },
+    {
+      label: 'OCI upstreams',
+      path: '/mirror/upstreams',
+      from: '/mirror/repositories',
+      outcome: 'upstreams',
+    },
+  ] as const;
+
+  for (const mirror of MIRROR_PAGES) {
+    it(`open-sidebar-mirror-page ${mirror.outcome}: ${mirror.label} below Mirror opens it`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(mirror.from);
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: mirror.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', mirror.path);
+      expect(await follow(fixture, link)).toBe(mirror.path);
+      expect(reached()).toEqual([`open-sidebar-mirror-page:${mirror.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
+
   it('renders no System page outside the System section', async () => {
     await render('/artifacts');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true }))
       .not.toHaveAttribute('aria-current');
-    for (const label of ['Services', 'Nodes', 'Configs', 'Secrets', 'Targets']) {
+    for (const label of [
+      'Services',
+      'Nodes',
+      'Configs',
+      'Secrets',
+      'Targets',
+      'Caches',
+      'OCI upstreams',
+    ]) {
       await expect
         .element(navigation.getByRole('link', { name: label, exact: true, includeHidden: true }))
         .not.toBeInTheDocument();

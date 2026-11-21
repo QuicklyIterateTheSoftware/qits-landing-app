@@ -368,9 +368,10 @@ System's are Services, Nodes, Configs, Secrets and Targets (`open-sidebar-system
 `exit('system/swarm/nodes')`, `exit('system/swarm/configs')` (qits-2348),
 `exit('system/swarm/secrets')` (qits-2350), `exit('system/targets')` (qits-2351));
 qits-2347…qits-2356 add one each.
-Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
-`mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
-page below it; so does Orchestrator, whose one process (gc) is what `orchestrator` redirects to.
+Mirror's are Caches and OCI upstreams (`open-sidebar-mirror-page`, `caches`/`upstreams`,
+`exit('mirror/repositories')`, `exit('mirror/upstreams')`, qits-2479); Caches stays current on one
+cache root's page below it. Orchestrator lists none: its one process (gc) is what `orchestrator`
+redirects to, so, as Artifacts, it is marked `page` on every page below it.
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
@@ -888,9 +889,9 @@ no request matches, so the row waits for one with no `?` in it). The provider st
 once, in `src/testing/system-states.ts`.
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
-`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and one cache root's page is
+`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to the Caches page (qits-2479, below), and one cache root's page is
 `mirror/repositories/<repository>` (below). It is an entry point (`qitsEntry`): the old page hands off to it
-with a full-document load, and the sidebar's Mirror exit names `mirror`, which redirects. It reads
+with a full-document load, and OCI upstreams below the sidebar's Mirror leads to it. It reads
 through `qitsResource` over `core/mirror/upstreams.operations.ts`: `UPSTREAM_LIST`
 (`listUpstreams`, `GET /mirror/api/upstreams`, `{ upstreams: [...] }` in namespace order), in the
 browser only, one table in the server's order: host (mono, the name a docker client uses, the row's
