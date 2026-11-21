@@ -30,8 +30,14 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 /** The operations this spec owns in that file. */
 const OPERATIONS = ['listLeases'];
 
-/** The filtered read is recorded (a later pin than 2026.1120.213800): else this spec writes none. */
-const RECORDED = isRecorded(CONNECTED_WITH_LEASES, 'listLeases', masters);
+/**
+ * The filtered read is recorded with its `targetId` as the index's `query` (qits-system-service's
+ * fix in qits-2351, after 2026.1121.34528, which wrote it into `path`, where no request matches it):
+ * else this spec writes none.
+ */
+const RECORDED =
+  isRecorded(CONNECTED_WITH_LEASES, 'listLeases', masters) &&
+  !masters.operation(CONNECTED_WITH_LEASES, 'listLeases').path.includes('?');
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-leases-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
