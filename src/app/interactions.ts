@@ -921,6 +921,22 @@ export const INTERACTIONS = {
    */
   'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
+   * `swarm-node.page.ts` via `SWARM_NODE` and `SWARM_NODE_TASKS` (qits-2347): one swarm node's
+   * page shows its status, facts and labels, and the tasks swarm placed on it. Refresh reads both
+   * again (no event announces a node change).
+   */
+  'show-swarm-node': 'A swarm node’s page shows its facts, labels and tasks',
+  /**
+   * `swarm-nodes.page.ts`: a node row's hostname opens the node's page in this app,
+   * `system/swarm/nodes/:id` (qits-2347). Navigates only, and names no pact.
+   */
+  'open-swarm-node': 'A node of the swarm nodes list opens its page',
+  /**
+   * `swarm-node.page.ts`: the crumb back opens the swarm nodes list (qits-2347). Navigates only,
+   * and names no pact.
+   */
+  'leave-swarm-node': 'A swarm node’s page leads back to the nodes list',
+  /**
    * `swarm-configs.page.ts` via `SWARM_CONFIG_LIST` (qits-2348): the System section's configs page
    * lists the configs of qits-system's swarm, each with its labels and docker's created and
    * updated text. Refresh reads them again (no event announces a change).

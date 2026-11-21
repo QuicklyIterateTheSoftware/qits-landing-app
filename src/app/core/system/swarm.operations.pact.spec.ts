@@ -12,7 +12,9 @@ import { isRecorded, systemGoldenMasters as masters } from '../../../testing/gol
 import { swarmServiceState } from './swarm-service-state';
 import {
   SWARM_CONFIG_LIST,
+  SWARM_NODE,
   SWARM_NODE_LIST,
+  SWARM_NODE_TASKS,
   SWARM_SECRET_LIST,
   SWARM_SERVICE_LIST,
 } from './swarm.operations';
@@ -27,7 +29,12 @@ import {
  * (`[]`), which skips itself until the `@qits/system-golden-masters` pin records it. Its nodes page
  * lists the swarm's nodes (`show-swarm-nodes`, qits-2346): in "a single-node swarm" (one node, the
  * manager and Leader qits-system runs on), and in "a swarm listing no nodes" (`[]`), which skips
- * itself the same way. Its configs page lists the swarm's configs (`show-swarm-configs`,
+ * itself the same way. A node's page reads the node and its tasks (`show-swarm-node`, qits-2347):
+ * in "a single-node swarm" (the node with two labels, `self`, and two tasks, the second Failed and
+ * shut down with its error), in "a swarm node running no tasks" (the same node, its tasks `[]`)
+ * and in "no such swarm node" (both 404s, binding the status only: the page reads nothing of the
+ * body). They skip themselves until the `@qits/system-golden-masters` pin records the node's
+ * tasks. Its configs page lists the swarm's configs (`show-swarm-configs`,
  * qits-2348): in "a single-node swarm" (one config with one label), and in "a swarm holding no
  * configs" (`[]`), which skips itself the same way. Its secrets page lists the swarm's secrets with
  * the services that use them (`show-swarm-secrets`, qits-2350): in "a single-node swarm" (two
@@ -40,12 +47,42 @@ const PROVIDER = 'qits-system-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 
 /** The operations this spec owns in that file. */
-const OPERATIONS = ['listSwarmServices', 'listSwarmNodes', 'listSwarmConfigs', 'listSwarmSecrets'];
+const OPERATIONS = [
+  'listSwarmServices',
+  'listSwarmNodes',
+  'getSwarmNode',
+  'listSwarmNodeTasks',
+  'listSwarmConfigs',
+  'listSwarmSecrets',
+];
 
 const SWARM = 'a single-node swarm';
 const EMPTY_SWARM = 'a swarm running no services';
 const NO_NODES = 'a swarm listing no nodes';
 const NO_CONFIGS = 'a swarm holding no configs';
+const NO_NODE_TASKS = 'a swarm node running no tasks';
+const NO_SUCH_NODE = 'no such swarm node';
+
+/** The node `state` recorded its read for (its `nodeId`), as the page addresses it. */
+const nodeOf = (state: string, operationId: string) => ({
+  path: { id: masters.operation(state, operationId).params['nodeId'] },
+});
+
+/**
+ * Whether the pin records a node's page: its tasks door is the newest of what the page reads (an
+ * older pin records `getSwarmNode` without `self`, in the detail's own lowercase vocabulary).
+ */
+const NODE_RECORDED = isRecorded(SWARM, 'listSwarmNodeTasks', masters);
+
+/** The interaction of a node page's read `operationId` in `state`, binding `consumes`. */
+const givenNode = (state: string, operationId: string, consumes: readonly string[]) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state,
+    operationId,
+    trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-node' },
+    consumes,
+  });
 
 const NO_SECRETS = 'a swarm holding no secrets';
 
@@ -83,6 +120,8 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
   it('declares the provider this spec binds', () => {
     expect(SWARM_SERVICE_LIST.provider).toBe(PROVIDER);
     expect(SWARM_NODE_LIST.provider).toBe(PROVIDER);
+    expect(SWARM_NODE.provider).toBe(PROVIDER);
+    expect(SWARM_NODE_TASKS.provider).toBe(PROVIDER);
     expect(SWARM_CONFIG_LIST.provider).toBe(PROVIDER);
   });
 
@@ -150,6 +189,77 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
         const { data, error } = await at(server.url, () => SWARM_NODE_LIST.fetch({}));
         expect(error).toBeUndefined();
         expect(data).toEqual([]);
+      }),
+  );
+
+  it.skipIf(!NODE_RECORDED)(
+    'show-swarm-node: a node in the list’s words, with its labels, marked as this node',
+    () =>
+      givenNode(SWARM, SWARM_NODE.operationId, SWARM_NODE.consumes).executeTest(async (server) => {
+        const { data, error } = await at(server.url, () =>
+          SWARM_NODE.fetch(nodeOf(SWARM, SWARM_NODE.operationId)),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.hostname).toBe('fake-host');
+        expect(data?.status).toBe('Ready');
+        expect(data?.availability).toBe('Active');
+        expect(data?.self).toBe(true);
+        expect(data?.labels).toEqual({ 'qits.edge': 'true', zone: 'fsn1' });
+      }),
+  );
+
+  it.skipIf(!NODE_RECORDED)('show-swarm-node: the tasks swarm placed on the node', () =>
+    givenNode(SWARM, SWARM_NODE_TASKS.operationId, SWARM_NODE_TASKS.consumes).executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          SWARM_NODE_TASKS.fetch(nodeOf(SWARM, SWARM_NODE_TASKS.operationId)),
+        );
+        expect(error).toBeUndefined();
+        // The mock answers each row with the recording's first by type: two rows, as recorded.
+        expect(data).toHaveLength(2);
+        expect(data?.[0]?.name).toBeTruthy();
+        expect(typeof data?.[0]?.slot).toBe('number');
+      },
+    ),
+  );
+
+  it.skipIf(!isRecorded(NO_NODE_TASKS, 'getSwarmNode', masters))(
+    'show-swarm-node: a node running no tasks',
+    () =>
+      givenNode(NO_NODE_TASKS, SWARM_NODE.operationId, SWARM_NODE.consumes).executeTest(
+        async (server) => {
+          const { data, error } = await at(server.url, () =>
+            SWARM_NODE.fetch(nodeOf(NO_NODE_TASKS, SWARM_NODE.operationId)),
+          );
+          expect(error).toBeUndefined();
+          expect(data?.hostname).toBe('fake-host');
+        },
+      ),
+  );
+
+  it.skipIf(!isRecorded(NO_NODE_TASKS, 'listSwarmNodeTasks', masters))(
+    'show-swarm-node: a node running no tasks lists none',
+    () =>
+      givenNode(NO_NODE_TASKS, SWARM_NODE_TASKS.operationId, SWARM_NODE_TASKS.consumes).executeTest(
+        async (server) => {
+          const { data, error } = await at(server.url, () =>
+            SWARM_NODE_TASKS.fetch(nodeOf(NO_NODE_TASKS, SWARM_NODE_TASKS.operationId)),
+          );
+          expect(error).toBeUndefined();
+          expect(data).toEqual([]);
+        },
+      ),
+  );
+
+  it.skipIf(!isRecorded(NO_SUCH_NODE, 'getSwarmNode', masters))(
+    'show-swarm-node: no such node is a 404',
+    () =>
+      givenNode(NO_SUCH_NODE, SWARM_NODE.operationId, []).executeTest(async (server) => {
+        const { data, response } = await at(server.url, () =>
+          SWARM_NODE.fetch(nodeOf(NO_SUCH_NODE, SWARM_NODE.operationId)),
+        );
+        expect(data).toBeUndefined();
+        expect(response?.status).toBe(404);
       }),
   );
 

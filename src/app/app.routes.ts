@@ -172,6 +172,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * its name or id: its facts, rollout, environment keys, labels, mounts, networks and tasks; each
  * services row's name opens it, and it is an entry point too, where the old `swarm/services/:id`
  * hands off.
+ * `system/swarm/nodes/<id>` (`SwarmNodePage`, qits-2347) is one node of that swarm, by its id:
+ * its status, availability and manager status, facts, labels and the tasks swarm placed on it; each
+ * nodes row's hostname opens it, the sidebar keeps Nodes current on it, and it is an entry point
+ * too, where the old `swarm/nodes/:id` hands off. Its four resource tabs (containers, images,
+ * networks, volumes) come as its child routes later (qits-2352…qits-2355).
  *
  * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
  * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
@@ -743,6 +748,16 @@ export const routes: Routes = [
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/system/swarm/nodes/swarm-nodes.page').then((m) => m.SwarmNodesPage),
+          },
+          {
+            path: 'swarm/nodes/:id',
+            // An entry point (qits-2049): qits-system-frontend's old `swarm/nodes/:id` hands off
+            // here with a full-document load (qits-2347); the nodes list links it too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/nodes/[id]/swarm-node.page').then(
+                (m) => m.SwarmNodePage,
+              ),
           },
           {
             path: 'swarm/configs',

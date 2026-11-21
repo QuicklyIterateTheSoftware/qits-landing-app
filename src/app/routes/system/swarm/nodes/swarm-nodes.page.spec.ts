@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../api/system/client.gen';
@@ -33,6 +34,8 @@ describe('SwarmNodesPage', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
+        // Each row's hostname links the node's page (qits-2347).
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(systemClient),
