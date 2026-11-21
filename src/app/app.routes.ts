@@ -171,6 +171,14 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * open. `mirror` redirects to it by a relative `redirectTo`; it is an entry point, where
  * qits-mirror-frontend's old `upstreams` hands off. qits-2358 adds `mirror/repositories/...`.
  *
+ * The Orchestrator section (qits-2359) is at `orchestrator/processes/<kind>`
+ * (`OrchestratorProcessPage`): one of qits-orchestrator's technical processes, its latest runs,
+ * one run's steps by dependency depth and one step's call, reached from the root sidebar with no
+ * project open. The shown run and the open step are the query (`?run=`, `?step=`), so a run is an
+ * address. `orchestrator` and `orchestrator/processes` redirect to `processes/gc` (the only
+ * process); it is an entry point, where qits-orchestrator-frontend's old `''` and `processes/:kind`
+ * hand off.
+ *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
  * shell, so the guard does not run on it and the catch-all never takes it.
@@ -744,6 +752,27 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/mirror/upstreams/mirror-upstreams.page').then(
                 (m) => m.MirrorUpstreamsPage,
+              ),
+          },
+        ],
+      },
+      {
+        // The Orchestrator section (qits-2359): qits-orchestrator's technical processes, bound to
+        // no project. gc is the only process (its provider states assert it), so `/orchestrator`
+        // and `/orchestrator/processes` open it; a list page waits for a second process.
+        path: 'orchestrator',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'processes/gc' },
+          { path: 'processes', pathMatch: 'full', redirectTo: 'processes/gc' },
+          {
+            path: 'processes/:kind',
+            // An entry point (qits-2049): qits-orchestrator-frontend's old `''` and
+            // `processes/:kind` hand off here with a full-document load, and their bookmarks
+            // follow; the sidebar's Orchestrator leads to `orchestrator`, which redirects here.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/orchestrator/processes/[kind]/orchestrator-process.page').then(
+                (m) => m.OrchestratorProcessPage,
               ),
           },
         ],

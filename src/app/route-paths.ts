@@ -13,6 +13,8 @@ export type RoutePath =
   | 'artifacts/repositories/:repo/packages/:package'
   | 'mirror'
   | 'mirror/upstreams'
+  | 'orchestrator'
+  | 'orchestrator/processes/:kind'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'
