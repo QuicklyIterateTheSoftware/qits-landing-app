@@ -1,4 +1,5 @@
 import type {
+  GetSwarmConfigResponses,
   GetSwarmNodeResponses,
   ListSwarmConfigsResponses,
   ListSwarmNodesResponses,
@@ -10,10 +11,10 @@ import type { Consumed } from '@qits/angular';
 
 /**
  * What the app reads of qits-system's swarm (qits-2344, qits-2346, qits-2347, qits-2348,
- * qits-2350): `SWARM_SERVICE_LIST`, `SWARM_NODE_LIST`, `SWARM_NODE`, `SWARM_NODE_TASKS`,
- * `SWARM_CONFIG_LIST` and `SWARM_SECRET_LIST` (`swarm.operations.ts`) declare it as `consumes`, so
- * nothing else can be read, and their pact spec binds the same lists. To read another field, add it
- * here.
+ * qits-2349, qits-2350): `SWARM_SERVICE_LIST`, `SWARM_NODE_LIST`, `SWARM_NODE`, `SWARM_NODE_TASKS`,
+ * `SWARM_CONFIG_LIST`, `SWARM_CONFIG` and `SWARM_SECRET_LIST` (`swarm.operations.ts`) declare it as
+ * `consumes`, so nothing else can be read, and their pact spec binds the same lists. To read
+ * another field, add it here.
  */
 
 /**
@@ -116,6 +117,24 @@ export type SwarmConfig = Consumed<
   ListSwarmConfigsResponses[200],
   typeof LIST_SWARM_CONFIGS
 >[number];
+
+/**
+ * `SWARM_CONFIG` (qits-2349): one config, for its page. `createdAt`/`updatedAt` are docker
+ * inspect's exact instants (unlike the list's humanized text); `data` is the config's content
+ * decoded as text, `""` (never null) when it is empty or, with `binary: true`, not UTF-8.
+ */
+export const GET_SWARM_CONFIG = [
+  'id',
+  'name',
+  'createdAt',
+  'updatedAt',
+  'labels',
+  'data',
+  'binary',
+] as const;
+
+/** One swarm config, cut to what its page reads. */
+export type SwarmConfigDetail = Consumed<GetSwarmConfigResponses[200], typeof GET_SWARM_CONFIG>;
 
 /**
  * `SWARM_SECRET_LIST` (qits-2350): the swarm's secrets, for the System section's secrets page. No

@@ -659,7 +659,7 @@ records them.
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
 (`listSwarmConfigs`, `docker config ls` on the manager), one table in the server's order: name
-(plain text until a config's page lands, qits-2349), docker's 12-character id (`shortSwarmId`, the
+(linking the config's page by its id, `open-swarm-config`, qits-2349), docker's 12-character id (`shortSwarmId`, the
 whole id in `title`), the labels (each `key=value` on a neutral chip, sorted by key, "—" when `{}`;
 they say who owns a config, where the old page showed only their count), created and updated.
 Created and Updated are the door's text verbatim, through no date parser or formatter: real
@@ -672,6 +672,27 @@ all: Refresh reads again; nothing polls. The pact reads it (`show-swarm-configs`
 swarm" (one config, `qits-edge-vhosts`, labelled `qits.platform.deployments.target=platform`) and
 "a swarm holding no configs" (`[]`; the interaction and the `empty` screenshot skip themselves
 until the pin records it).
+
+`system/swarm/configs/<id>` (`SwarmConfigPage`, qits-2349, replacing qits-system-frontend's
+`swarm/configs/:id`, an entry point too) is one config, `<id>` its id (docker inspects by name too);
+the sidebar keeps System › Configs current on it (the section's prefix match). One read by the
+address's id: `SWARM_CONFIG` (`getSwarmConfig`, `docker config inspect` on the manager, in
+`swarm.operations.ts`). The title is the config's name (its id while the read is open), "← Configs"
+leads back (`leave-swarm-config`); facts: the full id in monospace, Created and Updated as inspect's
+exact instants (`formatInstant`, the served instant in `title`; unlike the list's humanized text),
+the labels as `key=value` neutral chips sorted by key ("—" when `{}`). The data is shown verbatim
+in a monospace `<pre>` that wraps: never truncated, parsed, pretty-printed or highlighted (a
+config is configuration by design). The door answers `data: ""` both for an empty config and,
+with `binary: true`, for bytes that are not UTF-8, which the old page read as empty: here a binary
+config says "This config holds binary data, which is not shown." and only `data: ""` without
+`binary` says "This config is empty.". A 404 is "No swarm config <id>." (and nothing else; the
+only answer the estate gives today, since it holds no configs), a 403 the roles, a 503 the swarm
+not answering, with Retry. Staleness: no `refreshOn`. No event names a config change, so Refresh
+reads again; nothing polls. The pact reads it (`show-swarm-config`) in "a single-node swarm"
+(`qits-edge-vhosts`, one label, one line of text, `binary: false`), "a swarm config holding no
+data" (`qits-empty-config`, `data: ""`, no labels), "a swarm config holding binary data"
+(`qits-binary-config`, `data: ""`, `binary: true`) and "no such swarm config" (a 404, status
+only); the screenshots (`config`, `empty`, `binary`, `not-found`) open each state's `configId`.
 
 `system/swarm/secrets` (`SwarmSecretsPage`, qits-2350, replacing qits-system-frontend's
 `swarm/secrets`, an entry point too) is the same swarm's secrets, never a value (a lede says so:

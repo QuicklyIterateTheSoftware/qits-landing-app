@@ -1,6 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
-import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsApiError,
+  QitsEntity,
+  QitsEntityList,
+  QitsExit,
+  QitsField,
+  qitsResource,
+} from '@qits/angular';
 import { plural } from '$core/artifacts/artifact-listings';
 import { loadState } from '$core/resources/load-state';
 import type { SwarmConfig } from '$core/system/swarm.consumes';
@@ -23,9 +32,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * server render has no session).
  *
  * - Header: "Swarm configs", Refresh, and "N configs".
- * - Rows: name (plain text: a config's own page is qits-2349's), docker's 12-character id (the
- *   whole id on hover), the labels (each `key=value` on a neutral chip, sorted by key, "—" when
- *   none), created and updated.
+ * - Rows: name (linking the config's page here by its id, `open-swarm-config`, qits-2349),
+ *   docker's 12-character id (the whole id on hover), the labels (each `key=value` on a neutral
+ *   chip, sorted by key, "—" when none), created and updated.
  * - Created and Updated are the door's text verbatim: real docker's `config ls` writes a humanized
  *   age (`2 months ago`), not an instant, so nothing parses or formats it. The exact instants are
  *   the config's own page's (`config inspect`).
@@ -46,7 +55,16 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 @Component({
   selector: 'app-swarm-configs-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Chip, LoadFailure, PageLayoutComponent, QitsEntity, QitsEntityList, QitsField, Spinner],
+  imports: [
+    Chip,
+    LoadFailure,
+    PageLayoutComponent,
+    QitsEntity,
+    QitsEntityList,
+    QitsExit,
+    QitsField,
+    Spinner,
+  ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -99,9 +117,14 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         entityKey="id"
                       >
                         <td class="py-1.5 pr-3 whitespace-nowrap">
-                          <span class="font-medium" [fieldOf]="row" qitsField="name">{{
-                            row.name
-                          }}</span>
+                          <a
+                            class="font-medium text-accent no-underline hover:underline"
+                            [qitsExit]="opening.config"
+                            [exitParams]="{ id: row.id ?? '' }"
+                            [fieldOf]="row"
+                            qitsField="name"
+                            >{{ row.name }}</a
+                          >
                         </td>
                         <td
                           class="py-1.5 pr-3 font-mono text-xs whitespace-nowrap text-fg-soft"
@@ -151,6 +174,11 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 })
 export class SwarmConfigsPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** A row's name: the config's page here (qits-2349), addressed by its id. */
+  protected readonly opening = outcomes('open-swarm-config', {
+    config: exit('system/swarm/configs/:id'),
+  });
 
   /** The swarm's configs; read again on Refresh only (no event names a config change). */
   protected readonly configs = qitsResource(SWARM_CONFIG_LIST, () =>
