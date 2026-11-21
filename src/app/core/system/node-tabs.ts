@@ -20,4 +20,5 @@ export const NODE_TABS: readonly NodeTab[] = [
   // One entry per line, in the order above.
   { segment: 'containers', label: 'Containers' },
   { segment: 'volumes', label: 'Volumes' },
+  { segment: 'networks', label: 'Networks' },
 ];

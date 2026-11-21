@@ -927,6 +927,12 @@ export const INTERACTIONS = {
    */
   'show-swarm-node': 'A swarm node’s page shows its facts, labels and tasks',
   /**
+   * `swarm-node-networks.page.ts` via `NODE_NETWORK_LIST` (qits-2354): a swarm node's Networks tab
+   * lists the docker networks of the node qits-system runs on (another node is not read). Refresh
+   * reads them again (no event announces a network change).
+   */
+  'show-swarm-node-networks': 'A swarm node’s Networks tab lists the node’s docker networks',
+  /**
    * `swarm-nodes.page.ts`: a node row's hostname opens the node's page in this app,
    * `system/swarm/nodes/:id` (qits-2347). Navigates only, and names no pact.
    */

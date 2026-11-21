@@ -2057,6 +2057,339 @@
         "references": {
           "qits-call": {
             "app": "qits-system-service",
+            "operationId": "listNodeNetworks"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-networks",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-swarm-node-networks: listNodeNetworks",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a node listing no networks"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/local/networks"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listNodeNetworks"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-networks",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-swarm-node-networks: listNodeNetworks",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a single-node swarm",
+          "params": {
+            "configId": "qits-edge-vhosts",
+            "containerId": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+            "nodeId": "iwbwrdui2z0n62kqcjfo1erwh",
+            "serviceId": "dev-qits-artifacts"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/local/networks"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "createdAt": "2026-08-18 02:13:24 +0000 UTC",
+              "driver": "overlay",
+              "id": "mulnl3uqqi0h",
+              "internal": false,
+              "labels": {},
+              "name": "qits-net",
+              "scope": "swarm"
+            },
+            {
+              "createdAt": "2026-08-15 06:44:01.671795447 +0000 UTC",
+              "driver": "bridge",
+              "id": "c8c43a515890",
+              "internal": true,
+              "labels": {
+                "qits.system.runner": "d2616b57-95a8-4e1b-865f-c10d8225ce5d"
+              },
+              "name": "qits-system-runner-leases-d2616b57",
+              "scope": "local"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.driver": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.internal": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.scope": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.createdAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.driver": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.internal": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.labels['qits.system.runner']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.scope": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listNodeNetworks"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-networks",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-swarm-node-networks: listNodeNetworks",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a swarm node this service cannot reach"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/no-such-node/networks"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "NODE_REMOTE",
+            "message": "only the local node is reachable in this version"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
             "operationId": "listNodeVolumes"
           },
           "qits-trigger": {
