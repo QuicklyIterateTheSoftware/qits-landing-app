@@ -8,6 +8,139 @@
         "references": {
           "qits-call": {
             "app": "qits-orchestrator-service",
+            "operationId": "getProcessRunStep"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-orchestrator-step",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-orchestrator-step: getProcessRunStep",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a finished gc dry run",
+          "params": {
+            "kind": "gc",
+            "runId": "00000000-0000-4000-8000-000000000001",
+            "stepId": "artifacts.plan"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/runs/${runId}/steps/${stepId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/orchestrator/api/runs/00000000-0000-4000-8000-000000000001/steps/artifacts.plan"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": "artifacts.plan",
+            "request": {
+              "body": "{\"dryRun\":true}",
+              "method": "POST",
+              "url": "http://dev-qits-artifacts:8080/artifacts/api/gc/plan"
+            },
+            "response": "{\"summary\":{\"executable\":true}}",
+            "responseBytes": 31
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.method": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.request.url": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.response": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.responseBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
             "operationId": "planArtifactsCleanupRepository"
           },
           "qits-trigger": {
@@ -817,6 +950,2324 @@
           }
         },
         "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "getProcessRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-orchestrator-process",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-orchestrator-process: getProcessRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a finished gc dry run",
+          "params": {
+            "kind": "gc",
+            "runId": "00000000-0000-4000-8000-000000000001",
+            "stepId": "artifacts.plan"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/runs/${runId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/orchestrator/api/runs/00000000-0000-4000-8000-000000000001",
+        "query": {
+          "bodies": [
+            "false"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dryRun": true,
+            "finishedAt": "2026-01-01T00:00:00Z",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "SUCCEEDED",
+            "steps": [
+              {
+                "dependsOn": [],
+                "error": null,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": 200,
+                "id": "usage.before",
+                "name": "Disk usage before",
+                "request": {
+                  "method": "GET",
+                  "url": "http://dev-qits-containers:8080/containers/api/gc/usage"
+                },
+                "responseBytes": 77,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCEEDED",
+                "summary": "images 10 B (2 B reclaimable), build cache 4 B",
+                "target": "containers"
+              },
+              {
+                "dependsOn": [
+                  "pins.deployments",
+                  "pins.deployments",
+                  "pins.deployments",
+                  "pins.deployments",
+                  "pins.deployments"
+                ],
+                "error": null,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": 200,
+                "id": "artifacts.plan",
+                "name": "Plan the registry collection",
+                "request": {
+                  "method": "POST",
+                  "url": "http://dev-qits-artifacts:8080/artifacts/api/gc/plan"
+                },
+                "responseBytes": 31,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCEEDED",
+                "summary": "plan executable",
+                "target": "artifacts"
+              },
+              {
+                "dependsOn": [
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan"
+                ],
+                "error": "dry run",
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": null,
+                "id": "artifacts.sweep",
+                "name": "Sweep the registry",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SKIPPED",
+                "summary": null,
+                "target": "artifacts"
+              },
+              {
+                "dependsOn": [
+                  "usage.before",
+                  "usage.before",
+                  "usage.before",
+                  "usage.before",
+                  "usage.before",
+                  "usage.before"
+                ],
+                "error": null,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": 200,
+                "id": "containers.volumes",
+                "name": "Collect orphan volumes",
+                "request": {
+                  "method": "POST",
+                  "url": "http://dev-qits-containers:8080/containers/api/gc/volumes"
+                },
+                "responseBytes": 24,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCEEDED",
+                "summary": "removed 0 volumes, kept 0",
+                "target": "containers"
+              },
+              {
+                "dependsOn": [
+                  "artifacts.sweep"
+                ],
+                "error": null,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": 200,
+                "id": "artifacts.usage.after",
+                "name": "Registry store after",
+                "request": {
+                  "method": "GET",
+                  "url": "http://dev-qits-artifacts:8080/artifacts/api/store/summary"
+                },
+                "responseBytes": 67,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCEEDED",
+                "summary": "store 10 B: oci 8 B, docs 1 B, sbom 1 B",
+                "target": "artifacts"
+              },
+              {
+                "dependsOn": [
+                  "artifacts.sweep",
+                  "artifacts.sweep",
+                  "artifacts.sweep",
+                  "artifacts.sweep"
+                ],
+                "error": null,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": 200,
+                "id": "usage.after",
+                "name": "Disk usage after",
+                "request": {
+                  "method": "GET",
+                  "url": "http://dev-qits-containers:8080/containers/api/gc/usage"
+                },
+                "responseBytes": 77,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCEEDED",
+                "summary": "images 10 B (2 B reclaimable), build cache 4 B",
+                "target": "containers"
+              }
+            ],
+            "trigger": "manual"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dryRun": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.finishedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.httpStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.method": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.url": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.responseBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 5,
+                              "min": 5
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.httpStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.method": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.url": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.responseBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 6,
+                              "min": 6
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.error": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 3,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 6,
+                              "min": 6
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.httpStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.method": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.url": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.responseBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 4,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.httpStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.method": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.url": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.responseBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 5,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.httpStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.method": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.url": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.responseBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.trigger": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "getProcessRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-orchestrator-process",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-orchestrator-process: getProcessRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a running gc run",
+          "params": {
+            "kind": "gc",
+            "runId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/runs/${runId}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/orchestrator/api/runs/00000000-0000-4000-8000-000000000001",
+        "query": {
+          "bodies": [
+            "false"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dryRun": false,
+            "finishedAt": null,
+            "id": "00000000-0000-4000-8000-000000000001",
+            "startedAt": "2026-01-01T00:00:00Z",
+            "status": "RUNNING",
+            "steps": [
+              {
+                "dependsOn": [],
+                "error": null,
+                "finishedAt": "2026-01-01T00:00:00Z",
+                "httpStatus": 200,
+                "id": "usage.before",
+                "name": "Disk usage before",
+                "request": {
+                  "method": "GET",
+                  "url": "http://dev-qits-containers:8080/containers/api/gc/usage"
+                },
+                "responseBytes": 77,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "SUCCEEDED",
+                "summary": "images 10 B (2 B reclaimable), build cache 4 B",
+                "target": "containers"
+              },
+              {
+                "dependsOn": [],
+                "error": null,
+                "finishedAt": null,
+                "httpStatus": null,
+                "id": "pins.ci",
+                "name": "CI daemon pin",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": "2026-01-01T00:00:00Z",
+                "status": "RUNNING",
+                "summary": null,
+                "target": "ci"
+              },
+              {
+                "dependsOn": [],
+                "error": null,
+                "finishedAt": null,
+                "httpStatus": null,
+                "id": "pins.dependencies",
+                "name": "Dependency pins",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": null,
+                "status": "PENDING",
+                "summary": null,
+                "target": "maintenance"
+              },
+              {
+                "dependsOn": [
+                  "pins.deployments",
+                  "pins.deployments",
+                  "pins.deployments",
+                  "pins.deployments",
+                  "pins.deployments"
+                ],
+                "error": null,
+                "finishedAt": null,
+                "httpStatus": null,
+                "id": "artifacts.plan",
+                "name": "Plan the registry collection",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": null,
+                "status": "PENDING",
+                "summary": null,
+                "target": "artifacts"
+              },
+              {
+                "dependsOn": [
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan",
+                  "artifacts.plan"
+                ],
+                "error": null,
+                "finishedAt": null,
+                "httpStatus": null,
+                "id": "artifacts.sweep",
+                "name": "Sweep the registry",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": null,
+                "status": "PENDING",
+                "summary": null,
+                "target": "artifacts"
+              },
+              {
+                "dependsOn": [
+                  "artifacts.sweep"
+                ],
+                "error": null,
+                "finishedAt": null,
+                "httpStatus": null,
+                "id": "artifacts.usage.after",
+                "name": "Registry store after",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": null,
+                "status": "PENDING",
+                "summary": null,
+                "target": "artifacts"
+              },
+              {
+                "dependsOn": [
+                  "artifacts.sweep",
+                  "artifacts.sweep",
+                  "artifacts.sweep",
+                  "artifacts.sweep"
+                ],
+                "error": null,
+                "finishedAt": null,
+                "httpStatus": null,
+                "id": "usage.after",
+                "name": "Disk usage after",
+                "request": null,
+                "responseBytes": null,
+                "startedAt": null,
+                "status": "PENDING",
+                "summary": null,
+                "target": "containers"
+              }
+            ],
+            "trigger": "manual"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dryRun": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.startedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.steps": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.httpStatus": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.method": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.request.url": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.responseBytes": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "number"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 2,
+                      "rules": {
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 3,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 5,
+                              "min": 5
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 4,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 6,
+                              "min": 6
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 5,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 1,
+                              "min": 1
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 6,
+                      "rules": {
+                        "$.dependsOn": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type",
+                              "max": 4,
+                              "min": 4
+                            }
+                          ]
+                        },
+                        "$.dependsOn[*]": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            },
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.target": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "$.trigger": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "listProcessRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-orchestrator-process",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-orchestrator-process: listProcessRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a finished gc dry run",
+          "params": {
+            "kind": "gc",
+            "runId": "00000000-0000-4000-8000-000000000001",
+            "stepId": "artifacts.plan"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/processes/${kind}/runs",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/orchestrator/api/processes/gc/runs"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "dryRun": true,
+              "finishedAt": "2026-01-01T00:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "startedAt": "2026-01-01T00:00:00Z",
+              "status": "SUCCEEDED",
+              "summary": "usage.before SUCCEEDED (images 10 B (2 B reclaimable), build cache 4 B); artifacts.usage.before SUCCEEDED (store 10 B: oci 8 B, docs 1 B, sbom 1 B); pins.deployments SUCCEEDED (1 deployment pin across 1 application); pins.ci SUCCEEDED (qits-ci-daemon 1); pins.dependencies SUCCEEDED (0 manifest pins across 1 repository); pins.workspaces SUCCEEDED (0 workspace launch pins); pins.projects SUCCEEDED (0 project launch pins); pins.mirror-images SUCCEEDED (1 image pin — what qits-mirror keeps its mirrored tags by); artifacts.plan SUCCEEDED (plan executable); artifacts.sweep SKIPPED (dry run); containers.images SUCCEEDED (removed 0 images, kept 0); containers.volumes SUCCEEDED (removed 0 volumes, kept 0); containers.build-cache SUCCEEDED (reclaimed 0 B); repos.catalogue SUCCEEDED (0 repositories); branches.sweep SUCCEEDED (removed 0 of 0 branches); tags.sweep SUCCEEDED (0 tags decommissioned); claims.idp-clients SUCCEEDED (0 service-client claims); idp.service-clients SUCCEEDED (removed 0 service clients); mirror.sweep SUCCEEDED (would delete 0 cached entries); artifacts.usage.after SUCCEEDED (store 10 B: oci 8 B, docs 1 B, sbom 1 B); usage.after SUCCEEDED (images 10 B (2 B reclaimable), build cache 4 B)",
+              "trigger": "manual"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.dryRun": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.finishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.summary": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.trigger": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "listProcessRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-orchestrator-process",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-orchestrator-process: listProcessRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a running gc run",
+          "params": {
+            "kind": "gc",
+            "runId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/processes/${kind}/runs",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/orchestrator/api/processes/gc/runs"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "dryRun": false,
+              "finishedAt": null,
+              "id": "00000000-0000-4000-8000-000000000001",
+              "startedAt": "2026-01-01T00:00:00Z",
+              "status": "RUNNING",
+              "summary": null,
+              "trigger": "manual"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.dryRun": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.id": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.startedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.status": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.trigger": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "listProcessRuns"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-orchestrator-process",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-orchestrator-process: listProcessRuns",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the gc process before its first run",
+          "params": {
+            "kind": "gc"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/processes/${kind}/runs",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/orchestrator/api/processes/gc/runs"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "listProcesses"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-orchestrator-process",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-orchestrator-process: listProcesses",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the gc process",
+          "params": {
+            "kind": "gc"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/orchestrator/api/processes"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "description": "Reads the platform's pin set once, then asks every store's own owner to delete what nothing pins: registry identities and blobs (qits-artifacts), host images, orphan volumes and buildkit cache (qits-containers), service clients nothing claims (qits-idp), and mirrored images no manifest pins (qits-mirror). Measures host disk and the registry store before and after.",
+              "kind": "gc",
+              "name": "Garbage collection"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "startProcessRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "start-orchestrator-dry-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "start-orchestrator-dry-run: startProcessRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a running gc run",
+          "params": {
+            "kind": "gc",
+            "runId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "dryRun": true
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/processes/${kind}/runs",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/orchestrator/api/processes/gc/runs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "message": "a gc run is already active: 00000000-0000-4000-8000-000000000001"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-orchestrator-service",
+            "operationId": "startProcessRun"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "start-orchestrator-dry-run",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "start-orchestrator-dry-run: startProcessRun",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no active gc run",
+          "params": {
+            "kind": "gc"
+          }
+        }
+      ],
+      "request": {
+        "body": {
+          "content": {
+            "dryRun": true
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "generators": {
+          "path": {
+            "expression": "/orchestrator/api/processes/${kind}/runs",
+            "type": "ProviderState"
+          }
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/orchestrator/api/processes/gc/runs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": "00000000-0000-4000-8000-000000000001"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 202
       },
       "type": "Synchronous/HTTP"
     },
