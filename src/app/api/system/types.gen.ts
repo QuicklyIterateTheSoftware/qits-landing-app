@@ -407,6 +407,7 @@ export type SecretSummary = {
     labels?: {
         [key: string]: string;
     };
+    usedBy?: Array<string>;
 };
 
 export type ServiceDetail = {
