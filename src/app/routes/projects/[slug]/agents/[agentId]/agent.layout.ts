@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   forwardRef,
   inject,
   PLATFORM_ID,
@@ -24,6 +25,8 @@ import { SelectedProject } from '$core/projects/selected-project';
 import { isMissing } from '$core/resources/resource-family';
 import { valueMarks } from '$core/marks/value-marks';
 import { loadState } from '$core/resources/load-state';
+import { SelectedWork } from '$core/work/selected-work';
+import { unmetNeeds } from '$core/work/work-needs';
 import { activityLabel, agentWaitLabel, runStateLabel } from '$core/workspaces/agent-labels';
 import { AGENT_TABS } from '$core/workspaces/agent-tabs';
 import type { AgentDetail } from '$core/workspaces/agents.consumes';
@@ -41,6 +44,7 @@ import {
 } from '$core/workspaces/workspace-events';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { AgentStatus } from '$patterns/agents/agent-status/agent-status';
+import { AgentNeeds } from '$patterns/workspaces/agent-needs/agent-needs';
 import { AgentDiscard } from '$patterns/workspaces/agent-discard/agent-discard';
 import { AgentRunActions } from '$patterns/workspaces/agent-run-actions/agent-run-actions';
 import { StartingLog } from '$patterns/workspaces/starting-log/starting-log';
@@ -73,7 +77,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * read), while the agent has a slot. The layout provides itself as `OPEN_AGENT`, so its tabs follow
  * the same read. Its open waits and attention come from the project's ACTIVE agents, which
  * `getAgent` does not carry: the shell's `ProjectActiveAgents`, the same request as the agents
- * menu's. In the browser only.
+ * menu's. Its item's needs (qits-2494: an unmet one is what an agent with no declared wait waits
+ * on, `app-agent-needs`, and not "waiting on you") come from `SelectedWork`, the project's work.
+ * In the browser only.
  *
  * What it shows carries the data marks (qits-2141): the header and the Workspace section are the
  * agent (`qitsEntity`, by `agentId`, from `AGENT_DETAIL`), each value its field or the fields its
@@ -83,7 +89,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * Staleness (qits-1270): `WORKSPACE_EVENTS` naming the agent (`agentId`) or its slot
  * (`workspaceId`) → the agent, and with it its start (the resource's `refreshOn`, quietly, at most
  * once a second). `AGENT_STATUS_EVENTS` about the project → its waits and attention
- * (`ProjectActiveAgents`' `refreshOn`). Not announced: a queued agent's creation, the slot's
+ * (`ProjectActiveAgents`' `refreshOn`). `EntityTransitioned` about the project → its work, and
+ * with it the needs (`SelectedWork.followTransitions`). Not announced: a queued agent's creation, the slot's
  * container stopping.
  */
 @Component({
@@ -91,6 +98,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AgentDiscard,
+    AgentNeeds,
     AgentRunActions,
     AgentStatus,
     Chip,
@@ -197,6 +205,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                     {{ wait }}
                   </p>
                 }
+                <app-agent-needs [agent]="agent" />
                 @if (status(); as status) {
                   <app-agent-status [agent]="status" [attr.data-qits-source]="statusSource" />
                 }
@@ -274,6 +283,12 @@ export class AgentLayout implements OpenAgentRead {
   private readonly selected = inject(SelectedProject);
   private readonly activeAgents = inject(ProjectActiveAgents);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+  /** The project's work: the item's needs, which the header shows as what the agent waits on. */
+  private readonly work = inject(SelectedWork);
+
+  constructor() {
+    this.work.followTransitions(inject(DestroyRef));
+  }
 
   /** The header's item, linked to its page (epic qits-2000). */
   protected readonly item = outcomes('open-agent-item', {
@@ -384,7 +399,9 @@ export class AgentLayout implements OpenAgentRead {
 
   protected readonly doing = computed(() => {
     const agent = this.agent();
-    return agent ? activityLabel(agent.activity, agent.waitingOn, agent.entityStatus) : null;
+    if (!agent) return null;
+    const needs = unmetNeeds(this.work.entryOf(agent.entityId)?.needs).length;
+    return activityLabel(agent.activity, agent.waitingOn, agent.entityStatus, needs);
   });
 
   protected readonly wait = computed(() => {

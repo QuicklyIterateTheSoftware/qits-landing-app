@@ -13,6 +13,9 @@ import {
 } from '../../../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../../../testing/browser/shell-menus';
 
+/** The project's work the agent pages read for their items' needs (qits-2494). */
+const WORK_WITH_NEEDS = 'a ticket that needs another';
+
 /**
  * Screenshots of an agent's Terminal tab, at `agents/<agent id>/terminal`, inside the shell and the
  * agent's layout (`openRoute`). The project is qits-projects' "a project exists"; the agent is
@@ -109,7 +112,7 @@ describe('AgentTerminalPage (screenshots)', () => {
     // with no waits ("an agent whose workspace is starting", which the pact binds).
     const opened = await openRoute(
       (project) => `/projects/${project.slug}/agents/${agent.agentId}/terminal`,
-      { agents: STARTING },
+      { agents: STARTING, work: WORK_WITH_NEEDS },
     );
     http.expectOne(`/workspaces/api/agents/${agent.agentId}`).flush(agent);
     await opened.settled();

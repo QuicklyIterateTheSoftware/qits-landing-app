@@ -12,6 +12,9 @@ import {
 } from '../../../../../testing/browser/app-route';
 import { shootShellMenus } from '../../../../../testing/browser/shell-menus';
 
+/** The project's work the agent pages read for their items' needs (qits-2494). */
+const WORK_WITH_NEEDS = 'a ticket that needs another';
+
 /**
  * Screenshots of a project's Agents page inside the shell (`openRoute`). Its ACTIVE agents (the
  * "Active agents" heading, the same read as the shell's agents menu) are qits-workspaces' "a
@@ -62,7 +65,10 @@ describe('ProjectAgentsPage (screenshots)', () => {
     // As wide as the page was, plus the sidebar; tall enough for every row, as the shell shows
     // only what is in the viewport.
     await page.viewport(1140, height);
-    return openRoute((project) => `/projects/${project.slug}/agents`, { agents });
+    return openRoute((project) => `/projects/${project.slug}/agents`, {
+      agents,
+      work: WORK_WITH_NEEDS,
+    });
   }
 
   /** Answers the wrapper, then its slots and their agents. */

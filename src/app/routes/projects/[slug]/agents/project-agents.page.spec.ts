@@ -66,6 +66,8 @@ describe('ProjectAgentsPage', () => {
     // The open project's release requests, which the status lines' context reads
     // (`OpenProjectWaits`, `ProjectReleaseRequests`, qits-2146); not this page's.
     http.match(`/projects/api/projects/${PROJECT_ID}/release-requests`);
+    // The project's work (`SelectedWork`), for the needs a row shows (qits-2494); the next test's.
+    http.match(`/projects/api/projects/${PROJECT_ID}/work`);
     http.verify();
   });
 
@@ -184,5 +186,74 @@ describe('ProjectAgentsPage', () => {
       p.textContent?.includes('No active agents.'),
     );
     expect(none?.classList.contains('hidden')).toBe(false);
+  });
+
+  it('shows an agent with no wait on an item with unmet needs as waiting on them, not on you (qits-2494)', async () => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl(`/projects/${SLUG}/agents`);
+    await settle();
+    const agent = {
+      agentId: 'a-2',
+      entityId: `${SLUG}-12`,
+      entityStatus: 'REFINED',
+      state: 'ACTIVE',
+      runState: 'RUNNING',
+      activity: 'WAITING',
+      waits: [],
+    };
+    http
+      .expectOne(`/workspaces/api/agents?projectId=${PROJECT_ID}&state=ACTIVE`)
+      .flush({ agents: [agent, { ...agent, agentId: 'a-3', entityId: `${SLUG}-13` }] });
+    http
+      .expectOne(`/projects/api/projects/${PROJECT_ID}/repositories`)
+      .flush(null, { status: 500, statusText: 'Server Error' });
+    http.expectOne(`/projects/api/projects/${PROJECT_ID}/work`).flush({
+      entities: [
+        {
+          id: 'e-11',
+          qualifiedId: `${SLUG}-11`,
+          title: 'The needed ticket',
+          archetype: 'TICKET',
+          status: 'IMPLEMENTING',
+        },
+        {
+          id: 'e-12',
+          qualifiedId: `${SLUG}-12`,
+          title: 'The waiting ticket',
+          archetype: 'TICKET',
+          status: 'REFINED',
+          needs: [
+            {
+              qualifiedId: `${SLUG}-11`,
+              status: 'IMPLEMENTED',
+              currentStatus: 'IMPLEMENTING',
+              met: false,
+            },
+          ],
+          unmetNeeds: 1,
+        },
+        {
+          id: 'e-13',
+          qualifiedId: `${SLUG}-13`,
+          title: 'A ticket that needs nothing',
+          archetype: 'TICKET',
+          status: 'REFINED',
+        },
+      ],
+    });
+    await answered(harness);
+
+    const element = harness.routeNativeElement as HTMLElement;
+    const row = (id: string) => element.querySelector(`li[data-qits-item="agentId=${id}"]`);
+    const needs = row('a-2')?.querySelector('[data-agent-needs]');
+    expect(needs?.textContent?.replace(/\s+/g, ' ')).toContain('waits on');
+    expect(needs?.textContent).toContain('(IMPLEMENTING)');
+    expect(needs?.querySelector('a')?.getAttribute('href')).toBe(
+      `/projects/${SLUG}/work/detail/${SLUG}-11`,
+    );
+    expect(row('a-2')?.textContent).not.toContain('waiting on you');
+    // Nothing explains the other one's wait: it waits on you.
+    expect(row('a-3')?.querySelector('[data-agent-needs]')).toBeNull();
+    expect(row('a-3')?.textContent).toContain('waiting on you');
   });
 });

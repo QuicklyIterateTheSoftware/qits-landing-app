@@ -5,6 +5,8 @@
  * stores read; every one takes the clock as an argument, so a spec pins it.
  */
 
+import { unmetNeeds, type NeedView } from '$core/work/work-needs';
+
 /** What is drawn where there is nothing to draw. */
 export const NONE = '—';
 
@@ -79,16 +81,47 @@ export function itemDoneLabel(entityStatus: string | null | undefined): string |
 }
 
 /**
+ * What the agent waits on from its item's needs (qits-2494): the needs not met yet, while the agent
+ * is neither working nor ended, declared no wait (a declared wait wins, {@link agentWaitLabel}) and
+ * its item is not VERIFIED or DONE. The desk moves the item on by itself once they are met, so no
+ * person is awaited. Empty otherwise.
+ */
+export function agentNeedsWait(
+  agent: {
+    readonly activity?: string | null;
+    readonly entityStatus?: string | null;
+  } & Waiting,
+  needs: readonly NeedView[] | null | undefined,
+): readonly NeedView[] {
+  if (agent.activity === 'BUSY' || agent.activity === 'ENDED') return [];
+  if (agent.waitingOn?.trim() || itemDoneLabel(agent.entityStatus)) return [];
+  return unmetNeeds(needs);
+}
+
+/** The needs an agent waits on, in one line: `waits on qits-2347 (IMPLEMENTING), qits-2352 (REFINED)`. */
+export function needsWaitLabel(needs: readonly NeedView[]): string | null {
+  if (!needs.length) return null;
+  const items = needs.map((need) =>
+    need.currentStatus
+      ? `${need.qualifiedId ?? '?'} (${need.currentStatus})`
+      : (need.qualifiedId ?? '?'),
+  );
+  return `waits on ${items.join(', ')}`;
+}
+
+/**
  * What the agent is doing, from its daemon's hooks; null when nothing is reported. WAITING is
- * "waiting on you" only when the agent declared no wait: one that waits on a release request, a CI
- * run or a work item is not waiting on a person, and {@link agentWaitLabel} says what it waits on.
- * An agent that is neither working nor ended, on a VERIFIED or DONE item, is done
+ * "waiting on you" only when nothing else explains the wait: the agent declared no wait (one on a
+ * release request, a CI run or a work item is not a person's; {@link agentWaitLabel} says what it
+ * waits on) and its item has no need left unmet (`unmetNeeds`, qits-2494; {@link agentNeedsWait}
+ * says which). An agent that is neither working nor ended, on a VERIFIED or DONE item, is done
  * ({@link itemDoneLabel}, qits-1776), not idle and not waiting on you.
  */
 export function activityLabel(
   activity: string | null | undefined,
   waitingOn?: string | null,
   entityStatus?: string | null,
+  unmetNeedCount = 0,
 ): string | null {
   switch (activity) {
     case 'BUSY':
@@ -100,7 +133,7 @@ export function activityLabel(
   if (done) return done;
   switch (activity) {
     case 'WAITING':
-      return waitingOn?.trim() ? null : 'waiting on you';
+      return waitingOn?.trim() || unmetNeedCount > 0 ? null : 'waiting on you';
     case 'IDLE':
       return 'idle';
     default:
@@ -109,13 +142,18 @@ export function activityLabel(
 }
 
 /**
- * Whether a person is awaited: the agent waits for input and declared no wait of its own, and its
- * item is not already VERIFIED or DONE.
+ * Whether a person is awaited: the agent waits for input, declared no wait of its own, its item has
+ * no need left unmet (`needs`, the item's needs as the work read holds them) and is not already
+ * VERIFIED or DONE.
  */
 export function waitsOnYou(
   agent: { readonly activity?: string | null; readonly entityStatus?: string | null } & Waiting,
+  needs?: readonly NeedView[] | null,
 ): boolean {
-  return activityLabel(agent.activity, agent.waitingOn, agent.entityStatus) === 'waiting on you';
+  return (
+    activityLabel(agent.activity, agent.waitingOn, agent.entityStatus, unmetNeeds(needs).length) ===
+    'waiting on you'
+  );
 }
 
 /** What an agent is called on screen: its work item's qualified id, else its id. */

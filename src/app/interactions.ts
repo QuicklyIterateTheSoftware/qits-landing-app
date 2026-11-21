@@ -48,7 +48,9 @@ export const INTERACTIONS = {
   /**
    * The work section's pages (`routes/projects/[slug]/work/`) via `SelectedWork` (`PROJECT_WORK`,
    * qits-2146): they lay the project's work out on the board, the backlog, Acceptance and the
-   * archive, nested, each item with the needs it has not met yet (epic qits-1899).
+   * archive, nested, each item with the needs it has not met yet (epic qits-1899). The agent pages
+   * (the Agents page, a slot's page, an agent's page) make the same read for their items' needs:
+   * an unmet need is what an agent with no declared wait waits on (qits-2494).
    */
   'show-project-work-board': 'The Work page shows the project’s work on a board, nested',
   /**

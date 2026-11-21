@@ -148,6 +148,12 @@ export interface FrameReads {
    * `'a project with workspaces bound to work items'`.
    */
   readonly workspaces?: string;
+  /**
+   * qits-projects' `listProjectWork` of the open project (`SelectedWork`): the agent pages read it
+   * for their items' needs (qits-2494). Default `'unanswered'`: the work section's specs answer it
+   * themselves.
+   */
+  readonly work?: string;
 }
 
 /** A frame read: which request it is, and how a state answers it. */
@@ -182,6 +188,12 @@ const FRAME_READS: readonly FrameRead[] = [
     fallback: 'a project with workspaces bound to work items',
     matches: (url) => url === '/workspaces/api/work/workspaces',
     answer: (state) => goldenMaster(state, 'listOpenWorkspaces', 'qits-workspaces'),
+  },
+  {
+    key: 'work',
+    fallback: 'unanswered',
+    matches: (url) => /^\/projects\/api\/projects\/[^/?]+\/work$/.test(url),
+    answer: (state) => goldenMaster(state, 'listProjectWork'),
   },
 ];
 
