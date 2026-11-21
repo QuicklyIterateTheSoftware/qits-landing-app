@@ -3113,6 +3113,108 @@
       "route": "system/swarm/nodes/:id/containers"
     }
   ],
+  "src/app/routes/system/swarm/nodes/[id]/images/swarm-node-images.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id/images"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listNodeImages",
+      "route": "system/swarm/nodes/:id/images"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id/images"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a swarm node holding no images",
+      "operationId": "listNodeImages",
+      "route": "system/swarm/nodes/:id/images"
+    }
+  ],
+  "src/app/routes/system/swarm/nodes/[id]/networks/swarm-node-networks.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a node listing no networks",
+      "operationId": "listNodeNetworks",
+      "route": "system/swarm/nodes/:id/networks"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id/networks"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listNodeNetworks",
+      "route": "system/swarm/nodes/:id/networks"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id/networks"
+    }
+  ],
+  "src/app/routes/system/swarm/nodes/[id]/volumes/swarm-node-volumes.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a node holding no volumes",
+      "operationId": "listNodeVolumes",
+      "route": "system/swarm/nodes/:id/volumes"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id/volumes"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listNodeVolumes",
+      "route": "system/swarm/nodes/:id/volumes"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
+      "route": "system/swarm/nodes/:id/volumes"
+    }
+  ],
   "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts": [
     {
       "provider": "qits-system-service",
