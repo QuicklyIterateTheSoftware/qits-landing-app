@@ -625,7 +625,8 @@ the `@qits/system-golden-masters` pin records the node's tasks. The page is a la
 its four resource tabs (`NODE_TABS`, `core/system/node-tabs.ts`: containers, images, volumes,
 networks, local to the node qits-system runs on, qits-2352…qits-2355) are each an entry there, a
 child route and a `switch-swarm-node-tab` exit, and read the node it read through `OPEN_SWARM_NODE`
-(`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all).
+(`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all). The tab row and
+the open tab sit below the labels, and the Tasks section shows on the bare node URL only.
 
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`

@@ -9,7 +9,8 @@ import {
   type Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import {
   exit,
   type ExitOutcome,
@@ -62,9 +63,12 @@ export function memorySize(bytes: number | undefined): string {
  * (the nodes list links it). It replaces qits-system-frontend's `swarm/nodes/:id`.
  *
  * A layout (qits-2354): the node's resource tabs (`NODE_TABS`, `core/system/node-tabs.ts`:
- * Containers, Images, Volumes, Networks, qits-2352…qits-2355) are its child routes, drawn in its
- * `<router-outlet>` below the node, under a row of tab links shown once the node is read and while
- * `NODE_TABS` has an entry; the empty child (the bare node URL) shows the node alone. Each link is
+ * Containers, Images, Volumes, Networks, qits-2352…qits-2355) are its child routes. The header,
+ * facts and labels stay on top; below them a row of tab links (once the node is read, and while
+ * `NODE_TABS` has an entry), then its `<router-outlet>`. The Tasks section is the bare node URL's
+ * (the empty child) only: while a tab is open (`tabOpen`, the activated child route has a path) it
+ * is not drawn, so a tab's content never sits below a long task table. The tasks are still read
+ * on every node URL (and again on Refresh), only not shown on a tab. Each link is
  * a declared exit of `switch-swarm-node-tab` (marked current while its tab is open: `[qitsExit]`
  * sets `aria-current`). A tab plugs in with three lines: its `NODE_TABS` entry, its child route of
  * `swarm/nodes/:id` in `app.routes.ts`, and its key in `switching` below, named by its segment
@@ -287,130 +291,133 @@ export function memorySize(bytes: number | undefined): string {
                 </section>
               </article>
 
-              <section aria-labelledby="node-tasks" data-tasks>
-                <h2 id="node-tasks" class="mt-0 mb-1 text-base font-semibold">Tasks</h2>
-                <ui-load-failure
-                  [message]="tasksFailureMessage()"
-                  [class.hidden]="tasksState() !== 'error'"
-                  (retry)="tasks.reload()"
-                />
-                <ui-spinner
-                  [state]="tasksState()"
-                  class="min-h-24"
-                  [class.hidden]="tasksState() === 'error'"
-                >
-                  @if (taskRows().length) {
-                    <p
-                      class="mt-0 mb-2 text-xs text-fg-muted"
-                      [qitsEntityList]="tasks"
-                      data-caption
-                    >
-                      <span [fieldOf]="tasksAnswer()" [qitsField]="marks.count">{{
-                        taskCount()
-                      }}</span>
-                      in the order the swarm lists them, newest first per slot. The shut-down ones
-                      are history, kept beside the tasks running now.
-                    </p>
-                    <div class="overflow-x-auto">
-                      <table class="w-full border-collapse text-left text-sm" aria-label="Tasks">
-                        <thead>
-                          <tr class="border-b border-line text-xs text-fg-muted">
-                            <th class="py-1.5 pr-3 font-semibold">Name</th>
-                            <th class="py-1.5 pr-3 font-semibold">Slot</th>
-                            <th class="py-1.5 pr-3 font-semibold">State</th>
-                            <th class="py-1.5 pr-3 font-semibold">Desired</th>
-                            <th class="py-1.5 pr-3 font-semibold">Error</th>
-                            <th class="py-1.5 font-semibold">Image</th>
-                          </tr>
-                        </thead>
-                        <tbody [qitsEntityList]="tasks">
-                          @for (task of taskRows(); track task.id) {
-                            <tr
-                              class="border-b border-line-subtle align-top"
-                              [qitsEntity]="task"
-                              entityKey="id"
-                            >
-                              <td
-                                class="py-1.5 pr-3 font-medium whitespace-nowrap"
-                                [fieldOf]="task"
-                                qitsField="name"
-                              >
-                                {{ task.name }}
-                              </td>
-                              <td
-                                class="py-1.5 pr-3 tabular-nums"
-                                [fieldOf]="task"
-                                [qitsField]="marks.slot"
-                              >
-                                {{ task.slot ?? none }}
-                              </td>
-                              <td
-                                class="py-1.5 pr-3 whitespace-nowrap"
-                                [fieldOf]="task"
-                                qitsField="state"
-                              >
-                                {{ task.state }}
-                              </td>
-                              <td
-                                class="py-1.5 pr-3 whitespace-nowrap text-fg-soft"
-                                [fieldOf]="task"
-                                qitsField="desiredState"
-                              >
-                                {{ task.desiredState }}
-                              </td>
-                              <td
-                                class="min-w-48 py-1.5 pr-3 font-mono text-xs break-all"
-                                [class.text-danger]="!!task.error"
-                                [class.text-fg-muted]="!task.error"
-                                [fieldOf]="task"
-                                [qitsField]="marks.error"
-                                data-error
-                              >
-                                {{ task.error || none }}
-                              </td>
-                              <td
-                                class="min-w-48 py-1.5 font-mono text-xs break-all text-fg-soft"
-                                [fieldOf]="task"
-                                qitsField="image"
-                              >
-                                {{ task.image }}
-                              </td>
+              @if (tabs.length) {
+                <nav class="mb-4" aria-label="Swarm node">
+                  <ul class="m-0 flex list-none gap-1 overflow-x-auto border-b border-line p-0">
+                    @for (tab of tabs; track tab.segment) {
+                      <li class="shrink-0">
+                        <a
+                          class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-fg-soft no-underline hover:text-fg aria-[current=page]:border-fg aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                          [qitsExit]="tab.exit"
+                          [exitParams]="{ id: id() }"
+                          >{{ tab.label }}</a
+                        >
+                      </li>
+                    }
+                  </ul>
+                </nav>
+                <div class="mb-6"><router-outlet /></div>
+              }
+              <!-- The tasks are the bare node’s: an open tab shows in their place. -->
+              @if (!tabOpen()) {
+                <section aria-labelledby="node-tasks" data-tasks>
+                  <h2 id="node-tasks" class="mt-0 mb-1 text-base font-semibold">Tasks</h2>
+                  <ui-load-failure
+                    [message]="tasksFailureMessage()"
+                    [class.hidden]="tasksState() !== 'error'"
+                    (retry)="tasks.reload()"
+                  />
+                  <ui-spinner
+                    [state]="tasksState()"
+                    class="min-h-24"
+                    [class.hidden]="tasksState() === 'error'"
+                  >
+                    @if (taskRows().length) {
+                      <p
+                        class="mt-0 mb-2 text-xs text-fg-muted"
+                        [qitsEntityList]="tasks"
+                        data-caption
+                      >
+                        <span [fieldOf]="tasksAnswer()" [qitsField]="marks.count">{{
+                          taskCount()
+                        }}</span>
+                        in the order the swarm lists them, newest first per slot. The shut-down ones
+                        are history, kept beside the tasks running now.
+                      </p>
+                      <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-left text-sm" aria-label="Tasks">
+                          <thead>
+                            <tr class="border-b border-line text-xs text-fg-muted">
+                              <th class="py-1.5 pr-3 font-semibold">Name</th>
+                              <th class="py-1.5 pr-3 font-semibold">Slot</th>
+                              <th class="py-1.5 pr-3 font-semibold">State</th>
+                              <th class="py-1.5 pr-3 font-semibold">Desired</th>
+                              <th class="py-1.5 pr-3 font-semibold">Error</th>
+                              <th class="py-1.5 font-semibold">Image</th>
                             </tr>
-                          }
-                        </tbody>
-                      </table>
-                    </div>
-                  } @else {
-                    <p
-                      role="status"
-                      class="m-0 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
-                      [qitsEntityList]="tasks"
-                      data-no-tasks
-                    >
-                      Swarm runs no task on this node.
-                    </p>
-                  }
-                </ui-spinner>
-              </section>
+                          </thead>
+                          <tbody [qitsEntityList]="tasks">
+                            @for (task of taskRows(); track task.id) {
+                              <tr
+                                class="border-b border-line-subtle align-top"
+                                [qitsEntity]="task"
+                                entityKey="id"
+                              >
+                                <td
+                                  class="py-1.5 pr-3 font-medium whitespace-nowrap"
+                                  [fieldOf]="task"
+                                  qitsField="name"
+                                >
+                                  {{ task.name }}
+                                </td>
+                                <td
+                                  class="py-1.5 pr-3 tabular-nums"
+                                  [fieldOf]="task"
+                                  [qitsField]="marks.slot"
+                                >
+                                  {{ task.slot ?? none }}
+                                </td>
+                                <td
+                                  class="py-1.5 pr-3 whitespace-nowrap"
+                                  [fieldOf]="task"
+                                  qitsField="state"
+                                >
+                                  {{ task.state }}
+                                </td>
+                                <td
+                                  class="py-1.5 pr-3 whitespace-nowrap text-fg-soft"
+                                  [fieldOf]="task"
+                                  qitsField="desiredState"
+                                >
+                                  {{ task.desiredState }}
+                                </td>
+                                <td
+                                  class="min-w-48 py-1.5 pr-3 font-mono text-xs break-all"
+                                  [class.text-danger]="!!task.error"
+                                  [class.text-fg-muted]="!task.error"
+                                  [fieldOf]="task"
+                                  [qitsField]="marks.error"
+                                  data-error
+                                >
+                                  {{ task.error || none }}
+                                </td>
+                                <td
+                                  class="min-w-48 py-1.5 font-mono text-xs break-all text-fg-soft"
+                                  [fieldOf]="task"
+                                  qitsField="image"
+                                >
+                                  {{ task.image }}
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    } @else {
+                      <p
+                        role="status"
+                        class="m-0 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
+                        [qitsEntityList]="tasks"
+                        data-no-tasks
+                      >
+                        Swarm runs no task on this node.
+                      </p>
+                    }
+                  </ui-spinner>
+                </section>
+              }
             }
           </ui-spinner>
-        }
-        @if (tabs.length && shown()) {
-          <nav class="mt-8" aria-label="Swarm node">
-            <ul class="m-0 flex list-none gap-1 overflow-x-auto border-b border-line p-0">
-              @for (tab of tabs; track tab.segment) {
-                <li class="shrink-0">
-                  <a
-                    class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-fg-soft no-underline hover:text-fg aria-[current=page]:border-fg aria-[current=page]:font-semibold aria-[current=page]:text-fg"
-                    [qitsExit]="tab.exit"
-                    [exitParams]="{ id: id() }"
-                    >{{ tab.label }}</a
-                  >
-                </li>
-              }
-            </ul>
-          </nav>
-          <div class="pt-4"><router-outlet /></div>
         }
       </app-page-layout>
     </div>
@@ -441,6 +448,19 @@ export class SwarmNodeLayout implements OpenSwarmNodeRead {
     const exit = this.exits[tab.segment];
     return exit ? [{ ...tab, exit }] : [];
   });
+
+  /**
+   * Whether a tab (a child route with a path) is open rather than the bare node URL (the empty
+   * child): the Tasks section is the bare node's, and a tab shows in its place. Read from the
+   * activated child route after each navigation, so switching tabs or back follows it.
+   */
+  protected readonly tabOpen = toSignal(
+    inject(Router).events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this.childIsTab()),
+    ),
+    { initialValue: this.childIsTab() },
+  );
 
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
@@ -535,6 +555,11 @@ export class SwarmNodeLayout implements OpenSwarmNodeRead {
   protected readonly labels = nodeLabelPairs;
   protected readonly cpus = cpuCount;
   protected readonly memory = memorySize;
+
+  /** The activated child route has a path: a tab, not the empty child. */
+  private childIsTab(): boolean {
+    return !!this.route.firstChild?.routeConfig?.path;
+  }
 
   protected statusTone(node: SwarmNodeDetail): ChipTone {
     return swarmNodeStatusTone(node.status);
