@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetOrchestratorApiProcessesByKindRunsData, GetOrchestratorApiProcessesByKindRunsResponse, GetOrchestratorApiProcessesData, GetOrchestratorApiProcessesResponse, GetOrchestratorApiRunsByIdData, GetOrchestratorApiRunsByIdResponse, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesResponse, PlanArtifactsCleanupRepositoryData, PlanArtifactsCleanupRepositoryResponse, PostOrchestratorApiProcessesByKindRunsData, SweepArtifactsCleanupRepositoryData, SweepArtifactsCleanupRepositoryResponse } from '../types.gen';
+import type { GetProcessRunData, GetProcessRunResponse, GetProcessRunStepData, GetProcessRunStepResponse, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesResponse, ListProcessesData, ListProcessesResponse, ListProcessRunsData, ListProcessRunsResponse, PlanArtifactsCleanupRepositoryData, PlanArtifactsCleanupRepositoryResponse, StartProcessRunData, StartProcessRunResponse2, SweepArtifactsCleanupRepositoryData, SweepArtifactsCleanupRepositoryResponse } from '../types.gen';
 
 /**
  * Every artifacts repository, with what a collection would reclaim
@@ -45,7 +45,7 @@ export const sweepArtifactsCleanupRepositoryRequest = <ThrowOnError extends bool
 /**
  * Every technical process, with its steps and their dependencies
  */
-export const getOrchestratorApiProcessesRequest = <ThrowOnError extends boolean = false>(options?: Options<GetOrchestratorApiProcessesData, ThrowOnError>): HttpRequest<GetOrchestratorApiProcessesResponse> => (options?.client ?? client).requestOptions<GetOrchestratorApiProcessesResponse, ThrowOnError>({
+export const listProcessesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListProcessesData, ThrowOnError>): HttpRequest<ListProcessesResponse> => (options?.client ?? client).requestOptions<ListProcessesResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/orchestrator/api/processes',
@@ -55,7 +55,7 @@ export const getOrchestratorApiProcessesRequest = <ThrowOnError extends boolean 
 /**
  * One process's runs, newest first
  */
-export const getOrchestratorApiProcessesByKindRunsRequest = <ThrowOnError extends boolean = false>(options: Options<GetOrchestratorApiProcessesByKindRunsData, ThrowOnError>): HttpRequest<GetOrchestratorApiProcessesByKindRunsResponse> => (options?.client ?? client).requestOptions<GetOrchestratorApiProcessesByKindRunsResponse, ThrowOnError>({
+export const listProcessRunsRequest = <ThrowOnError extends boolean = false>(options: Options<ListProcessRunsData, ThrowOnError>): HttpRequest<ListProcessRunsResponse> => (options?.client ?? client).requestOptions<ListProcessRunsResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/orchestrator/api/processes/{kind}/runs',
@@ -65,7 +65,7 @@ export const getOrchestratorApiProcessesByKindRunsRequest = <ThrowOnError extend
 /**
  * Start a run of this process
  */
-export const postOrchestratorApiProcessesByKindRunsRequest = <ThrowOnError extends boolean = false>(options: Options<PostOrchestratorApiProcessesByKindRunsData, ThrowOnError>): HttpRequest<unknown> => (options?.client ?? client).requestOptions<unknown, ThrowOnError>({
+export const startProcessRunRequest = <ThrowOnError extends boolean = false>(options: Options<StartProcessRunData, ThrowOnError>): HttpRequest<StartProcessRunResponse2> => (options?.client ?? client).requestOptions<StartProcessRunResponse2, ThrowOnError>({
     responseStyle: 'data',
     method: 'POST',
     url: '/orchestrator/api/processes/{kind}/runs',
@@ -75,10 +75,20 @@ export const postOrchestratorApiProcessesByKindRunsRequest = <ThrowOnError exten
 /**
  * One run with its steps
  */
-export const getOrchestratorApiRunsByIdRequest = <ThrowOnError extends boolean = false>(options: Options<GetOrchestratorApiRunsByIdData, ThrowOnError>): HttpRequest<GetOrchestratorApiRunsByIdResponse> => (options?.client ?? client).requestOptions<GetOrchestratorApiRunsByIdResponse, ThrowOnError>({
+export const getProcessRunRequest = <ThrowOnError extends boolean = false>(options: Options<GetProcessRunData, ThrowOnError>): HttpRequest<GetProcessRunResponse> => (options?.client ?? client).requestOptions<GetProcessRunResponse, ThrowOnError>({
     responseStyle: 'data',
     method: 'GET',
     url: '/orchestrator/api/runs/{id}',
+    ...options
+});
+
+/**
+ * One step of a run, with its bodies
+ */
+export const getProcessRunStepRequest = <ThrowOnError extends boolean = false>(options: Options<GetProcessRunStepData, ThrowOnError>): HttpRequest<GetProcessRunStepResponse> => (options?.client ?? client).requestOptions<GetProcessRunStepResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/orchestrator/api/runs/{id}/steps/{stepId}',
     ...options
 });
 
@@ -115,31 +125,39 @@ export const sweepArtifactsCleanupRepositoryResource = <ThrowOnError extends boo
 /**
  * Every technical process, with its steps and their dependencies
  */
-export const getOrchestratorApiProcessesResource = <ThrowOnError extends boolean = false>(options?: () => Options<GetOrchestratorApiProcessesData, ThrowOnError> | undefined) => httpResource<GetOrchestratorApiProcessesResponse>(() => {
+export const listProcessesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListProcessesData, ThrowOnError> | undefined) => httpResource<ListProcessesResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getOrchestratorApiProcessesRequest(opts) : undefined;
+    return opts ? listProcessesRequest(opts) : undefined;
 });
 
 /**
  * One process's runs, newest first
  */
-export const getOrchestratorApiProcessesByKindRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<GetOrchestratorApiProcessesByKindRunsData, ThrowOnError> | undefined) => httpResource<GetOrchestratorApiProcessesByKindRunsResponse>(() => {
+export const listProcessRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<ListProcessRunsData, ThrowOnError> | undefined) => httpResource<ListProcessRunsResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getOrchestratorApiProcessesByKindRunsRequest(opts) : undefined;
+    return opts ? listProcessRunsRequest(opts) : undefined;
 });
 
 /**
  * Start a run of this process
  */
-export const postOrchestratorApiProcessesByKindRunsResource = <ThrowOnError extends boolean = false>(options: () => Options<PostOrchestratorApiProcessesByKindRunsData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
+export const startProcessRunResource = <ThrowOnError extends boolean = false>(options: () => Options<StartProcessRunData, ThrowOnError> | undefined) => httpResource<StartProcessRunResponse2>(() => {
     const opts = options ? options() : undefined;
-    return opts ? postOrchestratorApiProcessesByKindRunsRequest(opts) : undefined;
+    return opts ? startProcessRunRequest(opts) : undefined;
 });
 
 /**
  * One run with its steps
  */
-export const getOrchestratorApiRunsByIdResource = <ThrowOnError extends boolean = false>(options: () => Options<GetOrchestratorApiRunsByIdData, ThrowOnError> | undefined) => httpResource<GetOrchestratorApiRunsByIdResponse>(() => {
+export const getProcessRunResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProcessRunData, ThrowOnError> | undefined) => httpResource<GetProcessRunResponse>(() => {
     const opts = options ? options() : undefined;
-    return opts ? getOrchestratorApiRunsByIdRequest(opts) : undefined;
+    return opts ? getProcessRunRequest(opts) : undefined;
+});
+
+/**
+ * One step of a run, with its bodies
+ */
+export const getProcessRunStepResource = <ThrowOnError extends boolean = false>(options: () => Options<GetProcessRunStepData, ThrowOnError> | undefined) => httpResource<GetProcessRunStepResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getProcessRunStepRequest(opts) : undefined;
 });

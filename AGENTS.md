@@ -43,9 +43,11 @@ or page holding platform state reads it again after the domain events that can c
 `DomainEvents`; no polling, no timers, no second stream for staleness. The exceptions are what no
 event can announce, each while a person watches it: a running CI run's live output, read again
 every 10 s while the run is RUNNING and the page visible (`pollWhile`, `core/events/poll-while.ts`,
-qits-2321), and a target sign-in that has not settled, read again every 2 s while its card is on the
-Targets page and the page visible (`app-target-sign-in`, `SIGN_IN_POLL_MS`, qits-2351): qits-system
-publishes no sign-in event, and the flow lasts seconds to minutes. A subscriber narrows by
+qits-2321); the same way, a running orchestrator process run's steps, read without bodies
+(qits-2359: qits-orchestrator publishes no event); and a target sign-in that has not settled, read
+again every 2 s while its card is on the Targets page and the page visible (`app-target-sign-in`,
+`SIGN_IN_POLL_MS`, qits-2351): qits-system publishes no sign-in event, and the flow lasts seconds
+to minutes. A subscriber narrows by
 event name and by the ids the payload names (`payloadIds`: project, repository, request, run, work
 item, agent, slot; `payload` is a JSON string), and reads again only what the event can change:
 the one row it names, or the whole list when it can move the list (`changesReleaseRequestList`,
@@ -77,7 +79,8 @@ each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) b
 pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
-counts, a mirror upstream registered or deleted or an image pulled through (qits-2357).
+counts, a mirror upstream registered or deleted or an image pulled through (qits-2357), an
+orchestrator run started elsewhere (gc's deploy trigger, another operator; qits-2359, qits-2472).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
 `ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
@@ -351,8 +354,9 @@ With no project open, the sidebar shows its global sections in the project's sec
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
 every page below it: Artifacts (`open-sidebar-artifacts`, `exit('artifacts')`, qits-2316), System
-(`open-sidebar-system`, `exit('system')`, qits-2344) and Mirror (`open-sidebar-mirror`,
-`exit('mirror')`, qits-2357). Such a section may list its own pages below it
+(`open-sidebar-system`, `exit('system')`, qits-2344), Mirror (`open-sidebar-mirror`,
+`exit('mirror')`, qits-2357) and Orchestrator (`open-sidebar-orchestrator`, `exit('orchestrator')`,
+qits-2359). Such a section may list its own pages below it
 (`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
@@ -362,14 +366,13 @@ System's are Services, Nodes and Targets (`open-sidebar-system-page`, `services`
 qits-2347…qits-2356 add one each.
 Mirror lists none: its one listable page is the OCI upstreams `mirror` redirects to (qits-2358's
 `mirror/repositories/<repository>` takes a param), so, as Artifacts, it is marked `page` on every
-page below it.
+page below it; so does Orchestrator, whose one process (gc) is what `orchestrator` redirects to.
 `kind: 'external'` leaves the app: IdP admin (`open-sidebar-idp-admin`, qits-2319,
 `external('idp')`, same tab) for `PlatformOrigins.page('idp')` + `/idp/`, the idp's own admin
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
-no outcome. Orchestrator (qits-2359) adds one entry there with its own `outcomes(...)` exit (a
-`GlobalPath` of its own). With a project open the list is empty.
+no outcome. With a project open the list is empty.
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
@@ -669,6 +672,39 @@ pulled through, so none of it is followed: Refresh reads again (a known gap). Th
 three default registries) and "a mirror fronting no registries" (`upstreams: []`, recorded from
 `@qits/mirror-golden-masters` 2026.1120.232746 on; the interaction and the `empty` screenshot skip
 themselves on an older pin).
+
+The Orchestrator section (qits-2359) is qits-orchestrator's technical processes, which no project
+joins: `orchestrator/processes/<kind>` (`OrchestratorProcessPage`, replacing
+qits-orchestrator-frontend's `processes/:kind` and its `''`), at
+`https://qits.<domain>/orchestrator/processes/gc`; `orchestrator` and `orchestrator/processes`
+redirect to `processes/gc` (gc is the only process; a list page waits for a second). It is an entry
+point (`qitsEntry`), where the old pages hand off, and the sidebar's Orchestrator names
+`orchestrator`. It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
+the browser only: `PROCESS_LIST` (`listProcesses`: the title, the lede, whether the kind exists),
+`PROCESS_RUNS` (`listProcessRuns`, the latest 20, newest first: status, Started linking `?run=`
+(`open-orchestrator-run`), took, trigger with a "dry run" chip, the summary clamped to two lines)
+and `PROCESS_RUN` (`getProcessRun` with `bodies=false`, always: the old page re-read the whole run,
+2.8 MB for a running gc run, every 2 s). The shown run is `?run=` (else the newest), its steps a
+board in columns by dependency depth (`core/orchestrator/step-columns.ts`, ported from the old
+`board/layout.ts`, no wires); a card's press opens the step below (`?step=`,
+`open-orchestrator-step`, replaced, a second press closes it), whose call is one more read,
+`PROCESS_RUN_STEP` (`getProcessRunStep`: request body and response, the response collapsed behind
+"Show <responseBytes>"). Dry run starts `{ dryRun: true }` at once (`start-orchestrator-dry-run`);
+Run now asks first (`ask-orchestrator-run`) and its second press sends `{ dryRun: false }`
+(`start-orchestrator-run`), both through `qitsMutation`, `online-only`, never disabled while a run is
+active: a 409 is said in the service's words and the newest run shown, a 403 says the role, anything
+else that whether a run started is not known (`explainStart`, `core/orchestrator/process-runs.ts`).
+Staleness: qits-orchestrator publishes no event. A RUNNING shown run is read again every 10 s while
+the page is visible (`pollWhile`); when it leaves RUNNING the list is read again, and an open step
+whose status moved; a failed poll keeps the run and says so. The gap: a run started elsewhere (the
+deploy trigger, another operator) shows only after Refresh (qits-2472). The pact
+(`processes.operations.pact.spec.ts`, its own part of the orchestrator pact beside cleanup's,
+`assertPactPart`) reads the process in "the gc process", the runs, the run and `artifacts.plan`'s
+step in "a finished gc dry run", the runs in "the gc process before its first run" (`[]`), the runs
+and the run in "a running gc run", and Dry run's 202 in "no active gc run" and 409 in "a running gc
+run"; no recording holds a real start, so Run now's request is the page's plain spec's. Every
+interaction and screenshot skips itself until the `@qits/orchestrator-golden-masters` pin records
+these states.
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
@@ -1203,7 +1239,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
-| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`                                                      | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
+| qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`, `core/orchestrator/processes.operations*.ts`        | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
 | qits-mirror-service        | `core/mirror/upstreams.operations*.ts`                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
