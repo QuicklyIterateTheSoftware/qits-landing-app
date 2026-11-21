@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "cancel-target-sign-in",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -128,7 +129,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "declare-target",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -263,7 +265,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "edit-target",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -327,7 +330,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "follow-target-sign-in",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -442,7 +446,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "greenlight-target",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -491,7 +496,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "request-target-health-check",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -775,7 +781,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "rotate-target-token",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -872,7 +879,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-runner-slots",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -1195,7 +1203,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id"
           }
         }
       },
@@ -1403,7 +1412,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id"
           }
         }
       },
@@ -1673,7 +1683,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id"
           }
         }
       },
@@ -1840,7 +1851,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id"
           }
         }
       },
@@ -3292,7 +3304,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-target-health",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -3501,7 +3514,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-target-leases",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -3668,7 +3682,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-targets",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -3954,7 +3969,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-targets",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -4231,7 +4247,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-targets",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -4525,7 +4542,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-targets",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -4581,7 +4599,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "start-target-sign-in",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
@@ -4699,7 +4718,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "submit-target-sign-in-code",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/targets"
           }
         }
       },
