@@ -867,6 +867,17 @@ export const INTERACTIONS = {
    */
   'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
   /**
+   * `mirror-repository.page.ts` via `REPOSITORY_PACKAGES` (qits-2358): the Mirror section's
+   * repository page shows one cache root's type, upstream and eviction rule, its packages and the
+   * selected package's versions. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-repository': 'A cache root’s page lists what the mirror holds in it',
+  /**
+   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358). Changes the page
+   * only: no request, and names no pact.
+   */
+  'select-mirror-package': 'A cache root’s page shows the versions of the package chosen',
+  /**
    * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
    * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
    * engine version, the one qits-system runs on marked. Refresh reads them again.

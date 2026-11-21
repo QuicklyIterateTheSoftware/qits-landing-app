@@ -169,7 +169,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
  * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
  * open. `mirror` redirects to it by a relative `redirectTo`; it is an entry point, where
- * qits-mirror-frontend's old `upstreams` hands off. qits-2358 adds `mirror/repositories/...`.
+ * qits-mirror-frontend's old `upstreams` hands off. One cache root's contents are at
+ * `mirror/repositories/:repository` (`MirrorRepositoryPage`, qits-2358), an entry point too, where
+ * the old `repositories/:repository` hands off; qits-2471 adds the list at `mirror/repositories`.
  *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
@@ -744,6 +746,17 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/mirror/upstreams/mirror-upstreams.page').then(
                 (m) => m.MirrorUpstreamsPage,
+              ),
+          },
+          {
+            path: 'repositories/:repository',
+            // An entry point (qits-2049): qits-mirror-frontend's old `repositories/:repository`
+            // hands off here with a full-document load (qits-2358). No outcome of this app names it
+            // yet: qits-2471's list at `mirror/repositories` will link here.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/mirror/repositories/[repository]/mirror-repository.page').then(
+                (m) => m.MirrorRepositoryPage,
               ),
           },
         ],

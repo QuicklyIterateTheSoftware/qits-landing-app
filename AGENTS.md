@@ -74,7 +74,8 @@ each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) b
 pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
-counts, a mirror upstream registered or deleted or an image pulled through (qits-2357).
+counts, a mirror upstream registered or deleted or an image pulled through (qits-2357), and a mirror
+cache entry pulled through, evicted or swept (qits-2358).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
 `ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
@@ -590,8 +591,8 @@ Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a
 the interaction and the `empty` screenshot skip themselves until the pin records it).
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
-`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and qits-2358 adds
-`mirror/repositories/<repository>`. It is an entry point (`qitsEntry`): the old page hands off to it
+`https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and one cache root's page is
+`mirror/repositories/<repository>` (below). It is an entry point (`qitsEntry`): the old page hands off to it
 with a full-document load, and the sidebar's Mirror exit names `mirror`, which redirects. It reads
 through `qitsResource` over `core/mirror/upstreams.operations.ts`: `UPSTREAM_LIST`
 (`listUpstreams`, `GET /mirror/api/upstreams`, `{ upstreams: [...] }` in namespace order), in the
@@ -604,10 +605,44 @@ operator deleted them) is one sentence; any failure (a 5xx when the database can
 an empty fallback) says the upstreams cannot be read right now, with Retry. Staleness: no
 `refreshOn`. qits-mirror sends no event when an upstream is registered or deleted or an image is
 pulled through, so none of it is followed: Refresh reads again (a known gap). The pact
-(`upstreams.operations.pact.spec.ts`, the whole mirror pact) reads it in "the default caches" (the
+(`upstreams.operations.pact.spec.ts`) reads it in "the default caches" (the
 three default registries) and "a mirror fronting no registries" (`upstreams: []`, recorded from
 `@qits/mirror-golden-masters` 2026.1120.232746 on; the interaction and the `empty` screenshot skip
-themselves on an older pin).
+themselves on an older pin), in its own part of the mirror pact (`assertPactPart`).
+
+`mirror/repositories/<repository>` (`MirrorRepositoryPage`, qits-2358, replacing
+qits-mirror-frontend's `repositories/:repository`, an entry point too: the old route hands off to
+it, and qits-2471's list at `mirror/repositories` will link here) is one pull-through cache root, at
+`https://qits.<domain>/mirror/repositories/<name>`. It reads `REPOSITORY_PACKAGES`
+(`core/mirror/repository-packages.operations.ts`, `listRepositoryPackages`,
+`GET /mirror/api/repositories/{repository}/packages`: the root's row and every package with its
+versions, not paged), in the browser only, and keeps the server's order. The header is the name
+(mono), the type on a chip, "a cache of <upstream>" (a null upstream, an OCI namespace whose
+upstream was deleted, says it serves what is cached and fetches nothing new) and
+"N packages · M cached versions · <size>" (`images` for `oci-mirror`, `coordinates` for
+`maven-proxy`; binary `formatBytes`). The eviction line is the type's window from the row's
+`evictionWindow` (ISO-8601, `evictionWindowWords` in `core/mirror/eviction-window.ts`: `P30D` is
+"30 days", anything but whole days shown as written): "Entries unused for 30 days are evicted by the
+next sweep.", or "This cache is not swept: nothing is evicted." when it is null (eviction off).
+Pins are a gap the page states rather than draws: an image pin from qits-maintenance reaches the
+mirror only in the body of each sweep, so for `oci-mirror` it says one sentence (a pinned tag is
+kept whatever its age; the pins are not shown here), and it claims no per-version verdict (only a
+`qits:system` dry run knows one). A name search (`searched`) narrows the packages table (name, versions,
+size, last used, `never` when null); a package's name is a button (`aria-pressed`,
+`select-mirror-package`, reads nothing) that shows its versions below (version, or for OCI the
+digest shortened to `sha256:` + 12 hex with the whole in `title`; tags as chips, `—` when none;
+files for `maven-proxy` only, the count with the names in `title`; size; cached; last used), the
+first shown package selected until another is pressed. `packages: []` (nobody pulled through yet,
+every root on a fresh deployment) is "Nothing is cached in <name> yet."; a 404 (an unknown name) is
+"The mirror has no cache root called <name>." with no Retry; any other failure is a load failure
+with Retry. Staleness: no `refreshOn`; qits-mirror sends no event when a client pulls through, an
+entry is evicted or a sweep runs, so Refresh reads again (a known gap). Its pact
+(`repository-packages.operations.pact.spec.ts`, `show-mirror-repository`, its own part of the
+mirror pact) reads it in "a mirror holding a pinned and an unpinned tag" (`hub`, two tagged
+digests), "a maven cache holding a cached artifact" (`central`, a jar and a pom), "an npm cache
+holding a package" (`npmjs`, `left-pad`), "the default caches" (`hub`, `packages: []`) and "no cache
+root of that name" (404, status only); all but the npm one, and their screenshots, skip themselves
+until the `@qits/mirror-golden-masters` pin records them (qits-mirror's qits-2358 release).
 
 Network access (epic qits-1977) is not this app's any more (qits-2361): the page that registers a
 device and hands out its WireGuard config is qits-network-access' own frontend
@@ -1143,7 +1178,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
 | qits-orchestrator-service  | `core/artifacts/cleanup.operations*.ts`                                                      | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
-| qits-mirror-service        | `core/mirror/upstreams.operations*.ts`                                                       | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| qits-mirror-service        | `core/mirror/{upstreams,repository-packages}.operations*.ts`                                 | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
