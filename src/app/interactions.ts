@@ -921,7 +921,7 @@ export const INTERACTIONS = {
    */
   'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
-   * `swarm-node.page.ts` via `SWARM_NODE` and `SWARM_NODE_TASKS` (qits-2347): one swarm node's
+   * `swarm-node.layout.ts` via `SWARM_NODE` and `SWARM_NODE_TASKS` (qits-2347): one swarm node's
    * page shows its status, facts and labels, and the tasks swarm placed on it. Refresh reads both
    * again (no event announces a node change).
    */
@@ -932,7 +932,7 @@ export const INTERACTIONS = {
    */
   'open-swarm-node': 'A node of the swarm nodes list opens its page',
   /**
-   * `swarm-node.page.ts`: the crumb back opens the swarm nodes list (qits-2347). Navigates only,
+   * `swarm-node.layout.ts`: the crumb back opens the swarm nodes list (qits-2347). Navigates only,
    * and names no pact.
    */
   'leave-swarm-node': 'A swarm node’s page leads back to the nodes list',
@@ -1170,6 +1170,11 @@ export const INTERACTIONS = {
    * and names no pact (epic qits-2000).
    */
   'switch-agent-tab': 'An agent’s tabs open its Chat, Files or Terminal',
+  /**
+   * `swarm-node.layout.ts`: a swarm node page's tabs (`NODE_TABS`: Containers, Images, Volumes,
+   * Networks, qits-2352…qits-2355), one exit each (qits-2354). Navigates only, and names no pact.
+   */
+  'switch-swarm-node-tab': 'A swarm node’s tabs open its Containers, Images, Volumes or Networks',
   /**
    * `agent-chat.page.ts`: a picked reference's ↗ in the prompt composer opens its lines in the
    * Files tab (`path`, `lines` query params). Navigates only, and names no pact (epic qits-2000).

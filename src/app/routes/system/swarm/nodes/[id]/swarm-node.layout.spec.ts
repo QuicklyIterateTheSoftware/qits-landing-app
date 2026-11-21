@@ -8,9 +8,11 @@ import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../../api/system/client.gen';
 import { provideHeyApiClient } from '../../../../../api/system/client/client.gen';
+import { NODE_TABS } from '$core/system/node-tabs';
+import { OPEN_SWARM_NODE } from '$core/system/open-swarm-node';
 import type { SwarmNodeDetail, SwarmNodeTask } from '$core/system/swarm.consumes';
 import { isRecorded, systemGoldenMasters } from '../../../../../../testing/golden-masters';
-import { cpuCount, memorySize, nodeLabelPairs, SwarmNodePage } from './swarm-node.page';
+import { cpuCount, memorySize, nodeLabelPairs, SwarmNodeLayout } from './swarm-node.layout';
 
 /**
  * One swarm node's page (qits-2347), its two reads answered with qits-system's recordings: "a
@@ -38,14 +40,14 @@ const RECORDED = isRecorded(SWARM, 'listSwarmNodeTasks', systemGoldenMasters);
 @Component({ template: 'stub' })
 class Stub {}
 
-describe('SwarmNodePage', () => {
+describe('SwarmNodeLayout', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'system/swarm/nodes/:id', component: SwarmNodePage },
+          { path: 'system/swarm/nodes/:id', component: SwarmNodeLayout },
           { path: 'system/swarm/nodes', component: Stub },
         ]),
         provideHttpClient(),
@@ -108,6 +110,24 @@ describe('SwarmNodePage', () => {
       'zone=fsn1',
     ]);
   });
+
+  it.skipIf(!RECORDED)(
+    'provides itself as OPEN_SWARM_NODE, the node its tabs read (qits-2354)',
+    async () => {
+      const { harness, element } = await render(
+        NODE,
+        { body: nodeOf(SWARM) },
+        { body: tasksOf(SWARM) },
+      );
+      const open = harness.routeDebugElement!.injector.get(OPEN_SWARM_NODE);
+      expect(open.nodeId()).toBe(NODE);
+      expect(open.node()?.id).toBe(NODE);
+      expect(open.node()?.self).toBe(true);
+      // The tab row shows once the node is read, and only while a tab exists (`NODE_TABS`).
+      const links = [...element.querySelectorAll('nav[aria-label="Swarm node"] a')];
+      expect(links.map((link) => text(link))).toEqual(NODE_TABS.map((tab) => tab.label));
+    },
+  );
 
   it.skipIf(!RECORDED)('shows the recorded node, its labels and its tasks', async () => {
     const { element } = await render(NODE, { body: nodeOf(SWARM) }, { body: tasksOf(SWARM) });

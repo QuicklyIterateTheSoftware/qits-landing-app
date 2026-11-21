@@ -601,7 +601,7 @@ Refresh reads again; nothing polls. The pact reads it (`show-swarm-nodes`) in "a
 (one node, `fake-host`, the manager and Leader, `self`) and "a swarm listing no nodes" (`[]`;
 the interaction and the `empty` screenshot skip themselves until the pin records it).
 
-`system/swarm/nodes/<id>` (`SwarmNodePage`, qits-2347, replacing qits-system-frontend's
+`system/swarm/nodes/<id>` (`SwarmNodeLayout`, qits-2347, replacing qits-system-frontend's
 `swarm/nodes/:id`, an entry point too) is one node, `<id>` its id; the sidebar keeps System ›
 Nodes current on it. Two reads in parallel, by the address's id, nothing per row: `SWARM_NODE`
 (`getSwarmNode`, `docker node inspect`) and `SWARM_NODE_TASKS` (`listSwarmNodeTasks`, `docker node
@@ -621,9 +621,11 @@ task moving, so neither is followed: Refresh reads both again; nothing polls. Th
 (`show-swarm-node`) in "a single-node swarm" (`fake-host`, two labels, `self`, two tasks, the
 second Failed and shut down), "a swarm node running no tasks" (its tasks `[]`) and "no such swarm
 node" (`getSwarmNode` a 404, status only); its interactions and screenshots skip themselves until
-the `@qits/system-golden-masters` pin records the node's tasks. Its four resource tabs
-(containers, images, networks, volumes, local to the node qits-system runs on) are left to
-qits-2352…qits-2355, each a child route of this page with a tab of its own.
+the `@qits/system-golden-masters` pin records the node's tasks. The page is a layout (qits-2354):
+its four resource tabs (`NODE_TABS`, `core/system/node-tabs.ts`: containers, images, volumes,
+networks, local to the node qits-system runs on, qits-2352…qits-2355) are each an entry there, a
+child route and a `switch-swarm-node-tab` exit, and read the node it read through `OPEN_SWARM_NODE`
+(`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all).
 
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`

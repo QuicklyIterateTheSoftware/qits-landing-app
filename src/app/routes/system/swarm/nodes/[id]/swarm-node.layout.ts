@@ -1,9 +1,18 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  PLATFORM_ID,
+  type Signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import {
   exit,
+  type ExitOutcome,
   outcomes,
   QitsApiError,
   QitsEntity,
@@ -17,6 +26,8 @@ import { valueMarks } from '$core/marks/value-marks';
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { isMissing } from '$core/resources/resource-family';
 import { loadState } from '$core/resources/load-state';
+import { NODE_TABS } from '$core/system/node-tabs';
+import { OPEN_SWARM_NODE, type OpenSwarmNodeRead } from '$core/system/open-swarm-node';
 import type { SwarmNodeDetail, SwarmNodeTask } from '$core/system/swarm.consumes';
 import { SWARM_NODE, SWARM_NODE_TASKS } from '$core/system/swarm.operations';
 import { swarmNodeAvailabilityTone, swarmNodeStatusTone } from '$core/system/swarm-node-tones';
@@ -48,9 +59,19 @@ export function memorySize(bytes: number | undefined): string {
 
 /**
  * One node of the swarm (qits-2347), at `/system/swarm/nodes/<id>`, where `<id>` is the node's id
- * (the nodes list links it). It replaces qits-system-frontend's `swarm/nodes/:id`, without its four
- * resource tabs (containers, images, networks, volumes), which come as this page's child routes
- * later (qits-2352…qits-2355).
+ * (the nodes list links it). It replaces qits-system-frontend's `swarm/nodes/:id`.
+ *
+ * A layout (qits-2354): the node's resource tabs (`NODE_TABS`, `core/system/node-tabs.ts`:
+ * Containers, Images, Volumes, Networks, qits-2352…qits-2355) are its child routes, drawn in its
+ * `<router-outlet>` below the node, under a row of tab links shown once the node is read and while
+ * `NODE_TABS` has an entry; the empty child (the bare node URL) shows the node alone. Each link is
+ * a declared exit of `switch-swarm-node-tab` (marked current while its tab is open: `[qitsExit]`
+ * sets `aria-current`). A tab plugs in with three lines: its `NODE_TABS` entry, its child route of
+ * `swarm/nodes/:id` in `app.routes.ts`, and its key in `switching` below, named by its segment
+ * (`containers: exit('system/swarm/nodes/:id/containers')`; an exit is a literal path the route
+ * tree knows, so it cannot be built from the entry). The layout provides itself as
+ * `OPEN_SWARM_NODE` (`core/system/open-swarm-node.ts`), so a tab reads the open node's id and the
+ * node this layout read (`self` among it) without a second request.
  *
  * **Load budget: 2, nothing per row.** `SWARM_NODE` (`getSwarmNode`, `docker node inspect` on the
  * manager) and `SWARM_NODE_TASKS` (`listSwarmNodeTasks`, `docker node ps`), in parallel, both by
@@ -81,7 +102,7 @@ export function memorySize(bytes: number | undefined): string {
  * reads both again. Nothing polls.
  */
 @Component({
-  selector: 'app-swarm-node-page',
+  selector: 'app-swarm-node-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Chip,
@@ -91,8 +112,10 @@ export function memorySize(bytes: number | undefined): string {
     QitsEntityList,
     QitsExit,
     QitsField,
+    RouterOutlet,
     Spinner,
   ],
+  providers: [{ provide: OPEN_SWARM_NODE, useExisting: forwardRef(() => SwarmNodeLayout) }],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
@@ -123,7 +146,7 @@ export function memorySize(bytes: number | undefined): string {
           <ui-load-failure
             [message]="failureMessage()"
             [class.hidden]="state() !== 'error'"
-            (retry)="node.reload()"
+            (retry)="read.reload()"
           />
           <ui-spinner [state]="state()" class="min-h-48" [class.hidden]="state() === 'error'">
             @if (shown(); as node) {
@@ -372,11 +395,28 @@ export function memorySize(bytes: number | undefined): string {
             }
           </ui-spinner>
         }
+        @if (tabs.length && shown()) {
+          <nav class="mt-8" aria-label="Swarm node">
+            <ul class="m-0 flex list-none gap-1 overflow-x-auto border-b border-line p-0">
+              @for (tab of tabs; track tab.segment) {
+                <li class="shrink-0">
+                  <a
+                    class="-mb-px flex items-center border-b-2 border-transparent px-3 py-2 text-sm text-fg-soft no-underline hover:text-fg aria-[current=page]:border-fg aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                    [qitsExit]="tab.exit"
+                    [exitParams]="{ id: id() }"
+                    >{{ tab.label }}</a
+                  >
+                </li>
+              }
+            </ul>
+          </nav>
+          <div class="pt-4"><router-outlet /></div>
+        }
       </app-page-layout>
     </div>
   `,
 })
-export class SwarmNodePage {
+export class SwarmNodeLayout implements OpenSwarmNodeRead {
   private readonly route = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -385,12 +425,29 @@ export class SwarmNodePage {
     back: exit('system/swarm/nodes'),
   });
 
+  /**
+   * The tabs' exits, one key per `NODE_TABS` segment (none yet: a tab adds its line here, as
+   * `containers: exit('system/swarm/nodes/:id/containers')`).
+   */
+  private readonly switching = outcomes('switch-swarm-node-tab', {});
+
+  /** Each tab's exit, by its segment (`NODE_TABS`). */
+  private readonly exits: Readonly<Record<string, ExitOutcome>> = this.switching;
+
+  /** The tabs, each with its exit (`switch-swarm-node-tab`); a tab with no exit is not drawn. */
+  protected readonly tabs = NODE_TABS.flatMap((tab) => {
+    const exit = this.exits[tab.segment];
+    return exit ? [{ ...tab, exit }] : [];
+  });
+
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
   });
 
-  /** The node the address names, by its id. */
-  protected readonly id = computed(() => this.params().get('id') ?? '');
+  /** The node the address names, by its id (`OPEN_SWARM_NODE`'s `nodeId`). */
+  readonly nodeId = computed(() => this.params().get('id') ?? '');
+
+  protected readonly id = this.nodeId;
 
   /** The read's params: the address's node, in the browser only. */
   private readonly addressed = () => {
@@ -399,15 +456,18 @@ export class SwarmNodePage {
   };
 
   /** The node; read again on Refresh only (no event names a node change). */
-  protected readonly node = qitsResource(SWARM_NODE, this.addressed);
+  protected readonly read = qitsResource(SWARM_NODE, this.addressed);
 
   /** The tasks swarm placed on the node; read again on Refresh only (no event names a task move). */
   protected readonly tasks = qitsResource(SWARM_NODE_TASKS, this.addressed);
 
   /** The node as the page shows it; none while the read has none. */
   protected readonly shown = computed((): SwarmNodeDetail | undefined =>
-    this.node.hasValue() ? this.node.value() : undefined,
+    this.read.hasValue() ? this.read.value() : undefined,
   );
+
+  /** The node, once read, as its tabs read it (`OPEN_SWARM_NODE`): what the page shows. */
+  readonly node: Signal<SwarmNodeDetail | undefined> = this.shown;
 
   /** The page's heading: the node's hostname once read. */
   protected readonly title = computed(() => this.shown()?.hostname || 'Swarm node');
@@ -418,10 +478,10 @@ export class SwarmNodePage {
   });
 
   /** No such node: a 404. */
-  protected readonly missing = computed(() => isMissing(this.node));
+  protected readonly missing = computed(() => isMissing(this.read));
 
   /** The node read's failure status (403, 503, …); undefined while it has not failed. */
-  private readonly failure = computed((): number | undefined => failureOf(this.node));
+  private readonly failure = computed((): number | undefined => failureOf(this.read));
 
   /** A 403: the viewer's roles may not read the swarm. */
   protected readonly refusal = computed(() => this.failure() === 403);
@@ -433,7 +493,7 @@ export class SwarmNodePage {
       : 'This swarm node could not be read.',
   );
 
-  protected readonly state = computed((): LoadState => loadState(this.node));
+  protected readonly state = computed((): LoadState => loadState(this.read));
 
   /** The tasks read's answer; none while it has none. */
   protected readonly tasksAnswer = computed(
@@ -461,7 +521,7 @@ export class SwarmNodePage {
       label: 'Refresh',
       variant: 'muted',
       callback: () => {
-        this.node.reload();
+        this.read.reload();
         this.tasks.reload();
       },
     },

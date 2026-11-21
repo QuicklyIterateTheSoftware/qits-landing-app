@@ -38,7 +38,7 @@ import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.
 import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/orchestrator-process.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
-import { SwarmNodePage } from './routes/system/swarm/nodes/[id]/swarm-node.page';
+import { SwarmNodeLayout } from './routes/system/swarm/nodes/[id]/swarm-node.layout';
 import { SwarmConfigsPage } from './routes/system/swarm/configs/swarm-configs.page';
 import { SwarmSecretsPage } from './routes/system/swarm/secrets/swarm-secrets.page';
 import { SystemTargetsPage } from './routes/system/targets/system-targets.page';
@@ -312,7 +312,7 @@ describe('system routes (qits-2344)', () => {
   });
 
   it('opens one swarm node at system/swarm/nodes/:id (qits-2347)', async () => {
-    expect(await pages('/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh')).toEqual([SwarmNodePage]);
+    expect(await pages('/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh')).toEqual([SwarmNodeLayout]);
     expect(TestBed.inject(Router).url).toBe('/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh');
   });
 
