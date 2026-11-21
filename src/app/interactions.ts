@@ -949,6 +949,22 @@ export const INTERACTIONS = {
    */
   'show-swarm-configs': 'The swarm configs page lists the swarm’s configs with their labels',
   /**
+   * `swarm-config.page.ts` via `SWARM_CONFIG` (qits-2349): one swarm config's page shows its id,
+   * exact created and updated instants, labels and its data verbatim (a note instead when it is
+   * binary or empty). Refresh reads it again (no event announces a config change).
+   */
+  'show-swarm-config': 'A swarm config’s page shows its facts, labels and data',
+  /**
+   * `swarm-configs.page.ts`: a config row's name opens the config's page in this app,
+   * `system/swarm/configs/:id` (qits-2349). Navigates only, and names no pact.
+   */
+  'open-swarm-config': 'A config of the swarm configs list opens its page',
+  /**
+   * `swarm-config.page.ts`: the crumb back opens the swarm configs list (qits-2349). Navigates
+   * only, and names no pact.
+   */
+  'leave-swarm-config': 'A swarm config’s page leads back to the configs list',
+  /**
    * `swarm-secrets.page.ts` via `SWARM_SECRET_LIST` (qits-2350): the System section's secrets page
    * lists the secrets of qits-system's swarm, each with its labels, docker's created and updated
    * text and the services whose spec references it (`Unused` when none), never a value. Refresh,
