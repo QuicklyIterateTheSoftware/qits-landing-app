@@ -177,7 +177,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * nodes row's hostname opens it, the sidebar keeps Nodes current on it, and it is an entry point
  * too, where the old `swarm/nodes/:id` hands off. It is a layout (qits-2354): its four resource
  * tabs (`NODE_TABS`: containers, images, volumes, networks) come as its child routes
- * (qits-2352…qits-2355).
+ * (qits-2352…qits-2355); the bare URL shows the node alone, with no redirect to a tab.
+ * `system/swarm/nodes/<id>/containers` (`SwarmNodeContainersPage`, qits-2352) is its first tab:
+ * the containers of the node qits-system runs on (none read for another node), Running by default,
+ * with each one's log tail; an entry point, where the old `swarm/nodes/:id/containers` hands off.
  * `system/swarm/nodes/<id>/images` (`SwarmNodeImagesPage`, qits-2353) is that node's Images tab:
  * the images the node holds (local to the node qits-system runs on; another node shows a note and
  * is not read), with the containers using each and their total size; an entry point too, where the
@@ -185,6 +188,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `system/swarm/nodes/<id>/volumes` (`SwarmNodeVolumesPage`, qits-2355) is the node's Volumes tab:
  * the volumes of the node qits-system runs on, the unused ones marked, the anonymous ones hidden
  * unless `?anonymous=1`; an entry point too, where the old node volumes tab hands off.
+ * `system/swarm/nodes/<id>/networks` (`SwarmNodeNetworksPage`, qits-2354) is the node's Networks
+ * tab: the docker networks of the node qits-system runs on (another node is not read), an entry
+ * point too, where the old `swarm/nodes/:id/networks` hands off.
  * `system/swarm/configs/<id>` (`SwarmConfigPage`, qits-2349) is one config of that swarm, by its
  * id or name: its id, exact created and updated instants, labels and its data verbatim (a note
  * for a binary or an empty config); each configs row's name opens it, the sidebar keeps Configs
@@ -776,6 +782,17 @@ export const routes: Routes = [
             children: [
               { path: '', children: [] },
               {
+                // The node's Containers tab (qits-2352): every container on the node qits-system
+                // runs on, filtered to the running ones, with each one's log tail. An entry point:
+                // qits-system-frontend's old `swarm/nodes/:id/containers` hands off here.
+                path: 'containers',
+                data: { qitsEntry: true },
+                loadComponent: () =>
+                  import('./routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page').then(
+                    (m) => m.SwarmNodeContainersPage,
+                  ),
+              },
+              {
                 path: 'images',
                 // An entry point (qits-2049): qits-system-frontend's old
                 // `swarm/nodes/:id/images` hands off here with a full-document load (qits-2353).
@@ -792,6 +809,16 @@ export const routes: Routes = [
                 loadComponent: () =>
                   import('./routes/system/swarm/nodes/[id]/volumes/swarm-node-volumes.page').then(
                     (m) => m.SwarmNodeVolumesPage,
+                  ),
+              },
+              {
+                path: 'networks',
+                // An entry point (qits-2049, qits-2354): qits-system-frontend's old
+                // `swarm/nodes/:id/networks` hands off here with a full-document load.
+                data: { qitsEntry: true },
+                loadComponent: () =>
+                  import('./routes/system/swarm/nodes/[id]/networks/swarm-node-networks.page').then(
+                    (m) => m.SwarmNodeNetworksPage,
                   ),
               },
             ],
