@@ -499,6 +499,55 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a connected target",
+          "params": {
+            "targetId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/system/api/targets/${targetId}/healthcheck",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/system/api/targets/00000000-0000-4000-8000-000000000001/healthcheck"
+      },
+      "response": {
+        "status": 202
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "requestTargetHealthCheck"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "request-target-health-check",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "request-target-health-check: requestTargetHealthCheck",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a declared target",
           "params": {
             "targetId": "00000000-0000-4000-8000-000000000001"
@@ -571,6 +620,55 @@
           }
         },
         "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "requestTargetLoginCheck"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "request-target-login-check",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "request-target-login-check: requestTargetLoginCheck",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a connected target",
+          "params": {
+            "targetId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/system/api/targets/${targetId}/login-check",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/system/api/targets/00000000-0000-4000-8000-000000000001/login-check"
+      },
+      "response": {
+        "status": 202
       },
       "type": "Synchronous/HTTP"
     },
@@ -2434,6 +2532,173 @@
         "references": {
           "qits-call": {
             "app": "qits-system-service",
+            "operationId": "listLeases"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-target-leases",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-target-leases: listLeases",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a connected target with leases",
+          "params": {
+            "targetId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "targetId": {
+              "expression": "${targetId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "targetId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/system/api/leases",
+        "query": {
+          "targetId": [
+            "00000000-0000-4000-8000-000000000001"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "detail": null,
+              "id": "00000000-0000-4000-8000-000000000003",
+              "ownerApp": "qits-ci",
+              "ownerRef": "run-1",
+              "slotType": "CI",
+              "state": "RUNNING"
+            },
+            {
+              "detail": null,
+              "id": "00000000-0000-4000-8000-000000000003",
+              "ownerApp": "qits-ci",
+              "ownerRef": "run-1",
+              "slotType": "CI",
+              "state": "RUNNING"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$[*].ownerApp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].ownerRef": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].slotType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
             "operationId": "listTargets"
           },
           "qits-trigger": {
@@ -2976,6 +3241,62 @@
               ]
             }
           },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listTargets"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-targets",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-targets: listTargets",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no target",
+          "params": {
+            "authorization": "Bearer qits_tok_contract-qits-ci"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/targets"
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
           "header": {
             "Content-Type": {
               "combine": "AND",
