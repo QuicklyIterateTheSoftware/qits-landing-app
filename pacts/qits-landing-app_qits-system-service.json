@@ -1198,13 +1198,423 @@
         "references": {
           "qits-call": {
             "app": "qits-system-service",
+            "operationId": "getContainerLogs"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-container-logs",
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/containers"
+          }
+        }
+      },
+      "description": "show-swarm-node-container-logs: getContainerLogs",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a single-node swarm",
+          "params": {
+            "configId": "qits-edge-vhosts",
+            "containerId": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+            "nodeId": "iwbwrdui2z0n62kqcjfo1erwh",
+            "serviceId": "dev-qits-artifacts"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/local/containers/dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m/logs",
+        "query": {
+          "tail": [
+            "200"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "text": "the first line of the log\nthe last line of the log\n",
+            "truncated": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.text": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.truncated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listNodeContainers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-containers",
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/containers"
+          }
+        }
+      },
+      "description": "show-swarm-node-containers: listNodeContainers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a node running no containers"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/local/containers",
+        "query": {
+          "all": [
+            "true"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listNodeContainers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-containers",
+            "kind": "ui",
+            "route": "system/swarm/nodes/:id/containers"
+          }
+        }
+      },
+      "description": "show-swarm-node-containers: listNodeContainers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a single-node swarm",
+          "params": {
+            "configId": "qits-edge-vhosts",
+            "containerId": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+            "nodeId": "iwbwrdui2z0n62kqcjfo1erwh",
+            "serviceId": "dev-qits-artifacts"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/local/containers",
+        "query": {
+          "all": [
+            "true"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "createdAt": "2026-08-23 14:28:51 +0200 CEST",
+              "health": "healthy",
+              "id": "b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+              "image": "registry.dev.localhost:8080/qits/qits-ci:3e501b6",
+              "name": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+              "ports": "8080/tcp",
+              "state": "running",
+              "status": "Up 4 hours (healthy)"
+            },
+            {
+              "createdAt": "2026-08-23 14:28:51 +0200 CEST",
+              "health": "healthy",
+              "id": "b248472f7a8e00bba8cd036232373baed8856d90eb77b06c53f3eb0b321fdb17",
+              "image": "registry.dev.localhost:8080/qits/qits-ci:3e501b6",
+              "name": "dev-qits-ci.1.k4g0nn1ld7o272jl7fciatg6m",
+              "ports": "8080/tcp",
+              "state": "running",
+              "status": "Up 4 hours (healthy)"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$[*].createdAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].health": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].image": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].ports": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listNodeContainers"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-swarm-node-containers",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-swarm-node-containers: listNodeContainers",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a swarm node this service cannot reach"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/system/api/nodes/no-such-node/containers",
+        "query": {
+          "all": [
+            "true"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "code": "NODE_REMOTE",
+            "message": "only the local node is reachable in this version"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.message": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 409
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
             "operationId": "getSwarmNode"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
             "kind": "ui",
-            "route": "system/swarm/nodes/:id"
+            "route": "system/swarm/nodes/:id, system/swarm/nodes/:id/containers"
           }
         }
       },
@@ -1412,8 +1822,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
-            "kind": "ui",
-            "route": "system/swarm/nodes/:id"
+            "kind": "ui"
           }
         }
       },
@@ -1684,7 +2093,7 @@
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
             "kind": "ui",
-            "route": "system/swarm/nodes/:id"
+            "route": "system/swarm/nodes/:id, system/swarm/nodes/:id/containers"
           }
         }
       },
@@ -1851,8 +2260,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-node",
-            "kind": "ui",
-            "route": "system/swarm/nodes/:id"
+            "kind": "ui"
           }
         }
       },
