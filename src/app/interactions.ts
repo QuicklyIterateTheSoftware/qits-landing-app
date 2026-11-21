@@ -1762,13 +1762,8 @@ export const INTERACTIONS = {
    */
   'open-project-settings': 'The top bar’s gear opens the project’s settings',
   /**
-   * `shell.layout.ts`: the top bar's network icon leaves for qits-network-access' own frontend,
-   * `https://network-access.<domain>/` (qits-2361). Leaves the app only, and names no pact.
-   */
-  'open-network-access': 'The top bar’s network icon opens the Network access frontend',
-  /**
-   * `shell.layout.ts`: the sidebar's Network access entry, shown with or without a project open,
-   * leaves for qits-network-access' own frontend (qits-2262, qits-2361). Leaves the app only, and
+   * `shell.layout.ts`: the sidebar's Network access entry, shown with no project open only
+   * (qits-2485), leaves for qits-network-access' own frontend (qits-2262, qits-2361). Leaves the app only, and
    * names no pact.
    */
   'open-sidebar-network-access':

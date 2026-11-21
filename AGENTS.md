@@ -1022,10 +1022,10 @@ Network access (epic qits-1977) is not this app's any more (qits-2361): the page
 device and hands out its WireGuard config is qits-network-access' own frontend
 (qits-network-access-frontend), served at `https://network-access.<domain>/` by
 qits-network-access-service, which stays public so a person off the tunnel can still join it. The
-top bar's network icon (from 768px, `open-network-access`) and the sidebar's Network access entry
-below the project's sections (shown with or without a project open and in the phone's burger,
-`open-sidebar-network-access`, qits-2262) are plain links to it, `PlatformOrigins.page('network-access')`
-followed by `/`, each an `external('network-access')` outcome marked with `[qitsTriggers]`: a plain
+sidebar's Network access entry below the global sections (with no project open only, phones
+included: it is no project's concern, qits-2485; `open-sidebar-network-access`, qits-2262) is a
+plain link to it, `PlatformOrigins.page('network-access')` followed by `/`, an
+`external('network-access')` outcome marked with `[qitsTriggers]`: a plain
 primary click records it and leaves through `QITS_LEAVE_APP`, which the shell's browser spec replaces
 with a spy.
 
