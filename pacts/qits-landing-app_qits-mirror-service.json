@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-mirror-upstreams",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "mirror/upstreams"
           }
         }
       },
@@ -68,7 +69,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-mirror-upstreams",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "mirror/upstreams"
           }
         }
       },
