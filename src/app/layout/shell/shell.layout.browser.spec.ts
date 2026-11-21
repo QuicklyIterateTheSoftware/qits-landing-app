@@ -148,7 +148,8 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/releases/ci', component: TestPage },
           { path: 'projects/:slug/releases/ci/runs/:runId', component: TestPage },
           { path: 'projects/:slug/desk', component: TestPage },
-          { path: 'projects/:slug/repositories', component: TestPage },
+          { path: 'projects/:slug/components', component: TestPage },
+          { path: 'projects/:slug/components/:repo', component: TestPage },
           { path: 'projects/:slug/deployments', component: TestPage },
           { path: 'projects/:slug/deployments/requests', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
@@ -316,7 +317,7 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(navigation.getByRole('link', { name: 'Work', exact: true }))
       .toHaveAttribute('aria-current', 'page');
-    await expect.element(navigation.getByRole('link', { name: 'Repositories' })).toBeVisible();
+    await expect.element(navigation.getByRole('link', { name: 'Components' })).toBeVisible();
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(project.name);
@@ -395,7 +396,7 @@ describe('ShellLayout (screenshots)', () => {
       'Requests',
       'Agents',
       'CI',
-      'Repositories',
+      'Components',
       'Deployments',
       'Observability',
       'Events',
@@ -603,7 +604,7 @@ describe('ShellLayout (screenshots)', () => {
   const SECTIONS = [
     { label: 'Work', segment: 'work', outcome: 'work' },
     { label: /^Releases/, segment: 'releases', outcome: 'releases' },
-    { label: 'Repositories', segment: 'repositories', outcome: 'repositories' },
+    { label: 'Components', segment: 'components', outcome: 'components' },
     { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
     { label: 'Events', segment: 'events', outcome: 'events' },
@@ -695,6 +696,100 @@ describe('ShellLayout (screenshots)', () => {
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
       .toMatchTextContent(`${project.name}›Work›Ideas`);
+  });
+
+  /** The Components section open, its search's repositories read once the field is focused. */
+  async function openSearch() {
+    const rendered = await renderProject('/components');
+    const field = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('combobox', { name: 'Search components' });
+    await userEvent.click(field);
+    await settle();
+    const repositories = await goldenMaster('two projects exist', 'listProjectRepositories');
+    http
+      .expectOne(`/projects/api/projects/${rendered.project.id}/repositories`)
+      .flush(repositories);
+    await settle();
+    rendered.fixture.detectChanges();
+    const entries = (repositories as { entries?: { repository?: { name?: string } }[] }).entries;
+    const names = (entries ?? []).map((entry) => entry.repository?.name ?? '');
+    return { ...rendered, field, names };
+  }
+
+  it('lists Search first below Components while it is open, and reads nothing before (qits-2491)', async () => {
+    await renderProject('/components');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect
+      .element(navigation.getByRole('combobox', { name: 'Search components' }))
+      .toBeVisible();
+    http.expectNone((request) => request.url.endsWith('/repositories'));
+    await expect
+      .element(navigation.getByRole('link', { name: 'Components', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+  });
+
+  it('shows no Search while Components is closed', async () => {
+    await renderProject('/work');
+    await expect
+      .element(page.getByRole('combobox', { name: 'Search components', includeHidden: true }))
+      .not.toBeInTheDocument();
+  });
+
+  it('open-component-search opened: typing part of a name lists the matching repositories, Enter opens the highlighted one', async () => {
+    const { fixture, project, field, names } = await openSearch();
+    const name = names[0];
+    // Part of the name, in other case: the match ignores case.
+    const part = name.slice(1, 5).toUpperCase();
+    await userEvent.type(field, part);
+    fixture.detectChanges();
+    const list = page.getByRole('listbox', { name: 'Matching components' });
+    await expect.element(list).toBeVisible();
+    const options = list.getByRole('option').elements();
+    expect(options.map((option) => option.textContent?.trim())).toEqual(
+      names.filter((other: string) => other.toLowerCase().includes(part.toLowerCase())),
+    );
+    await expect.element(field).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.keyboard('{ArrowDown}');
+    fixture.detectChanges();
+    await expect.element(list.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{Enter}');
+    await settle();
+    await fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${project.slug}/components/${encodeURIComponent(name)}`,
+    );
+    expect(reached()).toEqual(['open-component-search:opened']);
+  });
+
+  it('open-component-search opened: a click on a match opens it; Escape closes the list', async () => {
+    const { fixture, project, field, names } = await openSearch();
+    await userEvent.type(field, names[1]);
+    fixture.detectChanges();
+    const list = page.getByRole('listbox', { name: 'Matching components' });
+    await expect.element(list).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    fixture.detectChanges();
+    await expect
+      .element(page.getByRole('listbox', { name: 'Matching components', includeHidden: true }))
+      .not.toBeVisible();
+    await expect.element(field).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.type(field, '{ArrowDown}');
+    fixture.detectChanges();
+    const option = list.getByRole('option', { name: names[1], exact: true });
+    expect(await follow(fixture, option)).toBe(
+      `/projects/${project.slug}/components/${encodeURIComponent(names[1])}`,
+    );
+    expect(reached()).toEqual(['open-component-search:opened']);
+  });
+
+  it('says when no component matches', async () => {
+    const { fixture, field } = await openSearch();
+    await userEvent.type(field, 'no-such-component');
+    fixture.detectChanges();
+    await expect
+      .element(page.getByRole('listbox', { name: 'Matching components' }))
+      .toMatchTextContent('No component matches.');
   });
 
   it('open-sidebar-deployments-page requests: Requests below Deployments opens it', async () => {

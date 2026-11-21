@@ -39,6 +39,7 @@ import { ReleaseMenu } from '$patterns/release-requests/release-menu/release-men
 import { AgentsMenu } from '$patterns/agents/agents-menu/agents-menu';
 import { ThemeChoices } from '$patterns/appearance/theme-choices/theme-choices';
 import { ThemeMenu } from '$patterns/appearance/theme-menu/theme-menu';
+import { ComponentSearch } from '$patterns/repositories/component-search/component-search';
 import { Breadcrumbs, type Crumb, type CrumbMarks } from '$ui/components/breadcrumbs/breadcrumbs';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
 
@@ -56,7 +57,7 @@ type SectionKey =
   | 'work'
   | 'releases'
   | 'desk'
-  | 'repositories'
+  | 'components'
   | 'deployments'
   | 'observability'
   | 'events'
@@ -77,7 +78,7 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'releases/agents'
   | 'releases/ci'
   | 'desk'
-  | 'repositories'
+  | 'components'
   | 'deployments'
   | 'deployments/requests'
   | 'observability'
@@ -101,6 +102,8 @@ export interface NavLink extends NavPage {
   readonly children?: readonly NavChild[];
   /** A line below the label: what is newest in the section, with a chip. */
   readonly note?: NavNote;
+  /** A search field as the section's first entry while it is open (Components, qits-2491). */
+  readonly search?: boolean;
 }
 
 /** One of a section's own pages, below it in the sidebar. */
@@ -273,6 +276,7 @@ export interface NavNote {
     QitsTriggers,
     RouterOutlet,
     BumpsMenu,
+    ComponentSearch,
     FinishToasts,
     NotificationsMenu,
     ReleaseMenu,
@@ -430,17 +434,17 @@ export interface NavNote {
           }
         </ul>
         <!-- With a repository open (qits-2492), its own pages in the project's sections' place,
-             below a way back to the project's Repositories; rendered only then (qits-2225). -->
+             below a way back to the project's Components; rendered only then (qits-2225). -->
         @if (repository(); as repo) {
           <ul class="m-0 list-none px-2 py-3" aria-label="Repository">
             <li>
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-sm text-fg-muted no-underline hover:bg-surface-muted"
-                [qitsExit]="repositoryBack.repositories"
+                [qitsExit]="repositoryBack.components"
                 [exitParams]="{ slug: slug() }"
                 [exitCurrent]="null"
                 (click)="closeNav()"
-                >← Repositories</a
+                >← Components</a
               >
             </li>
             <li
@@ -496,8 +500,16 @@ export interface NavNote {
                    (\`openChildren\`, qits-2225). -->
               <ul
                 class="m-0 mt-0.5 mb-1 ml-3 list-none border-l border-line pl-2"
-                [class.hidden]="!link.children?.length || link.path !== section()?.path"
+                [class.hidden]="
+                  (!link.children?.length && !link.search) || link.path !== section()?.path
+                "
               >
+                <!-- The section's search, its first entry while it is open (qits-2491). -->
+                @if (link.search && link.path === section()?.path) {
+                  <li class="py-1">
+                    <app-component-search />
+                  </li>
+                }
                 @for (child of openChildren(link); track child.path) {
                   <li [class.mb-3]="child.apart">
                     <a
@@ -514,8 +526,8 @@ export interface NavNote {
             </li>
           }
           <!-- Below 768px the top bar has no room for the desk icon: its entry sits here instead
-               (qits-2484). -->
-          @if (slug()) {
+               (qits-2484), while the project's sections show (not a repository's, qits-2492). -->
+          @if (slug() && shownLinks().length > 0) {
             <li class="md:hidden">
               <a
                 class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
@@ -583,7 +595,7 @@ export class ShellLayout {
   private readonly sections = outcomes('open-sidebar-section', {
     work: exit('projects/:slug/work'),
     releases: exit('projects/:slug/releases'),
-    repositories: exit('projects/:slug/repositories'),
+    components: exit('projects/:slug/components'),
     deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
     events: exit('projects/:slug/events'),
@@ -645,18 +657,18 @@ export class ShellLayout {
    * Overview, Artifacts, Docs, Contracts, Entities, UI builder and Release requests (qits-2506).
    */
   private readonly repositoryPages = outcomes('open-sidebar-repository-page', {
-    overview: exit('projects/:slug/repositories/:repo'),
-    artifacts: exit('projects/:slug/repositories/:repo/artifacts'),
-    docs: exit('projects/:slug/repositories/:repo/docs'),
-    contracts: exit('projects/:slug/repositories/:repo/contracts'),
-    entities: exit('projects/:slug/repositories/:repo/entities'),
-    uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
-    releaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
+    overview: exit('projects/:slug/components/:repo'),
+    artifacts: exit('projects/:slug/components/:repo/artifacts'),
+    docs: exit('projects/:slug/components/:repo/docs'),
+    contracts: exit('projects/:slug/components/:repo/contracts'),
+    entities: exit('projects/:slug/components/:repo/entities'),
+    uiBuilder: exit('projects/:slug/components/:repo/ui-builder'),
+    releaseRequests: exit('projects/:slug/components/:repo/release-requests'),
   });
 
   /** The repository sidebar's way back to the project's sidebar (qits-2492). */
   protected readonly repositoryBack = outcomes('leave-sidebar-repository', {
-    repositories: exit('projects/:slug/repositories'),
+    components: exit('projects/:slug/components'),
   });
 
   /** Each work page's exit, by its segment (`WORK_TABS`). */
@@ -872,19 +884,19 @@ export class ShellLayout {
     releasesRequests: exit('projects/:slug/releases/requests'),
     releasesAgents: exit('projects/:slug/releases/agents'),
     releasesCi: exit('projects/:slug/releases/ci'),
-    repositories: exit('projects/:slug/repositories'),
-    repository: exit('projects/:slug/repositories/:repo'),
-    repositoryContracts: exit('projects/:slug/repositories/:repo/contracts'),
-    repositoryEntities: exit('projects/:slug/repositories/:repo/entities'),
-    repositoryReleaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
-    repositoryDocs: exit('projects/:slug/repositories/:repo/docs'),
+    components: exit('projects/:slug/components'),
+    repository: exit('projects/:slug/components/:repo'),
+    repositoryContracts: exit('projects/:slug/components/:repo/contracts'),
+    repositoryEntities: exit('projects/:slug/components/:repo/entities'),
+    repositoryReleaseRequests: exit('projects/:slug/components/:repo/release-requests'),
+    repositoryDocs: exit('projects/:slug/components/:repo/docs'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
   private readonly sectionCrumbExits: Partial<Record<SectionKey, ExitOutcome>> = {
     work: this.trail.work,
     releases: this.trail.releases,
-    repositories: this.trail.repositories,
+    components: this.trail.components,
   };
 
   /** A repository page's crumb's exit, for the pages with a page below them (qits-2478). */
@@ -987,7 +999,7 @@ export class ShellLayout {
           },
         ],
       },
-      link('repositories', 'Repositories', sections.repositories),
+      { ...link('components', 'Components', sections.components), search: true },
       {
         ...link('deployments', 'Deployments', sections.deployments),
         children: [
@@ -1116,10 +1128,10 @@ export class ShellLayout {
       params,
     };
     const url = this.selected.url();
-    // A repository and its pages (qits-2478): Repositories › <repo> › Contracts › <state>, each
+    // A repository and its pages (qits-2478): Components › <repo> › Contracts › <state>, each
     // crumb before the last leading to its page.
     const repository = repositoryTrail(url, `/projects/${slug}`);
-    if (found.key === 'repositories' && repository) {
+    if (found.key === 'components' && repository) {
       const repoParams = { slug, repo: repository.repo };
       const steps: Crumb[] = [
         { label: repository.repo, exit: this.trail.repository, params: repoParams },
@@ -1434,8 +1446,11 @@ export function releaseRequestSubpage(
   };
 }
 
-/** The repositories section's segment below a project: `/projects/<slug>/repositories`. */
-export const REPOSITORIES = 'repositories';
+/**
+ * The components section's segment below a project: `/projects/<slug>/components` (qits-2491;
+ * the old `repositories` redirects).
+ */
+export const REPOSITORIES = 'components';
 
 /** A repository's pages that have a crumb of their own, by segment (qits-2478). */
 const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
@@ -1455,8 +1470,8 @@ export interface RepositoryTrail {
 }
 
 /**
- * The trail below the Repositories section of the project at `project` (`/projects/<slug>`,
- * qits-2478): `<project>/repositories/<repo>` is the repository, `…/<repo>/contracts` one of its
+ * The trail below the Components section of the project at `project` (`/projects/<slug>`,
+ * qits-2478): `<project>/components/<repo>` is the repository, `…/<repo>/contracts` one of its
  * pages, `…/contracts/<state>` a page below that (its segment, decoded). Undefined for the list
  * itself and anything outside it.
  */

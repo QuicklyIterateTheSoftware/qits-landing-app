@@ -89,9 +89,9 @@ describe('CallDetails (screenshots)', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'projects/:slug/repositories/:repo/contracts/:state', children: [] },
-          { path: 'projects/:slug/repositories/:repo/entities/:entity', children: [] },
-          { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
+          { path: 'projects/:slug/components/:repo/contracts/:state', children: [] },
+          { path: 'projects/:slug/components/:repo/entities/:entity', children: [] },
+          { path: 'projects/:slug/components/:repo/contracts', children: [] },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -247,7 +247,7 @@ describe('CallDetails (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: state.name }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/${GITHOST}/contracts/${state.slug}`,
+      `/projects/${slug}/components/${GITHOST}/contracts/${state.slug}`,
     );
     expect(fired()).toEqual(['open-call-contract:state']);
   });
@@ -257,7 +257,7 @@ describe('CallDetails (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: 'Open GitRepository entity page' }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/${GITHOST}/entities/${entity.entity}`,
+      `/projects/${slug}/components/${GITHOST}/entities/${entity.entity}`,
     );
     expect(fired()).toEqual(['open-call-contract:entity']);
   });
@@ -266,7 +266,7 @@ describe('CallDetails (screenshots)', () => {
     const { locator } = await opened();
     await userEvent.click(locator.getByRole('link', { name: `Contracts of ${GITHOST}` }));
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/repositories/${GITHOST}/contracts`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/components/${GITHOST}/contracts`);
     expect(fired()).toEqual(['open-call-contract:contracts']);
   });
 });

@@ -480,40 +480,40 @@ export const routes: Routes = [
           import('./routes/projects/[slug]/desk/project-desk.page').then((m) => m.ProjectDeskPage),
       },
       {
-        path: 'projects/:slug/repositories',
+        path: 'projects/:slug/components',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/project-repositories.page').then(
+          import('./routes/projects/[slug]/components/project-repositories.page').then(
             (m) => m.ProjectRepositoriesPage,
           ),
       },
       {
         // One repository's page (qits-2478): its own pages and the artifacts it publishes.
-        path: 'projects/:slug/repositories/:repo',
+        path: 'projects/:slug/components/:repo',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/repository.page').then(
+          import('./routes/projects/[slug]/components/[repo]/repository.page').then(
             (m) => m.RepositoryPage,
           ),
       },
       {
         // A repository's Artifacts (qits-2492): what it publishes.
-        path: 'projects/:slug/repositories/:repo/artifacts',
+        path: 'projects/:slug/components/:repo/artifacts',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/artifacts/repository-artifacts.page').then(
+          import('./routes/projects/[slug]/components/[repo]/artifacts/repository-artifacts.page').then(
             (m) => m.RepositoryArtifactsPage,
           ),
       },
       {
         // A repository's release requests (qits-2506), and one of them under the repository.
-        path: 'projects/:slug/repositories/:repo/release-requests',
+        path: 'projects/:slug/components/:repo/release-requests',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/release-requests/repository-release-requests.page').then(
+          import('./routes/projects/[slug]/components/[repo]/release-requests/repository-release-requests.page').then(
             (m) => m.RepositoryReleaseRequestsPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/release-requests/:requestId',
+        path: 'projects/:slug/components/:repo/release-requests/:requestId',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/release-requests/[requestId]/repository-release-request.page').then(
+          import('./routes/projects/[slug]/components/[repo]/release-requests/[requestId]/repository-release-request.page').then(
             (m) => m.RepositoryReleaseRequestPage,
           ),
       },
@@ -521,69 +521,85 @@ export const routes: Routes = [
         // A repository's docs (qits-2336, here since qits-2486), and one site's reader (qits-2337):
         // one page under three addresses, as before: `docs/:site[/-/:version]` (this app's links,
         // the site one segment) and `docs/**` (the site split); it reads both off the URL.
-        path: 'projects/:slug/repositories/:repo/docs',
+        path: 'projects/:slug/components/:repo/docs',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/docs/repository-docs.page').then(
+          import('./routes/projects/[slug]/components/[repo]/docs/repository-docs.page').then(
             (m) => m.RepositoryDocsPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/docs/:site',
+        path: 'projects/:slug/components/:repo/docs/:site',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page').then(
+          import('./routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page').then(
             (m) => m.DocsReaderPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/docs/:site/-/:version',
+        path: 'projects/:slug/components/:repo/docs/:site/-/:version',
         // eslint-disable-next-line qits/route-matches-directory -- the version is read off the URL by the site's page
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page').then(
+          import('./routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page').then(
             (m) => m.DocsReaderPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/docs/**',
+        path: 'projects/:slug/components/:repo/docs/**',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page').then(
+          import('./routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page').then(
             (m) => m.DocsReaderPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/ui-builder',
+        path: 'projects/:slug/components/:repo/ui-builder',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page').then(
+          import('./routes/projects/[slug]/components/[repo]/ui-builder/ui-builder.page').then(
             (m) => m.UiBuilderPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/contracts',
+        path: 'projects/:slug/components/:repo/contracts',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/contracts/contracts.page').then(
+          import('./routes/projects/[slug]/components/[repo]/contracts/contracts.page').then(
             (m) => m.ContractsPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/contracts/:state',
+        path: 'projects/:slug/components/:repo/contracts/:state',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page').then(
+          import('./routes/projects/[slug]/components/[repo]/contracts/[state]/contract-state.page').then(
             (m) => m.ContractStatePage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/entities',
+        path: 'projects/:slug/components/:repo/entities',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/entities/entities.page').then(
+          import('./routes/projects/[slug]/components/[repo]/entities/entities.page').then(
             (m) => m.EntitiesPage,
           ),
       },
       {
-        path: 'projects/:slug/repositories/:repo/entities/:entity',
+        path: 'projects/:slug/components/:repo/entities/:entity',
         loadComponent: () =>
-          import('./routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page').then(
+          import('./routes/projects/[slug]/components/[repo]/entities/[entity]/entity.page').then(
             (m) => m.EntityPage,
           ),
       },
+      // The old addresses before the Components section (qits-2491), as for Releases above.
+      ...redirects('projects/:slug/repositories', 'projects/:slug/components', [
+        '',
+        ':repo',
+        ':repo/artifacts',
+        ':repo/docs',
+        ':repo/docs/:site',
+        ':repo/docs/:site/-/:version',
+        ':repo/release-requests',
+        ':repo/release-requests/:requestId',
+        ':repo/ui-builder',
+        ':repo/contracts',
+        ':repo/contracts/:state',
+        ':repo/entities',
+        ':repo/entities/:entity',
+      ]),
       {
         // The Deployments section (qits-2315): no layout of its own, one page per view.
         path: 'projects/:slug/deployments',
@@ -667,13 +683,13 @@ export const routes: Routes = [
         ],
       },
       // The project's Docs section is gone (qits-2486): docs belong to the repository that
-      // publishes them. Its addresses redirect: the section to the Repositories, a repository's
-      // docs to `repositories/<repo>/docs`, and the reader (`DocsReadRedirectPage`) to the
+      // publishes them. Its addresses redirect: the section to the Components, a repository's
+      // docs to `components/<repo>/docs`, and the reader (`DocsReadRedirectPage`) to the
       // reader under the site's publisher.
-      { path: 'projects/:slug/docs', pathMatch: 'full', redirectTo: 'projects/:slug/repositories' },
+      { path: 'projects/:slug/docs', pathMatch: 'full', redirectTo: 'projects/:slug/components' },
       {
         path: 'projects/:slug/docs/repositories/:repo',
-        redirectTo: 'projects/:slug/repositories/:repo/docs',
+        redirectTo: 'projects/:slug/components/:repo/docs',
       },
       {
         path: 'projects/:slug/docs/read/:site',

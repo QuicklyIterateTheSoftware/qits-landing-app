@@ -236,7 +236,7 @@ const CASES: Case[] = [
       await page.viewport(1520, 800);
       const bundle = 'a published routes bundle';
       const opened = await openRoute(
-        (project) => `/projects/${project.slug}/repositories/qits-landing-app/ui-builder`,
+        (project) => `/projects/${project.slug}/components/qits-landing-app/ui-builder`,
       );
       http
         .expectOne(`/projects/api/projects/${opened.project.id}/repositories`)

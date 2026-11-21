@@ -47,10 +47,10 @@ describe('RepositoryCard (screenshots)', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'projects/:slug/repositories/:repo/ui-builder', children: [] },
-          { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
-          { path: 'projects/:slug/repositories/:repo/entities', children: [] },
-          { path: 'projects/:slug/repositories/:repo/docs', children: [] },
+          { path: 'projects/:slug/components/:repo/ui-builder', children: [] },
+          { path: 'projects/:slug/components/:repo/contracts', children: [] },
+          { path: 'projects/:slug/components/:repo/entities', children: [] },
+          { path: 'projects/:slug/components/:repo/docs', children: [] },
         ]),
       ],
     });
@@ -88,7 +88,7 @@ describe('RepositoryCard (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: 'UI builder →' }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/contract-frontend/ui-builder`,
+      `/projects/${slug}/components/contract-frontend/ui-builder`,
     );
     expect(fired()).toEqual(['open-repository-pages:uiBuilder']);
   });
@@ -98,7 +98,7 @@ describe('RepositoryCard (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: 'Contracts →' }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/contract-service/contracts`,
+      `/projects/${slug}/components/contract-service/contracts`,
     );
     expect(fired()).toEqual(['open-repository-pages:contracts']);
   });
@@ -108,7 +108,7 @@ describe('RepositoryCard (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: 'Entities →' }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/contract-service/entities`,
+      `/projects/${slug}/components/contract-service/entities`,
     );
     expect(fired()).toEqual(['open-repository-pages:entities']);
   });
@@ -117,7 +117,7 @@ describe('RepositoryCard (screenshots)', () => {
     const locator = await shown();
     await userEvent.click(locator.getByRole('link', { name: 'Docs →' }).last());
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/repositories/contract-service/docs`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/components/contract-service/docs`);
     expect(fired()).toEqual(['open-repository-docs:repository']);
   });
 });

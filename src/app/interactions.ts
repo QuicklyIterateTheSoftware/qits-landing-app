@@ -1172,7 +1172,7 @@ export const INTERACTIONS = {
   'open-repository-docs': 'A repository’s card or page opens its Docs page',
   /**
    * `repository-docs.page.ts`: “← <repo>” on a repository's Docs page goes back to the
-   * repository's page, the link beside an unknown repository to the Repositories (qits-2336,
+   * repository's page, the link beside an unknown repository to the Components (qits-2336,
    * qits-2486). Navigates only, and names no pact (epic qits-2000).
    */
   'leave-repository-docs': 'A repository’s Docs page goes back to the repository',
@@ -1530,7 +1530,7 @@ export const INTERACTIONS = {
    */
   'show-entity': 'An entity’s page shows its DTOs, operations and the states recording them',
   /**
-   * `repository-card.ts`: a repository's card on the Repositories page opens its UI builder (a
+   * `repository-card.ts`: a repository's card on the Components page opens its UI builder (a
    * frontend's), or its contracts or entities page (a service's). Navigates only, and names no
    * pact (epic qits-2000).
    */
@@ -1553,11 +1553,11 @@ export const INTERACTIONS = {
    */
   'open-repository-artifact': 'A published artifact on a repository’s page opens its store page',
   /**
-   * `repository.page.ts`: “← Repositories” on a repository's page (and the link beside an
-   * unknown repository) goes back to the project's Repositories page (qits-2478). Navigates only,
+   * `repository.page.ts`: “← Components” on a repository's page (and the link beside an
+   * unknown repository) goes back to the project's Components page (qits-2478). Navigates only,
    * and names no pact (epic qits-2000).
    */
-  'leave-repository': '“← Repositories” on a repository’s page goes back to the Repositories page',
+  'leave-repository': '“← Components” on a repository’s page goes back to the Components page',
   /**
    * `shell.layout.ts`: the repository sidebar's entries, shown while a repository's page is open
    * (qits-2492). Navigates only, and names no pact (epic qits-2000).
@@ -1586,7 +1586,7 @@ export const INTERACTIONS = {
     'A request under a repository opens the requests it names under the same repository',
   /**
    * `docs-read-redirect.page.ts` via `DOCS_CATALOG` (qits-2486): the docs reader's old address
-   * replaces itself with the reader under the site's publisher, or links the Repositories. Navigates
+   * replaces itself with the reader under the site's publisher, or links the Components. Navigates
    * only, and names no pact (epic qits-2000).
    */
   /**
@@ -1597,10 +1597,10 @@ export const INTERACTIONS = {
   'follow-moved-docs-site': 'The docs reader’s old address goes to the reader under its repository',
   'open-sidebar-repository-page': 'The repository sidebar opens one of the repository’s pages',
   /**
-   * `shell.layout.ts`: “← Repositories” at the top of the repository sidebar goes back to the
-   * project's Repositories page, and its sidebar (qits-2492). Navigates only, and names no pact.
+   * `shell.layout.ts`: “← Components” at the top of the repository sidebar goes back to the
+   * project's Components page, and its sidebar (qits-2492). Navigates only, and names no pact.
    */
-  'leave-sidebar-repository': 'The repository sidebar’s “← Repositories” goes back to the project',
+  'leave-sidebar-repository': 'The repository sidebar’s “← Components” goes back to the project',
   /**
    * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
    * pages, one exit each. Navigates only, and names no pact (epic qits-2000).
@@ -1711,7 +1711,7 @@ export const INTERACTIONS = {
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Releases,
-   * Repositories, Deployments, Observability, Docs, Events, Maintenance). Navigates only, and
+   * Components, Deployments, Observability, Events, Maintenance). Navigates only, and
    * names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
@@ -1733,6 +1733,18 @@ export const INTERACTIONS = {
    * page (qits-2482: Requests, Agents, CI). Navigates only, and names no pact.
    */
   'open-sidebar-releases-page': 'A Releases page below Releases in the sidebar opens that page',
+  /**
+   * `component-search.ts`: a repository the Components section's Search lists opens its page,
+   * `projects/:slug/components/:repo`, by a click or Enter (qits-2491). Navigates only, and names
+   * no pact.
+   */
+  'open-component-search': 'Choosing a match of the Components search opens its repository',
+  /**
+   * `component-search.ts` via `PROJECT_REPOSITORY_NAMES` (qits-2491): the Components section's
+   * Search reads the project's repositories' names once the field is first focused, and lists
+   * those whose name holds the typed text.
+   */
+  'search-components': 'The Components search lists the project’s repositories matching the text',
   /**
    * `shell.layout.ts`: a Deployments page listed below Deployments in the sidebar opens it, one
    * exit per page (qits-2315: Requests). Navigates only, and names no pact.

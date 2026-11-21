@@ -69,7 +69,7 @@ are `WEB_SOCKET`, outside the rule.
 What follows what (each store's comment has the detail). A release request's page follows only
 events about that request (`affectsReleaseRequest`: its `releaseRequestId`; a `SoftwareRelease` or
 build of its repository at its version or fold; a deployment of its version while RELEASED). The
-Repositories page and the project cards read a project's repositories again after a
+Components page and the project cards read a project's repositories again after a
 `SCMPublishCommit` to the wrapper's main branch (their resources' `refreshOn`, `movesWrapper`). The work pages read the
 open project's work again after `EntityTransitioned` naming it (`entities[].projectId`), and the work
 item page its own data when the event names the item (`entities[].entityId`), and again after
@@ -260,7 +260,7 @@ by the harness setup and handed to `app-sign-in-notice`; Open the sign-in termin
 `HOME_PLUGINS`, `listPlugins`, and `PLUGIN_INSTALL`, `installPlugin`), through the container proxy
 (`core/workspaces/agent-sign-in.operations.ts`, `agent-plugins.operations.ts`; qits-2146).
 
-The Repositories page's backup sign-in (qits-1268, from qits-projects-frontend's backup panel) is
+The Components page's backup sign-in (qits-1268, from qits-projects-frontend's backup panel) is
 the same `TerminalSocket` and `ui-terminal-screen` on another socket: qits-projects'
 `wss://projects.<domain>/projects/api/repositories/<repo id>/remote-login` (`remoteLoginSocketUrl`,
 `core/repositories/remote-login.ts`), drawn by `patterns/repositories/remote-login-panel/`. An
@@ -1070,7 +1070,17 @@ page's docs artifacts) still writes the old address, which redirects. `DOC_SECTI
 `shortNameOf` (`core/docs/doc-sections.ts`) group the repository's sites; the repository page lists
 its categories, each opening its Docs page at `?section=` (`open-repository-docs-category`).
 
-A repository's page (qits-2478, `projects/<slug>/repositories/<repo>`, `RepositoryPage`, the
+The Components section (qits-2491, the sidebar's Repositories before it) is at
+`projects/<slug>/components` (`ProjectRepositoriesPage`), every page below it under
+`components/…`; the old `repositories/…` addresses redirect, child path and query kept (one relative
+redirect per page in `app.routes.ts`). While the section is open, its first entry is Search
+(`app-component-search`, `patterns/repositories/component-search/`): a combobox whose list holds the
+project's repositories whose name contains the typed text, ignoring case (`matchRepositories`); the
+arrow keys move through it, Enter or a click opens the repository's page (`open-component-search`
+`opened`), Escape closes it. It reads `PROJECT_REPOSITORY_NAMES` (`search-components`) once the field
+is first focused or typed in, never on a page render.
+
+A repository's page (qits-2478, `projects/<slug>/components/<repo>`, `RepositoryPage`, the
 index of the `[repo]` folder) is where a repository's own pages and the artifacts it publishes are
 reached. Three reads, each its own `qitsResource`, in the browser only: the project's repositories
 (`PROJECT_REPOSITORY_PAGE`, `listProjectRepositories` with consumes of its own, `REPOSITORY_PAGE`:
@@ -1083,17 +1093,17 @@ SERVICE, UI builder for a FRONTEND or APP (`open-repository-pages`, as the card)
 (`open-repository-artifact`: a docker `qits/<image>` the `qits` image store's `images/<image>`, npm
 `npm/packages`, maven `maven/maven-packages`, a daemon `daemons/daemons`, a docs site
 `docs/docs/<site>`). A repository card's name links it (`open-repository` `page`). The trail below
-Repositories is `Repositories › <repo> › Contracts › <state>` (`repositoryTrail` in the shell), each
-crumb before the last a link (`follow-breadcrumb` `repositories`, `repository`,
+Components is `Components › <repo> › Contracts › <state>` (`repositoryTrail` in the shell), each
+crumb before the last a link (`follow-breadcrumb` `components`, `repository`,
 `repositoryContracts`, `repositoryEntities`). Staleness: `SCMPublishCommit` to the wrapper's main
 (`movesWrapper`) → the repositories; nothing announces a release's artifacts, so Refresh reads all
 three again. The two lists are `app-repository-published` (`patterns/repositories/repository-published/`,
 which holds the artifacts' and the catalog's reads), mounted again by the repository's Artifacts page
-(`repositories/<repo>/artifacts`, `RepositoryArtifactsPage`, qits-2492). While a page of a repository
+(`components/<repo>/artifacts`, `RepositoryArtifactsPage`, qits-2492). While a page of a repository
 is open (`repositoryTrail` finds one), the sidebar shows the repository's own entries in the
 project's sections' place (qits-2492, `repositoryLinks` in the shell, `open-sidebar-repository-page`):
-Overview, Artifacts, Docs, Contracts, Entities and UI builder, below "← Repositories"
-(`leave-sidebar-repository`), the way back to the project's sidebar; the project's sections are then
+Overview, Artifacts, Docs, Contracts, Entities and UI builder, below "← Components"
+(`leave-sidebar-repository` `components`), the way back to the project's sidebar; the project's sections are then
 not rendered (`shownLinks`). Every entry shows for every repository (each page says when it has
 nothing); Dependencies waits for qits-2489. Its pact interactions (`show-repository`) read "a project with 3 repositories" and
 "two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
@@ -1373,7 +1383,7 @@ and `trace-layout.spec.ts`'s, and the no-source page is the route's no-data scre
 
 The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent route with no
 component, like Observability; its own address redirects to `requests` by a relative `redirectTo`,
-and the sidebar's Deployments entry (between Repositories and Observability) lists its pages below
+and the sidebar's Deployments entry (between Components and Observability) lists its pages below
 it while one is open (`open-sidebar-deployments-page`). `deployments/requests`
 (`DeploymentRequestsPage`, the retired qits-deployments-frontend's `deployment-requests` page)
 reads qits-deployments' `listDeploymentRequests?projectId=` through `qitsResource` over
@@ -1777,7 +1787,7 @@ commits them beside the references. A changed page, component or style changes i
 fails a freeze that differs from what the run writes as stale `screenshot-baselines`. Never edit a
 freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
 
-The UI builder (qits-1951, `projects/<slug>/repositories/<repo>/ui-builder`, linked from the cards
+The UI builder (qits-1951, `projects/<slug>/components/<repo>/ui-builder`, linked from the cards
 of FRONTEND and APP repositories) reads a frontend's published freezes back through
 `RoutesBundles` (`core/ui-builder/routes-bundles.ts`, `qitsResource`s over `docs.operations.ts`): the `@routes/` site whose newest version's
 `git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
@@ -1858,7 +1868,7 @@ No recording pitches a screenshot of `@routes/qits-landing`, so the browser spec
 empty Pitched tab; a drawn pitch and its diff are the plain spec's (the recording moved onto the
 spec's screenshot).
 
-A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/repositories/<repo>/contracts`
+A service's contracts bundle has pages of its own (qits-1994): `projects/<slug>/components/<repo>/contracts`
 (its provider states, filtered by name), `contracts/<state slug>` (params, dependencies, each operation
 with its recorded response), `entities` (its `entities.json` by marking) and `entities/<class name>`
 (DTOs and operations with their link kinds, the states recording each operation). The bundle is the

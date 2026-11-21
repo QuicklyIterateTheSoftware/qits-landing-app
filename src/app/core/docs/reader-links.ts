@@ -9,6 +9,6 @@ import { exit, outcomes } from '@qits/angular';
  */
 export function newestVersionOutcomes() {
   return outcomes('leave-docs-site', {
-    newest: exit('projects/:slug/repositories/:repo/docs/:site'),
+    newest: exit('projects/:slug/components/:repo/docs/:site'),
   });
 }

@@ -26,8 +26,8 @@ import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-creat
 import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
 import { DocsReadRedirectPage } from './routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page';
-import { DocsReaderPage } from './routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page';
-import { RepositoryDocsPage } from './routes/projects/[slug]/repositories/[repo]/docs/repository-docs.page';
+import { DocsReaderPage } from './routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page';
+import { RepositoryDocsPage } from './routes/projects/[slug]/components/[repo]/docs/repository-docs.page';
 import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
 import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
 import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
@@ -153,7 +153,18 @@ describe('agents and workspaces routes', () => {
     ['/projects/x/ci/runs/r-1?step=0', '/projects/x/releases/ci/runs/r-1?step=0'],
     ['/projects/x/ci/x-service', '/projects/x/releases/ci/x-service'],
     ['/projects/x/releases', '/projects/x/releases/requests'],
-  ])('redirects %s to %s (qits-2482), keeping the query', async (from, to) => {
+    // qits-2491: Repositories became Components.
+    ['/projects/x/repositories', '/projects/x/components'],
+    ['/projects/x/repositories/x-service?y=1', '/projects/x/components/x-service?y=1'],
+    [
+      '/projects/x/repositories/x-service/contracts/a',
+      '/projects/x/components/x-service/contracts/a',
+    ],
+    [
+      '/projects/x/repositories/x-service/ui-builder',
+      '/projects/x/components/x-service/ui-builder',
+    ],
+  ])('redirects %s to %s (qits-2482, qits-2491), keeping the query', async (from, to) => {
     await opened(from);
     expect(TestBed.inject(Router).url).toBe(to);
   });
@@ -167,16 +178,16 @@ describe('agents and workspaces routes', () => {
     expect(TestBed.inject(Router).url).toBe('/projects/x/releases/agents');
   });
 
-  it('redirects the project’s old Docs page to its Repositories (qits-2486)', async () => {
+  it('redirects the project’s old Docs page to its Components (qits-2486, qits-2491)', async () => {
     await opened('/projects/x/docs');
-    expect(TestBed.inject(Router).url).toBe('/projects/x/repositories');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/components');
   });
 
   it('redirects a repository’s old Docs page under the repository, keeping the query (qits-2486)', async () => {
     expect(await opened('/projects/x/docs/repositories/r?section=apidocs')).toEqual([
       RepositoryDocsPage,
     ]);
-    expect(TestBed.inject(Router).url).toBe('/projects/x/repositories/r/docs?section=apidocs');
+    expect(TestBed.inject(Router).url).toBe('/projects/x/components/r/docs?section=apidocs');
   });
 
   it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
@@ -189,7 +200,7 @@ describe('agents and workspaces routes', () => {
   it.each(['/@apidocs%2Fx', '/@apidocs%2Fx/-/1', '/@apidocs/x/-/1'])(
     'opens the reader under its repository at docs%s (qits-2486)',
     async (rest) => {
-      expect(await opened(`/projects/x/repositories/r/docs${rest}`)).toEqual([DocsReaderPage]);
+      expect(await opened(`/projects/x/components/r/docs${rest}`)).toEqual([DocsReaderPage]);
     },
   );
 

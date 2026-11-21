@@ -37,10 +37,10 @@ import {
  *   whole list (the UI builder and the release request page read the same);
  * - `sync-backups-after-sign-in` (`BACKUP_SYNC`): the nudge after the backup sign-in, and a
  *   project qits-projects does not know (a 404, binding the status only);
- * - `show-repository-docs` (`PROJECT_REPOSITORY_NAMES`, qits-2336; the project Docs page's
- *   `show-project-docs` is gone, qits-2486): a
- *   repository's Docs page finds the address's repository by name, and the project's Docs page
- *   names the project's repository that published a site, in "two projects exist" (whose
+ * - `show-repository-docs` and `search-components` (`PROJECT_REPOSITORY_NAMES`, qits-2336,
+ *   qits-2491; the project Docs page's `show-project-docs` is gone, qits-2486): a repository's
+ *   Docs page finds the address's repository by name, and the Components search matches the typed
+ *   text against the names, in "two projects exist" (whose
  *   repositories are `qits-ci-service` and `qits-ci-frontend`, the publishers qits-artifacts'
  *   docs catalog recording names).
  * - `show-repository` (`PROJECT_REPOSITORY_PAGE`, qits-2478): a repository's page finds the
@@ -187,7 +187,7 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
       },
     ));
 
-  it.each(['show-repository-docs'] as const)(
+  it.each(['show-repository-docs', 'search-components'] as const)(
     '%s: the project’s repositories, found by name',
     (interaction) =>
       given(PROJECT_REPOSITORY_NAMES, 'two projects exist', interaction).executeTest(

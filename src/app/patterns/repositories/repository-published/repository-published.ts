@@ -308,7 +308,7 @@ export class RepositoryPublished {
 
   /** The repository's Docs page, narrowed to one category (qits-2486). */
   protected readonly byCategory = outcomes('open-repository-docs-category', {
-    section: exit('projects/:slug/repositories/:repo/docs'),
+    section: exit('projects/:slug/components/:repo/docs'),
   });
 
   /** A published artifact's page in the artifact store (qits-2324…qits-2328). */

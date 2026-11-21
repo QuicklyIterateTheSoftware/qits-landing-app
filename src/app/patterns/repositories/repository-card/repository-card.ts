@@ -169,19 +169,19 @@ export class RepositoryCard {
   private readonly name = computed(() => this.entry().repository?.name ?? '');
 
   protected readonly pages = outcomes('open-repository-pages', {
-    uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
-    contracts: exit('projects/:slug/repositories/:repo/contracts'),
-    entities: exit('projects/:slug/repositories/:repo/entities'),
+    uiBuilder: exit('projects/:slug/components/:repo/ui-builder'),
+    contracts: exit('projects/:slug/components/:repo/contracts'),
+    entities: exit('projects/:slug/components/:repo/entities'),
   });
 
   /** The name: the repository's own page (qits-2478). */
   protected readonly opening = outcomes('open-repository', {
-    page: exit('projects/:slug/repositories/:repo'),
+    page: exit('projects/:slug/components/:repo'),
   });
 
   /** Every card: the repository's Docs page (qits-2336). */
   protected readonly docs = outcomes('open-repository-docs', {
-    repository: exit('projects/:slug/repositories/:repo/docs'),
+    repository: exit('projects/:slug/components/:repo/docs'),
   });
 
   /** The repository's pages' exit params. */

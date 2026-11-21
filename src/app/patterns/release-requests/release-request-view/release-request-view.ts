@@ -1106,7 +1106,7 @@ export class ReleaseRequestView implements OpenReleaseRequest {
 
   /** "← Release requests" under a repository: back to the repository's (qits-2506). */
   protected readonly leavingRepository = outcomes('leave-repository-release-request', {
-    list: exit('projects/:slug/repositories/:repo/release-requests'),
+    list: exit('projects/:slug/components/:repo/release-requests'),
   });
 
   /**
@@ -1124,11 +1124,11 @@ export class ReleaseRequestView implements OpenReleaseRequest {
 
   /** The same requests, opened under the repository the view is mounted in (qits-2506). */
   protected readonly relatedInRepository = outcomes('open-related-repository-release-request', {
-    supersededBy: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
-    queuedBehind: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
-    queuedNext: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
-    movedFrom: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
-    movedTo: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
+    supersededBy: exit('projects/:slug/components/:repo/release-requests/:requestId'),
+    queuedBehind: exit('projects/:slug/components/:repo/release-requests/:requestId'),
+    queuedNext: exit('projects/:slug/components/:repo/release-requests/:requestId'),
+    movedFrom: exit('projects/:slug/components/:repo/release-requests/:requestId'),
+    movedTo: exit('projects/:slug/components/:repo/release-requests/:requestId'),
   });
 
   /** The request's repository, from its answer; `''` until it is read. */

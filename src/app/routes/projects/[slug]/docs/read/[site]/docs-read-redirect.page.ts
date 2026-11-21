@@ -25,7 +25,7 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * docs catalog (`DOCS_CATALOG`, in the browser only), finds the site's publisher
  * (`latestRepository`), and replaces the address with the reader under it, the version and the
  * query kept (`follow-moved-docs-site`). A site no repository is named for says so, with a link to
- * the project's Repositories; a failed read offers Retry.
+ * the project's Components; a failed read offers Retry.
  */
 @Component({
   selector: 'app-docs-read-redirect-page',
@@ -47,7 +47,7 @@ import { Spinner } from '$ui/components/spinner/spinner';
               class="text-accent no-underline hover:underline"
               [qitsExit]="moving.repositories"
               [exitParams]="{ slug: slug() }"
-              >Repositories</a
+              >Components</a
             >
           </p>
         </ui-spinner>
@@ -78,11 +78,11 @@ export class DocsReadRedirectPage {
 
   protected readonly slug = computed(() => this.selected.slug() ?? this.url()[1]?.path ?? '');
 
-  /** The reader under its repository, or the project's Repositories for an orphan site. */
+  /** The reader under its repository, or the project's Components for an orphan site. */
   protected readonly moving = outcomes('follow-moved-docs-site', {
-    reader: exit('projects/:slug/repositories/:repo/docs/:site'),
-    version: exit('projects/:slug/repositories/:repo/docs/:site/-/:version'),
-    repositories: exit('projects/:slug/repositories'),
+    reader: exit('projects/:slug/components/:repo/docs/:site'),
+    version: exit('projects/:slug/components/:repo/docs/:site/-/:version'),
+    repositories: exit('projects/:slug/components'),
   });
 
   /** Every docs site, in the browser only. */

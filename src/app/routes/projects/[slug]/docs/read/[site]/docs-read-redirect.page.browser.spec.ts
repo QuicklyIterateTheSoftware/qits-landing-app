@@ -64,7 +64,7 @@ describe('DocsReadRedirectPage (screenshots)', () => {
     const opened = await render('@contracts%2Fqits-ci');
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/repositories/qits-ci-service/docs/@contracts%2Fqits-ci`,
+      `/projects/${opened.project.slug}/components/qits-ci-service/docs/@contracts%2Fqits-ci`,
     );
     expect(reached()).toEqual(['follow-moved-docs-site:reader']);
   });
@@ -73,7 +73,7 @@ describe('DocsReadRedirectPage (screenshots)', () => {
     const opened = await render('@contracts/qits-ci/-/1?category=a');
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/repositories/qits-ci-service/docs/@contracts%2Fqits-ci/-/1?category=a`,
+      `/projects/${opened.project.slug}/components/qits-ci-service/docs/@contracts%2Fqits-ci/-/1?category=a`,
     );
     expect(reached()).toEqual(['follow-moved-docs-site:version']);
   });
@@ -88,9 +88,9 @@ describe('DocsReadRedirectPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('orphan', { kind: 'NO_DATA' });
     await shootShellMenus(opened, 'orphan');
-    await view.getByRole('link', { name: 'Repositories' }).click();
+    await view.getByRole('link', { name: 'Components' }).click();
     await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/repositories`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/components`);
     expect(reached()).toEqual(['follow-moved-docs-site:repositories']);
   });
 });
