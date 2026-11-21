@@ -873,6 +873,87 @@ export const INTERACTIONS = {
    */
   'show-swarm-nodes': 'The swarm nodes page lists the swarm’s nodes with their status',
   /**
+   * `system-targets.page.ts` via `TARGET_ROWS` (qits-2351): the System section's Targets page lists
+   * qits-system's execution targets, each with its connection, quarantine, slots, sign-ins, last
+   * health check and memory. Refresh, and a target event (`TARGET_EVENTS`, `TargetDeleted`,
+   * `TargetOomKilled`), read them again.
+   */
+  'show-targets': 'The Targets page lists the execution targets with their slots and sign-ins',
+  /**
+   * `target-card.ts` via `TARGET_HEALTH` (qits-2351): a target's health Details read its last
+   * settled health check, each check with its verdict, on opening.
+   */
+  'show-target-health': 'A target’s health details show its last settled health check',
+  /**
+   * `target-card.ts` via `TARGET_LEASES` (qits-2351): a target's Leases read the leases it holds,
+   * on opening and again after a `TargetLeaseChanged` naming it.
+   */
+  'show-target-leases': 'A target’s leases list the leases it holds',
+  /**
+   * `system-targets.page.ts` via `TARGET_INSTALL_SCRIPT` (qits-2351): View install script reads the
+   * script the install line pipes into `sh`.
+   */
+  'show-target-install-script': 'The Targets page shows the runner install script',
+  /**
+   * `declare-target.ts` via `TARGET_CREATE` (qits-2351): Declare a target declares one and shows its
+   * one-time install line; a refusal stays on the form.
+   */
+  'declare-target': 'Declaring a target shows the install line its runner registers with',
+  /**
+   * `target-card.ts` via `TARGET_PATCH` (qits-2351): Save of a target's Edit sends its description
+   * and reservations; the list is read again, a refusal stays on the card.
+   */
+  'edit-target': 'Saving a target’s description and reservations changes them',
+  /**
+   * `target-card.ts` via `TARGET_TOKEN_ROTATE` (qits-2351): Rotate registration token hands out a
+   * new one-time install line, optionally with another slots total.
+   */
+  'rotate-target-token': 'Rotating a target’s registration token shows a new install line',
+  /** `target-card.ts` via `TARGET_GREENLIGHT` (qits-2351): Greenlight lifts a quarantine. */
+  'greenlight-target': 'Greenlighting a quarantined target lifts its quarantine',
+  /**
+   * `target-card.ts`: Delete's first press asks for the second, Keep takes it back (qits-2351). No
+   * request, and names no pact.
+   */
+  'ask-delete-target': 'A target’s Delete asks to be pressed again before it deletes',
+  /**
+   * `target-card.ts` via `TARGET_DELETE` (qits-2351): the second press deletes the target; a
+   * `TARGET_BUSY` refusal opens its leases.
+   */
+  'delete-target': 'Deleting a target removes it, or names the lease that holds it',
+  /**
+   * `target-card.ts` via `TARGET_HEALTH_CHECK` (qits-2351): Run health check asks the runner for
+   * one; the list is read again (its result publishes no event).
+   */
+  'request-target-health-check': 'Running a target’s health check asks its runner for one',
+  /**
+   * `target-card.ts` via `TARGET_LOGIN_CHECK` (qits-2351): Check sign-in asks the runner to check
+   * each harness's sign-in; its answer arrives as `TargetLoginChanged`.
+   */
+  'request-target-login-check': 'Checking a target’s sign-in asks its runner to look again',
+  /**
+   * `target-sign-in.ts` via `TARGET_SIGN_IN_START` (qits-2351): Sign in to <harness> starts a
+   * sign-in on the target; a `SIGN_IN_RUNNING` refusal follows the running one.
+   */
+  'start-target-sign-in': 'Signing a target in to a harness starts a sign-in on it',
+  /**
+   * `target-sign-in.ts` via `TARGET_SIGN_IN_READ` (qits-2351): a sign-in that has not settled is read
+   * again every 2 s while its card is open (qits-system publishes no sign-in event).
+   */
+  'follow-target-sign-in': 'A running target sign-in is followed until it settles',
+  /**
+   * `target-sign-in.ts` via `TARGET_SIGN_IN_CODE` (qits-2351): Submit hands the code the browser
+   * showed to the sign-in, once per state.
+   */
+  'submit-target-sign-in-code': 'Submitting a sign-in code hands it to the target’s sign-in',
+  /** `target-sign-in.ts` via `TARGET_SIGN_IN_CANCEL` (qits-2351): Cancel ends a sign-in. */
+  'cancel-target-sign-in': 'Cancelling a target sign-in ends it',
+  /**
+   * `project-agents.page.ts`: the Targets link beside the Workspaces heading opens the System
+   * section's Targets page, `system/targets` (qits-2351). Navigates only, and names no pact.
+   */
+  'open-system-targets': 'The Agents page’s Targets link opens the Targets page',
+  /**
    * `project-docs.page.ts` via `DOCS_CATALOG` (qits-2318): the Docs page lists every docs site the
    * platform publishes, grouped by section; via `PROJECT_REPOSITORY_NAMES` (qits-2336) it names the
    * project's repository that published each site's newest version.
@@ -1461,8 +1542,8 @@ export const INTERACTIONS = {
   'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
   /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
-   * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no
-   * pact.
+   * section is open, open their page (Services, Nodes; qits-2346; Targets, qits-2351). Navigates
+   * only, and names no pact.
    */
   'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**
