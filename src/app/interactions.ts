@@ -927,6 +927,13 @@ export const INTERACTIONS = {
    */
   'show-swarm-node': 'A swarm node’s page shows its facts, labels and tasks',
   /**
+   * `swarm-node-images.page.ts` via `NODE_IMAGE_LIST` (qits-2353): a swarm node's Images tab lists
+   * the images the node holds, with the containers using each and their total size; a node other
+   * than the one qits-system runs on is not read (or answers 409 `NODE_REMOTE`). Refresh reads
+   * again, and so does a deployment going live or failing.
+   */
+  'show-swarm-node-images': 'A swarm node’s Images tab lists the images the node holds',
+  /**
    * `swarm-nodes.page.ts`: a node row's hostname opens the node's page in this app,
    * `system/swarm/nodes/:id` (qits-2347). Navigates only, and names no pact.
    */

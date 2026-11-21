@@ -628,6 +628,34 @@ child route and a `switch-swarm-node-tab` exit, and read the node it read throug
 (`core/system/open-swarm-node.ts`, its `self` deciding whether they read at all). The tab row and
 the open tab sit below the labels, and the Tasks section shows on the bare node URL only.
 
+`system/swarm/nodes/<id>/images` (`SwarmNodeImagesPage`, qits-2353, replacing qits-system-frontend's
+`swarm/nodes/:id/images` tab, an entry point too) is the node page's Images tab. One read,
+`NODE_IMAGE_LIST` (`listNodeImages`, `core/system/node-images.operations.ts`, its consumes in
+`node-images.consumes.ts`: `docker image ls` on the daemon qits-system runs on), by the layout's
+node id, made only once the layout has read the node and found it `self`: the door reads the local
+daemon alone and answers any other node 409 `NODE_REMOTE`. So a node that is not `self` is not read
+and shows "Only the node qits-system runs on can be read; this is another node." (the wording the
+node's other tabs share), and a 409 shows the same note with the door's message, never a failure
+and with no Retry. The table is docker's order (newest first): repository and tag (a dangling
+image's `<none>` a neutral "dangling" chip, its tag "—"), docker's short id (`imageShortId`,
+`core/system/node-images.ts`: the 12 hex digits after `sha256:`, the whole id in `title`), created,
+size (`formatBytes`) and in use (`inUse`: docker's string count, `N/A` "—", 0 a neutral "unused"
+chip); the caption is "N images, <total>" (`totalBytes`, Σ `sizeBytes`). Created is docker's Go
+date (`2026-08-18 04:46:43 +0200 CEST`, never ISO), read by its numeric offset with `dockerInstant`
+(`core/system/docker-date.ts`) and drawn with `formatInstant`, "—" when it is no date; `new Date()`
+reads it only by luck (never with a zone like `CEST`). No digest (`<none>` on every row: the door
+does not ask for `--digests`), no `size` text and no "created since" (docker's phrase frozen at the
+read). None is "This node holds no images.", a 403 the roles, a 503 (the daemon not answering) and
+anything else "The node's images cannot be read right now." with Retry. Staleness: `refreshOn`
+`DEPLOYMENT_EVENTS`, debounced 1 s (an image arrives when something deploys); nothing announces an
+image leaving (runner housekeeping's dangling and lease image passes, a prune by hand), so "Refresh
+images" reads again; nothing polls. The pact reads it (`show-swarm-node-images`,
+`node-images.operations.pact.spec.ts`, its own part of the system pact) in "a single-node swarm"
+(one image, `qits-ci:3e501b6`, three containers), "a swarm node holding no images" (`[]`) and "a
+swarm node this service cannot reach" (the 409, binding `code` and `message`); the last two, and
+their `empty` and `remote` screenshots, skip themselves until the `@qits/system-golden-masters` pin
+records them.
+
 `system/swarm/configs` (`SwarmConfigsPage`, qits-2348, replacing qits-system-frontend's
 `swarm/configs`, an entry point too) is the same swarm's configs: `SWARM_CONFIG_LIST`
 (`listSwarmConfigs`, `docker config ls` on the manager), one table in the server's order: name
@@ -1333,7 +1361,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-githost-service       | `core/loc/loc.operations*.ts`, `core/githost/raw-images.operations*.ts`                      | `pacts/qits-landing-app_qits-githost-service.json`       | `@qits/githost-golden-masters`          |
 | qits-workspaces-service    | `core/workspaces/{workspaces,agents,agent-prompt,agent-actions,container-actions}.store*.ts` | `pacts/qits-landing-app_qits-workspaces-service.json`    | `@qits/workspaces-golden-masters`       |
 | qits-workspace-daemon      | `core/workspaces/{agent-chat,agent-files,agent-sign-in,agent-plugins}.store*.ts`             | `pacts/qits-landing-app_qits-workspace-daemon.json`      | `@qits/workspace-daemon-golden-masters` |
-| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases}.operations*.ts`                            | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
+| qits-system-service        | `core/system/{targets,swarm,swarm-service,leases,node-images}.operations*.ts`                | `pacts/qits-landing-app_qits-system-service.json`        | `@qits/system-golden-masters`           |
 | qits-artifacts-service     | `core/ui-builder/docs.operations*.ts`, `core/artifacts/artifacts.operations*.ts`             | `pacts/qits-landing-app_qits-artifacts-service.json`     | `@qits/artifacts-golden-masters`        |
 | qits-observability-service | `core/observability/observability.operations*.ts`                                            | `pacts/qits-landing-app_qits-observability-service.json` | `@qits/observability-golden-masters`    |
 | qits-deployments-service   | `core/deployments/deployments.operations*.ts`                                                | `pacts/qits-landing-app_qits-deployments-service.json`   | `@qits/deployments-golden-masters`      |
