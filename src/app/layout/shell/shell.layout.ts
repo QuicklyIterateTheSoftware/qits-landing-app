@@ -588,7 +588,7 @@ export class ShellLayout {
 
   /**
    * The repository sidebar's entries (qits-2492), one exit per page of the open repository:
-   * Overview, Artifacts, Docs, Contracts, Entities and UI builder.
+   * Overview, Artifacts, Docs, Contracts, Entities, UI builder and Release requests (qits-2506).
    */
   private readonly repositoryPages = outcomes('open-sidebar-repository-page', {
     overview: exit('projects/:slug/repositories/:repo'),
@@ -597,6 +597,7 @@ export class ShellLayout {
     contracts: exit('projects/:slug/repositories/:repo/contracts'),
     entities: exit('projects/:slug/repositories/:repo/entities'),
     uiBuilder: exit('projects/:slug/repositories/:repo/ui-builder'),
+    releaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
   });
 
   /** The repository sidebar's way back to the project's sidebar (qits-2492). */
@@ -754,6 +755,7 @@ export class ShellLayout {
     repository: exit('projects/:slug/repositories/:repo'),
     repositoryContracts: exit('projects/:slug/repositories/:repo/contracts'),
     repositoryEntities: exit('projects/:slug/repositories/:repo/entities'),
+    repositoryReleaseRequests: exit('projects/:slug/repositories/:repo/release-requests'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
@@ -768,6 +770,7 @@ export class ShellLayout {
   private readonly repositoryPageCrumbExits: Readonly<Record<string, ExitOutcome | undefined>> = {
     contracts: this.trail.repositoryContracts,
     entities: this.trail.repositoryEntities,
+    'release-requests': this.trail.repositoryReleaseRequests,
   };
 
   /** The trail's brand, home. */
@@ -923,6 +926,7 @@ export class ShellLayout {
       { label: 'Contracts', exit: pages.contracts, current: undefined },
       { label: 'Entities', exit: pages.entities, current: undefined },
       { label: 'UI builder', exit: pages.uiBuilder, current: undefined },
+      { label: 'Release requests', exit: pages.releaseRequests, current: undefined },
     ];
   });
 
@@ -1250,6 +1254,7 @@ const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
   contracts: 'Contracts',
   entities: 'Entities',
   'ui-builder': 'UI builder',
+  'release-requests': 'Release requests',
 };
 
 /** Where in a repository the URL is: the repository, one of its pages, and a page below that. */

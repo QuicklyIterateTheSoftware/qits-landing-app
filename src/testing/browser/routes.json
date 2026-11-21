@@ -2167,6 +2167,82 @@
       "route": "projects/:slug/repositories/:repo/entities"
     }
   ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/release-requests/[requestId]/repository-release-request.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "getProjectReleaseRequest",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "moveReleaseRequestSource",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a repository with a tagged release whose request went obsolete mid-publish",
+      "operationId": "getProjectReleaseRequest",
+      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
+    }
+  ],
+  "src/app/routes/projects/[slug]/repositories/[repo]/release-requests/repository-release-requests.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "listRepositoryReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/repositories/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/repositories/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a repository with a release not merged to main",
+      "operationId": "listRepositoryReleaseRequests",
+      "route": "projects/:slug/repositories/:repo/release-requests"
+    }
+  ],
   "src/app/routes/projects/[slug]/repositories/[repo]/repository.page.browser.spec.ts": [
     {
       "provider": "qits-artifacts-service",

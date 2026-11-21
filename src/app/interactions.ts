@@ -1545,6 +1545,28 @@ export const INTERACTIONS = {
    * `shell.layout.ts`: the repository sidebar's entries, shown while a repository's page is open
    * (qits-2492). Navigates only, and names no pact (epic qits-2000).
    */
+  /**
+   * `repository-release-requests.page.ts` via `REPOSITORY_RELEASE_REQUESTS` (qits-2506): a
+   * repository's Release requests page lists its requests, newest first, filtered by state.
+   */
+  'show-repository-release-requests': 'A repository’s Release requests page lists its requests',
+  /**
+   * `repository-release-requests.page.ts`: a row opens the request under the repository
+   * (qits-2506). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-repository-release-request': 'A repository’s release request opens under the repository',
+  /**
+   * `release-request-view.ts` under a repository: “← Release requests” goes back to the
+   * repository's list (qits-2506). Navigates only, and names no pact (epic qits-2000).
+   */
+  'leave-repository-release-request':
+    '“← Release requests” on a request under a repository goes back to the repository’s list',
+  /**
+   * `release-request-view.ts` under a repository: the other requests it names open under the same
+   * repository (qits-2506). Navigates only, and names no pact (epic qits-2000).
+   */
+  'open-related-repository-release-request':
+    'A request under a repository opens the requests it names under the same repository',
   'open-sidebar-repository-page': 'The repository sidebar opens one of the repository’s pages',
   /**
    * `shell.layout.ts`: “← Repositories” at the top of the repository sidebar goes back to the

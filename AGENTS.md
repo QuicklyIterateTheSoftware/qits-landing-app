@@ -1054,6 +1054,23 @@ nothing); Dependencies waits for qits-2489. Its pact interactions (`show-reposit
 "two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
 naming contract repositories" and "a docs catalog of every kind".
 
+A repository's Release requests (qits-2506, `repositories/<repo>/release-requests`,
+`RepositoryReleaseRequestsPage`, the repository sidebar's last entry) lists only its requests, newest
+first: `REPOSITORY_RELEASE_REQUESTS` (`listRepositoryReleaseRequests`,
+`core/release-requests/repository-release-requests.*`) by the repository's id (found by name in
+`PROJECT_REPOSITORY_PAGE`). The state filter is `?state=` (`requestFilterOf`): all (the default,
+`state=all`, so past released requests show), open (the door's default), released (RELEASED,
+FINALIZED) and rejected or withdrawn, the last two narrowed in the page; rows show in chunks of
+`REQUESTS_CHUNK` with "Show more". It follows `RELEASE_REQUEST_EVENTS` naming the repository. A row
+opens the request under the repository (`open-repository-release-request`,
+`repositories/<repo>/release-requests/<requestId>`, `RepositoryReleaseRequestPage`), so the
+repository's sidebar and trail stay. Both request routes mount one body, `app-release-request-view`
+(`patterns/release-requests/release-request-view/`, the former page): set `repo`, and its back link
+and the requests it names stay under the repository (`leave-repository-release-request`,
+`open-related-repository-release-request`); the tabs only change `?tab=`. Its pact interactions
+(`show-repository-release-requests`) read "a repository with a release not merged to main"
+(`state=all`) and "a frozen release request with a queued next request" (open).
+
 A repository's Docs page (qits-2336, `projects/<slug>/docs/repositories/<repo>`,
 `RepositoryDocsPage`; a fixed `repositories` segment, so a name never reads as a reader path under
 `docs/`) lists the catalog's sites whose newest version the repository published: the catalog's

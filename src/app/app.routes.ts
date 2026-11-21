@@ -456,6 +456,21 @@ export const routes: Routes = [
           ),
       },
       {
+        // A repository's release requests (qits-2506), and one of them under the repository.
+        path: 'projects/:slug/repositories/:repo/release-requests',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/release-requests/repository-release-requests.page').then(
+            (m) => m.RepositoryReleaseRequestsPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/repositories/:repo/release-requests/:requestId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/repositories/[repo]/release-requests/[requestId]/repository-release-request.page').then(
+            (m) => m.RepositoryReleaseRequestPage,
+          ),
+      },
+      {
         path: 'projects/:slug/repositories/:repo/ui-builder',
         loadComponent: () =>
           import('./routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page').then(

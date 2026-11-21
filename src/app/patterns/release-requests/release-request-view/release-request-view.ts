@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   Injector,
+  input,
   PLATFORM_ID,
   signal,
 } from '@angular/core';
@@ -104,8 +105,12 @@ const UNATTENDED_TITLE =
   'move again when somebody pushes a fix.';
 
 /**
- * One release request, whole, at `/projects/<slug>/release-requests/<requestId>` (ported from
- * qits-projects-frontend's `release-request-detail-page`).
+ * One release request, whole (ported from qits-projects-frontend's `release-request-detail-page`):
+ * the body both `/projects/<slug>/release-requests/<requestId>` (`ReleaseRequestPage`) and a
+ * repository's `/projects/<slug>/repositories/<repo>/release-requests/<requestId>`
+ * (`RepositoryReleaseRequestPage`, qits-2506, `repo` set) mount. The links that lead back or to
+ * another request stay under the route that mounted it (`leavingRepository`,
+ * `relatedInRepository` when `repo` is set); the tabs only change `?tab=`.
  *
  * The URL names only the request, by its uuid or its logical id (`qualifiedId`,
  * `<repository>-rr-<n>`), so the page reads that one request through its project, through its own
@@ -172,9 +177,9 @@ const UNATTENDED_TITLE =
  * repositories a `SCMPublishCommit` to the wrapper's main branch (`movesWrapper`).
  */
 @Component({
-  selector: 'app-release-request-page',
+  selector: 'app-release-request-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: OPEN_RELEASE_REQUEST, useExisting: ReleaseRequestPage }],
+  providers: [{ provide: OPEN_RELEASE_REQUEST, useExisting: ReleaseRequestView }],
   imports: [
     Chip,
     CommitChangesView,
@@ -238,13 +243,23 @@ const UNATTENDED_TITLE =
           </h1>
         </div>
         <p class="mt-0 mb-4 text-sm">
-          <a
-            class="text-accent no-underline hover:underline"
-            [qitsExit]="leaving.list"
-            [exitParams]="{ slug: slug() }"
-            [exitCurrent]="null"
-            >← Release requests</a
-          >
+          @if (repo(); as repo) {
+            <a
+              class="text-accent no-underline hover:underline"
+              [qitsExit]="leavingRepository.list"
+              [exitParams]="{ slug: slug(), repo: repo }"
+              [exitCurrent]="null"
+              >← Release requests</a
+            >
+          } @else {
+            <a
+              class="text-accent no-underline hover:underline"
+              [qitsExit]="leaving.list"
+              [exitParams]="{ slug: slug() }"
+              [exitCurrent]="null"
+              >← Release requests</a
+            >
+          }
         </p>
         <p class="m-0 text-sm text-fg-soft" [class.hidden]="!missing()">
           This project has no release request {{ requestId() }}.
@@ -311,12 +326,21 @@ const UNATTENDED_TITLE =
                   A later release request for this repository took this one over before it finished,
                   so nothing here is waiting on anybody and nothing on it can be changed.
                   @if (request.supersededBy?.trim(); as replacement) {
-                    <a
-                      class="text-accent no-underline hover:underline"
-                      [qitsExit]="related.supersededBy"
-                      [exitParams]="{ slug: slug(), requestId: replacement }"
-                      >Open the request that superseded it</a
-                    >
+                    @if (repo(); as repo) {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="relatedInRepository.supersededBy"
+                        [exitParams]="{ slug: slug(), repo: repo, requestId: replacement }"
+                        >Open the request that superseded it</a
+                      >
+                    } @else {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="related.supersededBy"
+                        [exitParams]="{ slug: slug(), requestId: replacement }"
+                        >Open the request that superseded it</a
+                      >
+                    }
                   }
                 </p>
               }
@@ -497,26 +521,50 @@ const UNATTENDED_TITLE =
                     >
                   }
                   @if (behind(request); as ahead) {
-                    <a
-                      class="text-accent no-underline hover:underline"
-                      [qitsExit]="related.queuedBehind"
-                      [exitParams]="{ slug: slug(), requestId: ahead }"
-                      title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
-                      [fieldOf]="request"
-                      [qitsField]="{ derived: ['queuedBehindQualifiedId', 'queuedBehind'] }"
-                      >queued behind <span class="font-mono">{{ ahead }}</span></a
-                    >
+                    @if (repo(); as repo) {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="relatedInRepository.queuedBehind"
+                        [exitParams]="{ slug: slug(), repo: repo, requestId: ahead }"
+                        title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
+                        [fieldOf]="request"
+                        [qitsField]="{ derived: ['queuedBehindQualifiedId', 'queuedBehind'] }"
+                        >queued behind <span class="font-mono">{{ ahead }}</span></a
+                      >
+                    } @else {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="related.queuedBehind"
+                        [exitParams]="{ slug: slug(), requestId: ahead }"
+                        title="Held back by the feature freeze: this request folds and gates nothing until the one ahead of it has released or been withdrawn"
+                        [fieldOf]="request"
+                        [qitsField]="{ derived: ['queuedBehindQualifiedId', 'queuedBehind'] }"
+                        >queued behind <span class="font-mono">{{ ahead }}</span></a
+                      >
+                    }
                   }
                   @if (next(request); as after) {
-                    <a
-                      class="text-accent no-underline hover:underline"
-                      [qitsExit]="related.queuedNext"
-                      [exitParams]="{ slug: slug(), requestId: after }"
-                      title="The request queued behind this one: new asks land there while this one is frozen"
-                      [fieldOf]="request"
-                      [qitsField]="{ derived: ['queuedNextQualifiedId', 'queuedNext'] }"
-                      >next: <span class="font-mono">{{ after }}</span></a
-                    >
+                    @if (repo(); as repo) {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="relatedInRepository.queuedNext"
+                        [exitParams]="{ slug: slug(), repo: repo, requestId: after }"
+                        title="The request queued behind this one: new asks land there while this one is frozen"
+                        [fieldOf]="request"
+                        [qitsField]="{ derived: ['queuedNextQualifiedId', 'queuedNext'] }"
+                        >next: <span class="font-mono">{{ after }}</span></a
+                      >
+                    } @else {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="related.queuedNext"
+                        [exitParams]="{ slug: slug(), requestId: after }"
+                        title="The request queued behind this one: new asks land there while this one is frozen"
+                        [fieldOf]="request"
+                        [qitsField]="{ derived: ['queuedNextQualifiedId', 'queuedNext'] }"
+                        >next: <span class="font-mono">{{ after }}</span></a
+                      >
+                    }
                   }
                 </div>
 
@@ -555,27 +603,57 @@ const UNATTENDED_TITLE =
                           >
                           <span class="text-fg-soft">
                             @if (move.fromQualifiedId) {
-                              <a
-                                class="font-mono text-accent no-underline hover:underline"
-                                [qitsExit]="related.movedFrom"
-                                [exitParams]="{ slug: slug(), requestId: move.fromQualifiedId }"
-                                [fieldOf]="move"
-                                qitsField="fromQualifiedId"
-                                >{{ move.fromQualifiedId }}</a
-                              >
+                              @if (repo(); as repo) {
+                                <a
+                                  class="font-mono text-accent no-underline hover:underline"
+                                  [qitsExit]="relatedInRepository.movedFrom"
+                                  [exitParams]="{
+                                    slug: slug(),
+                                    repo: repo,
+                                    requestId: move.fromQualifiedId,
+                                  }"
+                                  [fieldOf]="move"
+                                  qitsField="fromQualifiedId"
+                                  >{{ move.fromQualifiedId }}</a
+                                >
+                              } @else {
+                                <a
+                                  class="font-mono text-accent no-underline hover:underline"
+                                  [qitsExit]="related.movedFrom"
+                                  [exitParams]="{ slug: slug(), requestId: move.fromQualifiedId }"
+                                  [fieldOf]="move"
+                                  qitsField="fromQualifiedId"
+                                  >{{ move.fromQualifiedId }}</a
+                                >
+                              }
                             } @else {
                               {{ none }}
                             }
                             →
                             @if (move.toQualifiedId) {
-                              <a
-                                class="font-mono text-accent no-underline hover:underline"
-                                [qitsExit]="related.movedTo"
-                                [exitParams]="{ slug: slug(), requestId: move.toQualifiedId }"
-                                [fieldOf]="move"
-                                qitsField="toQualifiedId"
-                                >{{ move.toQualifiedId }}</a
-                              >
+                              @if (repo(); as repo) {
+                                <a
+                                  class="font-mono text-accent no-underline hover:underline"
+                                  [qitsExit]="relatedInRepository.movedTo"
+                                  [exitParams]="{
+                                    slug: slug(),
+                                    repo: repo,
+                                    requestId: move.toQualifiedId,
+                                  }"
+                                  [fieldOf]="move"
+                                  qitsField="toQualifiedId"
+                                  >{{ move.toQualifiedId }}</a
+                                >
+                              } @else {
+                                <a
+                                  class="font-mono text-accent no-underline hover:underline"
+                                  [qitsExit]="related.movedTo"
+                                  [exitParams]="{ slug: slug(), requestId: move.toQualifiedId }"
+                                  [fieldOf]="move"
+                                  qitsField="toQualifiedId"
+                                  >{{ move.toQualifiedId }}</a
+                                >
+                              }
                             } @else {
                               {{ none }}
                             }
@@ -783,8 +861,14 @@ const UNATTENDED_TITLE =
     </div>
   `,
 })
-export class ReleaseRequestPage implements OpenReleaseRequest {
+export class ReleaseRequestView implements OpenReleaseRequest {
   private readonly selected = inject(SelectedProject);
+
+  /**
+   * The repository whose route mounts the view (qits-2506), by name: its back link and the other
+   * requests it names then stay under `repositories/<repo>/release-requests`. Unset, the project's.
+   */
+  readonly repo = input<string | undefined>(undefined);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly none = NONE;
@@ -1020,6 +1104,11 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
     list: exit('projects/:slug/release-requests'),
   });
 
+  /** "← Release requests" under a repository: back to the repository's (qits-2506). */
+  protected readonly leavingRepository = outcomes('leave-repository-release-request', {
+    list: exit('projects/:slug/repositories/:repo/release-requests'),
+  });
+
   /**
    * The other requests the page links (epic qits-2000): the one that superseded an obsolete
    * request, the one it is queued behind or the one queued behind it (the feature freeze), and
@@ -1031,6 +1120,15 @@ export class ReleaseRequestPage implements OpenReleaseRequest {
     queuedNext: exit('projects/:slug/release-requests/:requestId'),
     movedFrom: exit('projects/:slug/release-requests/:requestId'),
     movedTo: exit('projects/:slug/release-requests/:requestId'),
+  });
+
+  /** The same requests, opened under the repository the view is mounted in (qits-2506). */
+  protected readonly relatedInRepository = outcomes('open-related-repository-release-request', {
+    supersededBy: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
+    queuedBehind: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
+    queuedNext: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
+    movedFrom: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
+    movedTo: exit('projects/:slug/repositories/:repo/release-requests/:requestId'),
   });
 
   /** The request's repository, from its answer; `''` until it is read. */

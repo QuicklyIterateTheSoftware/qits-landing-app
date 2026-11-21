@@ -81,6 +81,7 @@ describe('RepositoryArtifactsPage (screenshots)', () => {
       'Contracts',
       'Entities',
       'UI builder',
+      'Release requests',
     ]);
     await expect
       .element(sidebar().getByRole('link', { name: 'Artifacts' }))
@@ -104,6 +105,16 @@ describe('RepositoryArtifactsPage (screenshots)', () => {
       `/projects/${opened.project.slug}/repositories/contract-service`,
     );
     expect(reached()).toEqual(['open-sidebar-repository-page:overview']);
+  });
+
+  it('open-sidebar-repository-page releaseRequests: Release requests opens the repository’s list', async () => {
+    const opened = await render();
+    await userEvent.click(sidebar().getByRole('link', { name: 'Release requests' }));
+    await leftFor(opened);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/repositories/contract-service/release-requests`,
+    );
+    expect(reached()).toEqual(['open-sidebar-repository-page:releaseRequests']);
   });
 
   it('leave-sidebar-repository repositories: “← Repositories” goes back to the project', async () => {

@@ -63,6 +63,8 @@ export type RoutePath =
   | 'projects/:slug/repositories/:repo/contracts/:state'
   | 'projects/:slug/repositories/:repo/entities'
   | 'projects/:slug/repositories/:repo/entities/:entity'
+  | 'projects/:slug/repositories/:repo/release-requests'
+  | 'projects/:slug/repositories/:repo/release-requests/:requestId'
   | 'projects/:slug/repositories/:repo/ui-builder'
   | 'projects/:slug/setup'
   | 'projects/:slug/work'
