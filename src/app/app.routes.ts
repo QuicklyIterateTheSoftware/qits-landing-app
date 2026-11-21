@@ -125,8 +125,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * address, `work/detail/<qualified id>/agent[/<tab>]`, where the Workspace links on cards and on the
  * item's page still lead, is `WorkAgentLayout`: it finds the item's ACTIVE agent and goes to its
  * page on the same tab, or to the item. This app has no runners page of its own (epic qits-1481):
- * the execution targets a slot is placed on are qits-system's, at its own Targets page, which the
- * Agents page links to directly rather than routing through here.
+ * the execution targets a slot is placed on are qits-system's, listed on the System section's
+ * Targets page (`system/targets`, qits-2351), which the Agents page's Targets link opens.
  *
  * The Network access pane (epic qits-1977) is no route of this app any more (qits-2361): it is
  * qits-network-access' own frontend at `https://network-access.<domain>/`, which the shell links to.
@@ -158,8 +158,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * root sidebar with no project open. `system` and `system/swarm` redirect to it by a relative
  * `redirectTo`; it is an entry point, where qits-system-frontend's old `swarm/services` hands off.
  * `system/swarm/nodes` (`SwarmNodesPage`, qits-2346) is the same swarm's nodes, an entry point too,
- * where the old `swarm/nodes` hands off. Below the root sidebar's System, its pages are listed while
- * the section is open (Services, Nodes); qits-2345…qits-2356 add the section's other pages under
+ * where the old `swarm/nodes` hands off. `system/targets` (`SystemTargetsPage`, qits-2351) is
+ * qits-system's execution targets, each with its slots, sign-ins, health and leases, and the
+ * writes that declare, edit, commission and delete them; an entry point too, where the old
+ * `targets` hands off. Below the root sidebar's System, its pages are listed while the section is
+ * open (Services, Nodes, Targets); qits-2345…qits-2356 add the section's other pages under
  * `system/...`, qits-2347…qits-2356 each with its own entry there.
  * `system/swarm/services/<id>` (`SwarmServicePage`, qits-2345) is one service of that swarm, by
  * its name or id: its facts, rollout, environment keys, labels, mounts, networks and tasks; each
@@ -726,6 +729,17 @@ export const routes: Routes = [
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/system/swarm/nodes/swarm-nodes.page').then((m) => m.SwarmNodesPage),
+          },
+          {
+            path: 'targets',
+            // An entry point (qits-2049, qits-2351): qits-system-frontend's old `targets` hands off
+            // here with a full-document load, and its bookmarks follow; Targets below the sidebar's
+            // System and the Agents page's Targets link lead here too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/targets/system-targets.page').then(
+                (m) => m.SystemTargetsPage,
+              ),
           },
         ],
       },

@@ -120,9 +120,9 @@ describe('ProjectAgentsPage', () => {
     expect(link(`${SLUG}-10`)?.getAttribute('href')).toBe(`/projects/${SLUG}/agents/a-1`);
     expect(element.querySelector('[data-wait]')?.textContent).toContain('CI run run-1234');
     expect(element.querySelector('[data-attention]')?.textContent).toContain('The wait is overdue');
-    expect(link('Targets')?.getAttribute('href')).toBe(
-      'https://system.qits.example/system/targets',
-    );
+    // The System section's Targets page, in this app (qits-2351): the old cross-origin link 404ed.
+    expect(link('Targets')?.getAttribute('href')).toBe('/system/targets');
+    expect(link('Targets')?.getAttribute('data-qits-outcome')).toBe('open-system-targets:open');
     const slot = [...element.querySelectorAll('a')].find((a) =>
       a.getAttribute('href')?.startsWith(`/projects/${SLUG}/workspaces/`),
     );

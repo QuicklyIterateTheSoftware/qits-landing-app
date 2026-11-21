@@ -51,7 +51,7 @@ import {
  *
  * The System section's Targets page (qits-2351) reads and writes the rest, each operation's own
  * `fetch` against the recorded request: `TARGET_ROWS` (`show-targets`) in "a connected target with
- * leases" and, empty, in "no target"; declaring (`createTarget` 201) and the install script in "no
+ * leases", in "a declared target" (not connected) and, empty, in "no target"; declaring (`createTarget` 201) and the install script in "no
  * target"; the declared target's patch, greenlight, delete (204) and health in "a declared target",
  * with the two checks' 409 TARGET_UNAVAILABLE as refusal rows; a token rotation in "a registered
  * runner"; a sign-in started in "a connected target", and followed, given its code and cancelled in
@@ -188,6 +188,19 @@ describe('qits-landing-app → qits-system-service pact: the targets', () => {
         expect(target.hostname).toBe('node-1');
         expect(target.login?.claude).toBe('PRESENT');
         expect(target.maximums?.ci).toBeNull();
+      },
+    ));
+
+  it('show-targets: a declared target that is not connected', () =>
+    given(DECLARED, 'listTargets', 'show-targets', TARGET_ROWS.consumes).executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () => TARGET_ROWS.fetch({}));
+        expect(error).toBeUndefined();
+        const [target] = data ?? [];
+        expect(data).toHaveLength(1);
+        expect(target.connected).toBe(false);
+        expect(target.connectedSince).toBeNull();
+        expect(target.hostname).toBe('lab-host');
       },
     ));
 

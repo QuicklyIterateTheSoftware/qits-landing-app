@@ -21,3 +21,9 @@ export const AWAITING_CODE = 'a connected target with a claude sign-in awaiting 
 
 /** A registered runner: `rotateTargetRegistrationToken` with a slots total. */
 export const REGISTERED_RUNNER = 'a registered runner';
+
+/**
+ * A quarantined target in the list: no `@qits/system-golden-masters` recording holds one yet, so
+ * the Greenlight test skips itself until qits-system records `listTargets` in this state.
+ */
+export const QUARANTINED = 'a quarantined target';

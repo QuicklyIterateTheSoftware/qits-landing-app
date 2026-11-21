@@ -162,6 +162,20 @@ describe('ProjectAgentsPage (screenshots)', () => {
     expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/workspaces/1`);
   });
 
+  it('open-system-targets open: Targets beside Workspaces opens the Targets page', async () => {
+    const opened = await render(NEEDING_ATTENTION, 1200);
+    await answerSlots(opened);
+    const view = page.elementLocator(opened.page);
+    const targets = view.getByRole('link', { name: 'Targets', exact: true });
+    await expect.element(targets).toHaveAttribute('href', '/system/targets');
+    await targets.click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-system-targets:open',
+    ]);
+    expect(TestBed.inject(Router).url).toBe('/system/targets');
+  });
+
   it('marks the page as loading, then as failed to load', async () => {
     const opened = await render('unanswered');
     const { project } = opened;
