@@ -3069,7 +3069,19 @@
       "route": "system/swarm/configs"
     }
   ],
-  "src/app/routes/system/swarm/nodes/[id]/swarm-node.page.browser.spec.ts": [
+  "src/app/routes/system/swarm/nodes/[id]/containers/swarm-node-containers.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a node running no containers",
+      "operationId": "listNodeContainers",
+      "route": "system/swarm/nodes/:id/containers"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "getContainerLogs",
+      "route": "system/swarm/nodes/:id/containers"
+    },
     {
       "provider": "qits-system-service",
       "state": "a single-node swarm",
@@ -3079,20 +3091,26 @@
     {
       "provider": "qits-system-service",
       "state": "a single-node swarm",
-      "operationId": "listSwarmNodeTasks",
-      "route": "system/swarm/nodes/:id"
-    },
-    {
-      "provider": "qits-system-service",
-      "state": "a swarm node running no tasks",
       "operationId": "getSwarmNode",
+      "route": "system/swarm/nodes/:id/containers"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listNodeContainers",
+      "route": "system/swarm/nodes/:id/containers"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmNodeTasks",
       "route": "system/swarm/nodes/:id"
     },
     {
       "provider": "qits-system-service",
-      "state": "a swarm node running no tasks",
+      "state": "a single-node swarm",
       "operationId": "listSwarmNodeTasks",
-      "route": "system/swarm/nodes/:id"
+      "route": "system/swarm/nodes/:id/containers"
     }
   ],
   "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts": [

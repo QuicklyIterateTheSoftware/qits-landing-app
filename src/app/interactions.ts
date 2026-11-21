@@ -937,6 +937,18 @@ export const INTERACTIONS = {
    */
   'leave-swarm-node': 'A swarm node’s page leads back to the nodes list',
   /**
+   * `swarm-node-containers.page.ts` via `NODE_CONTAINER_LIST` (qits-2352): a swarm node's
+   * Containers tab lists every container on the node qits-system runs on (`all=true`), filtered to
+   * the running ones by default; a node that is not that one is not read. Refresh reads it again
+   * (no event announces a container start, stop or death).
+   */
+  'show-swarm-node-containers': 'A swarm node’s Containers tab lists the node’s containers',
+  /**
+   * `swarm-node-containers.page.ts` via `NODE_CONTAINER_LOGS` (qits-2352): a container row's Logs
+   * opens a panel with the container's last 200 lines.
+   */
+  'show-swarm-node-container-logs': 'A container’s Logs on a swarm node shows its last 200 lines',
+  /**
    * `swarm-node-volumes.page.ts` via `NODE_VOLUME_LIST` (qits-2355): a swarm node page's Volumes
    * tab lists the volumes of the node qits-system runs on, the unused ones marked, the anonymous
    * ones hidden until asked for. Refresh reads them again (no event announces a volume change).

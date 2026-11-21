@@ -437,6 +437,7 @@ export class SwarmNodeLayout implements OpenSwarmNodeRead {
    * `containers: exit('system/swarm/nodes/:id/containers')`).
    */
   private readonly switching = outcomes('switch-swarm-node-tab', {
+    containers: exit('system/swarm/nodes/:id/containers'),
     volumes: exit('system/swarm/nodes/:id/volumes'),
   });
 

@@ -994,6 +994,10 @@ export type ListNodeContainersErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * NODE_REMOTE: not the node qits-system runs on
+     */
+    409: unknown;
 };
 
 export type ListNodeContainersResponses = {
@@ -1024,6 +1028,14 @@ export type GetNodeContainerErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * no such container
+     */
+    404: unknown;
+    /**
+     * NODE_REMOTE: not the node qits-system runs on
+     */
+    409: unknown;
 };
 
 export type GetNodeContainerResponses = {
@@ -1056,6 +1068,14 @@ export type GetContainerLogsErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * no such container
+     */
+    404: unknown;
+    /**
+     * NODE_REMOTE: not the node qits-system runs on
+     */
+    409: unknown;
 };
 
 export type GetContainerLogsResponses = {
