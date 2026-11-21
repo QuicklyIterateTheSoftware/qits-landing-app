@@ -1027,7 +1027,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-config",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/configs/:id"
           }
         }
       },
@@ -1154,7 +1155,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-config",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/configs/:id"
           }
         }
       },
@@ -1294,7 +1296,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-config",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/configs/:id"
           }
         }
       },
