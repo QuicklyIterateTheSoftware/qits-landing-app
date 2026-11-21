@@ -114,7 +114,12 @@ export interface NavChild extends NavPage {
 
 /** A global section's page in this app: a route that takes no params (qits-2316). */
 export type GlobalPath =
-  'artifacts' | 'system' | 'system/swarm/services' | 'system/swarm/nodes' | 'mirror';
+  | 'artifacts'
+  | 'system'
+  | 'system/swarm/services'
+  | 'system/swarm/nodes'
+  | 'system/swarm/configs'
+  | 'mirror';
 
 /** One of a global section's own pages, below it in the sidebar while the section is open. */
 export interface GlobalChild {
@@ -599,6 +604,7 @@ export class ShellLayout {
   private readonly systemPages = outcomes('open-sidebar-system-page', {
     services: exit('system/swarm/services'),
     nodes: exit('system/swarm/nodes'),
+    configs: exit('system/swarm/configs'),
   });
 
   /**
@@ -622,8 +628,8 @@ export class ShellLayout {
    * (qits-2316), System (qits-2344) and Mirror (qits-2357), in-app sections, and IdP admin
    * (qits-2319, leaving the app); Orchestrator (qits-2359) will add one entry here, with its own
    * `outcomes(...)` exit (a `GlobalPath`) or external. An in-app section may list its own pages
-   * below it (`children`, qits-2346): System's Services and Nodes, one exit each of
-   * `open-sidebar-system-page`; qits-2347…qits-2356 each add one child there. Mirror lists none:
+   * below it (`children`, qits-2346): System's Services, Nodes and Configs (qits-2348), one exit
+   * each of `open-sidebar-system-page`; qits-2347…qits-2356 each add one child there. Mirror lists none:
    * its one listable page is the OCI upstreams, which `mirror` opens.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
@@ -638,6 +644,7 @@ export class ShellLayout {
         children: [
           { label: 'Services', exit: system.services, path: system.services.url() },
           { label: 'Nodes', exit: system.nodes, path: system.nodes.url() },
+          { label: 'Configs', exit: system.configs, path: system.configs.url() },
         ],
       },
       { kind: 'exit', label: 'Mirror', exit: this.mirror.open },
