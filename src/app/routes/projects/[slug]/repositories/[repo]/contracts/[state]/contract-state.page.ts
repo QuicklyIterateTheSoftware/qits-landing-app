@@ -77,6 +77,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                     class="back text-xs font-semibold"
                     [qitsExit]="leaving.allStates"
                     [exitParams]="{ slug: slug(), repo: repo() }"
+                    [exitCurrent]="null"
                     >← All states</a
                   >
                 </p>
@@ -238,6 +239,7 @@ import { JsonBlock } from '$ui/components/json-block/json-block';
                 class="back font-semibold"
                 [qitsExit]="leaving.allStates"
                 [exitParams]="{ slug: slug(), repo: repo() }"
+                [exitCurrent]="null"
                 >All states</a
               >
             </p>

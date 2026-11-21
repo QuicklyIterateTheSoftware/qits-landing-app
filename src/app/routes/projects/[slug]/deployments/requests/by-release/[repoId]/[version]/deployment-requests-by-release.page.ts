@@ -123,6 +123,7 @@ function newestFirst(
             class="text-accent no-underline hover:underline"
             [qitsExit]="leaving.list"
             [exitParams]="{ slug: slug() }"
+            [exitCurrent]="null"
             >← Deployment requests</a
           >
         </p>

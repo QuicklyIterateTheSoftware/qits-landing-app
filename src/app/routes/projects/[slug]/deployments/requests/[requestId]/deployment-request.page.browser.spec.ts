@@ -109,6 +109,9 @@ describe('DeploymentRequestPage (screenshots)', () => {
       )
       .toHaveAttribute('aria-current', 'page');
     await expect
+      .element(view.getByRole('link', { name: '← Deployment requests' }))
+      .not.toHaveAttribute('aria-current');
+    await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('deployed', { kind: 'DATA' });
     await shootShellMenus(opened, 'deployed');

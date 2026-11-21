@@ -95,6 +95,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
             class="font-semibold text-accent no-underline hover:underline"
             [qitsExit]="leaving.ci"
             [exitParams]="{ slug: slug() }"
+            [exitCurrent]="null"
             data-back
             >← CI</a
           >
@@ -112,6 +113,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
               class="text-accent no-underline hover:underline"
               [qitsExit]="leaving.ci"
               [exitParams]="{ slug: slug() }"
+              [exitCurrent]="null"
               >Back to CI</a
             >
           </p>

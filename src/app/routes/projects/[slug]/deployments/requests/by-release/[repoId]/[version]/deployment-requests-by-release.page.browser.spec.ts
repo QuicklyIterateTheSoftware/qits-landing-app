@@ -120,6 +120,9 @@ describe('DeploymentRequestsByReleasePage (screenshots)', () => {
     await expect
       .element(view.getByRole('heading', { level: 1 }))
       .toHaveTextContent(`${release.repoId}@${release.version}`);
+    await expect
+      .element(view.getByRole('link', { name: '← Deployment requests' }))
+      .not.toHaveAttribute('aria-current');
     const table = view.getByRole('table');
     for (const row of rows) await expect.element(table).toMatchTextContent(row.applicationName);
     await expect.element(table.getByRole('row')).toHaveLength(3);

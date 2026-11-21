@@ -135,6 +135,9 @@ describe('ContractStatePage (screenshots)', () => {
       .toBeVisible();
     await expect.element(view.getByRole('link', { name: '← All states' })).toBeVisible();
     await expect
+      .element(view.getByRole('link', { name: '← All states' }))
+      .not.toHaveAttribute('aria-current');
+    await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('dependencies', { kind: 'DATA' });
     await shootShellMenus(opened, 'dependencies');

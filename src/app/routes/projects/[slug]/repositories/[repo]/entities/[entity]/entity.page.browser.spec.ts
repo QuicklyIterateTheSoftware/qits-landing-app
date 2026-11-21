@@ -112,6 +112,9 @@ describe('EntityPage (screenshots)', () => {
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('No such entity in qits-projects 2100.1.0.');
     await expect
+      .element(view.getByRole('link', { name: 'All entities' }))
+      .not.toHaveAttribute('aria-current');
+    await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('unknown', { kind: 'NO_DATA' });
   });
@@ -143,6 +146,9 @@ describe('EntityPage (screenshots)', () => {
     const view = page.elementLocator(opened.page);
     await expect.element(view.getByRole('link', { name: 'qits-projects:Project' })).toBeVisible();
     await expect.element(view.getByRole('link', { name: '← All entities' })).toBeVisible();
+    await expect
+      .element(view.getByRole('link', { name: '← All entities' }))
+      .not.toHaveAttribute('aria-current');
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('projection', { kind: 'DATA' });

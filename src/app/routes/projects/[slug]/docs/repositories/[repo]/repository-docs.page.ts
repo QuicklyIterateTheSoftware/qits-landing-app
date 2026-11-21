@@ -85,6 +85,7 @@ const NO_SITES: DocsCatalog = { sites: [] };
             class="font-semibold text-accent no-underline hover:underline"
             [qitsExit]="leaving.docs"
             [exitParams]="{ slug: slug() }"
+            [exitCurrent]="null"
             data-back
             >← Docs</a
           >
@@ -104,6 +105,7 @@ const NO_SITES: DocsCatalog = { sites: [] };
               class="text-accent no-underline hover:underline"
               [qitsExit]="leaving.docs"
               [exitParams]="{ slug: slug() }"
+              [exitCurrent]="null"
               >Back to Docs</a
             >
           </p>
