@@ -374,6 +374,11 @@
               "path": "swarm/nodes",
               "fullPath": "system/swarm/nodes",
               "entry": true
+            },
+            {
+              "path": "swarm/configs",
+              "fullPath": "system/swarm/configs",
+              "entry": true
             }
           ]
         },
@@ -389,6 +394,11 @@
             {
               "path": "upstreams",
               "fullPath": "mirror/upstreams",
+              "entry": true
+            },
+            {
+              "path": "repositories/:repository",
+              "fullPath": "mirror/repositories/:repository",
               "entry": true
             }
           ]
@@ -54264,6 +54274,3504 @@
       "records": [],
       "triggers": [
         "sign-in-failed:restarted"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says nothing is cached in a root nobody has pulled through",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says nothing is cached in a root nobody has pulled through",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says nothing is cached in a root nobody has pulled through",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says nothing is cached in a root nobody has pulled through",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says nothing is cached in a root nobody has pulled through",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says nothing is cached in a root nobody has pulled through",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "the default caches",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+      "name": "maven",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a maven cache holding a cached artifact",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+      "name": "maven",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a maven cache holding a cached artifact",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+      "name": "maven",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a maven cache holding a cached artifact",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+      "name": "maven",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a maven cache holding a cached artifact",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+      "name": "maven",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a maven cache holding a cached artifact",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+      "name": "maven",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a maven cache holding a cached artifact",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=central",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=org.example:contract-library",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.0.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an npm root’s packages with their dist-tags",
+      "name": "npm",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "an npm cache holding a package",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an npm root’s packages with their dist-tags",
+      "name": "npm",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "an npm cache holding a package",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an npm root’s packages with their dist-tags",
+      "name": "npm",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "an npm cache holding a package",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an npm root’s packages with their dist-tags",
+      "name": "npm",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "an npm cache holding a package",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an npm root’s packages with their dist-tags",
+      "name": "npm",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "an npm cache holding a package",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an npm root’s packages with their dist-tags",
+      "name": "npm",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "an npm cache holding a package",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=left-pad",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=npmjs",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=1.3.0",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an OCI root’s images, their digests shortened and tags as chips, and the pin rule",
+      "name": "oci",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror holding a pinned and an unpinned tag",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": "labels",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an OCI root’s images, their digests shortened and tags as chips, and the pin rule",
+      "name": "oci",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror holding a pinned and an unpinned tag",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": "labels",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an OCI root’s images, their digests shortened and tags as chips, and the pin rule",
+      "name": "oci",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror holding a pinned and an unpinned tag",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": "labels",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an OCI root’s images, their digests shortened and tags as chips, and the pin rule",
+      "name": "oci",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror holding a pinned and an unpinned tag",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": "labels",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an OCI root’s images, their digests shortened and tags as chips, and the pin rule",
+      "name": "oci",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror holding a pinned and an unpinned tag",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": "labels",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > shows an OCI root’s images, their digests shortened and tags as chips, and the pin rule",
+      "name": "oci",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [
+        {
+          "provider": "qits-mirror-service",
+          "state": "a mirror holding a pinned and an unpinned tag",
+          "operationId": "listRepositoryPackages"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open",
+        "select-mirror-package:selected"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": null,
+          "derived": [
+            "evictionWindow"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "type",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=hub",
+          "field": "upstream",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": null,
+          "derived": [
+            "versions"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "name=library/node",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe",
+          "field": "labels",
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "cachedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "lastAccessedAt"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": null,
+          "derived": [
+            "version"
+          ]
+        },
+        {
+          "source": "qits-mirror-service#listRepositoryPackages",
+          "item": "version=sha256:a88d1a5183df51d85bc9cda1e754f7badb96c8148d5b6764fd08ae4fb2a6f038",
+          "field": "labels",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > marks the page as loading, then says the contents cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-desktop-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says the mirror has no cache root of an unknown name, with no Retry",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-desktop-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says the mirror has no cache root of an unknown name, with no Retry",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-phone-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says the mirror has no cache root of an unknown name, with no Retry",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-phone-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says the mirror has no cache root of an unknown name, with no Retry",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-tablet-dark.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says the mirror has no cache root of an unknown name, with no Retry",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-tablet-light.html",
+      "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+      "test": "MirrorRepositoryPage (screenshots) > says the mirror has no cache root of an unknown name, with no Retry",
+      "name": "unknown",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "mirror/repositories/:repository",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system:open"
       ]
     },
     {
@@ -326089,6 +329597,894 @@
       ]
     },
     {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
+      "name": "configs",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "createdAt",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "updatedAt",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
+      "name": "configs",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "createdAt",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "updatedAt",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
+      "name": "configs",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
+      "name": "configs",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
+      "name": "configs",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "createdAt",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "updatedAt",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > lists the swarm’s configs with their labels and docker’s dates",
+      "name": "configs",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a single-node swarm",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "id"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": null,
+          "derived": [
+            "labels"
+          ]
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "createdAt",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": "id=ktnbjxoalbkvbvedmg1urrz8h",
+          "field": "updatedAt",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > says the swarm holds no configs",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm holding no configs",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > says the swarm holds no configs",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm holding no configs",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > says the swarm holds no configs",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm holding no configs",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > says the swarm holds no configs",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm holding no configs",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > says the swarm holds no configs",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm holding no configs",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > says the swarm holds no configs",
+      "name": "empty",
+      "kind": "NO_DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [
+        {
+          "provider": "qits-system-service",
+          "state": "a swarm holding no configs",
+          "operationId": "listSwarmConfigs"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-system-service#listSwarmConfigs",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "loading",
+      "kind": "PENDING",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-desktop-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-phone-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-phone-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": []
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-tablet-light.html",
+      "spec": "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts",
+      "test": "SwarmConfigsPage (screenshots) > marks the page as loading, then says the swarm cannot be read, with Retry",
+      "name": "unavailable",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "system/swarm/configs",
+      "records": [],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "open-network-access:open",
+        "open-sidebar-artifacts:open",
+        "open-sidebar-idp-admin:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
+        "open-sidebar-system-page:nodes",
+        "open-sidebar-system-page:services",
+        "open-sidebar-system:open"
+      ]
+    },
+    {
       "file": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-dark.html",
       "spec": "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts",
       "test": "SwarmNodesPage (screenshots) > says the swarm manager lists no nodes",
@@ -326113,6 +330509,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326151,6 +330548,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326243,6 +330641,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326281,6 +330680,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326313,6 +330713,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326337,6 +330738,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326387,6 +330789,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326411,6 +330814,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326441,6 +330845,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326543,6 +330948,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326779,6 +331185,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326881,6 +331288,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -326977,6 +331385,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327001,6 +331410,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327051,6 +331461,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327075,6 +331486,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327100,6 +331512,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327125,6 +331538,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327180,6 +331594,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327205,6 +331620,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327236,6 +331652,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327414,6 +331831,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -327928,6 +332346,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328106,6 +332525,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328278,6 +332698,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328303,6 +332724,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328358,6 +332780,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328383,6 +332806,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328408,6 +332832,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328433,6 +332858,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328488,6 +332914,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328513,6 +332940,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328544,6 +332972,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -328850,6 +333279,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -329748,6 +334178,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330054,6 +334485,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330354,6 +334786,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330379,6 +334812,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330434,6 +334868,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330459,6 +334894,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330489,6 +334925,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330527,6 +334964,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330619,6 +335057,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330657,6 +335096,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330689,6 +335129,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330713,6 +335154,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330763,6 +335205,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330787,6 +335230,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -330817,6 +335261,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open",
@@ -330948,6 +335393,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open",
@@ -331289,6 +335735,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open",
@@ -331420,6 +335867,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open",
@@ -331545,6 +335993,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -331569,6 +336018,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -331619,6 +336069,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -331643,6 +336094,7 @@
         "open-sidebar-mirror:open",
         "open-sidebar-network-access:networkAccess",
         "open-sidebar-orchestrator:open",
+        "open-sidebar-system-page:configs",
         "open-sidebar-system-page:nodes",
         "open-sidebar-system-page:services",
         "open-sidebar-system:open"
@@ -333576,6 +338028,50 @@
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-tablet-dark.html",
       "src/app/routes/auth-callback.page.browser.spec.ts/unknown-state-tablet-light.html"
     ],
+    "mirror/repositories/:repository": [
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-tablet-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/npm-tablet-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/oci-tablet-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unavailable-tablet-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-desktop-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-desktop-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-phone-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-phone-light.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-tablet-dark.html",
+      "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/unknown-tablet-light.html"
+    ],
     "mirror/upstreams": [
       "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/mirror/upstreams/mirror-upstreams.page.browser.spec.ts/empty-desktop-light.html",
@@ -335484,6 +339980,32 @@
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-tablet-dark.html",
       "src/app/routes/projects/[slug]/workspaces/[slotId]/workspace-slot.page.browser.spec.ts/slot-tablet-light.html"
     ],
+    "system/swarm/configs": [
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-desktop-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-phone-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-phone-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/configs-tablet-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-desktop-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-phone-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-phone-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/empty-tablet-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-desktop-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-phone-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-phone-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-desktop-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-desktop-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-phone-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-phone-light.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-tablet-dark.html",
+      "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts/unavailable-tablet-light.html"
+    ],
     "system/swarm/nodes": [
       "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-dark.html",
       "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts/empty-desktop-light.html",
@@ -335926,6 +340448,16 @@
         "global": false,
         "triggered": true,
         "file": "@qits/angular/src/lib/sign-in/auth-callback.page.ts"
+      },
+      {
+        "route": "mirror/repositories/:repository",
+        "interaction": "select-mirror-package",
+        "outcome": "selected",
+        "kind": "stay",
+        "to": null,
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.ts"
       },
       {
         "route": "orchestrator/processes/:kind",
@@ -337820,6 +342352,16 @@
       {
         "route": null,
         "interaction": "open-sidebar-system-page",
+        "outcome": "configs",
+        "kind": "exit",
+        "to": "system/swarm/configs",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-sidebar-system-page",
         "outcome": "nodes",
         "kind": "exit",
         "to": "system/swarm/nodes",
@@ -338376,6 +342918,15 @@
         "route": null,
         "interaction": "open-sidebar-system",
         "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > open-sidebar-system-page configs: Configs below System opens it",
+        "route": null,
+        "interaction": "open-sidebar-system-page",
+        "outcome": "configs",
         "kind": "exit",
         "freeze": null
       },
@@ -339287,6 +343838,15 @@
         "outcome": "succeeded",
         "kind": "returnTo",
         "freeze": null
+      },
+      {
+        "spec": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts",
+        "test": "MirrorRepositoryPage (screenshots) > select-mirror-package selected: a maven root’s coordinate shows its versions with their files",
+        "route": "mirror/repositories/:repository",
+        "interaction": "select-mirror-package",
+        "outcome": "selected",
+        "kind": "stay",
+        "freeze": "src/app/routes/mirror/repositories/[repository]/mirror-repository.page.browser.spec.ts/maven-desktop-light.html"
       },
       {
         "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
