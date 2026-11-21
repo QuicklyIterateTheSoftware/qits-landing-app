@@ -1817,6 +1817,13 @@ export const INTERACTIONS = {
    */
   'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**
+   * `shell.layout.ts`: a process listed below the sidebar's Orchestrator while the section is open
+   * opens its page, `orchestrator/processes/<kind>` (qits-2480: Garbage collection, `gc`).
+   * Navigates only, and names no pact.
+   */
+  'open-sidebar-orchestrator-page':
+    'A process below the sidebar’s Orchestrator entry opens that process’s page',
+  /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
    * the Work or Releases section above a subpage, and Releases' Requests, Agents or CI page. Navigates only, and names no pact

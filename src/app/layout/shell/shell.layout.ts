@@ -121,7 +121,10 @@ export interface NavChild extends NavPage {
   readonly apart?: boolean;
 }
 
-/** A global section's page in this app: a route that takes no params (qits-2316). */
+/**
+ * A global section's page in this app: a route that takes no params (qits-2316), or one process of
+ * the Orchestrator's, by its kind (qits-2480).
+ */
 export type GlobalPath =
   | 'artifacts'
   | 'system'
@@ -137,7 +140,11 @@ export type GlobalPath =
   | 'idp'
   | 'idp/clients'
   | 'idp/users'
-  | 'idp/devices';
+  | 'idp/devices'
+  | 'orchestrator/processes/:kind';
+
+/** A global section's own page: a route that takes no params (the sidebar's entry). */
+type GlobalSectionPath = Exclude<GlobalPath, 'orchestrator/processes/:kind'>;
 
 /** One of a global section's own pages, below it in the sidebar while the section is open. */
 export interface GlobalChild {
@@ -146,6 +153,8 @@ export interface GlobalChild {
   readonly exit: ExitOutcome<GlobalPath>;
   /** The page's URL (absolute, `/system/…`), matched against the router's. */
   readonly path: string;
+  /** Its exit's params, for a page that takes some (an Orchestrator process's `kind`). */
+  readonly params?: Readonly<Record<string, string>>;
   /**
    * Other URLs (absolute) whose pages it stays current on, though they are not below `path`: Nodes
    * on a terminal's page, `/system/terminals` (qits-2356), opened from a node's Containers tab.
@@ -168,7 +177,7 @@ export type GlobalLink =
       readonly kind: 'exit';
       readonly label: string;
       /** Its `exit(...)` outcome, rendered through `[qitsExit]` and current on its pages. */
-      readonly exit: ExitOutcome<GlobalPath>;
+      readonly exit: ExitOutcome<GlobalSectionPath>;
       /** The section's own pages, listed below it in the sidebar while the section is open. */
       readonly children?: readonly GlobalChild[];
     }
@@ -398,6 +407,7 @@ export interface NavNote {
                       <a
                         class="block rounded-md px-3 py-[0.3rem] text-sm text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
                         [qitsExit]="child.exit"
+                        [exitParams]="child.params"
                         [exitCurrent]="globalChildCurrent(child)"
                         (click)="closeNav()"
                         >{{ child.label }}</a
@@ -738,6 +748,15 @@ export class ShellLayout {
   });
 
   /**
+   * The Orchestrator section's pages below the sidebar's Orchestrator, one exit per process
+   * (qits-2480), listed while the section is open: Garbage collection (`gc`), the only process
+   * qits-orchestrator runs today. A static list: the shell reads no processes.
+   */
+  private readonly orchestratorPages = outcomes('open-sidebar-orchestrator-page', {
+    gc: exit('orchestrator/processes/:kind'),
+  });
+
+  /**
    * The Mirror section's pages below the sidebar's Mirror, one exit per page (qits-2479), listed
    * while the section is open: Caches (every cache root, qits-2471) and OCI upstreams (qits-2357).
    */
@@ -771,8 +790,9 @@ export class ShellLayout {
    * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`, and IdP
    * admin's Clients, Users and Signed-in devices, one exit each of `open-sidebar-idp-page`;
    * qits-2347…qits-2356 each add one child there. Mirror lists Caches and OCI upstreams
-   * (qits-2479), one exit each of `open-sidebar-mirror-page`; Orchestrator lists none: its one
-   * process (gc) is what `orchestrator` opens.
+   * (qits-2479), one exit each of `open-sidebar-mirror-page`; Orchestrator lists its processes
+   * (qits-2480): Garbage collection, which `orchestrator` opens, one exit each of
+   * `open-sidebar-orchestrator-page`.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
@@ -807,7 +827,19 @@ export class ShellLayout {
           { label: 'OCI upstreams', exit: mirror.upstreams, path: mirror.upstreams.url() },
         ],
       },
-      { kind: 'exit', label: 'Orchestrator', exit: this.orchestrator.open },
+      {
+        kind: 'exit',
+        label: 'Orchestrator',
+        exit: this.orchestrator.open,
+        children: [
+          {
+            label: 'Garbage collection',
+            exit: this.orchestratorPages.gc,
+            params: { kind: 'gc' },
+            path: this.orchestratorPages.gc.url({ kind: 'gc' }),
+          },
+        ],
+      },
       {
         kind: 'exit',
         label: 'IdP admin',

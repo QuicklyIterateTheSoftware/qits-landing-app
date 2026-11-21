@@ -371,8 +371,9 @@ System's are Services, Nodes, Configs, Secrets and Targets (`open-sidebar-system
 qits-2347…qits-2356 add one each.
 Mirror's are Caches and OCI upstreams (`open-sidebar-mirror-page`, `caches`/`upstreams`,
 `exit('mirror/repositories')`, `exit('mirror/upstreams')`, qits-2479); Caches stays current on one
-cache root's page below it. Orchestrator lists none: its one process (gc) is what `orchestrator`
-redirects to, so, as Artifacts, it is marked `page` on every page below it.
+cache root's page below it. Orchestrator lists its processes (qits-2480): Garbage collection
+(`open-sidebar-orchestrator-page`, `gc`, `exit('orchestrator/processes/:kind')` with `kind: 'gc'`,
+the page `orchestrator` redirects to), a static list, as the shell reads no processes.
 IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
 (qits-idp-frontend) inside this app: its pages are Clients, Users and Signed-in devices
 (`open-sidebar-idp-page`, `clients`/`users`/`devices`, `exit('idp/clients')`, `exit('idp/users')`,
@@ -991,7 +992,7 @@ qits-orchestrator-frontend's `processes/:kind` and its `''`), at
 `https://qits.<domain>/orchestrator/processes/gc`; `orchestrator` and `orchestrator/processes`
 redirect to `processes/gc` (gc is the only process; a list page waits for a second). It is an entry
 point (`qitsEntry`), where the old pages hand off, and the sidebar's Orchestrator names
-`orchestrator`. It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
+`orchestrator`, with Garbage collection below it while the section is open (qits-2480). It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
 the browser only: `PROCESS_LIST` (`listProcesses`: the title, the lede, whether the kind exists),
 `PROCESS_RUNS` (`listProcessRuns`, the latest 20, newest first: status, Started linking `?run=`
 (`open-orchestrator-run`), took, trigger with a "dry run" chip, the summary clamped to two lines)

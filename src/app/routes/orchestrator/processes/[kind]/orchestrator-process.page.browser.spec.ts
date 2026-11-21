@@ -148,14 +148,14 @@ describe('OrchestratorProcessPage (screenshots)', () => {
     await expect.element(card(opened, 'artifacts.sweep')).toMatchTextContent('SKIPPED');
     await expect.element(card(opened, 'artifacts.sweep')).toMatchTextContent('dry run');
     await expect.element(card(opened, STEP_ID)).toMatchTextContent('POST /artifacts/api/gc/plan');
-    // The root sidebar's Orchestrator is the current entry.
+    // The root sidebar's Orchestrator is the open section, its Garbage collection the current page
+    // (qits-2480).
+    const navigation = page.elementLocator(opened.frame).getByRole('navigation', { name: 'qits' });
     await expect
-      .element(
-        page
-          .elementLocator(opened.frame)
-          .getByRole('navigation', { name: 'qits' })
-          .getByRole('link', { name: 'Orchestrator', exact: true }),
-      )
+      .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Garbage collection', exact: true }))
       .toHaveAttribute('aria-current', 'page');
     await fitWholePage(opened);
     await expect

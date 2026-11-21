@@ -129,6 +129,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'idp/clients', component: TestPage },
           { path: 'idp/users', component: TestPage },
           { path: 'idp/devices', component: TestPage },
+          { path: 'orchestrator/processes/:kind', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -928,6 +929,26 @@ describe('ShellLayout (screenshots)', () => {
     expect(await follow(fixture, entry)).toBe('/orchestrator');
     expect(reached()).toEqual(['open-sidebar-orchestrator:open']);
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('open-sidebar-orchestrator-page gc: Garbage collection below Orchestrator opens the gc process (qits-2480)', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render('/orchestrator');
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const labels = navigation
+      .getByRole('link')
+      .elements()
+      .map((link) => link.textContent?.trim());
+    expect(
+      labels.slice(labels.indexOf('Orchestrator'), labels.indexOf('Orchestrator') + 2),
+    ).toEqual(['Orchestrator', 'Garbage collection']);
+    const gc = navigation.getByRole('link', { name: 'Garbage collection', exact: true });
+    expect(await follow(fixture, gc)).toBe('/orchestrator/processes/gc');
+    expect(reached()).toEqual(['open-sidebar-orchestrator-page:gc']);
+    await expect.element(gc).toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
+      .toHaveAttribute('aria-current', 'true');
   });
 
   it('lists the System section’s pages below System while it is open, and marks the current one', async () => {
