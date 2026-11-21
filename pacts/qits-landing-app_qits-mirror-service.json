@@ -8,6 +8,896 @@
         "references": {
           "qits-call": {
             "app": "qits-mirror-service",
+            "operationId": "listRepositoryPackages"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repository",
+            "kind": "ui",
+            "route": "mirror/repositories/:repository"
+          }
+        }
+      },
+      "description": "show-mirror-repository: listRepositoryPackages",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a maven cache holding a cached artifact",
+          "params": {
+            "repository": "central"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/mirror/api/repositories/${repository}/packages",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/mirror/api/repositories/central/packages"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "packages": [
+              {
+                "lastAccessedAt": "2026-01-01T00:00:00Z",
+                "name": "org.example:contract-library",
+                "sizeBytes": 160,
+                "versions": [
+                  {
+                    "cachedAt": "2026-01-01T00:00:00Z",
+                    "files": [
+                      "contract-library-1.0.0.jar",
+                      "contract-library-1.0.0.jar"
+                    ],
+                    "labels": [],
+                    "lastAccessedAt": "2026-01-01T00:00:00Z",
+                    "sizeBytes": 160,
+                    "version": "1.0.0"
+                  }
+                ]
+              }
+            ],
+            "repository": {
+              "evictionWindow": "P90D",
+              "name": "central",
+              "type": "maven-proxy",
+              "upstream": "https://repo1.maven.org/maven2"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.packages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].lastAccessedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.packages[*].versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].versions[*].cachedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].files": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.packages[*].versions[*].files[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].lastAccessedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.evictionWindow": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.upstream": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listRepositoryPackages"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repository",
+            "kind": "ui",
+            "route": "mirror/repositories/:repository"
+          }
+        }
+      },
+      "description": "show-mirror-repository: listRepositoryPackages",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a mirror holding a pinned and an unpinned tag",
+          "params": {
+            "repository": "hub"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/mirror/api/repositories/${repository}/packages",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/mirror/api/repositories/hub/packages"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "packages": [
+              {
+                "lastAccessedAt": "2026-01-01T00:00:00Z",
+                "name": "library/node",
+                "sizeBytes": 800,
+                "versions": [
+                  {
+                    "cachedAt": "2026-01-01T00:00:00Z",
+                    "files": [],
+                    "labels": [
+                      "24-alpine"
+                    ],
+                    "lastAccessedAt": "2026-01-01T00:00:00Z",
+                    "sizeBytes": 400,
+                    "version": "sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe"
+                  },
+                  {
+                    "cachedAt": "2026-01-01T00:00:00Z",
+                    "files": [],
+                    "labels": [
+                      "24-alpine"
+                    ],
+                    "lastAccessedAt": "2026-01-01T00:00:00Z",
+                    "sizeBytes": 400,
+                    "version": "sha256:555492b05ef577ef6c299325de61258ce08a7d971cfb906d5b9156451dd9b3fe"
+                  }
+                ]
+              }
+            ],
+            "repository": {
+              "evictionWindow": "P30D",
+              "name": "hub",
+              "type": "oci-mirror",
+              "upstream": "docker.io"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.packages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].lastAccessedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.packages[*].versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.packages[*].versions[*].cachedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].labels": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                },
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].versions[*].labels[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].lastAccessedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                },
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.evictionWindow": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.upstream": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listRepositoryPackages"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repository",
+            "kind": "ui",
+            "route": "mirror/repositories/:repository"
+          }
+        }
+      },
+      "description": "show-mirror-repository: listRepositoryPackages",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an npm cache holding a package",
+          "params": {
+            "repository": "npmjs"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/mirror/api/repositories/${repository}/packages",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/mirror/api/repositories/npmjs/packages"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "packages": [
+              {
+                "lastAccessedAt": "2026-01-01T00:00:00Z",
+                "name": "left-pad",
+                "sizeBytes": 70,
+                "versions": [
+                  {
+                    "cachedAt": "2026-01-01T00:00:00Z",
+                    "files": [],
+                    "labels": [
+                      "latest"
+                    ],
+                    "lastAccessedAt": "2026-01-01T00:00:00Z",
+                    "sizeBytes": 70,
+                    "version": "1.3.0"
+                  }
+                ]
+              }
+            ],
+            "repository": {
+              "evictionWindow": "P30D",
+              "name": "npmjs",
+              "type": "npm-proxy",
+              "upstream": "https://registry.npmjs.org"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.packages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].lastAccessedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.packages[*].versions": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].versions[*].cachedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].labels": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.packages[*].versions[*].labels[*]": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].lastAccessedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].sizeBytes": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.packages[*].versions[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.evictionWindow": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.upstream": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listRepositoryPackages"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repository",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-repository: listRepositoryPackages",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "no cache root of that name",
+          "params": {
+            "repository": "contract-absent-root"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/mirror/api/repositories/${repository}/packages",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/mirror/api/repositories/contract-absent-root/packages"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
+            "operationId": "listRepositoryPackages"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-repository",
+            "kind": "ui",
+            "route": "mirror/repositories/:repository"
+          }
+        }
+      },
+      "description": "show-mirror-repository: listRepositoryPackages",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "the default caches",
+          "params": {
+            "repository": "hub"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/mirror/api/repositories/${repository}/packages",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/mirror/api/repositories/hub/packages"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "packages": [],
+            "repository": {
+              "evictionWindow": "P30D",
+              "name": "hub",
+              "type": "oci-mirror",
+              "upstream": "docker.io"
+            }
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.repository.evictionWindow": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.repository.upstream": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-mirror-service",
             "operationId": "listUpstreams"
           },
           "qits-trigger": {
@@ -78,7 +968,10 @@
       "pending": false,
       "providerStates": [
         {
-          "name": "the default caches"
+          "name": "the default caches",
+          "params": {
+            "repository": "hub"
+          }
         }
       ],
       "request": {

@@ -33,6 +33,7 @@ import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daem
 import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
 import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
+import { MirrorRepositoryPage } from './routes/mirror/repositories/[repository]/mirror-repository.page';
 import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
 import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/orchestrator-process.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
@@ -338,6 +339,11 @@ describe('mirror routes (qits-2357)', () => {
     expect(await pages('/mirror')).toEqual([MirrorUpstreamsPage]);
     expect(TestBed.inject(Router).url).toBe('/mirror/upstreams');
   });
+
+  it('opens a cache root’s page at mirror/repositories/:repository (qits-2358)', async () => {
+    expect(await pages('/mirror/repositories/hub')).toEqual([MirrorRepositoryPage]);
+    expect(TestBed.inject(Router).url).toBe('/mirror/repositories/hub');
+  });
 });
 
 describe('orchestrator routes (qits-2359)', () => {
@@ -378,13 +384,13 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door, the old agent address, the docs reader’s split form, the swarm pages, the OCI upstreams and the orchestrator’s process, beside the library’s own', () => {
+  it('marks the front door, the old agent address, the docs reader’s split form, the swarm pages, the OCI upstreams, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
     // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
     // nodes, configs and secrets and one service's page where qits-system-frontend's old pages
-    // hand off (qits-2344, qits-2345, qits-2346, qits-2348, qits-2350), the OCI upstreams where
-    // qits-mirror-frontend's does (qits-2357), a process where qits-orchestrator-frontend's `''`
-    // and `processes/:kind` do (qits-2359).
+    // hand off (qits-2344, qits-2345, qits-2346, qits-2348, qits-2350), the OCI upstreams and a
+    // cache root's page where qits-mirror-frontend's do (qits-2357, qits-2358), a process where
+    // qits-orchestrator-frontend's `''` and `processes/:kind` do (qits-2359).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
@@ -395,6 +401,7 @@ describe('entry points (qits-2049)', () => {
       'system/swarm/configs',
       'system/swarm/secrets',
       'mirror/upstreams',
+      'mirror/repositories/:repository',
       'orchestrator/processes/:kind',
     ]);
   });
