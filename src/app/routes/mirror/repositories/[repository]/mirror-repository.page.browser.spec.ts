@@ -212,9 +212,9 @@ describe('MirrorRepositoryPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('releases', { kind: 'DATA' });
     const link = embedding.getByRole('link', { name: '@qits/contract-ui', exact: true });
-    await expect
-      .element(link)
-      .toHaveAttribute('href', '/artifacts/repositories/npm/packages/%40qits%2Fcontract-ui');
+    expect(decodeURIComponent(link.element().getAttribute('href') ?? '')).toBe(
+      '/artifacts/repositories/npm/packages/@qits/contract-ui',
+    );
     await link.click();
     await opened.idle();
     expect(reached()).toEqual(['open-mirror-package-release:npmPackage']);

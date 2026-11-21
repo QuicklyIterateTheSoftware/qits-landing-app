@@ -4825,6 +4825,182 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-mirror-package-releases",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-package-releases: listDependencies",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an external package our releases embed",
+          "params": {
+            "name": "left-pad",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies",
+        "query": {
+          "kind": [
+            "EXTERNAL"
+          ],
+          "name": [
+            "left-pad"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "ecosystem": "npm",
+              "error": null,
+              "latest": "1.3.0",
+              "name": "left-pad",
+              "pins": [
+                {
+                  "manifestPath": "package.json",
+                  "pending": false,
+                  "repository": "contract-frontend",
+                  "version": "1.3.0"
+                },
+                {
+                  "manifestPath": "package.json",
+                  "pending": false,
+                  "repository": "contract-frontend",
+                  "version": "1.3.0"
+                }
+              ]
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].latest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$[*].pins[*].manifestPath": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins[*].pending": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins[*].repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].pins[*].version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencies"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-package-releases",
             "kind": "ui",
             "route": "projects/:slug/maintenance/dependencies"
           }
@@ -5215,6 +5391,223 @@
           ]
         },
         "matchingRules": {
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-maintenance-service",
+            "operationId": "listDependencyDependents"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-mirror-package-releases",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-mirror-package-releases: listDependencyDependents",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "an external package our releases embed",
+          "params": {
+            "name": "left-pad",
+            "projectId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/maintenance/api/dependencies/dependents",
+        "query": {
+          "ecosystem": [
+            "npm"
+          ],
+          "name": [
+            "left-pad"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": {
+            "dependents": [
+              {
+                "artifactEcosystem": "docker",
+                "artifactName": "qits/contract-service",
+                "artifactVersion": "2026.1102.1",
+                "direct": false,
+                "embeddedVersion": "1.2.0",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "repository": "contract-service",
+                "sbomStatus": "INGESTED"
+              },
+              {
+                "artifactEcosystem": "docker",
+                "artifactName": "qits/contract-service",
+                "artifactVersion": "2026.1102.1",
+                "direct": false,
+                "embeddedVersion": "1.2.0",
+                "occurredAt": "2026-01-01T00:00:00Z",
+                "repository": "contract-service",
+                "sbomStatus": "INGESTED"
+              }
+            ],
+            "ecosystem": "npm",
+            "latest": "1.3.0",
+            "name": "left-pad"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.dependents": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$.dependents[*].artifactEcosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].artifactName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].artifactVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].direct": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].embeddedVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].occurredAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.dependents[*].repository": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.dependents[*].sbomStatus": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.ecosystem": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.latest": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
           "header": {
             "Content-Type": {
               "combine": "AND",

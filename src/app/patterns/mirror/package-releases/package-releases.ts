@@ -137,7 +137,7 @@ type PinRow = NonNullable<DependencyEntry['pins']>[number] & {
                             {{ row.embeddedVersion }}
                           }
                         </td>
-                        <td class="py-1.5 pr-3 font-mono break-all">
+                        <td class="py-1.5 pr-3 font-mono whitespace-nowrap">
                           @switch (page(row)?.kind) {
                             @case ('image') {
                               <a
@@ -194,7 +194,7 @@ type PinRow = NonNullable<DependencyEntry['pins']>[number] & {
                           {{ row.artifactVersion }}
                         </td>
                         <td
-                          class="py-1.5 pr-3 font-mono break-all text-fg-soft"
+                          class="py-1.5 pr-3 font-mono whitespace-nowrap text-fg-soft"
                           [fieldOf]="row"
                           qitsField="repository"
                         >
@@ -241,7 +241,7 @@ type PinRow = NonNullable<DependencyEntry['pins']>[number] & {
                       entityKey="repository"
                     >
                       <td
-                        class="py-1.5 pr-3 font-mono break-all"
+                        class="py-1.5 pr-3 font-mono whitespace-nowrap"
                         [fieldOf]="row"
                         qitsField="repository"
                       >
@@ -255,7 +255,7 @@ type PinRow = NonNullable<DependencyEntry['pins']>[number] & {
                         {{ row.version }}
                       </td>
                       <td
-                        class="py-1.5 pr-3 font-mono break-all text-fg-soft"
+                        class="py-1.5 pr-3 font-mono whitespace-nowrap text-fg-soft"
                         [fieldOf]="row"
                         qitsField="manifestPath"
                       >
