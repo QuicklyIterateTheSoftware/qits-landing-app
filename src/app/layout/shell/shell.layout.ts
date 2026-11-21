@@ -122,7 +122,11 @@ export type GlobalPath =
   | 'system/swarm/secrets'
   | 'system/targets'
   | 'mirror'
-  | 'orchestrator';
+  | 'orchestrator'
+  | 'idp'
+  | 'idp/clients'
+  | 'idp/users'
+  | 'idp/devices';
 
 /** One of a global section's own pages, below it in the sidebar while the section is open. */
 export interface GlobalChild {
@@ -142,9 +146,10 @@ export interface GlobalChild {
  * One of the sidebar's global sections, shown while no project is open: a platform page that
  * belongs to no project. Either a section of this app, opened by its declared exit as a router
  * link (`kind: 'exit'`, qits-2316: Artifacts; qits-2344: System; qits-2357: Mirror; qits-2359:
- * Orchestrator), with its own pages listed below it while it is open (`children`, qits-2346:
- * System's Services, Nodes, Configs and Secrets), or a site of its own the app leaves for at
- * `href`, through its declared external outcome (`kind: 'external'`, qits-2319: IdP admin).
+ * Orchestrator; qits-2481: IdP admin), with its own pages listed below it while it is open
+ * (`children`, qits-2346: System's Services, Nodes, Configs and Secrets; qits-2481: IdP admin's
+ * Clients, Users and Signed-in devices), or a site of its own the app leaves for at `href`, through
+ * its declared external outcome (`kind: 'external'`; none today).
  */
 export type GlobalLink =
   | {
@@ -213,11 +218,11 @@ export interface NavNote {
  * (`open-sidebar-network-access`, external), the global sections shown with no project open
  * (Artifacts, `open-sidebar-artifacts`, System, `open-sidebar-system`, Mirror,
  * `open-sidebar-mirror`, and Orchestrator, `open-sidebar-orchestrator`, in-app sections, with
- * System's own pages below it while it is open, `open-sidebar-system-page`; IdP admin, `open-sidebar-idp-admin`, which leaves the app for the
- * idp's own admin), the gear (`open-project-settings`), the network icon (`open-network-access`,
+ * System's own pages below it while it is open, `open-sidebar-system-page`; IdP admin,
+ * `open-sidebar-idp`, with its pages below it, `open-sidebar-idp-page`, qits-2481), the gear (`open-project-settings`), the network icon (`open-network-access`,
  * external), and the trail's brand and crumbs (`follow-breadcrumb`),
  * handed to `ui-breadcrumbs` as each crumb's exit and params. The agents and release menus declare
- * their own, being patterns (app-wide too). The two Network access links and IdP admin are plain
+ * their own, being patterns (app-wide too). The two Network access links are plain
  * links marked with their outcome (`[qitsTriggers]`); a plain primary click records it and leaves
  * (`leave`), any other click is the browser's. The gear, the sidebar's Artifacts, Mirror and
  * Orchestrator, a work page and a global section's page are marked current by `[qitsExit]`; a section keeps its own rule
@@ -354,7 +359,7 @@ export interface NavNote {
       >
         <!-- With no project open, the global sections in its place (Artifacts, System, Mirror,
              Orchestrator, IdP admin). A section of this app is a router link through its exit,
-             current on its pages; one that leaves the app is a real link that records its outcome first. The list
+             current on its pages; one that leaves the app (none today) is a real link that records its outcome first. The list
              and a leaving entry with no address yet (the server render) are switched by class; such
              an entry names no outcome, being a trigger nobody can reach. -->
         <ul class="m-0 list-none px-2 py-3" [class.hidden]="!globalShown()">
@@ -629,27 +634,29 @@ export class ShellLayout {
   });
 
   /**
-   * The sidebar's IdP admin (qits-2319): it leaves the app for the idp's own admin
-   * (qits-idp-frontend: clients, users, devices), which stands on its own and is not migrated here
-   * (owner, 2026-11-18). Same tab.
+   * The sidebar's IdP admin (qits-2481): the IdP admin section, the idp's own admin pages shown in
+   * a frame in this app's main slot. `idp` opens the clients (a redirect), and the entry stays
+   * current on every page below it.
    */
-  protected readonly idpAdmin = outcomes('open-sidebar-idp-admin', {
-    open: external('idp'),
+  protected readonly idp = outcomes('open-sidebar-idp', {
+    open: exit('idp'),
   });
 
-  /** The idp's page origin; `''` on the server render. */
-  private readonly idpOrigin = inject(PlatformOrigins).page('idp');
-
-  /** The idp admin's address: `<idp origin>/idp/`, or none while the origin is not known. */
-  private readonly idpAdminHref = this.idpOrigin ? `${this.idpOrigin}/idp/` : '';
+  /** The IdP admin section's pages below the sidebar's IdP admin, one exit per page (qits-2481). */
+  private readonly idpPages = outcomes('open-sidebar-idp-page', {
+    clients: exit('idp/clients'),
+    users: exit('idp/users'),
+    devices: exit('idp/devices'),
+  });
 
   /**
    * The sidebar's global sections: where the sections that belong to no project go, shown in the
    * project's sections' place while no project is open, and not at all while one is: Artifacts
-   * (qits-2316), System (qits-2344), Mirror (qits-2357) and Orchestrator (qits-2359), in-app
-   * sections, and IdP admin (qits-2319, leaving the app). An in-app section may list its own pages
+   * (qits-2316), System (qits-2344), Mirror (qits-2357), Orchestrator (qits-2359) and IdP admin
+   * (qits-2481), in-app sections. An in-app section may list its own pages
    * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348), Secrets
-   * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`;
+   * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`, and IdP
+   * admin's Clients, Users and Signed-in devices, one exit each of `open-sidebar-idp-page`;
    * qits-2347…qits-2356 each add one child there. Mirror lists none: its one listable page is the
    * OCI upstreams, which `mirror` opens; nor does Orchestrator: its one process (gc) is what
    * `orchestrator` opens.
@@ -657,6 +664,7 @@ export class ShellLayout {
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     const system = this.systemPages;
+    const idp = this.idpPages;
     return [
       { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
       {
@@ -678,7 +686,16 @@ export class ShellLayout {
       },
       { kind: 'exit', label: 'Mirror', exit: this.mirror.open },
       { kind: 'exit', label: 'Orchestrator', exit: this.orchestrator.open },
-      { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
+      {
+        kind: 'exit',
+        label: 'IdP admin',
+        exit: this.idp.open,
+        children: [
+          { label: 'Clients', exit: idp.clients, path: idp.clients.url() },
+          { label: 'Users', exit: idp.users, path: idp.users.url() },
+          { label: 'Signed-in devices', exit: idp.devices, path: idp.devices.url() },
+        ],
+      },
     ];
   });
 

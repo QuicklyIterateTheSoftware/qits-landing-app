@@ -36,6 +36,9 @@ import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services
 import { MirrorRepositoryPage } from './routes/mirror/repositories/[repository]/mirror-repository.page';
 import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
 import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/orchestrator-process.page';
+import { IdpClientsPage } from './routes/idp/clients/idp-clients.page';
+import { IdpUsersPage } from './routes/idp/users/idp-users.page';
+import { IdpDevicesPage } from './routes/idp/devices/idp-devices.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
 import { SwarmNodeLayout } from './routes/system/swarm/nodes/[id]/swarm-node.layout';
@@ -439,6 +442,34 @@ describe('orchestrator routes (qits-2359)', () => {
   it('opens the gc process at orchestrator/processes', async () => {
     expect(await pages('/orchestrator/processes')).toEqual([OrchestratorProcessPage]);
     expect(TestBed.inject(Router).url).toBe('/orchestrator/processes/gc');
+  });
+});
+
+describe('idp routes (qits-2481)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens the clients at idp/clients', async () => {
+    expect(await pages('/idp/clients')).toEqual([IdpClientsPage]);
+  });
+
+  it('opens the users at idp/users', async () => {
+    expect(await pages('/idp/users')).toEqual([IdpUsersPage]);
+  });
+
+  it('opens the signed-in devices at idp/devices', async () => {
+    expect(await pages('/idp/devices')).toEqual([IdpDevicesPage]);
+  });
+
+  it('opens the clients at idp', async () => {
+    expect(await pages('/idp')).toEqual([IdpClientsPage]);
+    expect(TestBed.inject(Router).url).toBe('/idp/clients');
   });
 });
 

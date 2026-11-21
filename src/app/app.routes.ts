@@ -216,6 +216,11 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * process); it is an entry point, where qits-orchestrator-frontend's old `''` and `processes/:kind`
  * hand off.
  *
+ * The IdP admin section (qits-2481) is at `idp/clients`, `idp/users` and `idp/devices`
+ * (`IdpClientsPage`, `IdpUsersPage`, `IdpDevicesPage`): the idp's own admin pages
+ * (qits-idp-frontend), each in a frame filling the main slot (`IdpFrame`), reached from the root
+ * sidebar with no project open. `idp` redirects to `idp/clients`.
+ *
  * `auth/callback` is where the sign-in comes back to (`@qits/angular`'s `qitsAuthCallbackRoute`, the
  * one callback page: `app.config.ts` passes `callbackRoute: false`); it sits first and outside the
  * shell, so the guard does not run on it and the catch-all never takes it.
@@ -932,6 +937,29 @@ export const routes: Routes = [
               import('./routes/orchestrator/processes/[kind]/orchestrator-process.page').then(
                 (m) => m.OrchestratorProcessPage,
               ),
+          },
+        ],
+      },
+      {
+        // The IdP admin section (qits-2481): the idp's own admin pages, each in a frame in the main
+        // slot. `/idp` opens the clients.
+        path: 'idp',
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'clients' },
+          {
+            path: 'clients',
+            loadComponent: () =>
+              import('./routes/idp/clients/idp-clients.page').then((m) => m.IdpClientsPage),
+          },
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./routes/idp/users/idp-users.page').then((m) => m.IdpUsersPage),
+          },
+          {
+            path: 'devices',
+            loadComponent: () =>
+              import('./routes/idp/devices/idp-devices.page').then((m) => m.IdpDevicesPage),
           },
         ],
       },

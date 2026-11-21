@@ -96,8 +96,8 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(orchestratorClient),
     provideHeyApiClient(mirrorClient),
     provideHeyApiClient(edgeClient),
-    // The idp's page origin, so the root sidebar's IdP admin (qits-2319) shows on the routes
-    // without a project, as it does deployed; the old artifacts explorer's, so the store
+    // The idp's page origin, so the IdP admin section's frames (qits-2481) have an address, as
+    // they do deployed; the old artifacts explorer's, so the store
     // repository page's rows link their detail pages there (qits-2316); qits-network-access' own
     // frontend's, which the shell's Network access links lead to (qits-2361).
     provideTestPlatformOrigins(
