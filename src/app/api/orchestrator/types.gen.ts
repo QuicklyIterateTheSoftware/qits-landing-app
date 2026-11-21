@@ -164,6 +164,7 @@ export type RunStepDto = {
     httpStatus?: number;
     request?: RequestDto;
     response?: string;
+    responseBytes?: number;
     error?: string;
     summary?: string;
 };
@@ -177,6 +178,10 @@ export type RunSummaryDto = {
     startedAt?: Instant;
     finishedAt?: Instant;
     summary?: string;
+};
+
+export type StartProcessRunResponse = {
+    id?: Uuid;
 };
 
 export type StartRunRequest = {
@@ -301,14 +306,14 @@ export type SweepArtifactsCleanupRepositoryResponses = {
 
 export type SweepArtifactsCleanupRepositoryResponse = SweepArtifactsCleanupRepositoryResponses[keyof SweepArtifactsCleanupRepositoryResponses];
 
-export type GetOrchestratorApiProcessesData = {
+export type ListProcessesData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/orchestrator/api/processes';
 };
 
-export type GetOrchestratorApiProcessesErrors = {
+export type ListProcessesErrors = {
     /**
      * Not Authorized
      */
@@ -319,16 +324,16 @@ export type GetOrchestratorApiProcessesErrors = {
     403: unknown;
 };
 
-export type GetOrchestratorApiProcessesResponses = {
+export type ListProcessesResponses = {
     /**
      * The processes
      */
     200: Array<ProcessDto>;
 };
 
-export type GetOrchestratorApiProcessesResponse = GetOrchestratorApiProcessesResponses[keyof GetOrchestratorApiProcessesResponses];
+export type ListProcessesResponse = ListProcessesResponses[keyof ListProcessesResponses];
 
-export type GetOrchestratorApiProcessesByKindRunsData = {
+export type ListProcessRunsData = {
     body?: never;
     path: {
         kind: string;
@@ -339,7 +344,7 @@ export type GetOrchestratorApiProcessesByKindRunsData = {
     url: '/orchestrator/api/processes/{kind}/runs';
 };
 
-export type GetOrchestratorApiProcessesByKindRunsErrors = {
+export type ListProcessRunsErrors = {
     /**
      * Not Authorized
      */
@@ -354,16 +359,16 @@ export type GetOrchestratorApiProcessesByKindRunsErrors = {
     404: unknown;
 };
 
-export type GetOrchestratorApiProcessesByKindRunsResponses = {
+export type ListProcessRunsResponses = {
     /**
      * The runs
      */
     200: Array<RunSummaryDto>;
 };
 
-export type GetOrchestratorApiProcessesByKindRunsResponse = GetOrchestratorApiProcessesByKindRunsResponses[keyof GetOrchestratorApiProcessesByKindRunsResponses];
+export type ListProcessRunsResponse = ListProcessRunsResponses[keyof ListProcessRunsResponses];
 
-export type PostOrchestratorApiProcessesByKindRunsData = {
+export type StartProcessRunData = {
     body: StartRunRequest;
     path: {
         kind: string;
@@ -372,7 +377,7 @@ export type PostOrchestratorApiProcessesByKindRunsData = {
     url: '/orchestrator/api/processes/{kind}/runs';
 };
 
-export type PostOrchestratorApiProcessesByKindRunsErrors = {
+export type StartProcessRunErrors = {
     /**
      * Bad Request
      */
@@ -395,23 +400,30 @@ export type PostOrchestratorApiProcessesByKindRunsErrors = {
     409: unknown;
 };
 
-export type PostOrchestratorApiProcessesByKindRunsResponses = {
+export type StartProcessRunResponses = {
     /**
      * Started; poll GET /runs/{id}
      */
-    202: unknown;
+    202: StartProcessRunResponse;
 };
 
-export type GetOrchestratorApiRunsByIdData = {
+export type StartProcessRunResponse2 = StartProcessRunResponses[keyof StartProcessRunResponses];
+
+export type GetProcessRunData = {
     body?: never;
     path: {
         id: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * false to leave out every step's request body and response; responseBytes stays
+         */
+        bodies?: boolean;
+    };
     url: '/orchestrator/api/runs/{id}';
 };
 
-export type GetOrchestratorApiRunsByIdErrors = {
+export type GetProcessRunErrors = {
     /**
      * Not Authorized
      */
@@ -426,11 +438,45 @@ export type GetOrchestratorApiRunsByIdErrors = {
     404: unknown;
 };
 
-export type GetOrchestratorApiRunsByIdResponses = {
+export type GetProcessRunResponses = {
     /**
      * The run
      */
     200: RunDetailDto;
 };
 
-export type GetOrchestratorApiRunsByIdResponse = GetOrchestratorApiRunsByIdResponses[keyof GetOrchestratorApiRunsByIdResponses];
+export type GetProcessRunResponse = GetProcessRunResponses[keyof GetProcessRunResponses];
+
+export type GetProcessRunStepData = {
+    body?: never;
+    path: {
+        id: string;
+        stepId: string;
+    };
+    query?: never;
+    url: '/orchestrator/api/runs/{id}/steps/{stepId}';
+};
+
+export type GetProcessRunStepErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+    /**
+     * No such run, or no such step in it
+     */
+    404: unknown;
+};
+
+export type GetProcessRunStepResponses = {
+    /**
+     * The step
+     */
+    200: RunStepDto;
+};
+
+export type GetProcessRunStepResponse = GetProcessRunStepResponses[keyof GetProcessRunStepResponses];
