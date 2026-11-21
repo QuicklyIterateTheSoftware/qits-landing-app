@@ -11,6 +11,7 @@ import { addGoldenInteraction, assertPactPart } from '@qits/angular/testing';
 import { isRecorded, systemGoldenMasters as masters } from '../../../testing/golden-masters';
 import { swarmServiceState } from './swarm-service-state';
 import {
+  SWARM_CONFIG,
   SWARM_CONFIG_LIST,
   SWARM_NODE,
   SWARM_NODE_LIST,
@@ -36,7 +37,11 @@ import {
  * body). They skip themselves until the `@qits/system-golden-masters` pin records the node's
  * tasks. Its configs page lists the swarm's configs (`show-swarm-configs`,
  * qits-2348): in "a single-node swarm" (one config with one label), and in "a swarm holding no
- * configs" (`[]`), which skips itself the same way. Its secrets page lists the swarm's secrets with
+ * configs" (`[]`), which skips itself the same way. A config's page reads the config
+ * (`show-swarm-config`, qits-2349): in "a single-node swarm" (`qits-edge-vhosts`, one label, its
+ * data as text, `binary: false`), "a swarm config holding no data" (`data: ""`, `binary: false`,
+ * no labels), "a swarm config holding binary data" (`data: ""`, `binary: true`) and "no such swarm
+ * config" (a 404, binding the status only: the page reads nothing of the body). Its secrets page lists the swarm's secrets with
  * the services that use them (`show-swarm-secrets`, qits-2350): in "a single-node swarm" (two
  * secrets, one used by `dev-qits-artifacts`, one by none), and in "a swarm holding no secrets"
  * (`[]`). Each test runs the operation's own `fetch`; the interaction's `operationId` and
@@ -53,6 +58,7 @@ const OPERATIONS = [
   'getSwarmNode',
   'listSwarmNodeTasks',
   'listSwarmConfigs',
+  'getSwarmConfig',
   'listSwarmSecrets',
 ];
 
@@ -85,6 +91,25 @@ const givenNode = (state: string, operationId: string, consumes: readonly string
   });
 
 const NO_SECRETS = 'a swarm holding no secrets';
+
+const EMPTY_CONFIG = 'a swarm config holding no data';
+const BINARY_CONFIG = 'a swarm config holding binary data';
+const NO_SUCH_CONFIG = 'no such swarm config';
+
+/** The config `state` recorded its read for (its `configId`), as the page addresses it. */
+const configOf = (state: string) => ({
+  path: { id: masters.operation(state, SWARM_CONFIG.operationId).params['configId'] },
+});
+
+/** The interaction of a config page's read in `state`, binding `consumes`. */
+const givenConfig = (state: string, consumes: readonly string[]) =>
+  addGoldenInteraction(pact, masters, {
+    provider: PROVIDER,
+    state,
+    operationId: SWARM_CONFIG.operationId,
+    trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-config' },
+    consumes,
+  });
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-swarm-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -123,6 +148,7 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
     expect(SWARM_NODE.provider).toBe(PROVIDER);
     expect(SWARM_NODE_TASKS.provider).toBe(PROVIDER);
     expect(SWARM_CONFIG_LIST.provider).toBe(PROVIDER);
+    expect(SWARM_CONFIG.provider).toBe(PROVIDER);
   });
 
   it('show-swarm-services: the page lists the swarm’s services, each with its replicas', () =>
@@ -296,6 +322,46 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
         expect(data).toEqual([]);
       }),
   );
+
+  it('show-swarm-config: a config with its exact instants, its labels and its data as text', () =>
+    givenConfig(SWARM, SWARM_CONFIG.consumes).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => SWARM_CONFIG.fetch(configOf(SWARM)));
+      expect(error).toBeUndefined();
+      expect(data).toEqual(masters.body(SWARM, 'getSwarmConfig'));
+      expect(data?.binary).toBe(false);
+      expect(data?.data).not.toBe('');
+      expect(Object.keys(data?.labels ?? {})).not.toHaveLength(0);
+    }));
+
+  it('show-swarm-config: a config holding no data answers it empty, not binary', () =>
+    givenConfig(EMPTY_CONFIG, SWARM_CONFIG.consumes).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        SWARM_CONFIG.fetch(configOf(EMPTY_CONFIG)),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.data).toBe('');
+      expect(data?.binary).toBe(false);
+      expect(data?.labels).toEqual({});
+    }));
+
+  it('show-swarm-config: a config holding binary data answers no text and says it is binary', () =>
+    givenConfig(BINARY_CONFIG, SWARM_CONFIG.consumes).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () =>
+        SWARM_CONFIG.fetch(configOf(BINARY_CONFIG)),
+      );
+      expect(error).toBeUndefined();
+      expect(data?.data).toBe('');
+      expect(data?.binary).toBe(true);
+    }));
+
+  it('show-swarm-config: no such config is a 404', () =>
+    givenConfig(NO_SUCH_CONFIG, []).executeTest(async (server) => {
+      const { data, response } = await at(server.url, () =>
+        SWARM_CONFIG.fetch(configOf(NO_SUCH_CONFIG)),
+      );
+      expect(data).toBeUndefined();
+      expect(response?.status).toBe(404);
+    }));
 
   it('show-swarm-secrets: the page lists the swarm’s secrets, each with the services using it', () =>
     addGoldenInteraction(pact, masters, {

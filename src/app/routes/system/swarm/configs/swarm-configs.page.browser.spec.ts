@@ -1,5 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { page } from 'vitest/browser';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import {
@@ -22,8 +23,10 @@ const CONFIGS = '/system/api/swarm/configs';
  * `@qits/system-golden-masters` pin records it). A read still open (`loading`) and a 503
  * (`unavailable`: the swarm not answering) are statuses only; so is a 403, which says the role.
  *
- * The page declares no outcome of its own: the shell's are shot once (`shootShellMenus`). Nothing
- * announces a config change, so the page has no `refreshOn`: Refresh is its only second read.
+ * A row's name opens the config's page (`open-swarm-config`, qits-2349), whose read is answered
+ * with the same state's `getSwarmConfig`. The shell's outcomes are shot once (`shootShellMenus`).
+ * Nothing announces a config change, so the page has no `refreshOn`: Refresh is its only second
+ * read.
  */
 describe('SwarmConfigsPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -146,6 +149,20 @@ describe('SwarmConfigsPage (screenshots)', () => {
       .element(view.getByRole('alert'))
       .toMatchTextContent('Reading the swarm needs an admin role');
     expect(view.getByRole('button', { name: 'Retry' }).elements()).toHaveLength(0);
+  });
+
+  it('opens a config’s page from its name', async () => {
+    const { opened, view } = await render(SWARM);
+    const link = view.getByRole('link', { name: 'qits-edge-vhosts', exact: true });
+    const config = 'ktnbjxoalbkvbvedmg1urrz8h';
+    await expect.element(link).toHaveAttribute('href', `/system/swarm/configs/${config}`);
+    await link.click();
+    await opened.idle();
+    http
+      .expectOne(`${CONFIGS}/${config}`)
+      .flush(await goldenMaster(SWARM, 'getSwarmConfig', SYSTEM));
+    await opened.settled();
+    expect(TestBed.inject(Router).url).toBe(`/system/swarm/configs/${config}`);
   });
 
   it('reads the configs again on Refresh', async () => {
