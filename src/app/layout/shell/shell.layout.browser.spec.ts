@@ -114,14 +114,21 @@ describe('ShellLayout (screenshots)', () => {
         provideRouter([
           { path: '', component: TestPage },
           { path: 'artifacts', component: TestPage },
+          { path: 'artifacts/repositories/:repo', component: TestPage },
+          { path: 'artifacts/repositories/:repo/images/:image', component: TestPage },
           { path: 'system', component: TestPage },
           { path: 'system/swarm/services', component: TestPage },
+          { path: 'system/swarm/services/:id', component: TestPage },
           { path: 'system/swarm/nodes', component: TestPage },
           { path: 'system/swarm/configs', component: TestPage },
           { path: 'system/swarm/secrets', component: TestPage },
           { path: 'system/targets', component: TestPage },
+          { path: 'system/terminals/:id', component: TestPage },
           { path: 'mirror', component: TestPage },
+          { path: 'mirror/upstreams', component: TestPage },
+          { path: 'mirror/repositories/:repository', component: TestPage },
           { path: 'orchestrator', component: TestPage },
+          { path: 'orchestrator/processes/:kind', component: TestPage },
           { path: 'projects', component: TestPage },
           { path: 'projects/:slug', component: TestPage },
           { path: 'projects/:slug/work', component: TestPage },
@@ -1087,6 +1094,94 @@ describe('ShellLayout (screenshots)', () => {
       expect(reached()).toEqual([`follow-breadcrumb:${crumb.outcome}`]);
     });
   }
+
+  /**
+   * A global section's crumb, with no project open (qits-2386): a page below it where it is a
+   * link, its name, the section's root it leads to, its outcome.
+   */
+  const GLOBAL_CRUMBS = [
+    {
+      from: '/artifacts/repositories/qits/images/x',
+      name: 'Artifacts',
+      to: '/artifacts',
+      outcome: 'artifacts',
+    },
+    { from: '/system/swarm/nodes', name: 'System', to: '/system', outcome: 'system' },
+    { from: '/mirror/repositories/docker-hub', name: 'Mirror', to: '/mirror', outcome: 'mirror' },
+    {
+      from: '/orchestrator/processes/gc',
+      name: 'Orchestrator',
+      to: '/orchestrator',
+      outcome: 'orchestrator',
+    },
+  ] as const;
+
+  for (const crumb of GLOBAL_CRUMBS) {
+    it(`follow-breadcrumb ${crumb.outcome}: the trail's ${crumb.name} opens its section`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(crumb.from);
+      const link = page
+        .getByRole('navigation', { name: 'Breadcrumb' })
+        .getByRole('link', { name: crumb.name, exact: true });
+      await expect.element(link).not.toHaveAttribute('aria-current');
+      expect(await follow(fixture, link)).toBe(crumb.to);
+      expect(reached()).toEqual([`follow-breadcrumb:${crumb.outcome}`]);
+    });
+  }
+
+  /**
+   * A global section's page and its trail after the brand (qits-2386): the section, then the page
+   * below it, the current page; or the section alone, then itself the current page.
+   */
+  const GLOBAL_TRAILS = [
+    { url: '/artifacts/repositories/qits', section: 'Artifacts', page: 'qits' },
+    {
+      url: '/artifacts/repositories/my%20repo/images/x?tab=tags#top',
+      section: 'Artifacts',
+      page: 'my repo',
+    },
+    { url: '/system/swarm/services/abc', section: 'System', page: 'Services' },
+    { url: '/system/swarm/nodes', section: 'System', page: 'Nodes' },
+    { url: '/system/swarm/configs', section: 'System', page: 'Configs' },
+    { url: '/system/swarm/secrets', section: 'System', page: 'Secrets' },
+    { url: '/system/targets', section: 'System', page: 'Targets' },
+    // A terminal is opened from a node: Nodes stays current there, as in the sidebar.
+    { url: '/system/terminals/7', section: 'System', page: 'Nodes' },
+    { url: '/mirror/repositories/docker-hub', section: 'Mirror', page: 'docker-hub' },
+    { url: '/mirror/upstreams', section: 'Mirror' },
+    { url: '/orchestrator/processes/gc', section: 'Orchestrator', page: 'gc' },
+  ] as const;
+
+  for (const global of GLOBAL_TRAILS) {
+    it(`names the global section in the trail on ${global.url}`, async () => {
+      await page.viewport(1280, 800);
+      await render(global.url);
+      const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+      const current = 'page' in global ? global.page : global.section;
+      await expect
+        .element(breadcrumb)
+        .toMatchTextContent(
+          'page' in global ? `qits›${global.section}›${current}` : `qits›${current}`,
+        );
+      await expect.element(breadcrumb).not.toMatchTextContent('Projects');
+      await expect
+        .element(breadcrumb.getByText(current, { exact: true }).last())
+        .toHaveAttribute('aria-current', 'page');
+      const section = breadcrumb.getByRole('link', { name: global.section, exact: true });
+      if ('page' in global) await expect.element(section).toBeVisible();
+      else await expect.element(section).not.toBeInTheDocument();
+    });
+  }
+
+  it('keeps Projects in the trail on a page outside every global section', async () => {
+    await page.viewport(1280, 800);
+    await render('/projects');
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb).toMatchTextContent('qits›Projects');
+    await expect
+      .element(breadcrumb.getByText('Projects', { exact: true }).last())
+      .toHaveAttribute('aria-current', 'page');
+  });
 
   /** A top-bar menu: its button, its panel's name, its screenshots' stem and its reads on opening. */
   interface Menu {

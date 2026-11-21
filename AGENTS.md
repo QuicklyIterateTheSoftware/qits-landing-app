@@ -375,7 +375,12 @@ page below it; so does Orchestrator, whose one process (gc) is what `orchestrato
 (qits-idp-frontend: clients, users, devices), standalone and not migrated here (owner, 2026-11-18);
 page specs get an idp page origin from `provideAppRoute()`, so their screenshots show it; with no
 idp origin (the server render) it has no address, is hidden by class and names
-no outcome. With a project open the list is empty.
+no outcome. With a project open the list is empty. On a global section's page the trail is that
+section's, not `Projects` (qits-2386, `globalCrumbs`): the section, through its own
+`follow-breadcrumb` exit to its root (`artifacts`, `system`, `mirror`, `orchestrator`), then
+System's page as the sidebar marks it (`alsoOn` included) or an entry by its decoded param
+(Artifacts › `<repo>`, Mirror › `<repository>`, Orchestrator › `<kind>`; the entry's segment is
+the link's `entries`).
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories

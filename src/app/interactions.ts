@@ -1712,8 +1712,9 @@ export const INTERACTIONS = {
   /**
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
-   * the Work, Agents or Release Requests section above a subpage. Navigates only, and names no pact
-   * (epic qits-2000).
+   * the Work, Agents or Release Requests section above a subpage; with no project open, the global
+   * section (Artifacts, System, Mirror or Orchestrator) above one of its pages, to its root
+   * (qits-2386). Navigates only, and names no pact (epic qits-2000).
    */
   'follow-breadcrumb': 'A breadcrumb before the current page opens its page',
   /**

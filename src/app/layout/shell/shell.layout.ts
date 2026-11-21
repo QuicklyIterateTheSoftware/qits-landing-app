@@ -152,8 +152,16 @@ export type GlobalLink =
       readonly label: string;
       /** Its `exit(...)` outcome, rendered through `[qitsExit]` and current on its pages. */
       readonly exit: ExitOutcome<GlobalPath>;
+      /** The section's crumb in the trail, its `follow-breadcrumb` exit (qits-2386). */
+      readonly crumb: ExitOutcome<GlobalPath>;
       /** The section's own pages, listed below it in the sidebar while the section is open. */
       readonly children?: readonly GlobalChild[];
+      /**
+       * The segment below the section whose entries' pages the trail names by their param
+       * (`globalSubpage`, qits-2386): Artifacts' and Mirror's `repositories`, Orchestrator's
+       * `processes`.
+       */
+      readonly entries?: string;
     }
   | {
       readonly kind: 'external';
@@ -657,12 +665,20 @@ export class ShellLayout {
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     const system = this.systemPages;
+    const trail = this.trail;
     return [
-      { kind: 'exit', label: 'Artifacts', exit: this.artifacts.open },
+      {
+        kind: 'exit',
+        label: 'Artifacts',
+        exit: this.artifacts.open,
+        crumb: trail.artifacts,
+        entries: 'repositories',
+      },
       {
         kind: 'exit',
         label: 'System',
         exit: this.system.open,
+        crumb: trail.system,
         children: [
           { label: 'Services', exit: system.services, path: system.services.url() },
           {
@@ -676,8 +692,20 @@ export class ShellLayout {
           { label: 'Targets', exit: system.targets, path: system.targets.url() },
         ],
       },
-      { kind: 'exit', label: 'Mirror', exit: this.mirror.open },
-      { kind: 'exit', label: 'Orchestrator', exit: this.orchestrator.open },
+      {
+        kind: 'exit',
+        label: 'Mirror',
+        exit: this.mirror.open,
+        crumb: trail.mirror,
+        entries: 'repositories',
+      },
+      {
+        kind: 'exit',
+        label: 'Orchestrator',
+        exit: this.orchestrator.open,
+        crumb: trail.orchestrator,
+        entries: 'processes',
+      },
       { kind: 'external', label: 'IdP admin', href: this.idpAdminHref, open: this.idpAdmin.open },
     ];
   });
@@ -689,7 +717,9 @@ export class ShellLayout {
 
   /**
    * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
-   * the project, and the sections a subpage crumb can follow (Work, Agents, Release Requests).
+   * the project, and the sections a subpage crumb can follow (Work, Agents, Release Requests); with
+   * no project open, the global section the URL is in (Artifacts, System, Mirror, Orchestrator,
+   * qits-2386), to its root.
    */
   private readonly trail = outcomes('follow-breadcrumb', {
     home: exit(''),
@@ -698,6 +728,10 @@ export class ShellLayout {
     work: exit('projects/:slug/work'),
     agents: exit('projects/:slug/agents'),
     releaseRequests: exit('projects/:slug/release-requests'),
+    artifacts: exit('artifacts'),
+    system: exit('system'),
+    mirror: exit('mirror'),
+    orchestrator: exit('orchestrator'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
@@ -837,14 +871,16 @@ export class ShellLayout {
    * The trail after the "qits" brand: "Projects", then the open project's name, then the section
    * the URL is in ("Work", or "Setup" from the gear), then a subpage of it (Work › Archive,
    * Work › <item id>, Release Requests › <request id>, Deployments › <version> · <application>,
-   * Agents › <agent's item id>, Agents › ws-<slot id>). The last crumb is the current page and is not a link; each one before it leads
-   * through its `follow-breadcrumb` exit.
+   * Agents › <agent's item id>, Agents › ws-<slot id>). With no project open, a global section's
+   * page has that section's trail instead (`globalCrumbs`, qits-2386: Artifacts › <repository>,
+   * System › Nodes), and any other page "Projects". The last crumb is the current page and is not a
+   * link; each one before it leads through its `follow-breadcrumb` exit.
    */
   protected readonly crumbs = computed((): readonly Crumb[] => {
     const projects: Crumb = { label: 'Projects', exit: this.trail.projects };
     const project = this.selected.project();
     const slug = this.selected.slug();
-    if (!project || !slug) return [projects];
+    if (!project || !slug) return this.globalCrumbs() ?? [projects];
     const params = { slug };
     const crumbs: Crumb[] = [
       projects,
@@ -880,6 +916,26 @@ export class ShellLayout {
     return sub
       ? [...crumbs, section, { label: sub.label, marks: sub.marks }]
       : [...crumbs, section];
+  });
+
+  /**
+   * The trail of a global section's page, with no project open (qits-2386): the section (its
+   * root, `follow-breadcrumb`), then the page below it: System's own page the URL is on, as the
+   * sidebar marks it (Services, Nodes, also on a terminal's page, Configs, Secrets, Targets), or an
+   * entry by its param (Artifacts › <repository>, Mirror › <repository>, Orchestrator › <kind>,
+   * `globalSubpage`). Undefined outside every global section.
+   */
+  private readonly globalCrumbs = computed((): readonly Crumb[] | undefined => {
+    const link = this.globalLinks().find(
+      (global): global is GlobalLink & { kind: 'exit' } =>
+        global.kind === 'exit' && this.isInGlobal(global),
+    );
+    if (!link) return undefined;
+    const section: Crumb = { label: link.label, exit: link.crumb };
+    const sub =
+      link.children?.find((child) => this.isAt(child) || this.isAlsoAt(child)) ??
+      globalSubpage(this.selected.url(), link.exit.url(), link.entries);
+    return sub ? [section, { label: sub.label }] : [section];
   });
 
   /**
@@ -1020,6 +1076,24 @@ export const IDEAS = 'ideas';
 /** True when `url` is `path` or a page below it, query and fragment ignored. */
 function within(url: string, path: string): boolean {
   return url === path || /^[/?#]/.test(url.startsWith(path) ? url.slice(path.length) : 'x');
+}
+
+/**
+ * The crumb of one entry below the global section at `section` (`/artifacts`, qits-2386):
+ * `<section>/<entries>/<id>` (and its pages below) names the entry by its id, decoded
+ * (`/artifacts/repositories/qits/images/x` is "qits"). Undefined for a section without `entries`,
+ * the list itself and anything outside it.
+ */
+export function globalSubpage(
+  url: string,
+  section: string,
+  entries: string | undefined,
+): NavPage | undefined {
+  if (!entries) return undefined;
+  const prefix = `${section}/${entries}/`;
+  if (!url.startsWith(prefix)) return undefined;
+  const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
+  return id ? { label: decodeURIComponent(id), path: `${prefix}${id}` } : undefined;
 }
 
 /** The agents section's segment below a project: `/projects/<slug>/agents` (epic qits-1681). */
