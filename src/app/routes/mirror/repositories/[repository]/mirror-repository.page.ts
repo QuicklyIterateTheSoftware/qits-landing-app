@@ -6,6 +6,7 @@ import {
   inject,
   linkedSignal,
   PLATFORM_ID,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -32,6 +33,7 @@ import { REPOSITORY_PACKAGES } from '$core/mirror/repository-packages.operations
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { PackageReleases } from '$patterns/mirror/package-releases/package-releases';
 import type { Action } from '$ui/components/action-button/action';
 import { Chip } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
@@ -56,7 +58,7 @@ const SHORT_DIGEST = 12;
  * qits-mirror-frontend's `repositories/:repository`, read through a pact instead of hand-written
  * DTOs, with an unknown name told apart from an outage and the cache's eviction rule stated.
  *
- * **Load budget: 1, nothing per row.** `REPOSITORY_PACKAGES` (`listRepositoryPackages`) is the
+ * **Load budget: 1, nothing per row, plus 2 per package shown (`PackageReleases`).** `REPOSITORY_PACKAGES` (`listRepositoryPackages`) is the
  * root's row and every package with its versions, in the server's order (packages by name, each
  * package's versions as the mirror sorts them; for OCI digests newest first). The door is not
  * paged, so the name search narrows the one bounded answer in the page. The read is made in the
@@ -73,7 +75,9 @@ const SHORT_DIGEST = 12;
  * - The packages table (name, versions, size, last used) and, below it, the selected package's
  *   versions (version or shortened digest, tags as chips, files for maven only, size, cached, last
  *   used). The first package shown is selected until another is pressed
- *   (`select-mirror-package`, which reads nothing).
+ *   (`select-mirror-package`).
+ * - Below them, which of our releases embed the selected package and which repositories pin it
+ *   (`PackageReleases`, qits-2488: two qits-maintenance reads per package shown).
  *
  * States: loading; a root nobody has pulled through yet (`packages: []`, every root on a fresh
  * deployment) says nothing is cached; a 404 (the mirror has no root of that name) says so, with no
@@ -94,6 +98,7 @@ const SHORT_DIGEST = 12;
   imports: [
     Chip,
     LoadFailure,
+    PackageReleases,
     PageLayoutComponent,
     QitsEntity,
     QitsEntityList,
@@ -328,6 +333,11 @@ const SHORT_DIGEST = 12;
                       </table>
                     </div>
                   </section>
+                  <app-package-releases
+                    [root]="name()"
+                    [type]="root()?.type"
+                    [name]="pkg.name ?? ''"
+                  />
                 }
               }
             }
@@ -423,9 +433,22 @@ export class MirrorRepositoryPage {
       : 'This cache is not swept: nothing is evicted.';
   });
 
-  /** Refresh: the packages, read again (qits-mirror sends no event for them). */
+  /** The selected package's releases and pins (qits-2488), while a package is shown. */
+  private readonly releases = viewChild(PackageReleases);
+
+  /**
+   * Refresh: the packages, and the selected package's releases and pins, read again (neither
+   * qits-mirror nor qits-maintenance sends an event for them).
+   */
   protected readonly actions: readonly Action[] = [
-    { label: 'Refresh', variant: 'muted', callback: () => this.packages.reload() },
+    {
+      label: 'Refresh',
+      variant: 'muted',
+      callback: () => {
+        this.packages.reload();
+        this.releases()?.reload();
+      },
+    },
   ];
 
   protected readonly marks = MARKS;

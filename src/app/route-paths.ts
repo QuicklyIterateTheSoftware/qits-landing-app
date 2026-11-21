@@ -16,6 +16,7 @@ export type RoutePath =
   | 'idp/devices'
   | 'idp/users'
   | 'mirror'
+  | 'mirror/repositories'
   | 'mirror/repositories/:repository'
   | 'mirror/upstreams'
   | 'orchestrator'

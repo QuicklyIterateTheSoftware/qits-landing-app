@@ -6,6 +6,8 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { client as mirrorClient } from '../../../../api/mirror/client.gen';
 import { provideHeyApiClient } from '../../../../api/mirror/client/client.gen';
+import { client as maintenanceClient } from '../../../../api/maintenance/client.gen';
+import { provideHeyApiClient as provideMaintenanceClient } from '../../../../api/maintenance/client/client.gen';
 import type { RepositoryPackages } from '$core/mirror/repository-packages.consumes';
 import {
   isRecorded,
@@ -48,6 +50,7 @@ describe('MirrorRepositoryPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(mirrorClient),
+        provideMaintenanceClient(maintenanceClient),
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ repository: name })) },
@@ -57,7 +60,17 @@ describe('MirrorRepositoryPage', () => {
     http = TestBed.inject(HttpTestingController);
   }
 
-  afterEach(() => http.verify());
+  afterEach(async () => {
+    // The selected package's releases and pins (qits-2488) are `PackageReleases`' to test: answer
+    // whatever it asked qits-maintenance with nothing, then hold the page to its own reads.
+    for (let i = 0; i < 3; i++) {
+      for (const request of http.match((r) => r.url.startsWith('/maintenance/'))) {
+        request.flush(request.request.url.endsWith('/dependents') ? { dependents: [] } : []);
+      }
+      await settle();
+    }
+    http.verify();
+  });
 
   /** Runs the page's effects and lets the client build its request. */
   async function ticked() {

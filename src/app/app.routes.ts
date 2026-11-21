@@ -197,12 +197,13 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * back link leads to `?node=`'s containers, else the nodes, the sidebar keeps Nodes current on it,
  * and it is an entry point too, where the old `terminals/:id` hands off.
  *
- * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
- * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
- * open. `mirror` redirects to it by a relative `redirectTo`; it is an entry point, where
- * qits-mirror-frontend's old `upstreams` hands off. One cache root's contents are at
+ * The Mirror section (qits-2357) is reached from the root sidebar with no project open; `mirror`
+ * redirects by a relative `redirectTo` to its Caches page (qits-2479, below). `mirror/upstreams`
+ * (`MirrorUpstreamsPage`) is the image registries qits-mirror's pull-through cache fronts; it is
+ * an entry point, where qits-mirror-frontend's old `upstreams` hands off. One cache root's contents are at
  * `mirror/repositories/:repository` (`MirrorRepositoryPage`, qits-2358), an entry point too, where
- * the old `repositories/:repository` hands off; qits-2471 adds the list at `mirror/repositories`.
+ * the old `repositories/:repository` hands off. Every cache root is listed at `mirror/repositories`
+ * (`MirrorRepositoriesPage`, qits-2471), an entry point where the old root route hands off.
  *
  * The Orchestrator section (qits-2359) is at `orchestrator/processes/<kind>`
  * (`OrchestratorProcessPage`): one of qits-orchestrator's technical processes, its latest runs,
@@ -942,15 +943,15 @@ export const routes: Routes = [
       },
       {
         // The Mirror section (qits-2357): qits-mirror's pull-through caches, bound to no project.
-        // No front page of its own yet: `/mirror` opens the OCI upstreams.
+        // `/mirror` opens the Caches page, every cache root (qits-2479).
         path: 'mirror',
         children: [
-          { path: '', pathMatch: 'full', redirectTo: 'upstreams' },
+          { path: '', pathMatch: 'full', redirectTo: 'repositories' },
           {
             path: 'upstreams',
             // An entry point (qits-2049): qits-mirror-frontend's old `upstreams` hands off here
-            // with a full-document load, and its bookmarks follow; the sidebar's Mirror leads to
-            // `mirror`, which redirects here, so no outcome of this app names it.
+            // with a full-document load, and its bookmarks follow; OCI upstreams below the
+            // sidebar's Mirror leads here (qits-2479).
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/mirror/upstreams/mirror-upstreams.page').then(
@@ -958,10 +959,21 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'repositories',
+            // An entry point (qits-2049): qits-mirror-frontend's old root route (`''`, its cached
+            // repositories) hands off here with a full-document load (qits-2471); the sidebar's
+            // Mirror leads to `mirror`, which redirects here, and Caches below it (qits-2479).
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/mirror/repositories/mirror-repositories.page').then(
+                (m) => m.MirrorRepositoriesPage,
+              ),
+          },
+          {
             path: 'repositories/:repository',
             // An entry point (qits-2049): qits-mirror-frontend's old `repositories/:repository`
-            // hands off here with a full-document load (qits-2358). No outcome of this app names it
-            // yet: qits-2471's list at `mirror/repositories` will link here.
+            // hands off here with a full-document load (qits-2358); the Caches list at
+            // `mirror/repositories` links here (`open-mirror-repository`, qits-2471).
             data: { qitsEntry: true },
             loadComponent: () =>
               import('./routes/mirror/repositories/[repository]/mirror-repository.page').then(

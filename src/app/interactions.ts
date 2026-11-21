@@ -875,10 +875,32 @@ export const INTERACTIONS = {
    */
   'show-mirror-repository': 'A cache root’s page lists what the mirror holds in it',
   /**
-   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358). Changes the page
-   * only: no request, and names no pact.
+   * `mirror-repositories.page.ts` via `REPOSITORY_LIST` (qits-2471): the Mirror section's Caches
+   * page lists every cache root qits-mirror holds, each with its type, upstream, eviction window
+   * and registration date. Refresh reads them again (no event announces a change).
+   */
+  'show-mirror-repositories': 'The Caches page lists every cache root the mirror holds',
+  /**
+   * `mirror-repositories.page.ts`: a cache root's name opens its page (qits-2471). Navigates only,
+   * and names no pact.
+   */
+  'open-mirror-repository': 'A cache root of the Caches list opens its page',
+  /**
+   * `mirror-repository.page.ts`: a package's name shows its versions (qits-2358), and which of our
+   * releases embed it (`show-mirror-package-releases`, qits-2488).
    */
   'select-mirror-package': 'A cache root’s page shows the versions of the package chosen',
+  /**
+   * `package-releases.ts` via `MAINTENANCE_DEPENDENCIES` and `MAINTENANCE_DEPENDENTS` (qits-2488):
+   * below a cached package's versions, the Mirror section's repository page lists which of our
+   * released artifacts embed it, per version, and which repositories pin it.
+   */
+  'show-mirror-package-releases': 'A cached package lists which of our releases embed it',
+  /**
+   * `package-releases.ts`: an embedding artifact's name opens its page in the Artifacts section
+   * (qits-2488). Navigates only, and names no pact.
+   */
+  'open-mirror-package-release': 'An embedding release of a cached package opens its artifact page',
   /**
    * `orchestrator-process.page.ts` via `PROCESS_LIST`, `PROCESS_RUNS` and `PROCESS_RUN` (qits-2359):
    * the Orchestrator section's process page shows the process, its latest runs and the shown run's
@@ -1760,7 +1782,7 @@ export const INTERACTIONS = {
   'open-sidebar-system': 'The sidebar’s System entry opens the System section',
   /**
    * `shell.layout.ts`: the sidebar's Mirror, a global section shown with no project open, opens
-   * the Mirror section (`mirror`, which opens the OCI upstreams; qits-2357). Navigates only, and
+   * the Mirror section (`mirror`, which opens the Caches page; qits-2357, qits-2479). Navigates only, and
    * names no pact.
    */
   'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
@@ -1770,6 +1792,12 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact.
    */
   'open-sidebar-orchestrator': 'The sidebar’s Orchestrator entry opens the Orchestrator section',
+  /**
+   * `shell.layout.ts`: the Mirror section's pages, listed below the sidebar's Mirror while the
+   * section is open, open their page (Caches, OCI upstreams; qits-2479). Navigates only, and names
+   * no pact.
+   */
+  'open-sidebar-mirror-page': 'A Mirror page below the sidebar’s Mirror entry opens that page',
   /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
    * section is open, open their page (Services, Nodes; qits-2346; Configs, qits-2348; Targets,
