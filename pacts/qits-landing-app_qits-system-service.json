@@ -5907,6 +5907,7 @@
               "memory": {
                 "kernelOomKills": null,
                 "memoryMaxBytes": null,
+                "memoryTotalBytes": null,
                 "nodeOomKills": null,
                 "reportedAt": null
               },
@@ -6194,6 +6195,7 @@
               "memory": {
                 "kernelOomKills": null,
                 "memoryMaxBytes": null,
+                "memoryTotalBytes": null,
                 "nodeOomKills": null,
                 "reportedAt": null
               },
@@ -6472,6 +6474,7 @@
               "memory": {
                 "kernelOomKills": null,
                 "memoryMaxBytes": null,
+                "memoryTotalBytes": null,
                 "nodeOomKills": null,
                 "reportedAt": null
               },
