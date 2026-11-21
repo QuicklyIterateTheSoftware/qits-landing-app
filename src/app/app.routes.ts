@@ -181,6 +181,10 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * `system/swarm/nodes/<id>/containers` (`SwarmNodeContainersPage`, qits-2352) is its first tab:
  * the containers of the node qits-system runs on (none read for another node), Running by default,
  * with each one's log tail; an entry point, where the old `swarm/nodes/:id/containers` hands off.
+ * `system/swarm/configs/<id>` (`SwarmConfigPage`, qits-2349) is one config of that swarm, by its
+ * id or name: its id, exact created and updated instants, labels and its data verbatim (a note
+ * for a binary or an empty config); each configs row's name opens it, the sidebar keeps Configs
+ * current on it, and it is an entry point too, where the old `swarm/configs/:id` hands off.
  *
  * The Mirror section (qits-2357) is at `mirror/upstreams` (`MirrorUpstreamsPage`): the image
  * registries qits-mirror's pull-through cache fronts, reached from the root sidebar with no project
@@ -789,6 +793,16 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/system/swarm/configs/swarm-configs.page').then(
                 (m) => m.SwarmConfigsPage,
+              ),
+          },
+          {
+            path: 'swarm/configs/:id',
+            // An entry point (qits-2049): qits-system-frontend's old `swarm/configs/:id` hands off
+            // here with a full-document load (qits-2349); the configs list links it too.
+            data: { qitsEntry: true },
+            loadComponent: () =>
+              import('./routes/system/swarm/configs/[id]/swarm-config.page').then(
+                (m) => m.SwarmConfigPage,
               ),
           },
           {

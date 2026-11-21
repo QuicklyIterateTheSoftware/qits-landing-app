@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../api/system/client.gen';
@@ -34,6 +35,8 @@ describe('SwarmConfigsPage', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
+        // Each row's name links the config's page (qits-2349).
+        provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(systemClient),
@@ -92,14 +95,16 @@ describe('SwarmConfigsPage', () => {
         config.updatedAt,
       ],
     ]);
-    // The whole id on hover; the label on a chip; the name is no link (qits-2349's).
+    // The whole id on hover; the label on a chip; the name links the config's page by its id.
     expect(element.querySelector('tbody td[title]')?.getAttribute('title')).toBe(
       'ktnbjxoalbkvbvedmg1urrz8h',
     );
     expect(element.querySelector('tbody ui-chip')?.textContent?.trim()).toBe(
       'qits.platform.deployments.target=platform',
     );
-    expect(element.querySelector('tbody a')).toBeNull();
+    expect(element.querySelector('tbody a')?.getAttribute('href')).toBe(
+      '/system/swarm/configs/ktnbjxoalbkvbvedmg1urrz8h',
+    );
     expect(text(element.querySelector('[data-lede]'))).toBe('1 config');
   });
 
