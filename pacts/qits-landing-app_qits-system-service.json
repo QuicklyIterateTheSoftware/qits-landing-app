@@ -1019,7 +1019,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-configs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/configs"
           }
         }
       },
@@ -1140,7 +1141,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-swarm-configs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "system/swarm/configs"
           }
         }
       },
@@ -3233,6 +3235,173 @@
                 {
                   "match": "regex",
                   "regex": "text/plain.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-system-service",
+            "operationId": "listLeases"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-target-leases",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-target-leases: listLeases",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a connected target with leases",
+          "params": {
+            "targetId": "00000000-0000-4000-8000-000000000001"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "query": {
+            "targetId": {
+              "expression": "${targetId}",
+              "type": "ProviderState"
+            }
+          }
+        },
+        "matchingRules": {
+          "query": {
+            "targetId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/system/api/leases",
+        "query": {
+          "targetId": [
+            "00000000-0000-4000-8000-000000000001"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "detail": null,
+              "id": "00000000-0000-4000-8000-000000000003",
+              "ownerApp": "qits-ci",
+              "ownerRef": "run-1",
+              "slotType": "CI",
+              "state": "RUNNING"
+            },
+            {
+              "detail": null,
+              "id": "00000000-0000-4000-8000-000000000003",
+              "ownerApp": "qits-ci",
+              "ownerRef": "run-1",
+              "slotType": "CI",
+              "state": "RUNNING"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 2,
+                  "min": 2
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$[*].ownerApp": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].ownerRef": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].slotType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
                 }
               ]
             }
