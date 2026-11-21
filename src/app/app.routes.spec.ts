@@ -35,6 +35,7 @@ import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
 import { MirrorRepositoryPage } from './routes/mirror/repositories/[repository]/mirror-repository.page';
 import { MirrorUpstreamsPage } from './routes/mirror/upstreams/mirror-upstreams.page';
+import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/orchestrator-process.page';
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
 
@@ -333,6 +334,32 @@ describe('mirror routes (qits-2357)', () => {
   });
 });
 
+describe('orchestrator routes (qits-2359)', () => {
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+    }),
+  );
+
+  /** The routed components below the section's parent, which has none of its own. */
+  const pages = async (url: string) => (await opened(url)).filter(Boolean);
+
+  it('opens a process at orchestrator/processes/<kind>', async () => {
+    expect(await pages('/orchestrator/processes/gc')).toEqual([OrchestratorProcessPage]);
+    expect(TestBed.inject(Router).url).toBe('/orchestrator/processes/gc');
+  });
+
+  it('opens the gc process at orchestrator', async () => {
+    expect(await pages('/orchestrator')).toEqual([OrchestratorProcessPage]);
+    expect(TestBed.inject(Router).url).toBe('/orchestrator/processes/gc');
+  });
+
+  it('opens the gc process at orchestrator/processes', async () => {
+    expect(await pages('/orchestrator/processes')).toEqual([OrchestratorProcessPage]);
+    expect(TestBed.inject(Router).url).toBe('/orchestrator/processes/gc');
+  });
+});
+
 describe('entry points (qits-2049)', () => {
   /** The full paths of the routes whose data marks them an entry, as `describeRoutes` reads it. */
   function entries(list: typeof routes, parent = ''): string[] {
@@ -345,12 +372,13 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door, the old agent address, the docs reader’s split form, the swarm pages, the OCI upstreams and a cache root’s page, beside the library’s own', () => {
+  it('marks the front door, the old agent address, the docs reader’s split form, the swarm pages, the OCI upstreams, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
     // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services
     // and nodes and one service's page where qits-system-frontend's old pages hand off
     // (qits-2344, qits-2345, qits-2346), the OCI upstreams and a cache root's page where
-    // qits-mirror-frontend's do (qits-2357, qits-2358).
+    // qits-mirror-frontend's do (qits-2357, qits-2358), a process where
+    // qits-orchestrator-frontend's `''` and `processes/:kind` do (qits-2359).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
@@ -360,6 +388,7 @@ describe('entry points (qits-2049)', () => {
       'system/swarm/nodes',
       'mirror/upstreams',
       'mirror/repositories/:repository',
+      'orchestrator/processes/:kind',
     ]);
   });
 });

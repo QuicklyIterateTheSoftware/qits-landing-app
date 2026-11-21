@@ -14,6 +14,8 @@ export type RoutePath =
   | 'mirror'
   | 'mirror/repositories/:repository'
   | 'mirror/upstreams'
+  | 'orchestrator'
+  | 'orchestrator/processes/:kind'
   | 'projects'
   | 'projects/:slug'
   | 'projects/:slug/agents'

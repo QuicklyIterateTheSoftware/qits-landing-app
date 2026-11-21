@@ -878,6 +878,43 @@ export const INTERACTIONS = {
    */
   'select-mirror-package': 'A cache root’s page shows the versions of the package chosen',
   /**
+   * `orchestrator-process.page.ts` via `PROCESS_LIST`, `PROCESS_RUNS` and `PROCESS_RUN` (qits-2359):
+   * the Orchestrator section's process page shows the process, its latest runs and the shown run's
+   * steps, the run read without bodies (`bodies=false`). Refresh reads them again, and a running
+   * run is read again every 10 s (no event announces its steps moving).
+   */
+  'show-orchestrator-process':
+    'A process page shows the process, its latest runs and the shown run’s steps',
+  /**
+   * `orchestrator-process.page.ts`: a run's Started (or "Show the newest run") shows that run,
+   * `?run=` in the URL (replaced, not pushed), read through `PROCESS_RUN` as
+   * `show-orchestrator-process` reads it (qits-2359).
+   */
+  'open-orchestrator-run': 'A process page shows the run picked from its list',
+  /**
+   * `orchestrator-process.page.ts` via `PROCESS_RUN_STEP` (qits-2359): a step's card opens its call
+   * below the board, `?step=` in the URL, reading that one step with its request body and response;
+   * a second press closes it.
+   */
+  'open-orchestrator-step': 'A process page opens a step’s request and response, or closes it',
+  /**
+   * `orchestrator-process.page.ts`: Run now's first press asks for the second, saying a run
+   * deletes; Not now takes it back. No request (qits-2359).
+   */
+  'ask-orchestrator-run': 'A process page’s Run now asks to be pressed again before it deletes',
+  /**
+   * `orchestrator-process.page.ts` via `START_PROCESS_RUN` (qits-2359): the confirmed Run now
+   * starts a real run (`{ dryRun: false }`) and shows it, or says why it did not start. No
+   * recording holds a real start, so the pact holds the dry run's.
+   */
+  'start-orchestrator-run': 'The confirmed Run now on a process page starts a run and shows it',
+  /**
+   * `orchestrator-process.page.ts` via `START_PROCESS_RUN` (qits-2359): Dry run starts a run that
+   * deletes nothing (`{ dryRun: true }`) at once and shows it, or says why it did not start (a 409
+   * while a run is active, in the service's words).
+   */
+  'start-orchestrator-dry-run': 'Dry run on a process page starts a dry run and shows it',
+  /**
    * `swarm-nodes.page.ts` via `SWARM_NODE_LIST` (qits-2346): the System section's nodes page lists
    * the nodes of qits-system's swarm, each with its role, status, availability, manager status and
    * engine version, the one qits-system runs on marked. Refresh reads them again.
@@ -1470,6 +1507,12 @@ export const INTERACTIONS = {
    * names no pact.
    */
   'open-sidebar-mirror': 'The sidebar’s Mirror entry opens the Mirror section',
+  /**
+   * `shell.layout.ts`: the sidebar's Orchestrator, a global section shown with no project open,
+   * opens the Orchestrator section (`orchestrator`, which opens the gc process; qits-2359).
+   * Navigates only, and names no pact.
+   */
+  'open-sidebar-orchestrator': 'The sidebar’s Orchestrator entry opens the Orchestrator section',
   /**
    * `shell.layout.ts`: the System section's pages, listed below the sidebar's System while the
    * section is open, open their page (Services, Nodes; qits-2346). Navigates only, and names no

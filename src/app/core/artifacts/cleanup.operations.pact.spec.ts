@@ -6,7 +6,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import type { QitsOperationIdentity } from '@qits/angular';
-import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
+import { addGoldenInteraction, assertPactPart } from '@qits/angular/testing';
 import { client as orchestratorClient } from '../../api/orchestrator/client.gen';
 import { provideHeyApiClient } from '../../api/orchestrator/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
@@ -18,10 +18,10 @@ import {
 import { ARTIFACTS_CLEANUP_PLAN, ARTIFACTS_CLEANUP_SWEEP } from './cleanup.operations';
 
 /**
- * qits-landing-app's pact with qits-orchestrator-service (qits-2329), in
+ * The cleanup page's part of qits-landing-app's pact with qits-orchestrator-service (qits-2329), in
  * `pacts/qits-landing-app_qits-orchestrator-service.json`: the Artifacts section's cleanup page
- * (`cleanup.operations.ts`). The operations are the only users of qits-orchestrator's client, so
- * this file is the whole pact.
+ * (`cleanup.operations.ts`). The same file holds the Orchestrator section's process page, whose
+ * part `core/orchestrator/processes.operations.pact.spec.ts` owns (`assertPactPart`, qits-2359).
  *
  * One store repository's plan and its sweep, in "a repository the cleanup can plan" (the
  * `repository` param, `daemons`): the provider serves qits-artifacts' recording of a plan over
@@ -43,6 +43,9 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const PLANNABLE = 'a repository the cleanup can plan';
 const NOTHING_TO_DELETE = 'a repository the cleanup has nothing to delete in';
 const PLAN = ARTIFACTS_CLEANUP_PLAN.operationId;
+
+/** The operations this spec owns in that file. */
+const OPERATIONS = [ARTIFACTS_CLEANUP_PLAN.operationId, ARTIFACTS_CLEANUP_SWEEP.operationId];
 
 /** Whether the pinned recording holds the dead list; until then the spec writes no pact. */
 const RECORDED =
@@ -89,8 +92,14 @@ describe('qits-landing-app → qits-orchestrator-service pact: the cleanup page'
   afterAll(() => {
     orchestratorClient.setConfig({ baseUrl: '' });
     try {
-      if (RECORDED)
-        assertPactFile(join(dir, `${CONSUMER}-${PROVIDER}.json`), COMMITTED, 'QITS_GOLDEN_UPDATE');
+      if (RECORDED) {
+        assertPactPart(
+          join(dir, `${CONSUMER}-${PROVIDER}.json`),
+          COMMITTED,
+          OPERATIONS,
+          'QITS_GOLDEN_UPDATE',
+        );
+      }
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
