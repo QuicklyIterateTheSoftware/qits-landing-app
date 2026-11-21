@@ -178,6 +178,9 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * too, where the old `swarm/nodes/:id` hands off. It is a layout (qits-2354): its four resource
  * tabs (`NODE_TABS`: containers, images, volumes, networks) come as its child routes
  * (qits-2352…qits-2355).
+ * `system/swarm/nodes/<id>/volumes` (`SwarmNodeVolumesPage`, qits-2355) is the node's Volumes tab:
+ * the volumes of the node qits-system runs on, the unused ones marked, the anonymous ones hidden
+ * unless `?anonymous=1`; an entry point too, where the old node volumes tab hands off.
  * `system/swarm/nodes/<id>/networks` (`SwarmNodeNetworksPage`, qits-2354) is the node's Networks
  * tab: the docker networks of the node qits-system runs on (another node is not read), an entry
  * point too, where the old `swarm/nodes/:id/networks` hands off.
@@ -771,6 +774,15 @@ export const routes: Routes = [
             // bare URL shows the node alone.
             children: [
               { path: '', children: [] },
+              {
+                path: 'volumes',
+                // An entry point (qits-2355): qits-system-frontend's node volumes tab hands off here.
+                data: { qitsEntry: true },
+                loadComponent: () =>
+                  import('./routes/system/swarm/nodes/[id]/volumes/swarm-node-volumes.page').then(
+                    (m) => m.SwarmNodeVolumesPage,
+                  ),
+              },
               {
                 path: 'networks',
                 // An entry point (qits-2049, qits-2354): qits-system-frontend's old

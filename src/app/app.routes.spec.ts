@@ -39,6 +39,7 @@ import { OrchestratorProcessPage } from './routes/orchestrator/processes/[kind]/
 import { SwarmServicePage } from './routes/system/swarm/services/[id]/swarm-service.page';
 import { SwarmNodesPage } from './routes/system/swarm/nodes/swarm-nodes.page';
 import { SwarmNodeLayout } from './routes/system/swarm/nodes/[id]/swarm-node.layout';
+import { SwarmNodeVolumesPage } from './routes/system/swarm/nodes/[id]/volumes/swarm-node-volumes.page';
 import { SwarmNodeNetworksPage } from './routes/system/swarm/nodes/[id]/networks/swarm-node-networks.page';
 import { SwarmConfigsPage } from './routes/system/swarm/configs/swarm-configs.page';
 import { SwarmConfigPage } from './routes/system/swarm/configs/[id]/swarm-config.page';
@@ -318,6 +319,16 @@ describe('system routes (qits-2344)', () => {
     expect(TestBed.inject(Router).url).toBe('/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh');
   });
 
+  it('opens a swarm node’s Volumes tab at system/swarm/nodes/:id/volumes (qits-2355)', async () => {
+    expect(await pages('/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh/volumes')).toEqual([
+      SwarmNodeLayout,
+      SwarmNodeVolumesPage,
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      '/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh/volumes',
+    );
+  });
+
   it('opens a swarm node’s Networks tab at system/swarm/nodes/:id/networks (qits-2354)', async () => {
     expect(await pages('/system/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh/networks')).toEqual([
       SwarmNodeLayout,
@@ -418,9 +429,9 @@ describe('entry points (qits-2049)', () => {
   it('marks the front door, the old agent address, the docs reader’s split form, the System pages, the OCI upstreams, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
     // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
-    // nodes, configs and secrets, one service's page, one node's page, its Networks tab, one
-    // config's page and the targets where qits-system-frontend's old pages hand off (qits-2344,
-    // qits-2345, qits-2346, qits-2347, qits-2348, qits-2349, qits-2350, qits-2351, qits-2354), the OCI upstreams and a cache root's page where
+    // nodes, configs and secrets, one service's page, one node's page, its Volumes and Networks
+    // tabs, one config's page and the targets where qits-system-frontend's old pages hand off
+    // (qits-2344, qits-2345, qits-2346, qits-2347, qits-2348, qits-2349, qits-2350, qits-2351, qits-2354, qits-2355), the OCI upstreams and a cache root's page where
     // qits-mirror-frontend's do (qits-2357, qits-2358), a process where qits-orchestrator-frontend's
     // `''` and `processes/:kind` do (qits-2359).
     expect(entries(routes).filter((path) => path !== qitsAuthCallbackRoute.path)).toEqual([
@@ -431,6 +442,7 @@ describe('entry points (qits-2049)', () => {
       'system/swarm/services',
       'system/swarm/nodes',
       'system/swarm/nodes/:id',
+      'system/swarm/nodes/:id/volumes',
       'system/swarm/nodes/:id/networks',
       'system/swarm/configs',
       'system/swarm/configs/:id',
