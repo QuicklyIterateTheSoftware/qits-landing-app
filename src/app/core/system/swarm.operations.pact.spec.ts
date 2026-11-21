@@ -32,9 +32,8 @@ import {
  * configs" (`[]`), which skips itself the same way. Its secrets page lists the swarm's secrets with
  * the services that use them (`show-swarm-secrets`, qits-2350): in "a single-node swarm" (two
  * secrets, one used by `dev-qits-artifacts`, one by none), and in "a swarm holding no secrets"
- * (`[]`). The same qits-system release records the secrets' usage and the empty state, so both
- * skip themselves until the pin records the empty one. Each test runs the operation's own `fetch`;
- * the interaction's `operationId` and `consumes` are the operation's.
+ * (`[]`). Each test runs the operation's own `fetch`; the interaction's `operationId` and
+ * `consumes` are the operation's.
  */
 const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-system-service';
@@ -49,9 +48,6 @@ const NO_NODES = 'a swarm listing no nodes';
 const NO_CONFIGS = 'a swarm holding no configs';
 
 const NO_SECRETS = 'a swarm holding no secrets';
-
-/** Whether the pin records the secrets' usage (`usedBy`): the release that records the empty state. */
-const SECRETS_USAGE_RECORDED = isRecorded(NO_SECRETS, 'listSwarmSecrets', masters);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-swarm-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -191,40 +187,34 @@ describe('qits-landing-app → qits-system-service pact: the swarm', () => {
       }),
   );
 
-  it.skipIf(!SECRETS_USAGE_RECORDED)(
-    'show-swarm-secrets: the page lists the swarm’s secrets, each with the services using it',
-    () =>
-      addGoldenInteraction(pact, masters, {
-        provider: PROVIDER,
-        state: SWARM,
-        operationId: SWARM_SECRET_LIST.operationId,
-        trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-secrets' },
-        consumes: SWARM_SECRET_LIST.consumes,
-      }).executeTest(async (server) => {
-        const { data, error } = await at(server.url, () => SWARM_SECRET_LIST.fetch({}));
-        expect(error).toBeUndefined();
-        const secrets = data ?? [];
-        expect(secrets).toHaveLength(2);
-        // One secret no service uses, one `dev-qits-artifacts` mounts.
-        expect(secrets.map((secret) => secret.usedBy?.length)).toEqual([0, 1]);
-        // No value: the door answers none, and the page reads none.
-        expect(secrets.every((secret) => !('value' in secret))).toBe(true);
-      }),
-  );
+  it('show-swarm-secrets: the page lists the swarm’s secrets, each with the services using it', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: SWARM,
+      operationId: SWARM_SECRET_LIST.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-secrets' },
+      consumes: SWARM_SECRET_LIST.consumes,
+    }).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => SWARM_SECRET_LIST.fetch({}));
+      expect(error).toBeUndefined();
+      const secrets = data ?? [];
+      expect(secrets).toHaveLength(2);
+      // One secret no service uses, one `dev-qits-artifacts` mounts.
+      expect(secrets.map((secret) => secret.usedBy?.length)).toEqual([0, 1]);
+      // No value: the door answers none, and the page reads none.
+      expect(secrets.every((secret) => !('value' in secret))).toBe(true);
+    }));
 
-  it.skipIf(!SECRETS_USAGE_RECORDED)(
-    'show-swarm-secrets: a swarm holding no secrets lists none',
-    () =>
-      addGoldenInteraction(pact, masters, {
-        provider: PROVIDER,
-        state: NO_SECRETS,
-        operationId: SWARM_SECRET_LIST.operationId,
-        trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-secrets' },
-        consumes: SWARM_SECRET_LIST.consumes,
-      }).executeTest(async (server) => {
-        const { data, error } = await at(server.url, () => SWARM_SECRET_LIST.fetch({}));
-        expect(error).toBeUndefined();
-        expect(data).toEqual([]);
-      }),
-  );
+  it('show-swarm-secrets: a swarm holding no secrets lists none', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: NO_SECRETS,
+      operationId: SWARM_SECRET_LIST.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'show-swarm-secrets' },
+      consumes: SWARM_SECRET_LIST.consumes,
+    }).executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => SWARM_SECRET_LIST.fetch({}));
+      expect(error).toBeUndefined();
+      expect(data).toEqual([]);
+    }));
 });

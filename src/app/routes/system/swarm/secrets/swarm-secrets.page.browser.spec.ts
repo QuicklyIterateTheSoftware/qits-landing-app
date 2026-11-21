@@ -32,9 +32,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * (`openRoute`), with no project open, its one read (`listSwarmSecrets`) answered with
  * qits-system's recordings: "a single-node swarm" (`qits-dns-hetzner-token-…`, labelled and used by
  * no service, and `qits-platform-idp-signing-key`, used by `dev-qits-artifacts`; `secrets`) and "a
- * swarm holding no secrets" (`[]`; `empty`). The same qits-system release records the usage and
- * the empty state, so a test reading either skips itself until the `@qits/system-golden-masters`
- * pin records the empty one. A read still open (`loading`) and a 503 (`unavailable`: the swarm not
+ * swarm holding no secrets" (`[]`; `empty`). A read still open (`loading`) and a 503 (`unavailable`: the swarm not
  * answering) are statuses only; so is a 403, which says the role.
  *
  * The page declares no outcome of its own: the shell's are shot once (`shootShellMenus`). The live
@@ -73,14 +71,6 @@ describe('SwarmSecretsPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  /** Whether the pin records the secrets' usage and the empty state (the same release). */
-  async function usageRecorded(): Promise<boolean> {
-    return (
-      (await goldenMaster(NO_SECRETS, 'listSwarmSecrets', SYSTEM).catch(() => undefined)) !==
-      undefined
-    );
-  }
-
   /** Opens the secrets page, its read still open. */
   async function open(): Promise<OpenedRoute> {
     await page.viewport(1140, 900);
@@ -110,8 +100,7 @@ describe('SwarmSecretsPage (screenshots)', () => {
     return { opened, view: page.elementLocator(opened.page) };
   }
 
-  it('lists the swarm’s secrets, each with the services using it, and no value', async (context) => {
-    if (!(await usageRecorded())) context.skip();
+  it('lists the swarm’s secrets, each with the services using it, and no value', async () => {
     const { opened, view } = await render(SWARM);
     await expect
       .element(view.getByRole('heading', { name: 'Swarm secrets', exact: true }))
@@ -144,10 +133,7 @@ describe('SwarmSecretsPage (screenshots)', () => {
     await shootShellMenus(opened, 'secrets');
   });
 
-  it('says a swarm holding no secrets holds none', async (context) => {
-    // qits-system records the state from a later release than the pinned one: until the pin
-    // reaches it (and the pact holds it), the reader refuses it and the test skips itself.
-    if (!(await usageRecorded())) context.skip();
+  it('says a swarm holding no secrets holds none', async () => {
     const { opened, view } = await render(NO_SECRETS);
     await expect
       .element(view.getByRole('status'))
@@ -188,16 +174,14 @@ describe('SwarmSecretsPage (screenshots)', () => {
     expect(view.getByRole('button', { name: 'Retry' }).elements()).toHaveLength(0);
   });
 
-  it('reads the secrets again on Refresh', async (context) => {
-    if (!(await usageRecorded())) context.skip();
+  it('reads the secrets again on Refresh', async () => {
     const { opened, view } = await render(SWARM);
     await view.getByRole('button', { name: 'Refresh' }).click();
     await opened.idle();
     await answer(opened, SWARM);
   });
 
-  it('reads the secrets again after a deployment went live', async (context) => {
-    if (!(await usageRecorded())) context.skip();
+  it('reads the secrets again after a deployment went live', async () => {
     const { opened } = await render(SWARM);
     // The stream opens after `DomainEvents`' reopen debounce.
     await wait(REOPEN_DEBOUNCE_MS + 50);

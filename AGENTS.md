@@ -627,8 +627,7 @@ whole list, debounced 1 s (a deployment changes which services use a secret); a 
 removed by hand (or by bootstrap) sends no event, so Refresh reads again; nothing polls. The pact
 reads it (`show-swarm-secrets`) in "a single-node swarm" (`qits-dns-hetzner-token-…`, labelled and
 unused, and `qits-platform-idp-signing-key`, used by `dev-qits-artifacts`) and "a swarm holding no
-secrets" (`[]`); the same qits-system release records the usage and the empty state, so both
-interactions and the screenshots reading them skip themselves until the pin records it.
+secrets" (`[]`).
 The Mirror section (qits-2357) is qits-mirror's pull-through caches, which no project joins:
 `mirror/upstreams` (`MirrorUpstreamsPage`, replacing qits-mirror-frontend's `upstreams`), at
 `https://qits.<domain>/mirror/upstreams`; `mirror` redirects to it, and qits-2358 adds
