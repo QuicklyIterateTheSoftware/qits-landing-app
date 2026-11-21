@@ -3003,6 +3003,20 @@
       "route": "projects"
     }
   ],
+  "src/app/routes/system/swarm/configs/swarm-configs.page.browser.spec.ts": [
+    {
+      "provider": "qits-system-service",
+      "state": "a single-node swarm",
+      "operationId": "listSwarmConfigs",
+      "route": "system/swarm/configs"
+    },
+    {
+      "provider": "qits-system-service",
+      "state": "a swarm holding no configs",
+      "operationId": "listSwarmConfigs",
+      "route": "system/swarm/configs"
+    }
+  ],
   "src/app/routes/system/swarm/nodes/swarm-nodes.page.browser.spec.ts": [
     {
       "provider": "qits-system-service",
