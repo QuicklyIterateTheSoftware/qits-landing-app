@@ -191,8 +191,8 @@ describe('WorkReorders', () => {
     const { work, reorders } = await loaded();
     expect(priorities(work)).toEqual({
       'contract-00000001-1': 2,
-      'contract-00000001-2': null,
-      'contract-00000001-3': null,
+      'contract-00000001-2': 0,
+      'contract-00000001-3': 0,
     });
     // Dropped last, after the first ticket.
     reorders.move([node('contract-00000001-3'), node('contract-00000001-1')], { from: 0, to: 1 });
@@ -205,7 +205,7 @@ describe('WorkReorders', () => {
     expect(reorders.refusal()).toBeUndefined();
     expect(priorities(work)).toEqual({
       'contract-00000001-1': 2,
-      'contract-00000001-2': null,
+      'contract-00000001-2': 0,
       'contract-00000001-3': 1,
     });
   });
@@ -233,7 +233,8 @@ describe('WorkReorders', () => {
     await settle();
     http.expectOne(WORK).flush(goldenMaster(RANKED, 'listProjectWork'));
     await settle();
-    expect(priorities(work)['contract-00000001-3']).toBeNull();
+    // qits-2496: an unranked item answers 0.
+    expect(priorities(work)['contract-00000001-3']).toBe(0);
 
     reorders.move([node('contract-00000001-1'), node('contract-00000001-2')], { from: 1, to: 0 });
     expect(reorders.refusal()).toBeUndefined();
