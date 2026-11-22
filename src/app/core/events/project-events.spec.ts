@@ -216,6 +216,28 @@ describe('eventSubjects', () => {
   it('names nothing for a payload that is not JSON', () => {
     expect(eventSubjects({ name: 'X', payload: 'not json' }, 'qits')).toEqual([]);
   });
+
+  it('names an SCMRelease’s repository by `repositoryName`, its `repository` being a UUID', () => {
+    const release = {
+      name: 'SCMRelease',
+      payload: JSON.stringify({
+        repository: '208793c7-a3f6-4b8a-977f-7ac953fc1871',
+        repositoryName: 'qits-ci-frontend',
+        version: '2026.1122.222826',
+      }),
+    };
+    expect(eventSubjects(release, 'qits')).toEqual([
+      { kind: 'repository', label: 'qits-ci-frontend' },
+    ]);
+  });
+
+  it('names no repository when the only repository key holds a UUID', () => {
+    const release = {
+      name: 'SCMRelease',
+      payload: JSON.stringify({ repository: '208793c7-a3f6-4b8a-977f-7ac953fc1871' }),
+    };
+    expect(eventSubjects(release, 'qits')).toEqual([]);
+  });
 });
 
 describe('eventDetail', () => {

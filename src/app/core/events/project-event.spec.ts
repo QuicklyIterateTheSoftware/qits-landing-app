@@ -48,15 +48,35 @@ describe('eventGist', () => {
     expect(
       eventGist({
         name: 'SCMRelease',
-        payload: payload({ repository: 'qits-ci', version: '2026.1.1', branch: 'main' }),
+        payload: payload({
+          repository: '208793c7-a3f6-4b8a-977f-7ac953fc1871',
+          repositoryName: 'qits-ci',
+          version: '2026.1.1',
+          branch: 'main',
+        }),
       }),
     ).toEqual({ repository: 'qits-ci', summary: '2026.1.1 · main' });
     expect(
       eventGist({
         name: 'SoftwareRelease',
-        payload: payload({ repository: 'x', version: '1', packageType: 'npm', packageName: 'p' }),
+        payload: payload({
+          repoName: 'x',
+          repository: '208793c7-a3f6-4b8a-977f-7ac953fc1871',
+          version: '1',
+          packageType: 'npm',
+          packageName: 'p',
+        }),
       }),
     ).toEqual({ repository: 'x', summary: '1 · npm p' });
+  });
+
+  it('gives no repository when the only repository key holds a UUID', () => {
+    const payload = JSON.stringify({
+      repository: '208793c7-a3f6-4b8a-977f-7ac953fc1871',
+      version: '2026.1.1',
+      branch: 'main',
+    });
+    expect(eventGist({ name: 'SCMRelease', payload }).repository).toBeNull();
   });
 
   it('reads any other name’s description, else its first three pairs by key', () => {

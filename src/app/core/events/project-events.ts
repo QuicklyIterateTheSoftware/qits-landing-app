@@ -1,5 +1,6 @@
 import type { ListEventsData } from '../../api/events';
 import { PROJECT_EVENTS_PAGE } from './events.consumes';
+import { repositoryEntry } from './project-event';
 import { payloadIds, payloadOf, type WithPayload } from './refresh-on';
 
 /**
@@ -180,11 +181,12 @@ function workId(projectSlug: string, number: unknown): string | undefined {
 }
 
 /**
- * What `event` concerns, from its payload, in this order: the repository (`repoName`, else
- * `repository`), the release request (`releaseRequestQualifiedId`, leading to its page by
- * `releaseRequestId`), the work items (`EntityTransitioned`'s `entities[]`, `EntityCommented`'s
- * own `number`, each `<project slug>-<number>`, leading to its page), the branch and the agent
- * (`agentId`). None when the payload names none of them, or is not JSON.
+ * What `event` concerns, from its payload, in this order: the repository (`repositoryEntry` from
+ * `project-event.ts`: `repoName`, else `repositoryName`, else `repository`, a UUID-shaped value not
+ * counting as a name; qits-2408), the release request (`releaseRequestQualifiedId`, leading to its
+ * page by `releaseRequestId`), the work items (`EntityTransitioned`'s `entities[]`,
+ * `EntityCommented`'s own `number`, each `<project slug>-<number>`, leading to its page), the
+ * branch and the agent (`agentId`). None when the payload names none of them, or is not JSON.
  */
 export function eventSubjects(
   event: WithPayload & { readonly name?: string },
@@ -193,7 +195,7 @@ export function eventSubjects(
   const payload = payloadOf(event);
   if (!payload) return [];
   const subjects: EventSubject[] = [];
-  const repository = textOf(payload['repoName']) ?? textOf(payload['repository']);
+  const repository = repositoryEntry(payload)?.name ?? null;
   if (repository) subjects.push({ kind: 'repository', label: repository });
   const request = textOf(payload['releaseRequestQualifiedId']);
   const requestId = textOf(payload['releaseRequestId']);
