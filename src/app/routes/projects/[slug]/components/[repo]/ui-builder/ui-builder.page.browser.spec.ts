@@ -435,7 +435,12 @@ describe('UiBuilderPage (screenshots)', () => {
     const view = page.elementLocator(opened.page);
     await view.getByRole('button', { name: 'Agent', exact: true }).click();
     await opened.settled();
-    // The project's named agents, as qits-projects recorded them: ui-builder IDLE on its command.
+    // Opened, the dialog starts the agent (qits-2499), which the recording leaves running...
+    http
+      .expectOne(`/projects/api/projects/${opened.project.id}/agents/ui-builder/start`)
+      .flush(await goldenMaster('a project whose named agent is running', 'startAgent'));
+    await opened.settled();
+    // ...then reads the project's named agents, as recorded: ui-builder IDLE on its command.
     http
       .expectOne(`/projects/api/projects/${opened.project.id}/agents`)
       .flush(await goldenMaster('a project whose named agent is running', 'listAgents'));
@@ -444,7 +449,8 @@ describe('UiBuilderPage (screenshots)', () => {
     const dialog = view.getByRole('dialog', { name: 'UI builder agent' });
     await expect.element(dialog).toBeVisible();
     await expect.element(dialog.getByText('Idle', { exact: true })).toBeVisible();
-    await expect.element(dialog.getByRole('textbox', { name: 'Prompt' })).toHaveFocus();
+    await expect.element(dialog.getByRole('button', { name: 'Insert page context' })).toBeVisible();
+    expect(dialog.getByRole('textbox', { name: 'Prompt' }).query()).toBeNull();
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('agent-open', { kind: 'DATA' });
