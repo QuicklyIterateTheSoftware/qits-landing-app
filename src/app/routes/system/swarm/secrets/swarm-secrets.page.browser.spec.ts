@@ -113,19 +113,21 @@ describe('SwarmSecretsPage (screenshots)', () => {
     expect(rows).toHaveLength(3);
     expect(rows[0].textContent).toMatch(/Name\s*ID\s*Used by\s*Labels\s*Created\s*Updated/);
     expect(rows[0].textContent).not.toContain('Driver');
-    // The recorded dates are docker's age text ("2 months ago"), which `formatInstant` cannot
-    // parse (qits-2487): it draws the dash, the raw text staying on the cell's `title`, until the
-    // golden masters carry real instants.
-    const created = formatInstant('2 months ago');
-    const updated = formatInstant('3 months ago');
+    // The recorded dates are inspect's instants (qits-2487), drawn the way the config page draws
+    // them.
+    const [hetzner, signing] = await goldenMaster<{ createdAt: string; updatedAt: string }[]>(
+      SWARM,
+      'listSwarmSecrets',
+      SYSTEM,
+    );
     expect(rows[1].textContent).toMatch(
       new RegExp(
-        `qits-dns-hetzner-token-2d945672e91b\\s*x4kq7v2m9p1c\\s*Unused\\s*qits\\.platform\\.deployments\\.target=platform\\s*${created}\\s*${created}`,
+        `qits-dns-hetzner-token-2d945672e91b\\s*x4kq7v2m9p1c\\s*Unused\\s*qits\\.platform\\.deployments\\.target=platform\\s*${formatInstant(hetzner.createdAt)}\\s*${formatInstant(hetzner.updatedAt)}`,
       ),
     );
     expect(rows[2].textContent).toMatch(
       new RegExp(
-        `qits-platform-idp-signing-key\\s*jvbcnrfhrbn8\\s*dev-qits-artifacts\\s*—\\s*${updated}\\s*${updated}`,
+        `qits-platform-idp-signing-key\\s*jvbcnrfhrbn8\\s*dev-qits-artifacts\\s*—\\s*${formatInstant(signing.createdAt)}\\s*${formatInstant(signing.updatedAt)}`,
       ),
     );
     expect(rows[2].textContent).not.toContain('Unused');
