@@ -13207,6 +13207,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -13236,17 +13247,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -17430,6 +17430,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -17459,17 +17470,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -17504,6 +17504,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -17533,17 +17544,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -17676,6 +17676,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -17705,17 +17716,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -17750,6 +17750,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -17779,17 +17790,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -17916,6 +17916,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -17945,17 +17956,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -18100,6 +18100,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -18129,17 +18140,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -18174,6 +18174,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -18203,17 +18214,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -18364,6 +18364,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -18393,17 +18404,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -18438,6 +18438,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -18467,17 +18478,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -18688,6 +18688,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -18777,17 +18788,6 @@
                 },
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -18915,6 +18915,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -18944,17 +18955,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -18989,6 +18989,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -19018,17 +19029,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -19155,6 +19155,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -19184,17 +19195,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -19315,6 +19315,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -19344,17 +19355,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -19475,6 +19475,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -19504,17 +19515,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -19659,6 +19659,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -19688,17 +19699,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -19733,6 +19733,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -19762,17 +19773,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -19930,6 +19930,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -19983,17 +19994,6 @@
                 },
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -20164,6 +20164,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -20202,17 +20213,6 @@
                             {
                               "match": "type",
                               "min": 0
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -20279,6 +20279,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -20310,17 +20321,6 @@
                               "match": "type"
                             }
                           ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
                         }
                       }
                     },
@@ -20350,6 +20350,17 @@
                             {
                               "match": "regex",
                               "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                            }
+                          ]
+                        },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
                             }
                           ]
                         },
@@ -20391,17 +20402,6 @@
                             {
                               "match": "type",
                               "min": 0
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -20477,6 +20477,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -20506,17 +20517,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -20650,6 +20650,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -20679,17 +20690,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -20724,6 +20724,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -20753,17 +20764,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -20890,6 +20890,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -20919,17 +20930,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -21074,6 +21074,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21103,17 +21114,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21148,6 +21148,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21177,17 +21188,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21321,6 +21321,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21350,17 +21361,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21395,6 +21395,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21424,17 +21435,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21568,6 +21568,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21597,17 +21608,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21642,6 +21642,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21671,17 +21682,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21816,6 +21816,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21845,17 +21856,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -21890,6 +21890,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -21919,17 +21930,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22063,6 +22063,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -22092,17 +22103,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22137,6 +22137,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -22166,17 +22177,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22303,6 +22303,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -22332,17 +22343,6 @@
               "matchers": [
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -22471,6 +22471,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -22500,17 +22511,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22545,6 +22545,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -22574,17 +22585,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22735,6 +22735,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -22764,17 +22775,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22809,6 +22809,17 @@
                             }
                           ]
                         },
+                        "$.priority": {
+                          "combine": "OR",
+                          "matchers": [
+                            {
+                              "match": "integer"
+                            },
+                            {
+                              "match": "null"
+                            }
+                          ]
+                        },
                         "$.qualifiedId": {
                           "combine": "AND",
                           "matchers": [
@@ -22838,17 +22849,6 @@
                           "matchers": [
                             {
                               "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
                             }
                           ]
                         }
@@ -22938,12 +22938,22 @@
               },
               {
                 "archetype": "TICKET",
-                "id": "00000000-0000-4000-8000-000000000004",
+                "id": "00000000-0000-4000-8000-000000000003",
                 "parent": null,
-                "priority": 0,
-                "qualifiedId": "contract-00000001-2",
+                "priority": 2,
+                "qualifiedId": "contract-00000001-1",
                 "status": "REPORTED",
-                "title": "Invoice totals round the wrong way",
+                "title": "Checkout times out under load",
+                "unmetNeeds": 0
+              },
+              {
+                "archetype": "TICKET",
+                "id": "00000000-0000-4000-8000-000000000003",
+                "parent": null,
+                "priority": 2,
+                "qualifiedId": "contract-00000001-1",
+                "status": "REPORTED",
+                "title": "Checkout times out under load",
                 "unmetNeeds": 0
               }
             ]
@@ -22962,139 +22972,107 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "arrayContains",
-                  "variants": [
-                    {
-                      "index": 0,
-                      "rules": {
-                        "$.archetype": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.id": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
-                        },
-                        "$.qualifiedId": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.status": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.title": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.unmetNeeds": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    {
-                      "index": 1,
-                      "rules": {
-                        "$.archetype": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.id": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "regex",
-                              "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                            }
-                          ]
-                        },
-                        "$.qualifiedId": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.status": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.title": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.unmetNeeds": {
-                          "combine": "AND",
-                          "matchers": [
-                            {
-                              "match": "type"
-                            }
-                          ]
-                        },
-                        "$.priority": {
-                          "combine": "OR",
-                          "matchers": [
-                            {
-                              "match": "integer"
-                            },
-                            {
-                              "match": "null"
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  ]
+                  "match": "type",
+                  "max": 3,
+                  "min": 3
+                }
+              ]
+            },
+            "$.entities[*].archetype": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                }
+              ]
+            },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
+            "$.entities[*].qualifiedId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].status": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].title": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.entities[*].unmetNeeds": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
                 }
               ]
             }
@@ -23355,6 +23333,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -23432,17 +23421,6 @@
                 },
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
@@ -23596,6 +23574,17 @@
                 }
               ]
             },
+            "$.entities[*].priority": {
+              "combine": "OR",
+              "matchers": [
+                {
+                  "match": "integer"
+                },
+                {
+                  "match": "null"
+                }
+              ]
+            },
             "$.entities[*].qualifiedId": {
               "combine": "AND",
               "matchers": [
@@ -23649,17 +23638,6 @@
                 },
                 {
                   "match": "type"
-                }
-              ]
-            },
-            "$.entities[*].priority": {
-              "combine": "OR",
-              "matchers": [
-                {
-                  "match": "integer"
-                },
-                {
-                  "match": "null"
                 }
               ]
             }
