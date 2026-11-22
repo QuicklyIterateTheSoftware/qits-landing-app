@@ -5974,7 +5974,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-artifacts",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo"
+            "route": "projects/:slug/components/:repo, projects/:slug/maintenance/artifacts"
           }
         }
       },
@@ -6028,7 +6028,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-artifacts",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts"
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/maintenance/artifacts"
           }
         }
       },
@@ -7335,7 +7335,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo"
+            "route": "projects/:slug/components/:repo, projects/:slug/maintenance/artifacts"
           }
         }
       },
@@ -7389,7 +7389,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository",
             "kind": "ui",
-            "route": "projects/:slug/maintenance/artifacts, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts"
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/maintenance/artifacts"
           }
         }
       },

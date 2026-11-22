@@ -4319,7 +4319,7 @@
             "app": "qits-landing-app",
             "interaction": "list-projects",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/components, projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/docs/:site/-/:version, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/release-requests, projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/components/:repo/ui-builder, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/releases/agents, projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal, projects/:slug/releases/ci, projects/:slug/releases/ci/:repo, projects/:slug/releases/ci/runs/:runId, projects/:slug/releases/requests, projects/:slug/releases/requests/:requestId, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -4594,7 +4594,7 @@
             "app": "qits-landing-app",
             "interaction": "move-release-request-source",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -7521,7 +7521,7 @@
             "app": "qits-landing-app",
             "interaction": "open-release-requests",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/components, projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/docs/:site/-/:version, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/release-requests, projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/components/:repo/ui-builder, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/releases/agents, projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal, projects/:slug/releases/ci, projects/:slug/releases/ci/:repo, projects/:slug/releases/ci/runs/:runId, projects/:slug/releases/requests, projects/:slug/releases/requests/:requestId, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -7596,7 +7596,7 @@
             "app": "qits-landing-app",
             "interaction": "open-release-requests",
             "kind": "ui",
-            "route": "projects/:slug/release-requests"
+            "route": "projects/:slug/releases/requests"
           }
         }
       },
@@ -8481,7 +8481,7 @@
             "app": "qits-landing-app",
             "interaction": "open-ui-builder-agent",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -10176,7 +10176,7 @@
             "app": "qits-landing-app",
             "interaction": "search-components",
             "kind": "ui",
-            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+            "route": "projects, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -11909,7 +11909,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/release-requests, projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/releases/ci, projects/:slug/releases/ci/:repo, projects/:slug/releases/ci/runs/:runId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -12092,7 +12092,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+            "route": "projects, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -13633,7 +13633,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
             "kind": "ui",
-            "route": "projects/:slug/release-requests"
+            "route": "projects/:slug/releases/requests"
           }
         }
       },
@@ -14486,7 +14486,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
             "kind": "ui",
-            "route": "projects/:slug, projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/release-requests, projects/:slug/release-requests/:requestId, projects/:slug/repositories, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/artifacts, projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/docs/:site/-/:version, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId, projects/:slug/repositories/:repo/ui-builder, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug, projects/:slug/components, projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/docs/:site/-/:version, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/release-requests, projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/components/:repo/ui-builder, projects/:slug/deployments/requests, projects/:slug/deployments/requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/desk, projects/:slug/docs/read/**, projects/:slug/docs/read/:site, projects/:slug/events, projects/:slug/events/:id, projects/:slug/ideas, projects/:slug/ideas/create, projects/:slug/ideas/detail/:ideaId, projects/:slug/ideas/detail/:ideaId/edit, projects/:slug/maintenance/adoption/:repository/:version, projects/:slug/maintenance/artifacts, projects/:slug/maintenance/bumps/:bumpId, projects/:slug/maintenance/dependencies, projects/:slug/maintenance/repositories/:name, projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces, projects/:slug/observability/traces/:traceId, projects/:slug/releases/agents, projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal, projects/:slug/releases/ci, projects/:slug/releases/ci/:repo, projects/:slug/releases/ci/runs/:runId, projects/:slug/releases/requests, projects/:slug/releases/requests/:requestId, projects/:slug/setup, projects/:slug/work/acceptance, projects/:slug/work/archive, projects/:slug/work/create, projects/:slug/work/detail/:id, projects/:slug/work/in-progress, projects/:slug/work/refinement, projects/:slug/work/schedule, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -14561,7 +14561,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
             "kind": "ui",
-            "route": "projects/:slug/release-requests"
+            "route": "projects/:slug/releases/requests"
           }
         }
       },
@@ -15401,7 +15401,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-release-requests",
             "kind": "ui",
-            "route": "projects/:slug/release-requests"
+            "route": "projects/:slug/releases/requests"
           }
         }
       },
@@ -16271,7 +16271,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-repositories-tree",
             "kind": "ui",
-            "route": "projects/:slug/agents, projects/:slug/repositories, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components, projects/:slug/components/:repo/ui-builder, projects/:slug/releases/agents"
           }
         }
       },
@@ -16645,7 +16645,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-repositories",
             "kind": "ui",
-            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/release-requests, projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/releases/ci, projects/:slug/releases/ci/:repo, projects/:slug/releases/ci/runs/:runId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -16943,7 +16943,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-repositories",
             "kind": "ui",
-            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+            "route": "projects, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -19801,7 +19801,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-work-board",
             "kind": "ui",
-            "route": "projects/:slug/agents, projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal, projects/:slug/work/detail/:id, projects/:slug/workspaces/:slotId"
+            "route": "projects/:slug/releases/agents, projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal, projects/:slug/work/detail/:id, projects/:slug/workspaces/:slotId"
           }
         }
       },
@@ -23467,7 +23467,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-workspaces",
             "kind": "ui",
-            "route": "projects/:slug/agents, projects/:slug/repositories, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components, projects/:slug/components/:repo/ui-builder, projects/:slug/releases/agents"
           }
         }
       },
@@ -24476,7 +24476,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -25045,7 +25045,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -26209,7 +26209,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -27112,7 +27112,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -27879,7 +27879,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -28503,7 +28503,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -29359,7 +29359,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -30495,7 +30495,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -31322,7 +31322,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -32374,7 +32374,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -32477,7 +32477,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -32621,7 +32621,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -32752,7 +32752,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -32884,7 +32884,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -33015,7 +33015,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -33146,7 +33146,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -33235,7 +33235,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -33549,7 +33549,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -33868,7 +33868,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -34186,7 +34186,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -34506,7 +34506,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
             "kind": "ui",
-            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+            "route": "projects, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -34673,7 +34673,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-release-requests",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/release-requests"
+            "route": "projects/:slug/components/:repo/release-requests"
           }
         }
       },
@@ -34937,7 +34937,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-release-requests",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/release-requests"
+            "route": "projects/:slug/components/:repo/release-requests"
           }
         }
       },
@@ -35155,7 +35155,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository",
             "kind": "ui",
-            "route": "projects/:slug/ci, projects/:slug/ci/:repo, projects/:slug/ci/runs/:runId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/release-requests/:requestId, projects/:slug/repositories/:repo, projects/:slug/repositories/:repo/docs/:site, projects/:slug/repositories/:repo/release-requests, projects/:slug/repositories/:repo/release-requests/:requestId"
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/release-requests, projects/:slug/components/:repo/release-requests/:requestId, projects/:slug/deployments/requests/by-release/:repoId/:version, projects/:slug/releases/ci, projects/:slug/releases/ci/:repo, projects/:slug/releases/ci/runs/:runId, projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -35359,7 +35359,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository",
             "kind": "ui",
-            "route": "projects, projects/:slug/repositories/:repo/docs, projects/:slug/repositories/:repo/docs/:site"
+            "route": "projects, projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -36023,7 +36023,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-pitches",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
