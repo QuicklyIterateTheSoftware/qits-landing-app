@@ -169,6 +169,17 @@ describe('agents and workspaces routes', () => {
     expect(TestBed.inject(Router).url).toBe(to);
   });
 
+  it.each([
+    ['', '?threshold=500&sort=duration'],
+    [
+      '?source=_service%2Fqits-ci&since=60&service=qits-ci&threshold=10',
+      '?threshold=500&sort=duration&source=_service%2Fqits-ci&service=qits-ci&since=60',
+    ],
+  ])('redirects the old Slow spans page%s to Traces with its floor (qits-2536)', async (q, to) => {
+    await opened(`/projects/x/observability/slow-spans${q}`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/x/observability/traces${to}`);
+  });
+
   it('opens the project’s agents at agents', async () => {
     expect(await opened('/projects/x/releases/agents')).toEqual([ProjectAgentsPage]);
   });

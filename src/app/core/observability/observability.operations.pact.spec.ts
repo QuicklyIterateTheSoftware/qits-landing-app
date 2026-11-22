@@ -16,7 +16,6 @@ import {
   TELEMETRY_ERRORS,
   TELEMETRY_LOGS,
   TELEMETRY_METRICS,
-  TELEMETRY_SLOW_SPANS,
   TELEMETRY_SOURCES,
   TELEMETRY_STORE,
   TELEMETRY_TRACE,
@@ -31,13 +30,14 @@ import {
  *
  * The sources, in an empty buffer (the page's "nothing buffered") and in one holding one platform
  * service's telemetry (`telemetry from one platform service`), each row with its services' names
- * (the Traces page's service lens, qits-2342); that source's logs as the page asks
- * for them by default (the source alone), and the same narrowed to the last hour (`sinceMinutes`,
- * `telemetry records of every kind`); that source's error groups as the Errors page asks for them
+ * (the Traces page's service lens, qits-2342); the logs as the Logs page asks for them by
+ * default, no source at all, every source merged (`telemetry from two platform services`,
+ * qits-2534), with each line's service, source and trace id, and that state's sources (the
+ * service filter's options), and the empty buffer's merged logs, none; that source's logs as an old
+ * `?source=` link asks for them (the source alone), and the same narrowed to the last hour
+ * (`sinceMinutes`, `telemetry records of every kind`); that source's error groups as the Errors page asks for them
  * by default (the source alone, qits-2339); that source's metric series, the latest point of
- * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340); and that
- * source's slow spans as the Slow spans page asks for them by default (the source and the floor,
- * `thresholdMs=500`, always sent; no `sort`, `sinceMinutes` or `limit`, qits-2341); that
+ * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340); that
  * source's traces as the Traces page asks for them by default (the source alone: newest first, no
  * floor, every service, everything buffered are the door's defaults, and `limit` is never sent,
  * qits-2342); and one of that source's traces as the trace page asks for it (the trace id in the
@@ -56,6 +56,7 @@ const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const EMPTY = 'an empty telemetry buffer';
 const ONE_SERVICE = 'telemetry from one platform service';
 const EVERY_KIND = 'telemetry records of every kind';
+const TWO_SERVICES = 'telemetry from two platform services';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-observability-operations-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -121,6 +122,47 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
       expect(source?.oldestReceivedAt).toBeTruthy();
     }));
 
+  it('show-telemetry-logs: every source’s logs merged, oldest first, each naming its service', () =>
+    given(TELEMETRY_LOGS, TWO_SERVICES, 'show-telemetry-logs').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_LOGS.fetch({ query: {} }));
+      expect(error).toBeUndefined();
+      // The mock answers each array with its first recorded element; the recording's merge of
+      // two sources is checked on the recording itself.
+      const logs = data?.logs ?? [];
+      expect(logs.length).toBeGreaterThan(0);
+      for (const line of logs) {
+        expect(line.source).toBeTruthy();
+        expect(line.serviceName).toBeTruthy();
+        expect(line.traceId).toBeDefined();
+      }
+      const recorded = masters.body<{ logs: { source: string; epochNanos: number }[] }>(
+        TWO_SERVICES,
+        'searchTelemetryLogs',
+      ).logs;
+      expect(new Set(recorded.map((line) => line.source)).size).toBe(2);
+      expect(recorded.map((line) => line.epochNanos)).toEqual(
+        recorded.map((line) => line.epochNanos).sort((a, b) => a - b),
+      );
+      expect(data?.truncated).toBe(false);
+    }));
+
+  it('show-telemetry-logs: an empty buffer’s merged logs are none', () =>
+    given(TELEMETRY_LOGS, EMPTY, 'show-telemetry-logs').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_LOGS.fetch({ query: {} }));
+      expect(error).toBeUndefined();
+      expect(data?.logs).toEqual([]);
+      expect(data?.truncated).toBe(false);
+    }));
+
+  it('show-telemetry-sources: two platform services, the Logs page’s service options', () =>
+    given(TELEMETRY_SOURCES, TWO_SERVICES, 'show-telemetry-sources').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_SOURCES.fetch({}));
+      expect(error).toBeUndefined();
+      for (const source of data?.sources ?? []) {
+        expect(source.services?.[0]?.name).toBeTruthy();
+      }
+    }));
+
   it('show-telemetry-logs: a source’s logs, oldest first', () =>
     given(TELEMETRY_LOGS, ONE_SERVICE, 'show-telemetry-logs').executeTest(async (server) => {
       const { data, error } = await at(server.url, () =>
@@ -179,39 +221,6 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
       }
       expect(metrics.some((metric) => metric.unit === 'By')).toBe(true);
     }));
-
-  it('show-telemetry-slow-spans: a source’s spans at or above 500 ms, slowest first', () =>
-    given(TELEMETRY_SLOW_SPANS, ONE_SERVICE, 'show-telemetry-slow-spans').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () =>
-          TELEMETRY_SLOW_SPANS.fetch({
-            query: { source: sourceOf(ONE_SERVICE), thresholdMs: 500 },
-          }),
-        );
-        expect(error).toBeUndefined();
-        const spans = data?.spans ?? [];
-        expect(spans.length).toBeGreaterThan(1);
-        expect(spans.every((span) => (span.durationMs ?? 0) >= 500)).toBe(true);
-        expect(spans.map((span) => span.durationMs ?? 0)).toEqual(
-          spans.map((span) => span.durationMs ?? 0).sort((a, b) => b - a),
-        );
-        for (const span of spans) {
-          expect(span.traceId).toBeTruthy();
-          expect(span.spanId).toBeTruthy();
-          expect(span.name).toBeTruthy();
-          expect(span.kind).toBeTruthy();
-          expect(span.startEpochNanos).toBeGreaterThan(0);
-          expect(span.resourceAttributes?.['service.version']).toBeTruthy();
-        }
-        expect(spans.some((span) => span.status === 'ERROR')).toBe(true);
-        expect(spans.some((span) => span.events?.some((event) => event.exception === true))).toBe(
-          true,
-        );
-        expect(spans.some((span) => !!span.attributes?.['http.route'])).toBe(true);
-        expect(data?.total).toBe(spans.length);
-        expect(data?.truncated).toBe(false);
-      },
-    ));
 
   it('show-telemetry-trace: one trace of a source, its spans by start and its logs by time', () =>
     given(TELEMETRY_TRACE, ONE_SERVICE, 'show-telemetry-trace').executeTest(async (server) => {

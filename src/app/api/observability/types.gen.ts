@@ -95,6 +95,7 @@ export type TelemetryLogDto = {
     traceId?: string;
     spanId?: string;
     serviceName?: string;
+    source?: string;
     attributes?: {
         [key: string]: string;
     };
@@ -263,6 +264,7 @@ export type SearchTelemetryLogsData = {
         service?: string;
         sinceMinutes?: number;
         source?: string;
+        traceId?: string;
         workspaceId?: string;
     };
     url: '/observability/api/telemetry/logs';

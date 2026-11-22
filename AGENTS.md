@@ -1278,20 +1278,23 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (logs, errors, metrics, slow spans,
-traces and one trace); its own address redirects to `logs` by a relative
+component whose pages are its children, one route per view (logs, errors, metrics, traces and
+one trace; the old `slow-spans` redirects to traces, qits-2536); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
 (`ObservabilityLogsPage`) reads qits-observability's telemetry buffer through `qitsResource` over
 `core/observability/observability.operations.ts` (`TELEMETRY_SOURCES`, `listTelemetrySources`;
-`TELEMETRY_LOGS`, `searchTelemetryLogs`), on the `observability` host: the SERVICE sources with
-their counts and reach (`oldestReceivedAt`), and the chosen one's lines newest first (the service
-answers oldest first, at most 200). The view lives in the query, with the retired
-qits-observability-frontend's names so its bookmarks forward as they are: `source` (a source key),
-`level` (→ `minSeverity`, absent: all), `q` (→ `query`) and `since` (minutes → `sinceMinutes`,
-absent: everything buffered). Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
+`TELEMETRY_LOGS`, `searchTelemetryLogs`), on the `observability` host: every source's lines merged
+into one tail by default (qits-2534: no `source` sent), newest first (the service answers oldest
+first, at most 200), each with its service, its `service.version` and, when it has one, its trace
+id, which opens its trace page at the line's own `source` (`open-telemetry-trace`, qits-2535). The
+view lives in the query: `service` (→ `service`; options are every source row's
+`services[].name`), `level` (→ `minSeverity`, absent: all), `q` (→ `query`), `since` (minutes →
+`sinceMinutes`, absent: everything buffered) and `traceId` (→ `traceId`, set by the trace page's
+Logs links, qits-2535). An old link's `source` (a source key) still reads that one source, shown as
+a filter to clear; choosing a service clears it. Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
 `qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
-again. The source picker is one pattern both pages show (`app-telemetry-source-picker`,
+again. The source picker is one pattern the other pages show (`app-telemetry-source-picker`,
 `patterns/observability/source-picker/`, the page's sources read as its input); what the pages
 share of a record (time ranges, a line's time and level, a refusal, `service.version`) is
 `core/observability/telemetry.ts`. `observability/errors` (`ObservabilityErrorsPage`, qits-2339,
@@ -1317,21 +1320,11 @@ significant digits, exponential under 1e-4; `unitGloss`) are `core/observability
 ported from the old `metric-series.ts`. `?name=` narrows the cards by a case-insensitive substring
 in the browser; the door's own exact `name` is never sent. No recording holds a name with several
 series, so the bars are the page's plain spec's, derived from the recorded series.
-`observability/slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) reads `TELEMETRY_SLOW_SPANS`
-(`listSlowSpans`), never before a source is chosen, with three lenses in the query: `threshold`
-(the floor in ms: 500, the default and absent, 1000, 100, 10 or 0 "Any duration"; always sent as
-`thresholdMs`, so the default read is the source and `thresholdMs=500` alone), `sort=recent`
-(newest first, sent as `sort`; absent, slowest first, sends none) and `since` (→ `sinceMinutes`);
-never `limit`, `service` or `name`. One row per span in the door's order: its duration (ms under a
-second, else seconds with one decimal), name and kind, which call (`url.full`, else `http.route`),
-an ERROR chip and an exception marker (any event with `exception: true`), its start, its
-`service.version` and its trace id, which opens its trace page at the same source
-(`open-telemetry-trace`, qits-2343). A truncated answer says "Showing the slowest (newest)
-N of T matching spans". An empty one says why, in order: the source holds no spans (its source
-row's `spans` is 0), none reaches the floor (when above 0, offering Any duration), none falls in
-the time range (when set, offering Everything buffered). The formatting and the empty reason are
-`core/observability/slow-spans.ts`. The recording answers the default read only, so the other
-lenses, a truncated answer and the empty reasons are the page's plain spec's.
+`observability/slow-spans` is no page any more (qits-2536): Slow spans and Traces showed the same
+span data, so the old address redirects (`slowSpansToTraces` in `app.routes.ts`, a `UrlTree`: a
+string redirect keeps the old query and drops its own) to `observability/traces?threshold=500&
+sort=duration`, keeping `source`, `service` and `since`. qits-observability still serves
+`listSlowSpans` for `qits observe slow-spans`; this app no longer calls it.
 `observability/traces` (`ObservabilityTracesPage`, qits-2342, the retired frontend's `traces`)
 reads `TELEMETRY_TRACES` (`listTelemetryTraces`), never before a source is chosen, with the old
 frontend's query names so its bookmarks forward, each sent only when it is not the door's default,
@@ -1362,7 +1355,10 @@ frontend's `traces/:traceId`, whose `?source=` it keeps) is one trace of one sou
 with no sidebar entry (the sidebar keeps Observability current). It reads `TELEMETRY_TRACE`
 (`getTelemetryTrace`) by the path's trace id and `source` alone, never `repositoryId` or
 `workspaceId`, and nothing at all without a source (a sourceless read answers an empty trace, which
-looks like an evicted one): it says so and offers the Slow spans page (`open-telemetry-slow-spans`).
+looks like an evicted one): it says so and offers the Traces page (`open-telemetry-traces`). Its
+Logs links (the header's and the Correlated logs heading's) open `observability/logs?traceId=…`,
+every source merged, so a trace across services shows all its lines (`open-telemetry-trace-logs`,
+qits-2535).
 An unknown or evicted trace is a 200 with no spans, never a 404: "No spans of this trace are
 buffered in this source", and only then a `TELEMETRY_STORE` (`getTelemetryStore`) read, whose
 `evictedSpans > 0` adds that it may have been evicted. The waterfall is

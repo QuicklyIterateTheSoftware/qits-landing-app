@@ -1,7 +1,6 @@
 import type {
   GetTelemetryStoreResponses,
   GetTelemetryTraceResponses,
-  ListSlowSpansResponses,
   ListTelemetryErrorsResponses,
   ListTelemetryMetricsResponses,
   ListTelemetrySourcesResponses,
@@ -33,14 +32,18 @@ export const LIST_TELEMETRY_SOURCES = [
 ] as const;
 
 /**
- * `searchTelemetryLogs`: each line's time, level, body and the resource attributes it shows
- * `service.version` from (read whole: a key with a dot in it is not a consumed path), and whether
- * the buffer held more than the answer.
+ * `searchTelemetryLogs`: each line's time, level, body, the service that wrote it and the resource
+ * attributes it shows `service.version` from (read whole: a key with a dot in it is not a consumed
+ * path), its trace id and the source it lives in (its trace's page is read at that source,
+ * qits-2535), and whether the buffer held more than the answer.
  */
 export const SEARCH_TELEMETRY_LOGS = [
   'logs[].epochNanos',
   'logs[].severityText',
   'logs[].body',
+  'logs[].serviceName',
+  'logs[].traceId',
+  'logs[].source',
   'logs[].resourceAttributes',
   'truncated',
 ] as const;
@@ -84,27 +87,6 @@ export const LIST_TELEMETRY_METRICS = [
   'metrics[].epochNanos',
   'metrics[].serviceName',
   'metrics[].attributes',
-] as const;
-
-/**
- * `listSlowSpans` (qits-2341): each span's trace and span id, name, kind, duration, status and
- * start; its attributes (read whole: `url.full` and `http.route`, keyed with dots); whether any of
- * its events is an exception; its resource attributes (read whole, for `service.version`); and how
- * many spans matched and whether the answer left some out.
- */
-export const LIST_SLOW_SPANS = [
-  'spans[].traceId',
-  'spans[].spanId',
-  'spans[].name',
-  'spans[].kind',
-  'spans[].durationMs',
-  'spans[].status',
-  'spans[].startEpochNanos',
-  'spans[].attributes',
-  'spans[].events[].exception',
-  'spans[].resourceAttributes',
-  'total',
-  'truncated',
 ] as const;
 
 /**
@@ -199,12 +181,6 @@ export type TelemetryMetrics = Consumed<
 
 /** One metric series at its latest point. */
 export type TelemetryMetricPoint = NonNullable<TelemetryMetrics['metrics']>[number];
-
-/** A source's slow spans, cut to what the slow spans page reads. */
-export type TelemetrySlowSpans = Consumed<ListSlowSpansResponses[200], typeof LIST_SLOW_SPANS>;
-
-/** One slow span. */
-export type TelemetrySlowSpan = NonNullable<TelemetrySlowSpans['spans']>[number];
 
 /** A source's traces, cut to what the traces page reads. */
 export type TelemetryTraces = Consumed<

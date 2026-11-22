@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { RedirectFunction, Router, Routes } from '@angular/router';
 import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
 
 /**
@@ -86,14 +87,16 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  *
  * The Observability section (qits-2313): `projects/<slug>/observability` is a parent with no
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
- * telemetry buffer's log lines of one source) by a relative `redirectTo`, which keeps the query, so
- * `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
+ * telemetry buffer's log lines, every source merged, qits-2534) by a relative `redirectTo`, which
+ * keeps the query, so `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
  * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
  * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series;
- * `slow-spans` (`ObservabilitySlowSpansPage`, qits-2341) its spans at or above a duration floor;
  * `traces` (`ObservabilityTracesPage`, qits-2342) its traces, grouped by path.
+ * `slow-spans` is no page any more (qits-2536): it redirects to `traces` with the floor the Slow
+ * spans page opened on (`threshold=500`) slowest first (`sort=duration`), keeping `source`,
+ * `service` and `since` (`slowSpansToTraces`).
  * `traces/<traceId>` (`ObservabilityTracePage`, qits-2343, `?source=`) one of its traces as a
- * waterfall, reached from a trace id on the Slow spans and Errors pages.
+ * waterfall, reached from a trace id on the Traces, Errors and Logs pages.
  *
  * The Deployments section (qits-2315): `projects/<slug>/deployments` is a parent with no
  * component, like Observability; `/deployments` opens `requests` (`DeploymentRequestsPage`, the
@@ -240,6 +243,23 @@ function redirects(from: string, to: string, pages: readonly string[]): Routes {
     redirectTo: join(to, page),
   }));
 }
+
+/**
+ * The old Slow spans page's address (qits-2536): the Traces page at the floor Slow spans opened on
+ * (500 ms), slowest first, keeping the old link's `source`, `service` and `since`. A tree, not a
+ * string: a string redirect keeps the old query whole and drops its own.
+ */
+export const slowSpansToTraces: RedirectFunction = ({ params, queryParams }) => {
+  const kept: Record<string, string> = { threshold: '500', sort: 'duration' };
+  for (const key of ['source', 'service', 'since']) {
+    const value: unknown = queryParams[key];
+    if (typeof value === 'string' && value) kept[key] = value;
+  }
+  return inject(Router).createUrlTree(
+    ['/projects', String(params['slug']), 'observability', 'traces'],
+    { queryParams: kept },
+  );
+};
 
 export const routes: Routes = [
   qitsAuthCallbackRoute,
@@ -658,13 +678,7 @@ export const routes: Routes = [
                 (m) => m.ObservabilityMetricsPage,
               ),
           },
-          {
-            path: 'slow-spans',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/observability/slow-spans/observability-slow-spans.page').then(
-                (m) => m.ObservabilitySlowSpansPage,
-              ),
-          },
+          { path: 'slow-spans', redirectTo: slowSpansToTraces },
           {
             path: 'traces',
             loadComponent: () =>

@@ -198,17 +198,31 @@ describe('ObservabilityTracePage (screenshots)', () => {
       .toMatchScreenshot('no-source', { kind: 'NO_DATA' });
   });
 
-  it('open-telemetry-slow-spans slowSpans: without a source, the Slow spans page', async () => {
+  it('open-telemetry-traces traces: without a source, the Traces page (qits-2536)', async () => {
     const { opened, view } = await render('');
     await opened.settled();
-    await view.getByRole('link', { name: 'Choose a source on the Slow spans page' }).click();
+    await view.getByRole('link', { name: 'Choose a source on the Traces page' }).click();
     await leftFor(opened);
     expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
-      'open-telemetry-slow-spans:slowSpans',
+      'open-telemetry-traces:traces',
     ]);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/observability/slow-spans`,
+      `/projects/${opened.project.slug}/observability/traces`,
     );
+  });
+
+  it('open-telemetry-trace-logs logs: the header’s Logs link, the Logs page at this trace (qits-2535)', async () => {
+    const { opened, view } = await loaded();
+    await view.getByRole('link', { name: 'This trace’s lines on the Logs page' }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-telemetry-trace-logs:logs',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/observability/logs?traceId=${TRACE_ID}`,
+    );
+    // The Logs page reads its sources and the trace's lines; this spec answers none of them.
+    for (const read of http.match(() => true)) read.flush(null, { status: 403, statusText: 'x' });
   });
 
   it('marks the page as loading, then says a refusal needs qits:admin', async () => {

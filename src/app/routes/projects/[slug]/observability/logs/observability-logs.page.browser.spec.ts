@@ -3,8 +3,10 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { page, userEvent } from 'vitest/browser';
+import { outcomeRecords } from '@qits/angular/testing/browser';
 import { goldenMaster } from '../../../../../../testing/browser/golden-master';
 import { openRoute, provideAppRoute } from '../../../../../../testing/browser/app-route';
+import { leftFor } from '../../../../../../testing/browser/contracts-bundles';
 import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
 
 /**
@@ -12,9 +14,11 @@ import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
  * recorded project's slug (qits-projects' "a project exists").
  *
  * `listTelemetrySources` and `searchTelemetryLogs` are answered from qits-observability's golden
- * masters: "telemetry from one platform service" (one SERVICE source, `_service/qits-example`, and
- * its two log lines, an INFO and a later ERROR), "telemetry records of every kind" (the same
- * source's lines of the last hour) and "an empty telemetry buffer" (no source). A
+ * masters: "telemetry from two platform services" (two SERVICE sources, `_service/qits-example`
+ * and `_service/qits-other`, and the merged tail: qits-example's INFO and ERROR in one trace and
+ * qits-other's WARN between them, in no trace), "telemetry from one platform service" (one source
+ * and its two lines, as an old `?source=` link reads them), "telemetry records of every kind" (the
+ * same source's lines of the last hour) and "an empty telemetry buffer" (no source, no line). A
  * refusal is a 403 with no body, as the service answers a credential without a telemetry role.
  */
 describe('ObservabilityLogsPage (screenshots)', () => {
@@ -31,11 +35,13 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
+  const TWO = 'telemetry from two platform services';
   const ONE_SERVICE = 'telemetry from one platform service';
   const EMPTY = 'an empty telemetry buffer';
   const EVERY_KIND = 'telemetry records of every kind';
   const SOURCES = '/observability/api/telemetry/sources';
   const LOGS = '/observability/api/telemetry/logs';
+  const OBS = 'qits-observability';
 
   /** The open logs reads. */
   const logsReads = (): TestRequest[] =>
@@ -56,36 +62,44 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     return { opened, view: page.elementLocator(opened.page) };
   }
 
-  /** The page with the recorded source chosen, its sources and logs answered. */
-  async function loaded() {
-    const source = (await goldenMaster(ONE_SERVICE, 'listTelemetrySources', 'qits-observability'))
-      .sources[0].key as string;
-    const rendered = await render(`?source=${encodeURIComponent(source)}`);
-    http
-      .expectOne(SOURCES)
-      .flush(await goldenMaster(ONE_SERVICE, 'listTelemetrySources', 'qits-observability'));
+  /** The page as it opens: every source merged, its sources and logs answered. */
+  async function loaded(query = '') {
+    const rendered = await render(query);
+    http.expectOne(SOURCES).flush(await goldenMaster(TWO, 'listTelemetrySources', OBS));
     const [logs] = logsReads();
-    expect(param(logs, 'source')).toBe(source);
-    logs?.flush(await goldenMaster(ONE_SERVICE, 'searchTelemetryLogs', 'qits-observability'));
+    expect(param(logs, 'source')).toBeNull();
+    logs?.flush(await goldenMaster(TWO, 'searchTelemetryLogs', OBS));
     await rendered.opened.settled();
-    return { ...rendered, source };
+    return rendered;
   }
 
-  it('shows a source’s log lines newest first, with its counts and reach', async () => {
+  it('shows every service’s log lines merged, newest first, each naming its service', async () => {
     const { opened, view } = await loaded();
-    const services = view.getByRole('list', { name: 'Services' });
-    await expect.element(services).toMatchTextContent('qits-example');
-    await expect.element(services).toMatchTextContent('2 log lines · 3 spans · 2 metric series');
-    await expect.element(services).toMatchTextContent('since 2026-01-01 00:00 UTC');
     const lines = view.getByRole('region', { name: 'Log lines' }).getByRole('listitem');
     await expect.element(lines.nth(0)).toMatchTextContent('invoice store unreachable');
+    await expect.element(lines.nth(0)).toMatchTextContent('qits-example');
     await expect.element(lines.nth(0)).toMatchTextContent('2026-01-01 00:00:00.700');
     await expect.element(lines.nth(0)).toMatchTextContent('2026.1231.120000');
-    await expect.element(lines.nth(1)).toMatchTextContent('listing invoices');
+    await expect.element(lines.nth(0)).toMatchTextContent('trace 6a1f0c2b');
+    await expect.element(lines.nth(1)).toMatchTextContent('cache miss rate high');
+    await expect.element(lines.nth(1)).toMatchTextContent('qits-other');
+    await expect.element(lines.nth(2)).toMatchTextContent('listing invoices');
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
     await shootShellMenus(opened, 'loaded');
+  });
+
+  it('narrows the stream to one service, in the URL, when a service is chosen', async () => {
+    const { opened, view } = await loaded();
+    await userEvent.selectOptions(view.getByRole('combobox', { name: /Service/ }), 'qits-other');
+    await opened.idle();
+    const [narrowed] = logsReads();
+    expect(param(narrowed, 'service')).toBe('qits-other');
+    expect(param(narrowed, 'source')).toBeNull();
+    narrowed?.flush(await goldenMaster(TWO, 'searchTelemetryLogs', OBS));
+    await opened.settled();
+    expect(TestBed.inject(Router).url).toContain('service=qits-other');
   });
 
   it('reads the logs again from WARN up when the level is WARN', async () => {
@@ -94,7 +108,7 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     await opened.idle();
     const [warn] = logsReads();
     expect(param(warn, 'minSeverity')).toBe('WARN');
-    warn?.flush(await goldenMaster(ONE_SERVICE, 'searchTelemetryLogs', 'qits-observability'));
+    warn?.flush(await goldenMaster(TWO, 'searchTelemetryLogs', OBS));
     await opened.settled();
     expect(TestBed.inject(Router).url).toContain('level=WARN');
   });
@@ -105,12 +119,60 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     await opened.idle();
     const [hour] = logsReads();
     expect(param(hour, 'sinceMinutes')).toBe('60');
-    hour?.flush(await goldenMaster(EVERY_KIND, 'searchTelemetryLogs', 'qits-observability'));
+    hour?.flush(await goldenMaster(EVERY_KIND, 'searchTelemetryLogs', OBS));
     await opened.settled();
     expect(TestBed.inject(Router).url).toContain('since=60');
     await expect
       .element(view.getByRole('region', { name: 'Log lines' }))
       .toMatchTextContent('invoice store unreachable');
+  });
+
+  it('reads one trace’s lines at ?traceId=, and Clear drops it (qits-2535)', async () => {
+    const traceId = '6a1f0c2b9d8e47f3a5b4c3d2e1f00a01';
+    const rendered = await render(`?traceId=${traceId}`);
+    http.expectOne(SOURCES).flush(await goldenMaster(TWO, 'listTelemetrySources', OBS));
+    const [traced] = logsReads();
+    expect(param(traced, 'traceId')).toBe(traceId);
+    traced?.flush(await goldenMaster(ONE_SERVICE, 'searchTelemetryLogs', OBS));
+    await rendered.opened.settled();
+    const filter = page.elementLocator(rendered.opened.page.querySelector('[data-trace-filter]')!);
+    await expect.element(filter).toMatchTextContent(traceId);
+    await expect
+      .element(page.elementLocator(rendered.opened.frame))
+      .toMatchScreenshot('trace-filter', { kind: 'DATA' });
+    await userEvent.click(filter.getByRole('button', { name: 'Clear' }));
+    await rendered.opened.idle();
+    const [all] = logsReads();
+    expect(param(all, 'traceId')).toBeNull();
+    all?.flush(await goldenMaster(TWO, 'searchTelemetryLogs', OBS));
+    await rendered.opened.settled();
+    expect(TestBed.inject(Router).url).not.toContain('traceId');
+  });
+
+  it('open-telemetry-trace trace: a line’s trace id opens the trace at its own source', async () => {
+    const { opened, view } = await loaded();
+    const lines = view.getByRole('region', { name: 'Log lines' }).getByRole('listitem');
+    await lines.nth(0).getByRole('link', { name: 'trace 6a1f0c2b' }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-telemetry-trace:trace',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=_service%2Fqits-example`,
+    );
+  });
+
+  it('still reads one source for an old ?source= link, shown as a filter', async () => {
+    const source = '_service/qits-example';
+    const rendered = await render(`?source=${encodeURIComponent(source)}`);
+    http.expectOne(SOURCES).flush(await goldenMaster(ONE_SERVICE, 'listTelemetrySources', OBS));
+    const [logs] = logsReads();
+    expect(param(logs, 'source')).toBe(source);
+    logs?.flush(await goldenMaster(ONE_SERVICE, 'searchTelemetryLogs', OBS));
+    await rendered.opened.settled();
+    await expect
+      .element(page.elementLocator(rendered.opened.page.querySelector('[data-source-filter]')!))
+      .toMatchTextContent(source);
   });
 
   it('opens the section’s address on the Logs page, keeping the query', async () => {
@@ -121,29 +183,24 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     expect(TestBed.inject(Router).url).toBe(
       `/projects/${opened.project.slug}/observability/logs?source=${encodeURIComponent(source)}`,
     );
-    http
-      .expectOne(SOURCES)
-      .flush(await goldenMaster(ONE_SERVICE, 'listTelemetrySources', 'qits-observability'));
-    logsReads()[0]?.flush(
-      await goldenMaster(ONE_SERVICE, 'searchTelemetryLogs', 'qits-observability'),
-    );
+    http.expectOne(SOURCES).flush(await goldenMaster(ONE_SERVICE, 'listTelemetrySources', OBS));
+    logsReads()[0]?.flush(await goldenMaster(ONE_SERVICE, 'searchTelemetryLogs', OBS));
     await opened.settled();
   });
 
-  it('says nothing is buffered when the buffer is empty', async () => {
+  it('says no line matches when the buffer is empty', async () => {
     const { opened, view } = await render();
-    http
-      .expectOne(SOURCES)
-      .flush(await goldenMaster(EMPTY, 'listTelemetrySources', 'qits-observability'));
+    http.expectOne(SOURCES).flush(await goldenMaster(EMPTY, 'listTelemetrySources', OBS));
+    logsReads()[0]?.flush(await goldenMaster(EMPTY, 'searchTelemetryLogs', OBS));
     await opened.settled();
-    await expect.element(view).toMatchTextContent('Nothing is buffered');
+    await expect.element(view).toMatchTextContent('No log lines match.');
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('empty', { kind: 'NO_DATA' });
   });
 
   it('marks the page as loading, then says a refusal needs qits:admin', async () => {
-    const { opened, view } = await render('?source=_service%2Fqits-example');
+    const { opened, view } = await render();
     await expect.element(view.getByRole('img', { name: 'Loading' }).first()).toBeVisible();
     await expect
       .element(page.elementLocator(opened.frame))
