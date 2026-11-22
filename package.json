@@ -65,7 +65,7 @@
     "@qits/mirror-golden-masters": "2026.1121.190031",
     "@qits/observability-golden-masters": "2026.1120.180009",
     "@qits/orchestrator-golden-masters": "2026.1121.21839",
-    "@qits/projects-golden-masters": "2026.1116.190952",
+    "@qits/projects-golden-masters": "2026.1122.94922",
     "@qits/system-golden-masters": "2026.1122.1345",
     "@qits/workspace-daemon-golden-masters": "2026.1111.190934",
     "@qits/workspaces-golden-masters": "2026.1117.154126",

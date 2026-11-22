@@ -7365,7 +7365,7 @@
             "app": "qits-landing-app",
             "interaction": "open-desk-agent",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
