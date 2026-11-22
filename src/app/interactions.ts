@@ -144,10 +144,11 @@ export const INTERACTIONS = {
   'show-telemetry-sources':
     'The Observability section lists the platform services the telemetry buffer holds records of',
   /**
-   * `observability-logs.page.ts` via `TELEMETRY_LOGS` (qits-2313): the Logs page shows the chosen
-   * source's buffered log lines, narrowed by level, body text and age, newest first.
+   * `observability-logs.page.ts` via `TELEMETRY_LOGS` (qits-2313, qits-2534): the Logs page shows
+   * the buffered log lines, every source merged unless an old link names one, narrowed by service,
+   * level, body text, age and trace, newest first.
    */
-  'show-telemetry-logs': 'The Logs page shows a source’s buffered log lines, newest first',
+  'show-telemetry-logs': 'The Logs page shows the buffered log lines, newest first',
   /**
    * `observability-errors.page.ts` via `TELEMETRY_ERRORS` (qits-2339): the Errors page shows the
    * chosen source's buffered error spans and logs, grouped by trace, narrowed by age.
@@ -167,12 +168,6 @@ export const INTERACTIONS = {
   'show-telemetry-metrics':
     'The Metrics page shows the latest value of each of a source’s buffered metric series',
   /**
-   * `observability-slow-spans.page.ts` via `TELEMETRY_SLOW_SPANS` (qits-2341): the Slow spans page
-   * shows the chosen source's buffered spans at or above a duration floor, slowest or newest first.
-   */
-  'show-telemetry-slow-spans':
-    'The Slow spans page shows a source’s buffered spans at or above a duration floor',
-  /**
    * `observability-traces.page.ts` via `TELEMETRY_TRACES` (qits-2342): the Traces page shows the
    * chosen source's buffered traces, grouped by path or one row each, newest or slowest first.
    */
@@ -185,17 +180,23 @@ export const INTERACTIONS = {
   'show-telemetry-trace':
     'The trace page shows a trace’s buffered spans as a waterfall, with its correlated logs',
   /**
-   * `observability-slow-spans.page.ts` (a span's trace id), `observability-errors.page.ts` (a
-   * correlated group's trace id) and `observability-traces.page.ts` (a trace row's id) (qits-2343):
-   * a trace id opens the trace page at the same source. Navigates only, and names no pact.
+   * `observability-errors.page.ts` (a correlated group's trace id), `observability-traces.page.ts`
+   * (a trace row's id) (qits-2343) and `observability-logs.page.ts` (a line's trace id, at the
+   * line's own source, qits-2535): a trace id opens the trace page. Navigates only, and names no
+   * pact.
    */
   'open-telemetry-trace': 'A trace id on an Observability page opens that trace’s page',
   /**
-   * `observability-trace.page.ts` (qits-2343): the trace page opened without a source reads
-   * nothing and points to the Slow spans page, where a source is chosen. Navigates only, and names
-   * no pact.
+   * `observability-trace.page.ts` (qits-2343, qits-2536): the trace page opened without a source
+   * reads nothing and points to the Traces page, where a source is chosen. Navigates only, and
+   * names no pact.
    */
-  'open-telemetry-slow-spans': 'The trace page without a source opens the Slow spans page',
+  'open-telemetry-traces': 'The trace page without a source opens the Traces page',
+  /**
+   * `observability-trace.page.ts` (qits-2535): the trace page's Logs links open the Logs page
+   * narrowed to the trace id, every source merged. Navigates only, and names no pact.
+   */
+  'open-telemetry-trace-logs': 'A trace’s Logs link opens the Logs page at that trace’s lines',
   /**
    * `deployment-requests.page.ts` via `PROJECT_DEPLOYMENT_REQUESTS` (qits-2315): the Deployments
    * section's Requests page lists the open project's deployment requests, pending and completed.

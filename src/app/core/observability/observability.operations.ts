@@ -2,7 +2,6 @@ import { qitsOperation } from '@qits/angular';
 import {
   getTelemetryStore,
   getTelemetryTrace,
-  listSlowSpans,
   listTelemetryErrors,
   listTelemetryMetrics,
   listTelemetrySources,
@@ -12,7 +11,6 @@ import {
 import {
   GET_TELEMETRY_STORE,
   GET_TELEMETRY_TRACE,
-  LIST_SLOW_SPANS,
   LIST_TELEMETRY_ERRORS,
   LIST_TELEMETRY_METRICS,
   LIST_TELEMETRY_SOURCES,
@@ -22,7 +20,7 @@ import {
 
 /**
  * qits-observability's telemetry buffer reads declared as operations (qits-2313; the errors,
- * qits-2339; the metrics, qits-2340; the slow spans, qits-2341; the traces, qits-2342; a trace and the store, qits-2343), for the Observability section's pages, which read them through `qitsResource`;
+ * qits-2339; the metrics, qits-2340; the traces, qits-2342; a trace and the store, qits-2343), for the Observability section's pages, which read them through `qitsResource`;
  * `observability.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`. Every door answers `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
  * `qits:agent` only; anyone else gets a 403.
@@ -37,7 +35,10 @@ export const TELEMETRY_SOURCES = qitsOperation({
   consumes: LIST_TELEMETRY_SOURCES,
 });
 
-/** A source's buffered log lines, oldest first, narrowed by level, body text and age. */
+/**
+ * The buffered log lines, oldest first: every source merged when none is named (qits-2534),
+ * narrowed by service, level, body text, age and trace.
+ */
 export const TELEMETRY_LOGS = qitsOperation({
   provider: 'qits-observability-service',
   operationId: 'searchTelemetryLogs',
@@ -68,19 +69,6 @@ export const TELEMETRY_METRICS = qitsOperation({
   method: 'GET',
   call: listTelemetryMetrics,
   consumes: LIST_TELEMETRY_METRICS,
-});
-
-/**
- * A source's spans at or above a duration floor (`thresholdMs`, default 500), slowest first or
- * (`sort=recent`) newest first, narrowed by age (qits-2341); a truncated answer keeps the slowest
- * (or newest) and says how many matched.
- */
-export const TELEMETRY_SLOW_SPANS = qitsOperation({
-  provider: 'qits-observability-service',
-  operationId: 'listSlowSpans',
-  method: 'GET',
-  call: listSlowSpans,
-  consumes: LIST_SLOW_SPANS,
 });
 
 /**

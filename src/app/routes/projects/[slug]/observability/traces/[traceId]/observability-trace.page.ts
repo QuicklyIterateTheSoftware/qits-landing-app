@@ -56,14 +56,15 @@ function eventAttribute(event: SpanEvent, key: string): string {
  * `/projects/<slug>/observability/traces/<traceId>?source=<key>` (qits-2343, the retired
  * qits-observability-frontend's `traces/:traceId`): one trace of one source of qits-observability's
  * telemetry buffer, whole. A detail page with no sidebar entry (the sidebar keeps Observability
- * current); a trace id on the Slow spans page and on the Errors page leads here
- * (`open-telemetry-trace`).
+ * current); a trace id on the Traces, Errors and Logs pages leads here (`open-telemetry-trace`).
+ * Its Logs links open the Logs page narrowed to this trace id, every source merged
+ * (`open-telemetry-trace-logs`, qits-2535).
  *
  * One read, `TELEMETRY_TRACE` (`getTelemetryTrace`), by the path's trace id and `?source=` alone
  * (never `repositoryId` or `workspaceId`), in the browser only (the server has no session), through
  * `qitsResource`. Without a source there is no read at all: a sourceless read answers an empty
- * trace, which would look exactly like an evicted one; the page says so and points to the Slow
- * spans page (`open-telemetry-slow-spans`), where a source is chosen. An unknown or evicted trace
+ * trace, which would look exactly like an evicted one; the page says so and points to the Traces
+ * page (`open-telemetry-traces`, qits-2536), where a source is chosen. An unknown or evicted trace
  * is a 200 with no spans, never a 404: the page says no span of it is buffered in this source, and
  * reads `TELEMETRY_STORE` (`getTelemetryStore`) then, and only then, to add that it may have been
  * evicted when the buffer has evicted spans (`evictedSpans > 0`).
@@ -110,6 +111,17 @@ function eventAttribute(event: SpanEvent, key: string): string {
           <dd class="m-0 font-mono break-all text-fg" data-trace-id>{{ traceId() }}</dd>
           <dt class="text-fg-muted">Source</dt>
           <dd class="m-0 font-mono break-all text-fg" data-source>{{ source() || '—' }}</dd>
+          <dt class="text-fg-muted">Logs</dt>
+          <dd class="m-0">
+            <a
+              class="text-accent no-underline hover:underline"
+              [qitsExit]="logging.logs"
+              [exitParams]="{ slug: slug() }"
+              [exitQueryParams]="{ traceId: traceId() }"
+              data-trace-logs
+              >This trace’s lines on the Logs page</a
+            >
+          </dd>
           <dt class="text-fg-muted" [class.hidden]="rows().length === 0">Spans</dt>
           <dd
             class="m-0 text-fg"
@@ -140,9 +152,9 @@ function eventAttribute(event: SpanEvent, key: string): string {
           </p>
           <a
             class="mt-2 inline-block text-accent no-underline hover:underline"
-            [qitsExit]="opening.slowSpans"
+            [qitsExit]="opening.traces"
             [exitParams]="{ slug: slug() }"
-            >Choose a source on the Slow spans page</a
+            >Choose a source on the Traces page</a
           >
         </div>
 
@@ -471,7 +483,16 @@ function eventAttribute(event: SpanEvent, key: string): string {
               }
 
               <section class="mt-6" aria-label="Correlated logs">
-                <h2 class="mt-0 mb-2 text-base font-semibold">Correlated logs</h2>
+                <h2 class="mt-0 mb-2 flex flex-wrap items-baseline gap-x-3 text-base font-semibold">
+                  Correlated logs
+                  <a
+                    class="text-sm font-normal text-accent no-underline hover:underline"
+                    [qitsExit]="logging.logs"
+                    [exitParams]="{ slug: slug() }"
+                    [exitQueryParams]="{ traceId: traceId() }"
+                    >Every service’s lines on the Logs page</a
+                  >
+                </h2>
                 <p class="m-0 text-sm text-fg-muted" [class.hidden]="logs().length > 0">
                   No log line names this trace.
                 </p>
@@ -625,9 +646,17 @@ export class ObservabilityTracePage {
   /** Whether the trace read was refused for the viewer's roles. */
   protected readonly refusal = computed(() => refused(this.trace) || refused(this.store));
 
-  /** Without a source: the Slow spans page, where a source is chosen (a declared exit). */
-  protected readonly opening = outcomes('open-telemetry-slow-spans', {
-    slowSpans: exit('projects/:slug/observability/slow-spans'),
+  /** Without a source: the Traces page, where a source is chosen (a declared exit, qits-2536). */
+  protected readonly opening = outcomes('open-telemetry-traces', {
+    traces: exit('projects/:slug/observability/traces'),
+  });
+
+  /**
+   * The trace's log lines on the Logs page (qits-2535): every source merged, narrowed to this trace
+   * id, so a trace that crossed services shows all its lines.
+   */
+  protected readonly logging = outcomes('open-telemetry-trace-logs', {
+    logs: exit('projects/:slug/observability/logs'),
   });
 
   /** Refresh: reads the trace again (and the store, when it was read); the selection stays. */

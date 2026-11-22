@@ -66,7 +66,8 @@ describe('ObservabilityTracePage', () => {
             path: 'projects/:slug/observability/traces/:traceId',
             component: ObservabilityTracePage,
           },
-          { path: 'projects/:slug/observability/slow-spans', component: Stub },
+          { path: 'projects/:slug/observability/traces', component: Stub },
+          { path: 'projects/:slug/observability/logs', component: Stub },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -148,14 +149,21 @@ describe('ObservabilityTracePage', () => {
     expect(reads(STORE)).toHaveLength(0);
   });
 
-  it('reads nothing without a source, and points to the Slow spans page', async () => {
+  it('reads nothing without a source, and points to the Traces page', async () => {
     const harness = await open('');
     expect(reads(TRACE)).toHaveLength(0);
     const element = harness.routeNativeElement as HTMLElement;
     const none = element.querySelector('[data-no-source]');
     expect(visible(none)).toBe(true);
     expect(none?.querySelector('a')?.getAttribute('href')).toBe(
-      `/projects/${project.slug}/observability/slow-spans`,
+      `/projects/${project.slug}/observability/traces`,
+    );
+  });
+
+  it('links the trace’s lines on the Logs page by its id, every source merged', async () => {
+    const { element } = await shown();
+    expect(element.querySelector('[data-trace-logs]')?.getAttribute('href')).toBe(
+      `/projects/${project.slug}/observability/logs?traceId=${TRACE_ID}`,
     );
   });
 
