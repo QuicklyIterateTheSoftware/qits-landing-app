@@ -60,7 +60,7 @@
     "@qits/edge-golden-masters": "2026.1115.212737",
     "@qits/events-golden-masters": "2026.1120.65904",
     "@qits/githost-golden-masters": "2026.1109.41303",
-    "@qits/idp-golden-masters": "2026.1109.13349",
+    "@qits/idp-golden-masters": "2026.1122.143700",
     "@qits/maintenance-golden-masters": "2026.1121.195220",
     "@qits/mirror-golden-masters": "2026.1121.190031",
     "@qits/observability-golden-masters": "2026.1122.141039",
