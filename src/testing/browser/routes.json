@@ -519,324 +519,592 @@
       "route": "orchestrator/processes/:kind"
     }
   ],
-  "src/app/routes/projects/[slug]/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
+  "src/app/routes/projects/[slug]/components/[repo]/artifacts/repository-artifacts.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog naming contract repositories",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/artifacts"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/components/:repo/artifacts"
+    },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/agents/:agentId/chat"
+      "route": "projects/:slug/components/:repo/artifacts"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a ticket that needs another",
-      "operationId": "listProjectWork",
-      "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-workspace-daemon",
-      "state": "a workspace daemon with an agent that has taken turns",
-      "operationId": "getCommandLog",
-      "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "a workspace slot hosting agents",
-      "operationId": "getAgentActiveProcess",
-      "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent whose workspace is starting",
-      "operationId": "listAgents",
-      "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent with a saved prompt draft",
-      "operationId": "getAgent",
-      "route": "projects/:slug/agents/:agentId/chat"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent with a saved prompt draft",
-      "operationId": "getAgentPromptDraft",
-      "route": "projects/:slug/agents/:agentId/chat"
+      "route": "projects/:slug/components/:repo/artifacts"
     }
   ],
-  "src/app/routes/projects/[slug]/agents/[agentId]/files/agent-files.page.browser.spec.ts": [
+  "src/app/routes/projects/[slug]/components/[repo]/contracts/[state]/contract-state.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle a dependency points into",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/contracts/:state"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/contracts/:state"
+    },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/agents/:agentId/files"
+      "route": "projects/:slug/components/:repo/contracts/:state"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a ticket that needs another",
-      "operationId": "listProjectWork",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspace-daemon",
-      "state": "a workspace daemon with an agent whose worktree has an ignored directory",
-      "operationId": "listFiles",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspace-daemon",
-      "state": "a workspace daemon with an agent whose worktree holds files",
-      "operationId": "detect",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspace-daemon",
-      "state": "a workspace daemon with an agent whose worktree holds files",
-      "operationId": "listFiles",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspace-daemon",
-      "state": "a workspace daemon with an agent whose worktree holds files",
-      "operationId": "readFile",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "a workspace slot hosting agents",
-      "operationId": "getAgentActiveProcess",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent whose workspace is starting",
-      "operationId": "listAgents",
-      "route": "projects/:slug/agents/:agentId/files"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent with a saved prompt draft",
-      "operationId": "getAgent",
-      "route": "projects/:slug/agents/:agentId/files"
+      "route": "projects/:slug/components/:repo/contracts/:state"
     }
   ],
-  "src/app/routes/projects/[slug]/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts": [
+  "src/app/routes/projects/[slug]/components/[repo]/contracts/contracts.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/contracts"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published docs site",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/contracts"
+    },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/agents/:agentId/terminal"
+      "route": "projects/:slug/components/:repo/contracts"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/agents/:agentId/terminal"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a ticket that needs another",
-      "operationId": "listProjectWork",
-      "route": "projects/:slug/agents/:agentId/terminal"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "a workspace slot hosting agents",
-      "operationId": "getAgentActiveProcess",
-      "route": "projects/:slug/agents/:agentId/terminal"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent whose workspace is starting",
-      "operationId": "listAgents",
-      "route": "projects/:slug/agents/:agentId/terminal"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "an agent with a saved prompt draft",
-      "operationId": "getAgent",
-      "route": "projects/:slug/agents/:agentId/terminal"
+      "route": "projects/:slug/components/:repo/contracts"
     }
   ],
-  "src/app/routes/projects/[slug]/agents/project-agents.page.browser.spec.ts": [
+  "src/app/routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog naming contract repositories",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog of every kind",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published apidocs bundle",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published apidocs bundle",
+      "operationId": "getDocsVersion",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published apidocs bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "getDocsVersion",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published markdown docs bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/docs/:site/-/:version"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a repository with published changelogs",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a repository with published changelogs",
+      "operationId": "getDocsVersion",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a repository with published changelogs",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/agents"
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/docs/:site/-/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/components/:repo/docs/:site"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/agents"
+      "route": "projects/:slug/components/:repo/docs/:site"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/docs/:site/-/:version"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/components/:repo/docs/:site"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/docs/repository-docs.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog of every kind",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/docs"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "two projects exist",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/components/:repo/docs"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/entities/[entity]/entity.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a golden-master index",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with a projection entity",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/entities/:entity"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/entities/entities.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/entities"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/entities"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/entities"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published docs site",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/entities"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/entities"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/entities"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/release-requests/[requestId]/repository-release-request.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "getProjectReleaseRequest",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "moveReleaseRequestSource",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a repository with a tagged release whose request went obsolete mid-publish",
+      "operationId": "getProjectReleaseRequest",
+      "route": "projects/:slug/components/:repo/release-requests/:requestId"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/release-requests/repository-release-requests.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "listRepositoryReleaseRequests",
+      "route": "projects/:slug/components/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/components/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/release-requests"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a repository with a release not merged to main",
+      "operationId": "listRepositoryReleaseRequests",
+      "route": "projects/:slug/components/:repo/release-requests"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/repository.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a docs catalog naming contract repositories",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/components/:repo"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "released artifacts, some behind",
+      "operationId": "listArtifacts",
+      "route": "projects/:slug/components/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/components/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo"
+    }
+  ],
+  "src/app/routes/projects/[slug]/components/[repo]/ui-builder/ui-builder.page.browser.spec.ts": [
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published contracts bundle with an entity map",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published docs site",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle freeze",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle with kinds and viewports",
+      "operationId": "getDocsFile",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle with kinds and viewports",
+      "operationId": "listDocsSites",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-artifacts-service",
+      "state": "a published routes bundle with kinds and viewports",
+      "operationId": "listDocsVersions",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project whose named agent is running",
+      "operationId": "listAgents",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with a pitch",
+      "operationId": "listPitches",
+      "route": "projects/:slug/components/:repo/ui-builder"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/components/:repo/ui-builder"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with repositories in components",
       "operationId": "listProjectRepositories",
-      "route": "projects/:slug/agents"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a ticket that needs another",
-      "operationId": "listProjectWork",
-      "route": "projects/:slug/agents"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "a project with agents needing attention",
-      "operationId": "listAgents",
-      "route": "projects/:slug/agents"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "a project with workspace slots hosting agents",
-      "operationId": "listAgents",
-      "route": "projects/:slug/agents"
-    },
-    {
-      "provider": "qits-workspaces-service",
-      "state": "a project with workspace slots hosting agents",
-      "operationId": "listWorkspaces",
-      "route": "projects/:slug/agents"
+      "route": "projects/:slug/components/:repo/ui-builder"
     }
   ],
-  "src/app/routes/projects/[slug]/ci/[repo]/ci-repository-runs.page.browser.spec.ts": [
-    {
-      "provider": "qits-ci-service",
-      "state": "a repository of the project with a run history",
-      "operationId": "listRuns",
-      "route": "projects/:slug/ci/:repo"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "a repository of the project with no runs",
-      "operationId": "listRuns",
-      "route": "projects/:slug/ci/:repo"
-    },
+  "src/app/routes/projects/[slug]/components/project-repositories.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/ci/:repo"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/ci/:repo"
+      "route": "projects/:slug/components"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/ci/:repo"
-    }
-  ],
-  "src/app/routes/projects/[slug]/ci/ci-runs.page.browser.spec.ts": [
-    {
-      "provider": "qits-ci-service",
-      "state": "a project whose repositories have runs",
-      "operationId": "listActiveRuns",
-      "route": "projects/:slug/ci"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "a project whose repositories have runs",
-      "operationId": "listRepositorySummaries",
-      "route": "projects/:slug/ci"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "runs only of repositories outside the project",
-      "operationId": "listActiveRuns",
-      "route": "projects/:slug/ci"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "runs only of repositories outside the project",
-      "operationId": "listRepositorySummaries",
-      "route": "projects/:slug/ci"
+      "route": "projects/:slug/components"
     },
     {
       "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/ci"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
+      "state": "a project with repositories in components",
       "operationId": "listProjectRepositories",
-      "route": "projects/:slug/ci"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/ci"
-    }
-  ],
-  "src/app/routes/projects/[slug]/ci/runs/[runId]/ci-run.page.browser.spec.ts": [
-    {
-      "provider": "qits-ci-service",
-      "state": "a finished run of the project",
-      "operationId": "getRun",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "a finished run of the project",
-      "operationId": "listRunReports",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "a finished run of the project",
-      "operationId": "retryRun",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "a queued run of the project",
-      "operationId": "getRun",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-ci-service",
-      "state": "a running run of the project",
-      "operationId": "getRun",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/ci/runs/:runId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/ci/runs/:runId"
+      "route": "projects/:slug/components"
     }
   ],
   "src/app/routes/projects/[slug]/deployments/requests/[requestId]/deployment-request.page.browser.spec.ts": [
@@ -1707,782 +1975,514 @@
       "route": "projects/:slug"
     }
   ],
-  "src/app/routes/projects/[slug]/release-requests/[requestId]/release-request.page.browser.spec.ts": [
-    {
-      "provider": "qits-ci-service",
-      "state": "a repository with the runs of a release request",
-      "operationId": "listRuns",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a conflicted release request",
-      "operationId": "getReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a conflicted release request",
-      "operationId": "listReleaseRequestCommits",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "getProjectReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "getReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "moveReleaseRequestSource",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
+  "src/app/routes/projects/[slug]/releases/agents/[agentId]/chat/agent-chat.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/agents/:agentId/chat"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent that has taken turns",
+      "operationId": "getCommandLog",
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getAgentActiveProcess",
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent whose workspace is starting",
+      "operationId": "listAgents",
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgent",
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgentPromptDraft",
+      "route": "projects/:slug/releases/agents/:agentId/chat"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/agents/[agentId]/files/agent-files.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree has an ignored directory",
+      "operationId": "listFiles",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree holds files",
+      "operationId": "detect",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree holds files",
+      "operationId": "listFiles",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspace-daemon",
+      "state": "a workspace daemon with an agent whose worktree holds files",
+      "operationId": "readFile",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getAgentActiveProcess",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent whose workspace is starting",
+      "operationId": "listAgents",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgent",
+      "route": "projects/:slug/releases/agents/:agentId/files"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/agents/[agentId]/terminal/agent-terminal.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/releases/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a workspace slot hosting agents",
+      "operationId": "getAgentActiveProcess",
+      "route": "projects/:slug/releases/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent whose workspace is starting",
+      "operationId": "listAgents",
+      "route": "projects/:slug/releases/agents/:agentId/terminal"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "an agent with a saved prompt draft",
+      "operationId": "getAgent",
+      "route": "projects/:slug/releases/agents/:agentId/terminal"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/agents/project-agents.page.browser.spec.ts": [
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/agents"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/agents"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with repositories in components",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/releases/agents"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket that needs another",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/releases/agents"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with agents needing attention",
+      "operationId": "listAgents",
+      "route": "projects/:slug/releases/agents"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with workspace slots hosting agents",
+      "operationId": "listAgents",
+      "route": "projects/:slug/releases/agents"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a project with workspace slots hosting agents",
+      "operationId": "listWorkspaces",
+      "route": "projects/:slug/releases/agents"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/ci/[repo]/ci-repository-runs.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a repository of the project with a run history",
+      "operationId": "listRuns",
+      "route": "projects/:slug/releases/ci/:repo"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a repository of the project with no runs",
+      "operationId": "listRuns",
+      "route": "projects/:slug/releases/ci/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/ci/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/releases/ci/:repo"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/ci/:repo"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/ci/ci-runs.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a project whose repositories have runs",
+      "operationId": "listActiveRuns",
+      "route": "projects/:slug/releases/ci"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a project whose repositories have runs",
+      "operationId": "listRepositorySummaries",
+      "route": "projects/:slug/releases/ci"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "runs only of repositories outside the project",
+      "operationId": "listActiveRuns",
+      "route": "projects/:slug/releases/ci"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "runs only of repositories outside the project",
+      "operationId": "listRepositorySummaries",
+      "route": "projects/:slug/releases/ci"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/ci"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/releases/ci"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/ci"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/ci/runs/[runId]/ci-run.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a finished run of the project",
+      "operationId": "getRun",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a finished run of the project",
+      "operationId": "listRunReports",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a finished run of the project",
+      "operationId": "retryRun",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a queued run of the project",
+      "operationId": "getRun",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-ci-service",
+      "state": "a running run of the project",
+      "operationId": "getRun",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/ci/runs/:runId"
+    }
+  ],
+  "src/app/routes/projects/[slug]/releases/requests/[requestId]/release-request.page.browser.spec.ts": [
+    {
+      "provider": "qits-ci-service",
+      "state": "a repository with the runs of a release request",
+      "operationId": "listRuns",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a conflicted release request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a conflicted release request",
+      "operationId": "listReleaseRequestCommits",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "getProjectReleaseRequest",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "getReleaseRequest",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a frozen release request with a queued next request",
+      "operationId": "moveReleaseRequestSource",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project exists",
+      "operationId": "listProjects",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with 3 repositories",
+      "operationId": "listProjectRepositories",
+      "route": "projects/:slug/releases/requests/:requestId"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no release requests",
+      "operationId": "listProjectReleaseRequests",
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with release requests in every state",
       "operationId": "getProjectReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a refolded release request",
       "operationId": "getReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a refolded release request",
       "operationId": "listCommitBuilds",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a refolded release request",
       "operationId": "listReleaseRequestCommits",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request awaiting approval",
       "operationId": "getReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request awaiting approval",
       "operationId": "getReleaseRequestApprovalEligibility",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request awaiting approval",
       "operationId": "listCommitBuilds",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request awaiting approval",
       "operationId": "listReleaseRequestCommits",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request rejected by its build",
       "operationId": "getReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request rejected by its build",
       "operationId": "listCommitBuilds",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a release request rejected by its build",
       "operationId": "listReleaseRequestCommits",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a released release request",
       "operationId": "getReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a released release request",
       "operationId": "getReleaseRequestArtifacts",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a released release request",
       "operationId": "listCommitBuilds",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a released release request",
       "operationId": "listReleaseRequestCommits",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     },
     {
       "provider": "qits-projects-service",
       "state": "a repository with a tagged release whose request went obsolete mid-publish",
       "operationId": "getProjectReleaseRequest",
-      "route": "projects/:slug/release-requests/:requestId"
+      "route": "projects/:slug/releases/requests/:requestId"
     }
   ],
-  "src/app/routes/projects/[slug]/release-requests/release-requests.page.browser.spec.ts": [
+  "src/app/routes/projects/[slug]/releases/requests/release-requests.page.browser.spec.ts": [
     {
       "provider": "qits-projects-service",
       "state": "a frozen release request with a queued next request",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/release-requests"
+      "route": "projects/:slug/releases/requests"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
-      "route": "projects/:slug/release-requests"
+      "route": "projects/:slug/releases/requests"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/release-requests"
+      "route": "projects/:slug/releases/requests"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with pending release requests",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/release-requests"
+      "route": "projects/:slug/releases/requests"
     },
     {
       "provider": "qits-projects-service",
       "state": "a project with release requests in every state",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/release-requests"
+      "route": "projects/:slug/releases/requests"
     },
     {
       "provider": "qits-projects-service",
       "state": "a repository with a tagged release whose request went obsolete mid-publish",
       "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/release-requests"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/artifacts/repository-artifacts.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a docs catalog naming contract repositories",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/artifacts"
-    },
-    {
-      "provider": "qits-maintenance-service",
-      "state": "released artifacts, some behind",
-      "operationId": "listArtifacts",
-      "route": "projects/:slug/repositories/:repo/artifacts"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/artifacts"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/artifacts"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/contracts/[state]/contract-state.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle a dependency points into",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/contracts/:state"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/contracts/contracts.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published docs site",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/contracts"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/docs/[site]/docs-reader.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a docs catalog naming contract repositories",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a docs catalog of every kind",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published apidocs bundle",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published apidocs bundle",
-      "operationId": "getDocsVersion",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published apidocs bundle",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published markdown docs bundle",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published markdown docs bundle",
-      "operationId": "getDocsVersion",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published markdown docs bundle",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published markdown docs bundle",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/docs/:site/-/:version"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a repository with published changelogs",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a repository with published changelogs",
-      "operationId": "getDocsVersion",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a repository with published changelogs",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/docs/:site/-/:version"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/docs/:site/-/:version"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "two projects exist",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo/docs/:site"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/docs/repository-docs.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a docs catalog of every kind",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/docs"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/docs"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/docs"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "two projects exist",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo/docs"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/entities/[entity]/entity.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a golden-master index",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with a projection entity",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/entities/:entity"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/entities/entities.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/entities"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/entities"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/entities"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published docs site",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/entities"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/entities"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/entities"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/release-requests/[requestId]/repository-release-request.page.browser.spec.ts": [
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "getProjectReleaseRequest",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "getReleaseRequest",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "moveReleaseRequestSource",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a repository with a tagged release whose request went obsolete mid-publish",
-      "operationId": "getProjectReleaseRequest",
-      "route": "projects/:slug/repositories/:repo/release-requests/:requestId"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/release-requests/repository-release-requests.page.browser.spec.ts": [
-    {
-      "provider": "qits-projects-service",
-      "state": "a frozen release request with a queued next request",
-      "operationId": "listRepositoryReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/release-requests"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/release-requests"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo/release-requests"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/release-requests"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a repository with a release not merged to main",
-      "operationId": "listRepositoryReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/release-requests"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/repository.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a docs catalog naming contract repositories",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo"
-    },
-    {
-      "provider": "qits-maintenance-service",
-      "state": "no released artifacts",
-      "operationId": "listArtifacts",
-      "route": "projects/:slug/repositories/:repo"
-    },
-    {
-      "provider": "qits-maintenance-service",
-      "state": "released artifacts, some behind",
-      "operationId": "listArtifacts",
-      "route": "projects/:slug/repositories/:repo"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with 3 repositories",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/[repo]/ui-builder/ui-builder.page.browser.spec.ts": [
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published contracts bundle with an entity map",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published docs site",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle freeze",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle with kinds and viewports",
-      "operationId": "getDocsFile",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle with kinds and viewports",
-      "operationId": "listDocsSites",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-artifacts-service",
-      "state": "a published routes bundle with kinds and viewports",
-      "operationId": "listDocsVersions",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project whose named agent is running",
-      "operationId": "listAgents",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with a pitch",
-      "operationId": "listPitches",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with repositories in components",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories/:repo/ui-builder"
-    }
-  ],
-  "src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts": [
-    {
-      "provider": "qits-projects-service",
-      "state": "a project exists",
-      "operationId": "listProjects",
-      "route": "projects/:slug/repositories"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with no release requests",
-      "operationId": "listProjectReleaseRequests",
-      "route": "projects/:slug/repositories"
-    },
-    {
-      "provider": "qits-projects-service",
-      "state": "a project with repositories in components",
-      "operationId": "listProjectRepositories",
-      "route": "projects/:slug/repositories"
+      "route": "projects/:slug/releases/requests"
     }
   ],
   "src/app/routes/projects/[slug]/setup/project-setup.page.browser.spec.ts": [
