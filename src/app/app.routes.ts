@@ -135,27 +135,15 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Network access pane (epic qits-1977) is no route of this app any more (qits-2361): it is
  * qits-network-access' own frontend at `https://network-access.<domain>/`, which the shell links to.
  *
- * The Artifacts section (qits-2316) is at `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`):
- * one of qits-artifacts' store repositories (`qits`, `npm`, `maven`, …), reached from the root
- * sidebar with no project open, as nothing in the store joins to a project. `artifacts` and
- * `artifacts/repositories` redirect to `artifacts/repositories/qits`, the image store, by a
- * relative `redirectTo`.
- * `artifacts/repositories/<repo>/images/<image>` (`ArtifactsImagePage`, qits-2324) is one image of
- * an image store, its tags and manifests; the image name is one segment (`%2F` for a slash).
- * `artifacts/repositories/<repo>/cleanup` (`ArtifactsCleanupPage`, qits-2329) is one repository's
- * cleanup: its gc plan read through qits-orchestrator, and the Run that sweeps it.
- * `artifacts/repositories/<repo>/daemons/<daemon>` (`ArtifactsDaemonPage`, qits-2327) is one daemon
- * of a daemon store, its published versions, each one downloadable.
- * `artifacts/repositories/<repo>/maven-packages/<coordinate>` (`ArtifactsMavenPackagePage`,
- * qits-2325) is one maven coordinate, its versions and their SBOMs; `groupId:artifactId` is one
- * segment.
- * `artifacts/repositories/<repo>/docs/<site>` (`ArtifactsDocsSitePage`, qits-2328) is one docs site
- * of a docs store, its published versions, each read in qits-docs' reader; the site name is one
- * segment (`@changelog/qits-qits` is `@changelog%2Fqits-qits` in the URL).
- * `artifacts/repositories/<repo>/packages/<package>` (`ArtifactsNpmPackagePage`, qits-2326) is one
- * npm package of an npm store, its versions with their dist-tags and their SBOMs; the package name
- * is one segment (`@qits/angular` is `@qits%2Fangular` in the URL). With it every store listing's
- * rows open a page of this app; none leaves for qits-artifacts-frontend any more.
+ * An artifact's page is below the repository that publishes it (qits-2477, which removed the root
+ * Artifacts section of qits-2316, its store pages and the cleanup page of qits-2329):
+ * `projects/<slug>/repositories/<repo>/artifacts/<store>/<kind>/<name>`, `<store>` one of
+ * qits-artifacts' store repositories and the name one segment (`%2F` for a slash): `images/<image>`
+ * (`ArtifactsImagePage`, qits-2324), `daemons/<daemon>` (qits-2327), `maven-packages/<coordinate>`
+ * (qits-2325, `groupId:artifactId`), `docs/<site>` (qits-2328) and `packages/<package>`
+ * (qits-2326). The old `artifacts/repositories/<store>/<kind>/<name>` addresses, which
+ * qits-artifacts-frontend still hands off to, stay entries of the same pages; every other old
+ * `artifacts/…` address opens the front door.
  *
  * The System section (qits-2344) is at `system/swarm/services` (`SwarmServicesPage`): the services
  * of the one swarm qits-system runs on, with a state derived from their replicas, reached from the
@@ -537,6 +525,44 @@ export const routes: Routes = [
             (m) => m.RepositoryReleaseRequestPage,
           ),
       },
+      // An artifact's page (qits-2324…qits-2328, under its repository since qits-2477):
+      // `artifacts/<store>/<kind>/<name>`, `<store>` the artifact store's repository (`qits`,
+      // `npm`, `maven`, `daemons`, `docs`) and the name one segment (a slash rides as %2F).
+      {
+        path: 'projects/:slug/components/:repo/artifacts/:store/images/:image',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/images/[image]/artifacts-image.page').then(
+            (m) => m.ArtifactsImagePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/components/:repo/artifacts/:store/daemons/:daemon',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/daemons/[daemon]/artifacts-daemon.page').then(
+            (m) => m.ArtifactsDaemonPage,
+          ),
+      },
+      {
+        path: 'projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page').then(
+            (m) => m.ArtifactsMavenPackagePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/components/:repo/artifacts/:store/docs/:site',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/docs/[site]/artifacts-docs-site.page').then(
+            (m) => m.ArtifactsDocsSitePage,
+          ),
+      },
+      {
+        path: 'projects/:slug/components/:repo/artifacts/:store/packages/:package',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page').then(
+            (m) => m.ArtifactsNpmPackagePage,
+          ),
+      },
       {
         // A repository's docs (qits-2336, here since qits-2486), and one site's reader (qits-2337):
         // one page under three addresses, as before: `docs/:site[/-/:version]` (this app's links,
@@ -796,76 +822,57 @@ export const routes: Routes = [
             (m) => m.ProjectSetupPage,
           ),
       },
+      // The Artifacts section (qits-2316) is gone (qits-2477): an artifact is reached from the
+      // repository that publishes it. qits-artifacts-frontend still hands its old pages off to
+      // `artifacts/repositories/<store>/<kind>/<name>`, so those stay entries of the same pages
+      // (no repository named, so no back link); every other old address opens the front door.
       {
-        // The Artifacts section (qits-2316): qits-artifacts' store, bound to no project. No front
-        // page of its own yet: `/artifacts` and `/artifacts/repositories` open the image store.
-        path: 'artifacts',
-        children: [
-          { path: '', pathMatch: 'full', redirectTo: 'repositories/qits' },
-          { path: 'repositories', pathMatch: 'full', redirectTo: 'repositories/qits' },
-          {
-            path: 'repositories/:repo',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/artifacts-repository.page').then(
-                (m) => m.ArtifactsRepositoryPage,
-              ),
-          },
-          {
-            // One image of an image store (qits-2324): its tags and manifests. `:image` is one
-            // segment; a slashed name rides as %2F, which the router decodes into the param.
-            path: 'repositories/:repo/images/:image',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page').then(
-                (m) => m.ArtifactsImagePage,
-              ),
-          },
-          {
-            // One repository's cleanup (qits-2329): its gc plan through qits-orchestrator, and Run.
-            path: 'repositories/:repo/cleanup',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page').then(
-                (m) => m.ArtifactsCleanupPage,
-              ),
-          },
-          {
-            // One daemon of a daemon store (qits-2327): its published versions. A daemon name is
-            // bounded to [a-z0-9][a-z0-9._-]{0,63} by the wire, so it is always one plain segment.
-            path: 'repositories/:repo/daemons/:daemon',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page').then(
-                (m) => m.ArtifactsDaemonPage,
-              ),
-          },
-          {
-            // One maven coordinate of a maven store (qits-2325): its versions and their SBOMs.
-            // `:coordinate` is one segment, `groupId:artifactId`.
-            path: 'repositories/:repo/maven-packages/:coordinate',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page').then(
-                (m) => m.ArtifactsMavenPackagePage,
-              ),
-          },
-          {
-            // One docs site of a docs store (qits-2328): its published versions. Every site name
-            // is scoped and slashed (`@changelog/qits-qits`), so it is one segment, `%2F` encoded.
-            path: 'repositories/:repo/docs/:site',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page').then(
-                (m) => m.ArtifactsDocsSitePage,
-              ),
-          },
-          {
-            // One npm package of an npm store (qits-2326): its versions and their SBOMs.
-            // `:package` is one segment; a scoped name's slash rides as %2F, which the router
-            // decodes into the param (`@qits/angular`).
-            path: 'repositories/:repo/packages/:package',
-            loadComponent: () =>
-              import('./routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page').then(
-                (m) => m.ArtifactsNpmPackagePage,
-              ),
-          },
-        ],
+        path: 'artifacts/repositories/:store/images/:image',
+        data: { qitsEntry: true },
+        // eslint-disable-next-line qits/route-matches-directory -- the old address of a page below the repository
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/images/[image]/artifacts-image.page').then(
+            (m) => m.ArtifactsImagePage,
+          ),
       },
+      {
+        path: 'artifacts/repositories/:store/daemons/:daemon',
+        data: { qitsEntry: true },
+        // eslint-disable-next-line qits/route-matches-directory -- the old address of a page below the repository
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/daemons/[daemon]/artifacts-daemon.page').then(
+            (m) => m.ArtifactsDaemonPage,
+          ),
+      },
+      {
+        path: 'artifacts/repositories/:store/maven-packages/:coordinate',
+        data: { qitsEntry: true },
+        // eslint-disable-next-line qits/route-matches-directory -- the old address of a page below the repository
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page').then(
+            (m) => m.ArtifactsMavenPackagePage,
+          ),
+      },
+      {
+        path: 'artifacts/repositories/:store/docs/:site',
+        data: { qitsEntry: true },
+        // eslint-disable-next-line qits/route-matches-directory -- the old address of a page below the repository
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/docs/[site]/artifacts-docs-site.page').then(
+            (m) => m.ArtifactsDocsSitePage,
+          ),
+      },
+      {
+        path: 'artifacts/repositories/:store/packages/:package',
+        data: { qitsEntry: true },
+        // eslint-disable-next-line qits/route-matches-directory -- the old address of a page below the repository
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page').then(
+            (m) => m.ArtifactsNpmPackagePage,
+          ),
+      },
+      { path: 'artifacts', pathMatch: 'full', redirectTo: '' },
+      { path: 'artifacts/**', redirectTo: '' },
       {
         // The System section (qits-2344): qits-system's one swarm, bound to no project. No front
         // page of its own yet: `/system` and `/system/swarm` open the swarm's services.

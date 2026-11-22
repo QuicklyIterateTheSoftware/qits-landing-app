@@ -514,61 +514,14 @@ export const INTERACTIONS = {
    */
   'open-notifications': 'Opening the notifications menu lists the platform’s newest domain events',
   /**
-   * `artifacts-repository.page.ts` via `ARTIFACT_REPOSITORIES` (qits-2316): the store repository
-   * page reads every store repository, to learn the open one's type, count and size, and to list
-   * them all in its switcher.
-   */
-  'show-artifact-repositories':
-    'The store repository page lists qits-artifacts’ repositories, with each one’s type, count and size',
-  /** `artifacts-repository.page.ts` via `ARTIFACT_IMAGES` (qits-2316): an image repository's images. */
-  'show-artifact-images':
-    'An image repository’s page lists its images, with tags, manifests and size',
-  /** `artifacts-repository.page.ts` via `ARTIFACT_NPM_PACKAGES` (qits-2316): an npm repository's packages. */
-  'show-artifact-npm-packages':
-    'An npm repository’s page lists its packages, with versions and the latest',
-  /**
-   * `artifacts-repository.page.ts` via `ARTIFACT_MAVEN_PACKAGES` (qits-2316): a maven repository's
-   * coordinates.
-   */
-  'show-artifact-maven-packages':
-    'A maven repository’s page lists its coordinates, with versions and size',
-  /** `artifacts-repository.page.ts` via `ARTIFACT_DAEMONS` (qits-2316): a daemon repository's daemons. */
-  'show-artifact-daemons':
-    'A daemon repository’s page lists its daemons, with versions, the latest and size',
-  /** `artifacts-repository.page.ts` via `ARTIFACT_DOCS_SITES` (qits-2316): a docs repository's sites. */
-  'show-artifact-docs-sites':
-    'A docs repository’s page lists its documentation sites, with versions, the latest and size',
-  /**
-   * `artifacts-repository.page.ts` via `ARTIFACT_RECORDS` (qits-2316): a ci repository's records,
-   * unfiltered.
-   */
-  'show-artifact-records': 'A ci repository’s page lists its records',
-  /**
-   * `artifacts-repository.page.ts`: a store repository in the page's switcher opens that
-   * repository's page (qits-2316). Navigates only, and names no pact.
-   */
-  'switch-artifacts-repository': 'A store repository in the switcher opens its page',
-  /**
-   * Retired (qits-2326): a store repository row's name, which left for its detail page in the old
-   * qits-artifacts explorer, the npm package's last. Every row now opens this app's own page
-   * (`open-artifact-image`, `open-maven-package`, `open-artifact-daemon`,
-   * `open-artifact-docs-site`, `open-npm-package`). Kept so the slug is never reused.
-   */
-  'open-artifacts-entry': 'A row of a store repository opens its detail page in the old explorer',
-  /**
-   * `artifacts-repository.page.ts`: an image row's name opens the image's page in this app,
-   * `artifacts/repositories/:repo/images/:image` (qits-2324). Navigates only, and names no pact.
-   */
-  'open-artifact-image': 'An image of an image repository opens its page',
-  /**
    * `artifacts-image.page.ts` via `ARTIFACT_IMAGE_TAGS`, `ARTIFACT_IMAGE_MANIFESTS` and
    * `ARTIFACT_IMAGES` (qits-2324): the image page reads the image's tags and manifests, and the
    * repository's images for the image's own counts and size. Refresh reads all three again.
    */
   'show-artifact-image': 'An image’s page lists its tags and manifests, under its counts and size',
   /**
-   * `artifacts-image.page.ts`: the back link, and the store page a non-image repository's note
-   * links, open the repository's page (qits-2324). Navigates only, and names no pact.
+   * `artifacts-image.page.ts`: the back link, and the link in a non-image store's note, open the repository's
+   * Artifacts (qits-2324, below it since qits-2477). Navigates only, and names no pact.
    */
   'leave-artifact-image': 'An image’s page leads back to its repository',
   /**
@@ -576,12 +529,6 @@ export const INTERACTIONS = {
    * the page only: no request, and names no pact.
    */
   'toggle-image-digests': 'An image’s page shows its digests whole or shortened',
-  /**
-   * `artifacts-repository.page.ts`: a maven row's coordinate opens its page in this app,
-   * `artifacts/repositories/:repo/maven-packages/:coordinate` (qits-2325). Navigates only, and
-   * names no pact.
-   */
-  'open-maven-package': 'A coordinate of a maven repository opens its page',
   /**
    * `artifacts-maven-package.page.ts` via `ARTIFACT_MAVEN_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
    * (qits-2325): the maven package page reads the coordinate's versions and its stored SBOMs, in
@@ -594,63 +541,18 @@ export const INTERACTIONS = {
    */
   'download-maven-sbom': 'A coordinate’s page saves a version’s SBOM as a file',
   /**
-   * `artifacts-maven-package.page.ts`: the back link, and the store page a non-maven repository's
-   * note links, open the repository's page (qits-2325). Navigates only, and names no pact.
+   * `artifacts-maven-package.page.ts`: the back link, and the link in a non-maven store's note, open the repository's
+   * Artifacts (qits-2325, below it since qits-2477). Navigates only, and names no pact.
    */
   'leave-maven-package': 'A coordinate’s page leads back to its repository',
-  /**
-   * `artifacts-repository.page.ts`: Cleanup opens the repository's cleanup page in this app,
-   * `artifacts/repositories/:repo/cleanup` (qits-2329). Navigates only, and names no pact.
-   */
-  'open-artifacts-cleanup': 'A store repository’s page opens its cleanup page',
-  /**
-   * `artifacts-cleanup.page.ts` via `ARTIFACTS_CLEANUP_PLAN` (qits-2329): the cleanup page reads
-   * the repository's collection plan through qits-orchestrator: what a run would delete and keep,
-   * each with its rule, the configured rule and how the run read the live pins.
-   */
-  'show-artifacts-cleanup-plan':
-    'A repository’s cleanup page shows what a cleanup would delete and keep, each with its rule',
-  /**
-   * `artifacts-cleanup.page.ts`: Re-read the plan (header, or under a receipt) reads the plan
-   * again, the same `ARTIFACTS_CLEANUP_PLAN` read as `show-artifacts-cleanup-plan`, and drops a
-   * receipt (qits-2329). The page stays.
-   */
-  'reread-artifacts-cleanup-plan': 'A repository’s cleanup page reads its plan again',
-  /**
-   * `artifacts-cleanup.page.ts`: the first press of Run asks for the second, naming what it would
-   * delete; Keep everything takes the question back (qits-2329). No request, and names no pact.
-   */
-  'ask-artifacts-cleanup-run': 'A cleanup page’s Run asks to be pressed again before it deletes',
-  /**
-   * `artifacts-cleanup.page.ts` via `ARTIFACTS_CLEANUP_SWEEP` (qits-2329): the second press sweeps
-   * the repository through qits-orchestrator, and its receipt replaces the plan; a refusal or a
-   * lost answer is said in its place. Never queued offline, never sent again by itself.
-   */
-  'sweep-artifacts-repository':
-    'The confirmed Run on a cleanup page sweeps the repository and shows the receipt',
-  /**
-   * `artifacts-cleanup.page.ts`: shows or hides the kept identities, each with the rule that kept
-   * it (qits-2329). Changes the page only: no request, and names no pact.
-   */
-  'toggle-artifacts-cleanup-kept': 'A cleanup page shows or hides what a cleanup would keep',
-  /**
-   * `artifacts-cleanup.page.ts`: the back link opens the repository's store page (qits-2329).
-   * Navigates only, and names no pact.
-   */
-  'leave-artifacts-cleanup': 'A cleanup page leads back to its repository',
-  /**
-   * `artifacts-repository.page.ts`: a daemon row's name opens the daemon's page in this app,
-   * `artifacts/repositories/:repo/daemons/:daemon` (qits-2327). Navigates only, and names no pact.
-   */
-  'open-artifact-daemon': 'A daemon of a daemon repository opens its page',
   /**
    * `artifacts-daemon.page.ts` via `ARTIFACT_DAEMON_VERSIONS` (qits-2327): the daemon page lists
    * the daemon's published versions, newest first. Refresh reads them again.
    */
   'show-artifact-daemon': 'A daemon’s page lists its published versions, newest first',
   /**
-   * `artifacts-daemon.page.ts`: the back link, and the store page a non-daemon repository's note
-   * links, open the repository's page (qits-2327). Navigates only, and names no pact.
+   * `artifacts-daemon.page.ts`: the back link, and the link in a non-daemon store's note, open the repository's
+   * Artifacts (qits-2327, below it since qits-2477). Navigates only, and names no pact.
    */
   'leave-artifact-daemon': 'A daemon’s page leads back to its repository',
   /**
@@ -660,19 +562,13 @@ export const INTERACTIONS = {
    */
   'download-artifact-daemon': 'A daemon version downloads as a file',
   /**
-   * `artifacts-repository.page.ts`: a docs site row's name opens the site's page in this app,
-   * `artifacts/repositories/:repo/docs/:site` (qits-2328), the name one segment. Navigates only,
-   * and names no pact.
-   */
-  'open-artifact-docs-site': 'A docs site of a docs repository opens its page',
-  /**
    * `artifacts-docs-site.page.ts` via `ARTIFACT_DOCS_VERSIONS` (qits-2328): the docs site page
    * lists the site's published versions, newest first. Refresh reads them again.
    */
   'show-artifact-docs-site': 'A docs site’s page lists its published versions, newest first',
   /**
-   * `artifacts-docs-site.page.ts`: the back link, and the store page a non-docs repository's note
-   * links, open the repository's page (qits-2328). Navigates only, and names no pact.
+   * `artifacts-docs-site.page.ts`: the back link, and the link in a non-docs store's note, open the repository's
+   * Artifacts (qits-2328, below it since qits-2477). Navigates only, and names no pact.
    */
   'leave-artifact-docs-site': 'A docs site’s page leads back to its repository',
   /**
@@ -681,12 +577,6 @@ export const INTERACTIONS = {
    * the app, and names no pact.
    */
   'read-artifact-docs-version': 'A docs site version opens in the docs reader',
-  /**
-   * `artifacts-repository.page.ts`: an npm row's name opens its package's page in this app,
-   * `artifacts/repositories/:repo/packages/:package` (qits-2326). Navigates only, and names no
-   * pact.
-   */
-  'open-npm-package': 'A package of an npm repository opens its page',
   /**
    * `artifacts-npm-package.page.ts` via `ARTIFACT_NPM_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
    * (qits-2326): the npm package page reads the package's versions and its stored SBOMs, in
@@ -699,8 +589,8 @@ export const INTERACTIONS = {
    */
   'download-npm-sbom': 'A package’s page saves a version’s SBOM as a file',
   /**
-   * `artifacts-npm-package.page.ts`: the back link, and the store page a non-npm repository's note
-   * links, open the repository's page (qits-2326). Navigates only, and names no pact.
+   * `artifacts-npm-package.page.ts`: the back link, and the link in a non-npm store's note, open the repository's
+   * Artifacts (qits-2326, below it since qits-2477). Navigates only, and names no pact.
    */
   'leave-npm-package': 'A package’s page leads back to its repository',
   /**
@@ -1794,12 +1684,6 @@ export const INTERACTIONS = {
    * idp's own admin page in a frame. Navigates only, and names no pact.
    */
   'open-sidebar-idp-page': 'An IdP admin page below the sidebar’s IdP admin opens it',
-  /**
-   * `shell.layout.ts`: the sidebar's Artifacts, a global section shown with no project open, opens
-   * the Artifacts section (`artifacts`, which opens the image store; qits-2316). Navigates only,
-   * and names no pact.
-   */
-  'open-sidebar-artifacts': 'The sidebar’s Artifacts entry opens the Artifacts section',
   /**
    * `shell.layout.ts`: the sidebar's System, a global section shown with no project open, opens
    * the System section (`system`, which opens the swarm's services; qits-2344). Navigates only,

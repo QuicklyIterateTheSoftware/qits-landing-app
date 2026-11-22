@@ -12,22 +12,15 @@ import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
-import { listingOf } from './artifact-listings';
 import {
   ARTIFACT_DAEMON_DOWNLOAD,
   ARTIFACT_DAEMON_VERSIONS,
-  ARTIFACT_DAEMONS,
-  ARTIFACT_DOCS_SITES,
   ARTIFACT_DOCS_VERSIONS,
   ARTIFACT_IMAGE_MANIFESTS,
   ARTIFACT_IMAGE_TAGS,
   ARTIFACT_IMAGES,
-  ARTIFACT_MAVEN_PACKAGES,
   ARTIFACT_MAVEN_VERSIONS,
-  ARTIFACT_NPM_PACKAGES,
   ARTIFACT_NPM_VERSIONS,
-  ARTIFACT_RECORDS,
-  ARTIFACT_REPOSITORIES,
   ARTIFACT_SBOM,
   ARTIFACT_SBOM_VERSIONS,
   daemonDownloadParams,
@@ -35,13 +28,13 @@ import {
 import { SBOM_MEDIA_TYPE, sbomParams } from './sbom-download';
 
 /**
- * qits-landing-app's pact with qits-artifacts-service, the store explorer's part (qits-2316):
+ * qits-landing-app's pact with qits-artifacts-service, the artifact pages' part (qits-2316; the
+ * store repository page and its listings are gone, qits-2477):
  * `pacts/qits-landing-app_qits-artifacts-service.json`, shared with the docs store's parts
- * (`core/ui-builder/docs.operations.pact.spec.ts`). This spec owns every interaction of the store
- * repository page's operations (`artifacts.operations.ts`): `listRepositories`, `listImages`,
- * `listNpmPackages`, `listMavenPackages`, `listDaemons`, `listDocsSiteSummaries` and
- * `listArtifactRecords`; the image page's (qits-2324): `listImageTagSummaries` and
- * `listImageManifestSummaries`, with `listImages` read again for the image's own row; the maven
+ * (`core/ui-builder/docs.operations.pact.spec.ts`). This spec owns every interaction of the
+ * artifact pages' operations (`artifacts.operations.ts`): the image page's (qits-2324):
+ * `listImageTagSummaries` and `listImageManifestSummaries`, with `listImages` for the image's own
+ * row; the maven
  * package page's (qits-2325): `listMavenVersionSummaries`, `listSbomVersions` and `getSbom`; the
  * daemon page's (qits-2327): `listDaemonVersions` and `getDaemon`; the docs site page's
  * (qits-2328): `listDocsVersionSummaries`; and the npm package page's (qits-2326):
@@ -128,13 +121,7 @@ const TWO_RELEASES = 'a docs site published by two releases';
 const SCOPED = 'a scoped npm package with an sbom on one of two versions';
 
 const OPERATIONS: readonly OwnedOperation[] = [
-  ARTIFACT_REPOSITORIES,
   ARTIFACT_IMAGES,
-  ARTIFACT_NPM_PACKAGES,
-  ARTIFACT_MAVEN_PACKAGES,
-  ARTIFACT_DAEMONS,
-  ARTIFACT_DOCS_SITES,
-  ARTIFACT_RECORDS,
   ARTIFACT_IMAGE_TAGS,
   ARTIFACT_IMAGE_MANIFESTS,
   ARTIFACT_MAVEN_VERSIONS,
@@ -247,29 +234,8 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
     }
   });
 
-  it('show-artifact-repositories: every store repository, with a listing chosen by its type', () =>
-    given(ARTIFACT_REPOSITORIES, STORE, 'show-artifact-repositories').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () => ARTIFACT_REPOSITORIES.fetch({}));
-        // The list is bound by its recorded first element (a ci repository), at least once.
-        const [row] = data?.repositories ?? [];
-        expect(row?.name).toBeTruthy();
-        expect(listingOf(row?.type)).toBe('records');
-        expect(typeof row?.itemCount).toBe('number');
-        expect(typeof row?.sizeBytes).toBe('number');
-      },
-    ));
-
-  it('show-artifact-repositories: the seeded repositories, with nothing published', () =>
-    given(ARTIFACT_REPOSITORIES, EMPTY, 'show-artifact-repositories').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () => ARTIFACT_REPOSITORIES.fetch({}));
-        expect((data?.repositories ?? []).length).toBeGreaterThan(0);
-      },
-    ));
-
-  it('show-artifact-images: an image repository’s images', () =>
-    given(ARTIFACT_IMAGES, STORE, 'show-artifact-images').executeTest(async (server) => {
+  it('show-artifact-image: the image repository’s images, for the image’s own row', () =>
+    given(ARTIFACT_IMAGES, STORE, 'show-artifact-image').executeTest(async (server) => {
       const repo = repoOf(STORE, 'imagesRepository');
       const { data } = await at(server.url, () => ARTIFACT_IMAGES.fetch({ path: { repo } }));
       const [image] = data?.images ?? [];
@@ -278,71 +244,14 @@ describe('qits-landing-app → qits-artifacts-service pact: the store repository
       expect(typeof image?.manifestCount).toBe('number');
     }));
 
-  it('show-artifact-images: an image repository with nothing pushed', () =>
-    given(ARTIFACT_IMAGES, EMPTY, 'show-artifact-images', STATUS_ONLY).executeTest(
+  it('show-artifact-image: an image repository with nothing pushed', () =>
+    given(ARTIFACT_IMAGES, EMPTY, 'show-artifact-image', STATUS_ONLY).executeTest(
       async (server) => {
         const repo = repoOf(EMPTY, 'imagesRepository');
         const { response, error } = await at(server.url, () =>
           ARTIFACT_IMAGES.fetch({ path: { repo } }),
         );
         // Status only: the shared database may hold other suites' images there.
-        expect(error).toBeUndefined();
-        expect(response?.status).toBe(200);
-      },
-    ));
-
-  it('show-artifact-npm-packages: an npm repository’s packages', () =>
-    given(ARTIFACT_NPM_PACKAGES, STORE, 'show-artifact-npm-packages').executeTest(
-      async (server) => {
-        const repo = repoOf(STORE, 'npmRepository');
-        const { data } = await at(server.url, () =>
-          ARTIFACT_NPM_PACKAGES.fetch({ path: { repo } }),
-        );
-        const [pkg] = data?.packages ?? [];
-        expect(pkg?.name).toBeTruthy();
-        expect(pkg?.latest).toBeTruthy();
-      },
-    ));
-
-  it('show-artifact-maven-packages: a maven repository’s coordinates', () =>
-    given(ARTIFACT_MAVEN_PACKAGES, STORE, 'show-artifact-maven-packages').executeTest(
-      async (server) => {
-        const repo = repoOf(STORE, 'mavenRepository');
-        const { data } = await at(server.url, () =>
-          ARTIFACT_MAVEN_PACKAGES.fetch({ path: { repo } }),
-        );
-        const [pkg] = data?.packages ?? [];
-        expect(pkg?.name).toContain(':');
-        expect(typeof pkg?.sizeBytes).toBe('number');
-      },
-    ));
-
-  it('show-artifact-daemons: a daemon repository’s daemons', () =>
-    given(ARTIFACT_DAEMONS, STORE, 'show-artifact-daemons').executeTest(async (server) => {
-      const repo = repoOf(STORE, 'daemonsRepository');
-      const { data } = await at(server.url, () => ARTIFACT_DAEMONS.fetch({ path: { repo } }));
-      const [daemon] = data?.daemons ?? [];
-      expect(daemon?.name).toBeTruthy();
-      expect(daemon?.latestVersion).toBeTruthy();
-    }));
-
-  it('show-artifact-docs-sites: a docs repository’s sites', () =>
-    given(ARTIFACT_DOCS_SITES, STORE, 'show-artifact-docs-sites').executeTest(async (server) => {
-      const repo = repoOf(STORE, 'docsRepository');
-      const { data } = await at(server.url, () => ARTIFACT_DOCS_SITES.fetch({ path: { repo } }));
-      const [site] = data?.sites ?? [];
-      expect(site?.name).toBeTruthy();
-      expect(site?.latestVersion).toBeTruthy();
-    }));
-
-  it('show-artifact-records: a ci repository’s records, none recorded', () =>
-    given(ARTIFACT_RECORDS, STORE, 'show-artifact-records', STATUS_ONLY).executeTest(
-      async (server) => {
-        const repo = repoOf(STORE, 'screenshotsRepository');
-        const { response, error } = await at(server.url, () =>
-          ARTIFACT_RECORDS.fetch({ path: { repo } }),
-        );
-        // Status only: no state can fill a ci repository, and other suites' records sit there.
         expect(error).toBeUndefined();
         expect(response?.status).toBe(200);
       },

@@ -104,12 +104,15 @@ describe('RepositoryPage (screenshots)', () => {
     ]);
     await expect
       .element(view.getByRole('link', { name: 'qits/contract-service' }))
-      .toHaveAttribute('href', '/artifacts/repositories/qits/images/contract-service');
+      .toHaveAttribute(
+        'href',
+        `/projects/${opened.project.slug}/components/contract-service/artifacts/qits/images/contract-service`,
+      );
     await expect
       .element(view.getByRole('link', { name: 'eu.wohlben.qits:contract-service-client' }))
       .toHaveAttribute(
         'href',
-        '/artifacts/repositories/maven/maven-packages/eu.wohlben.qits:contract-service-client',
+        `/projects/${opened.project.slug}/components/contract-service/artifacts/maven/maven-packages/eu.wohlben.qits:contract-service-client`,
       );
     expect(names(opened, 'Docs sites')).toEqual(['@contracts/contract-service']);
     // The repository sidebar is open, its Overview current (qits-2492), and the trail names it.
@@ -135,7 +138,10 @@ describe('RepositoryPage (screenshots)', () => {
     expect(pages.getByRole('link', { name: 'Contracts →' }).query()).toBeNull();
     await expect
       .element(view.getByRole('link', { name: '@qits/contract-ui' }))
-      .toHaveAttribute('href', '/artifacts/repositories/npm/packages/@qits%2Fcontract-ui');
+      .toHaveAttribute(
+        'href',
+        `/projects/${opened.project.slug}/components/contract-frontend/artifacts/npm/packages/@qits%2Fcontract-ui`,
+      );
     expect(names(opened, 'Docs sites')).toEqual(['@routes/contract-frontend']);
     await expect
       .element(page.elementLocator(opened.frame))
@@ -196,24 +202,26 @@ describe('RepositoryPage (screenshots)', () => {
     await reads.opened.settled();
   });
 
-  it('open-repository-artifact image: an image opens its store page', async () => {
+  it('open-repository-artifact image: an image opens its page below the repository', async () => {
     const opened = await render('contract-service');
     await userEvent.click(
       page.elementLocator(opened.page).getByRole('link', { name: 'qits/contract-service' }),
     );
     await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/qits/images/contract-service');
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/components/contract-service/artifacts/qits/images/contract-service`,
+    );
     expect(reached()).toEqual(['open-repository-artifact:image']);
   });
 
-  it('open-repository-artifact docsSite: a docs site opens its store page', async () => {
+  it('open-repository-artifact docsSite: a docs site opens its page below the repository', async () => {
     const opened = await render('contract-service');
     await userEvent.click(
       page.elementLocator(opened.page).getByRole('link', { name: '@contracts/contract-service' }),
     );
     await leftFor(opened);
     expect(TestBed.inject(Router).url).toBe(
-      '/artifacts/repositories/docs/docs/@contracts%2Fcontract-service',
+      `/projects/${opened.project.slug}/components/contract-service/artifacts/docs/docs/@contracts%2Fcontract-service`,
     );
     expect(reached()).toEqual(['open-repository-artifact:docsSite']);
   });
@@ -235,29 +243,29 @@ describe('RepositoryPage (screenshots)', () => {
       'contract-service',
       'eu.wohlben.qits:contract-service-client',
       'maven',
-      '/artifacts/repositories/maven/maven-packages/eu.wohlben.qits:contract-service-client',
+      '/artifacts/maven/maven-packages/eu.wohlben.qits:contract-service-client',
     ],
     [
       'contract-frontend',
       '@qits/contract-ui',
       'npm',
-      '/artifacts/repositories/npm/packages/@qits%2Fcontract-ui',
+      '/artifacts/npm/packages/@qits%2Fcontract-ui',
     ],
-    [
-      'contract-daemon',
-      'contract-daemon',
-      'daemon',
-      '/artifacts/repositories/daemons/daemons/contract-daemon',
-    ],
-  ])('open-repository-artifact: %s’s %s opens its store page (%s)', async (repo, name, key, to) => {
-    const opened = await render(repo);
-    await userEvent.click(
-      page.elementLocator(opened.page).getByRole('link', { name, exact: true }),
-    );
-    await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(to);
-    expect(reached()).toEqual([`open-repository-artifact:${key}`]);
-  });
+    ['contract-daemon', 'contract-daemon', 'daemon', '/artifacts/daemons/daemons/contract-daemon'],
+  ])(
+    'open-repository-artifact: %s’s %s opens its page below the repository (%s)',
+    async (repo, name, key, to) => {
+      const opened = await render(repo);
+      await userEvent.click(
+        page.elementLocator(opened.page).getByRole('link', { name, exact: true }),
+      );
+      await leftFor(opened);
+      expect(TestBed.inject(Router).url).toBe(
+        `/projects/${opened.project.slug}/components/${repo}${to}`,
+      );
+      expect(reached()).toEqual([`open-repository-artifact:${key}`]);
+    },
+  );
 
   it.each([
     ['contract-service', 'Entities →', 'open-repository-pages:entities', '/entities'],

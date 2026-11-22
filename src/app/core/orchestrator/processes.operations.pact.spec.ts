@@ -23,9 +23,8 @@ import {
 
 /**
  * The process page's part of qits-landing-app's pact with qits-orchestrator-service (qits-2359,
- * `processes.operations.ts`), in `pacts/qits-landing-app_qits-orchestrator-service.json` — the same
- * file `core/artifacts/cleanup.operations.pact.spec.ts` owns the cleanup doors of
- * (`assertPactPart`).
+ * `processes.operations.ts`), in `pacts/qits-landing-app_qits-orchestrator-service.json`, the one
+ * part left of that file (the cleanup doors are gone, qits-2477; `assertPactPart`).
  *
  * The Orchestrator section's process page (`show-orchestrator-process`) reads the process in "the
  * gc process" (gc alone); its runs and the newest run, without bodies (`bodies=false`), in "a
