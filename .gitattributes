@@ -1,3 +1,6 @@
 # Generated from the providers' openapi.yml by @hey-api/openapi-ts (npm run generate:api).
 # Marked so line counts (qits-githost) and diffs treat it as generated, not hand-written.
 src/app/api/** linguist-generated=true
+# UI freezes the browser specs write (qits-1947, @qits/angular screenshots plugin): generated test
+# output, so line counts (qits-githost) skip them (qits-2500).
+src/testing/browser/freezes/** linguist-generated=true
