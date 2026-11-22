@@ -378,7 +378,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-telemetry-logs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
           }
         }
       },
@@ -682,7 +683,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-telemetry-logs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
           }
         }
       },
@@ -1422,7 +1424,7 @@
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
             "kind": "ui",
-            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces"
+            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/traces"
           }
         }
       },
@@ -1483,7 +1485,7 @@
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
             "kind": "ui",
-            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/slow-spans, projects/:slug/observability/traces"
+            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/traces"
           }
         }
       },
@@ -1645,7 +1647,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
           }
         }
       },
