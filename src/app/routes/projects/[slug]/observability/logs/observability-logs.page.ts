@@ -184,8 +184,8 @@ export function shortTrace(traceId: string | undefined): string {
             [class.hidden]="!query().source && !query().trace"
           >
             <span
-              class="inline-flex items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5"
-              [class.hidden]="!query().source"
+              class="items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5"
+              [class]="query().source ? 'inline-flex' : 'hidden'"
               data-source-filter
             >
               Source <span class="font-mono text-fg">{{ query().source }}</span>
@@ -198,8 +198,8 @@ export function shortTrace(traceId: string | undefined): string {
               </button>
             </span>
             <span
-              class="inline-flex items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5"
-              [class.hidden]="!query().trace"
+              class="items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5"
+              [class]="query().trace ? 'inline-flex' : 'hidden'"
               data-trace-filter
             >
               Trace <span class="font-mono text-fg">{{ query().trace }}</span>

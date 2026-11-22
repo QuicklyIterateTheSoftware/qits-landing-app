@@ -137,6 +137,10 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     await rendered.opened.settled();
     const filter = page.elementLocator(rendered.opened.page.querySelector('[data-trace-filter]')!);
     await expect.element(filter).toMatchTextContent(traceId);
+    // No source is named, so its filter is not drawn at all.
+    await expect
+      .element(page.elementLocator(rendered.opened.page.querySelector('[data-source-filter]')!))
+      .not.toBeVisible();
     await expect
       .element(page.elementLocator(rendered.opened.frame))
       .toMatchScreenshot('trace-filter', { kind: 'DATA' });
