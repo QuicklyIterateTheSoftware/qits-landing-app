@@ -1,6 +1,7 @@
 import {
   agentSubpage,
   deploymentRequestSubpage,
+  globalSubpage,
   releaseRequestSubpage,
   slotSubpage,
   workSubpage,
@@ -179,5 +180,34 @@ describe('deploymentRequestSubpage', () => {
     expect(deploymentRequestSubpage(list, project, shown)).toBeUndefined();
     expect(deploymentRequestSubpage(`${list}/`, project, shown)).toBeUndefined();
     expect(deploymentRequestSubpage(`${project}/releases/requests/${id}`, project)).toBeUndefined();
+  });
+});
+
+describe('globalSubpage', () => {
+  it('names an entry by its decoded id, and its pages below', () => {
+    expect(globalSubpage('/artifacts/repositories/qits', '/artifacts', 'repositories')).toEqual({
+      label: 'qits',
+      path: '/artifacts/repositories/qits',
+    });
+    expect(
+      globalSubpage(
+        '/artifacts/repositories/my%20repo/images/x?tab=1#a',
+        '/artifacts',
+        'repositories',
+      ),
+    ).toEqual({ label: 'my repo', path: '/artifacts/repositories/my%20repo' });
+    expect(
+      globalSubpage('/orchestrator/processes/gc?x=1', '/orchestrator', 'processes')?.label,
+    ).toBe('gc');
+  });
+
+  it('is undefined without entries, for the list itself and anywhere else', () => {
+    expect(globalSubpage('/system/swarm/nodes', '/system', undefined)).toBeUndefined();
+    expect(globalSubpage('/mirror/upstreams', '/mirror', 'repositories')).toBeUndefined();
+    expect(globalSubpage('/mirror/repositories', '/mirror', 'repositories')).toBeUndefined();
+    expect(globalSubpage('/mirror/repositories/', '/mirror', 'repositories')).toBeUndefined();
+    expect(
+      globalSubpage('/projects/qits/repositories/x', '/mirror', 'repositories'),
+    ).toBeUndefined();
   });
 });

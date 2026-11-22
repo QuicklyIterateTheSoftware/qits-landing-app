@@ -383,6 +383,12 @@ IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
 theirs. The door and the idp are the same site, so the frame opens signed in. With no idp origin
 (the server render) there is no frame. `kind: 'external'` leaves the app at `href` through an
 `external(...)` outcome; no global section uses it today. With a project open the list is empty.
+On a global section's page the trail is that section's, not `Projects` (qits-2386,
+`globalCrumbs`): the section, through its own `follow-breadcrumb` exit to its root (`artifacts`,
+`system`, `mirror`, `orchestrator`, `idp`; every in-app section has one, an external one none),
+then an entry by its decoded param (Artifacts › `<repo>`, Mirror › `<repository>`; the entry's
+segment is the link's `entries`), else the section's page as the sidebar marks it, `alsoOn`
+included (System › Nodes, Mirror › Caches, Orchestrator › Garbage collection, IdP admin › Users).
 
 The Artifacts section (qits-2316) is qits-artifacts' store, which no project joins:
 `artifacts/repositories/<repo>` (`ArtifactsRepositoryPage`), one of the store's repositories
