@@ -61,14 +61,15 @@ export function renderPayload(payload: string | null | undefined): RenderedPaylo
 
 /** What an event's row says beyond its name and time: its repository and one line of gist. */
 export interface EventGist {
-  /** The repository the payload names (`repoName`, else `repository`), or null when none. */
+  /**
+   * The repository the payload names, by {@link REPOSITORY_KEYS} (`repoName`, else
+   * `repositoryName`, else `repository`, a UUID not counting as a name; qits-2408), or null when
+   * none.
+   */
   readonly repository: string | null;
   /** One line of gist; {@link NONE} when there is nothing to say. */
   readonly summary: string;
 }
-
-/** The two keys a payload names its repository by, the list's (`eventSubjects`) order. */
-const REPOSITORY_KEYS = ['repoName', 'repository'] as const;
 
 /** How many `key=value` pairs the fallback shows. */
 const FALLBACK_PAIRS = 3;
@@ -85,6 +86,30 @@ function at(payload: Readonly<Record<string, unknown>>, key: string): string | n
   return drawn.length > 0 ? drawn : null;
 }
 
+/** A value shaped like a UUID: never a repository name, even found under a repository key. */
+const UUID_SHAPED = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * The keys a payload names its repository by, in the order tried: `repoName` (`SoftwareRelease`),
+ * `repositoryName` (`SCMRelease`), `repository` (`BranchDeliveryChanged`, already a name). Shared by
+ * {@link eventGist} and `eventSubjects` (`project-events.ts`) so the two cannot drift (qits-2408):
+ * `SCMRelease` and `SoftwareRelease` also carry the repository's UUID under `repository`, so a
+ * UUID-shaped value (`UUID_SHAPED`) at any key is skipped in favour of the next one; none yielding a
+ * non-UUID value means the payload names no repository.
+ */
+export const REPOSITORY_KEYS = ['repoName', 'repositoryName', 'repository'] as const;
+
+/** The key and name a payload names its repository by ({@link REPOSITORY_KEYS}); null when none. */
+export function repositoryEntry(
+  payload: Readonly<Record<string, unknown>>,
+): { readonly key: (typeof REPOSITORY_KEYS)[number]; readonly name: string } | null {
+  for (const key of REPOSITORY_KEYS) {
+    const value = at(payload, key);
+    if (value !== null && !UUID_SHAPED.test(value)) return { key, name: value };
+  }
+  return null;
+}
+
 /** The parts that are there, joined by ` · `; {@link NONE} when none is. */
 function join(parts: readonly (string | null)[]): string {
   const present = parts.filter((part): part is string => !!part);
@@ -92,11 +117,12 @@ function join(parts: readonly (string | null)[]): string {
 }
 
 /**
- * An event's repository and gist. Three names get a line of their own: `BuildSuccessful` (branch ·
- * short commit), `SCMRelease` (version · branch) and `SoftwareRelease` (version · package type and
- * name). Any other name reads its `description` when it has one, else the first three `key=value`
- * pairs of its payload by key (the repository's key left out). A payload that is not a JSON object
- * reads the description, else says it is not JSON.
+ * An event's repository and gist. The repository is {@link repositoryEntry}'s name. Three names get
+ * a line of their own: `BuildSuccessful` (branch · short commit), `SCMRelease` (version · branch)
+ * and `SoftwareRelease` (version · package type and name). Any other name reads its `description`
+ * when it has one, else the first three `key=value` pairs of its payload by key (the repository's
+ * own key, if any, left out). A payload that is not a JSON object reads the description, else says
+ * it is not JSON.
  */
 export function eventGist(event: EventLike): EventGist {
   const payload = payloadOf(event);
@@ -107,8 +133,8 @@ export function eventGist(event: EventLike): EventGist {
       summary: description ?? (event.payload ? 'payload is not JSON' : NONE),
     };
   }
-  const key = REPOSITORY_KEYS.find((candidate) => at(payload, candidate) !== null);
-  const repository = key ? at(payload, key) : null;
+  const entry = repositoryEntry(payload);
+  const repository = entry?.name ?? null;
   switch (event.name) {
     case 'BuildSuccessful':
       return {
@@ -128,7 +154,7 @@ export function eventGist(event: EventLike): EventGist {
       if (description) return { repository, summary: description };
       const pairs = Object.keys(payload)
         .sort()
-        .filter((candidate) => candidate !== key)
+        .filter((candidate) => candidate !== entry?.key)
         .slice(0, FALLBACK_PAIRS)
         .map((candidate) => `${candidate}=${text(payload[candidate])}`);
       return { repository, summary: pairs.length ? pairs.join(' · ') : NONE };
