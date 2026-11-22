@@ -32,7 +32,8 @@ import {
  * service's telemetry (`telemetry from one platform service`), each row with its services' names
  * (the Traces page's service lens, qits-2342); the logs as the Logs page asks for them by
  * default, no source at all, every source merged (`telemetry from two platform services`,
- * qits-2534), with each line's service, source and trace id; that source's logs as an old
+ * qits-2534), with each line's service, source and trace id, and that state's sources (the
+ * service filter's options), and the empty buffer's merged logs, none; that source's logs as an old
  * `?source=` link asks for them (the source alone), and the same narrowed to the last hour
  * (`sinceMinutes`, `telemetry records of every kind`); that source's error groups as the Errors page asks for them
  * by default (the source alone, qits-2339); that source's metric series, the latest point of
@@ -125,15 +126,41 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
     given(TELEMETRY_LOGS, TWO_SERVICES, 'show-telemetry-logs').executeTest(async (server) => {
       const { data, error } = await at(server.url, () => TELEMETRY_LOGS.fetch({ query: {} }));
       expect(error).toBeUndefined();
+      // The mock answers each array with its first recorded element; the recording's merge of
+      // two sources is checked on the recording itself.
       const logs = data?.logs ?? [];
-      expect(new Set(logs.map((line) => line.source)).size).toBe(2);
-      expect(new Set(logs.map((line) => line.serviceName)).size).toBe(2);
-      expect(logs.map((line) => line.epochNanos ?? 0)).toEqual(
-        logs.map((line) => line.epochNanos ?? 0).sort((a, b) => a - b),
+      expect(logs.length).toBeGreaterThan(0);
+      for (const line of logs) {
+        expect(line.source).toBeTruthy();
+        expect(line.serviceName).toBeTruthy();
+        expect(line.traceId).toBeDefined();
+      }
+      const recorded = masters.body<{ logs: { source: string; epochNanos: number }[] }>(
+        TWO_SERVICES,
+        'searchTelemetryLogs',
+      ).logs;
+      expect(new Set(recorded.map((line) => line.source)).size).toBe(2);
+      expect(recorded.map((line) => line.epochNanos)).toEqual(
+        recorded.map((line) => line.epochNanos).sort((a, b) => a - b),
       );
-      expect(logs.some((line) => !!line.traceId)).toBe(true);
-      expect(logs.some((line) => !line.traceId)).toBe(true);
       expect(data?.truncated).toBe(false);
+    }));
+
+  it('show-telemetry-logs: an empty buffer’s merged logs are none', () =>
+    given(TELEMETRY_LOGS, EMPTY, 'show-telemetry-logs').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_LOGS.fetch({ query: {} }));
+      expect(error).toBeUndefined();
+      expect(data?.logs).toEqual([]);
+      expect(data?.truncated).toBe(false);
+    }));
+
+  it('show-telemetry-sources: two platform services, the Logs page’s service options', () =>
+    given(TELEMETRY_SOURCES, TWO_SERVICES, 'show-telemetry-sources').executeTest(async (server) => {
+      const { data, error } = await at(server.url, () => TELEMETRY_SOURCES.fetch({}));
+      expect(error).toBeUndefined();
+      for (const source of data?.sources ?? []) {
+        expect(source.services?.[0]?.name).toBeTruthy();
+      }
     }));
 
   it('show-telemetry-logs: a source’s logs, oldest first', () =>
