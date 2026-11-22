@@ -14,7 +14,7 @@
             "app": "qits-landing-app",
             "interaction": "agents-menu",
             "kind": "ui",
-            "route": "projects/:slug/agents"
+            "route": "projects/:slug/releases/agents"
           }
         }
       },
@@ -592,7 +592,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -764,7 +764,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -927,7 +927,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -1225,7 +1225,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -1529,7 +1529,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -1976,7 +1976,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2122,7 +2122,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2654,7 +2654,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -3617,7 +3617,7 @@
             "app": "qits-landing-app",
             "interaction": "show-agent-chat",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/chat"
+            "route": "projects/:slug/releases/agents/:agentId/chat"
           }
         }
       },
@@ -3861,7 +3861,7 @@
             "app": "qits-landing-app",
             "interaction": "show-agent",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
+            "route": "projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal"
           }
         }
       },
@@ -4022,7 +4022,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -4111,7 +4111,7 @@
             "app": "qits-landing-app",
             "interaction": "show-agent",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
+            "route": "projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal"
           }
         }
       },
@@ -4363,7 +4363,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-agents",
             "kind": "ui",
-            "route": "projects/:slug/agents"
+            "route": "projects/:slug/releases/agents"
           }
         }
       },
@@ -4941,7 +4941,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -5113,7 +5113,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -5276,7 +5276,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -5574,7 +5574,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -5878,7 +5878,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -5924,7 +5924,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-workspaces",
             "kind": "ui",
-            "route": "projects/:slug/agents"
+            "route": "projects/:slug/releases/agents"
           }
         }
       },
@@ -6177,7 +6177,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -6256,7 +6256,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -6294,7 +6294,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-workspaces",
             "kind": "ui",
-            "route": "projects/:slug/agents"
+            "route": "projects/:slug/releases/agents"
           }
         }
       },
@@ -6394,7 +6394,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -6547,7 +6547,7 @@
             "app": "qits-landing-app",
             "interaction": "show-work-item-agent",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/chat, projects/:slug/agents/:agentId/files, projects/:slug/agents/:agentId/terminal"
+            "route": "projects/:slug/releases/agents/:agentId/chat, projects/:slug/releases/agents/:agentId/files, projects/:slug/releases/agents/:agentId/terminal"
           }
         }
       },
@@ -6776,7 +6776,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -6814,7 +6814,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -7035,7 +7035,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -7167,7 +7167,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },

@@ -91,7 +91,7 @@ export interface WaitSubject {
   readonly gates?: readonly GateLike[];
   /**
    * The qualified id the subject's page in this app is addressed by: a release request's (its page,
-   * `projects/:slug/release-requests/:requestId`) or a work item's, for a `WORK_ITEM` or `COMMENTS`
+   * `projects/:slug/releases/requests/:requestId`) or a work item's, for a `WORK_ITEM` or `COMMENTS`
    * wait (`projects/:slug/work/detail/:id`). The caller picks the declared exit by `kind` (epic
    * qits-2000). Null for a run (see `href`), OTHER, or an unresolved subject.
    */

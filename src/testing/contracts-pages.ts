@@ -24,12 +24,13 @@ export const SLUG = 'qits';
 export const REPO = 'qits-projects-service';
 export const { site: SITE, version: VERSION } = masters.operation(CONTRACTS, 'getDocsFile').params;
 export const SITES_URL = '/artifacts/docs/docs';
-export const VERSIONS_URL = `${SITES_URL}/${SITE}`;
+/** The site's versions, the site one encoded segment, as the generated client sends it. */
+export const VERSIONS_URL = `${SITES_URL}/${encodeURIComponent(SITE)}`;
 export const DOCS = 'https://docs.example';
 
 /**
  * Sets the testing module up for `page` at `path`. `client` is the spec's artifacts client setup
- * (`provideHeyApiClient(artifactsClient)`, with `literalDocsPaths` on it, as `app.config.ts` does):
+ * (`provideHeyApiClient(artifactsClient)`, as `app.config.ts` provides it):
  * only stores and specs import a generated client.
  */
 export function configureContractsPage(
@@ -95,7 +96,7 @@ export async function openContractsPage(
    * Answers every open read of `file` in the site's version with `body`, or with `status`.
    */
   const answer = async (file: string, body: unknown, at = VERSION, status = 200) => {
-    for (const req of http.match(`${VERSIONS_URL}/-/${at}/${file}`)) {
+    for (const req of http.match(`${VERSIONS_URL}/-/${at}/${encodeURIComponent(file)}`)) {
       if (status >= 400) req.flush(null, { status, statusText: 'Error' });
       else req.flush(body as object);
     }

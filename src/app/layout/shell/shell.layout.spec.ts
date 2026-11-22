@@ -32,9 +32,9 @@ describe('agentSubpage', () => {
 
   it('names an agent by its item, and its tabs', () => {
     const agents = [{ agentId, entityId: 'qits-111' }];
-    expect(agentSubpage(`${project}/agents/${agentId}`, project, agents)).toEqual({
+    expect(agentSubpage(`${project}/releases/agents/${agentId}`, project, agents)).toEqual({
       label: 'qits-111',
-      path: `${project}/agents/${agentId}`,
+      path: `${project}/releases/agents/${agentId}`,
       // The label is the agent's item, from the project's ACTIVE agents (qits-2141).
       marks: {
         source: 'qits-workspaces-service#listAgents',
@@ -42,20 +42,20 @@ describe('agentSubpage', () => {
         field: 'entityId',
       },
     });
-    expect(agentSubpage(`${project}/agents/${agentId}/terminal?x=1`, project, agents)?.path).toBe(
-      `${project}/agents/${agentId}`,
-    );
+    expect(
+      agentSubpage(`${project}/releases/agents/${agentId}/terminal?x=1`, project, agents)?.path,
+    ).toBe(`${project}/releases/agents/${agentId}`);
   });
 
   it('names an agent it does not list by its id’s first eight characters', () => {
-    const page = agentSubpage(`${project}/agents/${agentId}/chat`, project);
+    const page = agentSubpage(`${project}/releases/agents/${agentId}/chat`, project);
     expect(page?.label).toBe('00000000');
     expect(page?.marks).toBeUndefined();
   });
 
   it('is undefined for the list itself and anywhere else', () => {
-    expect(agentSubpage(`${project}/agents`, project)).toBeUndefined();
-    expect(agentSubpage(`${project}/agents/`, project)).toBeUndefined();
+    expect(agentSubpage(`${project}/releases/agents`, project)).toBeUndefined();
+    expect(agentSubpage(`${project}/releases/agents/`, project)).toBeUndefined();
     expect(agentSubpage(`${project}/work/detail/qits-111/agent`, project)).toBeUndefined();
     expect(agentSubpage(`${project}/workspaces/12`, project)).toBeUndefined();
   });
@@ -98,7 +98,7 @@ describe('workSubpage', () => {
 
 describe('releaseRequestSubpage', () => {
   const project = '/projects/qits';
-  const list = `${project}/release-requests`;
+  const list = `${project}/releases/requests`;
   const id = '00000000-0000-4000-8000-000000000002';
 
   const requests = [{ id, qualifiedId: 'contract-service-rr-2' }, { id: `${id.slice(0, -1)}3` }];
@@ -179,7 +179,7 @@ describe('deploymentRequestSubpage', () => {
   it('has no crumb for the list itself or for other pages', () => {
     expect(deploymentRequestSubpage(list, project, shown)).toBeUndefined();
     expect(deploymentRequestSubpage(`${list}/`, project, shown)).toBeUndefined();
-    expect(deploymentRequestSubpage(`${project}/release-requests/${id}`, project)).toBeUndefined();
+    expect(deploymentRequestSubpage(`${project}/releases/requests/${id}`, project)).toBeUndefined();
   });
 });
 

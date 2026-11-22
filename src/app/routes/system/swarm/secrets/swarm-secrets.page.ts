@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { QitsApiError, QitsEntity, QitsEntityList, QitsField, qitsResource } from '@qits/angular';
 import { plural } from '$core/artifacts/artifact-listings';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
 import type { SwarmSecret } from '$core/system/swarm.consumes';
 import { SWARM_SECRET_LIST } from '$core/system/swarm.operations';
@@ -26,9 +27,9 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * - Header: "Swarm secrets", Refresh, a lede saying no value is shown, and "N secrets" (", M unused"
  *   while any is).
  * - Rows: name, docker's 12-character id (the whole id on hover), the services using it (one chip
- *   each; `Unused` when none), its labels (`key=value` chips, "—" for none), and docker's created
- *   and updated text as given ("2 months ago": `secret ls` prints no timestamp, so nothing parses
- *   it).
+ *   each; `Unused` when none), its labels (`key=value` chips, "—" for none), and Created and
+ *   Updated formatted the same way as the config detail page (`formatInstant`), the served instant
+ *   on hover.
  *
  * States: loading; a swarm holding no secrets is one sentence; a 403 says the swarm needs an admin
  * role; a 503 (the swarm is inactive, docker's socket missing or timing out: qits-system never
@@ -36,8 +37,8 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * failure, with Retry.
  *
  * Marks (qits-2141): the table is the secrets' read, each row a secret by its `id`; the short id is
- * derived from `id`, `Unused` from `usedBy`, the labels' chips (or the dash) from `labels`, the
- * count from the whole answer.
+ * derived from `id`, `Unused` from `usedBy`, the labels' chips (or the dash) from `labels`, Created
+ * and Updated derived from `createdAt`/`updatedAt`, the count from the whole answer.
  *
  * Staleness (qits-1270): the resource's `refreshOn`, `DEPLOYMENT_EVENTS` (`DeploymentActive`,
  * `DeploymentFailed`) → the whole list, debounced 1 s: which services use a secret changes when a
@@ -150,17 +151,19 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                         </td>
                         <td
                           class="py-1.5 pr-3 whitespace-nowrap text-fg-soft"
+                          [attr.title]="row.createdAt"
                           [fieldOf]="row"
-                          qitsField="createdAt"
+                          [qitsField]="marks.createdAt"
                         >
-                          {{ row.createdAt }}
+                          {{ instant(row.createdAt) }}
                         </td>
                         <td
                           class="py-1.5 whitespace-nowrap text-fg-soft"
+                          [attr.title]="row.updatedAt"
                           [fieldOf]="row"
-                          qitsField="updatedAt"
+                          [qitsField]="marks.updatedAt"
                         >
-                          {{ row.updatedAt }}
+                          {{ instant(row.updatedAt) }}
                         </td>
                       </tr>
                     }
@@ -228,6 +231,8 @@ export class SwarmSecretsPage {
 
   protected readonly shortId = shortSwarmId;
 
+  protected readonly instant = formatInstant;
+
   /** A secret's labels as `key=value`, in the answer's order. */
   protected labelsOf(row: SwarmSecret): readonly string[] {
     return Object.entries(row.labels ?? {}).map(([key, value]) => `${key}=${value}`);
@@ -240,4 +245,6 @@ const MARKS = {
   id: { derived: ['id'] },
   unused: { derived: ['usedBy'] },
   labels: { derived: ['labels'] },
+  createdAt: { derived: ['createdAt'] },
+  updatedAt: { derived: ['updatedAt'] },
 } as const;

@@ -6,6 +6,7 @@ import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { NEVER } from 'rxjs';
 import { client as systemClient } from '../../../../api/system/client.gen';
 import { provideHeyApiClient } from '../../../../api/system/client/client.gen';
+import { formatInstant } from '$core/release-requests/release-request-model';
 import type { SwarmSecret } from '$core/system/swarm.consumes';
 import { chipClass } from '$ui/components/chip/chip';
 import { systemGoldenMaster } from '../../../../../testing/golden-masters';
@@ -76,7 +77,8 @@ describe('SwarmSecretsPage', () => {
       [...row.querySelectorAll('td')].map((cell) => text(cell)),
     );
 
-  it('lists the recorded secrets with their usage, labels and docker’s own dates', async () => {
+  it('lists the recorded secrets with their usage, labels and formatted instants', async () => {
+    const [hetzner, idp] = recorded();
     const element = await shown(recorded());
     expect([...element.querySelectorAll('thead th')].map((heading) => text(heading))).toEqual([
       'Name',
@@ -92,22 +94,29 @@ describe('SwarmSecretsPage', () => {
         'x4kq7v2m9p1c',
         'Unused',
         'qits.platform.deployments.target=platform',
-        '2 months ago',
-        '2 months ago',
+        formatInstant(hetzner.createdAt),
+        formatInstant(hetzner.updatedAt),
       ],
       [
         'qits-platform-idp-signing-key',
         'jvbcnrfhrbn8',
         'dev-qits-artifacts',
         '—',
-        '3 months ago',
-        '3 months ago',
+        formatInstant(idp.createdAt),
+        formatInstant(idp.updatedAt),
       ],
     ]);
-    // The whole id on hover.
+    // The whole id, and the served instant, on hover.
     expect(
       [...element.querySelectorAll('tbody td[title]')].map((cell) => cell.getAttribute('title')),
-    ).toEqual(['x4kq7v2m9p1c8d0w5n3b6e2rt', 'jvbcnrfhrbn8u9c9c0nfg2rrj']);
+    ).toEqual([
+      'x4kq7v2m9p1c8d0w5n3b6e2rt',
+      hetzner.createdAt,
+      hetzner.updatedAt,
+      'jvbcnrfhrbn8u9c9c0nfg2rrj',
+      idp.createdAt,
+      idp.updatedAt,
+    ]);
     // Unused is a waiting chip, a service a neutral one.
     const [unused, used] = [...element.querySelectorAll('tbody tr')].map((row) =>
       row.querySelectorAll('td')[2].querySelector('ui-chip'),

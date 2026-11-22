@@ -5,7 +5,6 @@ import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../api/artifacts/client.gen';
 import { artifactsGoldenMasters } from '../../../testing/golden-masters';
 import { fetchSbomFile, saveFile, SBOM_MEDIA_TYPE, sbomFileName } from './sbom-download';
-import { literalSbomPaths } from './sbom-paths';
 
 /** qits-artifacts' coordinate with an SBOM on its newer version, and that SBOM's document. */
 const STATE = 'a maven coordinate with an sbom on one of two versions';
@@ -18,11 +17,6 @@ const DOCUMENT = artifactsGoldenMasters.text(STATE, 'getSbom');
 const SCOPED = 'a scoped npm package with an sbom on one of two versions';
 const NPM = artifactsGoldenMasters.operation(SCOPED, 'getSbom').params;
 const NPM_DOCUMENT = artifactsGoldenMasters.text(SCOPED, 'getSbom');
-
-// As `app.config.ts` does: the SBOM store's paths, with `:`, `@` and `/` literal.
-if (!artifactsClient.interceptors.request.exists(literalSbomPaths)) {
-  artifactsClient.interceptors.request.use(literalSbomPaths);
-}
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -44,12 +38,14 @@ describe('sbom download (qits-2325, qits-2326)', () => {
   afterEach(() => http.verify());
 
   /**
-   * The one SBOM read in flight, checked for its address (the coordinate's `:` literal, as the
-   * store's raw-path route needs it) and its text response type.
+   * The one SBOM read in flight, checked for its address (the coordinate encoded whole, `:` as
+   * `%3A`, as the generated client sends it) and its text response type.
    */
   async function pending() {
     await settle();
-    const request = http.expectOne(`/artifacts/sboms/maven/${COORDINATE}/-/${VERSION}`);
+    const request = http.expectOne(
+      `/artifacts/sboms/maven/${encodeURIComponent(COORDINATE)}/-/${VERSION}`,
+    );
     expect(request.request.responseType).toBe('text');
     return request;
   }
@@ -75,14 +71,13 @@ describe('sbom download (qits-2325, qits-2326)', () => {
     expect(await file?.blob.text()).toBe(DOCUMENT);
   });
 
-  it('reads a scoped npm package’s document, its name literal on the wire (qits-2326)', async () => {
+  it('reads a scoped npm package’s document, its name one encoded segment (qits-2326)', async () => {
     const reading = TestBed.runInInjectionContext(() =>
       fetchSbomFile('npm', NPM['packageName'], NPM['version']),
     );
     await settle();
-    // `@` and `/` as written: the store answers `%40contract%2Fcontract-scoped` with a 404.
-    const request = http.expectOne('/artifacts/sboms/npm/@contract/contract-scoped/-/2100.2.0');
-    expect(request.request.urlWithParams).not.toMatch(/%40|%2F/);
+    // The scoped name as one encoded segment, as the generated client sends it.
+    const request = http.expectOne('/artifacts/sboms/npm/%40contract%2Fcontract-scoped/-/2100.2.0');
     expect(request.request.responseType).toBe('text');
     request.flush(NPM_DOCUMENT, {
       headers: { 'Content-Type': 'application/vnd.cyclonedx+json; version=1.6' },

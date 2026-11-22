@@ -6,7 +6,6 @@ import { provideRouter, Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { commands, page, userEvent } from 'vitest/browser';
 import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { FreezeRecord } from '$core/ui-builder/routes-manifest';
 import { provideTestPlatformOrigins } from '../../../../testing/platform-origins';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
@@ -75,11 +74,6 @@ class Column {
   readonly project = input.required<string>();
 }
 
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
-}
-
 describe('CallDetails (screenshots)', () => {
   let http: HttpTestingController;
   let slug: string;
@@ -89,9 +83,9 @@ describe('CallDetails (screenshots)', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'projects/:slug/repositories/:repo/contracts/:state', children: [] },
-          { path: 'projects/:slug/repositories/:repo/entities/:entity', children: [] },
-          { path: 'projects/:slug/repositories/:repo/contracts', children: [] },
+          { path: 'projects/:slug/components/:repo/contracts/:state', children: [] },
+          { path: 'projects/:slug/components/:repo/entities/:entity', children: [] },
+          { path: 'projects/:slug/components/:repo/contracts', children: [] },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -150,7 +144,7 @@ describe('CallDetails (screenshots)', () => {
     beforeOpen?.(fixture.nativeElement as HTMLElement);
     await locator.getByRole('button', { name: /getGitRepository/ }).click();
     await settle();
-    http.expectOne((req) => req.url.endsWith('/golden-masters/index.json')).flush(index);
+    http.expectOne((req) => req.url.endsWith('/golden-masters%2Findex.json')).flush(index);
     // The popover's effect starts the recorded response's read once the index is drawn (qits-2146:
     // a `qitsResource`, open until answered, so `whenStable()` waits for it): run it first.
     for (let i = 0; i < 3; i++) {
@@ -158,7 +152,7 @@ describe('CallDetails (screenshots)', () => {
       fixture.detectChanges();
     }
     // The recorded response: no recording holds it.
-    for (const request of http.match((req) => req.url.endsWith('/getGitRepository.json'))) {
+    for (const request of http.match((req) => req.url.endsWith('%2FgetGitRepository.json'))) {
       request.flush(null, { status: 404, statusText: 'Not Found' });
     }
     await settle();
@@ -247,7 +241,7 @@ describe('CallDetails (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: state.name }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/${GITHOST}/contracts/${state.slug}`,
+      `/projects/${slug}/components/${GITHOST}/contracts/${state.slug}`,
     );
     expect(fired()).toEqual(['open-call-contract:state']);
   });
@@ -257,7 +251,7 @@ describe('CallDetails (screenshots)', () => {
     await userEvent.click(locator.getByRole('link', { name: 'Open GitRepository entity page' }));
     await settle();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${slug}/repositories/${GITHOST}/entities/${entity.entity}`,
+      `/projects/${slug}/components/${GITHOST}/entities/${entity.entity}`,
     );
     expect(fired()).toEqual(['open-call-contract:entity']);
   });
@@ -266,7 +260,7 @@ describe('CallDetails (screenshots)', () => {
     const { locator } = await opened();
     await userEvent.click(locator.getByRole('link', { name: `Contracts of ${GITHOST}` }));
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/repositories/${GITHOST}/contracts`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/${slug}/components/${GITHOST}/contracts`);
     expect(fired()).toEqual(['open-call-contract:contracts']);
   });
 });

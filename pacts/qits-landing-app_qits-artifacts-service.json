@@ -95,13 +95,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/maven/eu\\.wohlben\\.qits%3Acontract-maven/-/2100\\.2\\.0$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven/-/2100.2.0"
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits%3Acontract-maven/-/2100.2.0"
       },
       "response": {
         "headers": {
@@ -167,13 +168,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/npm/%40contract%2Fcontract-scoped/-/2100\\.2\\.0$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/npm/@contract/contract-scoped/-/2100.2.0"
+        "path": "/artifacts/sboms/npm/%40contract%2Fcontract-scoped/-/2100.2.0"
       },
       "response": {
         "headers": {
@@ -390,10 +392,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -543,7 +545,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -551,7 +553,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -678,7 +680,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -727,7 +729,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -757,7 +759,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -798,7 +800,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -930,7 +932,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -955,7 +957,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1164,7 +1166,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -1172,7 +1174,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -1321,7 +1323,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1540,7 +1542,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -1596,7 +1598,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -1734,7 +1736,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1925,7 +1927,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2035,7 +2037,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2051,7 +2053,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2059,7 +2061,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -2178,7 +2180,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2194,7 +2196,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2202,7 +2204,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -2390,7 +2392,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2398,7 +2400,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -2532,7 +2534,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -2696,7 +2698,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2712,7 +2714,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2823,7 +2825,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2839,7 +2841,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -2885,7 +2887,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts/:state"
+            "route": "projects/:slug/components/:repo/contracts/:state"
           }
         }
       },
@@ -2913,13 +2915,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/golden-masters%2Findex\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/golden-masters/index.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/golden-masters%2Findex.json"
       },
       "response": {
         "body": {
@@ -2971,7 +2974,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -2999,13 +3002,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100\\.1\\.0/golden-masters%2Findex\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100.1.0/golden-masters%2Findex.json"
       },
       "response": {
         "body": {
@@ -3057,7 +3061,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -3085,13 +3089,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -3143,7 +3148,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -3256,13 +3261,13 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -3294,7 +3299,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -3391,10 +3396,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -3426,7 +3431,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -3454,13 +3459,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost"
       },
       "response": {
         "body": {
@@ -3556,7 +3562,7 @@
             "app": "qits-landing-app",
             "interaction": "show-contract-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -3584,13 +3590,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects"
       },
       "response": {
         "body": {
@@ -3686,7 +3693,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -3714,13 +3721,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40apidocs%2Fcontract-service/-/2100\\.1\\.0/openapi\\.yml$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@apidocs/contract-service/-/2100.1.0/openapi.yml"
+        "path": "/artifacts/docs/docs/%40apidocs%2Fcontract-service/-/2100.1.0/openapi.yml"
       },
       "response": {
         "headers": {
@@ -3756,7 +3764,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -3784,13 +3792,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40userflows%2Fcontract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432/alpha%2Ffirst-story%2Fuser-story\\.md$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@userflows/contract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432/alpha/first-story/user-story.md"
+        "path": "/artifacts/docs/docs/%40userflows%2Fcontract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432/alpha%2Ffirst-story%2Fuser-story.md"
       },
       "response": {
         "headers": {
@@ -3853,13 +3862,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40userflows%2Fcontract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432/alpha%2Ffirst-story%2Fscreenshot\\.png$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@userflows/contract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432/alpha/first-story/screenshot.png"
+        "path": "/artifacts/docs/docs/%40userflows%2Fcontract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432/alpha%2Ffirst-story%2Fscreenshot.png"
       },
       "response": {
         "headers": {
@@ -3895,7 +3905,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -3964,7 +3974,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -3992,13 +4002,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40apidocs%2Fcontract-service/-/2100\\.1\\.0$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@apidocs/contract-service/-/2100.1.0"
+        "path": "/artifacts/docs/docs/%40apidocs%2Fcontract-service/-/2100.1.0"
       },
       "response": {
         "body": {
@@ -4063,7 +4074,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -4091,13 +4102,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40userflows%2Fcontract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@userflows/contract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432"
+        "path": "/artifacts/docs/docs/%40userflows%2Fcontract-userflows/-/9f8e7d6c5b4a39281706f5e4d3c2b1a098765432"
       },
       "response": {
         "body": {
@@ -4178,7 +4190,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -4327,7 +4339,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -4415,7 +4427,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -4453,7 +4465,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site, projects/:slug/docs/read/**, projects/:slug/docs/read/:site"
           }
         }
       },
@@ -4553,7 +4565,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -4591,7 +4603,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -4629,7 +4641,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -4657,13 +4669,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40apidocs%2Fcontract-service$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@apidocs/contract-service"
+        "path": "/artifacts/docs/docs/%40apidocs%2Fcontract-service"
       },
       "response": {
         "body": {
@@ -4750,7 +4763,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site, projects/:slug/docs/read/:site/-/:version"
+            "route": "projects/:slug/components/:repo/docs/:site, projects/:slug/components/:repo/docs/:site/-/:version"
           }
         }
       },
@@ -4778,13 +4791,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40userflows%2Fcontract-userflows$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@userflows/contract-userflows"
+        "path": "/artifacts/docs/docs/%40userflows%2Fcontract-userflows"
       },
       "response": {
         "body": {
@@ -4887,7 +4901,7 @@
             "app": "qits-landing-app",
             "interaction": "show-docs-site",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -5049,7 +5063,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -5077,13 +5091,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100\\.1\\.0/golden-masters%2Findex\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100.1.0/golden-masters%2Findex.json"
       },
       "response": {
         "body": {
@@ -5135,7 +5150,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -5163,13 +5178,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -5221,7 +5237,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -5249,13 +5265,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -5307,7 +5324,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/docs/read/:site"
+            "route": "projects/:slug/components/:repo/docs/:site"
           }
         }
       },
@@ -5376,7 +5393,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -5489,13 +5506,13 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -5527,7 +5544,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -5624,10 +5641,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -5659,7 +5676,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -5687,13 +5704,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost"
       },
       "response": {
         "body": {
@@ -5789,7 +5807,7 @@
             "app": "qits-landing-app",
             "interaction": "show-entity",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -5817,13 +5835,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects"
       },
       "response": {
         "body": {
@@ -5949,13 +5968,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/maven/maven-packages/eu\\.wohlben\\.qits%3Acontract-maven/versions$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits:contract-maven/versions"
+        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits%3Acontract-maven/versions"
       },
       "response": {
         "body": {
@@ -6050,10 +6070,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -6134,13 +6154,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/maven/maven-packages/eu\\.wohlben\\.qits%3Acontract-maven/versions$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits:contract-maven/versions"
+        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits%3Acontract-maven/versions"
       },
       "response": {
         "body": {
@@ -6207,7 +6228,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -6285,13 +6306,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/maven/maven-packages/eu\\.wohlben\\.qits%3Acontract-maven/versions$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits:contract-maven/versions"
+        "path": "/artifacts/api/repositories/maven/maven-packages/eu.wohlben.qits%3Acontract-maven/versions"
       },
       "response": {
         "status": 200
@@ -6339,13 +6361,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/maven/eu\\.wohlben\\.qits%3Acontract-maven$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits%3Acontract-maven"
       },
       "response": {
         "body": {
@@ -6392,7 +6415,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -6477,13 +6500,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/maven/eu\\.wohlben\\.qits%3Acontract-maven$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits%3Acontract-maven"
       },
       "response": {
         "status": 404
@@ -6538,13 +6562,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/maven/eu\\.wohlben\\.qits%3Acontract-maven$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits%3Acontract-maven"
       },
       "response": {
         "status": 404
@@ -6592,13 +6617,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/npm/packages/%40contract%2Fcontract-scoped/versions$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/api/repositories/npm/packages/@contract/contract-scoped/versions"
+        "path": "/artifacts/api/repositories/npm/packages/%40contract%2Fcontract-scoped/versions"
       },
       "response": {
         "body": {
@@ -6653,7 +6679,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -6704,7 +6730,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -6861,7 +6887,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -6993,13 +7019,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/npm/%40contract%2Fcontract-scoped$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/npm/@contract/contract-scoped"
+        "path": "/artifacts/sboms/npm/%40contract%2Fcontract-scoped"
       },
       "response": {
         "body": {
@@ -7046,7 +7073,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -7131,13 +7158,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/maven/eu\\.wohlben\\.qits%3Acontract-maven$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits%3Acontract-maven"
       },
       "response": {
         "status": 404
@@ -7192,13 +7220,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/sboms/maven/eu\\.wohlben\\.qits%3Acontract-maven$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/sboms/maven/eu.wohlben.qits:contract-maven"
+        "path": "/artifacts/sboms/maven/eu.wohlben.qits%3Acontract-maven"
       },
       "response": {
         "status": 404
@@ -7448,7 +7477,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -7476,13 +7505,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100\\.1\\.0/golden-masters%2Findex\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100.1.0/golden-masters%2Findex.json"
       },
       "response": {
         "body": {
@@ -7534,7 +7564,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -7562,13 +7592,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -7620,7 +7651,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -7733,13 +7764,13 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -7771,7 +7802,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -7868,10 +7899,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -7903,7 +7934,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -7931,13 +7962,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost"
       },
       "response": {
         "body": {
@@ -8033,7 +8065,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-contracts",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -8061,13 +8093,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects"
       },
       "response": {
         "body": {
@@ -8163,7 +8196,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
             "kind": "ui",
-            "route": "projects/:slug/docs, projects/:slug/docs/read/:site, projects/:slug/docs/repositories/:repo"
+            "route": "projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site, projects/:slug/docs/read/**, projects/:slug/docs/read/:site"
           }
         }
       },
@@ -8263,7 +8296,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -8301,7 +8334,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -8338,8 +8371,7 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-repository-docs",
-            "kind": "ui",
-            "route": "projects/:slug/docs"
+            "kind": "ui"
           }
         }
       },
@@ -8395,7 +8427,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-entities",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -8423,13 +8455,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -8481,7 +8514,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-entities",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -8578,10 +8611,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -8613,7 +8646,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-entities",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -8641,13 +8674,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects"
       },
       "response": {
         "body": {
@@ -8737,13 +8771,315 @@
         "references": {
           "qits-call": {
             "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/components/:repo, projects/:slug/components/:repo/artifacts, projects/:slug/components/:repo/docs/:site"
+          }
+        }
+      },
+      "description": "show-repository: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a docs catalog naming contract repositories",
+          "params": {
+            "site0": "@routes/contract-frontend",
+            "site1": "@contracts/contract-service"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestPublishedAt": "2026-01-01T00:00:00Z",
+                "latestRepository": "contract-service",
+                "latestVersion": "2100.1.0",
+                "name": "@contracts/contract-service",
+                "versionCount": 1
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.latestRepository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
+            "operationId": "listDocsSites"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-repository",
+            "kind": "ui",
+            "route": "projects/:slug/components/:repo/docs, projects/:slug/components/:repo/docs/:site, projects/:slug/docs/read/**, projects/:slug/docs/read/:site"
+          }
+        }
+      },
+      "description": "show-repository: listDocsSites",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "a docs catalog of every kind",
+          "params": {
+            "site0": "@apidocs/qits-ci",
+            "site1": "@userflows/qits-events",
+            "site2": "@guides/qits-platform",
+            "site3": "@contracts/qits-ci",
+            "site4": "@routes/qits-landing",
+            "site5": "@changelog/qits-ci-service",
+            "site6": "@qits/ui-components",
+            "site7": "qits-storybook"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/artifacts/docs/docs"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "sites": [
+              {
+                "latestPublishedAt": "2026-01-13T01:00:00Z",
+                "latestRepository": "qits-ci-service",
+                "latestVersion": "2026.112.10000",
+                "name": "@apidocs/qits-ci",
+                "versionCount": 3
+              },
+              {
+                "latestPublishedAt": "2026-01-02T08:00:00Z",
+                "latestVersion": "1.0.0",
+                "name": "qits-storybook",
+                "versionCount": 1
+              }
+            ]
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.sites": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.latestRepository": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.latestPublishedAt": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.latestVersion": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.name": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.versionCount": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-artifacts-service",
             "operationId": "getDocsFile"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-call-details",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities/:entity"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities/:entity"
           }
         }
       },
@@ -8771,13 +9107,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100\\.1\\.0/golden-masters%2Findex\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-githost/-/2100.1.0/golden-masters/index.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-githost/-/2100.1.0/golden-masters%2Findex.json"
       },
       "response": {
         "body": {
@@ -8829,7 +9166,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-call-details",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -8857,13 +9194,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -8915,7 +9253,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-entities",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -8943,13 +9281,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100\\.1\\.0/entities\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects/-/2100.1.0/entities.json"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects/-/2100.1.0/entities.json"
       },
       "response": {
         "body": {
@@ -9001,7 +9340,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-entities",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9098,10 +9437,10 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -9133,7 +9472,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-entities",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/contracts/:state, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/entities/:entity, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/contracts/:state, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/entities/:entity, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9161,13 +9500,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40contracts%2Fqits-projects$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@contracts/qits-projects"
+        "path": "/artifacts/docs/docs/%40contracts%2Fqits-projects"
       },
       "response": {
         "body": {
@@ -9263,7 +9603,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9291,13 +9631,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026\\.1109\\.73025/manifest\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing/-/2026.1109.73025/manifest.json"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026.1109.73025/manifest.json"
       },
       "response": {
         "body": {
@@ -9349,7 +9690,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9377,13 +9718,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026\\.1111\\.50732/manifest\\.json$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing/-/2026.1111.50732/manifest.json"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026.1111.50732/manifest.json"
       },
       "response": {
         "body": {
@@ -9435,7 +9777,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/contracts, projects/:slug/repositories/:repo/entities, projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/contracts, projects/:slug/components/:repo/entities, projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9515,7 +9857,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -9553,7 +9895,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9633,7 +9975,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -9671,7 +10013,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9751,7 +10093,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -9789,7 +10131,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9817,13 +10159,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing"
       },
       "response": {
         "body": {
@@ -9919,7 +10262,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-routes",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -9947,13 +10290,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing"
       },
       "response": {
         "body": {
@@ -10076,13 +10420,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026\\.1109\\.73025/assets%2Finter-latin-400-normal\\.woff2$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing/-/2026.1109.73025/assets/inter-latin-400-normal.woff2"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026.1109.73025/assets%2Finter-latin-400-normal.woff2"
       },
       "response": {
         "headers": {
@@ -10118,7 +10463,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ui-builder-state",
             "kind": "ui",
-            "route": "projects/:slug/repositories/:repo/ui-builder"
+            "route": "projects/:slug/components/:repo/ui-builder"
           }
         }
       },
@@ -10146,13 +10491,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026\\.1109\\.73025/src%2Fapp%2Froutes%2Fprojects%2F%5Bslug%5D%2Frepositories%2Fproject-repositories\\.page\\.browser\\.spec\\.ts%2Floaded\\.html$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing/-/2026.1109.73025/src/app/routes/projects/[slug]/repositories/project-repositories.page.browser.spec.ts/loaded.html"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026.1109.73025/src%2Fapp%2Froutes%2Fprojects%2F%5Bslug%5D%2Frepositories%2Fproject-repositories.page.browser.spec.ts%2Floaded.html"
       },
       "response": {
         "headers": {
@@ -10215,13 +10561,14 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026\\.1109\\.73025$"
               }
             ]
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@routes/qits-landing/-/2026.1109.73025"
+        "path": "/artifacts/docs/docs/%40routes%2Fqits-landing/-/2026.1109.73025"
       },
       "response": {
         "body": {

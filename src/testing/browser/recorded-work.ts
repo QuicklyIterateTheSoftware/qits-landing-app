@@ -143,7 +143,7 @@ export async function openWorkspaces(
 export const WORK_LINK_TARGETS: Routes = [
   { path: 'projects/:slug/work/detail/:id', children: [] },
   { path: 'projects/:slug/work/detail/:id/agent', children: [] },
-  { path: 'projects/:slug/release-requests/:requestId', children: [] },
+  { path: 'projects/:slug/releases/requests/:requestId', children: [] },
 ];
 
 /**

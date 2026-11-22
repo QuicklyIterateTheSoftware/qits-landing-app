@@ -152,7 +152,7 @@
             "app": "qits-landing-app",
             "interaction": "open-agent-directory",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/files"
+            "route": "projects/:slug/releases/agents/:agentId/files"
           }
         }
       },
@@ -239,7 +239,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -353,7 +353,7 @@
             "app": "qits-landing-app",
             "interaction": "open-agent-file",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/files"
+            "route": "projects/:slug/releases/agents/:agentId/files"
           }
         }
       },
@@ -661,7 +661,7 @@
             "app": "qits-landing-app",
             "interaction": "show-agent-chat",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/chat"
+            "route": "projects/:slug/releases/agents/:agentId/chat"
           }
         }
       },
@@ -765,16 +765,16 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             }
@@ -806,7 +806,7 @@
             "app": "qits-landing-app",
             "interaction": "show-agent-files",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/files"
+            "route": "projects/:slug/releases/agents/:agentId/files"
           }
         }
       },
@@ -1009,7 +1009,7 @@
             "app": "qits-landing-app",
             "interaction": "show-agent-files",
             "kind": "ui",
-            "route": "projects/:slug/agents/:agentId/files"
+            "route": "projects/:slug/releases/agents/:agentId/files"
           }
         }
       },
@@ -1097,7 +1097,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },

@@ -53,10 +53,10 @@ export class WorkAgentLayout {
   private readonly following = outcomes(
     'follow-work-item-agent',
     {
-      toAgent: exit('projects/:slug/agents/:agentId'),
-      toAgentChat: exit('projects/:slug/agents/:agentId/chat'),
-      toAgentFiles: exit('projects/:slug/agents/:agentId/files'),
-      toAgentTerminal: exit('projects/:slug/agents/:agentId/terminal'),
+      toAgent: exit('projects/:slug/releases/agents/:agentId'),
+      toAgentChat: exit('projects/:slug/releases/agents/:agentId/chat'),
+      toAgentFiles: exit('projects/:slug/releases/agents/:agentId/files'),
+      toAgentTerminal: exit('projects/:slug/releases/agents/:agentId/terminal'),
       toItem: exit('projects/:slug/work/detail/:id'),
     },
     { triggered: false },

@@ -432,13 +432,13 @@ describe('WorkGraph', () => {
         expect(roots(list)).toEqual(['b', 'c', 'a']);
       });
 
-      it('puts an entry nobody ranked after every ranked one', () => {
+      it('counts an entry nobody ranked as 0, above a negative priority (qits-2496)', () => {
         const list = [
           ranked('a', 'qits-1', null),
           ranked('b', 'qits-9', 0),
           ranked('c', 'qits-5', -2),
         ];
-        expect(roots(list)).toEqual(['b', 'c', 'a']);
+        expect(roots(list)).toEqual(['a', 'b', 'c']);
         expect([ranked('x', 'qits-1', null), ranked('y', 'qits-2', 1)].sort(byPriority)).toEqual([
           expect.objectContaining({ id: 'y' }),
           expect.objectContaining({ id: 'x' }),

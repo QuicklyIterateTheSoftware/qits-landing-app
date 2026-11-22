@@ -213,7 +213,7 @@ export class ReleaseMenu {
 
   /** A request's row, linked to the request's page (epic qits-2000). */
   protected readonly opening = outcomes('open-menu-release-request', {
-    request: exit('projects/:slug/release-requests/:requestId'),
+    request: exit('projects/:slug/releases/requests/:requestId'),
   });
 
   /** The requests' answer, once read; an empty one before. */

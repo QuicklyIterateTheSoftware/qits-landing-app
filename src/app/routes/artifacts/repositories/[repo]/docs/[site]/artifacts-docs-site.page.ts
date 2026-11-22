@@ -34,8 +34,7 @@ const NO_VERSIONS: ArtifactDocsVersions = { versions: [] };
  * published versions, each read in qits-docs' reader. It replaces qits-artifacts-frontend's
  * `repositories/:repo/docs/:site`. Every site name is scoped and slashed (`@changelog/qits-qits`),
  * and it is one segment: `@changelog%2Fqits-qits` in the URL, and `%40changelog%2Fqits-qits` in
- * the read (this `/artifacts/api/` door takes it encoded; `literalDocsPaths` rewrites only
- * `/artifacts/docs/` wire URLs).
+ * the read, as the generated client spells every path parameter.
  *
  * **Load budget: 1, nothing per row.** `ARTIFACT_DOCS_VERSIONS` (`listDocsVersionSummaries`) is
  * the table, and the header's count is taken from its answer; the store page's site listing is not

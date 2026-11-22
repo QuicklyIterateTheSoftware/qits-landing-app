@@ -163,7 +163,7 @@ describe('ProjectDeskPage', () => {
     const requestLink = lines[1].querySelector('a');
     expect(requestLink?.textContent?.trim()).toBe('contract-service-rr-7');
     expect(requestLink?.getAttribute('href')).toBe(
-      `/projects/${project.slug}/release-requests/contract-service-rr-7`,
+      `/projects/${project.slug}/releases/requests/contract-service-rr-7`,
     );
     expect(lines[2].textContent).toContain('comment 00000000');
     expect(lines[2].querySelector('a')?.getAttribute('href')).toBe(

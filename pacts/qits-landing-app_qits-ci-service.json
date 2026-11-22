@@ -81,7 +81,7 @@
             "app": "qits-landing-app",
             "interaction": "retry-ci-run",
             "kind": "ui",
-            "route": "projects/:slug/ci/runs/:runId"
+            "route": "projects/:slug/releases/ci/runs/:runId"
           }
         }
       },
@@ -173,7 +173,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
             "kind": "ui",
-            "route": "projects/:slug/ci/runs/:runId"
+            "route": "projects/:slug/releases/ci/runs/:runId"
           }
         }
       },
@@ -387,7 +387,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -489,13 +489,13 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -593,13 +593,13 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 },
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -656,7 +656,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
             "kind": "ui",
-            "route": "projects/:slug/ci/runs/:runId"
+            "route": "projects/:slug/releases/ci/runs/:runId"
           }
         }
       },
@@ -804,7 +804,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -812,7 +812,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -837,7 +837,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -927,7 +927,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
             "kind": "ui",
-            "route": "projects/:slug/ci/runs/:runId"
+            "route": "projects/:slug/releases/ci/runs/:runId"
           }
         }
       },
@@ -1108,7 +1108,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1151,7 +1151,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1228,7 +1228,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1286,7 +1286,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1392,7 +1392,7 @@
             "app": "qits-landing-app",
             "interaction": "show-ci-run",
             "kind": "ui",
-            "route": "projects/:slug/ci/runs/:runId"
+            "route": "projects/:slug/releases/ci/runs/:runId"
           }
         }
       },
@@ -1512,7 +1512,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1537,7 +1537,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1545,7 +1545,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -1586,7 +1586,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-ci",
             "kind": "ui",
-            "route": "projects/:slug/ci"
+            "route": "projects/:slug/releases/ci"
           }
         }
       },
@@ -1735,7 +1735,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-ci",
             "kind": "ui",
-            "route": "projects/:slug/ci"
+            "route": "projects/:slug/releases/ci"
           }
         }
       },
@@ -1881,7 +1881,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-ci",
             "kind": "ui",
-            "route": "projects/:slug/ci"
+            "route": "projects/:slug/releases/ci"
           }
         }
       },
@@ -2216,7 +2216,7 @@
             "app": "qits-landing-app",
             "interaction": "show-project-ci",
             "kind": "ui",
-            "route": "projects/:slug/ci"
+            "route": "projects/:slug/releases/ci"
           }
         }
       },
@@ -2811,7 +2811,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2861,7 +2861,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2869,7 +2869,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2909,7 +2909,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2959,7 +2959,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2967,7 +2967,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2975,7 +2975,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -2999,7 +2999,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3007,7 +3007,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3023,7 +3023,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3031,7 +3031,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3039,7 +3039,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3047,7 +3047,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3055,7 +3055,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3063,7 +3063,7 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "number"
+                  "match": "type"
                 }
               ]
             },
@@ -3261,7 +3261,7 @@
                                       "combine": "AND",
                                       "matchers": [
                                         {
-                                          "match": "number"
+                                          "match": "type"
                                         }
                                       ]
                                     }
@@ -3274,7 +3274,7 @@
                                       "combine": "AND",
                                       "matchers": [
                                         {
-                                          "match": "number"
+                                          "match": "type"
                                         }
                                       ]
                                     },
@@ -3306,7 +3306,7 @@
                                       "combine": "AND",
                                       "matchers": [
                                         {
-                                          "match": "number"
+                                          "match": "type"
                                         }
                                       ]
                                     }
@@ -3337,7 +3337,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -3345,7 +3345,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -3401,10 +3401,10 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             },
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -3429,7 +3429,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         },
@@ -3437,7 +3437,7 @@
                           "combine": "AND",
                           "matchers": [
                             {
-                              "match": "number"
+                              "match": "type"
                             }
                           ]
                         }
@@ -3484,7 +3484,7 @@
             "app": "qits-landing-app",
             "interaction": "show-release-request-runs",
             "kind": "ui",
-            "route": "projects/:slug/release-requests/:requestId"
+            "route": "projects/:slug/releases/requests/:requestId"
           }
         }
       },
@@ -4040,7 +4040,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-ci-empty",
             "kind": "ui",
-            "route": "projects/:slug/ci/:repo"
+            "route": "projects/:slug/releases/ci/:repo"
           }
         }
       },
@@ -4111,7 +4111,7 @@
             "app": "qits-landing-app",
             "interaction": "show-repository-ci",
             "kind": "ui",
-            "route": "projects/:slug/ci/:repo"
+            "route": "projects/:slug/releases/ci/:repo"
           }
         }
       },
