@@ -75,18 +75,18 @@ describe('WrapperClosingLine', () => {
     [
       'contract-00000001-2',
       'Closes with contract-00000001-contract-00000001-rr-1, pending',
-      '/projects/qits/release-requests/contract-00000001-contract-00000001-rr-1',
+      '/projects/qits/releases/requests/contract-00000001-contract-00000001-rr-1',
     ],
     [
       'contract-00000001-3',
       'Closes now: contract-00000001-contract-00000001-rr-2 finalized',
-      '/projects/qits/release-requests/contract-00000001-contract-00000001-rr-2',
+      '/projects/qits/releases/requests/contract-00000001-contract-00000001-rr-2',
     ],
     ['contract-00000001-4', 'Closes now: nothing left to release', null],
     [
       'contract-00000001-5',
       'Its wrapper request contract-00000001-contract-00000001-rr-4 ended without proof, so it cannot close by itself',
-      '/projects/qits/release-requests/contract-00000001-contract-00000001-rr-4',
+      '/projects/qits/releases/requests/contract-00000001-contract-00000001-rr-4',
     ],
     ['contract-00000001-6', 'Closes once its release lands', null],
   ])('%s: says “%s”, linking %s', async (ticket, words, href) => {

@@ -18,6 +18,7 @@ import {
   LIST_PROJECT_WRAPPER,
   PROJECT_REPOSITORIES,
   PROJECT_REPOSITORY_NAMES,
+  PROJECT_REPOSITORY_PAGE,
 } from './repositories.operations';
 
 /**
@@ -36,11 +37,16 @@ import {
  *   whole list (the UI builder and the release request page read the same);
  * - `sync-backups-after-sign-in` (`BACKUP_SYNC`): the nudge after the backup sign-in, and a
  *   project qits-projects does not know (a 404, binding the status only);
- * - `show-repository-docs` and `show-project-docs` (`PROJECT_REPOSITORY_NAMES`, qits-2336): a
- *   repository's Docs page finds the address's repository by name, and the project's Docs page
- *   names the project's repository that published a site, in "two projects exist" (whose
+ * - `show-repository-docs` and `search-components` (`PROJECT_REPOSITORY_NAMES`, qits-2336,
+ *   qits-2491; the project Docs page's `show-project-docs` is gone, qits-2486): a repository's
+ *   Docs page finds the address's repository by name, and the Components search matches the typed
+ *   text against the names, in "two projects exist" (whose
  *   repositories are `qits-ci-service` and `qits-ci-frontend`, the publishers qits-artifacts'
  *   docs catalog recording names).
+ * - `show-repository` (`PROJECT_REPOSITORY_PAGE`, qits-2478): a repository's page finds the
+ *   address's repository by name and reads its archetype, in "a project with 3 repositories"
+ *   (the `contract-*` names qits-maintenance's recordings publish from) and "two projects exist"
+ *   (the publishers of qits-artifacts' docs catalog recording).
  * - `show-docs-site` (`PROJECT_REPOSITORY_NAMES`, qits-2337): the docs reader hands a contracts or
  *   routes site off only to a repository of the project, in "two projects exist" (`qits-ci-service`,
  *   `@contracts/qits-ci`'s publisher) and "a project with 3 repositories" (`contract-frontend`,
@@ -181,7 +187,7 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
       },
     ));
 
-  it.each(['show-repository-docs', 'show-project-docs'] as const)(
+  it.each(['show-repository-docs', 'search-components'] as const)(
     '%s: the project’s repositories, found by name',
     (interaction) =>
       given(PROJECT_REPOSITORY_NAMES, 'two projects exist', interaction).executeTest(
@@ -199,6 +205,20 @@ describe('qits-landing-app → qits-projects-service pact: the repository operat
           expect(repositoryNamed(entries, 'no-such-repository')).toBeUndefined();
         },
       ),
+  );
+
+  it.each(['a project with 3 repositories', 'two projects exist'])(
+    'show-repository: the project’s repositories, the address’s found by name (%s)',
+    (state) =>
+      given(PROJECT_REPOSITORY_PAGE, state, 'show-repository').executeTest(async (server) => {
+        const { data } = await at(server.url, () =>
+          PROJECT_REPOSITORY_PAGE.fetch({ path: { projectId: projectOf(state) } }),
+        );
+        const entries = data?.entries ?? [];
+        expect(entries.length).toBeGreaterThan(0);
+        const name = entries[0].repository?.name ?? '';
+        expect(repositoryNamed(entries, name)?.archetype).toBeTruthy();
+      }),
   );
 
   it.each(['two projects exist', 'a project with 3 repositories'])(

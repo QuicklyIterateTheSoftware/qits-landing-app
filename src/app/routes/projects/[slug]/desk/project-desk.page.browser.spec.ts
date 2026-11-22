@@ -97,7 +97,7 @@ describe('ProjectDeskPage (screenshots)', () => {
   });
 
   it.each([
-    ['releaseRequest', 'contract-service-rr-7', 'release-requests/contract-service-rr-7'],
+    ['releaseRequest', 'contract-service-rr-7', 'releases/requests/contract-service-rr-7'],
     ['workItem', 'contract-00000001-1580', 'work/detail/contract-00000001-1580'],
   ])('open-desk-line %s: the line’s item “%s” opens its page', async (outcome, name, path) => {
     const { opened, view } = await loaded(RECEIVED);

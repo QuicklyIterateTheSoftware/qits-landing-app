@@ -198,7 +198,7 @@ describe('ProjectEventsPage (screenshots)', () => {
     await leftFor(opened);
     expect(reached()).toEqual(['open-project-event-subject:releaseRequest']);
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/release-requests/${requestId}`,
+      `/projects/${opened.project.slug}/releases/requests/${requestId}`,
     );
   });
 

@@ -40,7 +40,10 @@ describe('WorkAgentLayout', () => {
               { path: ':tab', children: [] },
             ],
           },
-          { path: 'projects/:slug/agents/:agentId', children: [{ path: '**', children: [] }] },
+          {
+            path: 'projects/:slug/releases/agents/:agentId',
+            children: [{ path: '**', children: [] }],
+          },
           { path: 'projects/:slug/work/detail/:id', children: [] },
         ]),
         { provide: SelectedProject, useValue: { slug: signal('qits') } },
@@ -81,25 +84,25 @@ describe('WorkAgentLayout', () => {
     const router = TestBed.inject(Router);
     const navigate = vi.spyOn(router, 'navigateByUrl');
     await answer(ACTIVE);
-    expect(navigate).toHaveBeenCalledWith(`/projects/qits/agents/${AGENT_ID}`, {
+    expect(navigate).toHaveBeenCalledWith(`/projects/qits/releases/agents/${AGENT_ID}`, {
       replaceUrl: true,
     });
     await settle();
-    expect(router.url).toBe(`/projects/qits/agents/${AGENT_ID}`);
+    expect(router.url).toBe(`/projects/qits/releases/agents/${AGENT_ID}`);
   });
 
   it.each(['chat', 'files', 'terminal'])('keeps the %s tab', async (tab) => {
     await open(`/projects/qits/work/detail/${ITEM}/agent/${tab}`);
     await answer(ACTIVE);
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/qits/agents/${AGENT_ID}/${tab}`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/qits/releases/agents/${AGENT_ID}/${tab}`);
   });
 
   it('drops a segment that is not a tab', async () => {
     await open(`/projects/qits/work/detail/${ITEM}/agent/nope`);
     await answer(ACTIVE);
     await settle();
-    expect(TestBed.inject(Router).url).toBe(`/projects/qits/agents/${AGENT_ID}`);
+    expect(TestBed.inject(Router).url).toBe(`/projects/qits/releases/agents/${AGENT_ID}`);
   });
 
   it('goes to the item when it has no ACTIVE agent', async () => {

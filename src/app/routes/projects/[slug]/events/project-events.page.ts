@@ -332,7 +332,7 @@ export class ProjectEventsPage {
 
   /** A release request or a work item a row names: its page. */
   protected readonly opening = outcomes('open-project-event-subject', {
-    releaseRequest: exit('projects/:slug/release-requests/:requestId'),
+    releaseRequest: exit('projects/:slug/releases/requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
   });
 

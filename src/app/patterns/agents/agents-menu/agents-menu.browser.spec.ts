@@ -79,10 +79,10 @@ describe('AgentsMenu (screenshots)', () => {
       providers: [
         provideRouter([
           { path: 'projects/:slug', component: TestPage },
-          { path: 'projects/:slug/agents', component: TestPage },
-          { path: 'projects/:slug/agents/:agentId', component: TestPage },
-          { path: 'projects/:slug/agents/:agentId/chat', component: TestPage },
-          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
+          { path: 'projects/:slug/releases/agents', component: TestPage },
+          { path: 'projects/:slug/releases/agents/:agentId', component: TestPage },
+          { path: 'projects/:slug/releases/agents/:agentId/chat', component: TestPage },
+          { path: 'projects/:slug/releases/requests/:requestId', component: TestPage },
           { path: 'projects/:slug/work/detail/:id', component: TestPage },
         ]),
         provideHttpClient(),
@@ -166,7 +166,10 @@ describe('AgentsMenu (screenshots)', () => {
     expect(panel.getByRole('listitem').elements()).toHaveLength(5);
     await expect
       .element(panel.getByRole('link', { name: /contract-00000001-9/ }))
-      .toHaveAttribute('href', `/projects/${slug}/agents/00000000-0000-4000-8000-0000000000a6`);
+      .toHaveAttribute(
+        'href',
+        `/projects/${slug}/releases/agents/00000000-0000-4000-8000-0000000000a6`,
+      );
     await expect.element(panel).toMatchTextContent('Blocked 50 min by contract-person');
     await expect
       .element(panel.getByRole('link', { name: 'CI run 00000000' }).first())
@@ -228,7 +231,7 @@ describe('AgentsMenu (screenshots)', () => {
   it('open-menu-agent agent: an agent’s item opens the agent’s page', async () => {
     const { panel } = await opened(NEEDING_ATTENTION);
     const { url, reached } = await follow(panel.getByRole('link', { name: /contract-00000001-9/ }));
-    expect(url).toBe(`/projects/${slug}/agents/00000000-0000-4000-8000-0000000000a6`);
+    expect(url).toBe(`/projects/${slug}/releases/agents/00000000-0000-4000-8000-0000000000a6`);
     expect(reached).toEqual(['open-menu-agent:agent']);
   });
 
@@ -237,7 +240,7 @@ describe('AgentsMenu (screenshots)', () => {
     const { url, reached } = await follow(
       panel.getByRole('link', { name: 'contract-qits-rr-368', exact: true }),
     );
-    expect(url).toBe(`/projects/${slug}/release-requests/contract-qits-rr-368`);
+    expect(url).toBe(`/projects/${slug}/releases/requests/contract-qits-rr-368`);
     expect(reached).toEqual(['open-menu-agent-wait:releaseRequest']);
   });
 
@@ -268,7 +271,7 @@ describe('AgentsMenu (screenshots)', () => {
     const { url, reached } = await follow(
       row(idle.entityId).getByRole('link', { name: 'Prompt agent' }),
     );
-    expect(url).toBe(`/projects/${slug}/agents/${idle.agentId}/chat`);
+    expect(url).toBe(`/projects/${slug}/releases/agents/${idle.agentId}/chat`);
     expect(reached).toEqual(['act-on-menu-agent-attention:prompt']);
   });
 
@@ -286,14 +289,14 @@ describe('AgentsMenu (screenshots)', () => {
     const { url, reached } = await follow(
       row('contract-00000001-11').getByRole('link', { name: 'contract-qits-rr-369' }).last(),
     );
-    expect(url).toBe(`/projects/${slug}/release-requests/contract-qits-rr-369`);
+    expect(url).toBe(`/projects/${slug}/releases/requests/contract-qits-rr-369`);
     expect(reached).toEqual(['act-on-menu-agent-attention:overdueRequest']);
   });
 
   it('open-all-agents agents: All agents opens the project’s Agents page', async () => {
     const { panel } = await opened(NEEDING_ATTENTION);
     const { url, reached } = await follow(panel.getByRole('link', { name: 'All agents' }));
-    expect(url).toBe(`/projects/${slug}/agents`);
+    expect(url).toBe(`/projects/${slug}/releases/agents`);
     expect(reached).toEqual(['open-all-agents:agents']);
   });
 

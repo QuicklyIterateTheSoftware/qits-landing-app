@@ -58,7 +58,7 @@ describe('ReleaseMenu (screenshots)', () => {
       providers: [
         provideRouter([
           { path: 'projects/:slug', component: TestPage },
-          { path: 'projects/:slug/release-requests/:requestId', component: TestPage },
+          { path: 'projects/:slug/releases/requests/:requestId', component: TestPage },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -182,7 +182,7 @@ describe('ReleaseMenu (screenshots)', () => {
     const panel = page.getByRole('region', { name: 'Pending release requests' });
     const link = panel.getByRole('link', { name: /contract-frontend/ }).first();
     const href = link.element().getAttribute('href')!;
-    expect(href).toMatch(new RegExp(`^/projects/${slug}/release-requests/[^/#]+#.+`));
+    expect(href).toMatch(new RegExp(`^/projects/${slug}/releases/requests/[^/#]+#.+`));
     await userEvent.click(link);
     await settle();
     await fixture.whenStable();

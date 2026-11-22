@@ -13,7 +13,6 @@ import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../api/artifacts/client.gen';
-import { literalDocsPaths } from './docs-paths';
 import { artifactsGoldenMasters as masters } from '../../../testing/golden-masters';
 import { RoutesBundles } from './routes-bundles';
 
@@ -35,12 +34,11 @@ const { site: SITE, version: VERSION } = masters.operation(BUNDLE, 'getDocsFile'
 const FREEZE_FILE = masters.operation(FREEZE, 'getDocsFile').params['path'];
 const FONT_FILE = masters.operation(FONT, 'getDocsFile').params['path'];
 
-/** Where the service reads: the site and the file path with `/` and `@` literal, `[`/`]` encoded. */
+/** Where the reads go: the site and the file path each one encoded segment, as the client sends them. */
 const SITES_URL = '/artifacts/docs/docs';
-const VERSIONS_URL = `/artifacts/docs/docs/${SITE}`;
+const VERSIONS_URL = `/artifacts/docs/docs/${encodeURIComponent(SITE)}`;
 const VERSION_URL = `${VERSIONS_URL}/-/${VERSION}`;
-const fileUrl = (file: string) =>
-  `${VERSION_URL}/${file.split('/').map(encodeURIComponent).join('/')}`;
+const fileUrl = (file: string) => `${VERSION_URL}/${encodeURIComponent(file)}`;
 
 /** A stand-in for the browser's `EventSource`, so a spec can push frames. */
 class FakeSource implements EventSourceLike {
@@ -71,11 +69,6 @@ class ManualDestroy implements DestroyRef {
     this.destroyed = true;
     this.callbacks.forEach((callback) => callback());
   }
-}
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
 }
 
 describe('RoutesBundles', () => {
@@ -189,7 +182,7 @@ describe('RoutesBundles', () => {
     expect(store.freezeRead(bundle, FREEZE_FILE)).toEqual({ status: 'loading' });
     await settle();
     const freeze = http.expectOne(fileUrl(FREEZE_FILE));
-    expect(freeze.request.url).toContain('/%5Bslug%5D/');
+    expect(freeze.request.url).toContain('%2F%5Bslug%5D%2F');
     expect(freeze.request.responseType).toBe('text');
     // The freeze is recorded without a body. A freeze names its font relative to itself, as here.
     freeze.flush('<style>@font-face{src:url("../../assets/inter-latin-400-normal.woff2")}</style>');

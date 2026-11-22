@@ -357,15 +357,14 @@ export function byNumber(a: WorkEntry, b: WorkEntry): number {
 }
 
 /**
- * The trees' order (qits-753): by `priority`, highest first; an entry nobody ranked (no priority)
- * after every ranked one; equal priorities, and two unranked entries, by {@link byNumber}.
+ * The trees' order (qits-753): by `priority`, highest first. qits-projects answers 0 for an entry
+ * nobody ranked (qits-2496), and a missing one counts as 0 too, so a negative priority sorts
+ * below unranked work. Equal priorities by {@link byNumber}.
  */
 export function byPriority(a: WorkEntry, b: WorkEntry): number {
-  const x = a.priority ?? undefined;
-  const y = b.priority ?? undefined;
-  if (x !== undefined && y !== undefined && x !== y) return y - x;
-  if (x !== undefined && y === undefined) return -1;
-  if (x === undefined && y !== undefined) return 1;
+  const x = a.priority ?? 0;
+  const y = b.priority ?? 0;
+  if (x !== y) return y - x;
   return byNumber(a, b);
 }
 

@@ -15,8 +15,8 @@ import {
  * (qits-2146): `ContractsCatalog`, `RoutesBundles` and `ContractsBundles`.
  * `docs.operations.pact.spec.ts` binds each with the same provider, operationId and `consumes`.
  *
- * The site and the file path go on the wire as the store reads them (`/` and `@` literal) through
- * `literalDocsPaths` (`docs-paths.ts`), which `app.config.ts` puts on the artifacts client.
+ * The site and the file path go on the wire as the generated client encodes them, each one segment
+ * (`%40routes%2Fqits-landing`, `golden-masters%2Findex.json`), which the store reads (qits-2409).
  */
 
 /** Every docs site of a docs repository (`listDocsSites`). */

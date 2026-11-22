@@ -328,8 +328,8 @@ export class CallDetails {
   });
 
   protected readonly opening = outcomes('open-call-contract', {
-    state: exit('projects/:slug/repositories/:repo/contracts/:state'),
-    entity: exit('projects/:slug/repositories/:repo/entities/:entity'),
+    state: exit('projects/:slug/components/:repo/contracts/:state'),
+    entity: exit('projects/:slug/components/:repo/entities/:entity'),
   });
 
   /**

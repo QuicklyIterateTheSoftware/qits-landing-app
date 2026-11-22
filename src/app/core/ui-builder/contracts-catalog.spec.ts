@@ -13,7 +13,6 @@ import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import { client as artifactsClient } from '../../api/artifacts/client.gen';
-import { literalDocsPaths } from './docs-paths';
 import {
   artifactsGoldenMasters as masters,
   ENTITY_MAP_STATE as CONTRACTS,
@@ -37,10 +36,10 @@ const SITES_URL = '/artifacts/docs/docs';
 /** The frontend whose page follows the catalog. */
 const REPO = 'qits-landing-app';
 
-/** The recorded contracts site's version and where its reads go (`/` and `@` literal). */
+/** The recorded contracts site's version and where its reads go (the site one encoded segment). */
 function contracts() {
   const { site, version } = masters.operation(CONTRACTS, 'getDocsFile').params;
-  const versionsUrl = `${SITES_URL}/${site}`;
+  const versionsUrl = `${SITES_URL}/${encodeURIComponent(site)}`;
   return {
     site,
     version,
@@ -78,11 +77,6 @@ class ManualDestroy implements DestroyRef {
     this.destroyed = true;
     this.callbacks.forEach((callback) => callback());
   }
-}
-
-// As `app.config.ts` does: the docs store's paths, with `/` and `@` literal.
-if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-  artifactsClient.interceptors.request.use(literalDocsPaths);
 }
 
 describe('ContractsCatalog', () => {

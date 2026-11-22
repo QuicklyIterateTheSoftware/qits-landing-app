@@ -110,7 +110,7 @@ describe('WorkAgentLayout (screenshots)', () => {
     const at = await opened(bug.qualifiedId, tab);
     await answerAgents(at, bug.id, STARTING);
     await leftFor(at);
-    const target = `/projects/${at.project.slug}/agents/${agentId}${tab}`;
+    const target = `/projects/${at.project.slug}/releases/agents/${agentId}${tab}`;
     expect(first()).toEqual({ outcome: `follow-work-item-agent:${outcome}`, url: target });
     expect(TestBed.inject(Router).url).toBe(target);
   });

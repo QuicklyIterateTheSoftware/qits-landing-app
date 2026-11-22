@@ -51,8 +51,8 @@ const NOT_RECORDED = 'not recorded';
  * `/artifacts/repositories/<repo>/packages/<package>`: replaces qits-artifacts-frontend's
  * `repositories/:repo/packages/:package`, and adds what that page never showed, each version's
  * SBOM. The package name is one segment (`@qits/angular` is `@qits%2Fangular` in the URL, which
- * the router decodes; the versions read sends it encoded, the SBOM reads literally,
- * `literalSbomPaths`).
+ * the router decodes; the versions read and the SBOM reads send it encoded, `%40qits%2Fangular`,
+ * as the generated client spells it).
  *
  * **Load budget: 2 + 0.** `ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`) is the version table;
  * `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `npm` and the package name) says which of them has

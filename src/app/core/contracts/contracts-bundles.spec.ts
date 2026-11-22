@@ -1,7 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { literalDocsPaths } from '$core/ui-builder/docs-paths';
 import type { ContractsSite } from '$core/ui-builder/contracts-catalog';
 import type { GoldenIndex } from '$core/ui-builder/golden-masters';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
@@ -24,7 +23,9 @@ const site = (): ContractsSite => ({
   version: `2026.1.${++version}`,
   repository: 'qits-projects-service',
 });
-const base = (s: ContractsSite) => `/artifacts/docs/docs/${s.site}/-/${s.version}/golden-masters`;
+/** `path` in the site's `golden-masters/`, the site and the file path each one encoded segment. */
+const base = (s: ContractsSite, path: string) =>
+  `/artifacts/docs/docs/${encodeURIComponent(s.site)}/-/${s.version}/${encodeURIComponent(`golden-masters/${path}`)}`;
 
 /** qits-projects' published index, as its golden-masters package carries it. */
 const INDEX = projectsGoldenIndex<GoldenIndex>();
@@ -44,9 +45,6 @@ describe('ContractsBundles', () => {
         provideHeyApiClient(artifactsClient),
       ],
     });
-    if (!artifactsClient.interceptors.request.exists(literalDocsPaths)) {
-      artifactsClient.interceptors.request.use(literalDocsPaths);
-    }
     http = TestBed.inject(HttpTestingController);
     store = TestBed.inject(ContractsBundles);
   });
@@ -58,7 +56,7 @@ describe('ContractsBundles', () => {
     store.readIndex(s);
     expect(store.indexRead(s)).toEqual({ status: 'loading' });
     await settle();
-    http.expectOne(`${base(s)}/index.json`).flush(INDEX);
+    http.expectOne(base(s, `index.json`)).flush(INDEX);
     await settle();
     const read = store.indexRead(s);
     expect(read?.status).toBe('loaded');
@@ -66,21 +64,21 @@ describe('ContractsBundles', () => {
     expect(read?.status === 'loaded' && read.index.states).toHaveLength(INDEX.states!.length);
     store.readIndex(s);
     await settle();
-    http.expectNone(`${base(s)}/index.json`);
+    http.expectNone(base(s, `index.json`));
   });
 
   it('marks an unreadable index, or a file that is not one, and reads again when asked', async () => {
     const s = site();
     store.readIndex(s);
     await settle();
-    http.expectOne(`${base(s)}/index.json`).flush(null, { status: 404, statusText: 'Not Found' });
+    http.expectOne(base(s, `index.json`)).flush(null, { status: 404, statusText: 'Not Found' });
     await settle();
     expect(store.indexRead(s)).toEqual({ status: 'error' });
 
     store.readIndex(s);
     await settle();
     // A JSON file that is not an index: qits-projects’ recorded project list.
-    http.expectOne(`${base(s)}/index.json`).flush(goldenMaster('a project exists', 'listProjects'));
+    http.expectOne(base(s, `index.json`)).flush(goldenMaster('a project exists', 'listProjects'));
     await settle();
     expect(store.indexRead(s)).toEqual({ status: 'error' });
   });
@@ -91,7 +89,7 @@ describe('ContractsBundles', () => {
     store.readRecording(s, LIST);
     expect(store.recordingRead(s, LIST)).toEqual({ status: 'loading' });
     await settle();
-    http.expectOne(`${base(s)}/${LIST.file}`).flush(body);
+    http.expectOne(base(s, `${LIST.file}`)).flush(body);
     await settle();
     expect(store.recordingRead(s, LIST)).toEqual({
       status: 'loaded',

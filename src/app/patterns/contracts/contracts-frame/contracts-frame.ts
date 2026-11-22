@@ -102,8 +102,8 @@ export class ContractsFrame {
   });
 
   protected readonly switching = outcomes('switch-contracts-section', {
-    contracts: exit('projects/:slug/repositories/:repo/contracts'),
-    entities: exit('projects/:slug/repositories/:repo/entities'),
+    contracts: exit('projects/:slug/components/:repo/contracts'),
+    entities: exit('projects/:slug/components/:repo/entities'),
   });
 
   /** The bundle's two lists, one exit each. */

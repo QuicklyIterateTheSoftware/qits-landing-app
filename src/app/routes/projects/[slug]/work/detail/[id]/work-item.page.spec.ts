@@ -247,7 +247,7 @@ describe('WorkItemPage', () => {
     harness.fixture.detectChanges();
     expect(facts()).toBe('Closes with contract-00000001-contract-00000001-rr-1, pending');
     expect(element.querySelector('app-wrapper-closing a')?.getAttribute('href')).toBe(
-      `/projects/${project.slug}/release-requests/contract-00000001-contract-00000001-rr-1`,
+      `/projects/${project.slug}/releases/requests/contract-00000001-contract-00000001-rr-1`,
     );
   });
 

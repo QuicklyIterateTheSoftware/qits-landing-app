@@ -33,7 +33,7 @@ import { ReleaseWithdraw } from '$patterns/release-requests/release-withdraw/rel
  * `frozen 3/3` chip, a queued one `queued behind <id>` (a link to that request), and an open one
  * that is neither a quiet count of its counted branches (`1/3`). A request that needs a person is
  * ringed, with a link to that check. The logical id and each item's text link to the request's own
- * page, `release-requests/<logical id>` (its uuid where it has no logical id). Every link is a
+ * page, `releases/requests/<logical id>` (its uuid where it has no logical id). Every link is a
  * declared exit (`open-listed-release-request`, epic qits-2000). A request that can still be called
  * off has Withdraw.
  *
@@ -239,9 +239,9 @@ export class ReleaseRequestRow {
    * anchor), and the work item an item names.
    */
   protected readonly opening = outcomes('open-listed-release-request', {
-    request: exit('projects/:slug/release-requests/:requestId'),
-    queuedBehind: exit('projects/:slug/release-requests/:requestId'),
-    attention: exit('projects/:slug/release-requests/:requestId'),
+    request: exit('projects/:slug/releases/requests/:requestId'),
+    queuedBehind: exit('projects/:slug/releases/requests/:requestId'),
+    attention: exit('projects/:slug/releases/requests/:requestId'),
     workItem: exit('projects/:slug/work/detail/:id'),
   });
 
