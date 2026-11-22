@@ -2,45 +2,32 @@ import { qitsOperation } from '@qits/angular';
 import {
   getDaemon,
   getSbom,
-  listArtifactRecords,
-  listDaemons,
   listDaemonVersions,
-  listDocsSiteSummaries,
   listDocsVersionSummaries,
   listImageManifestSummaries,
   listImages,
   listImageTagSummaries,
-  listMavenPackages,
   listMavenVersionSummaries,
-  listNpmPackages,
   listNpmVersionSummaries,
-  listRepositories,
   listSbomVersions,
 } from '../../api/artifacts';
 import {
   GET_ARTIFACT_DAEMON,
   GET_ARTIFACT_SBOM,
   LIST_ARTIFACT_DAEMON_VERSIONS,
-  LIST_ARTIFACT_DAEMONS,
-  LIST_ARTIFACT_DOCS_SITES,
   LIST_ARTIFACT_DOCS_VERSIONS,
   LIST_ARTIFACT_IMAGE_MANIFESTS,
   LIST_ARTIFACT_IMAGE_TAGS,
   LIST_ARTIFACT_IMAGES,
-  LIST_ARTIFACT_MAVEN_PACKAGES,
   LIST_ARTIFACT_MAVEN_VERSIONS,
-  LIST_ARTIFACT_NPM_PACKAGES,
   LIST_ARTIFACT_NPM_VERSIONS,
-  LIST_ARTIFACT_RECORDS,
-  LIST_ARTIFACT_REPOSITORIES,
   LIST_ARTIFACT_SBOM_VERSIONS,
 } from './artifacts.consumes';
 
 /**
- * qits-artifacts' store explorer reads declared as operations (qits-2316), for the Artifacts
- * section's store repository page (`ArtifactsRepositoryPage`), which reads them through
- * `qitsResource`: the store's repositories, then exactly one listing, chosen by the repository's
- * type (`listingOf`, `artifact-listings.ts`); and the image page's (`ArtifactsImagePage`,
+ * qits-artifacts' reads for the artifact pages, below the repository that publishes the artifact
+ * (qits-2316; the store repository page and its listings are gone, qits-2477): the image page's
+ * (`ArtifactsImagePage`,
  * qits-2324), which reads `ARTIFACT_IMAGES` for its headline row and one image's tags and
  * manifests; the maven package page's (`ArtifactsMavenPackagePage`, qits-2325), which reads one
  * coordinate's versions and its SBOMs, and one SBOM on a press; the daemon page's
@@ -51,15 +38,6 @@ import {
  * `artifacts.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`.
  */
-
-/** Every store repository with its type, count and size (`listRepositories`). */
-export const ARTIFACT_REPOSITORIES = qitsOperation({
-  provider: 'qits-artifacts-service',
-  operationId: 'listRepositories',
-  method: 'GET',
-  call: listRepositories,
-  consumes: LIST_ARTIFACT_REPOSITORIES,
-});
 
 /** An `oci-images` repository's images (`listImages`). */
 export const ARTIFACT_IMAGES = qitsOperation({
@@ -89,33 +67,6 @@ export const ARTIFACT_IMAGE_MANIFESTS = qitsOperation({
   method: 'GET',
   call: listImageManifestSummaries,
   consumes: LIST_ARTIFACT_IMAGE_MANIFESTS,
-});
-
-/** An `npm-packages` repository's packages (`listNpmPackages`). */
-export const ARTIFACT_NPM_PACKAGES = qitsOperation({
-  provider: 'qits-artifacts-service',
-  operationId: 'listNpmPackages',
-  method: 'GET',
-  call: listNpmPackages,
-  consumes: LIST_ARTIFACT_NPM_PACKAGES,
-});
-
-/** A `maven-packages` repository's coordinates (`listMavenPackages`). */
-export const ARTIFACT_MAVEN_PACKAGES = qitsOperation({
-  provider: 'qits-artifacts-service',
-  operationId: 'listMavenPackages',
-  method: 'GET',
-  call: listMavenPackages,
-  consumes: LIST_ARTIFACT_MAVEN_PACKAGES,
-});
-
-/** A `daemon-binaries` repository's daemons (`listDaemons`, qits-1149). */
-export const ARTIFACT_DAEMONS = qitsOperation({
-  provider: 'qits-artifacts-service',
-  operationId: 'listDaemons',
-  method: 'GET',
-  call: listDaemons,
-  consumes: LIST_ARTIFACT_DAEMONS,
 });
 
 /**
@@ -153,15 +104,6 @@ export const daemonDownloadParams = (daemon: string, version: string) => ({
   responseType: 'blob' as const,
 });
 
-/** A `docs` repository's sites (`listDocsSiteSummaries`). */
-export const ARTIFACT_DOCS_SITES = qitsOperation({
-  provider: 'qits-artifacts-service',
-  operationId: 'listDocsSiteSummaries',
-  method: 'GET',
-  call: listDocsSiteSummaries,
-  consumes: LIST_ARTIFACT_DOCS_SITES,
-});
-
 /**
  * One docs site's versions (`listDocsVersionSummaries`, qits-2328), newest first: 404 for an
  * unknown repository, 400 for one that holds no docs, an empty list for a site it does not hold.
@@ -174,15 +116,6 @@ export const ARTIFACT_DOCS_VERSIONS = qitsOperation({
   method: 'GET',
   call: listDocsVersionSummaries,
   consumes: LIST_ARTIFACT_DOCS_VERSIONS,
-});
-
-/** A `ci-screenshots` or `ci-videos` repository's records, unfiltered (`listArtifactRecords`). */
-export const ARTIFACT_RECORDS = qitsOperation({
-  provider: 'qits-artifacts-service',
-  operationId: 'listArtifactRecords',
-  method: 'GET',
-  call: listArtifactRecords,
-  consumes: LIST_ARTIFACT_RECORDS,
 });
 
 /**

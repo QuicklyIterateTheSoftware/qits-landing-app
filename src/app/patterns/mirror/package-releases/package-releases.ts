@@ -293,12 +293,16 @@ export class PackageReleases {
   /** The package's name as the mirror caches it. */
   readonly name = input.required<string>();
 
-  /** An artifact's name: its page in the Artifacts section, by its ecosystem. */
+  /**
+   * An artifact's name: its page, by its ecosystem. The Mirror section names no project, so it links
+   * the artifact pages' project-less addresses (`artifacts/repositories/<store>/…`, kept as entries
+   * since qits-2477), not the ones below a component.
+   */
   protected readonly opening = outcomes('open-mirror-package-release', {
-    image: exit('artifacts/repositories/:repo/images/:image'),
-    npmPackage: exit('artifacts/repositories/:repo/packages/:package'),
-    mavenPackage: exit('artifacts/repositories/:repo/maven-packages/:coordinate'),
-    daemon: exit('artifacts/repositories/:repo/daemons/:daemon'),
+    image: exit('artifacts/repositories/:store/images/:image'),
+    npmPackage: exit('artifacts/repositories/:store/packages/:package'),
+    mavenPackage: exit('artifacts/repositories/:store/maven-packages/:coordinate'),
+    daemon: exit('artifacts/repositories/:store/daemons/:daemon'),
   });
 
   private readonly ecosystem = computed(() => ecosystemOf(this.type()));
@@ -383,35 +387,35 @@ export class PackageReleases {
   }
 
   /** The image page's params; only called for a docker dependent. */
-  protected imageAt(row: PackageDependent): { repo: string; image: string } {
+  protected imageAt(row: PackageDependent): { store: string; image: string } {
     const page = artifactPage(row);
     return page?.kind === 'image'
-      ? { repo: page.repo, image: page.image }
-      : { repo: '', image: '' };
+      ? { store: page.repo, image: page.image }
+      : { store: '', image: '' };
   }
 
   /** The npm package page's params; only called for an npm dependent. */
-  protected npmAt(row: PackageDependent): { repo: string; package: string } {
+  protected npmAt(row: PackageDependent): { store: string; package: string } {
     const page = artifactPage(row);
     return page?.kind === 'npmPackage'
-      ? { repo: page.repo, package: page.package }
-      : { repo: '', package: '' };
+      ? { store: page.repo, package: page.package }
+      : { store: '', package: '' };
   }
 
   /** The maven package page's params; only called for a maven dependent. */
-  protected mavenAt(row: PackageDependent): { repo: string; coordinate: string } {
+  protected mavenAt(row: PackageDependent): { store: string; coordinate: string } {
     const page = artifactPage(row);
     return page?.kind === 'mavenPackage'
-      ? { repo: page.repo, coordinate: page.coordinate }
-      : { repo: '', coordinate: '' };
+      ? { store: page.repo, coordinate: page.coordinate }
+      : { store: '', coordinate: '' };
   }
 
   /** The daemon page's params; only called for a daemon dependent. */
-  protected daemonAt(row: PackageDependent): { repo: string; daemon: string } {
+  protected daemonAt(row: PackageDependent): { store: string; daemon: string } {
     const page = artifactPage(row);
     return page?.kind === 'daemon'
-      ? { repo: page.repo, daemon: page.daemon }
-      : { repo: '', daemon: '' };
+      ? { store: page.repo, daemon: page.daemon }
+      : { store: '', daemon: '' };
   }
 
   protected rowKey(row: PackageDependent): string {

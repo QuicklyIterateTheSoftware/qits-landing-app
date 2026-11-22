@@ -28,13 +28,11 @@ import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edi
 import { DocsReadRedirectPage } from './routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page';
 import { DocsReaderPage } from './routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page';
 import { RepositoryDocsPage } from './routes/projects/[slug]/components/[repo]/docs/repository-docs.page';
-import { ArtifactsRepositoryPage } from './routes/artifacts/repositories/[repo]/artifacts-repository.page';
-import { ArtifactsImagePage } from './routes/artifacts/repositories/[repo]/images/[image]/artifacts-image.page';
-import { ArtifactsMavenPackagePage } from './routes/artifacts/repositories/[repo]/maven-packages/[coordinate]/artifacts-maven-package.page';
-import { ArtifactsCleanupPage } from './routes/artifacts/repositories/[repo]/cleanup/artifacts-cleanup.page';
-import { ArtifactsDaemonPage } from './routes/artifacts/repositories/[repo]/daemons/[daemon]/artifacts-daemon.page';
-import { ArtifactsDocsSitePage } from './routes/artifacts/repositories/[repo]/docs/[site]/artifacts-docs-site.page';
-import { ArtifactsNpmPackagePage } from './routes/artifacts/repositories/[repo]/packages/[package]/artifacts-npm-package.page';
+import { ArtifactsImagePage } from './routes/projects/[slug]/components/[repo]/artifacts/[store]/images/[image]/artifacts-image.page';
+import { ArtifactsMavenPackagePage } from './routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page';
+import { ArtifactsDaemonPage } from './routes/projects/[slug]/components/[repo]/artifacts/[store]/daemons/[daemon]/artifacts-daemon.page';
+import { ArtifactsDocsSitePage } from './routes/projects/[slug]/components/[repo]/artifacts/[store]/docs/[site]/artifacts-docs-site.page';
+import { ArtifactsNpmPackagePage } from './routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page';
 import { SwarmServicesPage } from './routes/system/swarm/services/swarm-services.page';
 import { MirrorRepositoryPage } from './routes/mirror/repositories/[repository]/mirror-repository.page';
 import { MirrorRepositoriesPage } from './routes/mirror/repositories/mirror-repositories.page';
@@ -266,7 +264,7 @@ describe('ideas routes', () => {
   });
 });
 
-describe('artifacts routes (qits-2316)', () => {
+describe('artifact routes (qits-2316, below the repository since qits-2477)', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
@@ -276,25 +274,22 @@ describe('artifacts routes (qits-2316)', () => {
   /** The routed components below the section's parent, which has none of its own. */
   const pages = async (url: string) => (await opened(url)).filter(Boolean);
 
-  it('opens a store repository at artifacts/repositories/<repo>', async () => {
-    expect(await pages('/artifacts/repositories/npm')).toEqual([ArtifactsRepositoryPage]);
-    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/npm');
-  });
-
-  it('opens an image at artifacts/repositories/<repo>/images/<image>, a slash as %2F (qits-2324)', async () => {
-    expect(await pages('/artifacts/repositories/qits/images/team%2Fapp')).toEqual([
+  it('opens an image at components/<repo>/artifacts/<store>/images/<image>, a slash as %2F (qits-2324)', async () => {
+    expect(await pages('/projects/p/components/r/artifacts/qits/images/team%2Fapp')).toEqual([
       ArtifactsImagePage,
     ]);
     const router = TestBed.inject(Router);
     let leaf = router.routerState.snapshot.root;
     while (leaf.firstChild) leaf = leaf.firstChild;
     expect(leaf.paramMap.get('image')).toBe('team/app');
-    expect(router.url).toBe('/artifacts/repositories/qits/images/team%2Fapp');
+    expect(router.url).toBe('/projects/p/components/r/artifacts/qits/images/team%2Fapp');
   });
 
-  it('opens a maven coordinate at artifacts/repositories/<repo>/maven-packages/<coordinate> (qits-2325)', async () => {
+  it('opens a maven coordinate at components/<repo>/artifacts/<store>/maven-packages/<coordinate> (qits-2325)', async () => {
     expect(
-      await pages('/artifacts/repositories/maven/maven-packages/eu.wohlben.qits%3Acontract-maven'),
+      await pages(
+        '/projects/p/components/r/artifacts/maven/maven-packages/eu.wohlben.qits%3Acontract-maven',
+      ),
     ).toEqual([ArtifactsMavenPackagePage]);
     const router = TestBed.inject(Router);
     let leaf = router.routerState.snapshot.root;
@@ -302,52 +297,65 @@ describe('artifacts routes (qits-2316)', () => {
     expect(leaf.paramMap.get('coordinate')).toBe('eu.wohlben.qits:contract-maven');
   });
 
-  it('opens a repository’s cleanup at artifacts/repositories/<repo>/cleanup (qits-2329)', async () => {
-    expect(await pages('/artifacts/repositories/daemons/cleanup')).toEqual([ArtifactsCleanupPage]);
-    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/daemons/cleanup');
-  });
-
-  it('opens a daemon at artifacts/repositories/<repo>/daemons/<daemon> (qits-2327)', async () => {
-    expect(await pages('/artifacts/repositories/daemons/daemons/contract-daemon')).toEqual([
-      ArtifactsDaemonPage,
-    ]);
+  it('opens a daemon at components/<repo>/artifacts/<store>/daemons/<daemon> (qits-2327)', async () => {
+    expect(
+      await pages('/projects/p/components/r/artifacts/daemons/daemons/contract-daemon'),
+    ).toEqual([ArtifactsDaemonPage]);
     const router = TestBed.inject(Router);
     let leaf = router.routerState.snapshot.root;
     while (leaf.firstChild) leaf = leaf.firstChild;
-    expect(leaf.paramMap.get('repo')).toBe('daemons');
+    expect(leaf.paramMap.get('store')).toBe('daemons');
     expect(leaf.paramMap.get('daemon')).toBe('contract-daemon');
   });
 
-  it('opens a docs site at artifacts/repositories/<repo>/docs/<site>, the site one segment (qits-2328)', async () => {
-    expect(await pages('/artifacts/repositories/docs/docs/%40changelog%2Fqits-qits')).toEqual([
-      ArtifactsDocsSitePage,
-    ]);
+  it('opens a docs site at components/<repo>/artifacts/<store>/docs/<site>, the site one segment (qits-2328)', async () => {
+    expect(
+      await pages('/projects/p/components/r/artifacts/docs/docs/%40changelog%2Fqits-qits'),
+    ).toEqual([ArtifactsDocsSitePage]);
     const router = TestBed.inject(Router);
     // The router writes `@` literal in a segment (it needs no escape there); the `/` stays `%2F`.
-    expect(router.url).toBe('/artifacts/repositories/docs/docs/@changelog%2Fqits-qits');
+    expect(router.url).toBe('/projects/p/components/r/artifacts/docs/docs/@changelog%2Fqits-qits');
     let leaf = router.routerState.snapshot.root;
     while (leaf.firstChild) leaf = leaf.firstChild;
-    expect(leaf.paramMap.get('repo')).toBe('docs');
+    expect(leaf.paramMap.get('store')).toBe('docs');
     expect(leaf.paramMap.get('site')).toBe('@changelog/qits-qits');
   });
 
-  it('opens an npm package at artifacts/repositories/<repo>/packages/<package>, the name one segment (qits-2326)', async () => {
+  it('opens an npm package at components/<repo>/artifacts/<store>/packages/<package>, the name one segment (qits-2326)', async () => {
     expect(
-      await pages('/artifacts/repositories/npm/packages/%40contract%2Fcontract-scoped'),
+      await pages('/projects/p/components/r/artifacts/npm/packages/%40contract%2Fcontract-scoped'),
     ).toEqual([ArtifactsNpmPackagePage]);
     const router = TestBed.inject(Router);
     // The router writes `@` literal in a segment (it needs no escape there); the `/` stays `%2F`.
-    expect(router.url).toBe('/artifacts/repositories/npm/packages/@contract%2Fcontract-scoped');
+    expect(router.url).toBe(
+      '/projects/p/components/r/artifacts/npm/packages/@contract%2Fcontract-scoped',
+    );
     let leaf = router.routerState.snapshot.root;
     while (leaf.firstChild) leaf = leaf.firstChild;
-    expect(leaf.paramMap.get('repo')).toBe('npm');
+    expect(leaf.paramMap.get('store')).toBe('npm');
     expect(leaf.paramMap.get('package')).toBe('@contract/contract-scoped');
   });
 
-  it.each(['/artifacts', '/artifacts/repositories'])('opens the image store at %s', async (url) => {
-    expect(await pages(url)).toEqual([ArtifactsRepositoryPage]);
-    expect(TestBed.inject(Router).url).toBe('/artifacts/repositories/qits');
-  });
+  it.each([
+    ['/artifacts/repositories/qits/images/team%2Fapp', ArtifactsImagePage],
+    ['/artifacts/repositories/daemons/daemons/d', ArtifactsDaemonPage],
+    ['/artifacts/repositories/maven/maven-packages/g%3Aa', ArtifactsMavenPackagePage],
+    ['/artifacts/repositories/docs/docs/%40changelog%2Fx', ArtifactsDocsSitePage],
+    ['/artifacts/repositories/npm/packages/%40s%2Fp', ArtifactsNpmPackagePage],
+  ] as const)(
+    'keeps the old address %s, which qits-artifacts-frontend hands off to',
+    async (url, page) => {
+      expect(await pages(url)).toEqual([page]);
+    },
+  );
+
+  it.each(['/artifacts', '/artifacts/repositories/npm', '/artifacts/repositories/daemons/cleanup'])(
+    'sends the retired address %s to the projects (qits-2477)',
+    async (url) => {
+      await opened(url);
+      expect(TestBed.inject(Router).url).toBe('/projects');
+    },
+  );
 });
 
 describe('system routes (qits-2344)', () => {
@@ -575,6 +583,11 @@ describe('entry points (qits-2049)', () => {
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
       'projects/:slug/docs/read/**',
+      'artifacts/repositories/:store/images/:image',
+      'artifacts/repositories/:store/daemons/:daemon',
+      'artifacts/repositories/:store/maven-packages/:coordinate',
+      'artifacts/repositories/:store/docs/:site',
+      'artifacts/repositories/:store/packages/:package',
       'system/swarm/services/:id',
       'system/swarm/services',
       'system/swarm/nodes',

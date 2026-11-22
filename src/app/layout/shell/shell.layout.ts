@@ -128,7 +128,6 @@ export interface NavChild extends NavPage {
  * the Orchestrator's, by its kind (qits-2480).
  */
 export type GlobalPath =
-  | 'artifacts'
   | 'system'
   | 'system/swarm/services'
   | 'system/swarm/nodes'
@@ -245,7 +244,7 @@ export interface NavNote {
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, Ideas and one exit per `WORK_TABS` entry), the Releases pages
  * (`open-sidebar-releases-page`), the global sections shown with no project open
- * (Artifacts, `open-sidebar-artifacts`, System, `open-sidebar-system`, Mirror,
+ * (System, `open-sidebar-system`, Mirror,
  * `open-sidebar-mirror`, and Orchestrator, `open-sidebar-orchestrator`, in-app sections, with
  * System's own pages below it while it is open, `open-sidebar-system-page`, and Mirror's,
  * `open-sidebar-mirror-page`; IdP admin, `open-sidebar-idp`, with its pages below it,
@@ -717,15 +716,6 @@ export class ShellLayout {
   });
 
   /**
-   * The sidebar's Artifacts (qits-2316): the Artifacts section, qits-artifacts' store, which
-   * belongs to no project. `artifacts` opens the image store (a redirect), and the entry stays
-   * current on every page below it.
-   */
-  protected readonly artifacts = outcomes('open-sidebar-artifacts', {
-    open: exit('artifacts'),
-  });
-
-  /**
    * The sidebar's System (qits-2344): the System section, qits-system's one swarm, which belongs
    * to no project. `system` opens the swarm's services (a redirect), and the entry stays current
    * on every page below it.
@@ -801,8 +791,8 @@ export class ShellLayout {
 
   /**
    * The sidebar's global sections: where the sections that belong to no project go, shown in the
-   * project's sections' place while no project is open, and not at all while one is: Artifacts
-   * (qits-2316), System (qits-2344), Mirror (qits-2357), Orchestrator (qits-2359) and IdP admin
+   * project's sections' place while no project is open, and not at all while one is: System (qits-2344; the root Artifacts of
+   * qits-2316 is gone, qits-2477), Mirror (qits-2357), Orchestrator (qits-2359) and IdP admin
    * (qits-2481), in-app sections. An in-app section may list its own pages
    * below it (`children`, qits-2346): System's Services, Nodes, Configs (qits-2348), Secrets
    * (qits-2350) and Targets (qits-2351), one exit each of `open-sidebar-system-page`, and IdP
@@ -819,13 +809,6 @@ export class ShellLayout {
     const idp = this.idpPages;
     const trail = this.trail;
     return [
-      {
-        kind: 'exit',
-        label: 'Artifacts',
-        exit: this.artifacts.open,
-        crumb: trail.artifacts,
-        entries: 'repositories',
-      },
       {
         kind: 'exit',
         label: 'System',
@@ -909,7 +892,6 @@ export class ShellLayout {
     repositoryEntities: exit('projects/:slug/components/:repo/entities'),
     repositoryReleaseRequests: exit('projects/:slug/components/:repo/release-requests'),
     repositoryDocs: exit('projects/:slug/components/:repo/docs'),
-    artifacts: exit('artifacts'),
     system: exit('system'),
     mirror: exit('mirror'),
     orchestrator: exit('orchestrator'),
@@ -1383,9 +1365,9 @@ function within(url: string, path: string): boolean {
 }
 
 /**
- * The crumb of one entry below the global section at `section` (`/artifacts`, qits-2386):
+ * The crumb of one entry below the global section at `section` (`/mirror`, qits-2386):
  * `<section>/<entries>/<id>` (and its pages below) names the entry by its id, decoded
- * (`/artifacts/repositories/qits/images/x` is "qits"). Undefined for a section without `entries`,
+ * (`/mirror/repositories/hub` is "hub"). Undefined for a section without `entries`,
  * the list itself and anything outside it.
  */
 export function globalSubpage(
@@ -1538,8 +1520,10 @@ export interface RepositoryTrail {
 export function repositoryTrail(url: string, project: string): RepositoryTrail | undefined {
   const prefix = `${project}/${REPOSITORIES}/`;
   if (!url.startsWith(prefix)) return undefined;
-  const [repo, segment, leaf] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  const [repo, segment, ...rest] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
   if (!repo) return undefined;
+  // An artifact's page (qits-2477), `artifacts/<store>/<kind>/<name>`, is named by its name.
+  const leaf = segment === 'artifacts' ? rest[2] : rest[0];
   const label = segment ? REPOSITORY_PAGES[segment] : undefined;
   return {
     repo: decodeURIComponent(repo),

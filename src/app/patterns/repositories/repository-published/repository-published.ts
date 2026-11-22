@@ -57,7 +57,7 @@ function refused(read: { status(): string; error(): unknown }): boolean {
  *   release published), kept by their `repository` (`repositoryArtifacts`): images, npm and maven
  *   packages and daemons, each with its newest version and how long ago it was built, its name
  *   linking its store page (`open-repository-artifact`: an image in its namespace's image store,
- *   `qits/qits-ci` → `artifacts/repositories/qits/images/qits-ci`). Only staff roles may read it: a
+ *   `qits/qits-ci` → `artifacts/qits/images/qits-ci` below the component, qits-2477). Only staff roles may read it: a
  *   403 says so, and the docs sites stay;
  * - qits-artifacts' docs catalog (`DOCS_CATALOG`), whose sites are kept by the repository their
  *   newest version names (`publishedBy`), each linking its docs store page
@@ -120,7 +120,9 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                     class="font-mono font-semibold break-all text-accent no-underline hover:underline"
                     [qitsExit]="opening.image"
                     [exitParams]="{
-                      repo: artifact.place?.store ?? '',
+                      slug: slug(),
+                      repo: repo(),
+                      store: artifact.place?.store ?? '',
                       image: artifact.place?.name ?? '',
                     }"
                     [fieldOf]="artifact"
@@ -133,7 +135,9 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                     class="font-mono font-semibold break-all text-accent no-underline hover:underline"
                     [qitsExit]="opening.npm"
                     [exitParams]="{
-                      repo: artifact.place?.store ?? '',
+                      slug: slug(),
+                      repo: repo(),
+                      store: artifact.place?.store ?? '',
                       package: artifact.place?.name ?? '',
                     }"
                     [fieldOf]="artifact"
@@ -146,7 +150,9 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                     class="font-mono font-semibold break-all text-accent no-underline hover:underline"
                     [qitsExit]="opening.maven"
                     [exitParams]="{
-                      repo: artifact.place?.store ?? '',
+                      slug: slug(),
+                      repo: repo(),
+                      store: artifact.place?.store ?? '',
                       coordinate: artifact.place?.name ?? '',
                     }"
                     [fieldOf]="artifact"
@@ -159,7 +165,9 @@ function refused(read: { status(): string; error(): unknown }): boolean {
                     class="font-mono font-semibold break-all text-accent no-underline hover:underline"
                     [qitsExit]="opening.daemon"
                     [exitParams]="{
-                      repo: artifact.place?.store ?? '',
+                      slug: slug(),
+                      repo: repo(),
+                      store: artifact.place?.store ?? '',
                       daemon: artifact.place?.name ?? '',
                     }"
                     [fieldOf]="artifact"
@@ -263,7 +271,12 @@ function refused(read: { status(): string; error(): unknown }): boolean {
               <a
                 class="font-mono font-semibold break-all text-accent no-underline hover:underline"
                 [qitsExit]="opening.docsSite"
-                [exitParams]="{ repo: docsStore, site: site.name ?? '' }"
+                [exitParams]="{
+                  slug: slug(),
+                  repo: repo(),
+                  store: docsStore,
+                  site: site.name ?? '',
+                }"
                 [fieldOf]="site"
                 qitsField="name"
                 >{{ site.name }}</a
@@ -311,13 +324,13 @@ export class RepositoryPublished {
     section: exit('projects/:slug/components/:repo/docs'),
   });
 
-  /** A published artifact's page in the artifact store (qits-2324…qits-2328). */
+  /** A published artifact's page, below the component (qits-2324…qits-2328, qits-2477). */
   protected readonly opening = outcomes('open-repository-artifact', {
-    image: exit('artifacts/repositories/:repo/images/:image'),
-    npm: exit('artifacts/repositories/:repo/packages/:package'),
-    maven: exit('artifacts/repositories/:repo/maven-packages/:coordinate'),
-    daemon: exit('artifacts/repositories/:repo/daemons/:daemon'),
-    docsSite: exit('artifacts/repositories/:repo/docs/:site'),
+    image: exit('projects/:slug/components/:repo/artifacts/:store/images/:image'),
+    npm: exit('projects/:slug/components/:repo/artifacts/:store/packages/:package'),
+    maven: exit('projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate'),
+    daemon: exit('projects/:slug/components/:repo/artifacts/:store/daemons/:daemon'),
+    docsSite: exit('projects/:slug/components/:repo/artifacts/:store/docs/:site'),
   });
 
   /** The docs store's repository, where every docs site is. */

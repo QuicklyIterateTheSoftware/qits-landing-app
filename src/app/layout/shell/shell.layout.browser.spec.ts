@@ -92,8 +92,8 @@ class PinnedPage {}
  * to a stand-in route: the sidebar's sections (`open-sidebar-section`), work pages
  * (`open-sidebar-work-page`), the gear (`open-project-settings`), and the trail's brand and crumbs
  * (`follow-breadcrumb`). The agents and release menus' own exits are followed in their own specs.
- * The global sections shown with no project open open a section of this app (Artifacts,
- * `open-sidebar-artifacts`, qits-2316, System, `open-sidebar-system`, qits-2344, Mirror,
+ * The global sections shown with no project open open a section of this app (System,
+ * `open-sidebar-system`, qits-2344, Mirror,
  * `open-sidebar-mirror`, qits-2357, and Orchestrator, `open-sidebar-orchestrator`, qits-2359, each
  * to a stand-in route, with System's own pages below it
  * while it is open, `open-sidebar-system-page`, qits-2346, Mirror's, `open-sidebar-mirror-page`,
@@ -114,9 +114,6 @@ describe('ShellLayout (screenshots)', () => {
       providers: [
         provideRouter([
           { path: '', component: TestPage },
-          { path: 'artifacts', component: TestPage },
-          { path: 'artifacts/repositories/:repo', component: TestPage },
-          { path: 'artifacts/repositories/:repo/images/:image', component: TestPage },
           { path: 'system', component: TestPage },
           { path: 'system/swarm/services', component: TestPage },
           { path: 'system/swarm/services/:id', component: TestPage },
@@ -246,13 +243,12 @@ describe('ShellLayout (screenshots)', () => {
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
-    // At the root the navigation holds no project's sections: the global sections (Artifacts,
-    // qits-2316; System, qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
+    // At the root the navigation holds no project's sections: the global sections (System,
+    // qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
     // qits-2481), then Network access, the phone's way there (qits-2262); the "qits" brand leads
     // home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
-      'Artifacts',
       'System',
       'Mirror',
       'Orchestrator',
@@ -955,28 +951,8 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels).toEqual([
-      'Artifacts',
-      'System',
-      'Mirror',
-      'Orchestrator',
-      'IdP admin',
-      'Network access',
-    ]);
+    expect(labels).toEqual(['System', 'Mirror', 'Orchestrator', 'IdP admin', 'Network access']);
     await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
-  });
-
-  it('open-sidebar-artifacts open: the sidebar’s Artifacts opens the Artifacts section, marked current there', async () => {
-    await page.viewport(1280, 800);
-    const { fixture } = await render();
-    const entry = page
-      .getByRole('navigation', { name: 'qits' })
-      .getByRole('link', { name: 'Artifacts' });
-    await expect.element(entry).toHaveAttribute('href', '/artifacts');
-    await expect.element(entry).not.toHaveAttribute('aria-current');
-    expect(await follow(fixture, entry)).toBe('/artifacts');
-    expect(reached()).toEqual(['open-sidebar-artifacts:open']);
-    await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
   it('open-sidebar-system open: the sidebar’s System opens the System section, marked current there', async () => {
@@ -1047,7 +1023,6 @@ describe('ShellLayout (screenshots)', () => {
       .elements()
       .map((link) => link.textContent?.trim());
     expect(labels).toEqual([
-      'Artifacts',
       'System',
       'Services',
       'Nodes',
@@ -1071,7 +1046,7 @@ describe('ShellLayout (screenshots)', () => {
         .not.toHaveAttribute('aria-current');
     }
     await expect
-      .element(navigation.getByRole('link', { name: 'Artifacts', exact: true }))
+      .element(navigation.getByRole('link', { name: 'Mirror', exact: true }))
       .not.toHaveAttribute('aria-current');
   });
 
@@ -1151,7 +1126,6 @@ describe('ShellLayout (screenshots)', () => {
       .elements()
       .map((link) => link.textContent?.trim());
     expect(labels).toEqual([
-      'Artifacts',
       'System',
       'Mirror',
       'Caches',
@@ -1204,7 +1178,7 @@ describe('ShellLayout (screenshots)', () => {
   }
 
   it('renders no System page outside the System section', async () => {
-    await render('/artifacts');
+    await render('/orchestrator');
     const navigation = page.getByRole('navigation', { name: 'qits' });
     await expect
       .element(navigation.getByRole('link', { name: 'System', exact: true }))
@@ -1247,7 +1221,6 @@ describe('ShellLayout (screenshots)', () => {
       .elements()
       .map((link) => link.textContent?.trim());
     expect(labels).toEqual([
-      'Artifacts',
       'System',
       'Mirror',
       'Orchestrator',
@@ -1421,12 +1394,6 @@ describe('ShellLayout (screenshots)', () => {
    * link, its name, the section's root it leads to, its outcome.
    */
   const GLOBAL_CRUMBS = [
-    {
-      from: '/artifacts/repositories/qits/images/x',
-      name: 'Artifacts',
-      to: '/artifacts',
-      outcome: 'artifacts',
-    },
     { from: '/system/swarm/nodes', name: 'System', to: '/system', outcome: 'system' },
     { from: '/mirror/repositories/docker-hub', name: 'Mirror', to: '/mirror', outcome: 'mirror' },
     {
@@ -1456,12 +1423,6 @@ describe('ShellLayout (screenshots)', () => {
    * below it, the current page; or the section alone, then itself the current page.
    */
   const GLOBAL_TRAILS = [
-    { url: '/artifacts/repositories/qits', section: 'Artifacts', page: 'qits' },
-    {
-      url: '/artifacts/repositories/my%20repo/images/x?tab=tags#top',
-      section: 'Artifacts',
-      page: 'my repo',
-    },
     { url: '/system/swarm/services/abc', section: 'System', page: 'Services' },
     { url: '/system/swarm/nodes', section: 'System', page: 'Nodes' },
     { url: '/system/swarm/configs', section: 'System', page: 'Configs' },
