@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, type Routes } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { QITS_DOMAIN_EVENTS, qitsAuthCallbackRoute } from '@qits/angular';
 import { routes } from './app.routes';
@@ -142,30 +142,39 @@ describe('agents and workspaces routes', () => {
   );
 
   it.each([
-    ['/projects/x/agents', '/projects/x/releases/agents'],
-    ['/projects/x/agents/a-1?y=1', '/projects/x/releases/agents/a-1?y=1'],
-    ['/projects/x/agents/a-1/chat', '/projects/x/releases/agents/a-1/chat'],
-    ['/projects/x/release-requests', '/projects/x/releases/requests'],
-    ['/projects/x/release-requests/x-rr-1#c', '/projects/x/releases/requests/x-rr-1#c'],
-    ['/projects/x/ci?status=SUCCESS', '/projects/x/releases/ci?status=SUCCESS'],
-    ['/projects/x/ci/runs/r-1?step=0', '/projects/x/releases/ci/runs/r-1?step=0'],
-    ['/projects/x/ci/x-service', '/projects/x/releases/ci/x-service'],
-    ['/projects/x/releases', '/projects/x/releases/requests'],
+    ['/projects/qits/agents', '/projects/qits/releases/agents'],
+    ['/projects/qits/agents/a-1?y=1', '/projects/qits/releases/agents/a-1?y=1'],
+    ['/projects/qits/agents/a-1/chat', '/projects/qits/releases/agents/a-1/chat'],
+    ['/projects/qits/release-requests', '/projects/qits/releases/requests'],
+    ['/projects/qits/release-requests/qits-rr-1#c', '/projects/qits/releases/requests/qits-rr-1#c'],
+    ['/projects/qits/ci?status=SUCCESS', '/projects/qits/releases/ci?status=SUCCESS'],
+    ['/projects/qits/ci/runs/r-1?step=0', '/projects/qits/releases/ci/runs/r-1?step=0'],
+    ['/projects/qits/ci/qits-ci-service', '/projects/qits/releases/ci/qits-ci-service'],
+    ['/projects/qits/releases', '/projects/qits/releases/requests'],
+    ['/projects/qits/workspaces?y=1', '/projects/qits/releases/agents?y=1'],
+    ['/projects/qits/docs', '/projects/qits/components'],
+    ['/projects/qits/docs/repositories/r#a', '/projects/qits/components/r/docs#a'],
     // qits-2491: Repositories became Components.
-    ['/projects/x/repositories', '/projects/x/components'],
-    ['/projects/x/repositories/x-service?y=1', '/projects/x/components/x-service?y=1'],
+    ['/projects/qits/repositories', '/projects/qits/components'],
     [
-      '/projects/x/repositories/x-service/contracts/a',
-      '/projects/x/components/x-service/contracts/a',
+      '/projects/qits/repositories/qits-ci-service?y=1',
+      '/projects/qits/components/qits-ci-service?y=1',
     ],
     [
-      '/projects/x/repositories/x-service/ui-builder',
-      '/projects/x/components/x-service/ui-builder',
+      '/projects/qits/repositories/qits-ci-service/contracts/a',
+      '/projects/qits/components/qits-ci-service/contracts/a',
     ],
-  ])('redirects %s to %s (qits-2482, qits-2491), keeping the query', async (from, to) => {
-    await opened(from);
-    expect(TestBed.inject(Router).url).toBe(to);
-  });
+    [
+      '/projects/qits/repositories/qits-ci-service/ui-builder',
+      '/projects/qits/components/qits-ci-service/ui-builder',
+    ],
+  ])(
+    'redirects %s to %s (qits-2482, qits-2491, qits-2567), keeping the query',
+    async (from, to) => {
+      await opened(from);
+      expect(TestBed.inject(Router).url).toBe(to);
+    },
+  );
 
   it.each([
     ['', '?threshold=500&sort=duration'],
@@ -606,5 +615,27 @@ describe('entry points (qits-2049)', () => {
       'mirror/repositories/:repository',
       'orchestrator/processes/:kind',
     ]);
+  });
+});
+
+describe('string redirects (qits-2567)', () => {
+  /** Every route with a relative string `redirectTo`, as `<parent path> | <own path>`. */
+  function stringRedirects(config: Routes, parent = ''): string[] {
+    return config.flatMap((route) => [
+      ...(typeof route.redirectTo === 'string' && !route.redirectTo.startsWith('/')
+        ? [`${parent} | ${route.path ?? ''}`]
+        : []),
+      ...stringRedirects(route.children ?? [], [parent, route.path].filter(Boolean).join('/')),
+    ]);
+  }
+
+  it('are relative only on a route of one segment with no parameter, the shape the server renderer resolves right', () => {
+    // The server renderer joins a relative target to the route's parent and leaves `:param`s
+    // unfilled; a longer path takes `movedTo`, or an absolute target with no parameter.
+    const wrong = stringRedirects(routes).filter((entry) => {
+      const own = entry.split(' | ')[1] ?? '';
+      return own.includes('/') || own.includes(':');
+    });
+    expect(wrong).toEqual([]);
   });
 });

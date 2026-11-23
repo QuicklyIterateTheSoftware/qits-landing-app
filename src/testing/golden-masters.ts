@@ -73,6 +73,25 @@ export const artifactsGoldenMasters = goldenMasters(
   'qits-artifacts',
 );
 
+/**
+ * `masters` with a changelog's site spelled as the generated client sends it (ticket qits-2511).
+ * qits-artifacts records a changelog under the template
+ * `/artifacts/docs/docs/@changelog/{repository}`, but the client fills the `{site}` of `docs.operations.ts` with `@changelog/<repository>` and
+ * encodes it whole: `%40changelog%2F<repository>`. The pact pins the path to its example, so the
+ * template's literal text is spelled encoded too. The provider replays the same request as before:
+ * pact-jvm decodes the generated path before it re-encodes it per segment.
+ */
+export function changelogSiteAsSent(masters: GoldenMasters): GoldenMasters {
+  return {
+    operation(state, operationId) {
+      const op = masters.operation(state, operationId);
+      return { ...op, path: op.path.replace('/@changelog/{', '/%40changelog%2F{') };
+    },
+    body: (state, operationId) => masters.body(state, operationId),
+    text: (state, operationId) => masters.text(state, operationId),
+  };
+}
+
 /** qits-edge's golden masters (qits-2220: its upstream pools), from its npm package. */
 export const edgeGoldenMasters = goldenMasters('@qits/edge-golden-masters', 'qits-edge');
 

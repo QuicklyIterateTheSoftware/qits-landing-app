@@ -3034,7 +3034,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/artifacts/docs/docs/@changelog/${repository}/-/${version}/CHANGELOG.md",
+            "expression": "/artifacts/docs/docs/%40changelog%2F${repository}/-/${version}/CHANGELOG.md",
             "type": "ProviderState"
           }
         },
@@ -3049,7 +3049,7 @@
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@changelog/contract-repository/-/2100.1.0/CHANGELOG.md"
+        "path": "/artifacts/docs/docs/%40changelog%2Fcontract-repository/-/2100.1.0/CHANGELOG.md"
       },
       "response": {
         "headers": {
@@ -3319,7 +3319,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/artifacts/docs/docs/@changelog/${repository}/-/${version}",
+            "expression": "/artifacts/docs/docs/%40changelog%2F${repository}/-/${version}",
             "type": "ProviderState"
           }
         },
@@ -3334,7 +3334,7 @@
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@changelog/contract-repository/-/2100.1.0"
+        "path": "/artifacts/docs/docs/%40changelog%2Fcontract-repository/-/2100.1.0"
       },
       "response": {
         "body": {
@@ -4030,7 +4030,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/artifacts/docs/docs/@changelog/${repository}",
+            "expression": "/artifacts/docs/docs/%40changelog%2F${repository}",
             "type": "ProviderState"
           }
         },
@@ -4045,7 +4045,7 @@
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@changelog/contract-repository"
+        "path": "/artifacts/docs/docs/%40changelog%2Fcontract-repository"
       },
       "response": {
         "body": {
@@ -4453,7 +4453,7 @@
       "request": {
         "generators": {
           "path": {
-            "expression": "/artifacts/docs/docs/@changelog/${repository}/-/${version}/CHANGELOG.md",
+            "expression": "/artifacts/docs/docs/%40changelog%2F${repository}/-/${version}/CHANGELOG.md",
             "type": "ProviderState"
           }
         },
@@ -4468,7 +4468,7 @@
           }
         },
         "method": "GET",
-        "path": "/artifacts/docs/docs/@changelog/contract-repository/-/2100.1.0/CHANGELOG.md"
+        "path": "/artifacts/docs/docs/%40changelog%2Fcontract-repository/-/2100.1.0/CHANGELOG.md"
       },
       "response": {
         "headers": {
