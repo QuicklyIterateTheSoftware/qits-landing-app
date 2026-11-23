@@ -10,7 +10,8 @@ import { client as artifactsClient } from '../../api/artifacts/client.gen';
 import { provideHeyApiClient } from '../../api/artifacts/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
 import {
-  artifactsGoldenMasters as masters,
+  artifactsGoldenMasters,
+  changelogSiteAsSent,
   ENTITY_MAP_STATE as CONTRACTS,
 } from '../../../testing/golden-masters';
 import { assertPactPart, type OwnedOperation } from '../../../testing/pact-part';
@@ -44,7 +45,6 @@ import {
   DOCS_VERSIONS,
 } from './docs.operations';
 import { asEntityMap, type EntityMap } from './entity-map';
-import { safeRecordedFile } from './golden-masters';
 import { blobDataUrl, routesSiteOf, type BundleVersion } from './routes-bundles';
 import { asManifest, hasViewports, routeStates } from './routes-manifest';
 
@@ -67,6 +67,9 @@ it('declares the provider these parts bind', () => {
 });
 
 const DOCS = { repository: DOCS_REPOSITORY } as const;
+
+/** The docs store's golden masters, a changelog's site spelled as the client sends it. */
+const masters = changelogSiteAsSent(artifactsGoldenMasters);
 
 /** The docs sites named `prefix…`, each with its versions (null when they could not be read). */
 async function sitesWithVersions(
@@ -171,14 +174,6 @@ async function assetFilesFound({ site, version }: BundleVersion): Promise<readon
 async function dataUrlFound(bundle: BundleVersion, path: string): Promise<string | null> {
   const file = await fileOf(bundle, path, { responseType: 'blob' });
   return !file.failed && file.data instanceof Blob ? blobDataUrl(file.data) : null;
-}
-
-/** One unit's diagram as Markdown text, as `ContractsBundles` reads it. */
-async function diagramFound(site: BundleVersion, file: string): Promise<string | 'none' | null> {
-  if (!safeRecordedFile(file)) return null;
-  const read = await fileOf(site, `database/${file}`, { responseType: 'text' });
-  if (read.status === 404) return 'none';
-  return !read.failed && typeof read.data === 'string' ? read.data : null;
 }
 
 {
@@ -529,13 +524,12 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
    * `database/index.json`) sends the recorded path, as the provider replays it anyway.
    *
    * The entity page also reads the ER diagram of the entity's unit (qits-2014): the bundle's
-   * `database/index.json` and the unit's `database/<file>.md`
-   * (`diagramFound`). No recording of qits-artifacts holds a bundle's database files yet, so each
-   * read binds what the docs store answers for a file of its media type: the index as the entity
-   * map's JSON file is bound (the recorded `entities.json`, read at its own path and checked as not
+   * `database/index.json` and the unit's `database/<file>.md`. No recording of qits-artifacts
+   * holds a bundle's database files yet, so each read binds what the docs store answers for a file
+   * of its media type: the index as the entity map's JSON file is bound (the recorded `entities.json`, read at its own path and checked as not
    * an index), and the Markdown file as `a repository with published changelogs` records one,
-   * `text/markdown`, binding the header only (Pact sniffs a Markdown body as `text/plain`). The
-   * provider replays each state's own path.
+   * `text/markdown`, binding the header only (Pact sniffs a Markdown body as `text/plain`). Each
+   * read sends its state's own path, which the pact pins (qits-2511) and the provider replays.
    *
    * The pages' links (epic qits-2000) are shown against qits-2041's states: `a published contracts
    * bundle with a golden-master index` (`@contracts/qits-githost`, naming qits-githost-service, in a
@@ -778,6 +772,9 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         },
       ));
 
+    // No state records a unit's ER diagram, and the pact matches the recorded path exactly
+    // (qits-2511): the read sends the Markdown file the state records, as a diagram's read asks
+    // for it, and checks that Markdown comes back as text.
     it('show-entity: reads a unit’s ER diagram as Markdown', () =>
       given(
         'show-entity',
@@ -788,8 +785,14 @@ async function diagramFound(site: BundleVersion, file: string): Promise<string |
         { contentType: 'text/markdown' },
         MARKDOWN,
       ).executeTest(async (server) => {
-        const markdown = await at(server.url, () => diagramFound(site(), 'projects.md'));
-        expect(typeof markdown).toBe('string');
+        const { repository, version } = masters.operation(MARKDOWN, 'getDocsFile').params;
+        const markdown = await at(server.url, () =>
+          fileOf({ site: `@changelog/${repository}`, version }, 'CHANGELOG.md', {
+            responseType: 'text',
+          }),
+        );
+        expect(markdown.failed).toBe(false);
+        expect(typeof markdown.data).toBe('string');
       }));
   });
 }
