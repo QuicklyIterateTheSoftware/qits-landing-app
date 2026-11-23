@@ -6074,6 +6074,98 @@
       ]
     },
     {
+      "file": "src/app/patterns/agents/agent-dialog/agent-dialog.browser.spec.ts/agent-context-loading-dark.html",
+      "spec": "src/app/patterns/agents/agent-dialog/agent-dialog.browser.spec.ts",
+      "test": "AgentDialog (screenshots) > disables Insert page context while the page’s own context is still loading (qits-2545)",
+      "name": "agent-context-loading",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project whose named agent is running",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project whose named agent is running",
+          "operationId": "startAgent"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listAgents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listAgents",
+          "item": "name=ui-builder",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listAgents",
+          "item": "name=ui-builder",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/agents/agent-dialog/agent-dialog.browser.spec.ts/agent-context-loading-light.html",
+      "spec": "src/app/patterns/agents/agent-dialog/agent-dialog.browser.spec.ts",
+      "test": "AgentDialog (screenshots) > disables Insert page context while the page’s own context is still loading (qits-2545)",
+      "name": "agent-context-loading",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project whose named agent is running",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project whose named agent is running",
+          "operationId": "startAgent"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listAgents",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listAgents",
+          "item": "name=ui-builder",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listAgents",
+          "item": "name=ui-builder",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        }
+      ]
+    },
+    {
       "file": "src/app/patterns/agents/agent-dialog/agent-dialog.browser.spec.ts/agent-desk-dark.html",
       "spec": "src/app/patterns/agents/agent-dialog/agent-dialog.browser.spec.ts",
       "test": "AgentDialog (screenshots) > shows the desk’s dialog, its terminal attached, with no page context to insert",
