@@ -63,3 +63,95 @@ contracts:
     qits-deployments-service: { packages: [maven] }
     qits-orchestrator-service: { packages: [maven] }
     qits-mirror-service: { packages: [maven] }
+
+  # qits-2465: pact parity with qits-platform-access-monorepo (the CLI), checked by qits-ci on
+  # every release request. An operation the CLI makes that this page does not must be listed here
+  # with a reason.
+  mirror:
+    repository: qits-platform-access-monorepo
+    framework: pact-js
+    excluded:
+      qits-artifacts-service:
+        getContentHash: "qits artifacts publish contract; qits-landing-app has no page for it yet"
+        getMavenFile: "qits artifacts fetch deployed-pacts; qits-landing-app has no page for it yet"
+        getNewestContentHash: "qits artifacts publish contract; qits-landing-app has no page for it yet"
+        getNpmPackument: "qits artifacts publish contract; qits-landing-app has no page for it yet"
+        headDaemon: "qits artifacts publish daemon submit; qits-landing-app has no page for it yet"
+        headSbom: "qits artifacts publish exists; qits-landing-app has no page for it yet"
+        listDaemons: "qits update; qits-landing-app has no page for it yet"
+        putDaemon: "qits artifacts publish daemon submit; qits-landing-app has no page for it yet"
+        putDocs: "qits artifacts publish changelog; qits-landing-app has no page for it yet"
+        putMavenFile: "qits artifacts publish contract; qits-landing-app has no page for it yet"
+        putNpmDistTag: "qits artifacts publish contract; qits-landing-app has no page for it yet"
+        putNpmPackage: "qits artifacts publish contract; qits-landing-app has no page for it yet"
+        putSbom: "qits artifacts publish sbom submit; qits-landing-app has no page for it yet"
+      qits-ci-service:
+        getRunBaseline: "qits ci report submit; qits-landing-app has no page for it yet"
+        listRunBaselineReports: "qits ci report submit; qits-landing-app has no page for it yet"
+        listRunGateReports: "qits artifacts publish changelog; qits-landing-app has no page for it yet"
+        putRunStepReport: "qits ci report submit; qits-landing-app has no page for it yet"
+      qits-deployments-service:
+        abortDatabaseMove: "qits deployments database abort; qits-landing-app has no page for it yet"
+        deleteSetting: "qits deployments settings delete; qits-landing-app has no page for it yet"
+        getDatabaseMove: "qits deployments database move-status; qits-landing-app has no page for it yet"
+        listDatabaseMoves: "qits deployments database moves; qits-landing-app has no page for it yet"
+        listSettings: "qits deployments settings list; qits-landing-app has no page for it yet"
+        moveDatabase: "qits deployments database move; qits-landing-app has no page for it yet"
+        previewSettings: "qits deployments settings preview; qits-landing-app has no page for it yet"
+        putSetting: "qits deployments settings set; qits-landing-app has no page for it yet"
+      qits-idp-service: "qits-landing-app calls no qits-idp-service door; CLI commands: qits git-credential, qits git-login, qits login, qits remembered-devices list, qits remembered-devices revoke, qits service-clients list, …"
+      qits-maintenance-service:
+        listDeployedPacts: "qits artifacts fetch deployed-pacts; qits-landing-app has no page for it yet"
+        listReleaseRequestAutomations: "qits maintenance automations; qits-landing-app has no page for it yet"
+        runReleaseRequestAutomation: "qits maintenance automation run; qits-landing-app has no page for it yet"
+      qits-network-access-service: "qits-landing-app calls no qits-network-access-service door; CLI commands: qits network-access down, qits network-access up"
+      qits-observability-service:
+        listSlowSpans: "qits observe slow-spans; qits-landing-app has no page for it yet"
+        searchTelemetryRecords: "qits observe query; qits-landing-app has no page for it yet"
+      qits-projects-service:
+        addPitchVersion: "qits pitches add-version; qits-landing-app has no page for it yet"
+        addRefinementDesign: "qits work design put; qits-landing-app has no page for it yet"
+        addReleaseRequestSource: "qits release-request join; qits-landing-app has no page for it yet"
+        archivePitch: "qits pitches archive; qits-landing-app has no page for it yet"
+        backupResetRepository: "qits repositories backup reset; qits-landing-app has no page for it yet"
+        createPitch: "qits pitches create; qits-landing-app has no page for it yet"
+        createProjectRepository: "qits repositories create; qits-landing-app has no page for it yet"
+        createReleaseRequest: "qits release-request create; qits-landing-app has no page for it yet"
+        createWorkDossierPage: "qits work dossier put; qits-landing-app has no page for it yet"
+        deleteWork: "qits work delete; qits-landing-app has no page for it yet"
+        deleteWorkDossierPage: "qits work dossier delete; qits-landing-app has no page for it yet"
+        discardRefinement: "qits work refinement discard; qits-landing-app has no page for it yet"
+        ensureRefinementContainer: "qits work refinement open; qits-landing-app has no page for it yet"
+        getAgentLastAnswer: "qits projects agents answer; qits-landing-app has no page for it yet"
+        getBranchDeliveries: "qits wait branch; qits-landing-app has no page for it yet"
+        getDevelopmentGuide: "qits help guide; qits-landing-app has no page for it yet"
+        getFrontDeskLastAnswer: "qits projects desk answer; qits-landing-app has no page for it yet"
+        getRefinementDesign: "qits work design get; qits-landing-app has no page for it yet"
+        getWorkArchetypeSchema: "qits work create; qits-landing-app has no page for it yet"
+        getWorkDossierPage: "qits work dossier get; qits-landing-app has no page for it yet"
+        getWorkRefinement: "qits work design get; qits-landing-app has no page for it yet"
+        inlineWorkDossierAsset: "qits work dossier inline; qits-landing-app has no page for it yet"
+        listBranchCommits: "qits repositories commits; qits-landing-app has no page for it yet"
+        listDevelopmentGuideVariants: "qits help guide; qits-landing-app has no page for it yet"
+        listRefinementDesigns: "qits work design list; qits-landing-app has no page for it yet"
+        listRepositoryBranches: "qits repositories branches; qits-landing-app has no page for it yet"
+        listWorkChildren: "qits work details; qits-landing-app has no page for it yet"
+        measureCommitSubjects: "qits repositories commit-subjects; qits-landing-app has no page for it yet"
+        moveWorkDossierPage: "qits work dossier move; qits-landing-app has no page for it yet"
+        promptAgent: "qits projects agents prompt; qits-landing-app has no page for it yet"
+        promptFrontDesk: "qits projects desk prompt; qits-landing-app has no page for it yet"
+        putWorkDossierPage: "qits work dossier put; qits-landing-app has no page for it yet"
+        rerunReleasePipelinePhase: "qits release-request rerun; qits-landing-app has no page for it yet"
+        rerunReleaseRequestAutomation: "qits release-request regenerate; qits-landing-app has no page for it yet"
+        setReleaseRequestDeployHold: "qits release-request hold-deploy; qits-landing-app has no page for it yet"
+        setWorkBlocked: "qits work block; qits-landing-app has no page for it yet"
+        startWorkRefinement: "qits work refinement open; qits-landing-app has no page for it yet"
+        transitionWork: "qits work transition; qits-landing-app has no page for it yet"
+        updateRefinementDesign: "qits work design put; qits-landing-app has no page for it yet"
+      qits-workspaces-service:
+        cancelAgentWait: "qits wait cancel; qits-landing-app has no page for it yet"
+        createAgentWait: "qits wait; qits-landing-app has no page for it yet"
+        getAgentTranscript: "qits agents transcript; qits-landing-app has no page for it yet"
+        listAgentSessions: "qits agents sessions; qits-landing-app has no page for it yet"
+        listAgentWaits: "qits wait list; qits-landing-app has no page for it yet"
+        yieldAgent: "qits agents yield; qits-landing-app has no page for it yet"
