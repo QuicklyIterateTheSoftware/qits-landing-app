@@ -55,7 +55,7 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * The Releases section (qits-2482): `projects/<slug>/releases` is a parent with no component, its
  * pages its children: Requests, Agents and CI. `/releases` opens `requests` by a relative
  * `redirectTo`. The old addresses (`release-requests/…`, `agents/…`, `ci/…`) redirect to theirs
- * below `releases/`, one relative redirect per page, so the child path and the query are kept.
+ * below `releases/`, one redirect per page (`movedTo`), so the child path and the query are kept.
  *
  * A project's release requests are at `projects/<slug>/releases/requests` (`ReleaseRequestsPage`),
  * one request at `releases/requests/<requestId>` (`ReleaseRequestPage`).
@@ -219,16 +219,36 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * shell, so the guard does not run on it and the catch-all never takes it.
  */
 /**
+ * A redirect to `path` from the app's root, each `:param` filled from the old address, the query
+ * and fragment kept (qits-2567). A function, not a string: the server renderer resolves a string
+ * `redirectTo` on its own, and for a route path of more than one segment it joins the target to
+ * the route's parent and leaves its `:param`s as they are, so `projects/:slug/agents` answered
+ * `/projects/qits/projects/:slug/releases/agents`. A function runs in the router on both sides.
+ */
+export function movedTo(path: string): RedirectFunction {
+  return ({ params, queryParams, fragment }) =>
+    inject(Router).createUrlTree(
+      [
+        '/',
+        ...path
+          .split('/')
+          .map((part) => (part.startsWith(':') ? String(params[part.slice(1)]) : part)),
+      ],
+      { queryParams, fragment: fragment ?? undefined },
+    );
+}
+
+/**
  * Redirects from an old section's addresses to its new ones, one per page below it (`''` is the
- * section itself): `redirects('a', 'b', ['', ':id'])` sends `a` to `b` and `a/<id>` to `b/<id>`.
- * Relative, so the query is kept.
+ * section itself): `redirects('a', 'b', ['', ':id'])` sends `a` to `b` and `a/<id>` to `b/<id>`,
+ * keeping the query (`movedTo`).
  */
 function redirects(from: string, to: string, pages: readonly string[]): Routes {
   const join = (base: string, page: string) => (page ? `${base}/${page}` : base);
   return pages.map((page) => ({
     path: join(from, page),
     pathMatch: 'full',
-    redirectTo: join(to, page),
+    redirectTo: movedTo(join(to, page)),
   }));
 }
 
@@ -457,8 +477,8 @@ export const routes: Routes = [
           },
         ],
       },
-      // The old addresses before the Releases section (qits-2482): relative redirects, so the
-      // query is kept, one per depth, so child paths are kept too.
+      // The old addresses before the Releases section (qits-2482): one redirect per depth, so
+      // child paths and the query are kept.
       ...redirects('projects/:slug/release-requests', 'projects/:slug/releases/requests', [
         '',
         ':requestId',
@@ -473,7 +493,7 @@ export const routes: Routes = [
       {
         path: 'projects/:slug/workspaces',
         pathMatch: 'full',
-        redirectTo: 'projects/:slug/releases/agents',
+        redirectTo: movedTo('projects/:slug/releases/agents'),
       },
       {
         path: 'projects/:slug/workspaces/:slotId',
@@ -726,10 +746,14 @@ export const routes: Routes = [
       // publishes them. Its addresses redirect: the section to the Components, a repository's
       // docs to `components/<repo>/docs`, and the reader (`DocsReadRedirectPage`) to the
       // reader under the site's publisher.
-      { path: 'projects/:slug/docs', pathMatch: 'full', redirectTo: 'projects/:slug/components' },
+      {
+        path: 'projects/:slug/docs',
+        pathMatch: 'full',
+        redirectTo: movedTo('projects/:slug/components'),
+      },
       {
         path: 'projects/:slug/docs/repositories/:repo',
-        redirectTo: 'projects/:slug/components/:repo/docs',
+        redirectTo: movedTo('projects/:slug/components/:repo/docs'),
       },
       {
         path: 'projects/:slug/docs/read/:site',
@@ -872,7 +896,8 @@ export const routes: Routes = [
           ),
       },
       { path: 'artifacts', pathMatch: 'full', redirectTo: '' },
-      { path: 'artifacts/**', redirectTo: '' },
+      // Absolute: the server renderer resolves a relative target here to `/artifacts` (qits-2567).
+      { path: 'artifacts/**', redirectTo: '/' },
       {
         // The System section (qits-2344): qits-system's one swarm, bound to no project. No front
         // page of its own yet: `/system` and `/system/swarm` open the swarm's services.
