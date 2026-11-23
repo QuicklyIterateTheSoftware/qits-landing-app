@@ -1,7 +1,7 @@
 import {
   agentSubpage,
   deploymentRequestSubpage,
-  globalSubpage,
+  globalLeaf,
   releaseRequestSubpage,
   slotSubpage,
   workSubpage,
@@ -183,31 +183,20 @@ describe('deploymentRequestSubpage', () => {
   });
 });
 
-describe('globalSubpage', () => {
-  it('names an entry by its decoded id, and its pages below', () => {
-    expect(globalSubpage('/artifacts/repositories/qits', '/artifacts', 'repositories')).toEqual({
-      label: 'qits',
-      path: '/artifacts/repositories/qits',
-    });
-    expect(
-      globalSubpage(
-        '/artifacts/repositories/my%20repo/images/x?tab=1#a',
-        '/artifacts',
-        'repositories',
-      ),
-    ).toEqual({ label: 'my repo', path: '/artifacts/repositories/my%20repo' });
-    expect(
-      globalSubpage('/orchestrator/processes/gc?x=1', '/orchestrator', 'processes')?.label,
-    ).toBe('gc');
+describe('globalLeaf', () => {
+  it('names the page right below a global section page by its decoded id', () => {
+    expect(globalLeaf('/system/swarm/services/abc', '/system/swarm/services')).toBe('abc');
+    expect(globalLeaf('/system/swarm/nodes/n%201/containers?x=1', '/system/swarm/nodes')).toBe(
+      'n 1',
+    );
+    expect(globalLeaf('/system/terminals/7#top', '/system/terminals')).toBe('7');
+    expect(globalLeaf('/mirror/repositories/%zz', '/mirror/repositories')).toBe('%zz');
   });
 
-  it('is undefined without entries, for the list itself and anywhere else', () => {
-    expect(globalSubpage('/system/swarm/nodes', '/system', undefined)).toBeUndefined();
-    expect(globalSubpage('/mirror/upstreams', '/mirror', 'repositories')).toBeUndefined();
-    expect(globalSubpage('/mirror/repositories', '/mirror', 'repositories')).toBeUndefined();
-    expect(globalSubpage('/mirror/repositories/', '/mirror', 'repositories')).toBeUndefined();
-    expect(
-      globalSubpage('/projects/qits/repositories/x', '/mirror', 'repositories'),
-    ).toBeUndefined();
+  it('is undefined for the page itself and anywhere else', () => {
+    expect(globalLeaf('/system/swarm/services', '/system/swarm/services')).toBeUndefined();
+    expect(globalLeaf('/system/swarm/services/', '/system/swarm/services')).toBeUndefined();
+    expect(globalLeaf('/system/swarm/servicesx/a', '/system/swarm/services')).toBeUndefined();
+    expect(globalLeaf('/system/swarm/services?x=1', '/system/swarm/services')).toBeUndefined();
   });
 });

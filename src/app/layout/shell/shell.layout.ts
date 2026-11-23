@@ -128,6 +128,7 @@ export interface NavChild extends NavPage {
  * the Orchestrator's, by its kind (qits-2480).
  */
 export type GlobalPath =
+  | 'projects'
   | 'system'
   | 'system/swarm/services'
   | 'system/swarm/nodes'
@@ -161,6 +162,11 @@ export interface GlobalChild {
    * on a terminal's page, `/system/terminals` (qits-2356), opened from a node's Containers tab.
    */
   readonly alsoOn?: readonly string[];
+  /**
+   * Its crumb's `follow-breadcrumb` exit, a link on a page below it (qits-2533), for a page with
+   * pages below it: System's Services, Nodes and Configs, Mirror's Caches.
+   */
+  readonly crumb?: ExitOutcome<GlobalPath>;
 }
 
 /**
@@ -183,11 +189,6 @@ export type GlobalLink =
       readonly crumb: ExitOutcome<GlobalSectionPath>;
       /** The section's own pages, listed below it in the sidebar while the section is open. */
       readonly children?: readonly GlobalChild[];
-      /**
-       * The segment below the section whose entries' pages the trail names by their param
-       * (`globalSubpage`, qits-2386): Artifacts' and Mirror's `repositories`.
-       */
-      readonly entries?: string;
     }
   | {
       readonly kind: 'external';
@@ -716,6 +717,13 @@ export class ShellLayout {
   });
 
   /**
+   * The sidebar's Projects (qits-2532): the first global entry, the project picker, current on it.
+   */
+  protected readonly projects = outcomes('open-sidebar-projects', {
+    open: exit('projects'),
+  });
+
+  /**
    * The sidebar's System (qits-2344): the System section, qits-system's one swarm, which belongs
    * to no project. `system` opens the swarm's services (a redirect), and the entry stays current
    * on every page below it.
@@ -809,20 +817,32 @@ export class ShellLayout {
     const idp = this.idpPages;
     const trail = this.trail;
     return [
+      { kind: 'exit', label: 'Projects', exit: this.projects.open, crumb: trail.projects },
       {
         kind: 'exit',
         label: 'System',
         exit: this.system.open,
         crumb: trail.system,
         children: [
-          { label: 'Services', exit: system.services, path: system.services.url() },
+          {
+            label: 'Services',
+            exit: system.services,
+            path: system.services.url(),
+            crumb: trail.systemServices,
+          },
           {
             label: 'Nodes',
             exit: system.nodes,
             path: system.nodes.url(),
             alsoOn: ['/system/terminals'],
+            crumb: trail.systemNodes,
           },
-          { label: 'Configs', exit: system.configs, path: system.configs.url() },
+          {
+            label: 'Configs',
+            exit: system.configs,
+            path: system.configs.url(),
+            crumb: trail.systemConfigs,
+          },
           { label: 'Secrets', exit: system.secrets, path: system.secrets.url() },
           { label: 'Targets', exit: system.targets, path: system.targets.url() },
         ],
@@ -832,9 +852,13 @@ export class ShellLayout {
         label: 'Mirror',
         exit: this.mirror.open,
         crumb: trail.mirror,
-        entries: 'repositories',
         children: [
-          { label: 'Caches', exit: mirror.caches, path: mirror.caches.url() },
+          {
+            label: 'Caches',
+            exit: mirror.caches,
+            path: mirror.caches.url(),
+            crumb: trail.mirrorCaches,
+          },
           { label: 'OCI upstreams', exit: mirror.upstreams, path: mirror.upstreams.url() },
         ],
       },
@@ -875,7 +899,8 @@ export class ShellLayout {
    * The trail's brand and its crumbs before the current page (epic qits-2000): home, the picker,
    * the project, and the sections and pages a subpage crumb can follow (Work; Releases and its
    * Requests, Agents and CI, qits-2482); with no project open, the global section the URL is in
-   * (Artifacts, System, Mirror, Orchestrator, IdP admin, qits-2386), to its root.
+   * (System, Mirror, Orchestrator, IdP admin, qits-2386), to its root, and the section's page
+   * above a page below it (qits-2533).
    */
   private readonly trail = outcomes('follow-breadcrumb', {
     home: exit(''),
@@ -896,6 +921,10 @@ export class ShellLayout {
     mirror: exit('mirror'),
     orchestrator: exit('orchestrator'),
     idp: exit('idp'),
+    systemServices: exit('system/swarm/services'),
+    systemNodes: exit('system/swarm/nodes'),
+    systemConfigs: exit('system/swarm/configs'),
+    mirrorCaches: exit('mirror/repositories'),
   });
 
   /** A section's crumb's exit, for the sections with a subpage below them. */
@@ -1100,8 +1129,8 @@ export class ShellLayout {
    * Ideas, qits-2483; Releases › Requests, Agents or CI, qits-2482), then a subpage of it (Work › Archive, Work › <item id>, Releases › Requests ›
    * <request id>, Releases › CI › <run>, Releases › Agents › <agent's item id>, Releases › Agents ›
    * ws-<slot id>, Deployments › <version> · <application>). With no project open, a global
-   * section's page has that section's trail instead (`globalCrumbs`, qits-2386: Artifacts ›
-   * <repository>, System › Nodes, IdP admin › Users), and any other page "Projects". The last crumb
+   * section's page has that section's trail instead (`globalCrumbs`, qits-2386: System ›
+   * Nodes, IdP admin › Users; System › Services › <id> below a page, qits-2533), and any other page "Projects". The last crumb
    * is the current page and is not a link; each one before it leads through its
    * `follow-breadcrumb` exit.
    */
@@ -1174,10 +1203,11 @@ export class ShellLayout {
 
   /**
    * The trail of a global section's page, with no project open (qits-2386): the section (its
-   * root, `follow-breadcrumb`), then the page below it: an entry by its param (Artifacts ›
-   * <repository>, Mirror › <repository>, `globalSubpage`), else the section's own page the URL is
-   * on, as the sidebar marks it (System › Nodes, also on a terminal's page; Mirror › Caches;
-   * Orchestrator › Garbage collection; IdP admin › Users). Undefined outside every global section.
+   * root, `follow-breadcrumb`), then the section's own page the URL is on, as the sidebar marks it
+   * (System › Nodes, also on a terminal's page; Mirror › Caches; Orchestrator › Garbage
+   * collection; IdP admin › Users). On a page below that one (qits-2533) the page is a link, and
+   * the current page is named by its id (`globalLeaf`: System › Services › <id>, System › Nodes ›
+   * <terminal id>, Mirror › Caches › <repository>). Undefined outside every global section.
    */
   private readonly globalCrumbs = computed((): readonly Crumb[] | undefined => {
     const link = this.globalLinks().find(
@@ -1186,10 +1216,14 @@ export class ShellLayout {
     );
     if (!link) return undefined;
     const section: Crumb = { label: link.label, exit: link.crumb };
-    const sub =
-      globalSubpage(this.selected.url(), link.exit.url(), link.entries) ??
-      link.children?.find((child) => this.isAt(child) || this.isAlsoAt(child));
-    return sub ? [section, { label: sub.label }] : [section];
+    const child = link.children?.find((page) => this.isAt(page) || this.isAlsoAt(page));
+    if (!child) return [section];
+    const page: Crumb = { label: child.label, exit: child.crumb, params: child.params };
+    const url = this.selected.url();
+    const leaf = [child.path, ...(child.alsoOn ?? [])]
+      .map((path) => globalLeaf(url, path))
+      .find((id) => id !== undefined);
+    return leaf ? [section, page, { label: leaf }] : [section, page];
   });
 
   /**
@@ -1365,21 +1399,23 @@ function within(url: string, path: string): boolean {
 }
 
 /**
- * The crumb of one entry below the global section at `section` (`/mirror`, qits-2386):
- * `<section>/<entries>/<id>` (and its pages below) names the entry by its id, decoded
- * (`/mirror/repositories/hub` is "hub"). Undefined for a section without `entries`,
- * the list itself and anything outside it.
+ * The id of the page right below the global section page at `path` (qits-2533), decoded:
+ * `/system/swarm/services/abc` below `/system/swarm/services` is "abc", and
+ * `/system/swarm/nodes/n1/containers` below `/system/swarm/nodes` is "n1". Undefined for the page
+ * itself and anything outside it.
  */
-export function globalSubpage(
-  url: string,
-  section: string,
-  entries: string | undefined,
-): NavPage | undefined {
-  if (!entries) return undefined;
-  const prefix = `${section}/${entries}/`;
-  if (!url.startsWith(prefix)) return undefined;
-  const id = url.slice(prefix.length).split(/[?#]/)[0].split('/')[0];
-  return id ? { label: decodeURIComponent(id), path: `${prefix}${id}` } : undefined;
+export function globalLeaf(url: string, path: string): string | undefined {
+  if (!url.startsWith(`${path}/`)) return undefined;
+  const id = url
+    .slice(path.length + 1)
+    .split(/[?#]/)[0]
+    .split('/')[0];
+  if (!id) return undefined;
+  try {
+    return decodeURIComponent(id);
+  } catch {
+    return id;
+  }
 }
 
 /**

@@ -356,7 +356,8 @@ With no project open, the sidebar shows its global sections in the project's sec
 (`globalLinks` in `layout/shell/shell.layout.ts`), above Network access: the sections that belong
 to no project. A `GlobalLink` is one of two kinds. `kind: 'exit'` is a section of this app, a
 router link through its declared exit (`[qitsExit]`, a `GlobalPath` with no params), current on
-every page below it (the root Artifacts of qits-2316 is gone, qits-2477): System
+every page below it (the root Artifacts of qits-2316 is gone, qits-2477): first Projects
+(`open-sidebar-projects`, `exit('projects')`, qits-2532), the project picker, current on it; then System
 (`open-sidebar-system`, `exit('system')`, qits-2344), Mirror (`open-sidebar-mirror`,
 `exit('mirror')`, qits-2357) and Orchestrator (`open-sidebar-orchestrator`, `exit('orchestrator')`,
 qits-2359), IdP admin (below). Such a section may list its own pages below it
@@ -384,11 +385,14 @@ theirs. The door and the idp are the same site, so the frame opens signed in. Wi
 (the server render) there is no frame. `kind: 'external'` leaves the app at `href` through an
 `external(...)` outcome; no global section uses it today. With a project open the list is empty.
 On a global section's page the trail is that section's, not `Projects` (qits-2386,
-`globalCrumbs`): the section, through its own `follow-breadcrumb` exit to its root (`artifacts`,
-`system`, `mirror`, `orchestrator`, `idp`; every in-app section has one, an external one none),
-then an entry by its decoded param (Artifacts › `<repo>`, Mirror › `<repository>`; the entry's
-segment is the link's `entries`), else the section's page as the sidebar marks it, `alsoOn`
-included (System › Nodes, Mirror › Caches, Orchestrator › Garbage collection, IdP admin › Users).
+`globalCrumbs`): the section, through its own `follow-breadcrumb` exit to its root (`system`,
+`mirror`, `orchestrator`, `idp`; every in-app section has one, an external one none), then the
+section's page as the sidebar marks it, `alsoOn` included (System › Nodes, Mirror › Caches,
+Orchestrator › Garbage collection, IdP admin › Users). On a page below that page (qits-2533) it is
+a link through its own `follow-breadcrumb` exit (the child's `crumb`: `systemServices`,
+`systemNodes`, `systemConfigs`, `mirrorCaches`; only the pages with pages below them declare one),
+and the current page is named by its decoded id (`globalLeaf`): System › Services › `<id>`,
+System › Nodes › `<terminal id>`, Mirror › Caches › `<repository>`.
 
 An artifact's page is below the repository that publishes it (qits-2477, which removed the root
 Artifacts section of qits-2316, its store repository page and its listings):

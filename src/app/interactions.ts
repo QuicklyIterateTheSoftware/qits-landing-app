@@ -1685,6 +1685,11 @@ export const INTERACTIONS = {
    */
   'open-sidebar-idp-page': 'An IdP admin page below the sidebar’s IdP admin opens it',
   /**
+   * `shell.layout.ts`: the sidebar's Projects, the first global entry shown with no project open,
+   * opens the project picker (`projects`, qits-2532). Navigates only, and names no pact.
+   */
+  'open-sidebar-projects': 'The sidebar’s Projects entry opens the project picker',
+  /**
    * `shell.layout.ts`: the sidebar's System, a global section shown with no project open, opens
    * the System section (`system`, which opens the swarm's services; qits-2344). Navigates only,
    * and names no pact.
@@ -1725,8 +1730,9 @@ export const INTERACTIONS = {
    * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
    * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
    * the Work or Releases section above a subpage, and Releases' Requests, Agents or CI page; with
-   * no project open, the global section (Artifacts, System, Mirror, Orchestrator or IdP admin) above
-   * one of its pages, to its root (qits-2386). Navigates only, and names no pact (epic qits-2000).
+   * no project open, the global section (System, Mirror, Orchestrator or IdP admin) above one of
+   * its pages, to its root (qits-2386), and the section's page (Services, Nodes, Configs, Caches)
+   * above a page below it (qits-2533). Navigates only, and names no pact (epic qits-2000).
    */
   'follow-breadcrumb': 'A breadcrumb before the current page opens its page',
   /**

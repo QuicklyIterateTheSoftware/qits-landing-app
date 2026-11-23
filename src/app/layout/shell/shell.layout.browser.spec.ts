@@ -118,7 +118,9 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'system/swarm/services', component: TestPage },
           { path: 'system/swarm/services/:id', component: TestPage },
           { path: 'system/swarm/nodes', component: TestPage },
+          { path: 'system/swarm/nodes/:id/containers', component: TestPage },
           { path: 'system/swarm/configs', component: TestPage },
+          { path: 'system/swarm/configs/:id', component: TestPage },
           { path: 'system/swarm/secrets', component: TestPage },
           { path: 'system/targets', component: TestPage },
           { path: 'system/terminals/:id', component: TestPage },
@@ -243,12 +245,13 @@ describe('ShellLayout (screenshots)', () => {
     await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
     fixture.detectChanges();
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
-    // At the root the navigation holds no project's sections: the global sections (System,
+    // At the root the navigation holds no project's sections: Projects (qits-2532), the global sections (System,
     // qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
     // qits-2481), then Network access, the phone's way there (qits-2262); the "qits" brand leads
     // home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
+      'Projects',
       'System',
       'Mirror',
       'Orchestrator',
@@ -951,8 +954,28 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels).toEqual(['System', 'Mirror', 'Orchestrator', 'IdP admin', 'Network access']);
+    expect(labels).toEqual([
+      'Projects',
+      'System',
+      'Mirror',
+      'Orchestrator',
+      'IdP admin',
+      'Network access',
+    ]);
     await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
+  });
+
+  it('open-sidebar-projects open: the sidebar’s Projects opens the project picker, marked current there', async () => {
+    await page.viewport(1280, 800);
+    const { fixture } = await render('/system/swarm/nodes');
+    const entry = page
+      .getByRole('navigation', { name: 'qits' })
+      .getByRole('link', { name: 'Projects', exact: true });
+    await expect.element(entry).toHaveAttribute('href', '/projects');
+    await expect.element(entry).not.toHaveAttribute('aria-current');
+    expect(await follow(fixture, entry)).toBe('/projects');
+    expect(reached()).toEqual(['open-sidebar-projects:open']);
+    await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
   it('open-sidebar-system open: the sidebar’s System opens the System section, marked current there', async () => {
@@ -1023,6 +1046,7 @@ describe('ShellLayout (screenshots)', () => {
       .elements()
       .map((link) => link.textContent?.trim());
     expect(labels).toEqual([
+      'Projects',
       'System',
       'Services',
       'Nodes',
@@ -1126,6 +1150,7 @@ describe('ShellLayout (screenshots)', () => {
       .elements()
       .map((link) => link.textContent?.trim());
     expect(labels).toEqual([
+      'Projects',
       'System',
       'Mirror',
       'Caches',
@@ -1221,6 +1246,7 @@ describe('ShellLayout (screenshots)', () => {
       .elements()
       .map((link) => link.textContent?.trim());
     expect(labels).toEqual([
+      'Projects',
       'System',
       'Mirror',
       'Orchestrator',
@@ -1423,14 +1449,27 @@ describe('ShellLayout (screenshots)', () => {
    * below it, the current page; or the section alone, then itself the current page.
    */
   const GLOBAL_TRAILS = [
-    { url: '/system/swarm/services/abc', section: 'System', page: 'Services' },
+    { url: '/system/swarm/services', section: 'System', page: 'Services' },
+    { url: '/system/swarm/services/abc', section: 'System', page: 'Services', leaf: 'abc' },
+    {
+      url: '/system/swarm/nodes/n%201/containers',
+      section: 'System',
+      page: 'Nodes',
+      leaf: 'n 1',
+    },
+    { url: '/system/swarm/configs/c1', section: 'System', page: 'Configs', leaf: 'c1' },
     { url: '/system/swarm/nodes', section: 'System', page: 'Nodes' },
     { url: '/system/swarm/configs', section: 'System', page: 'Configs' },
     { url: '/system/swarm/secrets', section: 'System', page: 'Secrets' },
     { url: '/system/targets', section: 'System', page: 'Targets' },
     // A terminal is opened from a node: Nodes stays current there, as in the sidebar.
-    { url: '/system/terminals/7', section: 'System', page: 'Nodes' },
-    { url: '/mirror/repositories/docker-hub', section: 'Mirror', page: 'docker-hub' },
+    { url: '/system/terminals/7', section: 'System', page: 'Nodes', leaf: '7' },
+    {
+      url: '/mirror/repositories/docker-hub',
+      section: 'Mirror',
+      page: 'Caches',
+      leaf: 'docker-hub',
+    },
     { url: '/mirror/repositories', section: 'Mirror', page: 'Caches' },
     { url: '/mirror/upstreams', section: 'Mirror', page: 'OCI upstreams' },
     { url: '/orchestrator/processes/gc', section: 'Orchestrator', page: 'Garbage collection' },
@@ -1445,19 +1484,71 @@ describe('ShellLayout (screenshots)', () => {
       await page.viewport(1280, 800);
       await render(global.url);
       const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
-      const current = 'page' in global ? global.page : global.section;
-      await expect
-        .element(breadcrumb)
-        .toMatchTextContent(
-          'page' in global ? `qits›${global.section}›${current}` : `qits›${current}`,
-        );
+      const steps = [
+        global.section,
+        ...('page' in global ? [global.page] : []),
+        ...('leaf' in global ? [global.leaf] : []),
+      ];
+      const current = steps[steps.length - 1];
+      await expect.element(breadcrumb).toMatchTextContent(`qits›${steps.join('›')}`);
       await expect.element(breadcrumb).not.toMatchTextContent('Projects');
       await expect
         .element(breadcrumb.getByText(current, { exact: true }).last())
         .toHaveAttribute('aria-current', 'page');
-      const section = breadcrumb.getByRole('link', { name: global.section, exact: true });
-      if ('page' in global) await expect.element(section).toBeVisible();
-      else await expect.element(section).not.toBeInTheDocument();
+      // Every crumb before the current page is a link (qits-2533: the section's page, too).
+      for (const step of steps.slice(0, -1)) {
+        await expect
+          .element(breadcrumb.getByRole('link', { name: step, exact: true }))
+          .toBeVisible();
+      }
+      if (steps.length === 1) {
+        await expect
+          .element(breadcrumb.getByRole('link', { name: global.section, exact: true }))
+          .not.toBeInTheDocument();
+      }
+    });
+  }
+
+  /**
+   * A global section's page's crumb above a page below it (qits-2533): where it is a link, its
+   * name, the page it leads to, its outcome.
+   */
+  const GLOBAL_PAGE_CRUMBS = [
+    {
+      from: '/system/swarm/services/abc',
+      name: 'Services',
+      to: '/system/swarm/services',
+      outcome: 'systemServices',
+    },
+    {
+      from: '/system/terminals/7',
+      name: 'Nodes',
+      to: '/system/swarm/nodes',
+      outcome: 'systemNodes',
+    },
+    {
+      from: '/system/swarm/configs/c1',
+      name: 'Configs',
+      to: '/system/swarm/configs',
+      outcome: 'systemConfigs',
+    },
+    {
+      from: '/mirror/repositories/docker-hub',
+      name: 'Caches',
+      to: '/mirror/repositories',
+      outcome: 'mirrorCaches',
+    },
+  ] as const;
+
+  for (const crumb of GLOBAL_PAGE_CRUMBS) {
+    it(`follow-breadcrumb ${crumb.outcome}: the trail's ${crumb.name} opens its page`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render(crumb.from);
+      const link = page
+        .getByRole('navigation', { name: 'Breadcrumb' })
+        .getByRole('link', { name: crumb.name, exact: true });
+      expect(await follow(fixture, link)).toBe(crumb.to);
+      expect(reached()).toEqual([`follow-breadcrumb:${crumb.outcome}`]);
     });
   }
 
