@@ -12,6 +12,12 @@ import type { ValueMarks } from '$ui/dom/value-marks';
  * and Entities tabs (declared exits, `switch-contracts-section`, epic qits-2000: each marked
  * current by `[qitsExit]` on its list and the pages below it), and why there is nothing to show when the repository has no readable bundle
  * (`lookup`). The page's own content is projected and drawn only once the bundle is found.
+ *
+ * Because `<ng-content />` is conditional, a `@let` in the projected content is read only in that
+ * content's own view, never from a block nested inside it (qits-2504): a nested read keeps the
+ * `@let` as a node, and Angular's hydration serializer throws NG0502 on the server for such a node
+ * in projected content that was never inserted (the bundle still loading). Read it through a
+ * `computed` on the page instead.
  */
 @Component({
   selector: 'app-contracts-frame',

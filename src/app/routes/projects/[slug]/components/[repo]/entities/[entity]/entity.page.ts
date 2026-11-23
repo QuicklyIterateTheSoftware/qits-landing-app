@@ -246,8 +246,7 @@ import { Chip } from '$ui/components/chip/chip';
             </div>
           } @else {
             <p class="unknown m-0 text-sm text-fg-soft">
-              No such entity in {{ read?.status === 'loaded' ? read.map.application : '' }}
-              {{ site()?.version }}.
+              No such entity in {{ mapApplication() }} {{ site()?.version }}.
               <a
                 class="back font-semibold"
                 [qitsExit]="leaving.allEntities"
@@ -306,6 +305,15 @@ export class EntityPage {
   protected readonly mapRead = computed(() => {
     const site = this.site();
     return site ? this.entityMaps.mapRead(site) : undefined;
+  });
+
+  /**
+   * The map's application, for the line naming a class it does not list. Read here and not from
+   * the projected `@let read` in that nested block (qits-2504; `ContractsFrame`).
+   */
+  protected readonly mapApplication = computed(() => {
+    const read = this.mapRead();
+    return read?.status === 'loaded' ? read.map.application : '';
   });
 
   /** The data marks of the entity shown (qits-2146; `contracts-marks.ts`). */
