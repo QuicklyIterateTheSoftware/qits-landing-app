@@ -235,8 +235,8 @@ interface ShownAgent {
               @if (contextLoading()) {
                 The page is still loading what it shows.
               } @else {
-                Pastes what the page shows (route, screenshot, selection) into the agent’s input.
-                It is not sent: type on, then press Enter.
+                Pastes what the page shows (route, screenshot, selection) into the agent’s input. It
+                is not sent: type on, then press Enter.
               }
             </p>
           </div>
