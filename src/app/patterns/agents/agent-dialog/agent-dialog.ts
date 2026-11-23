@@ -103,7 +103,9 @@ interface ShownAgent {
  * - **Insert page context** (only with a `context`, the UI builder's): writes the opened-context
  *   block (`openedContext`, of what the page shows at that moment) into the agent's input as a
  *   bracketed paste, so it is not sent: the person types on and presses Enter themselves. Enabled
- *   while the terminal is attached.
+ *   while the terminal is attached, and while `contextLoading` says the page's own context has
+ *   finished loading (qits-2545): the terminal attaches well before a slow `@routes/` bundle load
+ *   does, and pasting early pastes `none` for what has not loaded yet.
  * - Closing only detaches (`TerminalSocket.close()`): it never stops, interrupts or discards the
  *   session. Opened again, the dialog attaches to the same command, and the daemon replays its
  *   scrollback.
@@ -224,14 +226,18 @@ interface ShownAgent {
             <button
               type="button"
               class="insert-context cursor-pointer rounded-md border border-line bg-surface px-3 py-1.5 text-sm font-semibold text-fg hover:bg-surface-subtle disabled:cursor-default disabled:opacity-50"
-              [disabled]="link() !== 'open'"
+              [disabled]="link() !== 'open' || contextLoading()"
               (click)="insertContext()"
             >
               Insert page context
             </button>
             <p class="hint m-0 text-xs text-fg-muted">
-              Pastes what the page shows (route, screenshot, selection) into the agent’s input. It
-              is not sent: type on, then press Enter.
+              @if (contextLoading()) {
+                The page is still loading what it shows.
+              } @else {
+                Pastes what the page shows (route, screenshot, selection) into the agent’s input.
+                It is not sent: type on, then press Enter.
+              }
             </p>
           </div>
         }
@@ -256,6 +262,11 @@ export class AgentDialog {
   readonly title = input.required<string>();
   /** What the page shows now, for Insert page context (`openedContext`); none, no button. */
   readonly context = input<OpenedContextFields | null>(null);
+  /**
+   * While true, the page has not loaded what `context` shows, so Insert page context waits
+   * (qits-2545).
+   */
+  readonly contextLoading = input(false);
   /** The dialog was closed (Escape, the close button, the backdrop): the page removes it. */
   readonly closed = output<void>();
 
@@ -424,7 +435,7 @@ export class AgentDialog {
   protected insertContext(): void {
     const context = this.context();
     const socket = this.socket();
-    if (!context || !socket || this.link() !== 'open') return;
+    if (!context || !socket || this.link() !== 'open' || this.contextLoading()) return;
     socket.send(bracketedPaste(openedContext(context)));
     // Back to the terminal (xterm's input), so the person types on after the paste.
     this.pane().nativeElement.querySelector('textarea')?.focus();

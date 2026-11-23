@@ -85,6 +85,7 @@ interface FakeStream {
       [agent]="agent()"
       title="UI builder agent"
       [context]="context()"
+      [contextLoading]="contextLoading()"
       (closed)="closedOnce()"
     />
   }`,
@@ -94,6 +95,7 @@ class Host {
   readonly projectId = ID;
   readonly agent = signal('ui-builder');
   readonly context = signal<OpenedContextFields | null>(CONTEXT);
+  readonly contextLoading = signal(false);
   closed = 0;
   closedOnce() {
     this.closed++;
@@ -275,6 +277,32 @@ describe('AgentDialog', () => {
     expect(data).toEqual([{ type: 'data', data: `\x1b[200~${openedContext(CONTEXT)}\x1b[201~` }]);
     expect(data[0].data).not.toMatch(/\r$/);
     // No request: the paste goes to the terminal only.
+  });
+
+  it('waits for the page’s own context to load, even with the terminal attached (qits-2545)', async () => {
+    const { fixture, host, insert, text } = await render(undefined, (host) =>
+      host.contextLoading.set(true),
+    );
+    sockets[0].open();
+    await settle(fixture);
+    expect(insert()?.disabled).toBe(true);
+    expect(text('.hint')).toBe('The page is still loading what it shows.');
+
+    insert()!.click();
+    await settle(fixture);
+    expect(sockets[0].sent.filter((frame) => JSON.parse(frame).type === 'data')).toEqual([]);
+
+    host.contextLoading.set(false);
+    await settle(fixture);
+    expect(insert()?.disabled).toBe(false);
+    expect(text('.hint')).toContain('It is not sent');
+
+    insert()!.click();
+    await settle(fixture);
+    const data = sockets[0].sent
+      .map((frame) => JSON.parse(frame) as { type: string; data?: string })
+      .filter((frame) => frame.type === 'data');
+    expect(data).toEqual([{ type: 'data', data: `\x1b[200~${openedContext(CONTEXT)}\x1b[201~` }]);
   });
 
   it('pastes the context of the moment it is pressed', async () => {

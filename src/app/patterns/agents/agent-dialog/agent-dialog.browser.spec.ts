@@ -69,6 +69,8 @@ interface FakeStream {
  *   terminal detaches and its place says the agent is starting. The list read again after the
  *   event is left unanswered, so the dialog shows what the event said.
  * - `agent-desk`: the desk's dialog (no Insert page context), its terminal attached.
+ * - `agent-context-loading`: the terminal attached, but `contextLoading` true (qits-2545): Insert
+ *   page context disabled and its hint says the page is still loading.
  */
 describe('AgentDialog (screenshots)', () => {
   let http: HttpTestingController;
@@ -118,7 +120,7 @@ describe('AgentDialog (screenshots)', () => {
   });
 
   /** The dialog open on the recorded project, started, its agents answered. */
-  async function shown(agent = 'ui-builder') {
+  async function shown(agent = 'ui-builder', contextLoading = false) {
     const agents = await goldenMaster(STATE, 'listAgents');
     const started = await goldenMaster(STATE, 'startAgent');
     const fixture = TestBed.createComponent(AgentDialog);
@@ -130,6 +132,7 @@ describe('AgentDialog (screenshots)', () => {
       agent === 'desk' ? 'Front desk agent' : 'UI builder agent',
     );
     fixture.componentRef.setInput('context', agent === 'desk' ? null : CONTEXT);
+    fixture.componentRef.setInput('contextLoading', contextLoading);
     fixture.detectChanges();
     for (let i = 0; i < 3; i++) {
       await settle();
@@ -184,6 +187,20 @@ describe('AgentDialog (screenshots)', () => {
     await expect.element(dialog.getByRole('button', { name: 'Insert page context' })).toBeEnabled();
     await commands.parkPointer();
     await expect.element(dialog).toMatchScreenshot('agent-idle', { kind: 'DATA' });
+  });
+
+  it('disables Insert page context while the page’s own context is still loading (qits-2545)', async () => {
+    const { dialog, run } = await shown('ui-builder', true);
+    await attach(run);
+    await expect.element(dialog.getByText('Idle', { exact: true })).toBeVisible();
+    await expect
+      .element(dialog.getByRole('button', { name: 'Insert page context' }))
+      .toBeDisabled();
+    await expect
+      .element(dialog.getByText('The page is still loading what it shows.'))
+      .toBeVisible();
+    await commands.parkPointer();
+    await expect.element(dialog).toMatchScreenshot('agent-context-loading', { kind: 'DATA' });
   });
 
   it('shows the agent starting, without a terminal, as its state event says', async () => {

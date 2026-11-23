@@ -1700,6 +1700,45 @@ describe('UiBuilderPage', () => {
       const insert = await openAgent(fixture, element);
       expect((await insert()).split('\n')[9]).toBe('selection: entity Project');
     });
+
+    it('waits for the bundle before Insert page context pastes it (qits-2545)', async () => {
+      // The project is known at once (`SelectedProject`'s mock), so the agent opens and its
+      // terminal attaches well before the `@routes/` bundle's own reads answer.
+      const { harness, fixture } = await open('qits-landing-app');
+      const element = harness.routeNativeElement as HTMLElement;
+      await openAgent(fixture, element);
+      terminals.at(-1)!.open();
+      for (let i = 0; i < 3; i++) await settle();
+      fixture.detectChanges();
+      const button = element.querySelector<HTMLButtonElement>('dialog button.insert-context')!;
+      expect(button.disabled).toBe(true);
+
+      // The bundle's own reads, as `render` answers them.
+      http.expectOne(SITES_URL).flush(artifacts.body(BUNDLE, 'listDocsSites'));
+      await settle();
+      http.expectOne(VERSIONS_URL).flush(artifacts.body(BUNDLE, 'listDocsVersions'));
+      await settle();
+      http.expectOne(fileUrl('manifest.json')).flush(artifacts.body(BUNDLE, 'getDocsFile'));
+      await settle();
+      fixture.detectChanges();
+      await settle();
+      await answerNoContracts();
+      for (let i = 0; i < 5; i++) await settle();
+      await stable();
+      fixture.detectChanges();
+      // The selected freeze's own read, as `answerFreeze` answers it, settled: `contextLoading`
+      // follows the bundle (`state()`), not the drawn freeze, but its request is still open.
+      await answerFreeze(ERROR_FREEZE, fixture);
+      expect(button.disabled).toBe(false);
+
+      button.click();
+      const frame = JSON.parse(terminals.at(-1)!.sent.at(-1)!) as { type: string; data: string };
+      expect(frame.type).toBe('data');
+      const text = frame.data.slice('\x1b[200~'.length, -'\x1b[201~'.length);
+      const lines = text.split('\n');
+      expect(lines).toContain('route: projects/:slug/repositories');
+      expect(lines).toContain(`manifestVersion: ${VERSION}`);
+    });
   });
 
   describe('pitches (qits-2158)', () => {

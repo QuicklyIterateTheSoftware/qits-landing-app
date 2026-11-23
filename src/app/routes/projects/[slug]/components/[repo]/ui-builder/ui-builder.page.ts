@@ -529,7 +529,10 @@ interface EntityGroup {
  *   state, and Insert page context, which pastes the opened-context block into the agent's input
  *   without sending it (`openedContextFields`: the repository, the selected route, the bundle's
  *   version, the drawn freeze and its kind, viewport, scheme and network, else the switches', and
- *   the selected entity or data mark). Closing the dialog only detaches.
+ *   the selected entity or data mark). The dialog's `contextLoading` is this page's own `state()`
+ *   ('loading'; 'loaded' already covers a bundle with no entry, `none`), so Insert page context
+ *   waits for the bundle rather than pasting `none` for what has not loaded yet (qits-2545).
+ *   Closing the dialog only detaches.
  * - Pitches (qits-2158): Original | Pitched tabs above the frame, Original by default and again
  *   whenever another freeze is drawn. Pitched lists the drawn screenshot's pitches (`PITCHES`,
  *   narrowed by `screenshotPitches`), the shown one's versions newest first (`PITCH`), and draws the
@@ -1637,6 +1640,7 @@ interface EntityGroup {
           agent="ui-builder"
           title="UI builder agent"
           [context]="openedContextFields()"
+          [contextLoading]="state() === 'loading'"
           (closed)="agentOpen.set(false)"
         />
       }
