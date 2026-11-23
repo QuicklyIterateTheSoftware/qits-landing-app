@@ -3,6 +3,7 @@ import { client as artifactsClient } from '../../../../../../api/artifacts/clien
 import { provideHeyApiClient } from '../../../../../../api/artifacts/client/client.gen';
 import { artifactsGoldenMasters as masters } from '../../../../../../../testing/golden-masters';
 import {
+  annotateLoadingPage,
   configureContractsPage,
   CONTRACTS,
   openContractsPage,
@@ -68,5 +69,10 @@ describe('EntitiesPage', () => {
     expect(text(element.querySelector('.no-map'))).toBe(
       '@contracts/qits-projects 2100.1.4 publishes no entity map.',
     );
+  });
+
+  // The server render (qits-2504).
+  it('serializes for hydration while the bundle is still loading', async () => {
+    await expect(annotateLoadingPage(http, url)).resolves.toBeUndefined();
   });
 });

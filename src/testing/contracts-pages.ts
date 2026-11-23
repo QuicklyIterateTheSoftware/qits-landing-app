@@ -1,6 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, type EnvironmentProviders, type Provider, type Type } from '@angular/core';
+import {
+  ApplicationRef,
+  PLATFORM_ID,
+  ɵannotateForHydration as annotateForHydration,
+  type EnvironmentProviders,
+  type Provider,
+  type Type,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, type Routes } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -118,4 +125,25 @@ export function text(element: Element | null | undefined): string {
     if (part) parts.push(part);
   }
   return parts.join(' ');
+}
+
+/**
+ * Opens `url` and serializes the page for hydration while the bundle is still loading, as the
+ * server render does (qits-2504: the catalog never loads on the server, so the frame never inserts
+ * the page's projected content, and the entity page threw NG0502 there on a `@let` the compiler
+ * kept because a nested block read it). Throws what the serializer throws; fails the catalog's read
+ * afterwards, so nothing is left open.
+ */
+export async function annotateLoadingPage(http: HttpTestingController, url: string) {
+  const harness = await RouterTestingHarness.create();
+  await harness.navigateByUrl(url);
+  await settle();
+  harness.detectChanges();
+  const app = TestBed.inject(ApplicationRef);
+  app.attachView(harness.fixture.componentRef.hostView);
+  try {
+    annotateForHydration(app, document);
+  } finally {
+    http.expectOne(SITES_URL).flush(null, { status: 500, statusText: 'Server Error' });
+  }
 }

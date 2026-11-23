@@ -4,6 +4,7 @@ import { provideHeyApiClient } from '../../../../../../../api/artifacts/client/c
 import type { GoldenIndex, GoldenState } from '$core/ui-builder/golden-masters';
 import { goldenMaster, projectsGoldenIndex } from '../../../../../../../../testing/golden-masters';
 import {
+  annotateLoadingPage,
   configureContractsPage,
   openContractsPage,
   REPO,
@@ -114,5 +115,10 @@ describe('ContractStatePage', () => {
       `/projects/${SLUG}/components/${REPO}/contracts`,
     );
     expect(text(element.querySelector('.site'))).toBe(`${SITE} ${VERSION}`);
+  });
+
+  // The server render (qits-2504).
+  it('serializes for hydration while the bundle is still loading', async () => {
+    await expect(annotateLoadingPage(http, url('some-state'))).resolves.toBeUndefined();
   });
 });

@@ -4,6 +4,7 @@ import { provideHeyApiClient } from '../../../../../../api/artifacts/client/clie
 import type { GoldenIndex } from '$core/ui-builder/golden-masters';
 import { projectsGoldenIndex } from '../../../../../../../testing/golden-masters';
 import {
+  annotateLoadingPage,
   configureContractsPage,
   openContractsPage,
   REPO,
@@ -90,5 +91,10 @@ describe('ContractsPage', () => {
     expect(text(element.querySelector('.unreadable'))).toBe(
       `Could not read ${SITE}, so whether contract-frontend publishes a contracts bundle is not known.`,
     );
+  });
+
+  // The server render (qits-2504).
+  it('serializes for hydration while the bundle is still loading', async () => {
+    await expect(annotateLoadingPage(http, url())).resolves.toBeUndefined();
   });
 });

@@ -1,7 +1,4 @@
 import type { HttpTestingController } from '@angular/common/http/testing';
-import { ApplicationRef, ɵannotateForHydration as annotateForHydration } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { QITS_MERMAID_LOADER, type QitsMermaid } from '@qits/ui-components';
 import { client as artifactsClient } from '../../../../../../../api/artifacts/client.gen';
 import { provideHeyApiClient } from '../../../../../../../api/artifacts/client/client.gen';
@@ -11,12 +8,11 @@ import {
   projectsGoldenIndex,
 } from '../../../../../../../../testing/golden-masters';
 import {
+  annotateLoadingPage,
   configureContractsPage,
   CONTRACTS,
   openContractsPage,
   REPO,
-  settle,
-  SITES_URL,
   SLUG,
   text,
   VERSION,
@@ -293,18 +289,8 @@ describe('EntityPage', () => {
     expect(element.querySelector('.no-diagram')).toBeNull();
   });
 
-  // The server render (qits-2504): the catalog never loads there, so the frame never inserts the
-  // projected content, and serializing the page for hydration threw NG0502 on a `@let` the
-  // compiler kept because a nested block read it.
-  it('annotates for hydration while the bundle is still loading', async () => {
-    const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl(url(PROJECT));
-    await settle();
-    harness.detectChanges();
-    const app = TestBed.inject(ApplicationRef);
-    app.attachView(harness.fixture.componentRef.hostView);
-
-    expect(() => annotateForHydration(app, document)).not.toThrow();
-    http.expectOne(SITES_URL).flush(null, { status: 500, statusText: 'Server Error' });
+  // The server render (qits-2504).
+  it('serializes for hydration while the bundle is still loading', async () => {
+    await expect(annotateLoadingPage(http, url(PROJECT))).resolves.toBeUndefined();
   });
 });
