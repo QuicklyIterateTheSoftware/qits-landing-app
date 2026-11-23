@@ -45,7 +45,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }
@@ -482,7 +483,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }
@@ -968,7 +970,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }
@@ -1204,7 +1207,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }
@@ -2032,7 +2036,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/observability/api/telemetry/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01$"
               }
             ]
           },
@@ -2041,7 +2046,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }
@@ -2133,7 +2139,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/observability/api/telemetry/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01$"
               }
             ]
           },
@@ -2142,7 +2149,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }
@@ -2646,7 +2654,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^_service/qits-example$"
                 }
               ]
             }

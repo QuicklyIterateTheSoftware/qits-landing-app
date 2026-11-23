@@ -51,7 +51,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-00000000000e$"
                 }
               ]
             }
@@ -1611,7 +1612,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-00000000000e$"
                 }
               ]
             }
@@ -2198,7 +2200,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-00000000000e$"
                 }
               ]
             }
@@ -2738,7 +2741,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a5/discard$"
               }
             ]
           }
@@ -2836,7 +2840,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/discard$"
               }
             ]
           }
@@ -2943,7 +2948,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/discard$"
               }
             ]
           }
@@ -3038,7 +3044,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/prompt-draft$"
               }
             ]
           }
@@ -3089,7 +3096,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/interrupt$"
               }
             ]
           }
@@ -3184,7 +3192,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1/recreate-container$"
               }
             ]
           }
@@ -3270,7 +3279,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/restart$"
               }
             ]
           }
@@ -3369,7 +3379,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/prompt-draft$"
               }
             ]
           }
@@ -3458,7 +3469,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/prompt-draft$"
               }
             ]
           }
@@ -3521,7 +3533,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/prompt$"
               }
             ]
           }
@@ -3645,7 +3658,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/prompt-draft$"
               }
             ]
           }
@@ -3743,7 +3757,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/prompt-draft$"
               }
             ]
           }
@@ -3889,7 +3904,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1$"
               }
             ]
           }
@@ -4087,7 +4103,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a9$"
               }
             ]
           }
@@ -4148,7 +4165,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/active-process$"
               }
             ]
           }
@@ -4400,7 +4418,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-00000000000e$"
                 }
               ]
             }
@@ -6333,7 +6352,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000013$"
                 }
               ]
             }
@@ -6492,7 +6512,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-00000000000a$"
                 }
               ]
             }
@@ -6581,7 +6602,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000001$"
                 }
               ]
             }
@@ -6704,7 +6726,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/work/00000000-0000-4000-8000-000000000001/workspaces$"
               }
             ]
           }
@@ -6903,7 +6926,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/work/00000000-0000-4000-8000-00000000000a/workspaces$"
               }
             ]
           }
@@ -6989,7 +7013,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1$"
               }
             ]
           }
@@ -7121,7 +7146,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1$"
               }
             ]
           }
@@ -7260,7 +7286,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1/active-process$"
               }
             ]
           }
@@ -7339,7 +7366,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1/active-process$"
               }
             ]
           }
@@ -7436,7 +7464,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1/agents$"
               }
             ]
           }
@@ -7726,7 +7755,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1/ensure-container$"
               }
             ]
           }
@@ -7812,7 +7842,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/agents/00000000-0000-4000-8000-0000000000a1/stop$"
               }
             ]
           }
@@ -7898,7 +7929,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/api/workspaces/1/stop-container$"
               }
             ]
           }

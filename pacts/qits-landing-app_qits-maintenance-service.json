@@ -1267,7 +1267,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-ui-jslib$"
                 }
               ]
             },
@@ -1275,7 +1276,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^2026\\.905\\.1$"
                 }
               ]
             }
@@ -1419,7 +1421,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-ui-jslib$"
                 }
               ]
             },
@@ -1427,7 +1430,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^2026\\.905\\.1$"
                 }
               ]
             }
@@ -1824,7 +1828,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-ui-jslib$"
                 }
               ]
             }
@@ -2413,7 +2418,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/bumps/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -2645,7 +2651,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/bumps/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -2918,7 +2925,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/bumps/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -2974,7 +2982,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/bumps/00000000-0000-4000-8000-000000000005$"
               }
             ]
           }
@@ -3246,7 +3255,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-service$"
               }
             ]
           }
@@ -3353,7 +3363,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-javalib$"
               }
             ]
           }
@@ -3682,7 +3693,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-unknown-service$"
               }
             ]
           }
@@ -3732,7 +3744,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-service/downstream$"
               }
             ]
           }
@@ -3807,7 +3820,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-javalib/downstream$"
               }
             ]
           }
@@ -3995,7 +4009,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-unknown-service/downstream$"
               }
             ]
           }
@@ -4073,7 +4088,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-service$"
                 }
               ]
             }
@@ -4158,7 +4174,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-javalib$"
                 }
               ]
             }
@@ -4409,7 +4426,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-unknown-service$"
                 }
               ]
             }
@@ -4491,7 +4509,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-service/dependents$"
               }
             ]
           }
@@ -4566,7 +4585,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-javalib/dependents$"
               }
             ]
           }
@@ -4777,7 +4797,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/maintenance/api/repositories/contract-unknown-service/dependents$"
               }
             ]
           }

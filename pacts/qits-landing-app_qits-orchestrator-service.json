@@ -42,7 +42,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/runs/00000000-0000-4000-8000-000000000001/steps/artifacts\\.plan$"
               }
             ]
           }
@@ -176,7 +177,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/runs/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -1132,7 +1134,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/runs/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -1830,7 +1833,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/processes/gc/runs$"
               }
             ]
           }
@@ -1990,7 +1994,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/processes/gc/runs$"
               }
             ]
           }
@@ -2132,7 +2137,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/processes/gc/runs$"
               }
             ]
           }
@@ -2316,7 +2322,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/processes/gc/runs$"
               }
             ]
           }
@@ -2413,7 +2420,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/orchestrator/api/processes/gc/runs$"
               }
             ]
           }

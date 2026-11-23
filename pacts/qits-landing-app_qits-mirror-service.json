@@ -308,7 +308,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/mirror/api/repositories/central/packages$"
               }
             ]
           }
@@ -542,7 +543,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/mirror/api/repositories/hub/packages$"
               }
             ]
           }
@@ -804,7 +806,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/mirror/api/repositories/npmjs/packages$"
               }
             ]
           }
@@ -1033,7 +1036,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/mirror/api/repositories/contract-absent-root/packages$"
               }
             ]
           }
@@ -1083,7 +1087,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/mirror/api/repositories/hub/packages$"
               }
             ]
           }

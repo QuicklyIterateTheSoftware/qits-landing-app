@@ -41,7 +41,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/sign-ins/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -242,7 +243,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -307,7 +309,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -358,7 +361,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/sign-ins/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -473,7 +477,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/greenlight$"
               }
             ]
           }
@@ -683,7 +688,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/healthcheck$"
               }
             ]
           }
@@ -732,7 +738,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/healthcheck$"
               }
             ]
           }
@@ -825,7 +832,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/login-check$"
               }
             ]
           }
@@ -874,7 +882,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/login-check$"
               }
             ]
           }
@@ -981,7 +990,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/registration-token$"
               }
             ]
           }
@@ -1342,7 +1352,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/configs/qits-binary-config$"
               }
             ]
           }
@@ -1483,7 +1494,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/configs/qits-empty-config$"
               }
             ]
           }
@@ -1613,7 +1625,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/configs/no-such-config$"
               }
             ]
           }
@@ -3411,7 +3424,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh$"
               }
             ]
           }
@@ -3632,7 +3646,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/nodes/no-such-node$"
               }
             ]
           }
@@ -3849,7 +3864,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/nodes/iwbwrdui2z0n62kqcjfo1erwh/tasks$"
               }
             ]
           }
@@ -4801,7 +4817,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/services/dev-qits-idle$"
               }
             ]
           }
@@ -5043,7 +5060,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/swarm/services/no-such-service$"
               }
             ]
           }
@@ -5302,7 +5320,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/terminals/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -5510,7 +5529,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/health$"
               }
             ]
           }
@@ -5723,7 +5743,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000001$"
                 }
               ]
             }
@@ -6823,7 +6844,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/sign-ins$"
               }
             ]
           }
@@ -6943,7 +6965,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/targets/00000000-0000-4000-8000-000000000001/sign-ins/00000000-0000-4000-8000-000000000003/code$"
               }
             ]
           }
@@ -7057,7 +7080,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/system/api/terminals/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }

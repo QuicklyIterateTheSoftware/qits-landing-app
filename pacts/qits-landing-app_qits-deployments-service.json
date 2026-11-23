@@ -41,7 +41,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/deployments/api/deployment-requests/00000000-0000-4000-8000-000000000002/approve$"
               }
             ]
           }
@@ -311,7 +312,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/deployments/api/deployment-requests/00000000-0000-4000-8000-000000000002/decline$"
               }
             ]
           }
@@ -519,7 +521,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/deployments/api/deployment-requests/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -700,7 +703,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/deployments/api/deployment-requests/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -882,7 +886,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/deployments/api/deployment-requests/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -1129,7 +1134,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000001$"
                 }
               ]
             }
@@ -1373,7 +1379,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000001$"
                 }
               ]
             }
@@ -1655,7 +1662,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000001$"
                 }
               ]
             }
@@ -1746,7 +1754,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-app-00000001$"
                 }
               ]
             },
@@ -1754,7 +1763,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^2026\\.101\\.120000$"
                 }
               ]
             }
@@ -2080,7 +2090,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-app-no-requests$"
                 }
               ]
             },
@@ -2088,7 +2099,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^2026\\.104\\.120000$"
                 }
               ]
             }
@@ -2184,7 +2196,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-app-00000001$"
                 }
               ]
             },
@@ -2192,7 +2205,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^2026\\.101\\.120000$"
                 }
               ]
             }

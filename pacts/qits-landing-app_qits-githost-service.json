@@ -55,7 +55,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/githost/api/repositories/00000000-0000-4000-8000-000000000002/raw$"
               }
             ]
           },
@@ -64,7 +65,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^docs/screenshot\\.png$"
                 }
               ]
             },
@@ -72,7 +74,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^main$"
                 }
               ]
             }

@@ -50,7 +50,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-plugins/pyright-lsp/install$"
               }
             ]
           }
@@ -180,7 +181,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files$"
               }
             ]
           }
@@ -324,7 +326,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files/content$"
               }
             ]
           }
@@ -381,7 +384,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files/content$"
               }
             ]
           }
@@ -501,7 +505,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agents/sign-in$"
               }
             ]
           }
@@ -602,7 +607,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/prompt-refinements$"
               }
             ]
           }
@@ -689,7 +695,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/commands/00000000-0000-4000-8000-000000000100/log$"
               }
             ]
           }
@@ -834,7 +841,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/detection$"
               }
             ]
           }
@@ -1037,7 +1045,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-worktrees/00000000-0000-4000-8000-0000000000a1/files$"
               }
             ]
           }
@@ -1200,7 +1209,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agent-plugins$"
               }
             ]
           }
@@ -1319,7 +1329,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agents/available$"
               }
             ]
           }
@@ -1437,7 +1448,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/workspaces/container/1/agents/available$"
               }
             ]
           }

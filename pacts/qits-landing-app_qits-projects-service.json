@@ -56,7 +56,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/approve$"
               }
             ]
           }
@@ -1204,7 +1205,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000002/archive$"
               }
             ]
           }
@@ -1331,7 +1333,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -1841,7 +1844,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/decline$"
               }
             ]
           }
@@ -3011,7 +3015,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dispatch$"
               }
             ]
           }
@@ -3111,7 +3116,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dispatch$"
               }
             ]
           }
@@ -3211,7 +3217,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dispatch$"
               }
             ]
           }
@@ -3312,7 +3319,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dispatch$"
               }
             ]
           }
@@ -3413,7 +3421,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -3528,7 +3537,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-10/status$"
               }
             ]
           }
@@ -3627,7 +3637,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -3769,7 +3780,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -3895,7 +3907,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -4001,7 +4014,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-2$"
               }
             ]
           }
@@ -4099,7 +4113,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -4191,7 +4206,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000004$"
                 }
               ]
             }
@@ -4637,7 +4653,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000003/release-requests/00000000-0000-4000-8000-000000000004/sources/move$"
               }
             ]
           }
@@ -5930,7 +5947,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6029,7 +6047,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6128,7 +6147,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6226,7 +6246,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6325,7 +6346,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6423,7 +6445,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6521,7 +6544,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6619,7 +6643,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6717,7 +6742,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6815,7 +6841,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -6913,7 +6940,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -7011,7 +7039,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -7110,7 +7139,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -7208,7 +7238,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -7306,7 +7337,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -7392,7 +7424,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/agents$"
               }
             ]
           }
@@ -7524,7 +7557,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/agents/ui-builder/start$"
               }
             ]
           }
@@ -7627,7 +7661,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -7733,7 +7768,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -7783,7 +7819,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests$"
               }
             ]
           }
@@ -7861,7 +7898,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests$"
               }
             ]
           }
@@ -8744,7 +8782,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/agents$"
               }
             ]
           }
@@ -8876,7 +8915,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/agents/ui-builder/start$"
               }
             ]
           }
@@ -8996,7 +9036,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/upstream-overrides$"
               }
             ]
           }
@@ -9977,7 +10018,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000002/priority$"
               }
             ]
           }
@@ -10111,7 +10153,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-3/priority$"
               }
             ]
           }
@@ -10243,7 +10286,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -10341,7 +10385,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/status$"
               }
             ]
           }
@@ -10427,7 +10472,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -10609,7 +10655,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/sources/priority$"
               }
             ]
           }
@@ -11743,7 +11790,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/commits/019f0d272475dfef0ace655cc6d8672c8cd9c80c/diff$"
               }
             ]
           }
@@ -11853,7 +11901,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/commits/019f0d272475dfef0ace655cc6d8672c8cd9c80c/changes$"
               }
             ]
           }
@@ -11998,7 +12047,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work/briefs$"
               }
             ]
           },
@@ -12007,7 +12057,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^contract-00000001-2,contract-00000001-1,contract-00000001-999$"
                 }
               ]
             }
@@ -12159,7 +12210,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -12343,7 +12395,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -12513,7 +12566,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -12750,7 +12804,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -12870,7 +12925,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -13027,7 +13083,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -13146,7 +13203,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -13304,7 +13362,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/desk-triggers$"
               }
             ]
           }
@@ -13606,7 +13665,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/desk-triggers$"
               }
             ]
           }
@@ -13887,7 +13947,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests$"
               }
             ]
           }
@@ -14736,7 +14797,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests$"
               }
             ]
           }
@@ -14811,7 +14873,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests$"
               }
             ]
           }
@@ -15654,7 +15717,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests$"
               }
             ]
           }
@@ -16521,7 +16585,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -16895,7 +16960,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -17057,7 +17123,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -17194,7 +17261,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -17360,7 +17428,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-00000000000e/work$"
               }
             ]
           }
@@ -17606,7 +17675,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -17855,7 +17925,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -18030,7 +18101,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-00000000000e/work$"
               }
             ]
           }
@@ -18294,7 +18366,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-00000000000e/work$"
               }
             ]
           }
@@ -18542,7 +18615,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -18845,7 +18919,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -19094,7 +19169,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000002/work$"
               }
             ]
           }
@@ -19254,7 +19330,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000002/work$"
               }
             ]
           }
@@ -19414,7 +19491,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -19589,7 +19667,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-00000000000e/work$"
               }
             ]
           }
@@ -19835,7 +19914,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -20056,7 +20136,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -20580,7 +20661,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -20829,7 +20911,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -21004,7 +21087,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-00000000000e/work$"
               }
             ]
           }
@@ -21251,7 +21335,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000002/work$"
               }
             ]
           }
@@ -21498,7 +21583,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000002/work$"
               }
             ]
           }
@@ -21746,7 +21832,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -21993,7 +22080,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000002/work$"
               }
             ]
           }
@@ -22242,7 +22330,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -22401,7 +22490,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000002/work$"
               }
             ]
           }
@@ -22665,7 +22755,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-00000000000e/work$"
               }
             ]
           }
@@ -22914,7 +23005,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -23130,7 +23222,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -23204,7 +23297,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -23479,7 +23573,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/work$"
               }
             ]
           }
@@ -23695,7 +23790,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -23873,7 +23969,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/changes/diff$"
               }
             ]
           }
@@ -23984,7 +24081,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/changes/submodule/diff$"
               }
             ]
           }
@@ -24098,7 +24196,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/changes/submodule$"
               }
             ]
           }
@@ -24450,7 +24549,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/changes$"
               }
             ]
           }
@@ -24708,7 +24808,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests/contract-service-rr-2$"
               }
             ]
           }
@@ -25276,7 +25377,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests/contract-suite-app-rr-1$"
               }
             ]
           }
@@ -26440,7 +26542,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/release-requests/contract-service-rr-2$"
               }
             ]
           }
@@ -27342,7 +27445,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -28111,7 +28215,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000003/release-requests/00000000-0000-4000-8000-000000000004$"
               }
             ]
           }
@@ -28734,7 +28839,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -29591,7 +29697,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -30726,7 +30833,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -31553,7 +31661,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003$"
               }
             ]
           }
@@ -32606,7 +32715,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/approval-eligibility$"
               }
             ]
           }
@@ -32708,7 +32818,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/artifacts$"
               }
             ]
           }
@@ -32852,7 +32963,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/commits/a1e24622a6b22ddf43a4f8d7674758a6d9b42a31/builds$"
               }
             ]
           }
@@ -32984,7 +33096,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/commits/bd6360a2c6b42a991c62e3418b7f6d4ac5d89f14/builds$"
               }
             ]
           }
@@ -33115,7 +33228,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/commits/cb9776855921387be1951de5bbbf0914aa54b1bf/builds$"
               }
             ]
           }
@@ -33246,7 +33360,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/commits/cb9776855921387be1951de5bbbf0914aa54b1bf/builds$"
               }
             ]
           }
@@ -33376,7 +33491,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/commits$"
               }
             ]
           }
@@ -33466,7 +33582,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/commits$"
               }
             ]
           }
@@ -33781,7 +33898,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/commits$"
               }
             ]
           }
@@ -34099,7 +34217,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/commits$"
               }
             ]
           }
@@ -34417,7 +34536,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/commits$"
               }
             ]
           }
@@ -34735,7 +34855,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -34905,7 +35026,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000003/release-requests$"
               }
             ]
           }
@@ -35166,7 +35288,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests$"
               }
             ]
           }
@@ -35383,7 +35506,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -35588,7 +35712,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories$"
               }
             ]
           }
@@ -35788,7 +35913,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -35902,7 +36028,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-10$"
               }
             ]
           }
@@ -36002,7 +36129,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/pitches/00000000-0000-4000-8000-000000000002/versions/latest$"
               }
             ]
           }
@@ -36099,7 +36227,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/pitches/00000000-0000-4000-8000-000000000002$"
               }
             ]
           }
@@ -36258,7 +36387,8 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "^00000000-0000-4000-8000-000000000003$"
                 }
               ]
             }
@@ -40289,7 +40419,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-9$"
               }
             ]
           }
@@ -40443,7 +40574,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -40604,7 +40736,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-5$"
               }
             ]
           }
@@ -40749,7 +40882,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-11$"
               }
             ]
           }
@@ -40886,7 +41020,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-2$"
               }
             ]
           }
@@ -41025,7 +41160,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -41165,7 +41301,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -41295,7 +41432,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -41425,7 +41563,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -41586,7 +41725,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-4$"
               }
             ]
           }
@@ -41737,7 +41877,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-2$"
               }
             ]
           }
@@ -41952,7 +42093,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -42105,7 +42247,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -42234,7 +42377,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-5$"
               }
             ]
           }
@@ -42355,7 +42499,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1$"
               }
             ]
           }
@@ -42516,7 +42661,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-10$"
               }
             ]
           }
@@ -42677,7 +42823,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-9/comments$"
               }
             ]
           }
@@ -42873,7 +43020,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -42965,7 +43113,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-5/comments$"
               }
             ]
           }
@@ -43122,7 +43271,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-11/comments$"
               }
             ]
           }
@@ -43199,7 +43349,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -43276,7 +43427,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -43353,7 +43505,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -43445,7 +43598,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-4/comments$"
               }
             ]
           }
@@ -43587,7 +43741,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -43679,7 +43834,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -43874,7 +44030,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-5/comments$"
               }
             ]
           }
@@ -43951,7 +44108,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/comments$"
               }
             ]
           }
@@ -44108,7 +44266,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-10/comments$"
               }
             ]
           }
@@ -44265,7 +44424,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-9/dossier$"
               }
             ]
           }
@@ -44400,7 +44560,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -44492,7 +44653,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-11/dossier$"
               }
             ]
           }
@@ -44612,7 +44774,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -44689,7 +44852,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -44766,7 +44930,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -44843,7 +45008,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -44935,7 +45101,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -45085,7 +45252,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier$"
               }
             ]
           }
@@ -45177,7 +45345,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-10/dossier$"
               }
             ]
           }
@@ -45254,7 +45423,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier-assets$"
               }
             ]
           }
@@ -45331,7 +45501,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier-assets$"
               }
             ]
           }
@@ -45423,7 +45594,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/work/contract-00000001-1/dossier-assets$"
               }
             ]
           }
@@ -45542,7 +45714,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/wrapper-closings$"
               }
             ]
           }
@@ -45719,7 +45892,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories/backup-sync$"
               }
             ]
           }
@@ -45804,7 +45978,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/projects/00000000-0000-4000-8000-000000000001/repositories/backup-sync$"
               }
             ]
           }
@@ -45857,7 +46032,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/ideas/00000000-0000-4000-8000-000000000001/unarchive$"
               }
             ]
           }
@@ -45985,7 +46161,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/automations/waivers$"
               }
             ]
           }
@@ -47232,7 +47409,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/projects/api/repositories/00000000-0000-4000-8000-000000000002/release-requests/00000000-0000-4000-8000-000000000003/withdraw$"
               }
             ]
           }

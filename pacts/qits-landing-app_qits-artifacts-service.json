@@ -41,7 +41,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/daemons/contract-daemon/2026\\.2\\.0$"
               }
             ]
           }
@@ -239,7 +240,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/daemons/daemons/contract-daemon/versions$"
               }
             ]
           }
@@ -316,7 +318,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/daemons/daemons/contract-daemon/versions$"
               }
             ]
           }
@@ -465,7 +468,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/docs/docs/contract-docs-site/versions$"
               }
             ]
           }
@@ -731,7 +735,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/docs/docs/contract-docs-site/versions$"
               }
             ]
           }
@@ -882,7 +887,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/docs/docs/contract-docs-site/versions$"
               }
             ]
           }
@@ -944,7 +950,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images/contract-image/manifests$"
               }
             ]
           }
@@ -1105,7 +1112,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images/contract-image/manifests$"
               }
             ]
           }
@@ -1156,7 +1164,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images/contract-image/manifests$"
               }
             ]
           }
@@ -1368,7 +1377,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images/contract-image/tags$"
               }
             ]
           }
@@ -1508,7 +1518,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images/contract-image/tags$"
               }
             ]
           }
@@ -1559,7 +1570,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images/contract-image/tags$"
               }
             ]
           }
@@ -1699,7 +1711,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images$"
               }
             ]
           }
@@ -1842,7 +1855,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images$"
               }
             ]
           }
@@ -1893,7 +1907,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/qits/images$"
               }
             ]
           }
@@ -3043,7 +3058,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40changelog%2Fcontract-repository/-/2100\\.1\\.0/CHANGELOG\\.md$"
               }
             ]
           }
@@ -3328,7 +3344,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40changelog%2Fcontract-repository/-/2100\\.1\\.0$"
               }
             ]
           }
@@ -3426,7 +3443,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/contract-docs-site/-/2100\\.1\\.0$"
               }
             ]
           }
@@ -4039,7 +4057,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40changelog%2Fcontract-repository$"
               }
             ]
           }
@@ -4150,7 +4169,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/contract-docs-site$"
               }
             ]
           }
@@ -4462,7 +4482,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/docs/docs/%40changelog%2Fcontract-repository/-/2100\\.1\\.0/CHANGELOG\\.md$"
               }
             ]
           }
@@ -5925,7 +5946,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/npm/packages/contract-package/versions$"
               }
             ]
           }
@@ -6076,7 +6098,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/artifacts/api/repositories/npm/packages/contract-package/versions$"
               }
             ]
           }

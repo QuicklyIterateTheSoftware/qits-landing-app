@@ -57,7 +57,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000006/cancel$"
               }
             ]
           }
@@ -113,7 +114,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000006/retry$"
               }
             ]
           }
@@ -205,7 +207,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000006$"
               }
             ]
           }
@@ -688,7 +691,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000006$"
               }
             ]
           }
@@ -959,7 +963,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000006$"
               }
             ]
           }
@@ -1368,7 +1373,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000001$"
               }
             ]
           }
@@ -1424,7 +1430,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000006/reports$"
               }
             ]
           }
@@ -2719,7 +2726,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000008/reports/00000000-0000-4000-8000-000000000006$"
               }
             ]
           }
@@ -3135,7 +3143,8 @@
             "combine": "AND",
             "matchers": [
               {
-                "match": "type"
+                "match": "regex",
+                "regex": "^/ci/api/runs/00000000-0000-4000-8000-000000000008/reports$"
               }
             ]
           }
