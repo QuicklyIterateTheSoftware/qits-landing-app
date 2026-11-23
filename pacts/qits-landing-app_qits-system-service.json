@@ -5905,6 +5905,7 @@
                 "workspace": null
               },
               "memory": {
+                "builderMemoryBytes": null,
                 "kernelOomKills": null,
                 "memoryMaxBytes": null,
                 "memoryTotalBytes": null,
@@ -6193,6 +6194,7 @@
                 "workspace": null
               },
               "memory": {
+                "builderMemoryBytes": null,
                 "kernelOomKills": null,
                 "memoryMaxBytes": null,
                 "memoryTotalBytes": null,
@@ -6472,6 +6474,7 @@
                 "workspace": null
               },
               "memory": {
+                "builderMemoryBytes": null,
                 "kernelOomKills": null,
                 "memoryMaxBytes": null,
                 "memoryTotalBytes": null,
