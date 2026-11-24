@@ -52,6 +52,15 @@ export type ArtifactPinDto = {
     via?: string;
 };
 
+export type ArtifactVersionDto = {
+    version?: string;
+    repository?: string;
+    occurredAt?: Instant;
+    sbomStatus?: string;
+    sbomError?: string;
+    ingestedAt?: Instant;
+};
+
 export type AutomationDto = {
     kind?: string;
     label?: string;
@@ -488,6 +497,40 @@ export type IngestArtifactSbomResponses = {
      */
     202: unknown;
 };
+
+export type ListArtifactVersionsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        ecosystem?: string;
+        name?: string;
+    };
+    url: '/maintenance/api/artifacts/versions';
+};
+
+export type ListArtifactVersionsErrors = {
+    /**
+     * Unknown ecosystem, or no name
+     */
+    400: unknown;
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListArtifactVersionsResponses = {
+    /**
+     * The versions, newest release first
+     */
+    200: Array<ArtifactVersionDto>;
+};
+
+export type ListArtifactVersionsResponse = ListArtifactVersionsResponses[keyof ListArtifactVersionsResponses];
 
 export type ListAutomationKindsData = {
     body?: never;

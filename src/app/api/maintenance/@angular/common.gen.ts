@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetAdoptionByReleaseData, GetAdoptionByReleaseResponse, GetBumpData, GetBumpResponse, GetBumpStandingData, GetBumpStandingResponse, GetReleaseRequestMemoryData, GetReleaseRequestMemoryResponse, GetRepositoryData, GetRepositoryDownstreamData, GetRepositoryDownstreamResponse, GetRepositoryResponse, GetSbomCheckReportData, GetSbomCheckReportResponse, GetScanData, GetScanResponse, IngestArtifactSbomData, ListArtifactsData, ListArtifactsResponse, ListAutomationKindsData, ListAutomationKindsResponse, ListBumpsData, ListBumpsResponse, ListDependenciesData, ListDependenciesResponse, ListDependencyDependentsData, ListDependencyDependentsResponse, ListDependencyPinsData, ListDependencyPinsResponse, ListDeployedPactsData, ListDeployedPactsResponse, ListImagePinsData, ListImagePinsResponse, ListPendingBumpsData, ListPendingBumpsResponse, ListReleaseRequestAutomationsData, ListReleaseRequestAutomationsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryDependentsData, ListRepositoryDependentsResponse, RequestScanData, RunReleaseRequestAutomationData, RunSbomCheckData, TriggerReleaseRequestAutomationsData, TriggerReleaseRequestAutomationsResponse } from '../types.gen';
+import type { GetAdoptionByReleaseData, GetAdoptionByReleaseResponse, GetBumpData, GetBumpResponse, GetBumpStandingData, GetBumpStandingResponse, GetReleaseRequestMemoryData, GetReleaseRequestMemoryResponse, GetRepositoryData, GetRepositoryDownstreamData, GetRepositoryDownstreamResponse, GetRepositoryResponse, GetSbomCheckReportData, GetSbomCheckReportResponse, GetScanData, GetScanResponse, IngestArtifactSbomData, ListArtifactsData, ListArtifactsResponse, ListArtifactVersionsData, ListArtifactVersionsResponse, ListAutomationKindsData, ListAutomationKindsResponse, ListBumpsData, ListBumpsResponse, ListDependenciesData, ListDependenciesResponse, ListDependencyDependentsData, ListDependencyDependentsResponse, ListDependencyPinsData, ListDependencyPinsResponse, ListDeployedPactsData, ListDeployedPactsResponse, ListImagePinsData, ListImagePinsResponse, ListPendingBumpsData, ListPendingBumpsResponse, ListReleaseRequestAutomationsData, ListReleaseRequestAutomationsResponse, ListRepositoriesData, ListRepositoriesResponse, ListRepositoryDependentsData, ListRepositoryDependentsResponse, RequestScanData, RunReleaseRequestAutomationData, RunSbomCheckData, TriggerReleaseRequestAutomationsData, TriggerReleaseRequestAutomationsResponse } from '../types.gen';
 
 /**
  * How far one released repository and version got
@@ -33,6 +33,16 @@ export const ingestArtifactSbomRequest = <ThrowOnError extends boolean = false>(
     responseStyle: 'data',
     method: 'POST',
     url: '/maintenance/api/artifacts/ingest',
+    ...options
+});
+
+/**
+ * Every released version of one artifact, with its sbom status
+ */
+export const listArtifactVersionsRequest = <ThrowOnError extends boolean = false>(options?: Options<ListArtifactVersionsData, ThrowOnError>): HttpRequest<ListArtifactVersionsResponse> => (options?.client ?? client).requestOptions<ListArtifactVersionsResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/maintenance/api/artifacts/versions',
     ...options
 });
 
@@ -278,6 +288,14 @@ export const listArtifactsResource = <ThrowOnError extends boolean = false>(opti
 export const ingestArtifactSbomResource = <ThrowOnError extends boolean = false>(options: () => Options<IngestArtifactSbomData, ThrowOnError> | undefined) => httpResource<unknown>(() => {
     const opts = options ? options() : undefined;
     return opts ? ingestArtifactSbomRequest(opts) : undefined;
+});
+
+/**
+ * Every released version of one artifact, with its sbom status
+ */
+export const listArtifactVersionsResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListArtifactVersionsData, ThrowOnError> | undefined) => httpResource<ListArtifactVersionsResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listArtifactVersionsRequest(opts) : undefined;
 });
 
 /**
