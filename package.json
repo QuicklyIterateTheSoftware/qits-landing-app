@@ -61,7 +61,7 @@
     "@qits/events-golden-masters": "2026.1120.65904",
     "@qits/githost-golden-masters": "2026.1109.41303",
     "@qits/idp-golden-masters": "2026.1123.194348",
-    "@qits/maintenance-golden-masters": "2026.1121.195220",
+    "@qits/maintenance-golden-masters": "2026.1124.131229",
     "@qits/mirror-golden-masters": "2026.1121.190031",
     "@qits/observability-golden-masters": "2026.1122.141039",
     "@qits/orchestrator-golden-masters": "2026.1124.125326",
