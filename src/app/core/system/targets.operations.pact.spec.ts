@@ -153,7 +153,12 @@ describe('qits-landing-app → qits-system-service pact: the targets', () => {
       const targets = (data ?? []).map(targetOf);
       expect(targets.length).toBe(1);
       expect(targets[0].slotsTotal).toBeGreaterThan(0);
-      expect(Object.keys(targets[0].used ?? {}).sort()).toEqual(['ci', 'desk', 'workspace']);
+      expect(Object.keys(targets[0].used ?? {}).sort()).toEqual([
+        'agent',
+        'ci',
+        'desk',
+        'workspace',
+      ]);
     }));
 
   it('declares the Targets page’s operations on the same provider', () => {

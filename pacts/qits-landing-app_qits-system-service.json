@@ -1074,12 +1074,14 @@
             {
               "connected": true,
               "reservations": {
+                "agent": 0,
                 "ci": 2,
                 "desk": 1,
                 "workspace": 2
               },
               "slotsTotal": 6,
               "used": {
+                "agent": 0,
                 "ci": 1,
                 "desk": 0,
                 "workspace": 1
@@ -1114,6 +1116,14 @@
                 }
               ]
             },
+            "$[*].reservations.agent": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$[*].reservations.ci": {
               "combine": "AND",
               "matchers": [
@@ -1139,6 +1149,14 @@
               ]
             },
             "$[*].slotsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].used.agent": {
               "combine": "AND",
               "matchers": [
                 {
@@ -5921,6 +5939,7 @@
               },
               "loginCommand": null,
               "maximums": {
+                "agent": null,
                 "ci": null,
                 "desk": null,
                 "workspace": null
@@ -5938,6 +5957,7 @@
               "quarantined": false,
               "quarantinedAt": null,
               "reservations": {
+                "agent": 0,
                 "ci": 2,
                 "desk": 1,
                 "workspace": 2
@@ -5945,6 +5965,7 @@
               "runnerVersion": "frozen-token-1",
               "slotsTotal": 6,
               "used": {
+                "agent": 0,
                 "ci": 1,
                 "desk": 0,
                 "workspace": 1
@@ -6080,6 +6101,14 @@
                 }
               ]
             },
+            "$[*].reservations.agent": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$[*].reservations.ci": {
               "combine": "AND",
               "matchers": [
@@ -6113,6 +6142,14 @@
               ]
             },
             "$[*].slotsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].used.agent": {
               "combine": "AND",
               "matchers": [
                 {
@@ -6210,6 +6247,7 @@
               },
               "loginCommand": null,
               "maximums": {
+                "agent": null,
                 "ci": null,
                 "desk": null,
                 "workspace": null
@@ -6227,6 +6265,7 @@
               "quarantined": false,
               "quarantinedAt": null,
               "reservations": {
+                "agent": 0,
                 "ci": 2,
                 "desk": 1,
                 "workspace": 2
@@ -6234,6 +6273,7 @@
               "runnerVersion": "2026.1023.1",
               "slotsTotal": 6,
               "used": {
+                "agent": 0,
                 "ci": 0,
                 "desk": 0,
                 "workspace": 0
@@ -6360,6 +6400,14 @@
                 }
               ]
             },
+            "$[*].reservations.agent": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$[*].reservations.ci": {
               "combine": "AND",
               "matchers": [
@@ -6393,6 +6441,14 @@
               ]
             },
             "$[*].slotsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].used.agent": {
               "combine": "AND",
               "matchers": [
                 {
@@ -6490,6 +6546,7 @@
               },
               "loginCommand": null,
               "maximums": {
+                "agent": null,
                 "ci": null,
                 "desk": null,
                 "workspace": null
@@ -6507,6 +6564,7 @@
               "quarantined": true,
               "quarantinedAt": "2026-01-01T00:00:00Z",
               "reservations": {
+                "agent": 0,
                 "ci": 2,
                 "desk": 1,
                 "workspace": 2
@@ -6514,6 +6572,7 @@
               "runnerVersion": "2026.1023.1",
               "slotsTotal": 6,
               "used": {
+                "agent": 0,
                 "ci": 0,
                 "desk": 0,
                 "workspace": 0
@@ -6657,6 +6716,14 @@
                 }
               ]
             },
+            "$[*].reservations.agent": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
             "$[*].reservations.ci": {
               "combine": "AND",
               "matchers": [
@@ -6690,6 +6757,14 @@
               ]
             },
             "$[*].slotsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].used.agent": {
               "combine": "AND",
               "matchers": [
                 {

@@ -14,9 +14,9 @@ import {
 /** The slots of `a connected target with leases`' recorded target. */
 const LAB = {
   slotsTotal: 6,
-  reservations: { ci: 2, workspace: 2, desk: 1 },
-  maximums: { ci: null, workspace: 3, desk: null },
-  used: { ci: 1, workspace: 1, desk: 0 },
+  reservations: { ci: 2, workspace: 2, desk: 1, agent: 0 },
+  maximums: { ci: null, workspace: 3, desk: null, agent: null },
+  used: { ci: 1, workspace: 1, desk: 0, agent: 0 },
 };
 
 describe('a target’s card lines (qits-2351)', () => {
@@ -25,12 +25,16 @@ describe('a target’s card lines (qits-2351)', () => {
       { type: 'ci', used: 1, reserved: 2, maximum: '—' },
       { type: 'workspace', used: 1, reserved: 2, maximum: '3' },
       { type: 'desk', used: 0, reserved: 1, maximum: '—' },
+      { type: 'agent', used: 0, reserved: 0, maximum: '—' },
     ]);
-    expect(slotLines({} as never).map((line) => line.used)).toEqual([0, 0, 0]);
+    expect(slotLines({} as never).map((line) => line.used)).toEqual([0, 0, 0, 0]);
   });
 
   it('counts the slots in use against the total', () => {
     expect(slotsInUse(LAB as never)).toBe('2/6 slots in use');
+    expect(slotsInUse({ ...LAB, used: { ...LAB.used, agent: 2 } } as never)).toBe(
+      '4/6 slots in use',
+    );
   });
 
   it('reads a harness’s sign-in, UNKNOWN when unsaid, and its tone', () => {
@@ -81,12 +85,15 @@ describe('a target’s card lines (qits-2351)', () => {
 });
 
 describe('targetPatch (qits-2351)', () => {
-  const row = { description: 'the lab box', reservations: { ci: 2, workspace: 2, desk: 1 } };
+  const row = {
+    description: 'the lab box',
+    reservations: { ci: 2, workspace: 2, desk: 1, agent: 0 },
+  };
 
   it('opens the draft with what the target has', () => {
     expect(draftOf(row)).toEqual({
       description: 'the lab box',
-      reservations: { ci: '2', workspace: '2', desk: '1' },
+      reservations: { ci: '2', workspace: '2', desk: '1', agent: '0' },
     });
   });
 
@@ -99,6 +106,13 @@ describe('targetPatch (qits-2351)', () => {
       }),
     ).toEqual({ description: 'the lab box, rebuilt', reservations: { desk: 0 } });
     expect(targetPatch(row, { ...draft, description: '' })).toEqual({ description: '' });
+  });
+
+  it('edits an agent reservation like any other slot type', () => {
+    const draft = draftOf(row);
+    expect(
+      targetPatch(row, { ...draft, reservations: { ...draft.reservations, agent: '2' } }),
+    ).toEqual({ reservations: { agent: 2 } });
   });
 
   it('sends nothing when nothing changed, and refuses a count that is no slot count', () => {

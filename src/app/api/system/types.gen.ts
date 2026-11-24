@@ -79,7 +79,7 @@ export type ContainerSummary = {
 
 export type CreateLeaseRequest = {
     /**
-     * CI, WORKSPACE or DESK; must be the caller's
+     * CI, WORKSPACE, DESK or AGENT; must be the caller's
      */
     slotType: string;
     /**
@@ -88,7 +88,7 @@ export type CreateLeaseRequest = {
     ownerRef: string;
     projectId?: Uuid;
     /**
-     * ws-<rowId> or desk-<deskId>: the work volume, kept between leases
+     * ws-<rowId>, desk-<deskId> or agent-<agentId>: the work volume, kept between leases
      */
     workKey?: string;
     /**
@@ -109,6 +109,10 @@ export type CreateLeaseRequest = {
     adopt?: {
         [key: string]: string;
     };
+    /**
+     * Prefer any other target; this one only when no other can take the lease
+     */
+    avoidTargetId?: Uuid;
 };
 
 export type CreateTargetRequest = {
@@ -242,6 +246,7 @@ export type Lease = {
     projectId?: Uuid;
     workKey?: string;
     pinTargetId?: Uuid;
+    avoidTargetId?: Uuid;
     targetId?: Uuid;
     priority?: number;
     state?: string;
@@ -258,7 +263,7 @@ export type Lease = {
     startedAt?: Instant;
     endedAt?: Instant;
     /**
-     * Processes of this lease killed by any OOM killer (its container's cgroup memory.events oom_kill); the last sample is kept after it exits. Null until a runner reported one
+     * Processes of this lease killed by any OOM killer (its container's cgroup memory.events oom_kill); the last sample is kept after it exits. Null until a runner reported one. docker reporting the container OOM-killed counts as at least one kill even when its last cgroup sample showed none (qits-2502)
      */
     oomKills?: number;
     /**
@@ -378,6 +383,7 @@ export type PatchTargetRequest = {
         ci?: number;
         workspace?: number;
         desk?: number;
+        agent?: number;
     };
 };
 
@@ -455,9 +461,10 @@ export type SlotCounts = {
     ci?: number;
     workspace?: number;
     desk?: number;
+    agent?: number;
 };
 
-export type SlotType = 'CI' | 'WORKSPACE' | 'DESK';
+export type SlotType = 'CI' | 'WORKSPACE' | 'DESK' | 'AGENT';
 
 export type StartTargetSignInRequest = {
     /**
@@ -567,6 +574,14 @@ export type TargetMemory = {
      * The node's memory limit (its root memory.max); null when none
      */
     memoryMaxBytes?: number;
+    /**
+     * The node's physical memory (/proc/meminfo MemTotal); null when unreadable. Placement sizes the node by the smaller of this and memoryMaxBytes
+     */
+    memoryTotalBytes?: number;
+    /**
+     * The memory cap of the target's shared buildkitd (qits-2503); null from an older runner. Image builds run there, outside a CI lease's own limit, so placement charges it on a target that takes CI
+     */
+    builderMemoryBytes?: number;
     /**
      * When the runner last reported these
      */
@@ -790,7 +805,7 @@ export type EndLeaseData = {
     };
     query?: {
         /**
-         * Why; it lands in the lease's detail, and an operator's in the audit too. An owner's never-dialled-back on a RUNNING CI lease counts toward its target's dial-back quarantine (qits-1809)
+         * Why; it lands in the lease's detail, and an operator's in the audit too. An owner's never-dialled-back on a RUNNING CI lease, or on an EXITED one that ran, counts toward its target's dial-back quarantine (qits-1809, qits-2382)
          */
         reason?: string;
     };
@@ -1105,6 +1120,10 @@ export type ListNodeImagesErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * NODE_REMOTE: not the node this service runs on
+     */
+    409: unknown;
 };
 
 export type ListNodeImagesResponses = {
@@ -1134,6 +1153,10 @@ export type ListNodeNetworksErrors = {
      * Not Allowed
      */
     403: unknown;
+    /**
+     * NODE_REMOTE: not the node this service runs on
+     */
+    409: unknown;
 };
 
 export type ListNodeNetworksResponses = {

@@ -164,6 +164,7 @@ describe('SystemTargetsPage (screenshots)', () => {
       .map((row) => row.textContent?.trim());
     expect(slots[1]).toMatch(/ci\s*1\s*2\s*—/);
     expect(slots[3]).toMatch(/desk\s*0\s*1\s*—/);
+    expect(slots[4]).toMatch(/agent\s*0\s*0\s*—/);
     await expect.element(card.getByText('PRESENT', { exact: true })).toBeVisible();
     await expect.element(card.getByText('ABSENT', { exact: true })).toBeVisible();
     await expect
@@ -239,7 +240,7 @@ describe('SystemTargetsPage (screenshots)', () => {
     expect(create.request.body).toEqual({
       name: 'lab',
       description: 'the lab box',
-      reservations: { ci: 2, workspace: 2, desk: 1 },
+      reservations: { ci: 2, workspace: 2, desk: 1, agent: 0 },
     });
     create.flush(await goldenMaster(NO_TARGET, 'createTarget', SYSTEM), {
       status: 201,
