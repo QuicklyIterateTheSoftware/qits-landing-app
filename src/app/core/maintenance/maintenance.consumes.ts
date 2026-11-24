@@ -4,6 +4,7 @@ import type {
   GetRepositoryDownstreamResponses,
   GetRepositoryResponses,
   ListArtifactsResponses,
+  ListArtifactVersionsResponses,
   ListBumpsResponses,
   ListDependencyDependentsResponses,
   ListDependenciesResponses,
@@ -304,3 +305,29 @@ export type AdoptionJourney = Consumed<GetAdoptionByReleaseResponses[200], typeo
 
 /** One repository downstream of the release, as the adoption page draws its card. */
 export type Adopter = NonNullable<AdoptionJourney['adopters']>[number];
+
+/**
+ * `MAINTENANCE_ARTIFACT_VERSIONS` (qits-2490): every released version of one artifact
+ * (`?ecosystem=&name=`, the name in `mt_pin` spelling: maven `groupId:artifactId`, npm
+ * `@scope/name`), newest release first, as the npm and maven package pages show it beside each
+ * version row: the version, whether its SBOM was read (`sbomStatus`: PENDING, INGESTED, MISSING,
+ * FAILED), a FAILED read's reason (`sbomError`) and when the SBOM was read (`ingestedAt`).
+ */
+export const ARTIFACT_VERSIONS = [
+  '[].version',
+  '[].sbomStatus',
+  '[].sbomError',
+  '[].ingestedAt',
+] as const;
+
+/** One released version of an artifact, cut to what the package pages read. */
+export type ArtifactVersionStatus = Consumed<
+  ListArtifactVersionsResponses[200],
+  typeof ARTIFACT_VERSIONS
+>[number];
+
+/**
+ * `MAINTENANCE_INGEST_SBOM` (qits-2490): a version's SBOM read again binds the 202 only; the page
+ * reads nothing of the body (the artifact row's id) and reads the versions again instead.
+ */
+export const INGEST_SBOM = [] as const;

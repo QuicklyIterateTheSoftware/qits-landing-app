@@ -4,7 +4,9 @@ import {
   getBump,
   getRepository,
   getRepositoryDownstream,
+  ingestArtifactSbom,
   listArtifacts,
+  listArtifactVersions,
   listBumps,
   listDependencies,
   listDependencyDependents,
@@ -13,7 +15,9 @@ import {
 } from '../../api/maintenance';
 import {
   ADOPTION,
+  ARTIFACT_VERSIONS,
   BUMP,
+  INGEST_SBOM,
   DEPENDENTS_REFUSAL,
   LIST_ARTIFACTS,
   LIST_DEPENDENCIES,
@@ -30,7 +34,8 @@ import {
  * reads through `qitsResource` instead of a store (qits-2146), for a repository's pages (its
  * published artifacts, qits-2478; its Depends on and Dependents, qits-2489, once qits-2334's
  * repository page; a bump, qits-2332; a release's adoption, qits-2333) and for the Mirror
- * section's package releases (qits-2488); `maintenance.operations.pact.spec.ts` binds each with
+ * section's package releases (qits-2488), and for the npm and maven package pages' SBOM status per
+ * version and its re-read (qits-2490); `maintenance.operations.pact.spec.ts` binds each with
  * the same provider, operationId and `consumes`. The Maintenance section's listings that first
  * read them (qits-2317, qits-2330) are gone (qits-2489).
  */
@@ -164,4 +169,36 @@ export const MAINTENANCE_ADOPTION = qitsOperation({
   method: 'GET',
   call: getAdoptionByRelease,
   consumes: ADOPTION,
+});
+
+/**
+ * Every released version of one artifact with its SBOM's status (`listArtifactVersions`,
+ * `/maintenance/api/artifacts/versions?ecosystem=&name=`), newest release first: the npm and maven
+ * package pages' status per version row (qits-2490). The name is in `mt_pin` spelling, which is
+ * the package pages' own (maven `groupId:artifactId`, npm `@scope/name`). An artifact nothing
+ * released answers an empty list; an unknown ecosystem or no name is a 400. Staff roles and
+ * `qits:agent` may read it; anyone else gets a 403.
+ */
+export const MAINTENANCE_ARTIFACT_VERSIONS = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'listArtifactVersions',
+  method: 'GET',
+  call: listArtifactVersions,
+  consumes: ARTIFACT_VERSIONS,
+});
+
+/**
+ * Reads one released version's SBOM again, now (`ingestArtifactSbom`, `POST
+ * /maintenance/api/artifacts/ingest`, body `{ ecosystem, name, version }`): 202 once queued; the
+ * read itself happens after the answer, so the row turns PENDING and then INGESTED, MISSING or
+ * FAILED (no event says so: the page reads the versions again). The package pages' Re-read SBOM
+ * (qits-2490). Only admin and desk roles and `qits:system` may send it (not `qits:agent`); anyone
+ * else gets a 403.
+ */
+export const MAINTENANCE_INGEST_SBOM = qitsOperation({
+  provider: 'qits-maintenance-service',
+  operationId: 'ingestArtifactSbom',
+  method: 'POST',
+  call: ingestArtifactSbom,
+  consumes: INGEST_SBOM,
 });

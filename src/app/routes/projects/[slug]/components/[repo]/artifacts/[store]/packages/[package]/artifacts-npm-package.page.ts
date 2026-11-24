@@ -1,5 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -26,9 +33,13 @@ import {
   ARTIFACT_NPM_VERSIONS,
   ARTIFACT_SBOM_VERSIONS,
 } from '$core/artifacts/artifacts.operations';
+import type { ArtifactVersionStatus } from '$core/maintenance/maintenance.consumes';
+import { MAINTENANCE_ARTIFACT_VERSIONS } from '$core/maintenance/maintenance.operations';
+import { statusesByVersion } from '$core/maintenance/sbom-status';
 import { formatInstant } from '$core/release-requests/release-request-model';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { SbomCell } from '$patterns/artifacts/sbom-cell/sbom-cell';
+import { SbomStatus } from '$patterns/artifacts/sbom-status/sbom-status';
 import type { Action } from '$ui/components/action-button/action';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -54,9 +65,11 @@ const NOT_RECORDED = 'not recorded';
  * the router decodes; the versions read and the SBOM reads send it encoded, `%40qits%2Fangular`,
  * as the generated client spells it).
  *
- * **Load budget: 2 + 0.** `ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`) is the version table;
+ * **Load budget: 3 + 0.** `ARTIFACT_NPM_VERSIONS` (`listNpmVersionSummaries`) is the version table;
  * `ARTIFACT_SBOM_VERSIONS` (`listSbomVersions`, `npm` and the package name) says which of them has
- * an SBOM. Both are read in parallel, in the browser only (the server render has no session); the
+ * an SBOM; `MAINTENANCE_ARTIFACT_VERSIONS` (qits-maintenance's `listArtifactVersions`, `npm` and the
+ * package name, `@scope/name`, which is `mt_pin`'s spelling too; qits-2490) says how maintenance
+ * read each version's SBOM. All three are read in parallel, in the browser only (the server render has no session); the
  * store page's listing is not read, nothing is read per row, and an SBOM's document is read only
  * when its Download is pressed (`ARTIFACT_SBOM`, `download-npm-sbom`, through `app-sbom-cell`).
  *
@@ -66,20 +79,27 @@ const NOT_RECORDED = 'not recorded';
  *   the dist-tags pointing at it ("—" for none), its tarball's size ("not measured" when the store
  *   has none; never totalled, as a caption says: each tarball is a separate archive, and a column
  *   with unmeasured rows cannot be summed truthfully), when it was published ("not recorded" when
- *   null), and its SBOM ("CycloneDX <specVersion> · <size>" with Download, "—" without one). SBOMs
- *   of versions the store no longer holds are counted under the table, only when there are some.
+ *   null), its SBOM ("CycloneDX <specVersion> · <size>" with Download, "—" without one), and
+ *   maintenance's SBOM status (`app-sbom-status`: a chip, a FAILED read's reason, and Re-read SBOM,
+ *   `reread-artifact-sbom`; nothing for a version maintenance does not know). SBOMs of versions the
+ *   store no longer holds are counted under the table, only when there are some.
  *
  * States: loading; a failed versions read offers Retry; a 404 is "There is no repository called
  * <repo> in this store"; a 400 "<repo> is not an npm repository", linking the repository's Artifacts; no
  * versions (the door answers an unknown package with an empty list) "There is no package called
  * <package> in this repository". The SBOM list's 404 means the package has none, not a failure;
  * any other failure keeps the table, its SBOM column "unknown", and a Retry above it.
+ * Maintenance's statuses refused for the viewer's roles (401, 403) leave the status column out; any
+ * other failure keeps the table, its status cells empty, and a Retry above it. A re-read refused
+ * with 403 names the roles that may and takes Re-read SBOM off every row.
  *
  * Marks (qits-2141): each row an entry of the versions' read by `version`; its SBOM a join, an entry
- * of the SBOM list by `version` (`app-sbom-cell`).
+ * of the SBOM list by `version` (`app-sbom-cell`); its status a join, an entry of maintenance's
+ * versions by `version` (`app-sbom-status`).
  *
  * Staleness (qits-1270): none can follow, and nothing polls: qits-artifacts emits no domain event
- * for a publish, a dist-tag move, an SBOM or a sweep. Refresh reads both again.
+ * for a publish, a dist-tag move, an SBOM or a sweep, and qits-maintenance none for an SBOM read.
+ * Refresh reads all three again; a re-read's 202 reads maintenance's statuses again.
  */
 @Component({
   selector: 'app-artifacts-npm-package-page',
@@ -92,6 +112,7 @@ const NOT_RECORDED = 'not recorded';
     QitsExit,
     QitsField,
     SbomCell,
+    SbomStatus,
     Spinner,
   ],
   host: { class: 'block' },
@@ -185,6 +206,22 @@ const NOT_RECORDED = 'not recorded';
                   </button>
                 </div>
               }
+              @if (statusesUnknown()) {
+                <div
+                  class="mb-3 flex flex-wrap items-center gap-3 text-sm text-fg-muted"
+                  data-statuses-unknown
+                >
+                  <span>Maintenance’s SBOM statuses could not be read; the versions follow.</span>
+                  <button
+                    type="button"
+                    class="inline-flex h-7 items-center rounded-md border border-line bg-surface px-2 text-xs font-semibold text-fg-soft hover:bg-surface-muted"
+                    aria-label="Retry the SBOM statuses"
+                    (click)="statuses.reload()"
+                  >
+                    Retry
+                  </button>
+                </div>
+              }
               <p class="mt-0 mb-2 text-xs text-fg-muted" data-sizes-caption>
                 Each tarball is a separate archive, and a size the store did not measure cannot be
                 added, so the sizes are not totalled.
@@ -197,7 +234,10 @@ const NOT_RECORDED = 'not recorded';
                       <th class="py-1.5 pr-3 font-semibold">Dist-tags</th>
                       <th class="py-1.5 pr-3 text-right font-semibold">Tarball</th>
                       <th class="py-1.5 pr-3 font-semibold">Published</th>
-                      <th class="py-1.5 font-semibold">SBOM</th>
+                      <th class="py-1.5 pr-3 font-semibold">SBOM</th>
+                      @if (statusesShown()) {
+                        <th class="py-1.5 font-semibold">SBOM status</th>
+                      }
                     </tr>
                   </thead>
                   <tbody [qitsEntityList]="versions">
@@ -235,7 +275,7 @@ const NOT_RECORDED = 'not recorded';
                         >
                           {{ published(row.publishedAt) }}
                         </td>
-                        <td class="py-1.5 text-xs">
+                        <td class="py-1.5 pr-3 text-xs">
                           <app-sbom-cell
                             [packageType]="packageType"
                             [packageName]="packageName()"
@@ -247,6 +287,18 @@ const NOT_RECORDED = 'not recorded';
                             [failed]="downloading.failed"
                           />
                         </td>
+                        @if (statusesShown()) {
+                          <td class="py-1.5 text-xs">
+                            <app-sbom-status
+                              [ecosystem]="packageType"
+                              [name]="packageName()"
+                              [version]="row.version ?? ''"
+                              [status]="statusOf(row)"
+                              [source]="statuses"
+                              [(refused)]="rereadRefused"
+                            />
+                          </td>
+                        }
                       </tr>
                     }
                   </tbody>
@@ -277,6 +329,9 @@ export class ArtifactsNpmPackagePage {
     saved: stay(),
     failed: stay(),
   });
+
+  /** A re-read was refused for the viewer's roles (403): Re-read SBOM is gone from every row. */
+  protected readonly rereadRefused = signal(false);
 
   protected readonly packageType = PACKAGE_TYPE;
 
@@ -321,6 +376,35 @@ export class ArtifactsNpmPackagePage {
       : undefined;
   });
 
+  /**
+   * Maintenance's released versions of the package with their SBOM status, newest first (qits-2490):
+   * the ecosystem is the SBOM store's type and the name its spelling, which is `mt_pin`'s.
+   */
+  protected readonly statuses = qitsResource(MAINTENANCE_ARTIFACT_VERSIONS, () => {
+    const name = this.packageName();
+    return this.browser && name ? { query: { ecosystem: PACKAGE_TYPE, name } } : undefined;
+  });
+
+  private readonly statusIndex = computed(() =>
+    statusesByVersion(this.statuses.hasValue() ? this.statuses.value() : undefined),
+  );
+
+  private readonly statusesStatus = computed(() => failureStatus(this.statuses));
+
+  /** The viewer may not read maintenance's statuses (401, 403): the column is left out. */
+  private readonly statusesRefused = computed(() => {
+    const status = this.statusesStatus();
+    return status === 401 || status === 403;
+  });
+
+  /** The status column: shown unless the viewer may not read it. */
+  protected readonly statusesShown = computed(() => !this.statusesRefused());
+
+  /** Maintenance's statuses failed otherwise than for the viewer's roles: said, with Retry. */
+  protected readonly statusesUnknown = computed(
+    () => this.statuses.status() === 'error' && !this.statusesRefused(),
+  );
+
   protected readonly versionList = computed(
     (): readonly ArtifactNpmVersion[] =>
       (this.versions.hasValue() ? this.versions.value()?.versions : undefined) ?? [],
@@ -361,10 +445,11 @@ export class ArtifactsNpmPackagePage {
     const versions = this.versions;
     if (versions.status() === 'error') return 'error';
     const sbomsSettled = this.sboms.hasValue() || this.sboms.status() === 'error';
-    return versions.hasValue() && sbomsSettled ? 'loaded' : 'loading';
+    const statusesSettled = this.statuses.hasValue() || this.statuses.status() === 'error';
+    return versions.hasValue() && sbomsSettled && statusesSettled ? 'loaded' : 'loading';
   });
 
-  /** Refresh: the versions and the SBOM list, read again (no event follows the store). */
+  /** Refresh: the versions, the SBOM list and maintenance's statuses, read again. */
   protected readonly actions: readonly Action[] = [
     {
       label: 'Refresh',
@@ -372,6 +457,7 @@ export class ArtifactsNpmPackagePage {
       callback: () => {
         this.versions.reload();
         this.sboms.reload();
+        this.statuses.reload();
       },
     },
   ];
@@ -382,11 +468,17 @@ export class ArtifactsNpmPackagePage {
   protected retry(): void {
     this.versions.reload();
     if (this.sboms.status() === 'error') this.sboms.reload();
+    if (this.statuses.status() === 'error') this.statuses.reload();
   }
 
   /** This version's SBOM, if the list holds one. */
   protected sbomOf(row: ArtifactNpmVersion): ArtifactSbomVersion | undefined {
     return this.sbomIndex().get(row.version ?? '');
+  }
+
+  /** This version's status in maintenance, if maintenance knows the version. */
+  protected statusOf(row: ArtifactNpmVersion): ArtifactVersionStatus | undefined {
+    return this.statusIndex().get(row.version ?? '');
   }
 
   /** `2 versions · 1 with an SBOM`; the SBOMs unknown when their list failed. */

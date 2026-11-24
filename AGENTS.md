@@ -520,6 +520,29 @@ nothing published" by status only. Neither explorer state records the SBOM list 
 package (each records it once, for its maven coordinate, a 404 too), so the npm page's 404s bind
 that recording's status only.
 
+Both package pages also show qits-maintenance's SBOM status per version (qits-2490), a third read
+in parallel: `MAINTENANCE_ARTIFACT_VERSIONS` (`listArtifactVersions?ecosystem=&name=`, newest
+first). Maintenance's `name` is the `mt_pin` spelling, which is the pages' own: maven
+`groupId:artifactId` (the coordinate), npm `@scope/name` (the package), the ecosystem the SBOM
+store's type (`maven`, `npm`); checked against live `listArtifacts`. The "SBOM status" column draws
+`app-sbom-status` (`patterns/artifacts/sbom-status/`, `core/maintenance/sbom-status.ts`), joined by
+version (`statusesByVersion`): a chip (Pending, Ingested, Missing, Failed; a FAILED read's
+`sbomError` under it and in its `title`) and **Re-read SBOM**, `MAINTENANCE_INGEST_SBOM`
+(`ingestArtifactSbom` `{ ecosystem, name, version }`, `qitsMutation`, `online-only`), whose 202 reads the
+statuses again (`affects`: the version PENDING again); no event follows an SBOM read and nothing
+polls, so Refresh shows how it went.
+A version maintenance does not know shows nothing. A 403 on the re-read (`qits:agent` may read the
+statuses, not re-read) names the roles that may and takes the action off every row (the page's
+`rereadRefused`, bound two-way); any other failure is said on its row. The statuses refused (401, 403) leave the column out; any other failure keeps the table with a note and its own Retry ("Retry
+the SBOM statuses"). The cell declares its interaction itself (`reread-artifact-sbom`, app-wide, one
+pact interaction for both pages) because no recording of qits-artifacts and qits-maintenance names
+the same artifact: the pages' browser specs answer maintenance with "no released artifacts" (`[]`),
+so they never show a chip; the cell's own browser spec shoots the chips and both outcomes from "an
+artifact released in several versions" and "manifests that pin artifacts", and the pages' plain
+specs join a derived answer (`src/testing/package-page-statuses.ts`, the recorded rows put under the
+store's versions). A provider state recording the versions of a stored artifact
+(`eu.wohlben.qits:contract-maven` 2100.1.0/2100.2.0) would let the pages' screenshots show them.
+
 The System section (qits-2344) is qits-system's one swarm, which no project joins:
 `system/swarm/services` (`SwarmServicesPage`, replacing qits-system-frontend's `swarm/services`);
 `system` and `system/swarm` redirect to it, and qits-2345…qits-2356 add the section's other pages

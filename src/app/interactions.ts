@@ -532,7 +532,8 @@ export const INTERACTIONS = {
   /**
    * `artifacts-maven-package.page.ts` via `ARTIFACT_MAVEN_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
    * (qits-2325): the maven package page reads the coordinate's versions and its stored SBOMs, in
-   * parallel. Refresh reads both again.
+   * parallel, and qits-maintenance's SBOM status per version (`MAINTENANCE_ARTIFACT_VERSIONS`,
+   * qits-2490). Refresh reads all three again.
    */
   'show-maven-package': 'A coordinate’s page lists its versions, each with its SBOM',
   /**
@@ -580,9 +581,16 @@ export const INTERACTIONS = {
   /**
    * `artifacts-npm-package.page.ts` via `ARTIFACT_NPM_VERSIONS` and `ARTIFACT_SBOM_VERSIONS`
    * (qits-2326): the npm package page reads the package's versions and its stored SBOMs, in
-   * parallel. Refresh reads both again.
+   * parallel, and qits-maintenance's SBOM status per version (`MAINTENANCE_ARTIFACT_VERSIONS`,
+   * qits-2490). Refresh reads all three again.
    */
   'show-npm-package': 'A package’s page lists its versions, each with its dist-tags and SBOM',
+  /**
+   * `sbom-status.ts` (`app-sbom-status`, on the npm and the maven package page) via
+   * `MAINTENANCE_INGEST_SBOM` (qits-2490): a version's Re-read SBOM asks qits-maintenance to read
+   * its SBOM again now; the page reads the statuses again after the 202.
+   */
+  'reread-artifact-sbom': 'A package’s page has maintenance read a version’s SBOM again',
   /**
    * `artifacts-npm-package.page.ts` (`app-sbom-cell`) via `ARTIFACT_SBOM` (qits-2326): a version's
    * Download reads its CycloneDX document and saves it as a file.
