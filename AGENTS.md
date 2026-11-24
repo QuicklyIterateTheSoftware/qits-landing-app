@@ -1089,6 +1089,18 @@ nothing). Its pact interactions (`show-repository`) read "a project with 3 repos
 "two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
 naming contract repositories" and "a docs catalog of every kind".
 
+A page of the repository with navigation of its own puts it in the sidebar instead
+(qits-2493): it hands the shell a template through `SidebarOutlet` (`layout/shell/sidebar-outlet.ts`,
+root), in the browser only, and clears it on destroy; while one is held the shell draws it in the
+repository sidebar's place, below "← <repo>" (`leave-sidebar-ui-builder` `overview`, the
+repository's page). The template is the page's and runs in its context; a choice in it that changes
+what the page shows calls `SidebarOutlet.close()`, which closes the burger's navigation below 768px.
+The UI builder is the one such page: Routes, Entities and Outcomes are the entries (`leftTab`, the
+open one `aria-current="page"`), the open one's list indented below it; held while its bundle is
+loaded only, so the server render, a bundle being read and a repository with nothing published keep
+the repository sidebar, and its grid has no left column. Its plain spec renders the template beside
+the page through a stand-in layout route.
+
 A repository's Release requests (qits-2506, `repositories/<repo>/release-requests`,
 `RepositoryReleaseRequestsPage`) lists only its requests, newest
 first: `REPOSITORY_RELEASE_REQUESTS` (`listRepositoryReleaseRequests`,
@@ -1751,7 +1763,8 @@ fails a freeze that differs from what the run writes as stale `screenshot-baseli
 freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
 
 The UI builder (qits-1951, `projects/<slug>/components/<repo>/ui-builder`, linked from the cards
-of FRONTEND and APP repositories) reads a frontend's published freezes back through
+of FRONTEND and APP repositories; its Routes, Entities and Outcomes in the shell's sidebar since
+qits-2493, see the repository sidebar above) reads a frontend's published freezes back through
 `RoutesBundles` (`core/ui-builder/routes-bundles.ts`, `qitsResource`s over `docs.operations.ts`): the `@routes/` site whose newest version's
 `git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
 `assets/*` on demand. The site and the file path go out as the generated client encodes them, each

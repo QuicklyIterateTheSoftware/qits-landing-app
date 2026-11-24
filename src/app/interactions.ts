@@ -1486,6 +1486,12 @@ export const INTERACTIONS = {
    */
   'leave-sidebar-repository': 'The repository sidebar’s “← Components” goes back to the project',
   /**
+   * `shell.layout.ts`: “← <repo>” at the top of the UI builder's own sidebar (qits-2493,
+   * `SidebarOutlet`) goes back to the repository's page, and the repository sidebar. Navigates
+   * only, and names no pact.
+   */
+  'leave-sidebar-ui-builder': 'The UI builder’s sidebar “← <repo>” goes back to the repository',
+  /**
    * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
    * pages, one exit each. Navigates only, and names no pact (epic qits-2000).
    */

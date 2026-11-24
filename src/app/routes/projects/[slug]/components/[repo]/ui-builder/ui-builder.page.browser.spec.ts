@@ -43,8 +43,12 @@ import { shootShellMenus } from '../../../../../../../testing/browser/shell-menu
  *
  * An entity's page is a declared exit (`open-builder-entity`, epic qits-2000), each followed once:
  * the ↗ of an entity the route touches (`routeEntity`, shown by `entities`), the ↗ of an entity in
- * the Entities tab (`listedEntity`) and the picked entity's name (`pickedEntity`), both shown by
+ * the sidebar's Entities entry (`listedEntity`) and the picked entity's name (`pickedEntity`), both shown by
  * `entity-view`. The page each leaves for is its own spec's (`leftFor`).
+ *
+ * The builder's Routes, Entities and Outcomes are in the shell's sidebar once the bundle is in
+ * (qits-2493, `sidebar()`), below “← qits-landing-app” (`leave-sidebar-ui-builder`, followed once),
+ * in the repository sidebar's place; the page's grid is the preview and the right panel.
  */
 
 const BUNDLE = 'a published routes bundle';
@@ -83,9 +87,15 @@ describe('UiBuilderPage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
+  /**
+   * The shell's sidebar, which holds the builder's own navigation once the bundle is in (qits-2493):
+   * Routes, Entities and Outcomes, the open one's list below it.
+   */
+  const sidebar = () => page.getByRole('navigation', { name: 'qits' });
+
   /** The page for `repo`, with the project, its repositories and the docs catalog requested. */
   async function render(repo: string) {
-    // Wide enough for the three columns.
+    // Wide enough for the sidebar and the two columns.
     await page.viewport(1520, 800);
     const opened = await openRoute(
       (project) => `/projects/${project.slug}/components/${repo}/ui-builder`,
@@ -156,6 +166,18 @@ describe('UiBuilderPage (screenshots)', () => {
     // `error` answers listProjects alone, shown as the route's own call: the bundle has only one
     // route with freezes, below APP_WIDE_MIN_ROUTES (qits-2080).
     await expect.element(view).toMatchTextContent('listProjects');
+    // The builder's own navigation in the sidebar (qits-2493), below the way back to the
+    // repository, in the repository sidebar's place; the tree under Routes, the open entry.
+    const entries = sidebar().getByRole('list', { name: 'UI builder' });
+    await expect
+      .element(entries.getByRole('button', { name: 'Routes', exact: true }))
+      .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(sidebar().getByRole('navigation', { name: 'Routes' }))
+      .toMatchTextContent('repositories');
+    await expect.element(sidebar().getByRole('link', { name: '← qits-landing-app' })).toBeVisible();
+    expect(sidebar().getByRole('list', { name: 'Repository' }).query()).toBeNull();
+    expect(view.getByRole('navigation', { name: 'Routes' }).query()).toBeNull();
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
@@ -284,11 +306,11 @@ describe('UiBuilderPage (screenshots)', () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites, () => answerEntityMap(opened));
     const view = page.elementLocator(opened.page);
-    await view.getByRole('tab', { name: 'Entities' }).click();
+    await sidebar().getByRole('button', { name: 'Entities', exact: true }).click();
     await opened.settled();
-    await expect.element(view).toMatchTextContent('1 of 3 domain entities have no route');
-    await expect.element(view).toMatchTextContent('No route shows this');
-    await view.getByRole('button', { name: 'Project 1' }).click();
+    await expect.element(sidebar()).toMatchTextContent('1 of 3 domain entities have no route');
+    await expect.element(sidebar()).toMatchTextContent('No route shows this');
+    await sidebar().getByRole('button', { name: 'Project 1' }).click();
     await commands.parkPointer();
     await opened.settled();
     await expect
@@ -321,10 +343,10 @@ describe('UiBuilderPage (screenshots)', () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites, () => answerEntityMap(opened));
     const view = page.elementLocator(opened.page);
-    await view.getByRole('tab', { name: 'Entities' }).click();
+    await sidebar().getByRole('button', { name: 'Entities', exact: true }).click();
     await opened.settled();
-    // WorkEntity: no route shows it, so its ↗ is the Entities tab's alone.
-    await view.getByRole('link', { name: 'Open WorkEntity entity page' }).click();
+    // WorkEntity: no route shows it, so its ↗ is the Entities entry's alone.
+    await sidebar().getByRole('link', { name: 'Open WorkEntity entity page' }).click();
     await commands.parkPointer();
     await leftFor(opened);
     expect(fired()).toEqual(['open-builder-entity:listedEntity']);
@@ -335,15 +357,29 @@ describe('UiBuilderPage (screenshots)', () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites, () => answerEntityMap(opened));
     const view = page.elementLocator(opened.page);
-    await view.getByRole('tab', { name: 'Entities' }).click();
+    await sidebar().getByRole('button', { name: 'Entities', exact: true }).click();
     await opened.settled();
-    await view.getByRole('button', { name: 'Project 1' }).click();
+    await sidebar().getByRole('button', { name: 'Project 1' }).click();
     await opened.settled();
     await view.getByRole('link', { name: 'Project', exact: true }).click();
     await commands.parkPointer();
     await leftFor(opened);
     expect(fired()).toEqual(['open-builder-entity:pickedEntity']);
     expect(TestBed.inject(Router).url).toBe(entityPage(opened, 'domain.Project'));
+  });
+
+  it('leave-sidebar-ui-builder overview: “← <repo>” goes back to the repository’s page (qits-2493)', async () => {
+    const { opened, sites } = await render('qits-landing-app');
+    await answerBundle(opened, sites);
+    await sidebar().getByRole('link', { name: '← qits-landing-app' }).click();
+    await commands.parkPointer();
+    await leftFor(opened);
+    expect(fired()).toEqual(['leave-sidebar-ui-builder:overview']);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/components/qits-landing-app`,
+    );
+    // The builder let go of its navigation: the repository sidebar is back.
+    await expect.element(sidebar().getByRole('list', { name: 'Repository' })).toBeVisible();
   });
 
   it('selects the route a link in the frozen page leads to', async () => {
@@ -382,18 +418,18 @@ describe('UiBuilderPage (screenshots)', () => {
     expect(fired()).toEqual([]);
   });
 
-  it('scrolls each of the three panels on its own, and never the window', async () => {
+  it('scrolls each of the two panels on its own, and never the window', async () => {
     const { opened, sites } = await render('qits-landing-app');
     await answerBundle(opened, sites);
     // 1280px is the narrowest the panels sit side by side; 400px is short enough that the frozen
-    // page overflows its panel.
+    // page overflows its panel. The routes are in the shell's sidebar (qits-2493), which scrolls on
+    // its own as every sidebar does.
     await page.viewport(1280, 400);
     await opened.settled();
     const main = opened.frame.querySelector('main')!;
     const grid = opened.page.querySelector<HTMLElement>('[data-columns]')!;
     const columns = [...grid.children] as HTMLElement[];
     expect(columns.map((column) => column.getAttribute('aria-label'))).toEqual([
-      null,
       'Preview',
       'Calls',
     ]);
@@ -498,7 +534,7 @@ describe('UiBuilderPage (screenshots)', () => {
     await answerBundle(opened, sites);
     const view = page.elementLocator(opened.page);
     // The row's count is its fold button's; the route button is named by its segment alone.
-    await view.getByRole('button', { name: 'projects', exact: true }).click();
+    await sidebar().getByRole('button', { name: 'projects', exact: true }).click();
     // The pointer stays on the button after the click; its hover colour would vary the screenshot.
     await commands.parkPointer();
     await opened.settled();
