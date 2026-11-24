@@ -3,12 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   linkedSignal,
   PLATFORM_ID,
   signal,
-  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -24,8 +22,8 @@ import {
   stay,
 } from '@qits/angular';
 import { formatBytes, plural } from '$core/artifacts/artifact-listings';
-import { pollWhile, RUNNING_RUN_POLL_MS } from '$core/events/poll-while';
 import { valueMarks } from '$core/marks/value-marks';
+import { ofProcess, ofRun, ofStep, PROCESS_RUN_EVENTS } from '$core/orchestrator/process-events';
 import {
   callPath,
   explainStart,
@@ -115,14 +113,14 @@ interface ShownRunSource {
  * each row a run by `id`; the shown run the run's read by `id`, each card a step by `id`; the open
  * step's call the step's read by `id`.
  *
- * Staleness (qits-1270): qits-orchestrator publishes no domain event, so nothing here has a
- * `refreshOn`. The one poll the rule allows (`pollWhile`, `RUNNING_RUN_POLL_MS`, the document
- * visible): while the shown run is RUNNING its body-less read is made again every 10 s, since its
- * steps move with no event to say so; when it leaves RUNNING the run list is read again (its row's
- * status, took and summary), and so is an open step whose status moved. A failed poll keeps the
- * last run on screen and says the update did not arrive. The gap: no event announces a run started
- * elsewhere (gc's deploy trigger, another operator), so the run list follows only this page's
- * presses, a shown run stopping and Refresh (qits-2472 asks qits-orchestrator for run events).
+ * Staleness (qits-1270): qits-orchestrator's `PROCESS_RUN_EVENTS` (qits-2472,
+ * `core/orchestrator/process-events.ts`), each resource's `refreshOn`, debounced; nothing is
+ * polled. `ProcessRunChanged` of this process (`ofProcess`: a run opened or closed, here or
+ * elsewhere: gc's deploy trigger, a cron, another operator) → the runs, so a page without `?run=`
+ * shows the newest and follows it. Either event naming the shown run (`ofRun`) → the shown run,
+ * without bodies (its status, took and steps). `ProcessRunStepChanged` naming the open step
+ * (`ofStep`) → that step's call. A failed read again keeps the run on screen and says the update
+ * did not arrive. Refresh reads all four again.
  */
 @Component({
   selector: 'app-orchestrator-process-page',
@@ -321,10 +319,6 @@ interface ShownRunSource {
                   </table>
                 </div>
               }
-              <p class="mt-2 mb-0 text-xs text-fg-muted">
-                No event announces a run started elsewhere (the deploy trigger, another operator):
-                Refresh reads the runs again.
-              </p>
             </ui-spinner>
           </section>
 
@@ -354,11 +348,11 @@ interface ShownRunSource {
                 </p>
               } @else {
                 @if (shownRun(); as run) {
-                  @if (pollFailed()) {
+                  @if (reloadFailed()) {
                     <p
                       role="status"
                       class="mt-0 mb-3 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
-                      data-poll-failed
+                      data-reload-failed
                     >
                       The last update did not arrive. This is the run as it was last read.
                     </p>
@@ -696,29 +690,58 @@ export class OrchestratorProcessPage {
   /** The technical processes: the title, the lede, and whether the kind is one. */
   protected readonly processes = qitsResource(PROCESS_LIST, () => (this.browser ? {} : undefined));
 
-  /** The process's latest runs, newest first. */
-  protected readonly runs = qitsResource(PROCESS_RUNS, () => {
-    const kind = this.kind();
-    return this.browser && kind ? { path: { kind } } : undefined;
-  });
+  /** The process's latest runs, newest first; read again when a run of it opens or closes. */
+  protected readonly runs = qitsResource(
+    PROCESS_RUNS,
+    () => {
+      const kind = this.kind();
+      return this.browser && kind ? { path: { kind } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: ['ProcessRunChanged'],
+        when: (event) => ofProcess(event, this.kind()),
+      },
+    },
+  );
 
   /** The run shown: `?run=`, else the newest listed. */
   protected readonly shownRunId = computed(
     (): string | undefined => this.runParam() ?? this.listed()[0]?.id,
   );
 
-  /** The shown run, without any step's bodies; read again every 10 s while it runs. */
-  protected readonly runRead = qitsResource(PROCESS_RUN, () => {
-    const id = this.shownRunId();
-    return this.browser && id ? { path: { id }, query: { bodies: false } } : undefined;
-  });
+  /** The shown run, without any step's bodies; read again when it or one of its steps moves. */
+  protected readonly runRead = qitsResource(
+    PROCESS_RUN,
+    () => {
+      const id = this.shownRunId();
+      return this.browser && id ? { path: { id }, query: { bodies: false } } : undefined;
+    },
+    {
+      refreshOn: {
+        names: PROCESS_RUN_EVENTS,
+        when: (event) => ofRun(event, this.shownRunId()),
+      },
+    },
+  );
 
-  /** The open step's call, whole: its request body and its response. */
-  protected readonly stepRead = qitsResource(PROCESS_RUN_STEP, () => {
-    const id = this.shownRunId();
-    const stepId = this.stepParam();
-    return this.browser && id && stepId && this.stepShown() ? { path: { id, stepId } } : undefined;
-  });
+  /** The open step's call, whole: its request body and its response; read again when it moves. */
+  protected readonly stepRead = qitsResource(
+    PROCESS_RUN_STEP,
+    () => {
+      const id = this.shownRunId();
+      const stepId = this.stepParam();
+      return this.browser && id && stepId && this.stepShown()
+        ? { path: { id, stepId } }
+        : undefined;
+    },
+    {
+      refreshOn: {
+        names: ['ProcessRunStepChanged'],
+        when: (event) => ofStep(event, this.shownRunId(), this.stepParam()),
+      },
+    },
+  );
 
   /**
    * The start. `online-only`: a run is sent now or not at all, never kept in an outbox to be sent
@@ -748,7 +771,7 @@ export class OrchestratorProcessPage {
   );
 
   /**
-   * The shown run as last read: kept through a failed poll (the resource keeps its value through a
+   * The shown run as last read: kept through a failed read again (the resource keeps its value through a
    * failed reload, but not through a 404, which this keeps too: the last thing the service said),
    * and dropped when another run is shown.
    */
@@ -773,7 +796,10 @@ export class OrchestratorProcessPage {
     return stepId ? this.shownRun()?.steps?.find((step) => step.id === stepId) : undefined;
   });
 
-  /** Whether the shown run holds the open step (a boolean, so a poll does not read it again). */
+  /**
+   * Whether the shown run holds the open step: a boolean, so the run read again does not read the
+   * step again.
+   */
   private readonly stepShown = computed(() => this.openStep() !== undefined);
 
   /** The open step's call, once read, and only for the step open now. */
@@ -816,13 +842,16 @@ export class OrchestratorProcessPage {
 
   protected readonly runsState = computed((): LoadState => loadState(this.runs));
 
-  /** The run's first read (once a run is on screen, a failed read again is `pollFailed`). */
+  /** The run's first read (once a run is on screen, a failed read again is `reloadFailed`). */
   protected readonly runState = computed((): LoadState => loadState(this.runRead));
 
   protected readonly stepState = computed((): LoadState => loadState(this.stepRead));
 
-  /** A poll (or Refresh) failed while a run is on screen: it stays, and the page says so. */
-  protected readonly pollFailed = computed(
+  /**
+   * A read again (after an event, or Refresh) failed while a run is on screen: it stays, and the
+   * page says so.
+   */
+  protected readonly reloadFailed = computed(
     () =>
       (this.runRead.reloadError() !== undefined || this.runRead.status() === 'error') &&
       this.shownRun() !== undefined,
@@ -886,33 +915,6 @@ export class OrchestratorProcessPage {
   protected readonly tone = processStatusTone;
   protected readonly path = callPath;
   protected readonly readable = readableJson;
-
-  /** The shown run's id and status, and the open step's status, as last seen. */
-  private seen: { run?: string; status?: string; step?: string; stepStatus?: string } = {};
-
-  constructor() {
-    pollWhile({
-      active: () => this.shownRun()?.status === 'RUNNING',
-      everyMs: RUNNING_RUN_POLL_MS,
-      refresh: () => this.runRead.reload(),
-    });
-
-    // A shown run that leaves RUNNING moved its row (status, took, summary): the list is read
-    // again. An open step whose status moved has a call (or a response) it did not have.
-    effect(() => {
-      const run = this.shownRun();
-      const step = this.openStep();
-      untracked(() => {
-        const before = this.seen;
-        this.seen = { run: run?.id, status: run?.status, step: step?.id, stepStatus: step?.status };
-        if (!run || before.run !== run.id) return;
-        if (before.status === 'RUNNING' && run.status !== 'RUNNING') this.runs.reload();
-        if (step && before.step === step.id && before.stepStatus !== step.status) {
-          this.stepRead.reload();
-        }
-      });
-    });
-  }
 
   /** `artifacts.plan, pins.ci`, or "—" for a step that waits for nothing. */
   protected dependsOn(step: ProcessRunStep): string {

@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { outcomeRecords } from '@qits/angular/testing/browser';
 import { page, userEvent } from 'vitest/browser';
-import { RUNNING_RUN_POLL_MS } from '$core/events/poll-while';
 import { goldenMaster } from '../../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -29,13 +28,15 @@ const RUNS = '/orchestrator/api/processes/gc/runs';
 const RUN = (id = RUN_ID) => `/orchestrator/api/runs/${id}?bodies=false`;
 const STEP = `/orchestrator/api/runs/${RUN_ID}/steps/${STEP_ID}`;
 const PATH = '/orchestrator/processes/gc';
+/** Longer than the 10 s the page once polled a running run at (qits-2472 replaced the poll). */
+const PAST_A_POLL_MS = 30_000;
 
 /**
  * Screenshots of the Orchestrator section's process page (qits-2359) inside the shell
  * (`openRoute`), with no project open, its reads answered with qits-orchestrator's recordings: the
  * process from "the gc process"; a finished dry run's list, run (without bodies) and its
  * `artifacts.plan` step whole from "a finished gc dry run" (`finished`, `step`); a running real run
- * from "a running gc run" (`running`, a fake clock driving the poll once; its 409 is the refused
+ * from "a running gc run" (`running`, a fake clock showing it is never polled; its 409 is the refused
  * start, `refused`); no run from "the gc process before its first run" (`empty`); and a start's
  * 202 from "no active gc run". A read still open (`loading`) and a 503 on the runs
  * (`unavailable`) are statuses only, as are a 404 on the runs (an unknown kind) and on a `?run=`.
@@ -215,7 +216,7 @@ describe('OrchestratorProcessPage (screenshots)', () => {
     http.expectNone(RUN());
   });
 
-  it('shows a running run and reads it again while it runs, then the runs once it stopped', async () => {
+  it('shows a running run, reads it again only on Refresh, and keeps it through a failed read', async () => {
     vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
     const { opened, view } = await render(RUNNING);
     const [, row] = view.getByRole('table', { name: 'Runs' }).getByRole('row').elements();
@@ -226,34 +227,29 @@ describe('OrchestratorProcessPage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('running', { kind: 'DATA' });
-    // The poll: the body-less run, read again after RUNNING_RUN_POLL_MS.
+    // No poll: a running run is read again on its events (qits-2472), never on a clock.
+    vi.advanceTimersByTime(PAST_A_POLL_MS);
+    await opened.settled();
     http.expectNone(RUN());
-    vi.advanceTimersByTime(RUNNING_RUN_POLL_MS);
+    // A failed read again keeps the run on screen and says so.
+    await view.getByRole('button', { name: 'Refresh' }).click();
     await opened.settled();
-    read(RUN()).flush(await goldenMaster(RUNNING, 'getProcessRun', ORCHESTRATOR));
-    await opened.settled();
-    http.expectNone(RUNS);
-    // A failed poll keeps the run on screen and says so.
-    vi.advanceTimersByTime(RUNNING_RUN_POLL_MS);
-    await opened.settled();
+    read(PROCESSES).flush(await goldenMaster(PROCESS, 'listProcesses', ORCHESTRATOR));
+    read(RUNS).flush(await goldenMaster(RUNNING, 'listProcessRuns', ORCHESTRATOR));
     read(RUN()).flush(null, { status: 503, statusText: 'Service Unavailable' });
     await opened.settled();
     await expect
       .element(view.getByRole('status'))
       .toMatchTextContent('The last update did not arrive');
     await expect.element(card(opened, 'pins.ci')).toMatchTextContent('RUNNING');
-    // The run stops: the list is read again.
-    vi.advanceTimersByTime(RUNNING_RUN_POLL_MS);
+    // The next read that arrives takes the note away.
+    await view.getByRole('button', { name: 'Refresh' }).click();
     await opened.settled();
+    read(PROCESSES).flush(await goldenMaster(PROCESS, 'listProcesses', ORCHESTRATOR));
+    read(RUNS).flush(await goldenMaster(FINISHED, 'listProcessRuns', ORCHESTRATOR));
     read(RUN()).flush(await goldenMaster(FINISHED, 'getProcessRun', ORCHESTRATOR));
     await opened.settled();
-    read(RUNS).flush(await goldenMaster(FINISHED, 'listProcessRuns', ORCHESTRATOR));
-    await opened.settled();
     expect(view.getByRole('status').elements()).toHaveLength(0);
-    // Stopped: no more polls.
-    vi.advanceTimersByTime(RUNNING_RUN_POLL_MS * 2);
-    await opened.settled();
-    http.expectNone(RUN());
   });
 
   it('says a process that never ran has no runs', async (context) => {

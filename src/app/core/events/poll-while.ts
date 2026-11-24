@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 
 /**
- * How often a running run is read again: a CI run for its live step's output (qits-2321), and an
- * orchestrator process run for its steps' progress (qits-2359).
+ * How often a running CI run is read again for its live step's output (qits-2321). An
+ * orchestrator process run is not polled: its run and step events announce it (qits-2472).
  */
 export const RUNNING_RUN_POLL_MS = 10_000;
 
@@ -29,9 +29,7 @@ export interface PollWhileOptions {
 /**
  * The one poll the staleness rule (qits-1270) allows, for what no domain event announces: a
  * running CI run's live step writes output, and qits-ci sends an event only when a run changes
- * status (`BuildStatusChanged`), never per line (qits-2321); a running orchestrator process run
- * moves its steps, and qits-orchestrator publishes no event at all, so the process page reads the
- * run again, without its bodies (qits-2359). So while `active()` holds AND the
+ * status (`BuildStatusChanged`), never per line (qits-2321). So while `active()` holds AND the
  * document is visible, `refresh` runs every `everyMs`; it stops as soon as either ends (a finished
  * run, a hidden tab) and starts again when both hold. Everything an event does announce still
  * follows the event (`refreshOn`), never this.

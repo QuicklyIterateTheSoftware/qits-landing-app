@@ -43,8 +43,7 @@ or page holding platform state reads it again after the domain events that can c
 `DomainEvents`; no polling, no timers, no second stream for staleness. The exceptions are what no
 event can announce, each while a person watches it: a running CI run's live output, read again
 every 10 s while the run is RUNNING and the page visible (`pollWhile`, `core/events/poll-while.ts`,
-qits-2321); the same way, a running orchestrator process run's steps, read without bodies
-(qits-2359: qits-orchestrator publishes no event); and a target sign-in that has not settled, read
+qits-2321); and a target sign-in that has not settled, read
 again every 2 s while its card is on the Targets page and the page visible (`app-target-sign-in`,
 `SIGN_IN_POLL_MS`, qits-2351): qits-system publishes no sign-in event, and the flow lasts seconds
 to minutes. A subscriber narrows by
@@ -76,13 +75,15 @@ item page its own data when the event names the item (`entities[].entityId`), an
 `EntityCommented` naming it (`entityId`; qits-1660). A request's CI runs and
 each run's reports follow qits-ci's `BUILD_EVENTS` (`core/ci/build-events.ts`) by `repoId` and
 `runId` (the resources' `refreshOn`: `buildOfRepository`, `buildOfRun`; qits-2146). `WorkspaceActivity` (the work
-pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. Known gaps, where
+pages' open workspaces and ACTIVE agents) follows qits-workspaces' agent events (`ACTIVE_AGENT_EVENTS`), not `EntityTransitioned`. The
+Orchestrator process page follows qits-orchestrator's `PROCESS_RUN_EVENTS`
+(`core/orchestrator/process-events.ts`): its runs by `kind`, the shown run by `runId`, the open
+step by `runId` and `stepId` (`ofProcess`, `ofRun`, `ofStep`; qits-2472). Known gaps, where
 no event exists yet (qits-1270's thread lists them): project and repository creation, work item
 edits, a comment's edit, dossier and membership, a submitted CI report, a backup outcome, lines-of-code
 counts, a mirror upstream registered or deleted or an image pulled through (qits-2357), a mirror
 cache entry pulled through, evicted or swept (qits-2358), a mirror cache root registered or deleted
-(qits-2471), an orchestrator run started elsewhere
-(gc's deploy trigger, another operator; qits-2359, qits-2472).
+(qits-2471).
 
 Ideas (epic qits-888): `projects/<slug>/ideas` (`ProjectIdeasPage`), `ideas/create`,
 `ideas/detail/<idea id>` and its `edit` read and write qits-projects' `/ideas` doors through
@@ -983,10 +984,12 @@ Run now asks first (`ask-orchestrator-run`) and its second press sends `{ dryRun
 (`start-orchestrator-run`), both through `qitsMutation`, `online-only`, never disabled while a run is
 active: a 409 is said in the service's words and the newest run shown, a 403 says the role, anything
 else that whether a run started is not known (`explainStart`, `core/orchestrator/process-runs.ts`).
-Staleness: qits-orchestrator publishes no event. A RUNNING shown run is read again every 10 s while
-the page is visible (`pollWhile`); when it leaves RUNNING the list is read again, and an open step
-whose status moved; a failed poll keeps the run and says so. The gap: a run started elsewhere (the
-deploy trigger, another operator) shows only after Refresh (qits-2472). The pact
+Staleness (qits-2472): nothing is polled. `ProcessRunChanged` (a run opened or closed) of the
+process reads the runs again, so a run started elsewhere (gc's deploy trigger, another operator)
+appears, and a page without `?run=` shows the newest and follows it; `ProcessRunChanged` or
+`ProcessRunStepChanged` naming the shown run reads it again, without bodies; a
+`ProcessRunStepChanged` naming the open step reads its call again (`core/orchestrator/process-events.ts`,
+each resource's `refreshOn`). A failed read again keeps the run on screen and says so. The pact
 (`processes.operations.pact.spec.ts`, its own part of the orchestrator pact, the only one since qits-2477,
 `assertPactPart`) reads the process in "the gc process", the runs, the run and `artifacts.plan`'s
 step in "a finished gc dry run", the runs in "the gc process before its first run" (`[]`), the runs
