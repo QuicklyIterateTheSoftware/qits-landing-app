@@ -82,6 +82,8 @@ describe('RepositoryArtifactsPage (screenshots)', () => {
       'Entities',
       'UI builder',
       'Release requests',
+      'Depends on',
+      'Dependents',
     ]);
     await expect
       .element(sidebar().getByRole('link', { name: 'Artifacts' }))
