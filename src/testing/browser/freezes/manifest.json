@@ -45204,7 +45204,7 @@
     {
       "file": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts/running-desktop-dark.html",
       "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
-      "test": "OrchestratorProcessPage (screenshots) > shows a running run and reads it again while it runs, then the runs once it stopped",
+      "test": "OrchestratorProcessPage (screenshots) > shows a running run, reads it again only on Refresh, and keeps it through a failed read",
       "name": "running",
       "kind": "DATA",
       "viewport": "DESKTOP",
@@ -46322,7 +46322,7 @@
     {
       "file": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts/running-desktop-light.html",
       "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
-      "test": "OrchestratorProcessPage (screenshots) > shows a running run and reads it again while it runs, then the runs once it stopped",
+      "test": "OrchestratorProcessPage (screenshots) > shows a running run, reads it again only on Refresh, and keeps it through a failed read",
       "name": "running",
       "kind": "DATA",
       "viewport": "DESKTOP",
@@ -47440,7 +47440,7 @@
     {
       "file": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts/running-phone-dark.html",
       "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
-      "test": "OrchestratorProcessPage (screenshots) > shows a running run and reads it again while it runs, then the runs once it stopped",
+      "test": "OrchestratorProcessPage (screenshots) > shows a running run, reads it again only on Refresh, and keeps it through a failed read",
       "name": "running",
       "kind": "DATA",
       "viewport": "PHONE",
@@ -48361,7 +48361,7 @@
     {
       "file": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts/running-phone-light.html",
       "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
-      "test": "OrchestratorProcessPage (screenshots) > shows a running run and reads it again while it runs, then the runs once it stopped",
+      "test": "OrchestratorProcessPage (screenshots) > shows a running run, reads it again only on Refresh, and keeps it through a failed read",
       "name": "running",
       "kind": "DATA",
       "viewport": "PHONE",
@@ -49282,7 +49282,7 @@
     {
       "file": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts/running-tablet-dark.html",
       "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
-      "test": "OrchestratorProcessPage (screenshots) > shows a running run and reads it again while it runs, then the runs once it stopped",
+      "test": "OrchestratorProcessPage (screenshots) > shows a running run, reads it again only on Refresh, and keeps it through a failed read",
       "name": "running",
       "kind": "DATA",
       "viewport": "TABLET",
@@ -50324,7 +50324,7 @@
     {
       "file": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts/running-tablet-light.html",
       "spec": "src/app/routes/orchestrator/processes/[kind]/orchestrator-process.page.browser.spec.ts",
-      "test": "OrchestratorProcessPage (screenshots) > shows a running run and reads it again while it runs, then the runs once it stopped",
+      "test": "OrchestratorProcessPage (screenshots) > shows a running run, reads it again only on Refresh, and keeps it through a failed read",
       "name": "running",
       "kind": "DATA",
       "viewport": "TABLET",
