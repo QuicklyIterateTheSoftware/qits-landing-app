@@ -4,61 +4,12 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
-export type GcDiskReport = {
-    state?: string;
-    blobTablesBytesBefore?: number;
-    blobTablesBytesAfter?: number;
-    databaseBytesBefore?: number;
-    databaseBytesAfter?: number;
-    segmentsDrained?: number;
-    segmentsDropped?: number;
-    segmentsHeld?: number;
-    bytesMoved?: number;
-};
-
-export type GcIdentity = {
-    repository?: string;
-    identity?: string;
-    rule?: string;
-};
-
-export type GcPinSource = {
-    source?: string;
-    url?: string;
-    answered?: boolean;
-    outcome?: string;
-    readAt?: Instant;
-    tookMillis?: number;
-    pinCount?: number;
-    keeps?: Array<string>;
-};
-
 export type GcRepositoriesPlanResponse = {
     generatedAt?: Instant;
     executable?: boolean;
     pinFailures?: Array<string>;
     graceWindow?: string;
     repositories?: Array<GcRepositoryPlanSummary>;
-};
-
-export type GcRepositoryPlanReport = {
-    repository?: string;
-    type?: string;
-    generatedAt?: Instant;
-    dryRun?: boolean;
-    graceWindow?: string;
-    executable?: boolean;
-    pinFailures?: Array<string>;
-    pins?: Array<GcPinSource>;
-    configuration?: GcTypeConfiguration;
-    strategy?: string;
-    note?: string;
-    error?: string;
-    dead?: Array<GcIdentity>;
-    kept?: Array<GcIdentity>;
-    sweep?: GcSweepPlan;
-    structural?: GcSweepPlan;
-    untouchable?: GcUntouchablePool;
 };
 
 export type GcRepositoryPlanSummary = {
@@ -75,63 +26,13 @@ export type GcRepositoryPlanSummary = {
     withheldBytes?: number;
 };
 
-export type GcRepositorySweepReport = {
-    repository?: string;
-    type?: string;
-    executedAt?: Instant;
-    dryRun?: boolean;
-    graceWindow?: string;
-    aborted?: string;
-    pins?: Array<GcPinSource>;
-    strategy?: string;
-    note?: string;
-    error?: string;
-    deleted?: Array<GcIdentity>;
-    withheldByGraceWindow?: Array<GcIdentity>;
-    sweep?: GcSweepOutcome;
-    disk?: GcDiskReport;
-    untouchable?: GcUntouchablePool;
-    runId?: string;
-};
-
-export type GcSweepOutcome = {
-    blobsUnlinked?: number;
-    bytesReclaimed?: number;
-    withheldByGraceWindow?: number;
-    withheldBytes?: number;
-    stillReferenced?: number;
-    alreadyGone?: number;
-    unlinkedBlobIds?: Array<string>;
-};
-
-export type GcSweepPlan = {
-    blobCount?: number;
-    reclaimableBytes?: number;
-    withheldByGraceWindow?: number;
-    withheldBytes?: number;
-    blobIds?: Array<string>;
-};
-
-export type GcTypeConfiguration = {
-    type?: string;
-    strategy?: string;
-    window?: string;
-    rule?: string;
-};
-
-export type GcUntouchablePool = {
-    reason?: string;
-    blobCount?: number;
-    bytes?: number;
-    blobIds?: Array<string>;
-};
-
 export type Instant = string;
 
 export type ProcessDto = {
     kind?: string;
     name?: string;
     description?: string;
+    dryRunnable?: boolean;
     steps?: Array<StepDto>;
 };
 
@@ -228,84 +129,6 @@ export type ListArtifactsCleanupRepositoriesResponses = {
 
 export type ListArtifactsCleanupRepositoriesResponse = ListArtifactsCleanupRepositoriesResponses[keyof ListArtifactsCleanupRepositoriesResponses];
 
-export type PlanArtifactsCleanupRepositoryData = {
-    body?: never;
-    path: {
-        repository: string;
-    };
-    query?: never;
-    url: '/orchestrator/api/artifacts/repositories/{repository}/plan';
-};
-
-export type PlanArtifactsCleanupRepositoryErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * qits-artifacts has no such repository
-     */
-    404: unknown;
-    /**
-     * qits-artifacts could not be asked
-     */
-    502: unknown;
-};
-
-export type PlanArtifactsCleanupRepositoryResponses = {
-    /**
-     * qits-artifacts' plan for the repository
-     */
-    200: GcRepositoryPlanReport;
-};
-
-export type PlanArtifactsCleanupRepositoryResponse = PlanArtifactsCleanupRepositoryResponses[keyof PlanArtifactsCleanupRepositoryResponses];
-
-export type SweepArtifactsCleanupRepositoryData = {
-    body?: never;
-    path: {
-        repository: string;
-    };
-    query?: never;
-    url: '/orchestrator/api/artifacts/repositories/{repository}/sweep';
-};
-
-export type SweepArtifactsCleanupRepositoryErrors = {
-    /**
-     * Not Authorized
-     */
-    401: unknown;
-    /**
-     * Not Allowed
-     */
-    403: unknown;
-    /**
-     * qits-artifacts has no such repository
-     */
-    404: unknown;
-    /**
-     * A gc run is active
-     */
-    409: unknown;
-    /**
-     * qits-artifacts could not be asked
-     */
-    502: unknown;
-};
-
-export type SweepArtifactsCleanupRepositoryResponses = {
-    /**
-     * qits-artifacts' sweep receipt
-     */
-    200: GcRepositorySweepReport;
-};
-
-export type SweepArtifactsCleanupRepositoryResponse = SweepArtifactsCleanupRepositoryResponses[keyof SweepArtifactsCleanupRepositoryResponses];
-
 export type ListProcessesData = {
     body?: never;
     path?: never;
@@ -379,7 +202,7 @@ export type StartProcessRunData = {
 
 export type StartProcessRunErrors = {
     /**
-     * Bad Request
+     * A dry run of a process that has none (dryRunnable is false)
      */
     400: unknown;
     /**
@@ -387,7 +210,7 @@ export type StartProcessRunErrors = {
      */
     401: unknown;
     /**
-     * Not Allowed
+     * A commissioned agent (qits:agent) starting a process not open to one
      */
     403: unknown;
     /**
@@ -395,7 +218,7 @@ export type StartProcessRunErrors = {
      */
     404: unknown;
     /**
-     * A run of that kind is already active, or (gc) an artifacts cleanup sweep is in flight
+     * A run of that kind is already active
      */
     409: unknown;
 };
