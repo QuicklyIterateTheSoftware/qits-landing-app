@@ -3,7 +3,7 @@ import type { ChipTone } from '$ui/components/chip/chip';
 import type { TargetRow } from './targets.consumes';
 
 /** The slot types a target's card lists, in this order (qits-system's `SlotCounts`). */
-export const SLOT_TYPES = ['ci', 'workspace', 'desk'] as const;
+export const SLOT_TYPES = ['ci', 'workspace', 'desk', 'agent'] as const;
 
 /** A slot type a target serves. */
 export type SlotType = (typeof SLOT_TYPES)[number];
@@ -108,11 +108,9 @@ export interface TargetDraft {
 export function draftOf(row: Pick<TargetRow, 'description' | 'reservations'>): TargetDraft {
   return {
     description: row.description ?? '',
-    reservations: {
-      ci: `${row.reservations?.ci ?? 0}`,
-      workspace: `${row.reservations?.workspace ?? 0}`,
-      desk: `${row.reservations?.desk ?? 0}`,
-    },
+    reservations: Object.fromEntries(
+      SLOT_TYPES.map((type) => [type, `${row.reservations?.[type] ?? 0}`]),
+    ) as Record<SlotType, string>,
   };
 }
 

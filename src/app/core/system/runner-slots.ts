@@ -27,7 +27,7 @@ export interface RunnerSlots {
   readonly used: number;
   /** The connected targets' real slot count (`slotsTotal`), summed. Not a reservation. */
   readonly total: number;
-  /** One row per slot type the answer names: ci, workspaces, desk, then any other by name. */
+  /** One row per slot type the answer names: ci, workspaces, desk, agents, then any other by name. */
   readonly types: readonly SlotTypeRow[];
   /** The slots nothing reserves, and the types' use beyond their reservations. */
   readonly shared: SharedPool;
@@ -39,10 +39,11 @@ const LABELS: Readonly<Record<string, string>> = {
   workspace: 'workspaces',
   ws: 'workspaces',
   desk: 'desk',
+  agent: 'agents',
 };
 
 /** Where the known types go; any other type follows them, by name. */
-const ORDER = ['ci', 'workspace', 'ws', 'desk'];
+const ORDER = ['ci', 'workspace', 'ws', 'desk', 'agent'];
 const rank = (type: string) => (ORDER.includes(type) ? ORDER.indexOf(type) : ORDER.length);
 
 /**

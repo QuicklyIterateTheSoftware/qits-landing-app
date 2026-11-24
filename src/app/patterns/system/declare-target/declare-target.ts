@@ -10,10 +10,16 @@ import { ActionButton } from '$ui/components/action-button/action-button';
 /** qits-system's target names: a lower-case letter, then up to 63 of a-z, 0-9 and `-`. */
 const NAME = /^[a-z][a-z0-9-]{0,63}$/;
 
+/** An empty reservation for every slot type, the form's starting point and its reset. */
+function emptyReservations(): Readonly<Record<SlotType, string>> {
+  return Object.fromEntries(SLOT_TYPES.map((type) => [type, ''])) as Record<SlotType, string>;
+}
+
 /**
  * The Targets page's Declare a target form (qits-2351, `createTarget`): a name (required,
- * qits-system's pattern, checked here), a description, the slots reserved for ci, workspace and
- * desk, and an optional slots total (0..1024) for the install line (else the reservations' sum).
+ * qits-system's pattern, checked here), a description, the slots reserved for ci, workspace, desk
+ * and agent, and an optional slots total (0..1024) for the install line (else the reservations'
+ * sum).
  *
  * On 201 the answer's one-time install line is shown once, with Copy: the registration token in it
  * works once and is lost when the page is left, and rotating the target's token gives a new one.
@@ -121,11 +127,7 @@ export class DeclareTarget {
   protected readonly slotTypes = SLOT_TYPES;
   protected readonly name = signal('');
   protected readonly description = signal('');
-  protected readonly reservations = signal<Readonly<Record<SlotType, string>>>({
-    ci: '',
-    workspace: '',
-    desk: '',
-  });
+  protected readonly reservations = signal<Readonly<Record<SlotType, string>>>(emptyReservations());
   protected readonly slots = signal('');
   protected readonly busy = signal(false);
   protected readonly refusal = signal<string | null>(null);
@@ -180,7 +182,7 @@ export class DeclareTarget {
       this.installLine.set(answer?.installLine ?? null);
       this.name.set('');
       this.description.set('');
-      this.reservations.set({ ci: '', workspace: '', desk: '' });
+      this.reservations.set(emptyReservations());
       this.slots.set('');
       this.declared.emit();
     } catch (error) {

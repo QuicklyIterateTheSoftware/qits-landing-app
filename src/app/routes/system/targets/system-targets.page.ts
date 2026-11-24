@@ -31,7 +31,7 @@ const TARGET_PAGE_EVENTS = [...TARGET_EVENTS, 'TargetDeleted', 'TargetOomKilled'
 
 /**
  * The System section's Targets page (qits-2351), at `/system/targets`: qits-system's execution
- * targets, the hosts whose runners run the platform's CI, workspace and desk slots. It replaces
+ * targets, the hosts whose runners run the platform's CI, workspace, desk and agent slots. It replaces
  * qits-system-frontend's `targets`, which followed no event ("reload the page to see the answer"),
  * hid fields the service sends (`maximums`, `hostname`, `memory`) and polled on a scheduler.
  *

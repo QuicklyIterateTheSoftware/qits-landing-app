@@ -100,7 +100,13 @@ describe('RunnerSlots', () => {
     ).toBe(true);
     expect(right.textContent).not.toContain('shared');
     expect(right.querySelector('.border-t')).toBeNull();
-    expect(rows(element)).toEqual(['ci: 4/8', 'workspaces: 6/2', 'desk: 0/2', 'gpu: 1/1']);
+    expect(rows(element)).toEqual([
+      'ci: 4/8',
+      'workspaces: 6/2',
+      'desk: 0/2',
+      'agents: 0/0',
+      'gpu: 1/1',
+    ]);
   });
 
   it('shows the recorded target, connected and busy', async () => {
@@ -108,7 +114,7 @@ describe('RunnerSlots', () => {
     expect(element.textContent).toContain('runners: 1');
     expect(element.textContent).toContain('slots: 2/6');
     expect(element.textContent).toContain('shared: 0/1');
-    expect(rows(element)).toEqual(['ci: 1/2', 'workspaces: 1/2', 'desk: 0/1']);
+    expect(rows(element)).toEqual(['ci: 1/2', 'workspaces: 1/2', 'desk: 0/1', 'agents: 0/0']);
   });
 
   it('stays hidden when the read is refused, and reads again on the next opening', async () => {
