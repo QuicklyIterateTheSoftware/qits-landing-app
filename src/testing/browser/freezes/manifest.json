@@ -8755,6 +8755,574 @@
       "triggers": []
     },
     {
+      "file": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/queued-dark.html",
+      "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+      "test": "SbomStatus (screenshots) > reread-artifact-sbom queued: a re-read is queued and the versions read again",
+      "name": "queued",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "an artifact released in several versions",
+          "operationId": "listArtifactVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "manifests that pin artifacts",
+          "operationId": "ingestArtifactSbom"
+        }
+      ],
+      "triggers": [
+        "reread-artifact-sbom:failed",
+        "reread-artifact-sbom:queued"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": "sbomError",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/queued-light.html",
+      "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+      "test": "SbomStatus (screenshots) > reread-artifact-sbom queued: a re-read is queued and the versions read again",
+      "name": "queued",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "an artifact released in several versions",
+          "operationId": "listArtifactVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "manifests that pin artifacts",
+          "operationId": "ingestArtifactSbom"
+        }
+      ],
+      "triggers": [
+        "reread-artifact-sbom:failed",
+        "reread-artifact-sbom:queued"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": "sbomError",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/refused-dark.html",
+      "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+      "test": "SbomStatus (screenshots) > reread-artifact-sbom failed: a re-read refused for the viewer’s roles",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "an artifact released in several versions",
+          "operationId": "listArtifactVersions"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": "sbomError",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/refused-light.html",
+      "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+      "test": "SbomStatus (screenshots) > reread-artifact-sbom failed: a re-read refused for the viewer’s roles",
+      "name": "refused",
+      "kind": "ERROR",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "an artifact released in several versions",
+          "operationId": "listArtifactVersions"
+        }
+      ],
+      "triggers": [],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": "sbomError",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/statuses-dark.html",
+      "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+      "test": "SbomStatus (screenshots) > statuses",
+      "name": "statuses",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "an artifact released in several versions",
+          "operationId": "listArtifactVersions"
+        }
+      ],
+      "triggers": [
+        "reread-artifact-sbom:failed",
+        "reread-artifact-sbom:queued"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": "sbomError",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/statuses-light.html",
+      "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+      "test": "SbomStatus (screenshots) > statuses",
+      "name": "statuses",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "an artifact released in several versions",
+          "operationId": "listArtifactVersions"
+        }
+      ],
+      "triggers": [
+        "reread-artifact-sbom:failed",
+        "reread-artifact-sbom:queued"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1001.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1020.1",
+          "field": "sbomError",
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1101.2",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-maintenance-service#listArtifactVersions",
+          "item": "version=2026.1104.1",
+          "field": null,
+          "derived": [
+            "sbomStatus",
+            "ingestedAt",
+            "sbomError"
+          ]
+        }
+      ]
+    },
+    {
       "file": "src/app/patterns/desk/open-issues/open-issues.browser.spec.ts/open-issue-dark.html",
       "spec": "src/app/patterns/desk/open-issues/open-issues.browser.spec.ts",
       "test": "OpenIssues (screenshots) > lists an open issue, its id linking its page",
@@ -73918,6 +74486,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74072,6 +74645,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -74230,6 +74808,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74347,6 +74930,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74462,6 +75050,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -74620,6 +75213,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74771,6 +75369,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74825,6 +75428,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store with nothing published",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -74883,6 +75491,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74915,6 +75528,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -74945,6 +75563,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store with nothing published",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -75001,6 +75624,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store with nothing published",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -75575,6 +76203,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -75671,6 +76304,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store holding one artifact of every kind",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -75771,6 +76409,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -75847,6 +76490,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -75921,6 +76569,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store holding one artifact of every kind",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -76021,6 +76674,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -76114,6 +76772,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -76165,6 +76828,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -76218,6 +76886,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -76245,6 +76918,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -76271,6 +76949,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -76323,6 +77006,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -76389,6 +77077,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -76552,6 +77245,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -76711,6 +77409,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -76875,6 +77578,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -77037,6 +77745,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -77159,6 +77872,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -77279,6 +77997,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -77442,6 +78165,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -77593,6 +78321,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -77725,6 +78458,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -77861,6 +78599,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -77973,6 +78716,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -78083,6 +78831,11 @@
           "provider": "qits-artifacts-service",
           "state": "a maven coordinate with an sbom on one of two versions",
           "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -78219,6 +78972,11 @@
           "operationId": "listMavenVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -78337,6 +79095,864 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-maven-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-maven-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-maven-package:back",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-maven-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
+      "test": "ArtifactsMavenPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listMavenVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a maven coordinate with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-maven-sbom:failed",
+        "download-maven-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-maven-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "files"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listMavenVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts",
       "test": "ArtifactsMavenPackagePage (screenshots) > says so when the store holds no repository of that name",
@@ -78347,6 +79963,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -78399,6 +80020,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -78450,6 +80076,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -78477,6 +80108,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -78503,6 +80139,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -78554,6 +80195,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -78614,6 +80260,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -78772,6 +80423,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -78928,6 +80584,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -79060,6 +80721,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -79190,6 +80856,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -79348,6 +81019,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -79499,6 +81175,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -79553,6 +81234,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store with nothing published",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -79611,6 +81297,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -79643,6 +81334,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -79673,6 +81369,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store with nothing published",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -79729,6 +81430,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store with nothing published",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -80303,6 +82009,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80399,6 +82110,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store holding one artifact of every kind",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -80499,6 +82215,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80575,6 +82296,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80649,6 +82375,11 @@
           "provider": "qits-artifacts-service",
           "state": "a store holding one artifact of every kind",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -80749,6 +82480,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80842,6 +82578,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80893,6 +82634,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -80946,6 +82692,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80973,6 +82724,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -80999,6 +82755,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -81051,6 +82812,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -81117,6 +82883,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -81280,6 +83051,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -81439,6 +83215,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -81603,6 +83384,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -81765,6 +83551,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -81902,6 +83693,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -82037,6 +83833,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -82200,6 +84001,11 @@
           "operationId": "listSbomVersions"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -82351,6 +84157,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -82483,6 +84294,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -82619,6 +84435,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -82731,6 +84552,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -82841,6 +84667,11 @@
           "provider": "qits-artifacts-service",
           "state": "a scoped npm package with an sbom on one of two versions",
           "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
         },
         {
           "provider": "qits-projects-service",
@@ -82977,6 +84808,11 @@
           "operationId": "listNpmVersionSummaries"
         },
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -83095,6 +84931,894 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
+      "test": "ArtifactsNpmPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-npm-sbom:failed",
+        "download-npm-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-npm-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
+      "test": "ArtifactsNpmPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-npm-sbom:failed",
+        "download-npm-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-npm-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
+      "test": "ArtifactsNpmPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-npm-package:back",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
+      "test": "ArtifactsNpmPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "leave-npm-package:back",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
+      "test": "ArtifactsNpmPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-npm-sbom:failed",
+        "download-npm-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-npm-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
+      "test": "ArtifactsNpmPackagePage (screenshots) > keeps the versions when maintenance’s statuses fail, with their own Retry",
+      "name": "statuses-error",
+      "kind": "ERROR",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
+      "records": [
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listNpmVersionSummaries"
+        },
+        {
+          "provider": "qits-artifacts-service",
+          "state": "a scoped npm package with an sbom on one of two versions",
+          "operationId": "listSbomVersions"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "download-npm-sbom:failed",
+        "download-npm-sbom:saved",
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-npm-package:back",
+        "leave-sidebar-repository:components",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-repository-page:artifacts",
+        "open-sidebar-repository-page:contracts",
+        "open-sidebar-repository-page:dependents",
+        "open-sidebar-repository-page:dependsOn",
+        "open-sidebar-repository-page:docs",
+        "open-sidebar-repository-page:entities",
+        "open-sidebar-repository-page:overview",
+        "open-sidebar-repository-page:releaseRequests",
+        "open-sidebar-repository-page:uiBuilder"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.1.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "distTags"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "publishedAt"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "tarballSizeBytes"
+          ]
+        },
+        {
+          "source": "qits-artifacts-service#listNpmVersionSummaries",
+          "item": "version=2100.2.0",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-artifacts-service#listSbomVersions",
+          "item": "version=2100.2.0",
+          "field": null,
+          "derived": [
+            "specVersion",
+            "sizeBytes"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/unknown-repository-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts",
       "test": "ArtifactsNpmPackagePage (screenshots) > says so when the store holds no repository of that name",
@@ -83105,6 +85829,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -83157,6 +85886,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -83208,6 +85942,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -83235,6 +85974,11 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
         {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
+        {
           "provider": "qits-projects-service",
           "state": "a project exists",
           "operationId": "listProjects"
@@ -83261,6 +86005,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -83312,6 +86061,11 @@
       "colorSchemeReason": null,
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package",
       "records": [
+        {
+          "provider": "qits-maintenance-service",
+          "state": "no released artifacts",
+          "operationId": "listArtifactVersions"
+        },
         {
           "provider": "qits-projects-service",
           "state": "a project exists",
@@ -379433,6 +382187,12 @@
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-phone-light.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-tablet-dark.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/sbom-error-tablet-light.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-desktop-dark.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-desktop-light.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-phone-dark.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-phone-light.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-tablet-dark.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/statuses-error-tablet-light.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-dark.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-desktop-light.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/maven-packages/[coordinate]/artifacts-maven-package.page.browser.spec.ts/unknown-repository-phone-dark.html",
@@ -379491,6 +382251,12 @@
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/sbom-error-phone-light.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/sbom-error-tablet-dark.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/sbom-error-tablet-light.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-desktop-dark.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-desktop-light.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-phone-dark.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-phone-light.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-tablet-dark.html",
+      "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/statuses-error-tablet-light.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/unknown-repository-desktop-dark.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/unknown-repository-desktop-light.html",
       "src/app/routes/projects/[slug]/components/[repo]/artifacts/[store]/packages/[package]/artifacts-npm-package.page.browser.spec.ts/unknown-repository-phone-dark.html",
@@ -384897,6 +387663,26 @@
       },
       {
         "route": null,
+        "interaction": "reread-artifact-sbom",
+        "outcome": "failed",
+        "kind": "stay",
+        "to": null,
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/artifacts/sbom-status/sbom-status.ts"
+      },
+      {
+        "route": null,
+        "interaction": "reread-artifact-sbom",
+        "outcome": "queued",
+        "kind": "stay",
+        "to": null,
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/artifacts/sbom-status/sbom-status.ts"
+      },
+      {
+        "route": null,
         "interaction": "rotate-target-token",
         "outcome": "sent",
         "kind": "stay",
@@ -385688,6 +388474,24 @@
         "outcome": "workItem",
         "kind": "exit",
         "freeze": null
+      },
+      {
+        "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+        "test": "SbomStatus (screenshots) > reread-artifact-sbom failed: a re-read refused for the viewer’s roles",
+        "route": null,
+        "interaction": "reread-artifact-sbom",
+        "outcome": "failed",
+        "kind": "stay",
+        "freeze": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/refused-light.html"
+      },
+      {
+        "spec": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts",
+        "test": "SbomStatus (screenshots) > reread-artifact-sbom queued: a re-read is queued and the versions read again",
+        "route": null,
+        "interaction": "reread-artifact-sbom",
+        "outcome": "queued",
+        "kind": "stay",
+        "freeze": "src/app/patterns/artifacts/sbom-status/sbom-status.browser.spec.ts/queued-light.html"
       },
       {
         "spec": "src/app/patterns/desk/open-issues/open-issues.browser.spec.ts",

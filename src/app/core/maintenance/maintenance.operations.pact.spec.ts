@@ -19,10 +19,12 @@ import {
 import { PENDING_BUMPS, REPOSITORY_BUMPS_LIMIT } from './maintenance.consumes';
 import {
   MAINTENANCE_ADOPTION,
+  MAINTENANCE_ARTIFACT_VERSIONS,
   MAINTENANCE_ARTIFACTS,
   MAINTENANCE_BUMP,
   MAINTENANCE_DEPENDENCIES,
   MAINTENANCE_DEPENDENTS,
+  MAINTENANCE_INGEST_SBOM,
   MAINTENANCE_REPOSITORY,
   MAINTENANCE_REPOSITORY_BUMPS,
   MAINTENANCE_REPOSITORY_DEPENDENTS,
@@ -80,6 +82,17 @@ import {
  * released artifacts", none) and which repositories pin it (`listDependencies?kind=EXTERNAL&name=`:
  * the same `left-pad` state; the external glob states, matching and not), as its screenshots show
  * them. The `left-pad` state is recorded from qits-maintenance's qits-2488 release on.
+ *
+ * The npm and maven package pages (qits-2490) read every released version of the package with its
+ * SBOM's status (`listArtifactVersions`, `?ecosystem=&name=`, which the golden masters record and
+ * the interactions require): a maven artifact released four times, PENDING, INGESTED, FAILED with
+ * its `sbomError` and MISSING ("an artifact released in several versions"), and one nothing
+ * released ("no released artifacts", `[]`), once per page (`show-maven-package`,
+ * `show-npm-package`). The provider records only a maven artifact; the npm page sends `npm` and the
+ * `@scope/name` spelling, which the door reads the same way. Re-read SBOM (`reread-artifact-sbom`,
+ * the status cell both pages share) asks for one version's SBOM again (`ingestArtifactSbom`, the recorded
+ * `{ ecosystem, name, version }`) in "manifests that pin artifacts": a 202, status only (the page
+ * reads nothing of the body). A 403 has no recording: the plain specs cover it.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`
@@ -183,6 +196,26 @@ const releaseOf = (state: string) => {
   return {
     query: { repository: resolved(query['repository']), version: resolved(query['version']) },
   };
+};
+
+const SEVERAL_VERSIONS = 'an artifact released in several versions';
+const PINNING = 'manifests that pin artifacts';
+
+/** The package pages' request for the artifact `state` recorded the versions of. */
+const versionsOf = (state: string) => {
+  const { query, params } = masters.operation(state, MAINTENANCE_ARTIFACT_VERSIONS.operationId);
+  const resolved = (value: string) => value.replace(/\{(\w+)}/g, (_, name: string) => params[name]);
+  return { query: { ecosystem: resolved(query['ecosystem']), name: resolved(query['name']) } };
+};
+
+/** The re-read `state` recorded, as the status cell sends it. */
+const ingestOf = (state: string) => {
+  const body = masters.operation(state, MAINTENANCE_INGEST_SBOM.operationId).body as {
+    ecosystem: string;
+    name: string;
+    version: string;
+  };
+  return { body: { ecosystem: body.ecosystem, name: body.name, version: body.version } };
 };
 
 describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s operation', () => {
@@ -584,4 +617,64 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       );
       expect(data).toEqual([]);
     }));
+  it('show-maven-package: every released version with its SBOM status', () =>
+    given(MAINTENANCE_ARTIFACT_VERSIONS, SEVERAL_VERSIONS, 'show-maven-package').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_ARTIFACT_VERSIONS.fetch(versionsOf(SEVERAL_VERSIONS)),
+        );
+        expect(error).toBeUndefined();
+        // The mock answers one row per shape of nulls the recording holds (`arrayContaining`):
+        // a FAILED one carries its reason.
+        const rows = data ?? [];
+        expect(rows.length).toBeGreaterThan(0);
+        expect(rows.every((row) => !!row.version && !!row.sbomStatus)).toBe(true);
+        expect(rows.some((row) => row.sbomStatus === 'FAILED' && !!row.sbomError)).toBe(true);
+      },
+    ));
+
+  it('show-maven-package: no versions of an artifact nothing released', () =>
+    given(MAINTENANCE_ARTIFACT_VERSIONS, NOTHING_RELEASED, 'show-maven-package').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () =>
+          MAINTENANCE_ARTIFACT_VERSIONS.fetch(versionsOf(NOTHING_RELEASED)),
+        );
+        expect(data).toEqual([]);
+      },
+    ));
+
+  it('reread-artifact-sbom: a version’s SBOM read again is queued', () =>
+    given(MAINTENANCE_INGEST_SBOM, PINNING, 'reread-artifact-sbom').executeTest(async (server) => {
+      const { error, response } = await at(server.url, () =>
+        MAINTENANCE_INGEST_SBOM.fetch(ingestOf(PINNING)),
+      );
+      expect(error).toBeUndefined();
+      expect(response?.status).toBe(202);
+    }));
+
+  it('show-npm-package: every released version with its SBOM status', () =>
+    given(MAINTENANCE_ARTIFACT_VERSIONS, SEVERAL_VERSIONS, 'show-npm-package').executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () =>
+          MAINTENANCE_ARTIFACT_VERSIONS.fetch(versionsOf(SEVERAL_VERSIONS)),
+        );
+        expect(error).toBeUndefined();
+        // The mock answers one row per shape of nulls the recording holds (`arrayContaining`):
+        // a FAILED one carries its reason.
+        const rows = data ?? [];
+        expect(rows.length).toBeGreaterThan(0);
+        expect(rows.every((row) => !!row.version && !!row.sbomStatus)).toBe(true);
+        expect(rows.some((row) => row.sbomStatus === 'FAILED' && !!row.sbomError)).toBe(true);
+      },
+    ));
+
+  it('show-npm-package: no versions of an artifact nothing released', () =>
+    given(MAINTENANCE_ARTIFACT_VERSIONS, NOTHING_RELEASED, 'show-npm-package').executeTest(
+      async (server) => {
+        const { data } = await at(server.url, () =>
+          MAINTENANCE_ARTIFACT_VERSIONS.fetch(versionsOf(NOTHING_RELEASED)),
+        );
+        expect(data).toEqual([]);
+      },
+    ));
 });

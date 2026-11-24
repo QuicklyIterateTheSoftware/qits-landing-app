@@ -19,6 +19,11 @@ const STORE = 'a store holding one artifact of every kind';
 const EMPTY = 'a store with nothing published';
 const SCOPED = 'a scoped npm package with an sbom on one of two versions';
 const ARTIFACTS = 'qits-artifacts';
+const MAINTENANCE = 'qits-maintenance';
+/** qits-maintenance released nothing of the name (qits-2490): no version of the page is known. */
+const NOTHING_RELEASED = 'no released artifacts';
+/** qits-maintenance's versions read (`?ecosystem=&name=`). */
+const STATUSES = '/maintenance/api/artifacts/versions';
 
 /** The repository the page is opened under (qits-2477): the address's, not read. */
 const OWNER = 'contract-service';
@@ -45,6 +50,13 @@ const PACKAGE = 'contract-package';
  * Artifacts (`leave-npm-package`), and a version's Download (`download-npm-sbom`), saved (shot as
  * `package`, the recorded document answering it) and failed (`download-error`). The saved file
  * never reaches the disk: the download link's click is a spy.
+ *
+ * qits-maintenance's SBOM status per version (qits-2490, `listArtifactVersions`) is answered with
+ * its "no released artifacts" recording (`[]`) everywhere the store answers: no recording of the
+ * two providers names the same artifact, so no row shows a chip or Re-read SBOM here (the status
+ * cell's own browser spec shoots those, its plain spec and this page's join them). Its failure
+ * (`statuses-error`: a note and its own Retry) and its refusal for the viewer's roles (403: no
+ * column) are statuses only.
  */
 describe('ArtifactsNpmPackagePage (screenshots)', () => {
   let http: HttpTestingController;
@@ -101,7 +113,15 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
       .expectOne(urls(REPO, packageOf(state)).versions)
       .flush(await goldenMaster(state, 'listNpmVersionSummaries', ARTIFACTS));
     await answerSboms(state);
+    await answerStatuses();
     await opened.settled();
+  }
+
+  /** Answers maintenance's versions read: its recording of none, or a refusal's status. */
+  async function answerStatuses(status?: number) {
+    const request = http.expectOne((r) => r.url.startsWith(STATUSES));
+    if (status) request.flush(null, { status, statusText: 'Refused' });
+    else request.flush(await goldenMaster(NOTHING_RELEASED, 'listArtifactVersions', MAINTENANCE));
   }
 
   /** The package's page, answered from `state`. */
@@ -125,8 +145,15 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
       status: sbomStatus,
       statusText: sbomStatus === 404 ? 'Not Found' : statusText,
     });
+    await answerStatuses(sbomStatus === 404 ? undefined : sbomStatus);
     await opened.settled();
   }
+
+  /** The version table's column headings. */
+  const headers = (opened: OpenedRoute) =>
+    [...opened.page.querySelectorAll('table[aria-label="Versions"] th')].map((th) =>
+      th.textContent?.trim(),
+    );
 
   /** The outcomes the test reached, as their marks name them. */
   const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
@@ -137,6 +164,9 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
     await expect.element(view).toMatchTextContent('scope @contract');
     await expect.element(view).toMatchTextContent('name contract-scoped');
     await expect.element(view).toMatchTextContent('2 versions · 1 with an SBOM');
+    // Maintenance knows none of the versions: the column is there, its cells empty.
+    expect(headers(opened)).toContain('SBOM status');
+    expect(opened.page.querySelector('[data-sbom-status]')).toBeNull();
     await expect.element(view).toMatchTextContent('the sizes are not totalled');
     const table = view.getByRole('table', { name: 'Versions' });
     const rows = table.getByRole('row').elements();
@@ -264,6 +294,7 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
       .expectOne(at.versions)
       .flush(await goldenMaster(SCOPED, 'listNpmVersionSummaries', ARTIFACTS));
     http.expectOne(at.sboms).flush(null, { status: 500, statusText: 'Server Error' });
+    await answerStatuses();
     await opened.settled();
     const view = page.elementLocator(opened.page);
     await expect.element(view).toMatchTextContent('2 versions · SBOMs unknown');
@@ -303,7 +334,47 @@ describe('ArtifactsNpmPackagePage (screenshots)', () => {
       .toMatchTextContent('2100.2.0');
   });
 
-  it('reads both again on Refresh', async () => {
+  it('keeps the versions when maintenance’s statuses fail, with their own Retry', async () => {
+    const opened = await open();
+    const at = urls(REPO, SCOPED_PACKAGE);
+    http
+      .expectOne(at.versions)
+      .flush(await goldenMaster(SCOPED, 'listNpmVersionSummaries', ARTIFACTS));
+    http.expectOne(at.sboms).flush(await goldenMaster(SCOPED, 'listSbomVersions', ARTIFACTS));
+    await answerStatuses(500);
+    await opened.settled();
+    const view = page.elementLocator(opened.page);
+    await expect
+      .element(view)
+      .toMatchTextContent('Maintenance’s SBOM statuses could not be read; the versions follow.');
+    await expect.element(view).toMatchTextContent('2 versions · 1 with an SBOM');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('statuses-error', { kind: 'ERROR' });
+    // Its Retry reads the statuses again, nothing else.
+    await view.getByRole('button', { name: 'Retry the SBOM statuses' }).click();
+    await opened.idle();
+    await answerStatuses();
+    await opened.settled();
+    expect(opened.page.querySelector('[data-statuses-unknown]')).toBeNull();
+  });
+
+  it('leaves the status column out when the viewer may not read maintenance’s statuses', async () => {
+    const opened = await open();
+    const at = urls(REPO, SCOPED_PACKAGE);
+    http
+      .expectOne(at.versions)
+      .flush(await goldenMaster(SCOPED, 'listNpmVersionSummaries', ARTIFACTS));
+    http.expectOne(at.sboms).flush(await goldenMaster(SCOPED, 'listSbomVersions', ARTIFACTS));
+    await answerStatuses(403);
+    await opened.settled();
+    const view = page.elementLocator(opened.page);
+    expect(headers(opened)).not.toContain('SBOM status');
+    expect(opened.page.querySelector('[data-statuses-unknown]')).toBeNull();
+    await expect.element(view).toMatchTextContent('2 versions · 1 with an SBOM');
+  });
+
+  it('reads all three again on Refresh', async () => {
     const { opened, view } = await render(SCOPED);
     await view.getByRole('button', { name: 'Refresh' }).click();
     await opened.idle();

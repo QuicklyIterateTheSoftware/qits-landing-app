@@ -353,6 +353,12 @@
       "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate"
     },
     {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listArtifactVersions",
+      "route": "projects/:slug/components/:repo/artifacts/:store/maven-packages/:coordinate"
+    },
+    {
       "provider": "qits-projects-service",
       "state": "a project exists",
       "operationId": "listProjects",
@@ -394,6 +400,12 @@
       "provider": "qits-artifacts-service",
       "state": "a store with nothing published",
       "operationId": "listNpmVersionSummaries",
+      "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package"
+    },
+    {
+      "provider": "qits-maintenance-service",
+      "state": "no released artifacts",
+      "operationId": "listArtifactVersions",
       "route": "projects/:slug/components/:repo/artifacts/:store/packages/:package"
     },
     {
