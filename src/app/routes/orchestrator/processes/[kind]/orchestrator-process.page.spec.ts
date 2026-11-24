@@ -21,13 +21,19 @@ import { OrchestratorProcessPage } from './orchestrator-process.page';
  * What the browser spec cannot show is here: the request Run now sends (no recording holds a real
  * start, so the pact binds the dry run's), that the run is always read without bodies, and what
  * the page reads again after qits-orchestrator's run events (qits-2472), driven through a fake
- * `DomainEvents`; a running run is never polled. The whole spec skips itself while the pinned `@qits/orchestrator-golden-masters` lacks the
+ * `DomainEvents`; a running run is never polled; and that a process without a dry run (qits-2490,
+ * "the scan process", "a finished scan run", "no active scan run") is never offered one, nor before
+ * the process is read. The whole spec skips itself while the pinned `@qits/orchestrator-golden-masters` lacks the
  * recordings (they come with qits-orchestrator's release carrying qits-2359).
  */
 const PROCESS = 'the gc process';
 const FINISHED = 'a finished gc dry run';
 const IDLE = 'no active gc run';
 const RUNNING = 'a running gc run';
+const SCAN = 'the scan process';
+const SCAN_FINISHED = 'a finished scan run';
+const SCAN_IDLE = 'no active scan run';
+const SCAN_RUNS = '/orchestrator/api/processes/scan/runs';
 const RUN_ID = '00000000-0000-4000-8000-000000000001';
 const PROCESSES = '/orchestrator/api/processes';
 const RUNS = '/orchestrator/api/processes/gc/runs';
@@ -42,7 +48,8 @@ const PAST_A_POLL_MS = 30_000;
 const RECORDED =
   isRecorded(PROCESS, 'listProcesses', orchestratorGoldenMasters) &&
   isRecorded(FINISHED, 'getProcessRun', orchestratorGoldenMasters) &&
-  isRecorded(IDLE, 'startProcessRun', orchestratorGoldenMasters);
+  isRecorded(IDLE, 'startProcessRun', orchestratorGoldenMasters) &&
+  isRecorded(SCAN_IDLE, 'startProcessRun', orchestratorGoldenMasters);
 
 /** The generated client builds its request after a few awaits; let them run. */
 const settle = () => new Promise((resolve) => setTimeout(resolve));
@@ -217,7 +224,7 @@ describe.skipIf(!RECORDED)('OrchestratorProcessPage', () => {
     // Asked, nothing sent.
     http.expectNone(RUNS);
     expect(text(element.querySelector('[data-confirm] [role="alert"]'))).toBe(
-      'Run garbage collection now? It deletes what the plan names.',
+      'Run garbage collection now? This is the real run, not a dry run.',
     );
     await press(harness, 'Confirm: run now');
     const start = http.expectOne((request) => request.url === RUNS && request.method === 'POST');
@@ -290,6 +297,60 @@ describe.skipIf(!RECORDED)('OrchestratorProcessPage', () => {
     http
       .expectOne((request) => request.url === RUNS && request.method === 'GET')
       .flush(orchestratorGoldenMaster(FINISHED, 'listProcessRuns'));
+    await answered(harness);
+  });
+
+  /** The page's action buttons, by label. */
+  const buttons = (element: HTMLElement) =>
+    [...element.querySelectorAll('button')].map((button) => text(button));
+
+  it('offers no Dry run before the process is read', async () => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/orchestrator/processes/gc');
+    await answered(harness);
+    const element = harness.routeNativeElement as HTMLElement;
+    expect(buttons(element)).toContain('Run now');
+    expect(buttons(element)).not.toContain('Dry run');
+    http.expectOne(PROCESSES).flush(orchestratorGoldenMaster(PROCESS, 'listProcesses'));
+    await answered(harness);
+    expect(buttons(element)).toContain('Dry run');
+    http.expectOne(RUNS).flush(orchestratorGoldenMaster(FINISHED, 'listProcessRuns'));
+    await answered(harness);
+    http.expectOne(RUN).flush(orchestratorGoldenMaster(FINISHED, 'getProcessRun'));
+    await answered(harness);
+  });
+
+  it('offers a process without a dry run none, and asks in its words before its real run', async () => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/orchestrator/processes/scan');
+    await answered(harness);
+    http.expectOne(PROCESSES).flush(orchestratorGoldenMaster(SCAN, 'listProcesses'));
+    http.expectOne(SCAN_RUNS).flush(orchestratorGoldenMaster(SCAN_FINISHED, 'listProcessRuns'));
+    await answered(harness);
+    http.expectOne(RUN).flush(orchestratorGoldenMaster(SCAN_FINISHED, 'getProcessRun'));
+    await answered(harness);
+    const element = harness.routeNativeElement as HTMLElement;
+    expect(text(element.querySelector('h1'))).toBe('Manifest scan');
+    expect(buttons(element)).toEqual(expect.arrayContaining(['Run now', 'Refresh']));
+    expect(buttons(element)).not.toContain('Dry run');
+    await press(harness, 'Run now');
+    expect(text(element.querySelector('[data-confirm] [role="alert"]'))).toBe(
+      'Run manifest scan now? It has no dry run: it does the real work at once.',
+    );
+    await press(harness, 'Confirm: run now');
+    const start = http.expectOne(
+      (request) => request.url === SCAN_RUNS && request.method === 'POST',
+    );
+    expect(start.request.body).toEqual({ dryRun: false });
+    start.flush(orchestratorGoldenMaster(SCAN_IDLE, 'startProcessRun'), {
+      status: 202,
+      statusText: 'Accepted',
+    });
+    await answered(harness);
+    expect(TestBed.inject(Router).url).toBe(`/orchestrator/processes/scan?run=${RUN_ID}`);
+    http
+      .expectOne((request) => request.url === SCAN_RUNS && request.method === 'GET')
+      .flush(orchestratorGoldenMaster(SCAN_FINISHED, 'listProcessRuns'));
     await answered(harness);
   });
 });

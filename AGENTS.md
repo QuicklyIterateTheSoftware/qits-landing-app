@@ -375,7 +375,8 @@ Mirror's are Caches and OCI upstreams (`open-sidebar-mirror-page`, `caches`/`ups
 `exit('mirror/repositories')`, `exit('mirror/upstreams')`, qits-2479); Caches stays current on one
 cache root's page below it. Orchestrator lists its processes (qits-2480): Garbage collection
 (`open-sidebar-orchestrator-page`, `gc`, `exit('orchestrator/processes/:kind')` with `kind: 'gc'`,
-the page `orchestrator` redirects to), a static list, as the shell reads no processes.
+the page `orchestrator` redirects to), Manifest scan (`scan`, `kind: 'scan'`) and SBOM check
+(`sbomCheck`, `kind: 'sbom-check'`, qits-2490), a static list, as the shell reads no processes.
 IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
 (qits-idp-frontend) inside this app: its pages are Clients, Users and Signed-in devices
 (`open-sidebar-idp-page`, `clients`/`users`/`devices`, `exit('idp/clients')`, `exit('idp/users')`,
@@ -389,7 +390,7 @@ On a global section's page the trail is that section's, not `Projects` (qits-238
 `globalCrumbs`): the section, through its own `follow-breadcrumb` exit to its root (`system`,
 `mirror`, `orchestrator`, `idp`; every in-app section has one, an external one none), then the
 section's page as the sidebar marks it, `alsoOn` included (System › Nodes, Mirror › Caches,
-Orchestrator › Garbage collection, IdP admin › Users). On a page below that page (qits-2533) it is
+Orchestrator › Garbage collection or Manifest scan or SBOM check, IdP admin › Users). On a page below that page (qits-2533) it is
 a link through its own `follow-breadcrumb` exit (the child's `crumb`: `systemServices`,
 `systemNodes`, `systemConfigs`, `mirrorCaches`; only the pages with pages below them declare one),
 and the current page is named by its decoded id (`globalLeaf`): System › Services › `<id>`,
@@ -966,11 +967,14 @@ release).
 The Orchestrator section (qits-2359) is qits-orchestrator's technical processes, which no project
 joins: `orchestrator/processes/<kind>` (`OrchestratorProcessPage`, replacing
 qits-orchestrator-frontend's `processes/:kind` and its `''`), at
-`https://qits.<domain>/orchestrator/processes/gc`; `orchestrator` and `orchestrator/processes`
-redirect to `processes/gc` (gc is the only process; a list page waits for a second). It is an entry
+`https://qits.<domain>/orchestrator/processes/gc` (also `scan` and `sbom-check`, qits-2490);
+`orchestrator` and `orchestrator/processes` redirect to `processes/gc`. It is an entry
 point (`qitsEntry`), where the old pages hand off, and the sidebar's Orchestrator names
-`orchestrator`, with Garbage collection below it while the section is open (qits-2480). It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
-the browser only: `PROCESS_LIST` (`listProcesses`: the title, the lede, whether the kind exists),
+`orchestrator`, with Garbage collection, Manifest scan and SBOM check below it while the section is
+open (qits-2480, qits-2490). Nothing on the page is one process's: its name, its lede and whether it
+has a dry run come from `listProcesses`, and the same page serves every kind. It reads through `qitsResource` over `core/orchestrator/processes.operations.ts`, in
+the browser only: `PROCESS_LIST` (`listProcesses`: the title, the lede, whether the kind exists,
+`dryRunnable`),
 `PROCESS_RUNS` (`listProcessRuns`, the latest 20, newest first: status, Started linking `?run=`
 (`open-orchestrator-run`), took, trigger with a "dry run" chip, the summary clamped to two lines)
 and `PROCESS_RUN` (`getProcessRun` with `bodies=false`, always: the old page re-read the whole run,
@@ -979,8 +983,11 @@ board in columns by dependency depth (`core/orchestrator/step-columns.ts`, porte
 `board/layout.ts`, no wires); a card's press opens the step below (`?step=`,
 `open-orchestrator-step`, replaced, a second press closes it), whose call is one more read,
 `PROCESS_RUN_STEP` (`getProcessRunStep`: request body and response, the response collapsed behind
-"Show <responseBytes>"). Dry run starts `{ dryRun: true }` at once (`start-orchestrator-dry-run`);
-Run now asks first (`ask-orchestrator-run`) and its second press sends `{ dryRun: false }`
+"Show <responseBytes>"). Dry run starts `{ dryRun: true }` at once (`start-orchestrator-dry-run`),
+offered only once the process is read and `dryRunnable` (gc; scan's and sbom-check's door answers a
+dry start 400, qits-2490); Run now asks first (`ask-orchestrator-run`, "This is the real run, not
+a dry run", or for a process without one "It has no dry run: it does the real work at once") and
+its second press sends `{ dryRun: false }`
 (`start-orchestrator-run`), both through `qitsMutation`, `online-only`, never disabled while a run is
 active: a 409 is said in the service's words and the newest run shown, a 403 says the role, anything
 else that whether a run started is not known (`explainStart`, `core/orchestrator/process-runs.ts`).
@@ -994,7 +1001,15 @@ each resource's `refreshOn`). A failed read again keeps the run on screen and sa
 `assertPactPart`) reads the process in "the gc process", the runs, the run and `artifacts.plan`'s
 step in "a finished gc dry run", the runs in "the gc process before its first run" (`[]`), the runs
 and the run in "a running gc run", and Dry run's 202 in "no active gc run" and 409 in "a running gc
-run"; no recording holds a real start, so Run now's request is the page's plain spec's. Every
+run"; no recording holds a real gc start, so gc's Run now request is the page's plain spec's. The
+scan and sbom-check pages (qits-2490) read the process in "the scan process" / "the sbom-check
+process", the runs, the run and one step (`internal.follow`, `check`) in "a finished scan run" /
+"a finished sbom-check run", and Run now's real start (`start-orchestrator-run`, 202) in "no active
+scan run" / "no active sbom-check run"; their 400 for a dry start is not bound, as the page never
+sends one. The process list is open-ended (`openEndedProcessList`: at least one element of the
+recorded shape, no upper bound), so a provider adding a process does not break it; the mock
+therefore answers every element as the first recorded one (gc), and the spec reads which process is
+the kind's from the recording. Every
 interaction and screenshot skips itself until the `@qits/orchestrator-golden-masters` pin records
 these states.
 
@@ -1088,6 +1103,18 @@ not rendered (`shownLinks`). Every entry shows for every repository (each page s
 nothing). Its pact interactions (`show-repository`) read "a project with 3 repositories" and
 "two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
 naming contract repositories" and "a docs catalog of every kind".
+
+A page of the repository with navigation of its own puts it in the sidebar instead
+(qits-2493): it hands the shell a template through `SidebarOutlet` (`layout/shell/sidebar-outlet.ts`,
+root), in the browser only, and clears it on destroy; while one is held the shell draws it in the
+repository sidebar's place, below "← <repo>" (`leave-sidebar-ui-builder` `overview`, the
+repository's page). The template is the page's and runs in its context; a choice in it that changes
+what the page shows calls `SidebarOutlet.close()`, which closes the burger's navigation below 768px.
+The UI builder is the one such page: Routes, Entities and Outcomes are the entries (`leftTab`, the
+open one `aria-current="page"`), the open one's list indented below it; held while its bundle is
+loaded only, so the server render, a bundle being read and a repository with nothing published keep
+the repository sidebar, and its grid has no left column. Its plain spec renders the template beside
+the page through a stand-in layout route.
 
 A repository's Release requests (qits-2506, `repositories/<repo>/release-requests`,
 `RepositoryReleaseRequestsPage`) lists only its requests, newest
@@ -1751,7 +1778,8 @@ fails a freeze that differs from what the run writes as stale `screenshot-baseli
 freeze by hand; run `qits release-request regenerate --kind screenshot-baselines`.
 
 The UI builder (qits-1951, `projects/<slug>/components/<repo>/ui-builder`, linked from the cards
-of FRONTEND and APP repositories) reads a frontend's published freezes back through
+of FRONTEND and APP repositories; its Routes, Entities and Outcomes in the shell's sidebar since
+qits-2493, see the repository sidebar above) reads a frontend's published freezes back through
 `RoutesBundles` (`core/ui-builder/routes-bundles.ts`, `qitsResource`s over `docs.operations.ts`): the `@routes/` site whose newest version's
 `git.repository.name` is the repository, its `manifest.json`, and a freeze's HTML and the bundle's
 `assets/*` on demand. The site and the file path go out as the generated client encodes them, each

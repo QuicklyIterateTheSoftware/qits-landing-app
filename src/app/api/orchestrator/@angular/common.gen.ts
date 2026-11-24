@@ -4,7 +4,7 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetProcessRunData, GetProcessRunResponse, GetProcessRunStepData, GetProcessRunStepResponse, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesResponse, ListProcessesData, ListProcessesResponse, ListProcessRunsData, ListProcessRunsResponse, PlanArtifactsCleanupRepositoryData, PlanArtifactsCleanupRepositoryResponse, StartProcessRunData, StartProcessRunResponse2, SweepArtifactsCleanupRepositoryData, SweepArtifactsCleanupRepositoryResponse } from '../types.gen';
+import type { GetProcessRunData, GetProcessRunResponse, GetProcessRunStepData, GetProcessRunStepResponse, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesResponse, ListProcessesData, ListProcessesResponse, ListProcessRunsData, ListProcessRunsResponse, StartProcessRunData, StartProcessRunResponse2 } from '../types.gen';
 
 /**
  * Every artifacts repository, with what a collection would reclaim
@@ -15,30 +15,6 @@ export const listArtifactsCleanupRepositoriesRequest = <ThrowOnError extends boo
     responseStyle: 'data',
     method: 'GET',
     url: '/orchestrator/api/artifacts/repositories',
-    ...options
-});
-
-/**
- * One artifacts repository's collection plan; nothing is deleted
- *
- * Reads the platform's pins and hands them to qits-artifacts' POST /artifacts/api/gc/repositories/{repository}/plan; its answer is returned verbatim.
- */
-export const planArtifactsCleanupRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<PlanArtifactsCleanupRepositoryData, ThrowOnError>): HttpRequest<PlanArtifactsCleanupRepositoryResponse> => (options?.client ?? client).requestOptions<PlanArtifactsCleanupRepositoryResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'GET',
-    url: '/orchestrator/api/artifacts/repositories/{repository}/plan',
-    ...options
-});
-
-/**
- * Sweep one artifacts repository
- *
- * Reads the platform's pins and hands them to qits-artifacts' POST /artifacts/api/gc/repositories/{repository}/sweep; its receipt is returned verbatim. Refused while a gc run is active, and no gc run starts while it is in flight.
- */
-export const sweepArtifactsCleanupRepositoryRequest = <ThrowOnError extends boolean = false>(options: Options<SweepArtifactsCleanupRepositoryData, ThrowOnError>): HttpRequest<SweepArtifactsCleanupRepositoryResponse> => (options?.client ?? client).requestOptions<SweepArtifactsCleanupRepositoryResponse, ThrowOnError>({
-    responseStyle: 'data',
-    method: 'POST',
-    url: '/orchestrator/api/artifacts/repositories/{repository}/sweep',
     ...options
 });
 
@@ -100,26 +76,6 @@ export const getProcessRunStepRequest = <ThrowOnError extends boolean = false>(o
 export const listArtifactsCleanupRepositoriesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListArtifactsCleanupRepositoriesData, ThrowOnError> | undefined) => httpResource<ListArtifactsCleanupRepositoriesResponse>(() => {
     const opts = options ? options() : undefined;
     return opts ? listArtifactsCleanupRepositoriesRequest(opts) : undefined;
-});
-
-/**
- * One artifacts repository's collection plan; nothing is deleted
- *
- * Reads the platform's pins and hands them to qits-artifacts' POST /artifacts/api/gc/repositories/{repository}/plan; its answer is returned verbatim.
- */
-export const planArtifactsCleanupRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<PlanArtifactsCleanupRepositoryData, ThrowOnError> | undefined) => httpResource<PlanArtifactsCleanupRepositoryResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? planArtifactsCleanupRepositoryRequest(opts) : undefined;
-});
-
-/**
- * Sweep one artifacts repository
- *
- * Reads the platform's pins and hands them to qits-artifacts' POST /artifacts/api/gc/repositories/{repository}/sweep; its receipt is returned verbatim. Refused while a gc run is active, and no gc run starts while it is in flight.
- */
-export const sweepArtifactsCleanupRepositoryResource = <ThrowOnError extends boolean = false>(options: () => Options<SweepArtifactsCleanupRepositoryData, ThrowOnError> | undefined) => httpResource<SweepArtifactsCleanupRepositoryResponse>(() => {
-    const opts = options ? options() : undefined;
-    return opts ? sweepArtifactsCleanupRepositoryRequest(opts) : undefined;
 });
 
 /**

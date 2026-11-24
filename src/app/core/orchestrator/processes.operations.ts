@@ -24,7 +24,10 @@ import {
  * publishes no domain event.
  */
 
-/** The technical processes (`listProcesses`, `GET /orchestrator/api/processes`): gc alone today. */
+/**
+ * The technical processes (`listProcesses`, `GET /orchestrator/api/processes`): gc, scan and
+ * sbom-check today (qits-2490), each with whether it has a dry run.
+ */
 export const PROCESS_LIST = qitsOperation({
   provider: 'qits-orchestrator-service',
   operationId: 'listProcesses',
@@ -73,7 +76,8 @@ export const PROCESS_RUN_STEP = qitsOperation({
 
 /**
  * Starts a run (`startProcessRun`, `POST /processes/{kind}/runs`, body `{ dryRun }`): 202 with the
- * new run's id. A real run deletes, so the page asks first and never queues it offline or sends it
+ * new run's id; 400 for a dry run of a process without one (`dryRunnable` false: the page never
+ * offers it there). A real run does the real work (gc's deletes), so the page asks first and never queues it offline or sends it
  * again by itself. 404: no process of that kind; 409: a run of the kind is already active, or an
  * artifacts cleanup sweep is in flight, in the service's words (`message`).
  */
