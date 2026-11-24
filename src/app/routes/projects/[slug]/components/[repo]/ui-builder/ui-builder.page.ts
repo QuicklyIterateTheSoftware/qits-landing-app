@@ -11,6 +11,7 @@ import {
   Injector,
   PLATFORM_ID,
   signal,
+  type TemplateRef,
   untracked,
   viewChild,
 } from '@angular/core';
@@ -111,6 +112,7 @@ import {
   type TreeRow,
 } from '$core/ui-builder/routes-manifest';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
+import { SidebarOutlet } from '$layout/shell/sidebar-outlet';
 import type { Action } from '$ui/components/action-button/action';
 import { Chip, type ChipTone } from '$ui/components/chip/chip';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
@@ -118,7 +120,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 /** Which providers' calls the builder shows: every one, or those of one component. */
 type Scope = { readonly all: true } | { readonly all: false; readonly component: string };
 
-/** The left panel's tabs. */
+/** The builder's own sidebar entries (qits-2493; the left panel's tabs before it). */
 type LeftTab = 'routes' | 'entities' | 'outcomes';
 
 /**
@@ -355,9 +357,18 @@ interface EntityGroup {
  * state. Everything comes from the frontend's published `@routes/` bundle (`RoutesBundles`,
  * qits-1947 and qits-1948); the page is a viewer and changes nothing.
  *
- * - Tree (left): `routeTree` of the manifest. Each route shows its state count. A segment without a
- *   route is greyed and disabled; a redirect and `**` are shown and not selectable. It opens on the
- *   first route with states; choosing another route goes back to its first state. A route that
+ * - Sidebar (qits-2493): the builder's own navigation is no column of the page but the shell's
+ *   sidebar. Its template (`builderNav`) goes to `SidebarOutlet` in the browser while the bundle is
+ *   loaded, and is cleared on destroy; the shell draws it in the repository sidebar's place, below
+ *   “← <repo>” (`leave-sidebar-ui-builder`), so the server render, a bundle being read and a
+ *   repository with nothing published show the repository sidebar. Routes, Entities and Outcomes
+ *   are its entries (`leftTab`, the open one `aria-current="page"`), the open one's list indented
+ *   below it; the template runs in the page's context. Choosing a route, an entity, an entity's
+ *   page or an outcome's source closes the burger's navigation (`closeSidebar`); a fold, an inbound
+ *   row and an entry do not. The page's grid is the preview and the right panel.
+ * - Tree (the Routes entry): `routeTree` of the manifest. Each route shows its state count. A
+ *   segment without a route is greyed and disabled; a redirect and `**` are shown and not
+ *   selectable. It opens on the first route with states; choosing another route goes back to its first state. A route that
  *   declares page outcomes carries a mark before its count (qits-2045, `routeOutcomeMarks`): how
  *   many, toned as the gap chips when some are gaps, its label saying how many of each.
  * - States (middle): the route's states (`routeStates`: its freezes grouped by name, qits-2047), as
@@ -408,7 +419,7 @@ interface EntityGroup {
  * - The selected freeze (qits-2080): the right panel's Calls and states and Outcomes are the
  *   screenshot's, the selected state at the selected viewport (`freeze`), not the route's; they
  *   follow the URL's `state` and `viewport`, so the state list, the switch, Back and Forward move
- *   them. Entities, the left tabs and the tree's outcome marks stay the route's.
+ *   them. Entities, the sidebar's entries and the tree's outcome marks stay the route's.
  * - Calls (right, qits-2080): the selected freeze's `records` (`freezeCalls`), filtered to the
  *   scope; none when no freeze is selected. The app-wide ones (`appWideCalls`: a provider
  *   operation the freezes of more than half of the routes with freezes record) follow its own in
@@ -422,8 +433,8 @@ interface EntityGroup {
  * - Entities (qits-1950): the services' entity maps (`ContractsCatalog`: each `@contracts/` site
  *   whose newest version names a repository in scope, its `entities.json`), joined with the
  *   manifest's calls on (provider, operationId) by `joinEntities`. Below the calls, the route's
- *   domain entities with their verbs, and how many calls touch no mapped entity. The left panel's
- *   Entities tab lists the in-scope domain entities by application, untouched ones first and
+ *   domain entities with their verbs, and how many calls touch no mapped entity. The sidebar's
+ *   Entities entry lists the in-scope domain entities by application, untouched ones first and
  *   marked; selecting one lists its routes in the right panel, and a route there opens it in the
  *   Routes tab. Technical and projection entities are only counted. A provider without a map is
  *   named ("No entity map published"); a map that cannot be read marks its application alone.
@@ -584,335 +595,8 @@ interface EntityGroup {
             @case ('loaded') {
               <div
                 data-columns
-                class="grid grid-cols-1 gap-6 xl:h-[calc(100dvh-var(--app-header-h,0px)-var(--page-actions-h,0px))] xl:grid-cols-[17rem_minmax(0,1fr)_20rem] xl:grid-rows-[minmax(0,1fr)]"
+                class="grid grid-cols-1 gap-6 xl:h-[calc(100dvh-var(--app-header-h,0px)-var(--page-actions-h,0px))] xl:grid-cols-[minmax(0,1fr)_20rem] xl:grid-rows-[minmax(0,1fr)]"
               >
-                <div class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
-                  <div role="tablist" aria-label="Panels" class="mb-2 flex gap-1">
-                    @for (tab of leftTabs; track tab.id) {
-                      <button
-                        type="button"
-                        role="tab"
-                        class="panel-tab cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
-                        [class]="
-                          tab.id === leftTab()
-                            ? 'bg-surface-inverse text-fg-on-inverse'
-                            : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
-                        "
-                        [attr.aria-selected]="tab.id === leftTab()"
-                        (click)="leftTab.set(tab.id)"
-                      >
-                        {{ tab.label }}
-                      </button>
-                    }
-                  </div>
-                  @if (leftTab() === 'routes') {
-                    <nav
-                      aria-label="Routes"
-                      class="text-[0.8125rem]"
-                      [attr.data-qits-source]="marks.source"
-                      data-qits-derived="routes"
-                    >
-                      @for (row of shownRows(); track row.fullPath) {
-                        <div
-                          class="route-row group flex w-full items-center rounded"
-                          [attr.data-qits-item]="row.kind === 'segment' ? null : marks.route(row)"
-                          [class]="
-                            row.kind === 'route' && row.fullPath === selectedPath()
-                              ? 'bg-surface-inverse text-fg-on-inverse'
-                              : row.kind === 'route'
-                                ? 'hover:bg-surface-subtle'
-                                : 'text-fg-muted'
-                          "
-                        >
-                          <button
-                            type="button"
-                            class="route flex min-w-0 flex-1 items-center gap-1.5 py-0.5 text-left font-mono"
-                            [style.padding-left.rem]="0.5 + row.depth * 0.875"
-                            [class]="row.kind === 'route' ? 'cursor-pointer' : 'cursor-default'"
-                            [disabled]="row.kind !== 'route'"
-                            [attr.aria-current]="row.fullPath === selectedPath() ? 'page' : null"
-                            (click)="select(row.fullPath)"
-                          >
-                            <span
-                              class="shrink-0"
-                              [attr.data-qits-derived]="row.kind === 'segment' ? null : 'fullPath'"
-                              >{{ row.segment }}</span
-                            >
-                            @if (row.forward) {
-                              <span
-                                class="forward-mark shrink-0 text-[0.6875rem] opacity-70"
-                                data-qits-field="forward"
-                                role="img"
-                                aria-label="Forwards"
-                                title="Forwards"
-                                >↪</span
-                              >
-                            }
-                            @if (row.kind === 'redirect') {
-                              <span
-                                class="min-w-0 truncate text-[0.6875rem]"
-                                data-qits-field="redirectTo"
-                                >→ {{ row.redirectTo }}</span
-                              >
-                            }
-                          </button>
-                          @if (
-                            row.kind === 'route' ? outcomeMarks().get(row.fullPath) : null;
-                            as mark
-                          ) {
-                            @if (mark.outcomes > 0) {
-                              <span
-                                class="outcome-mark mr-1 shrink-0 rounded px-1 text-[0.6875rem] leading-4 tabular-nums"
-                                data-qits-derived="outcomes"
-                                [class.gap]="mark.gaps > 0"
-                                [class]="
-                                  mark.gaps > 0
-                                    ? 'bg-warning-soft text-warning-strong'
-                                    : 'opacity-70'
-                                "
-                                role="img"
-                                [attr.aria-label]="markLabel(mark)"
-                                [title]="markLabel(mark)"
-                                >◆{{ mark.outcomes }}</span
-                              >
-                            }
-                          }
-                          @if (row.parent) {
-                            <!-- − on hover, + while folded: pseudo-content, so the row's text stays its count. -->
-                            <button
-                              type="button"
-                              class="fold relative min-w-6 shrink-0 cursor-pointer self-stretch pr-2 pl-1 text-right text-[0.6875rem] tabular-nums after:absolute after:inset-y-0 after:right-2 after:flex after:items-center after:font-semibold pointer-fine:group-hover:aria-expanded:after:content-['−'] pointer-fine:aria-[expanded=false]:after:content-['+']"
-                              [attr.aria-expanded]="!row.collapsed"
-                              [attr.aria-label]="
-                                (row.collapsed ? 'Expand /' : 'Collapse /') + row.fullPath
-                              "
-                              (click)="toggleFold(row.fullPath)"
-                            >
-                              <span
-                                class="opacity-70 pointer-fine:group-hover:invisible pointer-fine:[[aria-expanded=false]>&]:invisible"
-                                [attr.data-qits-derived]="row.kind === 'route' ? 'freezes' : null"
-                                >{{ row.kind === 'route' ? row.states : '' }}</span
-                              >
-                            </button>
-                          } @else if (row.kind === 'route') {
-                            <span
-                              class="shrink-0 pr-2 text-[0.6875rem] tabular-nums opacity-70"
-                              data-qits-derived="freezes"
-                              >{{ row.states }}</span
-                            >
-                          }
-                        </div>
-                      }
-                    </nav>
-                  } @else if (leftTab() === 'entities') {
-                    <section
-                      aria-label="Entities"
-                      class="text-[0.8125rem]"
-                      [attr.data-qits-source]="marks.source"
-                    >
-                      @switch (entityState()) {
-                        @case ('loading') {
-                          <p class="m-0 text-fg-soft">Reading the entity maps…</p>
-                        }
-                        @case ('error') {
-                          <p class="entities-error m-0 text-danger">
-                            Could not read the entity maps.
-                          </p>
-                        }
-                        @default {
-                          <p class="entity-summary m-0 font-semibold" data-qits-derived="entities">
-                            {{ entityCounts().untouched }} of {{ entityCounts().total }} domain
-                            entities have no route
-                          </p>
-                          @if (entityCounts().leftOut; as leftOut) {
-                            <p
-                              class="left-out m-0 mt-0.5 text-xs text-fg-soft"
-                              data-qits-derived="entities"
-                            >
-                              {{ leftOut }} technical or projection
-                              {{ leftOut === 1 ? 'entity' : 'entities' }} left out.
-                            </p>
-                          }
-                          @for (group of entityGroups(); track group.key) {
-                            <h3 class="group m-0 mt-3 mb-1 text-xs font-semibold text-fg-soft">
-                              {{ group.application }}
-                            </h3>
-                            @switch (group.status) {
-                              @case ('none') {
-                                <p class="no-map m-0 text-xs text-fg-soft">
-                                  No entity map published
-                                </p>
-                              }
-                              @case ('error') {
-                                <p class="map-error m-0 text-xs text-danger">
-                                  Could not read its entity map
-                                </p>
-                              }
-                              @case ('loading') {
-                                <p class="m-0 text-xs text-fg-soft">Reading…</p>
-                              }
-                              @default {
-                                @for (entity of group.entities; track entity.key) {
-                                  <div
-                                    class="flex items-center gap-0.5"
-                                    [attr.data-qits-item]="marks.entity(entity)"
-                                  >
-                                    <button
-                                      type="button"
-                                      class="entity flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left"
-                                      [class]="
-                                        entity.key === selectedEntity()?.key
-                                          ? 'bg-surface-inverse text-fg-on-inverse'
-                                          : 'hover:bg-surface-subtle'
-                                      "
-                                      [attr.aria-current]="
-                                        entity.key === selectedEntity()?.key ? 'true' : null
-                                      "
-                                      (click)="pickedEntity.set(entity.key)"
-                                    >
-                                      <span
-                                        class="min-w-0 truncate font-mono"
-                                        data-qits-derived="entity"
-                                        >{{ entity.name }}</span
-                                      >
-                                      @if (entity.routes.length) {
-                                        <span
-                                          class="ml-auto text-[0.6875rem] tabular-nums opacity-70"
-                                          data-qits-derived="operations"
-                                          >{{ entity.routes.length }}</span
-                                        >
-                                      } @else {
-                                        <ui-chip
-                                          class="untouched ml-auto"
-                                          data-qits-derived="operations"
-                                          tone="waiting"
-                                          label="No route shows this"
-                                        />
-                                      }
-                                    </button>
-                                    @if (slug(); as project) {
-                                      <a
-                                        class="entity-link shrink-0 px-1 text-xs text-fg-soft no-underline hover:text-fg"
-                                        [qitsExit]="entityPages.listedEntity"
-                                        [exitParams]="{
-                                          slug: project,
-                                          repo: entity.repository,
-                                          entity: entity.entity,
-                                        }"
-                                        [attr.aria-label]="'Open ' + entity.name + ' entity page'"
-                                        [title]="'Open ' + entity.name + ' entity page'"
-                                        >↗</a
-                                      >
-                                    }
-                                  </div>
-                                } @empty {
-                                  <p class="m-0 text-xs text-fg-soft">No domain entity.</p>
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    </section>
-                  } @else {
-                    <section
-                      aria-label="Inbound outcomes"
-                      class="text-[0.8125rem]"
-                      [attr.data-qits-source]="marks.source"
-                    >
-                      @if (outcomeStatus() === 'declared') {
-                        @if (inboundCounts().unreachable > 0) {
-                          <p
-                            class="inbound-summary m-0 font-semibold"
-                            data-qits-derived="routes outcomes"
-                          >
-                            {{ inboundCounts().unreachable }} of {{ inboundCounts().total }} routes
-                            can't be reached: no outcome leads to
-                            {{ inboundCounts().unreachable === 1 ? 'it' : 'them' }}.
-                          </p>
-                        }
-                        <ul class="m-0 mt-2 flex list-none flex-col gap-0.5 p-0">
-                          @for (route of inboundRoutes(); track route.fullPath) {
-                            <li class="inbound-route" [attr.data-qits-item]="marks.route(route)">
-                              <button
-                                type="button"
-                                class="inbound flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left hover:bg-surface-subtle"
-                                [class.unreachable]="route.unreachable"
-                                [attr.aria-expanded]="expandedInbound().has(route.fullPath)"
-                                (click)="toggleInbound(route.fullPath)"
-                              >
-                                <span class="min-w-0 truncate font-mono" data-qits-field="fullPath"
-                                  >/{{ route.fullPath }}</span
-                                >
-                                <span class="ml-auto flex shrink-0 items-center gap-1">
-                                  @if (route.entry) {
-                                    <ui-chip
-                                      class="entry"
-                                      data-qits-field="entry"
-                                      label="Entry point"
-                                    />
-                                  }
-                                  @if (route.unreachable) {
-                                    <ui-chip
-                                      class="no-inbound"
-                                      data-qits-derived="outcomes"
-                                      tone="waiting"
-                                      label="No outcome leads here"
-                                    />
-                                  }
-                                  @if (route.sources.length) {
-                                    <span
-                                      class="inbound-count text-[0.6875rem] tabular-nums opacity-70"
-                                      data-qits-derived="outcomes"
-                                      >{{ route.sources.length }}</span
-                                    >
-                                  }
-                                </span>
-                              </button>
-                              @if (expandedInbound().has(route.fullPath)) {
-                                <ul class="m-0 mb-1 ml-4 flex list-none flex-col gap-0.5 p-0">
-                                  @for (source of route.sources; track source.outcome.key) {
-                                    <ng-container
-                                      [ngTemplateOutlet]="outcomeSource"
-                                      [ngTemplateOutletContext]="{
-                                        $implicit: source,
-                                        target: route.fullPath,
-                                      }"
-                                    />
-                                  } @empty {
-                                    <li class="no-sources px-2 text-xs text-fg-soft">
-                                      {{
-                                        route.entry
-                                          ? 'Entered from outside the app.'
-                                          : 'No outcome leads here.'
-                                      }}
-                                    </li>
-                                  }
-                                </ul>
-                              }
-                            </li>
-                          }
-                        </ul>
-                        <h3 class="outcome-group m-0 mt-3 mb-1 text-xs font-semibold text-fg-soft">
-                          Leaves without a fixed target
-                        </h3>
-                        <ul class="unfixed m-0 flex list-none flex-col gap-0.5 p-0">
-                          @for (source of unfixed(); track source.outcome.key) {
-                            <ng-container
-                              [ngTemplateOutlet]="outcomeSource"
-                              [ngTemplateOutletContext]="{ $implicit: source, target: null }"
-                            />
-                          } @empty {
-                            <li class="text-xs text-fg-soft">No return or external outcome.</li>
-                          }
-                        </ul>
-                      } @else {
-                        <ng-container [ngTemplateOutlet]="outcomesMissing" />
-                      }
-                    </section>
-                  }
-                </div>
-
                 <section aria-label="Preview" class="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pb-6">
                   @if (selectedPath(); as path) {
                     <h2
@@ -1646,6 +1330,340 @@ interface EntityGroup {
       }
     </div>
 
+    <!--
+      The builder's own navigation, in the shell's sidebar (qits-2493, \`SidebarOutlet\`): Routes,
+      Entities and Outcomes as the sidebar's entries, the open one's list indented below it, as a
+      section's pages are. Choosing a route, an entity or an outcome's source closes the burger's
+      navigation; a fold, an inbound row or another entry keeps it open.
+    -->
+    <ng-template #builderNav>
+      <ul class="m-0 list-none p-0" aria-label="UI builder">
+        @for (tab of leftTabs; track tab.id) {
+          <li>
+            <button
+              type="button"
+              class="panel-entry block w-full cursor-pointer rounded-md border-0 bg-transparent px-3 py-[0.4rem] text-left text-fg-soft hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+              [attr.aria-current]="tab.id === leftTab() ? 'page' : null"
+              (click)="leftTab.set(tab.id)"
+            >
+              {{ tab.label }}
+            </button>
+            @if (tab.id === leftTab()) {
+              <div class="mt-0.5 mb-1 ml-3 border-l border-line pl-2">
+                @if (leftTab() === 'routes') {
+                  <nav
+                    aria-label="Routes"
+                    class="text-[0.8125rem]"
+                    [attr.data-qits-source]="marks.source"
+                    data-qits-derived="routes"
+                  >
+                    @for (row of shownRows(); track row.fullPath) {
+                      <div
+                        class="route-row group flex w-full items-center rounded"
+                        [attr.data-qits-item]="row.kind === 'segment' ? null : marks.route(row)"
+                        [class]="
+                          row.kind === 'route' && row.fullPath === selectedPath()
+                            ? 'bg-surface-inverse text-fg-on-inverse'
+                            : row.kind === 'route'
+                              ? 'hover:bg-surface-subtle'
+                              : 'text-fg-muted'
+                        "
+                      >
+                        <button
+                          type="button"
+                          class="route flex min-w-0 flex-1 items-center gap-1.5 py-0.5 text-left font-mono"
+                          [style.padding-left.rem]="0.5 + row.depth * 0.875"
+                          [class]="row.kind === 'route' ? 'cursor-pointer' : 'cursor-default'"
+                          [disabled]="row.kind !== 'route'"
+                          [attr.aria-current]="row.fullPath === selectedPath() ? 'page' : null"
+                          (click)="select(row.fullPath); closeSidebar()"
+                        >
+                          <span
+                            class="min-w-0 truncate"
+                            [attr.data-qits-derived]="row.kind === 'segment' ? null : 'fullPath'"
+                            >{{ row.segment }}</span
+                          >
+                          @if (row.forward) {
+                            <span
+                              class="forward-mark shrink-0 text-[0.6875rem] opacity-70"
+                              data-qits-field="forward"
+                              role="img"
+                              aria-label="Forwards"
+                              title="Forwards"
+                              >↪</span
+                            >
+                          }
+                          @if (row.kind === 'redirect') {
+                            <span
+                              class="min-w-0 truncate text-[0.6875rem]"
+                              data-qits-field="redirectTo"
+                              >→ {{ row.redirectTo }}</span
+                            >
+                          }
+                        </button>
+                        @if (
+                          row.kind === 'route' ? outcomeMarks().get(row.fullPath) : null;
+                          as mark
+                        ) {
+                          @if (mark.outcomes > 0) {
+                            <span
+                              class="outcome-mark mr-1 shrink-0 rounded px-1 text-[0.6875rem] leading-4 tabular-nums"
+                              data-qits-derived="outcomes"
+                              [class.gap]="mark.gaps > 0"
+                              [class]="
+                                mark.gaps > 0 ? 'bg-warning-soft text-warning-strong' : 'opacity-70'
+                              "
+                              role="img"
+                              [attr.aria-label]="markLabel(mark)"
+                              [title]="markLabel(mark)"
+                              >◆{{ mark.outcomes }}</span
+                            >
+                          }
+                        }
+                        @if (row.parent) {
+                          <!-- − on hover, + while folded: pseudo-content, so the row's text stays its count. -->
+                          <button
+                            type="button"
+                            class="fold relative min-w-6 shrink-0 cursor-pointer self-stretch pr-2 pl-1 text-right text-[0.6875rem] tabular-nums after:absolute after:inset-y-0 after:right-2 after:flex after:items-center after:font-semibold pointer-fine:group-hover:aria-expanded:after:content-['−'] pointer-fine:aria-[expanded=false]:after:content-['+']"
+                            [attr.aria-expanded]="!row.collapsed"
+                            [attr.aria-label]="
+                              (row.collapsed ? 'Expand /' : 'Collapse /') + row.fullPath
+                            "
+                            (click)="toggleFold(row.fullPath)"
+                          >
+                            <span
+                              class="opacity-70 pointer-fine:group-hover:invisible pointer-fine:[[aria-expanded=false]>&]:invisible"
+                              [attr.data-qits-derived]="row.kind === 'route' ? 'freezes' : null"
+                              >{{ row.kind === 'route' ? row.states : '' }}</span
+                            >
+                          </button>
+                        } @else if (row.kind === 'route') {
+                          <span
+                            class="shrink-0 pr-2 text-[0.6875rem] tabular-nums opacity-70"
+                            data-qits-derived="freezes"
+                            >{{ row.states }}</span
+                          >
+                        }
+                      </div>
+                    }
+                  </nav>
+                } @else if (leftTab() === 'entities') {
+                  <section
+                    aria-label="Entities"
+                    class="text-[0.8125rem]"
+                    [attr.data-qits-source]="marks.source"
+                  >
+                    @switch (entityState()) {
+                      @case ('loading') {
+                        <p class="m-0 text-fg-soft">Reading the entity maps…</p>
+                      }
+                      @case ('error') {
+                        <p class="entities-error m-0 text-danger">
+                          Could not read the entity maps.
+                        </p>
+                      }
+                      @default {
+                        <p class="entity-summary m-0 font-semibold" data-qits-derived="entities">
+                          {{ entityCounts().untouched }} of {{ entityCounts().total }} domain
+                          entities have no route
+                        </p>
+                        @if (entityCounts().leftOut; as leftOut) {
+                          <p
+                            class="left-out m-0 mt-0.5 text-xs text-fg-soft"
+                            data-qits-derived="entities"
+                          >
+                            {{ leftOut }} technical or projection
+                            {{ leftOut === 1 ? 'entity' : 'entities' }} left out.
+                          </p>
+                        }
+                        @for (group of entityGroups(); track group.key) {
+                          <h3 class="group m-0 mt-3 mb-1 text-xs font-semibold text-fg-soft">
+                            {{ group.application }}
+                          </h3>
+                          @switch (group.status) {
+                            @case ('none') {
+                              <p class="no-map m-0 text-xs text-fg-soft">No entity map published</p>
+                            }
+                            @case ('error') {
+                              <p class="map-error m-0 text-xs text-danger">
+                                Could not read its entity map
+                              </p>
+                            }
+                            @case ('loading') {
+                              <p class="m-0 text-xs text-fg-soft">Reading…</p>
+                            }
+                            @default {
+                              @for (entity of group.entities; track entity.key) {
+                                <div
+                                  class="flex items-center gap-0.5"
+                                  [attr.data-qits-item]="marks.entity(entity)"
+                                >
+                                  <button
+                                    type="button"
+                                    class="entity flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left"
+                                    [class]="
+                                      entity.key === selectedEntity()?.key
+                                        ? 'bg-surface-inverse text-fg-on-inverse'
+                                        : 'hover:bg-surface-subtle'
+                                    "
+                                    [attr.aria-current]="
+                                      entity.key === selectedEntity()?.key ? 'true' : null
+                                    "
+                                    (click)="pickedEntity.set(entity.key); closeSidebar()"
+                                  >
+                                    <span
+                                      class="min-w-0 truncate font-mono"
+                                      data-qits-derived="entity"
+                                      [title]="entity.name"
+                                      >{{ entity.name }}</span
+                                    >
+                                    @if (entity.routes.length) {
+                                      <span
+                                        class="ml-auto text-[0.6875rem] tabular-nums opacity-70"
+                                        data-qits-derived="operations"
+                                        >{{ entity.routes.length }}</span
+                                      >
+                                    } @else {
+                                      <ui-chip
+                                        class="untouched ml-auto"
+                                        data-qits-derived="operations"
+                                        tone="waiting"
+                                        label="No route shows this"
+                                      />
+                                    }
+                                  </button>
+                                  @if (slug(); as project) {
+                                    <a
+                                      class="entity-link shrink-0 px-1 text-xs text-fg-soft no-underline hover:text-fg"
+                                      [qitsExit]="entityPages.listedEntity"
+                                      [exitParams]="{
+                                        slug: project,
+                                        repo: entity.repository,
+                                        entity: entity.entity,
+                                      }"
+                                      [attr.aria-label]="'Open ' + entity.name + ' entity page'"
+                                      [title]="'Open ' + entity.name + ' entity page'"
+                                      (click)="closeSidebar()"
+                                      >↗</a
+                                    >
+                                  }
+                                </div>
+                              } @empty {
+                                <p class="m-0 text-xs text-fg-soft">No domain entity.</p>
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  </section>
+                } @else {
+                  <section
+                    aria-label="Inbound outcomes"
+                    class="text-[0.8125rem]"
+                    [attr.data-qits-source]="marks.source"
+                  >
+                    @if (outcomeStatus() === 'declared') {
+                      @if (inboundCounts().unreachable > 0) {
+                        <p
+                          class="inbound-summary m-0 font-semibold"
+                          data-qits-derived="routes outcomes"
+                        >
+                          {{ inboundCounts().unreachable }} of {{ inboundCounts().total }} routes
+                          can't be reached: no outcome leads to
+                          {{ inboundCounts().unreachable === 1 ? 'it' : 'them' }}.
+                        </p>
+                      }
+                      <ul class="m-0 mt-2 flex list-none flex-col gap-0.5 p-0">
+                        @for (route of inboundRoutes(); track route.fullPath) {
+                          <li class="inbound-route" [attr.data-qits-item]="marks.route(route)">
+                            <button
+                              type="button"
+                              class="inbound flex w-full cursor-pointer items-center gap-1.5 rounded py-0.5 pr-2 pl-2 text-left hover:bg-surface-subtle"
+                              [class.unreachable]="route.unreachable"
+                              [attr.aria-expanded]="expandedInbound().has(route.fullPath)"
+                              (click)="toggleInbound(route.fullPath)"
+                            >
+                              <span
+                                class="min-w-0 truncate font-mono"
+                                data-qits-field="fullPath"
+                                [title]="'/' + route.fullPath"
+                                >/{{ route.fullPath }}</span
+                              >
+                              <span class="ml-auto flex shrink-0 items-center gap-1">
+                                @if (route.entry) {
+                                  <ui-chip
+                                    class="entry"
+                                    data-qits-field="entry"
+                                    label="Entry point"
+                                  />
+                                }
+                                @if (route.unreachable) {
+                                  <ui-chip
+                                    class="no-inbound"
+                                    data-qits-derived="outcomes"
+                                    tone="waiting"
+                                    label="No outcome leads here"
+                                  />
+                                }
+                                @if (route.sources.length) {
+                                  <span
+                                    class="inbound-count text-[0.6875rem] tabular-nums opacity-70"
+                                    data-qits-derived="outcomes"
+                                    >{{ route.sources.length }}</span
+                                  >
+                                }
+                              </span>
+                            </button>
+                            @if (expandedInbound().has(route.fullPath)) {
+                              <ul class="m-0 mb-1 ml-4 flex list-none flex-col gap-0.5 p-0">
+                                @for (source of route.sources; track source.outcome.key) {
+                                  <ng-container
+                                    [ngTemplateOutlet]="outcomeSource"
+                                    [ngTemplateOutletContext]="{
+                                      $implicit: source,
+                                      target: route.fullPath,
+                                    }"
+                                  />
+                                } @empty {
+                                  <li class="no-sources px-2 text-xs text-fg-soft">
+                                    {{
+                                      route.entry
+                                        ? 'Entered from outside the app.'
+                                        : 'No outcome leads here.'
+                                    }}
+                                  </li>
+                                }
+                              </ul>
+                            }
+                          </li>
+                        }
+                      </ul>
+                      <h3 class="outcome-group m-0 mt-3 mb-1 text-xs font-semibold text-fg-soft">
+                        Leaves without a fixed target
+                      </h3>
+                      <ul class="unfixed m-0 flex list-none flex-col gap-0.5 p-0">
+                        @for (source of unfixed(); track source.outcome.key) {
+                          <ng-container
+                            [ngTemplateOutlet]="outcomeSource"
+                            [ngTemplateOutletContext]="{ $implicit: source, target: null }"
+                          />
+                        } @empty {
+                          <li class="text-xs text-fg-soft">No return or external outcome.</li>
+                        }
+                      </ul>
+                    } @else {
+                      <ng-container [ngTemplateOutlet]="outcomesMissing" />
+                    }
+                  </section>
+                }
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </ng-template>
+
     <!-- Why no outcome is listed, in place of a list (qits-2006). -->
     <ng-template #outcomesMissing>
       @switch (outcomeStatus()) {
@@ -1687,7 +1705,7 @@ interface EntityGroup {
             source.outcome.declared.file +
             ')'
           "
-          (click)="pickSource(source.outcome, target)"
+          (click)="pickSource(source.outcome, target); closeSidebar()"
         >
           <span class="source-scope text-xs opacity-70">{{ source.scope }}</span>
           <span class="font-mono text-xs">{{ source.outcome.mark }}</span>
@@ -2099,6 +2117,10 @@ export class UiBuilderPage {
   private readonly injector = inject(Injector);
   private readonly theme = inject(ThemePreferenceStore);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly sidebar = inject(SidebarOutlet);
+
+  /** The builder's own navigation (qits-2493), which the shell draws in its sidebar. */
+  private readonly builderNav = viewChild<TemplateRef<unknown>>('builderNav');
 
   /** The marks of what the page shows of the docs files it reads (qits-2220; `builder-marks.ts`). */
   protected readonly marks = BUILDER_MARKS;
@@ -3643,6 +3665,25 @@ export class UiBuilderPage {
       onCleanup(() => observer.disconnect());
     });
     const destroy = inject(DestroyRef);
+    // The builder's navigation in the shell's sidebar (qits-2493), in the browser only and while
+    // the bundle is in: until then, and with nothing published, the repository sidebar stays.
+    let shown: TemplateRef<unknown> | null = null;
+    effect(() => {
+      const nav = this.builderNav();
+      if (!nav || !this.browser) return;
+      const loaded = this.bundle()?.status === 'loaded';
+      untracked(() => {
+        if (loaded) {
+          shown = nav;
+          this.sidebar.show(nav);
+        } else {
+          this.sidebar.clear(nav);
+        }
+      });
+    });
+    destroy.onDestroy(() => {
+      if (shown) this.sidebar.clear(shown);
+    });
     this.store.follow(() => this.repo() || undefined, destroy);
     this.entityMaps.follow(() => this.repo() || undefined, destroy);
   }
@@ -4027,12 +4068,23 @@ export class UiBuilderPage {
     });
   }
 
-  /** Scrolls the selected tree row into view once the selection is drawn. */
+  /**
+   * Asks the shell to close the burger's navigation (qits-2493): a choice in the builder's
+   * navigation, which changes what the page shows.
+   */
+  protected closeSidebar(): void {
+    this.sidebar.close();
+  }
+
+  /**
+   * Scrolls the selected tree row into view once the selection is drawn; the tree is in the shell's
+   * sidebar (qits-2493), outside the page's element.
+   */
   private revealSelected(): void {
     afterNextRender(
       () =>
-        this.host.nativeElement
-          .querySelector('nav button.route[aria-current="page"]')
+        this.host.nativeElement.ownerDocument
+          .querySelector('nav[aria-label="Routes"] button.route[aria-current="page"]')
           ?.scrollIntoView?.({ block: 'nearest' }),
       { injector: this.injector },
     );

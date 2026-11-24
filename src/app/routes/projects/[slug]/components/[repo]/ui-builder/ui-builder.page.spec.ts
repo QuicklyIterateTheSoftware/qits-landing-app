@@ -1,14 +1,17 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { By } from '@angular/platform-browser';
+import { provideRouter, Router, RouterOutlet } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { client as artifactsClient } from '../../../../../../api/artifacts/client.gen';
 import { provideHeyApiClient as provideArtifactsClient } from '../../../../../../api/artifacts/client/client.gen';
 import { client as projectsClient } from '../../../../../../api/projects/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/projects/client/client.gen';
 import { ThemePreferenceStore } from '$core/appearance/theme-preference';
+import { SidebarOutlet } from '$layout/shell/sidebar-outlet';
 import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { DomainEvents, EVENT_SOURCE, type EventSourceLike } from '$core/events/domain-events';
 import { formatInstant } from '$core/release-requests/release-request-model';
@@ -180,11 +183,35 @@ function words(element: Element): string {
     .join(' ');
 }
 
-/** Clicks the left panel's tab named `name`. */
+/** The builder's sidebar entries (qits-2493): Routes, Entities, Outcomes. */
+const ENTRIES = '[aria-label="UI builder"] button.panel-entry';
+
+/** Clicks the builder's sidebar entry named `name` (qits-2493). */
 function clickTab(element: HTMLElement, name: string): void {
-  [...element.querySelectorAll<HTMLButtonElement>('[aria-label="Panels"] [role="tab"]')]
+  [...element.querySelectorAll<HTMLButtonElement>(ENTRIES)]
     .find((tab) => tab.textContent?.trim() === name)!
     .click();
+}
+
+/**
+ * A stand-in for the shell (qits-2493): the template the page holds in `SidebarOutlet`, drawn
+ * before the routed page as the shell's sidebar draws it, so a case reads and clicks the builder's
+ * navigation within the same element as the page.
+ */
+@Component({
+  selector: 'app-test-sidebar-host',
+  imports: [NgTemplateOutlet, RouterOutlet],
+  template: `
+    <div data-test-sidebar>
+      @if (outlet.template(); as nav) {
+        <ng-container [ngTemplateOutlet]="nav" />
+      }
+    </div>
+    <router-outlet />
+  `,
+})
+class SidebarHost {
+  protected readonly outlet = inject(SidebarOutlet);
 }
 
 describe('UiBuilderPage', () => {
@@ -213,7 +240,15 @@ describe('UiBuilderPage', () => {
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
         provideRouter([
-          { path: 'projects/:slug/components/:repo/ui-builder', component: UiBuilderPage },
+          {
+            path: '',
+            component: SidebarHost,
+            children: [
+              { path: 'projects/:slug/components/:repo/ui-builder', component: UiBuilderPage },
+              // Away from the page (qits-2493): the page goes, the stand-in sidebar stays.
+              { path: 'elsewhere', children: [] },
+            ],
+          },
         ]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -273,13 +308,15 @@ describe('UiBuilderPage', () => {
 
   afterEach(() => http.verify());
 
-  /** The page for `repo` at the router, `query` appended to its address. */
+  /**
+   * The page for `repo` at the router, `query` appended to its address, below the stand-in sidebar
+   * (`SidebarHost`), whose element is `harness.routeNativeElement`.
+   */
   async function open(repo: string, query = '') {
     const harness = await RouterTestingHarness.create();
-    const page = await harness.navigateByUrl(
-      `/projects/${SLUG}/components/${repo}/ui-builder${query}`,
-      UiBuilderPage,
-    );
+    await harness.navigateByUrl(`/projects/${SLUG}/components/${repo}/ui-builder${query}`);
+    const page = harness.fixture.debugElement.query(By.directive(UiBuilderPage))
+      .componentInstance as UiBuilderPage;
     harness.detectChanges();
     await settle();
     http
@@ -424,7 +461,9 @@ describe('UiBuilderPage', () => {
     expect(disabled).toEqual([true, false, true, false, true, true]);
     expect(element.querySelector('h2')?.textContent).toBe('/projects/:slug/repositories');
     expect(texts('[aria-label="States"] [role="tab"]')).toEqual(['error', 'loaded']);
-    expect(texts('[aria-label="Panels"] [role="tab"]')).toEqual(['Routes', 'Entities', 'Outcomes']);
+    expect(texts(ENTRIES)).toEqual(['Routes', 'Entities', 'Outcomes']);
+    // The open entry is current, its list below it (qits-2493).
+    expect(texts(`${ENTRIES}[aria-current="page"]`)).toEqual(['Routes']);
     expect(element.querySelector('.frame-placeholder')?.textContent).toContain('Reading');
     // The selected state's calls (qits-2080): `error` answers listProjects, shown as the route's
     // own call since the bundle has only one route with freezes, below APP_WIDE_MIN_ROUTES.
@@ -666,9 +705,9 @@ describe('UiBuilderPage', () => {
       element.querySelector<HTMLButtonElement>('li.entity-route button')!.click();
       await navigated(fixture);
       expect(query()).toEqual({ route: 'projects/:slug/repositories' });
-      expect(
-        element.querySelector('[aria-label="Panels"] [aria-selected="true"]')?.textContent?.trim(),
-      ).toBe('Routes');
+      expect(element.querySelector(`${ENTRIES}[aria-current="page"]`)?.textContent?.trim()).toBe(
+        'Routes',
+      );
       expect(element.querySelector('nav [aria-current="page"]')?.textContent).toContain(
         'repositories',
       );
@@ -1381,6 +1420,61 @@ describe('UiBuilderPage', () => {
     });
   });
 
+  it('holds its navigation in the sidebar while the bundle is in, and lets go of it (qits-2493)', async () => {
+    const outlet = TestBed.inject(SidebarOutlet);
+    const { harness, fixture } = await open('qits-landing-app');
+    // The bundle is being read: the repository sidebar stays.
+    expect(outlet.template()).toBeNull();
+    http.expectOne(SITES_URL).flush(artifacts.body(BUNDLE, 'listDocsSites'));
+    await settle();
+    http.expectOne(VERSIONS_URL).flush(artifacts.body(BUNDLE, 'listDocsVersions'));
+    await settle();
+    http.expectOne(fileUrl('manifest.json')).flush(artifacts.body(BUNDLE, 'getDocsFile'));
+    await settle();
+    fixture.detectChanges();
+    await answerNoContracts();
+    await stable();
+    fixture.detectChanges();
+    expect(outlet.template()).not.toBeNull();
+    // No left column in the page: the preview and the right panel.
+    const element = harness.routeNativeElement as HTMLElement;
+    const page = element.querySelector('app-ui-builder-page')!;
+    expect(page.querySelector('nav')).toBeNull();
+    expect([...page.querySelector('[data-columns]')!.children].map((c) => c.tagName)).toEqual([
+      'SECTION',
+      'ASIDE',
+    ]);
+    expect(element.querySelector('[data-test-sidebar] nav[aria-label="Routes"]')).not.toBeNull();
+    // The shown state's freeze: no recording holds its bytes.
+    http.match((req) => req.url.includes('/-/'));
+    await harness.navigateByUrl('/elsewhere');
+    expect(outlet.template()).toBeNull();
+    expect(element.querySelector('[data-test-sidebar]')?.children).toHaveLength(0);
+  });
+
+  it('closes the burger’s navigation on a choice, not on a fold or an entry (qits-2493)', async () => {
+    const closes = vi.fn();
+    TestBed.inject(SidebarOutlet).onClose(closes);
+    const { fixture, element } = await render('qits-landing-app');
+    // Folded and unfolded again.
+    element.querySelector<HTMLButtonElement>('nav .route-row button.fold')!.click();
+    fixture.detectChanges();
+    element.querySelector<HTMLButtonElement>('nav .route-row button.fold')!.click();
+    fixture.detectChanges();
+    clickTab(element, 'Outcomes');
+    clickTab(element, 'Routes');
+    fixture.detectChanges();
+    expect(closes).not.toHaveBeenCalled();
+    const projects = [...element.querySelectorAll<HTMLElement>('nav .route-row')]
+      .find((row) => row.textContent?.replace(/\s+/g, '') === 'projects0')!
+      .querySelector<HTMLButtonElement>('button.route')!;
+    projects.click();
+    await navigated(fixture);
+    expect(closes).toHaveBeenCalledTimes(1);
+    // The first route's freeze: no recording holds its bytes.
+    http.match((req) => req.url.includes('/-/'));
+  });
+
   it('says so when no frozen routes are published for the repository', async () => {
     const { harness, fixture } = await open('contract-frontend');
     http.expectOne(SITES_URL).flush(artifacts.body('a published docs site', 'listDocsSites'));
@@ -1392,6 +1486,8 @@ describe('UiBuilderPage', () => {
       'No frozen routes published for contract-frontend.',
     );
     expect(element.querySelector('nav')).toBeNull();
+    // Nothing to list: the repository sidebar stays (qits-2493).
+    expect(TestBed.inject(SidebarOutlet).template()).toBeNull();
   });
 
   it('cancels a link click inside the frame and selects the route it leads to', async () => {
@@ -1404,7 +1500,7 @@ describe('UiBuilderPage', () => {
     expect(query()).toEqual({ route: 'projects' });
     expect(
       element
-        .querySelector('[aria-current="page"]')
+        .querySelector('nav [aria-current="page"]')
         ?.closest('.route-row')
         ?.textContent?.replace(/\s+/g, ''),
     ).toBe('projects0');
@@ -2681,9 +2777,9 @@ describe('UiBuilderPage', () => {
       expect(source('repositories:opened').getAttribute('aria-pressed')).toBe('true');
       expect(doc.querySelector('button')!.hasAttribute('data-qits-builder-highlight')).toBe(true);
       // The tab stays open, and a second click clears it.
-      expect(
-        element.querySelector('[aria-label="Panels"] [aria-selected="true"]')?.textContent?.trim(),
-      ).toBe('Outcomes');
+      expect(element.querySelector(`${ENTRIES}[aria-current="page"]`)?.textContent?.trim()).toBe(
+        'Outcomes',
+      );
       source('repositories:opened').click();
       fixture.detectChanges();
       expect(source('repositories:opened').getAttribute('aria-pressed')).toBe('false');

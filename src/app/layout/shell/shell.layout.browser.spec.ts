@@ -1,6 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  inject,
+  type TemplateRef,
+  viewChild,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { QITS_DOMAIN_EVENTS, QITS_LEAVE_APP } from '@qits/angular';
@@ -22,6 +29,7 @@ import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { Board } from '$ui/components/board/board';
 import { BoardCard } from '$ui/components/board/board-card';
 import { ShellLayout } from './shell.layout';
+import { SidebarOutlet } from './sidebar-outlet';
 import { goldenMaster } from '../../../testing/browser/golden-master';
 import { noPools, UPSTREAM_POOLS_PATH } from '../../../testing/browser/upstream-pools';
 import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
@@ -35,6 +43,38 @@ const settle = () => new Promise((resolve) => setTimeout(resolve));
 /** A page with fixed text, so the screenshots show the layout and nothing that loads. */
 @Component({ selector: 'app-test-page', template: `<p>Page content</p>` })
 class TestPage {}
+
+/**
+ * A page with navigation of its own (qits-2493), as the UI builder's: once rendered it holds a
+ * template in `SidebarOutlet`, one choice that asks the shell to close the burger's navigation, and
+ * lets go of it on destroy. Fixed text, as `TestPage`.
+ */
+@Component({
+  selector: 'app-nav-holding-page',
+  template: `
+    <p>Page content</p>
+    <ng-template #nav>
+      <ul class="m-0 list-none p-0" aria-label="Page navigation">
+        <li><button type="button" (click)="outlet.close()">A choice</button></li>
+      </ul>
+    </ng-template>
+  `,
+})
+class NavHoldingPage {
+  protected readonly outlet = inject(SidebarOutlet);
+  private readonly nav = viewChild.required<TemplateRef<unknown>>('nav');
+
+  constructor() {
+    let held: TemplateRef<unknown> | null = null;
+    afterNextRender(() => {
+      held = this.nav();
+      this.outlet.show(held);
+    });
+    inject(DestroyRef).onDestroy(() => {
+      if (held) this.outlet.clear(held);
+    });
+  }
+}
 
 /** A long page: actions, then a tall board, then more content; inline UI data. */
 @Component({
@@ -100,7 +140,9 @@ class PinnedPage {}
  * qits-2479, and IdP admin, `open-sidebar-idp`, qits-2481, with its pages,
  * `open-sidebar-idp-page`). Network access leaves the app for qits-network-access' own
  * frontend (qits-2361): the sidebar's entry (`open-sidebar-network-access`, qits-2262), shown with
- * no project open only (qits-2485), is pressed once. The
+ * no project open only (qits-2485), is pressed once. A page's own navigation (qits-2493) is a
+ * stand-in page holding a template (`NavHoldingPage`), shown in the repository sidebar's place and
+ * followed back once (`leave-sidebar-ui-builder`). The
  * page origins are under `PLATFORM_DOMAIN`, and `QITS_LEAVE_APP` is a spy, so the tab stays.
  */
 describe('ShellLayout (screenshots)', () => {
@@ -154,6 +196,7 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/desk', component: TestPage },
           { path: 'projects/:slug/components', component: TestPage },
           { path: 'projects/:slug/components/:repo', component: TestPage },
+          { path: 'projects/:slug/components/:repo/ui-builder', component: NavHoldingPage },
           { path: 'projects/:slug/deployments', component: TestPage },
           { path: 'projects/:slug/deployments/requests', component: TestPage },
           { path: 'projects/:slug/observability', component: TestPage },
@@ -790,6 +833,71 @@ describe('ShellLayout (screenshots)', () => {
       .toMatchTextContent('No component matches.');
   });
 
+  /** The page that holds its own navigation (`NavHoldingPage`), below `contract-service`. */
+  async function renderPageNav() {
+    const rendered = await renderProject('/components/contract-service/ui-builder');
+    await settle();
+    rendered.fixture.detectChanges();
+    await rendered.fixture.whenStable();
+    return rendered;
+  }
+
+  it('shows a page’s own navigation in the repository sidebar’s place, below “← <repo>” (qits-2493)', async () => {
+    const { fixture, project, layout } = await renderPageNav();
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect.element(navigation.getByRole('list', { name: 'Page navigation' })).toBeVisible();
+    const back = navigation.getByRole('link', { name: '← contract-service' });
+    await expect.element(back).toBeVisible();
+    await expect
+      .element(back)
+      .toHaveAttribute('href', `/projects/${project.slug}/components/contract-service`);
+    // The repository sidebar and the project's sections are not rendered meanwhile.
+    expect(navigation.getByRole('list', { name: 'Repository' }).query()).toBeNull();
+    expect(navigation.getByRole('link', { name: 'Work', exact: true }).query()).toBeNull();
+    await expect.element(layout).toMatchScreenshot('page-nav', { kind: 'DATA' });
+
+    // Let go of, the repository sidebar is back.
+    const outlet = TestBed.inject(SidebarOutlet);
+    outlet.clear(outlet.template()!);
+    fixture.detectChanges();
+    await expect.element(navigation.getByRole('list', { name: 'Repository' })).toBeVisible();
+    await expect.element(navigation.getByRole('link', { name: '← Components' })).toBeVisible();
+    expect(navigation.getByRole('list', { name: 'Page navigation' }).query()).toBeNull();
+  });
+
+  it('leave-sidebar-ui-builder overview: “← <repo>” goes back to the repository’s page and its sidebar (qits-2493)', async () => {
+    const { fixture, project } = await renderPageNav();
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    const back = navigation.getByRole('link', { name: '← contract-service' });
+    expect(await follow(fixture, back)).toBe(
+      `/projects/${project.slug}/components/contract-service`,
+    );
+    expect(reached()).toEqual(['leave-sidebar-ui-builder:overview']);
+    fixture.detectChanges();
+    // The page let go of its navigation: the repository's sidebar, Overview current.
+    await expect
+      .element(navigation.getByRole('link', { name: 'Overview' }))
+      .toHaveAttribute('aria-current', 'page');
+    expect(navigation.getByRole('list', { name: 'Page navigation' }).query()).toBeNull();
+  });
+
+  it('closes the burger’s navigation on a choice in a page’s own navigation (qits-2493)', async () => {
+    await page.viewport(390, 844);
+    const { fixture } = await renderPageNav();
+    await userEvent.click(page.getByRole('button', { name: 'Navigation' }));
+    fixture.detectChanges();
+    const navigation = page.getByRole('navigation', { name: 'qits' });
+    await expect.element(navigation).toBeVisible();
+    await userEvent.click(navigation.getByRole('button', { name: 'A choice' }));
+    fixture.detectChanges();
+    await expect
+      .element(page.getByRole('navigation', { name: 'qits', includeHidden: true }))
+      .not.toBeVisible();
+    await expect
+      .element(page.getByRole('button', { name: 'Navigation' }))
+      .toHaveAttribute('aria-expanded', 'false');
+  });
+
   it('open-sidebar-deployments-page requests: Requests below Deployments opens it', async () => {
     // On the section's page already, so its pages show below Deployments.
     const { fixture, project } = await renderProject('/deployments');
@@ -987,25 +1095,46 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
-  it('open-sidebar-orchestrator-page gc: Garbage collection below Orchestrator opens the gc process (qits-2480)', async () => {
+  /**
+   * The Orchestrator section's processes below Orchestrator in the sidebar, in this order:
+   * Garbage collection (qits-2480), Manifest scan and SBOM check (qits-2490).
+   */
+  const ORCHESTRATOR_PAGES = [
+    { label: 'Garbage collection', path: '/orchestrator/processes/gc', outcome: 'gc' },
+    { label: 'Manifest scan', path: '/orchestrator/processes/scan', outcome: 'scan' },
+    { label: 'SBOM check', path: '/orchestrator/processes/sbom-check', outcome: 'sbomCheck' },
+  ] as const;
+
+  it('lists the Orchestrator section’s processes below Orchestrator while it is open', async () => {
     await page.viewport(1280, 800);
-    const { fixture } = await render('/orchestrator');
-    const navigation = page.getByRole('navigation', { name: 'qits' });
-    const labels = navigation
+    await render('/orchestrator');
+    const labels = page
+      .getByRole('navigation', { name: 'qits' })
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(
-      labels.slice(labels.indexOf('Orchestrator'), labels.indexOf('Orchestrator') + 2),
-    ).toEqual(['Orchestrator', 'Garbage collection']);
-    const gc = navigation.getByRole('link', { name: 'Garbage collection', exact: true });
-    expect(await follow(fixture, gc)).toBe('/orchestrator/processes/gc');
-    expect(reached()).toEqual(['open-sidebar-orchestrator-page:gc']);
-    await expect.element(gc).toHaveAttribute('aria-current', 'page');
-    await expect
-      .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
-      .toHaveAttribute('aria-current', 'true');
+    const at = labels.indexOf('Orchestrator');
+    expect(labels.slice(at, at + 1 + ORCHESTRATOR_PAGES.length)).toEqual([
+      'Orchestrator',
+      ...ORCHESTRATOR_PAGES.map((process) => process.label),
+    ]);
   });
+
+  for (const process of ORCHESTRATOR_PAGES) {
+    it(`open-sidebar-orchestrator-page ${process.outcome}: ${process.label} below Orchestrator opens its process (qits-2480, qits-2490)`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render('/orchestrator');
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: process.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', process.path);
+      expect(await follow(fixture, link)).toBe(process.path);
+      expect(reached()).toEqual([`open-sidebar-orchestrator-page:${process.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
 
   it('lists the System section’s pages below System while it is open, and marks the current one', async () => {
     await page.viewport(1280, 800);
@@ -1443,6 +1572,8 @@ describe('ShellLayout (screenshots)', () => {
     { url: '/mirror/repositories', section: 'Mirror', page: 'Caches' },
     { url: '/mirror/upstreams', section: 'Mirror', page: 'OCI upstreams' },
     { url: '/orchestrator/processes/gc', section: 'Orchestrator', page: 'Garbage collection' },
+    { url: '/orchestrator/processes/scan', section: 'Orchestrator', page: 'Manifest scan' },
+    { url: '/orchestrator/processes/sbom-check', section: 'Orchestrator', page: 'SBOM check' },
     { url: '/idp/clients', section: 'IdP admin', page: 'Clients' },
     { url: '/idp/users', section: 'IdP admin', page: 'Users' },
     { url: '/idp/devices', section: 'IdP admin', page: 'Signed-in devices' },

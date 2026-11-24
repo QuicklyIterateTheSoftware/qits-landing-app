@@ -796,8 +796,9 @@ export const INTERACTIONS = {
   /**
    * `orchestrator-process.page.ts` via `PROCESS_LIST`, `PROCESS_RUNS` and `PROCESS_RUN` (qits-2359):
    * the Orchestrator section's process page shows the process, its latest runs and the shown run's
-   * steps, the run read without bodies (`bodies=false`). Refresh reads them again, and a running
-   * run is read again every 10 s (no event announces its steps moving).
+   * steps, the run read without bodies (`bodies=false`), for any process (gc; scan and sbom-check,
+   * qits-2490). Refresh reads them again, and qits-orchestrator's run events read them again
+   * (qits-2472).
    */
   'show-orchestrator-process':
     'A process page shows the process, its latest runs and the shown run’s steps',
@@ -814,20 +815,24 @@ export const INTERACTIONS = {
    */
   'open-orchestrator-step': 'A process page opens a step’s request and response, or closes it',
   /**
-   * `orchestrator-process.page.ts`: Run now's first press asks for the second, saying a run
-   * deletes; Not now takes it back. No request (qits-2359).
+   * `orchestrator-process.page.ts`: Run now's first press asks for the second, saying it is the
+   * real run (gc's deletes), or that the process has no dry run (qits-2490); Not now takes it back.
+   * No request (qits-2359).
    */
-  'ask-orchestrator-run': 'A process page’s Run now asks to be pressed again before it deletes',
+  'ask-orchestrator-run':
+    'A process page’s Run now asks to be pressed again before it does the real work',
   /**
    * `orchestrator-process.page.ts` via `START_PROCESS_RUN` (qits-2359): the confirmed Run now
-   * starts a real run (`{ dryRun: false }`) and shows it, or says why it did not start. No
-   * recording holds a real start, so the pact holds the dry run's.
+   * starts a real run (`{ dryRun: false }`) and shows it, or says why it did not start. The pact
+   * holds a real start of scan and sbom-check ("no active scan run", "no active sbom-check run",
+   * qits-2490); none of gc, whose real run the provider cannot make in its test.
    */
   'start-orchestrator-run': 'The confirmed Run now on a process page starts a run and shows it',
   /**
    * `orchestrator-process.page.ts` via `START_PROCESS_RUN` (qits-2359): Dry run starts a run that
    * deletes nothing (`{ dryRun: true }`) at once and shows it, or says why it did not start (a 409
-   * while a run is active, in the service's words).
+   * while a run is active, in the service's words). Offered only for a process with a dry run
+   * (`dryRunnable`, gc; qits-2490).
    */
   'start-orchestrator-dry-run': 'Dry run on a process page starts a dry run and shows it',
   /**
@@ -1494,6 +1499,12 @@ export const INTERACTIONS = {
    */
   'leave-sidebar-repository': 'The repository sidebar’s “← Components” goes back to the project',
   /**
+   * `shell.layout.ts`: “← <repo>” at the top of the UI builder's own sidebar (qits-2493,
+   * `SidebarOutlet`) goes back to the repository's page, and the repository sidebar. Navigates
+   * only, and names no pact.
+   */
+  'leave-sidebar-ui-builder': 'The UI builder’s sidebar “← <repo>” goes back to the repository',
+  /**
    * `contracts-frame.ts`: the Contracts and Entities tabs of a repository's contracts and entity
    * pages, one exit each. Navigates only, and names no pact (epic qits-2000).
    */
@@ -1716,8 +1727,9 @@ export const INTERACTIONS = {
   'open-sidebar-system-page': 'A System page below the sidebar’s System entry opens that page',
   /**
    * `shell.layout.ts`: a process listed below the sidebar's Orchestrator while the section is open
-   * opens its page, `orchestrator/processes/<kind>` (qits-2480: Garbage collection, `gc`).
-   * Navigates only, and names no pact.
+   * opens its page, `orchestrator/processes/<kind>` (qits-2480: Garbage collection, `gc`;
+   * qits-2490: Manifest scan, `scan`, and SBOM check, `sbom-check`). Navigates only, and names no
+   * pact.
    */
   'open-sidebar-orchestrator-page':
     'A process below the sidebar’s Orchestrator entry opens that process’s page',

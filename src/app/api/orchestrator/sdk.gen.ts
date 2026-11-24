@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetProcessRunData, GetProcessRunErrors, GetProcessRunResponses, GetProcessRunStepData, GetProcessRunStepErrors, GetProcessRunStepResponses, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesErrors, ListArtifactsCleanupRepositoriesResponses, ListProcessesData, ListProcessesErrors, ListProcessesResponses, ListProcessRunsData, ListProcessRunsErrors, ListProcessRunsResponses, PlanArtifactsCleanupRepositoryData, PlanArtifactsCleanupRepositoryErrors, PlanArtifactsCleanupRepositoryResponses, StartProcessRunData, StartProcessRunErrors, StartProcessRunResponses, SweepArtifactsCleanupRepositoryData, SweepArtifactsCleanupRepositoryErrors, SweepArtifactsCleanupRepositoryResponses } from './types.gen';
+import type { GetProcessRunData, GetProcessRunErrors, GetProcessRunResponses, GetProcessRunStepData, GetProcessRunStepErrors, GetProcessRunStepResponses, ListArtifactsCleanupRepositoriesData, ListArtifactsCleanupRepositoriesErrors, ListArtifactsCleanupRepositoriesResponses, ListProcessesData, ListProcessesErrors, ListProcessesResponses, ListProcessRunsData, ListProcessRunsErrors, ListProcessRunsResponses, StartProcessRunData, StartProcessRunErrors, StartProcessRunResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -26,28 +26,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const listArtifactsCleanupRepositories = <ThrowOnError extends boolean = false>(options?: Options<ListArtifactsCleanupRepositoriesData, ThrowOnError>): RequestResult<ListArtifactsCleanupRepositoriesResponses, ListArtifactsCleanupRepositoriesErrors, ThrowOnError> => (options?.client ?? client).get<ListArtifactsCleanupRepositoriesResponses, ListArtifactsCleanupRepositoriesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/orchestrator/api/artifacts/repositories',
-    ...options
-});
-
-/**
- * One artifacts repository's collection plan; nothing is deleted
- *
- * Reads the platform's pins and hands them to qits-artifacts' POST /artifacts/api/gc/repositories/{repository}/plan; its answer is returned verbatim.
- */
-export const planArtifactsCleanupRepository = <ThrowOnError extends boolean = false>(options: Options<PlanArtifactsCleanupRepositoryData, ThrowOnError>): RequestResult<PlanArtifactsCleanupRepositoryResponses, PlanArtifactsCleanupRepositoryErrors, ThrowOnError> => (options.client ?? client).get<PlanArtifactsCleanupRepositoryResponses, PlanArtifactsCleanupRepositoryErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/orchestrator/api/artifacts/repositories/{repository}/plan',
-    ...options
-});
-
-/**
- * Sweep one artifacts repository
- *
- * Reads the platform's pins and hands them to qits-artifacts' POST /artifacts/api/gc/repositories/{repository}/sweep; its receipt is returned verbatim. Refused while a gc run is active, and no gc run starts while it is in flight.
- */
-export const sweepArtifactsCleanupRepository = <ThrowOnError extends boolean = false>(options: Options<SweepArtifactsCleanupRepositoryData, ThrowOnError>): RequestResult<SweepArtifactsCleanupRepositoryResponses, SweepArtifactsCleanupRepositoryErrors, ThrowOnError> => (options.client ?? client).post<SweepArtifactsCleanupRepositoryResponses, SweepArtifactsCleanupRepositoryErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/orchestrator/api/artifacts/repositories/{repository}/sweep',
     ...options
 });
 

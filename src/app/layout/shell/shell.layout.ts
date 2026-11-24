@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {
   exit,
@@ -42,6 +50,7 @@ import { ThemeMenu } from '$patterns/appearance/theme-menu/theme-menu';
 import { ComponentSearch } from '$patterns/repositories/component-search/component-search';
 import { Breadcrumbs, type Crumb, type CrumbMarks } from '$ui/components/breadcrumbs/breadcrumbs';
 import { chipClass, type ChipTone } from '$ui/components/chip/chip';
+import { SidebarOutlet } from './sidebar-outlet';
 
 /** A page of the trail or the sidebar: its label and its URL, which says where the user is. */
 export interface NavPage {
@@ -237,6 +246,14 @@ export interface NavNote {
  * top of the scrolling box (the page's actions, the board's headings) reads `--app-pin-top`, which
  * covers both cases.
  *
+ * A page's own navigation (qits-2493): while a repository's page holds a template in
+ * `SidebarOutlet` (the UI builder: Routes, Entities, Outcomes and the open one's list), the sidebar
+ * draws it in the repository sidebar's place, below “← <repo>” (`leave-sidebar-ui-builder`
+ * `overview`, the repository's page); the template is the page's and runs in its context, and a
+ * choice in it that changes what the page shows closes the burger's navigation
+ * (`SidebarOutlet.close`). The page holds it in the browser only, once it has something to list, so
+ * the server render shows the repository sidebar.
+ *
  * Shell navigation is declared once, here (epic qits-2000, owner decision 3), and app-wide: the
  * sidebar's sections (`open-sidebar-section`), the work pages below Work
  * (`open-sidebar-work-page`, Ideas and one exit per `WORK_TABS` entry), the Releases pages
@@ -280,6 +297,7 @@ export interface NavNote {
     BumpsMenu,
     ComponentSearch,
     FinishToasts,
+    NgTemplateOutlet,
     NotificationsMenu,
     ReleaseMenu,
     ThemeChoices,
@@ -436,38 +454,55 @@ export interface NavNote {
           }
         </ul>
         <!-- With a repository open (qits-2492), its own pages in the project's sections' place,
-             below a way back to the project's Components; rendered only then (qits-2225). -->
+             below a way back to the project's Components; rendered only then (qits-2225). While
+             a page of it holds its own navigation (qits-2493, \`SidebarOutlet\`: the UI builder's
+             Routes, Entities and Outcomes), that instead, below a way back to the repository. -->
         @if (repository(); as repo) {
-          <ul class="m-0 list-none px-2 py-3" aria-label="Repository">
-            <li>
+          @if (pageNav.template(); as nav) {
+            <div class="px-2 py-3" data-page-nav>
               <a
-                class="block rounded-md px-3 py-[0.4rem] text-sm text-fg-muted no-underline hover:bg-surface-muted"
-                [qitsExit]="repositoryBack.components"
-                [exitParams]="{ slug: slug() }"
+                class="mb-1 block truncate rounded-md px-3 py-[0.4rem] text-sm text-fg-muted no-underline hover:bg-surface-muted"
+                [qitsExit]="pageNavBack.overview"
+                [exitParams]="{ slug: slug(), repo: repo }"
                 [exitCurrent]="null"
+                [title]="repo"
                 (click)="closeNav()"
-                >← Components</a
+                >← {{ repo }}</a
               >
-            </li>
-            <li
-              class="truncate px-3 pt-2 pb-1 font-mono text-xs font-semibold text-fg"
-              [title]="repo"
-            >
-              {{ repo }}
-            </li>
-            @for (entry of repositoryLinks(); track entry.label) {
+              <ng-container [ngTemplateOutlet]="nav" />
+            </div>
+          } @else {
+            <ul class="m-0 list-none px-2 py-3" aria-label="Repository">
               <li>
                 <a
-                  class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
-                  [qitsExit]="entry.exit"
-                  [exitParams]="{ slug: slug(), repo: repo }"
-                  [exitCurrent]="entry.current"
+                  class="block rounded-md px-3 py-[0.4rem] text-sm text-fg-muted no-underline hover:bg-surface-muted"
+                  [qitsExit]="repositoryBack.components"
+                  [exitParams]="{ slug: slug() }"
+                  [exitCurrent]="null"
                   (click)="closeNav()"
-                  >{{ entry.label }}</a
+                  >← Components</a
                 >
               </li>
-            }
-          </ul>
+              <li
+                class="truncate px-3 pt-2 pb-1 font-mono text-xs font-semibold text-fg"
+                [title]="repo"
+              >
+                {{ repo }}
+              </li>
+              @for (entry of repositoryLinks(); track entry.label) {
+                <li>
+                  <a
+                    class="block rounded-md px-3 py-[0.4rem] text-fg-soft no-underline hover:bg-surface-muted aria-[current=page]:bg-surface-active aria-[current=page]:font-semibold aria-[current=page]:text-fg"
+                    [qitsExit]="entry.exit"
+                    [exitParams]="{ slug: slug(), repo: repo }"
+                    [exitCurrent]="entry.current"
+                    (click)="closeNav()"
+                    >{{ entry.label }}</a
+                  >
+                </li>
+              }
+            </ul>
+          }
         }
         <!-- The open project's sections; switched by class while there are none. -->
         <ul class="m-0 list-none px-2 py-3" [class.hidden]="shownLinks().length === 0">
@@ -666,6 +701,21 @@ export class ShellLayout {
     components: exit('projects/:slug/components'),
   });
 
+  /**
+   * A page's own navigation in the sidebar (qits-2493): the template the open page holds, drawn in
+   * the repository sidebar's place while it holds one (the UI builder's Routes, Entities and
+   * Outcomes).
+   */
+  protected readonly pageNav = inject(SidebarOutlet);
+
+  /**
+   * The way back from a page's own navigation (qits-2493) to the repository's page, whose sidebar
+   * is the repository's again: the UI builder's “← <repo>”.
+   */
+  protected readonly pageNavBack = outcomes('leave-sidebar-ui-builder', {
+    overview: exit('projects/:slug/components/:repo'),
+  });
+
   /** Each work page's exit, by its segment (`WORK_TABS`). */
   private readonly workPageExits: Readonly<Record<string, ProjectPageExit>> = {
     refinement: this.workPages.refinement,
@@ -754,11 +804,14 @@ export class ShellLayout {
 
   /**
    * The Orchestrator section's pages below the sidebar's Orchestrator, one exit per process
-   * (qits-2480), listed while the section is open: Garbage collection (`gc`), the only process
-   * qits-orchestrator runs today. A static list: the shell reads no processes.
+   * (qits-2480), listed while the section is open: Garbage collection (`gc`), Manifest scan
+   * (`scan`) and SBOM check (`sbom-check`, qits-2490), the processes qits-orchestrator runs today. A
+   * static list: the shell reads no processes.
    */
   private readonly orchestratorPages = outcomes('open-sidebar-orchestrator-page', {
     gc: exit('orchestrator/processes/:kind'),
+    scan: exit('orchestrator/processes/:kind'),
+    sbomCheck: exit('orchestrator/processes/:kind'),
   });
 
   /**
@@ -796,14 +849,15 @@ export class ShellLayout {
    * admin's Clients, Users and Signed-in devices, one exit each of `open-sidebar-idp-page`;
    * qits-2347…qits-2356 each add one child there. Mirror lists Caches and OCI upstreams
    * (qits-2479), one exit each of `open-sidebar-mirror-page`; Orchestrator lists its processes
-   * (qits-2480): Garbage collection, which `orchestrator` opens, one exit each of
-   * `open-sidebar-orchestrator-page`.
+   * (qits-2480): Garbage collection, which `orchestrator` opens, Manifest scan and SBOM check
+   * (qits-2490), one exit each of `open-sidebar-orchestrator-page`.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     const system = this.systemPages;
     const mirror = this.mirrorPages;
     const idp = this.idpPages;
+    const orchestrator = this.orchestratorPages;
     const trail = this.trail;
     return [
       { kind: 'exit', label: 'Projects', exit: this.projects.open, crumb: trail.projects },
@@ -859,9 +913,21 @@ export class ShellLayout {
         children: [
           {
             label: 'Garbage collection',
-            exit: this.orchestratorPages.gc,
+            exit: orchestrator.gc,
             params: { kind: 'gc' },
-            path: this.orchestratorPages.gc.url({ kind: 'gc' }),
+            path: orchestrator.gc.url({ kind: 'gc' }),
+          },
+          {
+            label: 'Manifest scan',
+            exit: orchestrator.scan,
+            params: { kind: 'scan' },
+            path: orchestrator.scan.url({ kind: 'scan' }),
+          },
+          {
+            label: 'SBOM check',
+            exit: orchestrator.sbomCheck,
+            params: { kind: 'sbom-check' },
+            path: orchestrator.sbomCheck.url({ kind: 'sbom-check' }),
           },
         ],
       },
@@ -1327,6 +1393,11 @@ export class ShellLayout {
   }
 
   protected readonly navOpen = signal(false);
+
+  constructor() {
+    // A choice in a page's own navigation closes the burger's, as a sidebar link does (qits-2493).
+    inject(DestroyRef).onDestroy(this.pageNav.onClose(() => this.closeNav()));
+  }
 
   protected toggleNav(): void {
     this.navOpen.update((open) => !open);

@@ -1,6 +1,6 @@
 {
   "name": "qits-landing-app",
-  "version": "2026.1124.121416",
+  "version": "2026.1124.142255",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -64,7 +64,7 @@
     "@qits/maintenance-golden-masters": "2026.1124.131229",
     "@qits/mirror-golden-masters": "2026.1121.190031",
     "@qits/observability-golden-masters": "2026.1122.141039",
-    "@qits/orchestrator-golden-masters": "2026.1123.72319",
+    "@qits/orchestrator-golden-masters": "2026.1124.125326",
     "@qits/projects-golden-masters": "2026.1122.200309",
     "@qits/system-golden-masters": "2026.1123.194748",
     "@qits/workspace-daemon-golden-masters": "2026.1111.190934",

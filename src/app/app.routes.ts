@@ -203,8 +203,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * (`OrchestratorProcessPage`): one of qits-orchestrator's technical processes, its latest runs,
  * one run's steps by dependency depth and one step's call, reached from the root sidebar with no
  * project open. The shown run and the open step are the query (`?run=`, `?step=`), so a run is an
- * address. `orchestrator` and `orchestrator/processes` redirect to `processes/gc` (the only
- * process); it is an entry point, where qits-orchestrator-frontend's old `''` and `processes/:kind`
+ * address. `orchestrator` and `orchestrator/processes` redirect to `processes/gc` (the first of
+ * the sidebar's processes: gc, scan and sbom-check since qits-2490); it is an entry point, where qits-orchestrator-frontend's old `''` and `processes/:kind`
  * hand off.
  *
  * The IdP admin section (qits-2481) is at `idp/clients`, `idp/users` and `idp/devices`
@@ -1130,8 +1130,8 @@ export const routes: Routes = [
       },
       {
         // The Orchestrator section (qits-2359): qits-orchestrator's technical processes, bound to
-        // no project. gc is the only process (its provider states assert it), so `/orchestrator`
-        // and `/orchestrator/processes` open it; a list page waits for a second process.
+        // no project. `/orchestrator` and `/orchestrator/processes` open gc, the first of the
+        // sidebar's processes (gc, scan and sbom-check since qits-2490); the sidebar lists them.
         path: 'orchestrator',
         children: [
           { path: '', pathMatch: 'full', redirectTo: 'processes/gc' },

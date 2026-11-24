@@ -41,6 +41,12 @@ const PAST_A_POLL_MS = 30_000;
  * 202 from "no active gc run". A read still open (`loading`) and a 503 on the runs
  * (`unavailable`) are statuses only, as are a 404 on the runs (an unknown kind) and on a `?run=`.
  *
+ * The processes without a dry run (qits-2490) are shown the same way from their own recordings:
+ * Manifest scan from "the scan process", "a finished scan run" (`scan`, its `internal.follow` step
+ * whole) and "no active scan run" (Run now's real start); SBOM check from "the sbom-check process",
+ * "a finished sbom-check run" (`sbom-check`, its `check` step whole) and "no active sbom-check run".
+ * Neither offers Dry run, and neither says anything of gc's.
+ *
  * Every test skips itself while the pinned `@qits/orchestrator-golden-masters` lacks the
  * recordings (they come with qits-orchestrator's release carrying qits-2359), as the reader then
  * refuses them.
@@ -265,7 +271,7 @@ describe('OrchestratorProcessPage (screenshots)', () => {
     await expect
       .element(view.getByRole('status'))
       .toMatchTextContent(
-        'This process has never run here. Run now starts it; Dry run does everything except the deletions.',
+        'This process has never run here. Run now starts it. Dry run goes through it without changing anything.',
       );
     expect(view.getByRole('table').elements()).toHaveLength(0);
     await expect
@@ -370,7 +376,7 @@ describe('OrchestratorProcessPage (screenshots)', () => {
     await opened.settled();
     await expect
       .element(page.elementLocator(opened.page.querySelector('[data-confirm]')!))
-      .toMatchTextContent('Run garbage collection now? It deletes what the plan names.');
+      .toMatchTextContent('Run garbage collection now? This is the real run, not a dry run.');
     http.expectNone(RUNS);
     await view.getByRole('button', { name: 'Not now' }).click();
     await opened.settled();
@@ -423,4 +429,131 @@ describe('OrchestratorProcessPage (screenshots)', () => {
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('refused', { kind: 'ERROR' });
   });
+
+  /**
+   * The processes without a dry run (qits-2490): each kind's page from its own recordings, its
+   * sidebar entry current, no Dry run, Run now asking in its own words and starting a real run.
+   */
+  const UNDRY = [
+    {
+      kind: 'scan',
+      name: 'Manifest scan',
+      lede: 'Asks qits-maintenance to re-scan',
+      process: 'the scan process',
+      finished: 'a finished scan run',
+      idle: 'no active scan run',
+      step: 'internal.follow',
+      stepName: /Follow the internal scan/,
+      question: 'Run manifest scan now? It has no dry run: it does the real work at once.',
+    },
+    {
+      kind: 'sbom-check',
+      name: 'SBOM check',
+      lede: 'Asks qits-maintenance to check every released version',
+      process: 'the sbom-check process',
+      finished: 'a finished sbom-check run',
+      idle: 'no active sbom-check run',
+      step: 'check',
+      stepName: /Check the SBOMs/,
+      question: 'Run SBOM check now? It has no dry run: it does the real work at once.',
+    },
+  ] as const;
+
+  for (const shown of UNDRY) {
+    const path = `/orchestrator/processes/${shown.kind}`;
+    const runs = `/orchestrator/api/processes/${shown.kind}/runs`;
+
+    /** The kind's page, its process, runs and newest run answered from its own recordings. */
+    async function renderKind(url = path) {
+      const opened = await open(url);
+      read(PROCESSES).flush(await goldenMaster(shown.process, 'listProcesses', ORCHESTRATOR));
+      read(runs).flush(await goldenMaster(shown.finished, 'listProcessRuns', ORCHESTRATOR));
+      await opened.settled();
+      read(RUN()).flush(await goldenMaster(shown.finished, 'getProcessRun', ORCHESTRATOR));
+      await opened.settled();
+      return { opened, view: page.elementLocator(opened.page) };
+    }
+
+    it(`shows ${shown.name}: its own name and lede, its run, no Dry run`, async (context) => {
+      const recorded = await goldenMaster(shown.process, 'listProcesses', ORCHESTRATOR).catch(
+        () => undefined,
+      );
+      if (!recorded) context.skip();
+      const { opened, view } = await renderKind();
+      await expect
+        .element(view.getByRole('heading', { name: shown.name, exact: true }))
+        .toBeVisible();
+      await expect.element(view).toMatchTextContent(shown.lede);
+      expect(opened.page.textContent).not.toContain('Garbage collection');
+      expect(opened.page.textContent).not.toContain('delet');
+      const [, row] = view.getByRole('table', { name: 'Runs' }).getByRole('row').elements();
+      expect(row.textContent).toMatch(/SUCCEEDED\s*1 Jan 2026 00:00:00Z\s*0s\s*scheduled/);
+      expect(row.textContent).not.toContain('dry run');
+      await expect.element(card(opened, shown.step)).toMatchTextContent('SUCCEEDED');
+      expect(view.getByRole('button', { name: 'Dry run', exact: true }).elements()).toHaveLength(0);
+      await expect
+        .element(view.getByRole('button', { name: 'Run now', exact: true }))
+        .toBeVisible();
+      const navigation = page
+        .elementLocator(opened.frame)
+        .getByRole('navigation', { name: 'qits' });
+      await expect
+        .element(navigation.getByRole('link', { name: shown.name, exact: true }))
+        .toHaveAttribute('aria-current', 'page');
+      await fitWholePage(opened);
+      await expect
+        .element(page.elementLocator(opened.frame))
+        .toMatchScreenshot(shown.kind, { kind: 'DATA' });
+    });
+
+    it(`open-orchestrator-step opened: a ${shown.name} step’s call`, async (context) => {
+      const recorded = await goldenMaster(shown.process, 'listProcesses', ORCHESTRATOR).catch(
+        () => undefined,
+      );
+      if (!recorded) context.skip();
+      const { opened, view } = await renderKind();
+      await card(opened, shown.step).click();
+      await opened.settled();
+      expect(url()).toBe(`${path}?step=${shown.step}`);
+      read(`/orchestrator/api/runs/${RUN_ID}/steps/${shown.step}`).flush(
+        await goldenMaster(shown.finished, 'getProcessRunStep', ORCHESTRATOR),
+      );
+      await opened.settled();
+      const detail = view.getByRole('region', { name: shown.stepName });
+      await expect.element(detail).toMatchTextContent('http://dev-qits-maintenance:8080');
+      await detail.getByRole('button', { name: /^Show / }).click();
+      await opened.settled();
+      await fitWholePage(opened);
+      await expect
+        .element(page.elementLocator(opened.frame))
+        .toMatchScreenshot(`${shown.kind}-step`, { kind: 'DATA' });
+      expect(reached()).toEqual(['open-orchestrator-step:opened']);
+    });
+
+    it(`start-orchestrator-run started: ${shown.name}’s Run now asks in its words, then starts a real run`, async (context) => {
+      const recorded = await goldenMaster(shown.process, 'listProcesses', ORCHESTRATOR).catch(
+        () => undefined,
+      );
+      if (!recorded) context.skip();
+      const { opened, view } = await renderKind();
+      await view.getByRole('button', { name: 'Run now', exact: true }).click();
+      await opened.settled();
+      await expect
+        .element(page.elementLocator(opened.page.querySelector('[data-confirm]')!))
+        .toMatchTextContent(shown.question);
+      await userEvent.click(view.getByRole('button', { name: 'Confirm: run now' }));
+      await opened.settled();
+      const start = http.expectOne((request) => request.method === 'POST' && request.url === runs);
+      expect(start.request.body).toEqual({ dryRun: false });
+      start.flush(await goldenMaster(shown.idle, 'startProcessRun', ORCHESTRATOR), {
+        status: 202,
+        statusText: 'Accepted',
+      });
+      await opened.settled();
+      expect(reached()).toEqual(['ask-orchestrator-run:asked', 'start-orchestrator-run:started']);
+      expect(url()).toBe(`${path}?run=${RUN_ID}`);
+      read(runs).flush(await goldenMaster(shown.finished, 'listProcessRuns', ORCHESTRATOR));
+      await opened.settled();
+    });
+  }
 });

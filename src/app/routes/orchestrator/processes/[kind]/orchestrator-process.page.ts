@@ -66,7 +66,9 @@ interface ShownRunSource {
  * One technical process of qits-orchestrator (qits-2359), at `/orchestrator/processes/<kind>`:
  * what it is, its latest runs, one run's steps as a board by dependency depth, and one step's call
  * whole. It replaces qits-orchestrator-frontend's `processes/:kind` (and its `''`, which forwarded
- * to the only process); gc is the only kind today.
+ * to the only process then): gc, and since qits-2490 scan and sbom-check, whatever the URL names.
+ * Nothing here is any one process's: its name, its lede and whether it has a dry run
+ * (`dryRunnable`) are what `listProcesses` says of it.
  *
  * **Load budget: 3 + 1 per opened step, never a body until asked.** `PROCESS_LIST`
  * (`listProcesses`: the title, the lede, and whether the kind exists), `PROCESS_RUNS`
@@ -82,7 +84,8 @@ interface ShownRunSource {
  * a second press closes it) replace the URL rather than push it, so Back leaves the page.
  *
  * - Header: the process's `name` (the kind until it is read), its `description` as the lede; Run
- *   now, Dry run, Refresh.
+ *   now, Dry run (only for a process that has one, `dryRunnable`: scan's and sbom-check's door
+ *   refuses a dry start), Refresh.
  * - Runs: status, Started (the row's link), Took (`finishedAt − startedAt`, "—" while running or
  *   for a run that never finished), trigger with a "dry run" chip, and the summary clamped to two
  *   lines (the whole in `title`). The shown run's row is `aria-current`.
@@ -96,8 +99,9 @@ interface ShownRunSource {
  *   collapsed behind "Show <size>" ("Nothing came back." without one). A response the service cut
  *   at 1 MiB keeps its marker as text.
  *
- * **Writes.** Dry run sends `{ dryRun: true }` at once (`start-orchestrator-dry-run`). Run now
- * deletes, so its first press asks (`ask-orchestrator-run`) and the second sends `{ dryRun: false }`
+ * **Writes.** Dry run sends `{ dryRun: true }` at once (`start-orchestrator-dry-run`), and is
+ * offered only once the process is read and has one. Run now does the real work (gc's deletes),
+ * so its first press asks (`ask-orchestrator-run`) and the second sends `{ dryRun: false }`
  * (`start-orchestrator-run`). Both go through `qitsMutation`, `online-only`: a run is never queued
  * offline and never sent again by itself. Neither is disabled while a run is active: the service
  * holds the one-active-run rule and answers 409, which the page says in its words, showing the
@@ -193,9 +197,7 @@ interface ShownRunSource {
                   {{ question(known) }}
                 </p>
               } @else {
-                <p class="m-0" role="alert">
-                  Run “{{ kind() }}” now? It deletes what the plan names.
-                </p>
+                <p class="m-0" role="alert">Run “{{ kind() }}” now?</p>
               }
               <button
                 type="button"
@@ -234,8 +236,10 @@ interface ShownRunSource {
                   role="status"
                   class="m-0 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
                 >
-                  This process has never run here. Run now starts it; Dry run does everything except
-                  the deletions.
+                  This process has never run here. Run now starts it.
+                  @if (process()?.dryRunnable) {
+                    Dry run goes through it without changing anything.
+                  }
                 </p>
               } @else {
                 <div class="overflow-x-auto">
@@ -874,13 +878,26 @@ export class OrchestratorProcessPage {
     computation: () => null,
   });
 
-  /** `Run garbage collection now? It deletes what the plan names.` */
+  /**
+   * `Run garbage collection now? This is the real run, not a dry run.`, or for a process without a
+   * dry run `Run manifest scan now? It has no dry run: it does the real work at once.`
+   */
   protected question(known: Process): string {
     const name = known.name || known.kind || '';
-    return `Run ${name.charAt(0).toLowerCase()}${name.slice(1)} now? It deletes what the plan names.`;
+    // A capital that only starts the name is lowered, an acronym's is not: "SBOM check" stays.
+    const named = /^[A-Z][a-z]/.test(name)
+      ? `${name.charAt(0).toLowerCase()}${name.slice(1)}`
+      : name;
+    const run = `Run ${named} now?`;
+    return known.dryRunnable
+      ? `${run} This is the real run, not a dry run.`
+      : `${run} It has no dry run: it does the real work at once.`;
   }
 
-  /** Run now (its second press confirms), Dry run, Refresh. */
+  /** Whether the process is read and has a dry run: until then, Dry run is not offered. */
+  private readonly dryRunnable = computed(() => this.process()?.dryRunnable === true);
+
+  /** Run now (its second press confirms), Dry run (a process with one only), Refresh. */
   protected readonly actions = computed((): readonly Action[] => [
     this.confirming()
       ? {
@@ -897,13 +914,17 @@ export class OrchestratorProcessPage {
           outcomes: [this.asking.asked],
           callback: () => this.ask(),
         },
-    {
-      label: 'Dry run',
-      variant: 'muted',
-      disabled: this.busy(),
-      outcomes: [this.dryRunning.started, this.dryRunning.refused],
-      callback: () => void this.start(true),
-    },
+    ...(this.dryRunnable()
+      ? [
+          {
+            label: 'Dry run',
+            variant: 'muted',
+            disabled: this.busy(),
+            outcomes: [this.dryRunning.started, this.dryRunning.refused],
+            callback: () => void this.start(true),
+          } satisfies Action,
+        ]
+      : []),
     { label: 'Refresh', variant: 'muted', callback: () => this.refresh() },
   ]);
 
@@ -1012,7 +1033,7 @@ const MARKS = {
   summary: { derived: ['summary'] },
   requestBody: { derived: ['request.body'] },
   response: { derived: ['response'] },
-  question: { derived: ['name', 'kind'] },
+  question: { derived: ['name', 'kind', 'dryRunnable'] },
   started: { derived: ['startedAt'] },
   finished: { derived: ['finishedAt'] },
   took: { derived: ['startedAt', 'finishedAt'] },

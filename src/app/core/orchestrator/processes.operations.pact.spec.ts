@@ -2,7 +2,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { PactV4 } from '@pact-foundation/pact';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { QitsApiError } from '@qits/angular';
@@ -13,6 +13,7 @@ import type { InteractionSlug } from '../../interactions';
 import { isRecorded, orchestratorGoldenMasters as masters } from '../../../testing/golden-masters';
 import { columns } from './step-columns';
 import { explainStart } from './process-runs';
+import type { Process } from './processes.consumes';
 import {
   PROCESS_LIST,
   PROCESS_RUN,
@@ -27,7 +28,7 @@ import {
  * part left of that file (the cleanup doors are gone, qits-2477; `assertPactPart`).
  *
  * The Orchestrator section's process page (`show-orchestrator-process`) reads the process in "the
- * gc process" (gc alone); its runs and the newest run, without bodies (`bodies=false`), in "a
+ * gc process" (now listing gc, scan and sbom-check); its runs and the newest run, without bodies (`bodies=false`), in "a
  * finished gc dry run" (one dry run, 21 steps, the sweep SKIPPED); the runs in "the gc process before
  * its first run" (`[]`); and the runs and the run in "a running gc run" (one real run RUNNING, its
  * first steps SUCCEEDED, one RUNNING, the rest PENDING). A step's card (`open-orchestrator-step`)
@@ -35,9 +36,19 @@ import {
  * run (`start-orchestrator-dry-run`) starts one in "no active gc run" (202, the new run's id) and is
  * refused in "a running gc run" (409, the service's `message`).
  *
- * No recording holds a real start (`{ dryRun: false }`, Run now's second press,
- * `start-orchestrator-run`): the provider cannot run a real gc in its test, so the pact binds the
- * dry run's request and answer, and the request Run now sends is the page's plain spec's.
+ * The scan and sbom-check pages (qits-2490) read the process in "the scan process" and "the
+ * sbom-check process" (each lists all three, the kind's `dryRunnable` false); their runs, the
+ * newest run and one step whole in "a finished scan run" (four steps in two chains, `internal.follow`
+ * opened) and "a finished sbom-check run" (one step, `check`); and Run now's real start
+ * (`start-orchestrator-run`, `{ dryRun: false }`) in "no active scan run" and "no active sbom-check
+ * run" (202). Neither page offers Dry run, so their 400 for `{ dryRun: true }` is not bound.
+ *
+ * No recording holds a real gc start: the provider cannot run a real gc in its test, so gc's Run
+ * now request is the page's plain spec's.
+ *
+ * The process list is open-ended (`openEndedProcessList`): it is bound as "at least one process
+ * of this shape", never the recorded count, so a provider listing one more process still
+ * satisfies it (the old pin to exactly one is what qits-orchestrator's KNOWN_WRONG names).
  *
  * qits-orchestrator records these from its release carrying qits-2359 on (the operationIds and
  * states above); on an older `@qits/orchestrator-golden-masters` pin every interaction skips itself
@@ -63,6 +74,12 @@ const FINISHED = 'a finished gc dry run';
 const NEVER_RAN = 'the gc process before its first run';
 const RUNNING = 'a running gc run';
 const IDLE = 'no active gc run';
+const SCAN = 'the scan process';
+const SCAN_FINISHED = 'a finished scan run';
+const SCAN_IDLE = 'no active scan run';
+const SBOM = 'the sbom-check process';
+const SBOM_FINISHED = 'a finished sbom-check run';
+const SBOM_IDLE = 'no active sbom-check run';
 
 /** Every recording this spec binds; until the pin holds them all, nothing is bound or checked. */
 const RECORDED = (
@@ -76,8 +93,57 @@ const RECORDED = (
     [RUNNING, PROCESS_RUN],
     [RUNNING, START_PROCESS_RUN],
     [IDLE, START_PROCESS_RUN],
+    [SCAN, PROCESS_LIST],
+    [SCAN_FINISHED, PROCESS_RUNS],
+    [SCAN_FINISHED, PROCESS_RUN],
+    [SCAN_FINISHED, PROCESS_RUN_STEP],
+    [SCAN_IDLE, START_PROCESS_RUN],
+    [SBOM, PROCESS_LIST],
+    [SBOM_FINISHED, PROCESS_RUNS],
+    [SBOM_FINISHED, PROCESS_RUN],
+    [SBOM_FINISHED, PROCESS_RUN_STEP],
+    [SBOM_IDLE, START_PROCESS_RUN],
   ] as const
 ).every(([state, op]) => isRecorded(state, op.operationId, masters));
+
+/** One matcher of a generated pact's body rule, e.g. `{ match: 'type', min: 1, max: 1 }`. */
+interface Matcher {
+  readonly match: string;
+  min?: number;
+  max?: number;
+}
+interface GeneratedPact {
+  readonly interactions: readonly {
+    readonly comments?: {
+      readonly references?: { readonly ['qits-call']?: { readonly operationId?: string } };
+    };
+    readonly response: {
+      readonly matchingRules?: { readonly body?: Record<string, { matchers: Matcher[] }> };
+    };
+  }[];
+}
+
+/**
+ * Opens every `listProcesses` answer the written pact binds: `addGoldenInteraction` pins a list it
+ * is not told is filtered to exactly its recorded length (`min` = `max`), and the page looks up the
+ * process it shows, so any list of processes of that shape serves it: at least one, no upper
+ * bound.
+ */
+function openEndedProcessList(generated: string): void {
+  const written = JSON.parse(readFileSync(generated, 'utf8')) as GeneratedPact;
+  for (const interaction of written.interactions) {
+    if (interaction.comments?.references?.['qits-call']?.operationId !== 'listProcesses') continue;
+    const matcher = interaction.response.matchingRules?.body?.['$']?.matchers.find(
+      (m) => m.match === 'type',
+    );
+    if (!matcher || matcher.max == null) {
+      throw new Error('listProcesses no longer pins its length: update openEndedProcessList');
+    }
+    delete matcher.max;
+    matcher.min = 1;
+  }
+  writeFileSync(generated, JSON.stringify(written, null, 2));
+}
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-processes-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -125,12 +191,9 @@ describe('qits-landing-app → qits-orchestrator-service pact: the process page'
     orchestratorClient.setConfig({ baseUrl: '' });
     try {
       if (RECORDED) {
-        assertPactPart(
-          join(dir, `${CONSUMER}-${PROVIDER}.json`),
-          COMMITTED,
-          OPERATIONS,
-          'QITS_GOLDEN_UPDATE',
-        );
+        const generated = join(dir, `${CONSUMER}-${PROVIDER}.json`);
+        openEndedProcessList(generated);
+        assertPactPart(generated, COMMITTED, OPERATIONS, 'QITS_GOLDEN_UPDATE');
       }
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -146,11 +209,103 @@ describe('qits-landing-app → qits-orchestrator-service pact: the process page'
     given(PROCESS_LIST, PROCESS, 'show-orchestrator-process').executeTest(async (server) => {
       const { data, error } = await at(server.url, () => PROCESS_LIST.fetch({}));
       expect(error).toBeUndefined();
-      expect((data ?? []).map((known) => known.kind)).toEqual(['gc']);
-      expect(data?.[0]?.name).toBe('Garbage collection');
-      expect(data?.[0]?.description).toBeTruthy();
+      const gc = (data ?? []).find((known) => known.kind === 'gc');
+      expect(gc?.name).toBe('Garbage collection');
+      expect(gc?.description).toBeTruthy();
+      expect(gc?.dryRunnable).toBe(true);
     }),
   );
+
+  for (const [state, kind, name] of [
+    [SCAN, 'scan', 'Manifest scan'],
+    [SBOM, 'sbom-check', 'SBOM check'],
+  ] as const) {
+    it.skipIf(!RECORDED)(
+      `show-orchestrator-process: the ${kind} page names its process, which has no dry run`,
+      () =>
+        given(PROCESS_LIST, state, 'show-orchestrator-process').executeTest(async (server) => {
+          const { data, error } = await at(server.url, () => PROCESS_LIST.fetch({}));
+          expect(error).toBeUndefined();
+          // The mock answers the list by its shape (each element the first recorded one's), so
+          // which process is the kind's is read from the recording the page is shown with.
+          expect(data?.length).toBeGreaterThan(0);
+          expect(typeof data?.[0]?.dryRunnable).toBe('boolean');
+          expect(param(state, PROCESS_LIST.operationId, 'kind')).toBe(kind);
+          const recorded = masters
+            .body<Process[]>(state, PROCESS_LIST.operationId)
+            .find((one) => one.kind === kind);
+          expect(recorded?.name).toBe(name);
+          expect(recorded?.description).toBeTruthy();
+          expect(recorded?.dryRunnable).toBe(false);
+        }),
+    );
+  }
+
+  for (const [state, kind] of [
+    [SCAN_FINISHED, 'scan'],
+    [SBOM_FINISHED, 'sbom-check'],
+  ] as const) {
+    it.skipIf(!RECORDED)(`show-orchestrator-process: a finished ${kind} run listed`, () =>
+      given(PROCESS_RUNS, state, 'show-orchestrator-process').executeTest(async (server) => {
+        const listed = param(state, PROCESS_RUNS.operationId, 'kind');
+        expect(listed).toBe(kind);
+        const { data, error } = await at(server.url, () =>
+          PROCESS_RUNS.fetch({ path: { kind: listed } }),
+        );
+        expect(error).toBeUndefined();
+        const [run] = data ?? [];
+        expect(run?.status).toBe('SUCCEEDED');
+        expect(run?.dryRun).toBe(false);
+        expect(run?.summary).toBeTruthy();
+      }),
+    );
+
+    it.skipIf(!RECORDED)(`show-orchestrator-process: a finished ${kind} run’s steps`, () =>
+      given(PROCESS_RUN, state, 'show-orchestrator-process').executeTest(async (server) => {
+        const id = param(state, PROCESS_RUN.operationId, 'runId');
+        const { data, error } = await at(server.url, () =>
+          PROCESS_RUN.fetch({ path: { id }, query: { bodies: false } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.dryRun).toBe(false);
+        expect(data?.steps?.length).toBeGreaterThan(0);
+        expect((data?.steps ?? []).every((step) => step.status === 'SUCCEEDED')).toBe(true);
+      }),
+    );
+
+    it.skipIf(!RECORDED)(`open-orchestrator-step: one step of a ${kind} run, whole`, () =>
+      given(PROCESS_RUN_STEP, state, 'open-orchestrator-step').executeTest(async (server) => {
+        const id = param(state, PROCESS_RUN_STEP.operationId, 'runId');
+        const stepId = param(state, PROCESS_RUN_STEP.operationId, 'stepId');
+        const { data, error } = await at(server.url, () =>
+          PROCESS_RUN_STEP.fetch({ path: { id, stepId } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.id).toBe(stepId);
+        expect(data?.request?.url).toBeTruthy();
+        expect(JSON.parse(data?.response ?? 'null')).toBeTruthy();
+        expect(data?.responseBytes).toBeGreaterThan(0);
+      }),
+    );
+  }
+
+  for (const [state, kind] of [
+    [SCAN_IDLE, 'scan'],
+    [SBOM_IDLE, 'sbom-check'],
+  ] as const) {
+    it.skipIf(!RECORDED)(`start-orchestrator-run started: Run now starts a real ${kind} run`, () =>
+      given(START_PROCESS_RUN, state, 'start-orchestrator-run').executeTest(async (server) => {
+        const started = param(state, START_PROCESS_RUN.operationId, 'kind');
+        expect(started).toBe(kind);
+        expect(sentDryRun(state)).toBe(false);
+        const { data, error } = await at(server.url, () =>
+          START_PROCESS_RUN.fetch({ path: { kind: started }, body: { dryRun: false } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.id).toBeTruthy();
+      }),
+    );
+  }
 
   it.skipIf(!RECORDED)('show-orchestrator-process: the runs, newest first, a dry run listed', () =>
     given(PROCESS_RUNS, FINISHED, 'show-orchestrator-process').executeTest(async (server) => {
