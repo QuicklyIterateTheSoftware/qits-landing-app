@@ -514,7 +514,17 @@ describe('mirror routes (qits-2357)', () => {
 describe('orchestrator routes (qits-2359)', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
-      providers: [provideRouter(work), provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideRouter(work),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: EVENT_SOURCE,
+          useValue: () => ({ onmessage: null, onerror: null, readyState: 0, close: () => {} }),
+        },
+        // The process page's resources follow the app's one stream (qits-2472).
+        { provide: QITS_DOMAIN_EVENTS, useExisting: DomainEvents },
+      ],
     }),
   );
 
