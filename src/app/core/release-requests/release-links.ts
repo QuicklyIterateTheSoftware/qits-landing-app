@@ -115,8 +115,8 @@ export function docsReadPath(scope: string, site: string, version?: string): str
 /**
  * The release's own links: its tag and released commit in qits-githost, its deployment requests in
  * this app's Deployments section (only when something deploys it, qits-2323), and its adoption
- * (how far it got downstream) in this app's Maintenance section (qits-2333; it replaces the
- * retired release train in qits-maintenance-frontend).
+ * (how far it got downstream) under its repository in this app (qits-2333, qits-2489; it replaces
+ * the retired release train in qits-maintenance-frontend).
  */
 export function releaseLinks(input: {
   readonly slug: string;
@@ -156,8 +156,8 @@ export function releaseLinks(input: {
     links.push({
       label: 'Adoption of this release',
       path:
-        `/projects/${encodeURIComponent(input.slug)}/maintenance/adoption/` +
-        `${encodeURIComponent(input.repoName)}/${encodeURIComponent(version)}`,
+        `/projects/${encodeURIComponent(input.slug)}/components/` +
+        `${encodeURIComponent(input.repoName)}/adoption/${encodeURIComponent(version)}`,
       adoption: { repository: input.repoName, version },
     });
   }

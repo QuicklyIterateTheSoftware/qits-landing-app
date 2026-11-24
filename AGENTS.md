@@ -926,7 +926,7 @@ until the `@qits/mirror-golden-masters` pin records them (qits-mirror's qits-235
 
 Below the selected package's versions, `PackageReleases` (`patterns/mirror/package-releases/`,
 qits-2488) answers "are we affected by this version" where the package comes in, replacing
-Maintenance › Dependencies. It reads qits-maintenance twice per package shown, in the browser
+the retired Maintenance › Dependencies. It reads qits-maintenance twice per package shown, in the browser
 only: `MAINTENANCE_DEPENDENCIES` (`listDependencies?kind=EXTERNAL&name=`, the package's name, or for
 an image a glob on its upstream name, `*node`) for the pins, and `MAINTENANCE_DEPENDENTS`
 (`listDependencyDependents?ecosystem=&name=`) for the released artifacts of ours whose newest
@@ -1081,15 +1081,16 @@ which holds the artifacts' and the catalog's reads), mounted again by the reposi
 (`components/<repo>/artifacts`, `RepositoryArtifactsPage`, qits-2492). While a page of a repository
 is open (`repositoryTrail` finds one), the sidebar shows the repository's own entries in the
 project's sections' place (qits-2492, `repositoryLinks` in the shell, `open-sidebar-repository-page`):
-Overview, Artifacts, Docs, Contracts, Entities and UI builder, below "← Components"
+Overview, Artifacts, Docs, Contracts, Entities, UI builder, Release requests, Depends on and
+Dependents, below "← Components"
 (`leave-sidebar-repository` `components`), the way back to the project's sidebar; the project's sections are then
 not rendered (`shownLinks`). Every entry shows for every repository (each page says when it has
-nothing); Dependencies waits for qits-2489. Its pact interactions (`show-repository`) read "a project with 3 repositories" and
+nothing). Its pact interactions (`show-repository`) read "a project with 3 repositories" and
 "two projects exist", "released artifacts, some behind" and "no released artifacts", "a docs catalog
 naming contract repositories" and "a docs catalog of every kind".
 
 A repository's Release requests (qits-2506, `repositories/<repo>/release-requests`,
-`RepositoryReleaseRequestsPage`, the repository sidebar's last entry) lists only its requests, newest
+`RepositoryReleaseRequestsPage`) lists only its requests, newest
 first: `REPOSITORY_RELEASE_REQUESTS` (`listRepositoryReleaseRequests`,
 `core/release-requests/repository-release-requests.*`) by the repository's id (found by name in
 `PROJECT_REPOSITORY_PAGE`). The state filter is `?state=` (`requestFilterOf`): all (the default,
@@ -1423,56 +1424,60 @@ list's rule (`affectsDeploymentRequests`, the release's `repoId` the one reposit
 one deployment request" (the last two, and their browser tests, skip themselves until the pin
 records them).
 
-The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent route with no
-component whose pages are its children (`artifacts`, qits-2330; `bumps/:bumpId`, qits-2332;
-`adoption/:repository/:version`, qits-2333; `repositories/:name`, qits-2334; the external
-dependencies search is the Dependencies page's, qits-2331; the trains page comes as its own child
-later: qits-2335); its own
-address redirects to `dependencies` by a relative `redirectTo`, which keeps the query. The
-sidebar's Maintenance entry lists the section's pages below it while one is open
-(`open-sidebar-maintenance-page`).
-`maintenance/dependencies` (`MaintenanceDependenciesPage`) reads qits-maintenance's inventory
-through `qitsResource` over `core/maintenance/maintenance.operations.ts`
-(`MAINTENANCE_REPOSITORIES`, `listRepositories`; `MAINTENANCE_DEPENDENCIES`, `listDependencies`
-with `kind=INTERNAL` and `kind=EXTERNAL`, never the bare listing, which mixes in a repository's own
-REACTOR modules). The doors take no project, so the page keeps the pins of the repositories whose
-`project` is `SelectedProject`'s id and drops a dependency left with none. Two sections, Internal
-and External, each headed by its count of dependencies and behind pins; within one, dependencies
-with a behind (`pending`) pin first, then by name, each pin with its repository (linked to its repository page, `open-maintenance-repository`),
-version, manifest and a "behind" tag; a null `latest` shows as unknown with the `error` beside it.
-"Only behind" is `?behind=true` (written with `replaceUrl`). The name search (qits-2331, which
-replaces qits-maintenance-frontend's `external/dependencies` page) is `?name=<glob>`, pushed (Back
-is the previous search), trimmed, removed when blank: both dependencies reads then carry it
-(`kind=…&name=…`), the service matches the whole name case-sensitively (`*`, `?`), the page filters
-no name itself; without it the reads are exactly the unsearched ones. While searching, each heading
-says `matching "<glob>"`, a section with no match says so, and "nothing has been scanned" is not
-said. Only staff roles may read the inventory; a 403 says so. No domain event follows the inventory: Refresh reads all three again.
-`projectRepositories` (`core/maintenance/project-repositories.ts`) is that project filter, shared by
-the section's pages.
+A repository's maintenance (qits-2489, which removed the project's Maintenance section of
+qits-2317 and folded qits-2334's repository page into the repository) is its sidebar's last two
+entries, keyed by the repository's name (`qits-ci-service`, never the application), no project
+filter, every qits-maintenance read in the browser only.
 
-`maintenance/artifacts` (`MaintenanceArtifactsPage`, qits-2330) is what the project has released
-and who still ships an old copy, read off the SBOMs; it is not the global `/artifacts` (the
-artifact store, qits-2316). The listing reads `MAINTENANCE_REPOSITORIES` and
-`MAINTENANCE_ARTIFACTS` (`listArtifacts`) and keeps the artifacts whose `repository` is one of the
-project's: artifacts with a behind dependent (`behindCount > 0`) first, then by name, each with its
-ecosystem, repository (linked to its repository page), newest version and build time, latest (unknown when null), SBOM
-status, dependents and behind counts; the heading counts the artifacts, those shipped behind and
-those whose SBOM is MISSING or FAILED. "Only behind" is `?behind=true`, as on Dependencies. A name
-links to the detail on the same page (`?ecosystem=&name=`, `MAINTENANCE_DEPENDENTS`,
-`listDependencyDependents`), except a `daemon` row's: the door reads maven, npm and docker only and
-answers anything else with a 400, whose `message` (`errorConsumes`) the detail shows. The detail
-keeps the listing's reads for the artifact's own row, and lists every dependent, not filtered by
-project, each repository linked to its repository page, as current, behind or unknown
-(`currencyOf`, `core/maintenance/currency.ts`: `embeddedVersion` against `latest`), the
-behind ones first, then by repository; its back link drops `ecosystem` and `name` and keeps
-`behind`. A 403 on any read says so; Refresh reads the open view's reads again.
+`components/<repo>/depends-on` (`RepositoryDependsOnPage`) is what it depends on. It reads
+`MAINTENANCE_REPOSITORY` (`getRepository`) and `MAINTENANCE_REPOSITORY_BUMPS`
+(`listBumps?repository=&limit=20`), both again after `BUMP_EVENTS` naming the repository
+(`namesRepository`, `core/maintenance/repository-maintenance.ts`: its payload's `repository`,
+`repositoryName` or `repoName` is the name, or it names none by name), never on a timer; Refresh
+reads both. The heading is the name, the status as a chip (any word, `repositoryStatusTone`), the
+last scan and `message` as plain text; no Groups panel (every group is NONE or RETIRED since
+qits-1133). Pins: Internal and External tables (`patterns/maintenance/pin-table/`, `pinTables`),
+pending first by the service's `pending`, and REACTOR and UNRESOLVED pins in a collapsed
+`<details>` with their count; under each table only its behind transitives (by `via`), captioned
+with the total ("817 transitives, 11 behind"). Recent bumps: the status chip links the bump page
+(`open-repository-bump`), kind (`group`), trigger, started, changes count, the release request (a
+uuid links its page, `open-repository-bump-release-request`; the sentinels are words; null is
+none) and the message. A 404 on `getRepository` is "No repository <name> in the inventory." and
+nothing else; a 403 on either read a refusal. The pact (`show-repository-depends-on`) reads both
+in "a repository with pins and bumps" (`contract-javalib`), "a repository with nothing pinned"
+(`contract-service`) and "no such repository" (`contract-unknown-service`, `getRepository` a 404
+binding the status only).
 
-`maintenance/bumps/<bumpId>` (`MaintenanceBumpPage`, qits-2332) is one bump, a detail page with no
-sidebar entry (the sidebar keeps Maintenance open). It reads only `MAINTENANCE_BUMP` (`getBump`,
-no project filter: the id is the whole address), again after `BUMP_EVENTS`
-(`core/maintenance/bump-events.ts`, shared with the bumps menu) only while the bump is REQUESTED
-or RUNNING. It shows the group and repository (linked to its repository page) with the status as a chip (any status, SUPERSEDED
-or unknown, as its word), the facts, the release request (a uuid links
+`components/<repo>/dependents` (`RepositoryDependentsPage`) is who depends on it. Dependents:
+`MAINTENANCE_REPOSITORY_DEPENDENTS` (`listRepositoryDependents`), one group per published artifact
+(name, ecosystem, latest; `artifactGroups`), each dependent's repository linked, embedded version,
+direct or transitive, current or behind (`currencyOf`), the behind ones first: a behind row is a
+bump that dependent owes. Downstream: `MAINTENANCE_REPOSITORY_DOWNSTREAM`
+(`getRepositoryDownstream`), depth, repository (linked), archetype and `via`, counted in the
+caption, every row as the inventory gives it. Both are read once. Releases: the repository's id
+from `PROJECT_REPOSITORY_PAGE` (an unknown name says so), its requests from
+`REPOSITORY_RELEASE_REQUESTS` (`state=all`, as its Release requests page reads them, again after
+`RELEASE_REQUEST_EVENTS` naming it), the newest ten RELEASED or FINALIZED with a version
+(`releasedVersions`), each version opening its adoption page (`open-repository-adoption`); the
+newest one's journey is read once (`MAINTENANCE_ADOPTION`) and said as "n of m downstream carry
+<version>" (`adoptionSummary`). Each section has its own one-line empty text and Retry; a 403 on a
+qits-maintenance read is a refusal; Refresh reads everything again. The pact
+(`show-repository-dependents`) reads the dependents and downstream in the three repository states
+above and the journey in "a release some consumers adopted".
+
+Every repository name of a bump, an adopter or a dependent links that repository's Depends on
+through `MaintenanceRepositoryLinks` (`core/maintenance/repository-links.ts`,
+`open-repository-depends-on`); `core/maintenance/bump-model.ts` holds the bump status and
+release-request helpers both bump-showing pages share.
+
+`components/<repo>/bumps/<bumpId>` (`RepositoryBumpPage`, qits-2332) is one bump, a detail page
+below Depends on (the sidebar keeps Depends on current, the trail is `<repo> › Depends on ›
+<bumpId>`). It reads only `MAINTENANCE_BUMP` (`getBump`, no project filter: the id is the whole
+address), again after `BUMP_EVENTS` (`core/maintenance/bump-events.ts`, shared with the bumps
+menu) only while the bump is REQUESTED or RUNNING. A bump whose `repository` is not `<repo>` moves
+to its own repository's address in place (`follow-bump-repository`, `replaceUrl`), reading nothing
+again. It shows the group and repository (linked to its Depends on) with the status as a chip (any
+status, SUPERSEDED or unknown, as its word), the facts, the release request (a uuid links
 `projects/<slug>/releases/requests/<id>`, `open-bump-release-request`; the sentinels `converged`
 and `refused` are words with what they mean; null is none), `releaseState` and `releaseDetail`
 verbatim as of `releaseStateAt` (only REJECTED, FAILED and CONFLICTED say the release is not
@@ -1480,62 +1485,45 @@ coming: every automation bump that succeeded is REQUESTED), one link per CI run 
 `ciRunId` split on commas) through `CiRunLinks`, the `message` as plain text (an alert only when
 FAILED; with no changes it follows "This bump sent no changes."), a failed run's `failure` (step,
 image, exit code, the excerpt in a `<pre>`) and the changes table. A 404 is "No bump <id>.", a 403
-a refusal. The bumps menu's rows link the page in the open project (`open-menu-bump`); with no
-project open they are plain. The pact reads `getBump` in "pending bumps" (`releasedBumpId`), "a
-bump that changed nothing", "a failed bump" (`bumpId`) and "no such bump" (404, status only); a
-field under a recorded `null` (`failure`) is bound only where the recording holds it (`heldBy`).
+a refusal. The bumps menu's rows link the page under the bump's repository in the open project
+(`open-menu-bump`); with no project open they are plain. The pact reads `getBump` in "pending
+bumps" (`releasedBumpId`), "a bump that changed nothing", "a failed bump" (`bumpId`) and "no such
+bump" (404, status only); a field under a recorded `null` (`failure`) is bound only where the
+recording holds it (`heldBy`).
 
-`maintenance/adoption/<repository>/<version>` (`MaintenanceAdoptionPage`, qits-2333, the retired
-frontend's `adoption/…`) is how far one release got downstream, a detail page with no sidebar entry
-(the sidebar keeps Maintenance open). One read, `MAINTENANCE_ADOPTION` (`getAdoptionByRelease`,
-`?repository=&version=`, no project filter: the service traces the whole closure per request, so the
-page stitches nothing). The header names the release and its packages (`ecosystem name`,
-comma-joined); the caption counts the repositories downstream and those carrying it. The chart is a
-DAG drawn left to right by the pure `adoptionChart` (`core/maintenance/adoption-chart.ts`, its own
-spec): one column per distinct depth, one fixed 240x116 card per repository however many parents
-reach it, rows at the mean row of the parents (ties by name), an edge only to a parent that is
-drawn, every depth-1 card off the release; the SVG edges come from the same arithmetic, and the
-chart scrolls sideways inside its own box, never the page. A card's chip is ADOPTED (with
-`adoptedVersion` and when) or PENDING, quiet and neutral, never an error. An adopter whose
-`repositoryStatus` is `OK` links its repository page (`maintenance/repositories/<name>`, qits-2334,
-through `MaintenanceRepositoryLinks`); `ABSENT` says "absent". No adopter is "This release reached
-no repository."; no package a notice that the service holds no bill of materials for it. A 403 is a
-refusal, else Retry. Staleness: `ADOPTION_EVENTS` (`SCMRelease`, `SoftwareRelease`,
-`core/maintenance/adoption-events.ts`), debounced 1 s; Refresh reads again. A release request's
-"Adoption of this release" leads here (`open-release-adoption`, an in-app exit; `releaseLinks` gives
-it no `app`), in place of the retired release train link. The pact reads it in "a repository with
-downstream components" (both adopters PENDING, the fixed version 2026.905.1), "a release some
-consumers adopted" and "a release nobody consumes" (from `@qits/maintenance-golden-masters`
-2026.1119.183438 on). A release with no package is no recording's: the plain spec derives it.
+`components/<repo>/adoption/<version>` (`RepositoryAdoptionPage`, qits-2333, the retired
+frontend's `adoption/…`) is how far one release of the repository got downstream, a detail page
+below Dependents (the sidebar keeps Dependents current, the trail is `<repo> › Dependents ›
+<version>`). One read, `MAINTENANCE_ADOPTION` (`getAdoptionByRelease`, `?repository=&version=`, no
+project filter: the service traces the whole closure per request, so the page stitches nothing).
+The header names the release and its packages (`ecosystem name`, comma-joined); the caption counts
+the repositories downstream and those carrying it. The chart is a DAG drawn left to right by the
+pure `adoptionChart` (`core/maintenance/adoption-chart.ts`, its own spec): one column per distinct
+depth, one fixed 240x116 card per repository however many parents reach it, rows at the mean row
+of the parents (ties by name), an edge only to a parent that is drawn, every depth-1 card off the
+release; the SVG edges come from the same arithmetic, and the chart scrolls sideways inside its own
+box, never the page. A card's chip is ADOPTED (with `adoptedVersion` and when) or PENDING, quiet
+and neutral, never an error. An adopter whose `repositoryStatus` is `OK` links its Depends on;
+`ABSENT` says "absent". No adopter is "This release reached no repository."; no package a notice
+that the service holds no bill of materials for it. A 403 is a refusal, else Retry. Staleness:
+`ADOPTION_EVENTS` (`SCMRelease`, `SoftwareRelease`, `core/maintenance/adoption-events.ts`),
+debounced 1 s; Refresh reads again. A release request's "Adoption of this release" leads here
+(`open-release-adoption`, an in-app exit; `releaseLinks` gives it no `app`), in place of the
+retired release train link. The pact reads it in "a repository with downstream components" (both
+adopters PENDING, the fixed version 2026.905.1), "a release some consumers adopted" and "a release
+nobody consumes" (from `@qits/maintenance-golden-masters` 2026.1119.183438 on). A release with no
+package is no recording's: the plain spec derives it.
 
-`maintenance/repositories/<name>` (`MaintenanceRepositoryPage`, qits-2334) is one repository's
-maintenance, a detail page with no sidebar entry, keyed by the repository's name (`qits-ci-service`,
-never the application), no project filter. It reads `MAINTENANCE_REPOSITORY` (`getRepository`),
-`MAINTENANCE_REPOSITORY_BUMPS` (`listBumps?repository=&limit=20`),
-`MAINTENANCE_REPOSITORY_DEPENDENTS` (`listRepositoryDependents`) and
-`MAINTENANCE_REPOSITORY_DOWNSTREAM` (`getRepositoryDownstream`); the first two again after
-`BUMP_EVENTS` naming the repository (`namesRepository`: its payload's `repository`,
-`repositoryName` or `repoName` is the name, or it names none by name), never on a timer; the other
-two once; Refresh reads all four. The heading is the name, the status as a chip (any word), the last
-scan and `message` as plain text; no Groups panel (every group is NONE or RETIRED since qits-1133).
-Pins: Internal and External tables (`patterns/maintenance/pin-table/`, `pinTables`), pending first
-by the service's `pending`, and REACTOR and UNRESOLVED pins in a collapsed `<details>` with their
-count; under each table only its behind transitives (by `via`), captioned with the total
-("817 transitives, 11 behind"). Recent bumps: the status chip links the bump page
-(`open-repository-bump`), kind (`group`), trigger, started, changes count, the release request (a
-uuid links its page, `open-repository-bump-release-request`; the sentinels are words; null is
-none) and the message. Dependents: one group per published artifact (name, ecosystem, latest),
-each dependent's repository linked, embedded version, direct or transitive, current or behind
-(`currencyOf`). Downstream: depth, repository (linked), archetype and `via`, counted in the caption,
-every row as the inventory gives it. Each section has its own one-line empty text. A 404 on
-`getRepository` is "No repository <name> in the inventory." and nothing else (the other three answer
-empty for an unknown name); a 403 on any read a refusal. Every repository name in Maintenance (the
-Dependencies, Artifacts, bump, adoption and repository pages) links here through `MaintenanceRepositoryLinks`
-(`core/maintenance/repository-links.ts`, `open-maintenance-repository`); `core/maintenance/bump-model.ts`
-holds the bump status and release-request helpers both bump-showing pages share. The pact reads all
-four in "a repository with pins and bumps" (`contract-javalib`), "a repository with nothing pinned"
-(`contract-service`) and "no such repository" (`contract-unknown-service`, `getRepository` a 404
-binding the status only).
+The old `projects/<slug>/maintenance/…` addresses are entry points (`qitsEntry`):
+qits-maintenance-frontend's and the maintenance service webui's `DependenciesRedirect` hand off to
+them. `maintenance`, `maintenance/dependencies` and `maintenance/artifacts` open the Components,
+the query dropped (`replacedBy`: the listings they filtered are gone; the external-package
+question is the Mirror package page's `PackageReleases`, the internal one the producing
+repository's Dependents); `maintenance/repositories/<name>` opens `components/<name>/depends-on`
+and `maintenance/adoption/<repository>/<version>` `components/<repository>/adoption/<version>`
+(`movedTo`); `maintenance/bumps/<bumpId>` is `BumpRedirectPage`, which reads the bump and replaces
+the address with its page under its repository (`follow-moved-bump`), or says an unknown bump has
+no page, with a link to the Components.
 
 ## Styling
 

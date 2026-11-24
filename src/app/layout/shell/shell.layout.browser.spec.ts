@@ -163,9 +163,6 @@ describe('ShellLayout (screenshots)', () => {
           { path: 'projects/:slug/observability/traces', component: TestPage },
           { path: 'projects/:slug/docs', component: TestPage },
           { path: 'projects/:slug/events', component: TestPage },
-          { path: 'projects/:slug/maintenance', component: TestPage },
-          { path: 'projects/:slug/maintenance/dependencies', component: TestPage },
-          { path: 'projects/:slug/maintenance/artifacts', component: TestPage },
           { path: 'projects/:slug/setup', component: TestPage },
           { path: 'projects/:slug/workspaces/:slotId', component: TestPage },
         ]),
@@ -403,7 +400,6 @@ describe('ShellLayout (screenshots)', () => {
       'Deployments',
       'Observability',
       'Events',
-      'Maintenance',
       // No Network access with a project open (qits-2485).
     ]);
     await expect
@@ -611,7 +607,6 @@ describe('ShellLayout (screenshots)', () => {
     { label: 'Deployments', segment: 'deployments', outcome: 'deployments' },
     { label: 'Observability', segment: 'observability', outcome: 'observability' },
     { label: 'Events', segment: 'events', outcome: 'events' },
-    { label: 'Maintenance', segment: 'maintenance', outcome: 'maintenance' },
   ] as const;
 
   for (const section of SECTIONS) {
@@ -854,31 +849,6 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(link).toHaveAttribute('aria-current', 'page');
     await expect
       .element(navigation.getByRole('link', { name: 'Observability', exact: true }))
-      .toHaveAttribute('aria-current', 'true');
-  });
-
-  it('open-sidebar-maintenance-page dependencies: Dependencies below Maintenance opens it', async () => {
-    // On the section's page already, so its pages show below Maintenance.
-    const { fixture, project } = await renderProject('/maintenance');
-    const navigation = page.getByRole('navigation', { name: 'qits' });
-    const link = navigation.getByRole('link', { name: 'Dependencies', exact: true });
-    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/maintenance/dependencies`);
-    expect(reached()).toEqual(['open-sidebar-maintenance-page:dependencies']);
-    await expect.element(link).toHaveAttribute('aria-current', 'page');
-    await expect
-      .element(navigation.getByRole('link', { name: 'Maintenance', exact: true }))
-      .toHaveAttribute('aria-current', 'true');
-  });
-
-  it('open-sidebar-maintenance-page artifacts: Artifacts below Maintenance opens it', async () => {
-    const { fixture, project } = await renderProject('/maintenance');
-    const navigation = page.getByRole('navigation', { name: 'qits' });
-    const link = navigation.getByRole('link', { name: 'Artifacts', exact: true });
-    expect(await follow(fixture, link)).toBe(`/projects/${project.slug}/maintenance/artifacts`);
-    expect(reached()).toEqual(['open-sidebar-maintenance-page:artifacts']);
-    await expect.element(link).toHaveAttribute('aria-current', 'page');
-    await expect
-      .element(navigation.getByRole('link', { name: 'Maintenance', exact: true }))
       .toHaveAttribute('aria-current', 'true');
   });
 
@@ -1329,7 +1299,7 @@ describe('ShellLayout (screenshots)', () => {
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(labels.at(-1)).toBe('Maintenance');
+    expect(labels.at(-1)).toBe('Events');
   });
 
   it('marks Releases › Agents current on a slot’s page, with the slot below it in the trail', async () => {

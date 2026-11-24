@@ -61,7 +61,6 @@ type SectionKey =
   | 'deployments'
   | 'observability'
   | 'events'
-  | 'maintenance'
   | 'setup';
 
 /** A page of the open project the sidebar or the gear leads to: its exit takes the slug alone. */
@@ -87,9 +86,6 @@ type ProjectPageExit = ExitOutcome<`projects/:slug/${
   | 'observability/metrics'
   | 'observability/traces'
   | 'events'
-  | 'maintenance'
-  | 'maintenance/dependencies'
-  | 'maintenance/artifacts'
   | 'setup'}`>;
 
 /** One entry of the sidebar, or Setup (the gear's section, no entry). */
@@ -605,7 +601,6 @@ export class ShellLayout {
     deployments: exit('projects/:slug/deployments'),
     observability: exit('projects/:slug/observability'),
     events: exit('projects/:slug/events'),
-    maintenance: exit('projects/:slug/maintenance'),
   });
 
   /**
@@ -650,17 +645,9 @@ export class ShellLayout {
   });
 
   /**
-   * The Maintenance pages below Maintenance in the sidebar, one exit per page (qits-2317;
-   * Artifacts, qits-2330).
-   */
-  private readonly maintenancePages = outcomes('open-sidebar-maintenance-page', {
-    dependencies: exit('projects/:slug/maintenance/dependencies'),
-    artifacts: exit('projects/:slug/maintenance/artifacts'),
-  });
-
-  /**
    * The repository sidebar's entries (qits-2492), one exit per page of the open repository:
-   * Overview, Artifacts, Docs, Contracts, Entities, UI builder and Release requests (qits-2506).
+   * Overview, Artifacts, Docs, Contracts, Entities, UI builder, Release requests (qits-2506), and
+   * Depends on and Dependents (qits-2489, the repository's maintenance).
    */
   private readonly repositoryPages = outcomes('open-sidebar-repository-page', {
     overview: exit('projects/:slug/components/:repo'),
@@ -670,6 +657,8 @@ export class ShellLayout {
     entities: exit('projects/:slug/components/:repo/entities'),
     uiBuilder: exit('projects/:slug/components/:repo/ui-builder'),
     releaseRequests: exit('projects/:slug/components/:repo/release-requests'),
+    dependsOn: exit('projects/:slug/components/:repo/depends-on'),
+    dependents: exit('projects/:slug/components/:repo/dependents'),
   });
 
   /** The repository sidebar's way back to the project's sidebar (qits-2492). */
@@ -917,6 +906,8 @@ export class ShellLayout {
     repositoryEntities: exit('projects/:slug/components/:repo/entities'),
     repositoryReleaseRequests: exit('projects/:slug/components/:repo/release-requests'),
     repositoryDocs: exit('projects/:slug/components/:repo/docs'),
+    repositoryDependsOn: exit('projects/:slug/components/:repo/depends-on'),
+    repositoryDependents: exit('projects/:slug/components/:repo/dependents'),
     system: exit('system'),
     mirror: exit('mirror'),
     orchestrator: exit('orchestrator'),
@@ -940,6 +931,8 @@ export class ShellLayout {
     entities: this.trail.repositoryEntities,
     'release-requests': this.trail.repositoryReleaseRequests,
     docs: this.trail.repositoryDocs,
+    'depends-on': this.trail.repositoryDependsOn,
+    dependents: this.trail.repositoryDependents,
   };
 
   /** The trail's brand, home. */
@@ -1071,21 +1064,6 @@ export class ShellLayout {
         ],
       },
       link('events', 'Events', sections.events),
-      {
-        ...link('maintenance', 'Maintenance', sections.maintenance),
-        children: [
-          {
-            label: 'Dependencies',
-            exit: this.maintenancePages.dependencies,
-            path: this.maintenancePages.dependencies.url(params),
-          },
-          {
-            label: 'Artifacts',
-            exit: this.maintenancePages.artifacts,
-            path: this.maintenancePages.artifacts.url(params),
-          },
-        ],
-      },
     ];
   });
 
@@ -1099,8 +1077,9 @@ export class ShellLayout {
   /**
    * The repository sidebar's entries (qits-2492): each page with its exit and its `aria-current`
    * (Overview `page` on the repository's own page only, the others by `[qitsExit]`'s path rule, so
-   * Contracts stays current on a state's page). Every entry shows for every repository: each page
-   * says itself when the repository has nothing for it. Dependencies waits for qits-2489.
+   * Contracts stays current on a state's page; Depends on on a bump's page, Dependents on a
+   * release's adoption page, qits-2489). Every entry shows for every repository: each page says
+   * itself when the repository has nothing for it.
    */
   protected readonly repositoryLinks = computed(() => {
     const slug = this.selected.slug();
@@ -1108,7 +1087,10 @@ export class ShellLayout {
     if (slug === undefined || repo === undefined) return [];
     const pages = this.repositoryPages;
     const overview = pages.overview.url({ slug, repo });
-    const atOverview = this.selected.url().split(/[?#]/)[0] === overview;
+    const path = this.selected.url().split(/[?#]/)[0];
+    const atOverview = path === overview;
+    const below = (segment: string) =>
+      path.startsWith(`${overview}/${segment}/`) ? ('page' as const) : undefined;
     return [
       { label: 'Overview', exit: pages.overview, current: atOverview ? ('page' as const) : null },
       { label: 'Artifacts', exit: pages.artifacts, current: undefined },
@@ -1117,6 +1099,8 @@ export class ShellLayout {
       { label: 'Entities', exit: pages.entities, current: undefined },
       { label: 'UI builder', exit: pages.uiBuilder, current: undefined },
       { label: 'Release requests', exit: pages.releaseRequests, current: undefined },
+      { label: 'Depends on', exit: pages.dependsOn, current: below(BUMPS) },
+      { label: 'Dependents', exit: pages.dependents, current: below(ADOPTION) },
     ];
   });
 
@@ -1538,6 +1522,20 @@ const REPOSITORY_PAGES: Readonly<Record<string, string>> = {
   'ui-builder': 'UI builder',
   'release-requests': 'Release requests',
   docs: 'Docs',
+  'depends-on': 'Depends on',
+  dependents: 'Dependents',
+};
+
+/** A repository's bumps' segment, `<repo>/bumps/<bump id>`, below Depends on (qits-2489). */
+const BUMPS = 'bumps';
+
+/** A repository's releases' adoption segment, `<repo>/adoption/<version>`, below Dependents. */
+const ADOPTION = 'adoption';
+
+/** The page a repository's detail segment sits below in the trail (qits-2489). */
+const REPOSITORY_PAGE_OF: Readonly<Record<string, string>> = {
+  [BUMPS]: 'depends-on',
+  [ADOPTION]: 'dependents',
 };
 
 /** Where in a repository the URL is: the repository, one of its pages, and a page below that. */
@@ -1550,13 +1548,15 @@ export interface RepositoryTrail {
 /**
  * The trail below the Components section of the project at `project` (`/projects/<slug>`,
  * qits-2478): `<project>/components/<repo>` is the repository, `…/<repo>/contracts` one of its
- * pages, `…/contracts/<state>` a page below that (its segment, decoded). Undefined for the list
- * itself and anything outside it.
+ * pages, `…/contracts/<state>` a page below that (its segment, decoded). A bump
+ * (`…/<repo>/bumps/<id>`) is below Depends on, a release's adoption (`…/<repo>/adoption/<version>`)
+ * below Dependents (qits-2489). Undefined for the list itself and anything outside it.
  */
 export function repositoryTrail(url: string, project: string): RepositoryTrail | undefined {
   const prefix = `${project}/${REPOSITORIES}/`;
   if (!url.startsWith(prefix)) return undefined;
-  const [repo, segment, ...rest] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  const [repo, own, ...rest] = url.slice(prefix.length).split(/[?#]/)[0].split('/');
+  const segment = (own && REPOSITORY_PAGE_OF[own]) || own;
   if (!repo) return undefined;
   // An artifact's page (qits-2477), `artifacts/<store>/<kind>/<name>`, is named by its name.
   const leaf = segment === 'artifacts' ? rest[2] : rest[0];

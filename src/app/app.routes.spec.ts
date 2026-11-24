@@ -26,6 +26,11 @@ import { IdeaCreatePage } from './routes/projects/[slug]/ideas/create/idea-creat
 import { IdeaPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/idea.page';
 import { IdeaEditPage } from './routes/projects/[slug]/ideas/detail/[ideaId]/edit/idea-edit.page';
 import { DocsReadRedirectPage } from './routes/projects/[slug]/docs/read/[site]/docs-read-redirect.page';
+import { BumpRedirectPage } from './routes/projects/[slug]/maintenance/bumps/[bumpId]/bump-redirect.page';
+import { RepositoryDependsOnPage } from './routes/projects/[slug]/components/[repo]/depends-on/repository-depends-on.page';
+import { RepositoryDependentsPage } from './routes/projects/[slug]/components/[repo]/dependents/repository-dependents.page';
+import { RepositoryBumpPage } from './routes/projects/[slug]/components/[repo]/bumps/[bumpId]/repository-bump.page';
+import { RepositoryAdoptionPage } from './routes/projects/[slug]/components/[repo]/adoption/[version]/repository-adoption.page';
 import { DocsReaderPage } from './routes/projects/[slug]/components/[repo]/docs/[site]/docs-reader.page';
 import { RepositoryDocsPage } from './routes/projects/[slug]/components/[repo]/docs/repository-docs.page';
 import { ArtifactsImagePage } from './routes/projects/[slug]/components/[repo]/artifacts/[store]/images/[image]/artifacts-image.page';
@@ -168,6 +173,15 @@ describe('agents and workspaces routes', () => {
       '/projects/qits/repositories/qits-ci-service/ui-builder',
       '/projects/qits/components/qits-ci-service/ui-builder',
     ],
+    // qits-2489: the Maintenance section folded into the repository.
+    [
+      '/projects/qits/maintenance/repositories/qits-ci-service?y=1',
+      '/projects/qits/components/qits-ci-service/depends-on?y=1',
+    ],
+    [
+      '/projects/qits/maintenance/adoption/qits-ci-service/2026.1.1',
+      '/projects/qits/components/qits-ci-service/adoption/2026.1.1',
+    ],
   ])(
     'redirects %s to %s (qits-2482, qits-2491, qits-2567), keeping the query',
     async (from, to) => {
@@ -185,6 +199,32 @@ describe('agents and workspaces routes', () => {
   ])('redirects the old Slow spans page%s to Traces with its floor (qits-2536)', async (q, to) => {
     await opened(`/projects/x/observability/slow-spans${q}`);
     expect(TestBed.inject(Router).url).toBe(`/projects/x/observability/traces${to}`);
+  });
+
+  it.each([
+    '/projects/x/maintenance',
+    '/projects/x/maintenance?behind=true',
+    '/projects/x/maintenance/dependencies?behind=true&name=a*',
+    '/projects/x/maintenance/artifacts?ecosystem=maven&name=a',
+  ])(
+    'redirects the old Maintenance listing %s to the Components, the query dropped (qits-2489)',
+    async (from) => {
+      await opened(from);
+      expect(TestBed.inject(Router).url).toBe('/projects/x/components');
+    },
+  );
+
+  it('opens a bump’s old address on the page that moves it (qits-2489)', async () => {
+    expect(await opened('/projects/x/maintenance/bumps/b-1')).toEqual([BumpRedirectPage]);
+  });
+
+  it.each([
+    ['depends-on', RepositoryDependsOnPage],
+    ['dependents', RepositoryDependentsPage],
+    ['bumps/b-1', RepositoryBumpPage],
+    ['adoption/2026.1.1', RepositoryAdoptionPage],
+  ])('opens a repository’s %s (qits-2489)', async (rest, page) => {
+    expect(await opened(`/projects/x/components/r/${rest}`)).toEqual([page]);
   });
 
   it('opens the project’s agents at agents', async () => {
@@ -587,9 +627,10 @@ describe('entry points (qits-2049)', () => {
     });
   }
 
-  it('marks the front door, the old agent address, the docs reader’s split form, the System pages, the OCI upstreams, the cache roots, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
+  it('marks the front door, the old agent address, the docs reader’s split form, the old Maintenance addresses, the System pages, the OCI upstreams, the cache roots, a cache root’s page and the orchestrator’s process, beside the library’s own', () => {
     // `qitsAuthCallbackRoute` is the library's to mark (its `auth/callback`), not this app's. The
-    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the swarm services,
+    // reader's `read/**` is where the docs app's redirect lands (qits-2337); the old Maintenance
+    // addresses where qits-maintenance-frontend's `DependenciesRedirect` does (qits-2489); the swarm services,
     // nodes, configs and secrets, one service's page, one node's page, its Containers, Images,
     // Volumes and Networks tabs, one config's page, the targets and a terminal where
     // qits-system-frontend's old pages hand off (qits-2344, qits-2345, qits-2346, qits-2347,
@@ -602,6 +643,12 @@ describe('entry points (qits-2049)', () => {
       '',
       'projects/:slug/work/detail/:id/agent/:tab',
       'projects/:slug/docs/read/**',
+      'projects/:slug/maintenance',
+      'projects/:slug/maintenance/dependencies',
+      'projects/:slug/maintenance/artifacts',
+      'projects/:slug/maintenance/repositories/:name',
+      'projects/:slug/maintenance/adoption/:repository/:version',
+      'projects/:slug/maintenance/bumps/:bumpId',
       'artifacts/repositories/:store/images/:image',
       'artifacts/repositories/:store/daemons/:daemon',
       'artifacts/repositories/:store/maven-packages/:coordinate',

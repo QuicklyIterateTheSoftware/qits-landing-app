@@ -748,7 +748,7 @@ const UNATTENDED_TITLE =
                               [qitsExit]="adoptions.release"
                               [exitParams]="{
                                 slug: slug(),
-                                repository: adoption.repository,
+                                repo: adoption.repository,
                                 version: adoption.version,
                               }"
                               >{{ link.label }}</a
@@ -1094,9 +1094,12 @@ export class ReleaseRequestView implements OpenReleaseRequest {
     byRelease: exit('projects/:slug/deployments/requests/by-release/:repoId/:version'),
   });
 
-  /** "Adoption of this release": how far it got downstream, in this app (qits-2333). */
+  /**
+   * "Adoption of this release": how far it got downstream, in this app (qits-2333), under its
+   * repository (qits-2489).
+   */
   protected readonly adoptions = outcomes('open-release-adoption', {
-    release: exit('projects/:slug/maintenance/adoption/:repository/:version'),
+    release: exit('projects/:slug/components/:repo/adoption/:version'),
   });
 
   /** "← Release requests": back to the project's release requests (epic qits-2000). */

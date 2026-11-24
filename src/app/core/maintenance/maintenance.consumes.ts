@@ -7,7 +7,6 @@ import type {
   ListBumpsResponses,
   ListDependencyDependentsResponses,
   ListDependenciesResponses,
-  ListRepositoriesResponses,
   ListPendingBumpsResponses,
   ListRepositoryDependentsResponses,
 } from '../../api/maintenance';
@@ -46,13 +45,6 @@ export type BumpEntry = NonNullable<
 >[number];
 
 /**
- * `MAINTENANCE_REPOSITORIES` (qits-2317): every repository of the inventory, read by the
- * Maintenance section's Dependencies page for its project only: the doors take no project, so the
- * page keeps the pins of the repositories whose `project` is the open one's id.
- */
-export const LIST_REPOSITORIES = ['[].name', '[].project'] as const;
-
-/**
  * `MAINTENANCE_DEPENDENCIES` (qits-2317): the dependencies of one kind (`?kind=INTERNAL` or
  * `?kind=EXTERNAL`, never the bare listing, which mixes in a repository's own modules), each with
  * its latest version (null when unknown, with the `error` that says why) and every pin of it: the
@@ -69,12 +61,6 @@ export const LIST_DEPENDENCIES = [
   '[].pins[].manifestPath',
   '[].pins[].pending',
 ] as const;
-
-/** One repository of the inventory, cut to what the Dependencies page reads. */
-export type MaintenanceRepository = Consumed<
-  ListRepositoriesResponses[200],
-  typeof LIST_REPOSITORIES
->[number];
 
 /** One dependency with its pins, cut to what the Dependencies page reads. */
 export type DependencyEntry = Consumed<
@@ -186,7 +172,7 @@ export type BumpChange = NonNullable<BumpDetail['changes']>[number];
 
 /**
  * `MAINTENANCE_REPOSITORY` (qits-2334): one repository of the inventory by its name, as the
- * repository page shows it. Its name, its status (`OK`, `ABSENT`, `UNDECLARED` or any other word),
+ * Depends on page shows it (qits-2489). Its name, its status (`OK`, `ABSENT`, `UNDECLARED` or any other word),
  * when it was last scanned and the scan's `message`; every pin (where, `manifestPath`; what,
  * `ecosystem` and `name`; the version it pins, the latest one, its `kind`: INTERNAL, EXTERNAL,
  * REACTOR or UNRESOLVED, and whether it is behind, the service's `pending`); and the transitives
@@ -212,16 +198,16 @@ export const REPOSITORY = [
   'transitives[].behind',
 ] as const;
 
-/** One repository, cut to what the repository page reads. */
+/** One repository, cut to what the Depends on page reads. */
 export type RepositoryDetail = Consumed<GetRepositoryResponses[200], typeof REPOSITORY>;
 
-/** One pin of a repository, as the repository page's tables read it. */
+/** One pin of a repository, as the Depends on page's tables read it. */
 export type RepositoryPin = NonNullable<RepositoryDetail['pins']>[number];
 
-/** One transitive of a repository, as the repository page reads it. */
+/** One transitive of a repository, as the Depends on page reads it. */
 export type RepositoryTransitive = NonNullable<RepositoryDetail['transitives']>[number];
 
-/** How many bumps the repository page asks for: the newest, one page. */
+/** How many bumps the Depends on page asks for: the newest, one page. */
 export const REPOSITORY_BUMPS_LIMIT = 20;
 
 /**
@@ -241,7 +227,7 @@ export const REPOSITORY_BUMPS = [
   '[].changes[].name',
 ] as const;
 
-/** One bump of a repository, cut to what the repository page reads. */
+/** One bump of a repository, cut to what the Depends on page reads. */
 export type RepositoryBump = Consumed<ListBumpsResponses[200], typeof REPOSITORY_BUMPS>[number];
 
 /**
@@ -262,13 +248,13 @@ export const REPOSITORY_DEPENDENTS = [
   'artifacts[].dependents[].direct',
 ] as const;
 
-/** One repository's dependents, cut to what the repository page reads. */
+/** One repository's dependents, cut to what the Dependents page reads. */
 export type RepositoryDependents = Consumed<
   ListRepositoryDependentsResponses[200],
   typeof REPOSITORY_DEPENDENTS
 >;
 
-/** One published artifact with its dependents, as the repository page reads it. */
+/** One published artifact with its dependents, as the Dependents page reads it. */
 export type PublishedArtifact = NonNullable<RepositoryDependents['artifacts']>[number];
 
 /**
@@ -283,7 +269,7 @@ export const REPOSITORY_DOWNSTREAM = [
   'downstream[].via',
 ] as const;
 
-/** One repository's downstream closure, cut to what the repository page reads. */
+/** One repository's downstream closure, cut to what the Dependents page reads. */
 export type RepositoryDownstream = Consumed<
   GetRepositoryDownstreamResponses[200],
   typeof REPOSITORY_DOWNSTREAM

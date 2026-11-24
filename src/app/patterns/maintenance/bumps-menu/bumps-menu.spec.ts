@@ -59,7 +59,7 @@ describe('BumpsMenu', () => {
         provideHttpClientTesting(),
         provideRouter([
           { path: 'projects/:slug', component: Stub },
-          { path: 'projects/:slug/maintenance/bumps/:bumpId', component: Stub },
+          { path: 'projects/:slug/components/:repo/bumps/:bumpId', component: Stub },
         ]),
         provideHeyApiClient(maintenanceClient),
         provideHeyApiClient(edgeClient),
@@ -162,14 +162,17 @@ describe('BumpsMenu', () => {
       bumps.map((bump: { repository: string }) => bump.repository),
     );
     expect(links.map((a) => a.getAttribute('href'))).toEqual(
-      bumps.map((bump: { id: string }) => `/projects/${project.slug}/maintenance/bumps/${bump.id}`),
+      bumps.map(
+        (bump: { id: string; repository: string }) =>
+          `/projects/${project.slug}/components/${bump.repository}/bumps/${bump.id}`,
+      ),
     );
     expect(links[0].getAttribute('data-qits-outcome')).toBe('open-menu-bump:bump');
     links[0].click();
     await settle();
     fixture.detectChanges();
     expect(TestBed.inject(Router).url).toBe(
-      `/projects/${project.slug}/maintenance/bumps/${bumps[0].id}`,
+      `/projects/${project.slug}/components/${bumps[0].repository}/bumps/${bumps[0].id}`,
     );
     // Following a row closes the menu.
     expect(panel.classList.contains('hidden')).toBe(true);

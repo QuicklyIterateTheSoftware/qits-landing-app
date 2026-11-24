@@ -44,7 +44,7 @@ describe('BumpsMenu (screenshots)', () => {
         provideHttpClientTesting(),
         provideRouter([
           { path: 'projects/:slug', component: TestPage },
-          { path: 'projects/:slug/maintenance/bumps/:bumpId', component: TestPage },
+          { path: 'projects/:slug/components/:repo/bumps/:bumpId', component: TestPage },
         ]),
         provideHeyApiClient(maintenanceClient),
         provideHeyApiClient(edgeClient),
@@ -123,7 +123,7 @@ describe('BumpsMenu (screenshots)', () => {
     await expect.element(first).toHaveAttribute('data-qits-outcome', 'open-menu-bump:bump');
     await expect.element(frame).toMatchScreenshot('open-in-project', { kind: 'DATA' });
     const href = first.element().getAttribute('href');
-    expect(href).toMatch(new RegExp(`^/projects/${slug}/maintenance/bumps/`));
+    expect(href).toMatch(new RegExp(`^/projects/${slug}/components/[^/]+/bumps/`));
     await userEvent.click(first);
     await answered(fixture);
     expect(TestBed.inject(Router).url).toBe(href);

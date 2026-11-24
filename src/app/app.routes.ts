@@ -106,19 +106,17 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * are a table, none says why. It is declared before `requests/<requestId>`
  * (`DeploymentRequestPage`, qits-2322, one request); the sidebar keeps Requests current below both.
  *
- * The Maintenance section (qits-2317): `projects/<slug>/maintenance` is a parent with no
- * component, its pages its children; `/maintenance` opens `dependencies`
- * (`MaintenanceDependenciesPage`, the project's internal and external pins, the behind ones first)
- * by a relative `redirectTo`, which keeps the query, so `/maintenance?behind=true` lands on the
- * behind pins only.
- * `maintenance/artifacts` (`MaintenanceArtifactsPage`, qits-2330) is what the project has
- * released and who still ships an old copy: the listing, and one artifact's dependents at
- * `?ecosystem=&name=` on the same page. It is not the global `/artifacts` (the artifact store,
- * qits-2316). `maintenance/bumps/<bumpId>` (`MaintenanceBumpPage`, qits-2332) is one bump,
- * `maintenance/adoption/<repository>/<version>` (`MaintenanceAdoptionPage`, qits-2333) how far
- * one release got, and `maintenance/repositories/<name>` (`MaintenanceRepositoryPage`, qits-2334)
- * one repository's pins, bumps, dependents and downstream: detail pages with no sidebar entry of
- * their own.
+ * A repository's maintenance is two of its pages (qits-2489, which removed the project's
+ * Maintenance section): `components/<repo>/depends-on` (`RepositoryDependsOnPage`, its pins and
+ * recent bumps) and `components/<repo>/dependents` (`RepositoryDependentsPage`, who embeds what it
+ * publishes, what is downstream of it and its releases). One bump is at `bumps/<bumpId>`
+ * (`RepositoryBumpPage`, qits-2332) and how far one release got at `adoption/<version>`
+ * (`RepositoryAdoptionPage`, qits-2333), detail pages below the two. The old `maintenance/…`
+ * addresses are entry points, where qits-maintenance-frontend's `DependenciesRedirect` hands off:
+ * `maintenance`, `maintenance/dependencies` and `maintenance/artifacts` open the Components (the
+ * query dropped), `maintenance/repositories/<name>` the repository's Depends on and
+ * `maintenance/adoption/<repository>/<version>` its adoption page (`movedTo`), and
+ * `maintenance/bumps/<bumpId>` reads the bump to find its repository (`BumpRedirectPage`).
  *
  * The agents (epic qits-1681, before it epic qits-1230's workspaces): `projects/<slug>/releases/agents`
  * lists the project's ACTIVE agents and, under a Workspaces heading, its slots
@@ -236,6 +234,21 @@ export function movedTo(path: string): RedirectFunction {
       ],
       { queryParams, fragment: fragment ?? undefined },
     );
+}
+
+/**
+ * A redirect to `path` from the app's root, each `:param` filled from the old address, the query
+ * and fragment dropped: the page they narrowed is gone (qits-2489, the Maintenance section's
+ * listings to the Components).
+ */
+export function replacedBy(path: string): RedirectFunction {
+  return ({ params }) =>
+    inject(Router).createUrlTree([
+      '/',
+      ...path
+        .split('/')
+        .map((part) => (part.startsWith(':') ? String(params[part.slice(1)]) : part)),
+    ]);
 }
 
 /**
@@ -545,6 +558,38 @@ export const routes: Routes = [
             (m) => m.RepositoryReleaseRequestPage,
           ),
       },
+      {
+        // What a repository depends on (qits-2489): its pins and recent bumps.
+        path: 'projects/:slug/components/:repo/depends-on',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/depends-on/repository-depends-on.page').then(
+            (m) => m.RepositoryDependsOnPage,
+          ),
+      },
+      {
+        // Who depends on a repository (qits-2489): dependents, downstream and its releases.
+        path: 'projects/:slug/components/:repo/dependents',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/dependents/repository-dependents.page').then(
+            (m) => m.RepositoryDependentsPage,
+          ),
+      },
+      {
+        // One bump (qits-2332), a detail page below Depends on.
+        path: 'projects/:slug/components/:repo/bumps/:bumpId',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/bumps/[bumpId]/repository-bump.page').then(
+            (m) => m.RepositoryBumpPage,
+          ),
+      },
+      {
+        // How far one release got (qits-2333), a detail page below Dependents.
+        path: 'projects/:slug/components/:repo/adoption/:version',
+        loadComponent: () =>
+          import('./routes/projects/[slug]/components/[repo]/adoption/[version]/repository-adoption.page').then(
+            (m) => m.RepositoryAdoptionPage,
+          ),
+      },
       // An artifact's page (qits-2324…qits-2328, under its repository since qits-2477):
       // `artifacts/<store>/<kind>/<name>`, `<store>` the artifact store's repository (`qits`,
       // `npm`, `maven`, `daemons`, `docs`) and the name one segment (a slash rides as %2F).
@@ -793,51 +838,45 @@ export const routes: Routes = [
             (m) => m.ProjectEventPage,
           ),
       },
+      // The project's Maintenance section is gone (qits-2489): a repository's maintenance is its
+      // Depends on and Dependents. Its addresses are entry points (qits-maintenance-frontend's
+      // `DependenciesRedirect` hands off to them), so each keeps resolving.
       {
-        // The Maintenance section (qits-2317): no layout of its own, one page per view.
         path: 'projects/:slug/maintenance',
-        children: [
-          // Relative, so the query (`?behind=true`) rides along: see "The Maintenance section".
-          { path: '', pathMatch: 'full', redirectTo: 'dependencies' },
-          {
-            path: 'dependencies',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/maintenance/dependencies/maintenance-dependencies.page').then(
-                (m) => m.MaintenanceDependenciesPage,
-              ),
-          },
-          {
-            path: 'artifacts',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/maintenance/artifacts/maintenance-artifacts.page').then(
-                (m) => m.MaintenanceArtifactsPage,
-              ),
-          },
-          {
-            // A detail page (qits-2332): no sidebar entry; the sidebar keeps Maintenance open.
-            path: 'bumps/:bumpId',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/maintenance/bumps/[bumpId]/maintenance-bump.page').then(
-                (m) => m.MaintenanceBumpPage,
-              ),
-          },
-          {
-            // A detail page (qits-2334): no sidebar entry; the sidebar keeps Maintenance open.
-            path: 'repositories/:name',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/maintenance/repositories/[name]/maintenance-repository.page').then(
-                (m) => m.MaintenanceRepositoryPage,
-              ),
-          },
-          {
-            // A detail page (qits-2333): no sidebar entry; the sidebar keeps Maintenance open.
-            path: 'adoption/:repository/:version',
-            loadComponent: () =>
-              import('./routes/projects/[slug]/maintenance/adoption/[repository]/[version]/maintenance-adoption.page').then(
-                (m) => m.MaintenanceAdoptionPage,
-              ),
-          },
-        ],
+        pathMatch: 'full',
+        data: { qitsEntry: true },
+        redirectTo: replacedBy('projects/:slug/components'),
+      },
+      {
+        path: 'projects/:slug/maintenance/dependencies',
+        pathMatch: 'full',
+        data: { qitsEntry: true },
+        redirectTo: replacedBy('projects/:slug/components'),
+      },
+      {
+        path: 'projects/:slug/maintenance/artifacts',
+        pathMatch: 'full',
+        data: { qitsEntry: true },
+        redirectTo: replacedBy('projects/:slug/components'),
+      },
+      {
+        path: 'projects/:slug/maintenance/repositories/:name',
+        data: { qitsEntry: true },
+        redirectTo: movedTo('projects/:slug/components/:name/depends-on'),
+      },
+      {
+        path: 'projects/:slug/maintenance/adoption/:repository/:version',
+        data: { qitsEntry: true },
+        redirectTo: movedTo('projects/:slug/components/:repository/adoption/:version'),
+      },
+      {
+        // The bump names its repository: the page reads it, then moves there.
+        path: 'projects/:slug/maintenance/bumps/:bumpId',
+        data: { qitsEntry: true },
+        loadComponent: () =>
+          import('./routes/projects/[slug]/maintenance/bumps/[bumpId]/bump-redirect.page').then(
+            (m) => m.BumpRedirectPage,
+          ),
       },
       {
         path: 'projects/:slug/setup',

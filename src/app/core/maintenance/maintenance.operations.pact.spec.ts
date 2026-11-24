@@ -23,7 +23,6 @@ import {
   MAINTENANCE_BUMP,
   MAINTENANCE_DEPENDENCIES,
   MAINTENANCE_DEPENDENTS,
-  MAINTENANCE_REPOSITORIES,
   MAINTENANCE_REPOSITORY,
   MAINTENANCE_REPOSITORY_BUMPS,
   MAINTENANCE_REPOSITORY_DEPENDENTS,
@@ -42,42 +41,27 @@ import {
  * The empty list has an interaction too ("no pending bumps"): the menu's screenshot of it shows
  * that recorded body, and every body a screenshot shows is one the provider verifies.
  *
- * The Maintenance section's Dependencies page (qits-2317) reads the inventory's repositories and
- * the dependencies of each kind, INTERNAL and EXTERNAL (`?kind=`, which the golden masters record
- * and the interactions require): an inventory where some of a project's pins are behind
- * ("dependencies of a project, some behind", "external dependencies of a project, some behind"),
- * and an empty one ("no dependencies", "no external dependencies"), each as the page's screenshots
- * show it.
+ * A repository's page (qits-2478) reads the released artifacts, keeping the repository's own: a
+ * project that has released artifacts ("released artifacts, some behind") and none ("no released
+ * artifacts"), each as the page's screenshots show it.
  *
- * Its Artifacts page (qits-2330) reads the inventory's repositories, the released artifacts and,
- * for one artifact (`?ecosystem=&name=`, which the golden master records and the interaction
- * requires), the released artifacts embedding it: a project that has released artifacts, one with
- * dependents current, behind and transitive ("released artifacts, some behind"), and none ("no
- * released artifacts"), each as the page's screenshots show it.
- *
- * Its bump page (qits-2332) reads one bump by its id (`getBump`): a GROUP bump that succeeded,
+ * A repository's bump page (qits-2332, under the repository since qits-2489) reads one bump by its id (`getBump`): a GROUP bump that succeeded,
  * sent one change and was RELEASED ("pending bumps", its `releasedBumpId`), an automation bump
  * that changed nothing ("a bump that changed nothing"), a FAILED automation bump with its failure
  * and two CI runs ("a failed bump"), and an id the service does not know ("no such bump", a 404
  * binding the status only: the page reads nothing of the body).
  *
- * Its repository page (qits-2334) reads one repository by its name (`repoName`) four ways: the
- * repository with its pins and transitives (`getRepository`), its newest 20 bumps
- * (`listBumps?repository=&limit=20`, which the golden master records and the interaction
- * requires), who embeds what it publishes (`listRepositoryDependents`) and its downstream closure
- * (`getRepositoryDownstream`). Each in three states: internal, external, REACTOR and UNRESOLVED
+ * Its Depends on and Dependents pages (qits-2489, qits-2334's repository page split in two) read
+ * one repository by its name (`repoName`) four ways: Depends on the repository with its pins and
+ * transitives (`getRepository`) and its newest 20 bumps (`listBumps?repository=&limit=20`, which
+ * the golden master records and the interaction requires), Dependents who embeds what it
+ * publishes (`listRepositoryDependents`) and its downstream closure (`getRepositoryDownstream`).
+ * Each in three states: internal, external, REACTOR and UNRESOLVED
  * pins, some pending, a behind transitive, a RUNNING, a SUCCEEDED and a NOTHING_TO_DO bump, one
  * published artifact with a current and a behind dependent, a two-level downstream ("a repository
  * with pins and bumps"); an OK repository with nothing at all ("a repository with nothing
  * pinned"); and a name the inventory does not hold ("no such repository": `getRepository` a 404
  * binding the status only, the other three empty answers).
- *
- * Its name search (qits-2331) reads the same dependencies of each kind with the searched glob
- * (`?kind=…&name=…`): a glob some of the project's dependencies match (`*p*`: "dependencies
- * matching a glob, some behind", "external dependencies matching a glob, some behind") and one
- * nothing matches (`nothing-matches-*`: "no dependencies matching a glob", "no external
- * dependencies matching a glob"), the inventory's repositories read beside each in the internal
- * state, as the page's searched screenshots show them.
  *
  * Its adoption page (qits-2333) reads how far one release got (`getAdoptionByRelease`,
  * `?repository=&version=`, which the golden masters record and the interactions require): a
@@ -86,7 +70,9 @@ import {
  * parents reach ("a release some consumers adopted"), and one nobody consumes ("a release nobody
  * consumes", `adopters: []`; both from `@qits/maintenance-golden-masters` 2026.1119.183438 on). A
  * field under a recorded `null` (a PENDING adopter's `adoptedVersion` and
- * `adoptedAt`) is bound as that `null` (`heldBy` keeps a path the recording holds).
+ * `adoptedAt`) is bound as that `null` (`heldBy` keeps a path the recording holds). The Dependents
+ * page reads the newest release's journey the same way, counting its adopters ("a release some
+ * consumers adopted").
  *
  * The Mirror section's repository page (qits-2488) reads, for a cached package, which of our
  * releases embed it (`listDependencyDependents`: "an external package our releases embed", npm
@@ -142,23 +128,13 @@ const given = (
 /** The menu's request: the newest {@link PENDING_BUMPS}. */
 const NEWEST = { query: { limit: PENDING_BUMPS } };
 
-const SOME_BEHIND = 'dependencies of a project, some behind';
-const EXTERNAL_SOME_BEHIND = 'external dependencies of a project, some behind';
-const NONE = 'no dependencies';
-const NO_EXTERNAL = 'no external dependencies';
-
-const MATCHING = 'dependencies matching a glob, some behind';
 const EXTERNAL_MATCHING = 'external dependencies matching a glob, some behind';
-const NONE_MATCHING = 'no dependencies matching a glob';
 const NO_EXTERNAL_MATCHING = 'no external dependencies matching a glob';
 /** The globs the searched states record: one that matches, one that matches nothing. */
 const SOME_GLOB = '*p*';
 const NO_GLOB = 'nothing-matches-*';
 
-/** The page's request for the dependencies of `kind`. */
-const ofKind = (kind: 'INTERNAL' | 'EXTERNAL') => ({ query: { kind } });
-
-/** The page's request for the dependencies of `kind` whose name matches `name`. */
+/** The mirror page's request for the dependencies of `kind` whose name matches `name`. */
 const searched = (kind: 'INTERNAL' | 'EXTERNAL', name: string) => ({ query: { kind, name } });
 
 const RELEASED = 'released artifacts, some behind';
@@ -169,7 +145,7 @@ const EMBEDDED = 'an external package our releases embed';
 const EMBEDDED_PACKAGE = 'left-pad';
 const NOTHING_RELEASED = 'no released artifacts';
 
-/** The detail's request for the artifact `state` recorded the dependents of. */
+/** The mirror page's request for the artifact `state` recorded the dependents of. */
 const dependentsOf = (state: string) => {
   const { ecosystem, name } = masters.operation(state, 'listDependencyDependents').query;
   return { query: { ecosystem, name } };
@@ -209,10 +185,6 @@ const releaseOf = (state: string) => {
   };
 };
 
-/** The project the recorded states' repositories belong to. */
-const projectOf = (state: string): string =>
-  masters.operation(state, 'listRepositories').params['projectId'];
-
 describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s operation', () => {
   afterAll(() => {
     maintenanceClient.setConfig({ baseUrl: '' });
@@ -239,113 +211,6 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-project-dependencies: the inventory’s repositories, with their projects', () =>
-    given(MAINTENANCE_REPOSITORIES, SOME_BEHIND, 'show-project-dependencies').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
-        expect(error).toBeUndefined();
-        // The mock answers each row with the recorded first one (a type match per element).
-        const repositories = data ?? [];
-        expect(repositories.length).toBeGreaterThan(0);
-        expect(repositories.every((r) => !!r.name)).toBe(true);
-        expect(repositories[0]?.project).toBe(projectOf(SOME_BEHIND));
-      },
-    ));
-
-  it('show-project-dependencies: no repositories in an empty inventory', () =>
-    given(MAINTENANCE_REPOSITORIES, NONE, 'show-project-dependencies').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
-        expect(data).toEqual([]);
-      },
-    ));
-
-  it('show-project-dependencies: the internal dependencies, a pin behind', () =>
-    given(MAINTENANCE_DEPENDENCIES, SOME_BEHIND, 'show-project-dependencies').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(ofKind('INTERNAL')),
-        );
-        expect(error).toBeUndefined();
-        const pins = (data ?? []).flatMap((dependency) => dependency.pins ?? []);
-        expect(pins.some((pin) => pin.pending === true)).toBe(true);
-        expect(pins.every((pin) => !!pin.repository && !!pin.manifestPath)).toBe(true);
-      },
-    ));
-
-  it('show-project-dependencies: the external dependencies, one with no latest and its error', () =>
-    given(MAINTENANCE_DEPENDENCIES, EXTERNAL_SOME_BEHIND, 'show-project-dependencies').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(ofKind('EXTERNAL')),
-        );
-        expect(error).toBeUndefined();
-        const unknown = (data ?? []).find((dependency) => dependency.latest == null);
-        expect(unknown?.error).toBeTruthy();
-        expect((data ?? []).some((d) => (d.pins ?? []).some((pin) => pin.pending))).toBe(true);
-      },
-    ));
-
-  it('show-project-dependencies: no internal dependencies in an empty inventory', () =>
-    given(MAINTENANCE_DEPENDENCIES, NONE, 'show-project-dependencies').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(ofKind('INTERNAL')),
-        );
-        expect(data).toEqual([]);
-      },
-    ));
-
-  it('show-project-dependencies: no external dependencies in an empty inventory', () =>
-    given(MAINTENANCE_DEPENDENCIES, NO_EXTERNAL, 'show-project-dependencies').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(ofKind('EXTERNAL')),
-        );
-        expect(data).toEqual([]);
-      },
-    ));
-
-  it('show-project-artifacts: the inventory’s repositories, with their projects', () =>
-    given(MAINTENANCE_REPOSITORIES, RELEASED, 'show-project-artifacts').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
-        expect(error).toBeUndefined();
-        const repositories = data ?? [];
-        expect(repositories.length).toBeGreaterThan(0);
-        expect(repositories[0]?.project).toBe(projectOf(RELEASED));
-      },
-    ));
-
-  it('show-project-artifacts: no repositories when nothing was released', () =>
-    given(MAINTENANCE_REPOSITORIES, NOTHING_RELEASED, 'show-project-artifacts').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
-        expect(data).toEqual([]);
-      },
-    ));
-
-  it('show-project-artifacts: the released artifacts, with their SBOMs and dependents', () =>
-    given(MAINTENANCE_ARTIFACTS, RELEASED, 'show-project-artifacts').executeTest(async (server) => {
-      const { data, error } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
-      expect(error).toBeUndefined();
-      // The mock answers each row with the recorded first one (a type match per element).
-      const artifacts = data ?? [];
-      expect(artifacts.length).toBeGreaterThan(0);
-      expect(
-        artifacts.every((a) => !!a.ecosystem && !!a.name && !!a.repository && !!a.sbomStatus),
-      ).toBe(true);
-      expect(artifacts.every((a) => typeof a.behindCount === 'number')).toBe(true);
-    }));
-
-  it('show-project-artifacts: no artifacts when nothing was released', () =>
-    given(MAINTENANCE_ARTIFACTS, NOTHING_RELEASED, 'show-project-artifacts').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
-        expect(data).toEqual([]);
-      },
-    ));
-
   it('show-repository: the released artifacts, kept by the repository that publishes them', () =>
     given(MAINTENANCE_ARTIFACTS, RELEASED, 'show-repository').executeTest(async (server) => {
       const { data, error } = await at(server.url, () => MAINTENANCE_ARTIFACTS.fetch({}));
@@ -366,29 +231,6 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-artifact-dependents: an artifact’s dependents, direct and transitive', () =>
-    given(MAINTENANCE_DEPENDENTS, RELEASED, 'show-artifact-dependents').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENTS.fetch(dependentsOf(RELEASED)),
-        );
-        expect(error).toBeUndefined();
-        expect(data?.latest).toBeTruthy();
-        const dependents = data?.dependents ?? [];
-        expect(dependents.length).toBeGreaterThan(0);
-        expect(dependents.every((d) => !!d.repository && !!d.embeddedVersion)).toBe(true);
-      },
-    ));
-
-  it('show-artifact-dependents: nothing embeds an artifact when nothing was released', () =>
-    given(MAINTENANCE_DEPENDENTS, NOTHING_RELEASED, 'show-artifact-dependents').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENTS.fetch(dependentsOf(NOTHING_RELEASED)),
-        );
-        expect(data?.dependents).toEqual([]);
-      },
-    ));
   it('show-bump: a bump that sent a change and was released', () =>
     given(MAINTENANCE_BUMP, 'pending bumps', 'show-bump').executeTest(async (server) => {
       const { data, error } = await at(server.url, () =>
@@ -439,8 +281,8 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-maintenance-repository: a repository with pins of every kind and transitives', () =>
-    given(MAINTENANCE_REPOSITORY, PINS_AND_BUMPS, 'show-maintenance-repository').executeTest(
+  it('show-repository-depends-on: a repository with pins of every kind and transitives', () =>
+    given(MAINTENANCE_REPOSITORY, PINS_AND_BUMPS, 'show-repository-depends-on').executeTest(
       async (server) => {
         const { data, error } = await at(server.url, () =>
           MAINTENANCE_REPOSITORY.fetch(named(PINS_AND_BUMPS)),
@@ -457,8 +299,8 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-maintenance-repository: a repository with nothing pinned', () =>
-    given(MAINTENANCE_REPOSITORY, NOTHING_PINNED, 'show-maintenance-repository').executeTest(
+  it('show-repository-depends-on: a repository with nothing pinned', () =>
+    given(MAINTENANCE_REPOSITORY, NOTHING_PINNED, 'show-repository-depends-on').executeTest(
       async (server) => {
         const { data, error } = await at(server.url, () =>
           MAINTENANCE_REPOSITORY.fetch(named(NOTHING_PINNED)),
@@ -470,12 +312,12 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-maintenance-repository: a repository the inventory does not hold is a 404', () =>
+  it('show-repository-depends-on: a repository the inventory does not hold is a 404', () =>
     // The page reads nothing of a 404's body: the interaction binds the status only.
     given(
       { ...MAINTENANCE_REPOSITORY, consumes: [] },
       NO_SUCH_REPOSITORY,
-      'show-maintenance-repository',
+      'show-repository-depends-on',
     ).executeTest(async (server) => {
       const { data, response } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY.fetch(named(NO_SUCH_REPOSITORY)),
@@ -484,8 +326,8 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(response?.status).toBe(404);
     }));
 
-  it('show-maintenance-repository: a repository’s newest bumps', () =>
-    given(MAINTENANCE_REPOSITORY_BUMPS, PINS_AND_BUMPS, 'show-maintenance-repository').executeTest(
+  it('show-repository-depends-on: a repository’s newest bumps', () =>
+    given(MAINTENANCE_REPOSITORY_BUMPS, PINS_AND_BUMPS, 'show-repository-depends-on').executeTest(
       async (server) => {
         const { data, error } = await at(server.url, () =>
           MAINTENANCE_REPOSITORY_BUMPS.fetch(bumpsOf(PINS_AND_BUMPS)),
@@ -497,8 +339,8 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-maintenance-repository: no bumps of a repository with nothing pinned', () =>
-    given(MAINTENANCE_REPOSITORY_BUMPS, NOTHING_PINNED, 'show-maintenance-repository').executeTest(
+  it('show-repository-depends-on: no bumps of a repository with nothing pinned', () =>
+    given(MAINTENANCE_REPOSITORY_BUMPS, NOTHING_PINNED, 'show-repository-depends-on').executeTest(
       async (server) => {
         const { data } = await at(server.url, () =>
           MAINTENANCE_REPOSITORY_BUMPS.fetch(bumpsOf(NOTHING_PINNED)),
@@ -507,11 +349,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       },
     ));
 
-  it('show-maintenance-repository: no bumps of a repository the inventory does not hold', () =>
+  it('show-repository-depends-on: no bumps of a repository the inventory does not hold', () =>
     given(
       MAINTENANCE_REPOSITORY_BUMPS,
       NO_SUCH_REPOSITORY,
-      'show-maintenance-repository',
+      'show-repository-depends-on',
     ).executeTest(async (server) => {
       const { data } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_BUMPS.fetch(bumpsOf(NO_SUCH_REPOSITORY)),
@@ -519,11 +361,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(data).toEqual([]);
     }));
 
-  it('show-maintenance-repository: who embeds what a repository publishes', () =>
+  it('show-repository-dependents: who embeds what a repository publishes', () =>
     given(
       MAINTENANCE_REPOSITORY_DEPENDENTS,
       PINS_AND_BUMPS,
-      'show-maintenance-repository',
+      'show-repository-dependents',
     ).executeTest(async (server) => {
       const { data, error } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_DEPENDENTS.fetch(named(PINS_AND_BUMPS)),
@@ -537,11 +379,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(dependents.every((d) => !!d.repository && !!d.embeddedVersion)).toBe(true);
     }));
 
-  it('show-maintenance-repository: nothing published by a repository with nothing pinned', () =>
+  it('show-repository-dependents: nothing published by a repository with nothing pinned', () =>
     given(
       MAINTENANCE_REPOSITORY_DEPENDENTS,
       NOTHING_PINNED,
-      'show-maintenance-repository',
+      'show-repository-dependents',
     ).executeTest(async (server) => {
       const { data } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_DEPENDENTS.fetch(named(NOTHING_PINNED)),
@@ -549,11 +391,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(data?.artifacts).toEqual([]);
     }));
 
-  it('show-maintenance-repository: nothing published by a repository the inventory does not hold', () =>
+  it('show-repository-dependents: nothing published by a repository the inventory does not hold', () =>
     given(
       MAINTENANCE_REPOSITORY_DEPENDENTS,
       NO_SUCH_REPOSITORY,
-      'show-maintenance-repository',
+      'show-repository-dependents',
     ).executeTest(async (server) => {
       const { data } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_DEPENDENTS.fetch(named(NO_SUCH_REPOSITORY)),
@@ -561,11 +403,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(data?.artifacts).toEqual([]);
     }));
 
-  it('show-maintenance-repository: what is downstream of a repository', () =>
+  it('show-repository-dependents: what is downstream of a repository', () =>
     given(
       MAINTENANCE_REPOSITORY_DOWNSTREAM,
       PINS_AND_BUMPS,
-      'show-maintenance-repository',
+      'show-repository-dependents',
     ).executeTest(async (server) => {
       const { data, error } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(PINS_AND_BUMPS)),
@@ -579,11 +421,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect((downstream[0]?.via ?? []).length).toBeGreaterThan(0);
     }));
 
-  it('show-maintenance-repository: nothing downstream of a repository with nothing pinned', () =>
+  it('show-repository-dependents: nothing downstream of a repository with nothing pinned', () =>
     given(
       MAINTENANCE_REPOSITORY_DOWNSTREAM,
       NOTHING_PINNED,
-      'show-maintenance-repository',
+      'show-repository-dependents',
     ).executeTest(async (server) => {
       const { data } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(NOTHING_PINNED)),
@@ -591,11 +433,11 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(data?.downstream).toEqual([]);
     }));
 
-  it('show-maintenance-repository: nothing downstream of a repository the inventory does not hold', () =>
+  it('show-repository-dependents: nothing downstream of a repository the inventory does not hold', () =>
     given(
       MAINTENANCE_REPOSITORY_DOWNSTREAM,
       NO_SUCH_REPOSITORY,
-      'show-maintenance-repository',
+      'show-repository-dependents',
     ).executeTest(async (server) => {
       const { data } = await at(server.url, () =>
         MAINTENANCE_REPOSITORY_DOWNSTREAM.fetch(named(NO_SUCH_REPOSITORY)),
@@ -645,73 +487,20 @@ describe('qits-landing-app → qits-maintenance-service pact: the bumps menu’s
       expect(data?.adopters).toEqual([]);
     }));
 
-  it('search-project-dependencies: the inventory’s repositories, beside a matching search', () =>
-    given(MAINTENANCE_REPOSITORIES, MATCHING, 'search-project-dependencies').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
-        expect(error).toBeUndefined();
-        const repositories = data ?? [];
-        expect(repositories.length).toBeGreaterThan(0);
-        expect(repositories[0]?.project).toBe(projectOf(MATCHING));
-      },
-    ));
-
-  it('search-project-dependencies: the inventory’s repositories, beside a search matching nothing', () =>
-    given(MAINTENANCE_REPOSITORIES, NONE_MATCHING, 'search-project-dependencies').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () => MAINTENANCE_REPOSITORIES.fetch({}));
-        expect(error).toBeUndefined();
-        expect((data ?? []).length).toBeGreaterThan(0);
-      },
-    ));
-
-  it('search-project-dependencies: the internal dependencies matching a glob, a pin behind', () =>
-    given(MAINTENANCE_DEPENDENCIES, MATCHING, 'search-project-dependencies').executeTest(
+  it('show-repository-dependents: how far the newest release got, some consumers adopted', () =>
+    given(MAINTENANCE_ADOPTION, ADOPTED, 'show-repository-dependents').executeTest(
       async (server) => {
         const { data, error } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(searched('INTERNAL', SOME_GLOB)),
+          MAINTENANCE_ADOPTION.fetch(releaseOf(ADOPTED)),
         );
         expect(error).toBeUndefined();
-        expect((data ?? []).length).toBeGreaterThan(0);
-        const pins = (data ?? []).flatMap((dependency) => dependency.pins ?? []);
-        expect(pins.some((pin) => pin.pending === true)).toBe(true);
+        // The page counts the adopters and those ADOPTED, nothing more.
+        const adopters = data?.adopters ?? [];
+        expect(adopters.length).toBeGreaterThan(0);
+        expect(adopters.every((a) => !!a.state)).toBe(true);
       },
     ));
 
-  it('search-project-dependencies: the external dependencies matching a glob, one with no latest', () =>
-    given(MAINTENANCE_DEPENDENCIES, EXTERNAL_MATCHING, 'search-project-dependencies').executeTest(
-      async (server) => {
-        const { data, error } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(searched('EXTERNAL', SOME_GLOB)),
-        );
-        expect(error).toBeUndefined();
-        const unknown = (data ?? []).find((dependency) => dependency.latest == null);
-        expect(unknown?.error).toBeTruthy();
-        expect((data ?? []).some((d) => (d.pins ?? []).some((pin) => pin.pending))).toBe(true);
-      },
-    ));
-
-  it('search-project-dependencies: no internal dependency matches a glob', () =>
-    given(MAINTENANCE_DEPENDENCIES, NONE_MATCHING, 'search-project-dependencies').executeTest(
-      async (server) => {
-        const { data } = await at(server.url, () =>
-          MAINTENANCE_DEPENDENCIES.fetch(searched('INTERNAL', NO_GLOB)),
-        );
-        expect(data).toEqual([]);
-      },
-    ));
-
-  it('search-project-dependencies: no external dependency matches a glob', () =>
-    given(
-      MAINTENANCE_DEPENDENCIES,
-      NO_EXTERNAL_MATCHING,
-      'search-project-dependencies',
-    ).executeTest(async (server) => {
-      const { data } = await at(server.url, () =>
-        MAINTENANCE_DEPENDENCIES.fetch(searched('EXTERNAL', NO_GLOB)),
-      );
-      expect(data).toEqual([]);
-    }));
   // The Mirror section's repository page (qits-2488): below a cached package's versions, which of
   // our releases embed it (`listDependencyDependents?ecosystem=&name=`) and which repositories pin
   // it (`listDependencies?kind=EXTERNAL&name=`, the name or an image's glob). "an external package

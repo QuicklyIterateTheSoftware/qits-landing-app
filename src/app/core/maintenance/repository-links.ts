@@ -3,12 +3,11 @@ import { exit, outcomes } from '@qits/angular';
 import { SelectedProject } from '$core/projects/selected-project';
 
 /**
- * Every in-app link to a repository's maintenance page (qits-2334): the repository page in the
- * open project, `/projects/<slug>/maintenance/repositories/<name>`, as the exit
- * `open-maintenance-repository:repository`. The Dependencies page's pins, the Artifacts page's
- * producing repository and dependents, the bump page's repository, the adoption page's adopters
- * (qits-2333) and the repository page's own dependents and downstream lead there through it, rendered with `QitsExit`
- * (`[qitsExit]="repositoryLinks.opening.repository"` and
+ * Every in-app link to a repository's Depends on page (qits-2334; under the repository since
+ * qits-2489): `/projects/<slug>/components/<name>/depends-on` in the open project, as the exit
+ * `open-repository-depends-on:repository`. The bump page's repository, the adoption page's
+ * adopters (qits-2333) and the Dependents page's dependents and downstream lead there through it,
+ * rendered with `QitsExit` (`[qitsExit]="repositoryLinks.opening.repository"` and
  * `[exitParams]="repositoryLinks.params(name)"`), so each link has a real `href`, a plain click
  * records the outcome and navigates through the router, and the trigger carries
  * `data-qits-outcome`. The declaration is app-wide, since this file is outside `routes/`.
@@ -20,16 +19,16 @@ import { SelectedProject } from '$core/projects/selected-project';
 export class MaintenanceRepositoryLinks {
   private readonly selected = inject(SelectedProject);
 
-  /** A repository's maintenance page. */
-  readonly opening = outcomes('open-maintenance-repository', {
-    repository: exit('projects/:slug/maintenance/repositories/:name'),
+  /** A repository's Depends on page. */
+  readonly opening = outcomes('open-repository-depends-on', {
+    repository: exit('projects/:slug/components/:repo/depends-on'),
   });
 
   /** The open project's slug; `''` before the URL names one. */
   readonly slug = computed(() => this.selected.slug() ?? '');
 
   /** The exit's params for the repository `name` in the open project. */
-  params(name: string | null | undefined): { readonly slug: string; readonly name: string } {
-    return { slug: this.slug(), name: name ?? '' };
+  params(name: string | null | undefined): { readonly slug: string; readonly repo: string } {
+    return { slug: this.slug(), repo: name ?? '' };
   }
 }

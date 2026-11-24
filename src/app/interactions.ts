@@ -642,68 +642,69 @@ export const INTERACTIONS = {
    */
   'open-related-project-event': 'An event’s cause or an event of its chain opens that event’s page',
   /**
-   * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
-   * (qits-2317): the Maintenance section's Dependencies page reads the inventory's repositories and
-   * the INTERNAL and EXTERNAL dependencies, and shows the pins of the open project's repositories,
-   * the behind ones first. Refresh reads all three again.
-   */
-  'show-project-dependencies':
-    'The Dependencies page lists the open project’s internal and external pins, behind ones first',
-  /**
-   * `maintenance-artifacts.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_ARTIFACTS`
-   * (qits-2330): the Maintenance section's Artifacts page reads the inventory's repositories and the
-   * released artifacts, and lists the open project's, those with a behind dependent first. Refresh
-   * reads both again.
-   */
-  'show-project-artifacts':
-    'The Artifacts page lists what the open project released, those shipped behind somewhere first',
-  /**
-   * `maintenance-artifacts.page.ts` via `MAINTENANCE_DEPENDENTS` (qits-2330): an artifact's detail
-   * (`?ecosystem=&name=`) reads the released artifacts whose newest release embeds it, each current,
-   * behind or unknown against its latest, the behind ones first. Refresh reads it again.
-   */
-  'show-artifact-dependents':
-    'An artifact on the Artifacts page lists who embeds it, and which of them ship an old copy',
-  /**
-   * `maintenance-bump.page.ts` via `MAINTENANCE_BUMP` (qits-2332): the bump page reads one bump by
+   * `repository-bump.page.ts` via `MAINTENANCE_BUMP` (qits-2332): the bump page reads one bump by
    * its id, and again after `BUMP_EVENTS` while it is REQUESTED or RUNNING. Refresh reads it again.
    */
   'show-bump': 'A bump’s page shows how it ran, its release, its CI runs and the changes it sent',
   /**
-   * `maintenance-bump.page.ts`: the release request a bump belongs to opens the request's page
+   * `repository-bump.page.ts`: the release request a bump belongs to opens the request's page
    * (qits-2332). Navigates only, and names no pact.
    */
   'open-bump-release-request': 'The release request on a bump’s page opens the request',
   /**
-   * `maintenance-repository.page.ts` via `MAINTENANCE_REPOSITORY`, `MAINTENANCE_REPOSITORY_BUMPS`,
-   * `MAINTENANCE_REPOSITORY_DEPENDENTS` and `MAINTENANCE_REPOSITORY_DOWNSTREAM` (qits-2334): the
-   * repository page reads one repository by its name with its pins and transitives, its newest 20
-   * bumps, who embeds what it publishes and its downstream closure; the repository and its bumps
-   * again after `BUMP_EVENTS` naming it. Refresh reads all four again.
+   * `repository-bump.page.ts`: a bump read under another repository than its own moves to its own
+   * repository's address, in place (qits-2489). Navigates only, and names no pact.
    */
-  'show-maintenance-repository':
-    'A repository’s maintenance page shows its pins, its recent bumps, its dependents and what is downstream',
+  'follow-bump-repository': 'A bump’s page under another repository moves under the bump’s own',
   /**
-   * `maintenance-repository.page.ts`: a bump in a repository's recent bumps opens the bump's page
-   * (qits-2334). Navigates only, and names no pact.
+   * `bump-redirect.page.ts` via `MAINTENANCE_BUMP` (qits-2489): a bump's old address
+   * (`maintenance/bumps/<id>`) reads the bump and replaces itself with the bump's page under its
+   * repository, or links the Components for a bump the service does not know. Navigates only, and
+   * names no pact.
    */
-  'open-repository-bump': 'A bump on a repository’s maintenance page opens the bump’s page',
+  'follow-moved-bump': 'A bump’s old address goes to the bump’s page under its repository',
   /**
-   * `maintenance-repository.page.ts`: the release request a recent bump belongs to opens the
+   * `repository-depends-on.page.ts` via `MAINTENANCE_REPOSITORY` and `MAINTENANCE_REPOSITORY_BUMPS`
+   * (qits-2489, from qits-2334's repository page): a repository's Depends on page reads it by its
+   * name with its pins and transitives, and its newest 20 bumps; both again after `BUMP_EVENTS`
+   * naming it. Refresh reads both again.
+   */
+  'show-repository-depends-on':
+    'A repository’s Depends on page shows its pins, behind ones first, and its recent bumps',
+  /**
+   * `repository-depends-on.page.ts`: a bump in a repository's recent bumps opens the bump's page
+   * under the repository (qits-2334, qits-2489). Navigates only, and names no pact.
+   */
+  'open-repository-bump': 'A bump on a repository’s Depends on page opens the bump’s page',
+  /**
+   * `repository-depends-on.page.ts`: the release request a recent bump belongs to opens the
    * request's page (qits-2334). Navigates only, and names no pact.
    */
   'open-repository-bump-release-request':
-    'The release request of a bump on a repository’s maintenance page opens the request',
+    'The release request of a bump on a repository’s Depends on page opens the request',
   /**
-   * `repository-links.ts` (`MaintenanceRepositoryLinks`, qits-2334): a repository name on the
-   * Dependencies page (a pin's), the Artifacts page (the producing repository, a dependent's), the
-   * bump page, the adoption page (an adopter's card the inventory holds) and the repository page (a
-   * dependent's, a downstream one's) opens that repository's maintenance page in the open project.
-   * Navigates only, and names no pact.
+   * `repository-dependents.page.ts` via `MAINTENANCE_REPOSITORY_DEPENDENTS`,
+   * `MAINTENANCE_REPOSITORY_DOWNSTREAM` and `MAINTENANCE_ADOPTION` (qits-2489, from qits-2334's
+   * repository page): a repository's Dependents page reads who embeds what it publishes, its
+   * downstream closure and, beside its releases (qits-projects' `REPOSITORY_RELEASE_REQUESTS`), how
+   * far the newest one got. Refresh reads them all again.
    */
-  'open-maintenance-repository': 'A repository name in Maintenance opens the repository’s page',
+  'show-repository-dependents':
+    'A repository’s Dependents page shows who embeds it, what is downstream and how far its newest release got',
   /**
-   * `maintenance-adoption.page.ts` via `MAINTENANCE_ADOPTION` (qits-2333): a release's adoption
+   * `repository-dependents.page.ts`: a release in a repository's Releases opens its adoption page
+   * under the repository (qits-2489). Navigates only, and names no pact.
+   */
+  'open-repository-adoption': 'A release on a repository’s Dependents page opens its adoption page',
+  /**
+   * `repository-links.ts` (`MaintenanceRepositoryLinks`, qits-2334, qits-2489): a repository name
+   * on the bump page, the adoption page (an adopter's card the inventory holds) and the Dependents
+   * page (a dependent's, a downstream one's) opens that repository's Depends on page in the open
+   * project. Navigates only, and names no pact.
+   */
+  'open-repository-depends-on': 'A repository name of a bump or a dependent opens its Depends on',
+  /**
+   * `repository-adoption.page.ts` via `MAINTENANCE_ADOPTION` (qits-2333): a release's adoption
    * page reads how far it got (`getAdoptionByRelease?repository=&version=`), every repository
    * downstream of it and whether it carries the release yet. Refresh reads it again, and so does
    * an `SCMRelease` or `SoftwareRelease`.
@@ -711,19 +712,11 @@ export const INTERACTIONS = {
   'show-adoption': 'A release’s adoption page draws every repository downstream and who carries it',
   /**
    * `release-request.page.ts`: “Adoption of this release” on a released request opens the
-   * release's adoption page in this app's Maintenance section (qits-2333). Navigates only, and
-   * names no pact.
+   * release's adoption page under its repository (qits-2333, qits-2489). Navigates only, and names
+   * no pact.
    */
   'open-release-adoption':
     '“Adoption of this release” on a release request opens its adoption page',
-  /**
-   * `maintenance-dependencies.page.ts` via `MAINTENANCE_REPOSITORIES` and `MAINTENANCE_DEPENDENCIES`
-   * (qits-2331): a name glob searched on the Dependencies page (`?name=`) reads the INTERNAL and
-   * EXTERNAL dependencies with it (`?kind=…&name=…`), beside the inventory's repositories, and
-   * shows the open project's matching pins.
-   */
-  'search-project-dependencies':
-    'Searching the Dependencies page by a name glob lists the open project’s matching pins',
   /**
    * `bumps-menu.ts` via `PENDING_BUMPS_LIST` (qits-2146): the top bar's bumps menu (a lighthouse),
    * on its first opening.
@@ -1603,7 +1596,7 @@ export const INTERACTIONS = {
   'open-open-issue': 'An open issue’s id on the Desk page opens the issue’s page',
   /**
    * `shell.layout.ts`: a section in the sidebar opens it, one exit per section (Work, Releases,
-   * Components, Deployments, Observability, Events, Maintenance). Navigates only, and
+   * Components, Deployments, Observability, Events). Navigates only, and
    * names no pact (epic qits-2000).
    */
   'open-sidebar-section': 'A section in the sidebar opens the section’s page',
@@ -1643,12 +1636,6 @@ export const INTERACTIONS = {
    */
   'open-sidebar-deployments-page':
     'A Deployments page below Deployments in the sidebar opens that page',
-  /**
-   * `shell.layout.ts`: a Maintenance page listed below Maintenance in the sidebar opens it, one exit
-   * per page (qits-2317: Dependencies; qits-2330: Artifacts). Navigates only, and names no pact.
-   */
-  'open-sidebar-maintenance-page':
-    'A Maintenance page below Maintenance in the sidebar opens that page',
   /**
    * `shell.layout.ts`: the top bar's desk icon, beside the gear, opens the open project's desk
    * (qits-2484). Navigates only, and names no pact.
@@ -1741,8 +1728,8 @@ export const INTERACTIONS = {
    */
   'open-menu-agent': 'An agent in the agents menu opens the agent’s page',
   /**
-   * `bumps-menu.ts`: a bump's repository in the top bar's bumps menu opens the bump's page in the
-   * open project (qits-2332). Navigates only, and names no pact.
+   * `bumps-menu.ts`: a bump's repository in the top bar's bumps menu opens the bump's page under
+   * its repository in the open project (qits-2332, qits-2489). Navigates only, and names no pact.
    */
   'open-menu-bump': 'A bump in the bumps menu opens the bump’s page',
   /**

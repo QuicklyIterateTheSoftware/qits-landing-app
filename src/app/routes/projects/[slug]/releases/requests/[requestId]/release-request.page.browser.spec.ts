@@ -539,7 +539,7 @@ describe('ReleaseRequestPage (screenshots)', () => {
     await leftFor(opened);
     expect(fired()).toEqual(['open-release-adoption:release']);
     expect(url()).toBe(
-      `/projects/${opened.project.slug}/maintenance/adoption/${request.repoName}/${request.version}`,
+      `/projects/${opened.project.slug}/components/${request.repoName}/adoption/${request.version}`,
     );
   });
 

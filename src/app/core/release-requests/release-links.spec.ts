@@ -66,7 +66,7 @@ describe('release links', () => {
       ['githost', `${SCOPE}tags/2026.1.1`],
       ['githost', `${SCOPE}commit/abc`],
       [undefined, '/projects/qits/deployments/requests/by-release/r1/2026.1.1'],
-      [undefined, '/projects/qits/maintenance/adoption/qits-ci-service/2026.1.1'],
+      [undefined, '/projects/qits/components/qits-ci-service/adoption/2026.1.1'],
     ]);
     expect(
       releaseLinks({ ...base, version: '2026.1.1', deployable: false }).map((link) => link.app),
@@ -99,7 +99,7 @@ describe('release links', () => {
     }).filter((link) => link.label === 'Adoption of this release');
     expect(adoption).toEqual({
       label: 'Adoption of this release',
-      path: '/projects/qits/maintenance/adoption/repo%2F1/2026.1.1%2Bx',
+      path: '/projects/qits/components/repo%2F1/adoption/2026.1.1%2Bx',
       adoption: { repository: 'repo/1', version: '2026.1.1+x' },
     });
   });

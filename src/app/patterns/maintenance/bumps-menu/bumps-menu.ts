@@ -59,10 +59,11 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
  * (`qitsEntityList`), each row its bump (`qitsEntity`, by `id`), each value its field or the fields
  * it is derived from (`qitsField`); each change line its change, by the dependency's `name`.
  *
- * Each row's repository opens the bump's page in the open project (`open-menu-bump`,
- * `projects/<slug>/maintenance/bumps/<id>`, qits-2332), closing the menu. Bumps are the
- * platform's, so a bump of another project's repository is linked in the open one too: its page
- * reads the bump by id alone. With no project open, the rows are not links.
+ * Each row's repository opens the bump's page under that repository in the open project
+ * (`open-menu-bump`, `projects/<slug>/components/<repository>/bumps/<id>`, qits-2332, qits-2489),
+ * closing the menu. Bumps are the platform's, so a bump of another project's repository is linked
+ * in the open one too: its page reads the bump by id alone. With no project open, the rows are not
+ * links.
  *
  * Below the bumps, a compact list of the edge's upstream connection pools (qits-1065): its own
  * `qitsResource` over `UPSTREAM_POOLS` (the edge's `getUpstreamPools`, on the page's own origin;
@@ -117,7 +118,11 @@ export function bumpState(bump: BumpEntry): { label: string; tone: keyof typeof 
                     <a
                       class="truncate text-sm font-semibold text-accent no-underline hover:underline"
                       [qitsExit]="opening.bump"
-                      [exitParams]="{ slug: slug(), bumpId: bump.id ?? '' }"
+                      [exitParams]="{
+                        slug: slug(),
+                        repo: bump.repository ?? '',
+                        bumpId: bump.id ?? '',
+                      }"
                       [title]="'The bump of ' + (bump.repository ?? '')"
                       (click)="menu.close()"
                       [fieldOf]="bump"
@@ -221,7 +226,7 @@ export class BumpsMenu {
 
   /** A bump's page in the open project (qits-2332). */
   protected readonly opening = outcomes('open-menu-bump', {
-    bump: exit('projects/:slug/maintenance/bumps/:bumpId'),
+    bump: exit('projects/:slug/components/:repo/bumps/:bumpId'),
   });
 
   /** The open project's slug; `''` with no project open, when no row is a link. */

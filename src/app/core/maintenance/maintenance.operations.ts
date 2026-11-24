@@ -8,7 +8,6 @@ import {
   listBumps,
   listDependencies,
   listDependencyDependents,
-  listRepositories,
   listPendingBumps,
   listRepositoryDependents,
 } from '../../api/maintenance';
@@ -20,7 +19,6 @@ import {
   LIST_DEPENDENCIES,
   LIST_DEPENDENCY_DEPENDENTS,
   LIST_PENDING_BUMPS,
-  LIST_REPOSITORIES,
   REPOSITORY,
   REPOSITORY_BUMPS,
   REPOSITORY_DEPENDENTS,
@@ -29,10 +27,12 @@ import {
 
 /**
  * qits-maintenance's reads declared as operations (qits-2145), for the top bar's bumps menu, which
- * reads through `qitsResource` instead of a store (qits-2146), and for the Maintenance section's
- * Dependencies page (qits-2317), Artifacts page (qits-2330), bump page (qits-2332), adoption page
- * (qits-2333) and repository page (qits-2334); `maintenance.operations.pact.spec.ts` binds each
- * with the same provider, operationId and `consumes`.
+ * reads through `qitsResource` instead of a store (qits-2146), for a repository's pages (its
+ * published artifacts, qits-2478; its Depends on and Dependents, qits-2489, once qits-2334's
+ * repository page; a bump, qits-2332; a release's adoption, qits-2333) and for the Mirror
+ * section's package releases (qits-2488); `maintenance.operations.pact.spec.ts` binds each with
+ * the same provider, operationId and `consumes`. The Maintenance section's listings that first
+ * read them (qits-2317, qits-2330) are gone (qits-2489).
  */
 
 /** The newest pending version bumps (`listPendingBumps?limit=`), the bumps menu's list. */
@@ -42,18 +42,6 @@ export const PENDING_BUMPS_LIST = qitsOperation({
   method: 'GET',
   call: listPendingBumps,
   consumes: LIST_PENDING_BUMPS,
-});
-
-/**
- * Every repository of the inventory, with the project it belongs to (`listRepositories`). Only
- * staff roles may read it; anyone else gets a 403.
- */
-export const MAINTENANCE_REPOSITORIES = qitsOperation({
-  provider: 'qits-maintenance-service',
-  operationId: 'listRepositories',
-  method: 'GET',
-  call: listRepositories,
-  consumes: LIST_REPOSITORIES,
 });
 
 /**
@@ -109,7 +97,7 @@ export const MAINTENANCE_BUMP = qitsOperation({
 
 /**
  * One repository of the inventory with its pins and transitives (`getRepository`,
- * `/maintenance/api/repositories/{name}`), the repository page's main read (qits-2334): keyed by
+ * `/maintenance/api/repositories/{name}`), the Depends on page's main read (qits-2334, qits-2489): keyed by
  * the repository's name (`qits-ci-service`, never the application `qits-ci`). A name the inventory
  * does not hold is a 404, which the page says as "No repository <name> in the inventory." (status
  * only: the page reads nothing of the body). Only staff roles may read it; anyone else gets a 403.
@@ -123,7 +111,7 @@ export const MAINTENANCE_REPOSITORY = qitsOperation({
 });
 
 /**
- * The newest bumps of one repository (`listBumps?repository=&limit=20`), the repository page's
+ * The newest bumps of one repository (`listBumps?repository=&limit=20`), the Depends on page's
  * recent bumps (qits-2334). An unknown repository answers an empty list. Only staff roles may read
  * it; anyone else gets a 403.
  */
@@ -137,7 +125,7 @@ export const MAINTENANCE_REPOSITORY_BUMPS = qitsOperation({
 
 /**
  * Who embeds what one repository publishes, per published artifact
- * (`listRepositoryDependents`, `/maintenance/api/repositories/{name}/dependents`), the repository
+ * (`listRepositoryDependents`, `/maintenance/api/repositories/{name}/dependents`), the Dependents
  * page's dependents (qits-2334). An unknown repository answers no artifacts. Only staff roles may
  * read it; anyone else gets a 403.
  */
@@ -151,7 +139,7 @@ export const MAINTENANCE_REPOSITORY_DEPENDENTS = qitsOperation({
 
 /**
  * Everything downstream of one repository, upstream first (`getRepositoryDownstream`,
- * `/maintenance/api/repositories/{name}/downstream`), the repository page's downstream closure
+ * `/maintenance/api/repositories/{name}/downstream`), the Dependents page's downstream closure
  * (qits-2334). An unknown repository answers an empty closure. Only staff roles may read it; anyone
  * else gets a 403.
  */
