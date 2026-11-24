@@ -987,25 +987,46 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(entry).toHaveAttribute('aria-current', 'page');
   });
 
-  it('open-sidebar-orchestrator-page gc: Garbage collection below Orchestrator opens the gc process (qits-2480)', async () => {
+  /**
+   * The Orchestrator section's processes below Orchestrator in the sidebar, in this order:
+   * Garbage collection (qits-2480), Manifest scan and SBOM check (qits-2490).
+   */
+  const ORCHESTRATOR_PAGES = [
+    { label: 'Garbage collection', path: '/orchestrator/processes/gc', outcome: 'gc' },
+    { label: 'Manifest scan', path: '/orchestrator/processes/scan', outcome: 'scan' },
+    { label: 'SBOM check', path: '/orchestrator/processes/sbom-check', outcome: 'sbomCheck' },
+  ] as const;
+
+  it('lists the Orchestrator section’s processes below Orchestrator while it is open', async () => {
     await page.viewport(1280, 800);
-    const { fixture } = await render('/orchestrator');
-    const navigation = page.getByRole('navigation', { name: 'qits' });
-    const labels = navigation
+    await render('/orchestrator');
+    const labels = page
+      .getByRole('navigation', { name: 'qits' })
       .getByRole('link')
       .elements()
       .map((link) => link.textContent?.trim());
-    expect(
-      labels.slice(labels.indexOf('Orchestrator'), labels.indexOf('Orchestrator') + 2),
-    ).toEqual(['Orchestrator', 'Garbage collection']);
-    const gc = navigation.getByRole('link', { name: 'Garbage collection', exact: true });
-    expect(await follow(fixture, gc)).toBe('/orchestrator/processes/gc');
-    expect(reached()).toEqual(['open-sidebar-orchestrator-page:gc']);
-    await expect.element(gc).toHaveAttribute('aria-current', 'page');
-    await expect
-      .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
-      .toHaveAttribute('aria-current', 'true');
+    const at = labels.indexOf('Orchestrator');
+    expect(labels.slice(at, at + 1 + ORCHESTRATOR_PAGES.length)).toEqual([
+      'Orchestrator',
+      ...ORCHESTRATOR_PAGES.map((process) => process.label),
+    ]);
   });
+
+  for (const process of ORCHESTRATOR_PAGES) {
+    it(`open-sidebar-orchestrator-page ${process.outcome}: ${process.label} below Orchestrator opens its process (qits-2480, qits-2490)`, async () => {
+      await page.viewport(1280, 800);
+      const { fixture } = await render('/orchestrator');
+      const navigation = page.getByRole('navigation', { name: 'qits' });
+      const link = navigation.getByRole('link', { name: process.label, exact: true });
+      await expect.element(link).toHaveAttribute('href', process.path);
+      expect(await follow(fixture, link)).toBe(process.path);
+      expect(reached()).toEqual([`open-sidebar-orchestrator-page:${process.outcome}`]);
+      await expect.element(link).toHaveAttribute('aria-current', 'page');
+      await expect
+        .element(navigation.getByRole('link', { name: 'Orchestrator', exact: true }))
+        .toHaveAttribute('aria-current', 'true');
+    });
+  }
 
   it('lists the System section’s pages below System while it is open, and marks the current one', async () => {
     await page.viewport(1280, 800);
@@ -1443,6 +1464,8 @@ describe('ShellLayout (screenshots)', () => {
     { url: '/mirror/repositories', section: 'Mirror', page: 'Caches' },
     { url: '/mirror/upstreams', section: 'Mirror', page: 'OCI upstreams' },
     { url: '/orchestrator/processes/gc', section: 'Orchestrator', page: 'Garbage collection' },
+    { url: '/orchestrator/processes/scan', section: 'Orchestrator', page: 'Manifest scan' },
+    { url: '/orchestrator/processes/sbom-check', section: 'Orchestrator', page: 'SBOM check' },
     { url: '/idp/clients', section: 'IdP admin', page: 'Clients' },
     { url: '/idp/users', section: 'IdP admin', page: 'Users' },
     { url: '/idp/devices', section: 'IdP admin', page: 'Signed-in devices' },

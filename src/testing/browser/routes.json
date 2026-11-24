@@ -116,6 +116,42 @@
     },
     {
       "provider": "qits-orchestrator-service",
+      "state": "a finished sbom-check run",
+      "operationId": "getProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished sbom-check run",
+      "operationId": "getProcessRunStep",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished sbom-check run",
+      "operationId": "listProcessRuns",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished scan run",
+      "operationId": "getProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished scan run",
+      "operationId": "getProcessRunStep",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "a finished scan run",
+      "operationId": "listProcessRuns",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
       "state": "a running gc run",
       "operationId": "getProcessRun",
       "route": "orchestrator/processes/:kind"
@@ -134,6 +170,18 @@
     },
     {
       "provider": "qits-orchestrator-service",
+      "state": "no active sbom-check run",
+      "operationId": "startProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "no active scan run",
+      "operationId": "startProcessRun",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
       "state": "the gc process",
       "operationId": "listProcesses",
       "route": "orchestrator/processes/:kind"
@@ -142,6 +190,18 @@
       "provider": "qits-orchestrator-service",
       "state": "the gc process before its first run",
       "operationId": "listProcessRuns",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "the sbom-check process",
+      "operationId": "listProcesses",
+      "route": "orchestrator/processes/:kind"
+    },
+    {
+      "provider": "qits-orchestrator-service",
+      "state": "the scan process",
+      "operationId": "listProcesses",
       "route": "orchestrator/processes/:kind"
     }
   ],
