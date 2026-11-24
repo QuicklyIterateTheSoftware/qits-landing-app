@@ -754,11 +754,14 @@ export class ShellLayout {
 
   /**
    * The Orchestrator section's pages below the sidebar's Orchestrator, one exit per process
-   * (qits-2480), listed while the section is open: Garbage collection (`gc`), the only process
-   * qits-orchestrator runs today. A static list: the shell reads no processes.
+   * (qits-2480), listed while the section is open: Garbage collection (`gc`), Manifest scan
+   * (`scan`) and SBOM check (`sbom-check`, qits-2490), the processes qits-orchestrator runs today. A
+   * static list: the shell reads no processes.
    */
   private readonly orchestratorPages = outcomes('open-sidebar-orchestrator-page', {
     gc: exit('orchestrator/processes/:kind'),
+    scan: exit('orchestrator/processes/:kind'),
+    sbomCheck: exit('orchestrator/processes/:kind'),
   });
 
   /**
@@ -796,14 +799,15 @@ export class ShellLayout {
    * admin's Clients, Users and Signed-in devices, one exit each of `open-sidebar-idp-page`;
    * qits-2347…qits-2356 each add one child there. Mirror lists Caches and OCI upstreams
    * (qits-2479), one exit each of `open-sidebar-mirror-page`; Orchestrator lists its processes
-   * (qits-2480): Garbage collection, which `orchestrator` opens, one exit each of
-   * `open-sidebar-orchestrator-page`.
+   * (qits-2480): Garbage collection, which `orchestrator` opens, Manifest scan and SBOM check
+   * (qits-2490), one exit each of `open-sidebar-orchestrator-page`.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
     const system = this.systemPages;
     const mirror = this.mirrorPages;
     const idp = this.idpPages;
+    const orchestrator = this.orchestratorPages;
     const trail = this.trail;
     return [
       { kind: 'exit', label: 'Projects', exit: this.projects.open, crumb: trail.projects },
@@ -859,9 +863,21 @@ export class ShellLayout {
         children: [
           {
             label: 'Garbage collection',
-            exit: this.orchestratorPages.gc,
+            exit: orchestrator.gc,
             params: { kind: 'gc' },
-            path: this.orchestratorPages.gc.url({ kind: 'gc' }),
+            path: orchestrator.gc.url({ kind: 'gc' }),
+          },
+          {
+            label: 'Manifest scan',
+            exit: orchestrator.scan,
+            params: { kind: 'scan' },
+            path: orchestrator.scan.url({ kind: 'scan' }),
+          },
+          {
+            label: 'SBOM check',
+            exit: orchestrator.sbomCheck,
+            params: { kind: 'sbom-check' },
+            path: orchestrator.sbomCheck.url({ kind: 'sbom-check' }),
           },
         ],
       },

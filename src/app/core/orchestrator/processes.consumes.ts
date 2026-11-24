@@ -19,8 +19,12 @@ import type {
  * own facts show the steps instead).
  */
 
-/** `PROCESS_LIST` (`listProcesses`): the header's name and lede, and whether the kind exists. */
-export const LIST_PROCESSES = ['[].kind', '[].name', '[].description'] as const;
+/**
+ * `PROCESS_LIST` (`listProcesses`): the header's name and lede, whether the kind exists, and
+ * whether it has a dry run (`dryRunnable`, qits-2490: gc has, scan and sbom-check have none, and
+ * their door answers a dry start 400), which decides whether the page offers Dry run.
+ */
+export const LIST_PROCESSES = ['[].kind', '[].name', '[].description', '[].dryRunnable'] as const;
 
 /** One process, cut to what the page reads. */
 export type Process = Consumed<ListProcessesResponses[200], typeof LIST_PROCESSES>[number];
