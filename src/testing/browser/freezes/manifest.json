@@ -5163,6 +5163,88 @@
       ]
     },
     {
+      "file": "src/app/layout/shell/shell.layout.browser.spec.ts/page-nav-dark.html",
+      "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+      "test": "ShellLayout (screenshots) > shows a page’s own navigation in the repository sidebar’s place, below “← <repo>” (qits-2493)",
+      "name": "page-nav",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-sidebar-ui-builder:overview",
+        "open-project-desk:open",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/layout/shell/shell.layout.browser.spec.ts/page-nav-light.html",
+      "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+      "test": "ShellLayout (screenshots) > shows a page’s own navigation in the repository sidebar’s place, below “← <repo>” (qits-2493)",
+      "name": "page-nav",
+      "kind": "DATA",
+      "viewport": null,
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": null,
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:components",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:repository",
+        "leave-sidebar-ui-builder:overview",
+        "open-project-desk:open",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/layout/shell/shell.layout.browser.spec.ts/project-dark.html",
       "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
       "test": "ShellLayout (screenshots) > lists the open project’s sections and marks the current one",
@@ -137930,14 +138012,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -137955,106 +138029,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         },
         {
@@ -138159,14 +138141,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -138184,106 +138158,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         },
         {
@@ -138780,18 +138662,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -139003,18 +138876,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -139250,14 +139114,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -139275,106 +139131,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -139451,14 +139215,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -139476,106 +139232,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -139628,18 +139292,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -139828,18 +139483,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -140043,19 +139689,10 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-builder-entity:routeEntity",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -140326,19 +139963,10 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-builder-entity:routeEntity",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -140634,14 +140262,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -140703,106 +140323,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -140895,14 +140423,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -140964,106 +140484,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -141131,18 +140559,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -141346,18 +140765,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -141561,20 +140971,11 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-builder-entity:listedEntity",
         "open-builder-entity:pickedEntity",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -141752,20 +141153,11 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-builder-entity:listedEntity",
         "open-builder-entity:pickedEntity",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -141938,7 +141330,6 @@
         }
       ],
       "triggers": [
-        "open-builder-entity:listedEntity",
         "open-builder-entity:pickedEntity",
         "open-project-settings:open"
       ],
@@ -141951,14 +141342,6 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
-          "field": null,
-          "derived": [
-            "entities"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "entity=eu.wohlben.qits.entities.domain.Project",
           "field": null,
           "derived": []
@@ -141974,50 +141357,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "entity=eu.wohlben.qits.entities.domain.Project",
-          "field": null,
-          "derived": [
-            "operations"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.domain.Repository",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.domain.Repository",
-          "field": null,
-          "derived": [
-            "entity"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.domain.Repository",
-          "field": null,
-          "derived": [
-            "operations"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.entity.WorkEntity",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.entity.WorkEntity",
-          "field": null,
-          "derived": [
-            "entity"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.entity.WorkEntity",
           "field": null,
           "derived": [
             "operations"
@@ -142107,7 +141446,6 @@
         }
       ],
       "triggers": [
-        "open-builder-entity:listedEntity",
         "open-builder-entity:pickedEntity",
         "open-project-settings:open"
       ],
@@ -142120,14 +141458,6 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
-          "field": null,
-          "derived": [
-            "entities"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "entity=eu.wohlben.qits.entities.domain.Project",
           "field": null,
           "derived": []
@@ -142143,50 +141473,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "entity=eu.wohlben.qits.entities.domain.Project",
-          "field": null,
-          "derived": [
-            "operations"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.domain.Repository",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.domain.Repository",
-          "field": null,
-          "derived": [
-            "entity"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.domain.Repository",
-          "field": null,
-          "derived": [
-            "operations"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.entity.WorkEntity",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.entity.WorkEntity",
-          "field": null,
-          "derived": [
-            "entity"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "entity=eu.wohlben.qits.entities.entity.WorkEntity",
           "field": null,
           "derived": [
             "operations"
@@ -142281,19 +141567,10 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-builder-entity:listedEntity",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -142471,19 +141748,10 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-builder-entity:listedEntity",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -142928,18 +142196,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -143175,18 +142434,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -143446,14 +142696,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -143495,106 +142737,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -143671,14 +142821,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -143720,106 +142862,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -143872,18 +142922,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -144096,18 +143137,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -144320,18 +143352,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -144543,18 +143566,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -144766,19 +143780,10 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-all-agents:agents",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -144990,19 +143995,10 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-all-agents:agents",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -145238,14 +144234,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -145263,106 +144251,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -145439,14 +144335,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -145464,106 +144352,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -145616,18 +144412,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -145816,18 +144603,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -146016,18 +144794,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -146206,18 +144975,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -146404,114 +145164,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -146572,114 +145232,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -146732,18 +145292,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -146922,18 +145473,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -147429,18 +145971,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -147657,18 +146190,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -147909,14 +146433,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -147934,106 +146450,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -148115,14 +146539,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -148140,106 +146556,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -148297,18 +146621,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -148502,18 +146817,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -148702,18 +147008,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -148949,18 +147246,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -149220,14 +147508,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -149269,106 +147549,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -149445,14 +147633,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -149494,106 +147674,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -149646,18 +147734,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -149870,18 +147949,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -150094,18 +148164,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -150341,18 +148402,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -150612,14 +148664,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -150661,106 +148705,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -150837,14 +148789,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -150886,106 +148830,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -151038,18 +148890,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -151262,18 +149105,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -151486,18 +149320,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -151733,18 +149558,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -152004,14 +149820,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -152053,106 +149861,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -152229,14 +149945,6 @@
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": null,
-          "field": null,
-          "derived": [
-            "routes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": null,
           "field": "operationId",
           "derived": []
         },
@@ -152278,106 +149986,14 @@
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=",
-          "field": "redirectTo",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=**",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": null,
           "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "freezes"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/repositories",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
         },
         {
           "source": "qits-artifacts-service#getDocsFile",
           "item": "fullPath=projects/:slug/repositories",
           "field": "fullPath",
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": null,
-          "derived": [
-            "fullPath"
-          ]
-        },
-        {
-          "source": "qits-artifacts-service#getDocsFile",
-          "item": "fullPath=projects/:slug/workspaces",
-          "field": "redirectTo",
           "derived": []
         }
       ]
@@ -152430,18 +150046,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -152654,18 +150261,9 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:repository",
-        "leave-sidebar-repository:components",
+        "leave-sidebar-ui-builder:overview",
         "open-project-desk:open",
-        "open-project-settings:open",
-        "open-sidebar-repository-page:artifacts",
-        "open-sidebar-repository-page:contracts",
-        "open-sidebar-repository-page:dependents",
-        "open-sidebar-repository-page:dependsOn",
-        "open-sidebar-repository-page:docs",
-        "open-sidebar-repository-page:entities",
-        "open-sidebar-repository-page:overview",
-        "open-sidebar-repository-page:releaseRequests",
-        "open-sidebar-repository-page:uiBuilder"
+        "open-project-settings:open"
       ],
       "dataMarks": [
         {
@@ -391697,6 +389295,16 @@
       },
       {
         "route": null,
+        "interaction": "leave-sidebar-ui-builder",
+        "outcome": "overview",
+        "kind": "exit",
+        "to": "projects/:slug/components/:repo",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/layout/shell/shell.layout.ts"
+      },
+      {
+        "route": null,
         "interaction": "open-agent-row",
         "outcome": "open",
         "kind": "exit",
@@ -393213,6 +390821,15 @@
         "route": null,
         "interaction": "follow-breadcrumb",
         "outcome": "work",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/layout/shell/shell.layout.browser.spec.ts",
+        "test": "ShellLayout (screenshots) > leave-sidebar-ui-builder overview: “← <repo>” goes back to the repository’s page and its sidebar (qits-2493)",
+        "route": null,
+        "interaction": "leave-sidebar-ui-builder",
+        "outcome": "overview",
         "kind": "exit",
         "freeze": null
       },
@@ -395040,6 +392657,15 @@
         "route": "projects/:slug/components/:repo",
         "interaction": "open-repository-pages",
         "outcome": "contracts",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/components/[repo]/ui-builder/ui-builder.page.browser.spec.ts",
+        "test": "UiBuilderPage (screenshots) > leave-sidebar-ui-builder overview: “← <repo>” goes back to the repository’s page (qits-2493)",
+        "route": "projects/:slug/components/:repo/ui-builder",
+        "interaction": "leave-sidebar-ui-builder",
+        "outcome": "overview",
         "kind": "exit",
         "freeze": null
       },
