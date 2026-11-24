@@ -71,6 +71,7 @@ contracts:
     repository: qits-platform-access-monorepo
     framework: pact-js
     excluded:
+      qits-agents-service: "qits-landing-app calls no qits-agents-service door; CLI commands: qits work list --assigned-to-me"
       qits-artifacts-service:
         getContentHash: "qits artifacts publish contract; qits-landing-app has no page for it yet"
         getMavenFile: "qits artifacts fetch deployed-pacts; qits-landing-app has no page for it yet"
@@ -150,8 +151,11 @@ contracts:
         updateRefinementDesign: "qits work design put; qits-landing-app has no page for it yet"
       qits-workspaces-service:
         cancelAgentWait: "qits wait cancel; qits-landing-app has no page for it yet"
+        cancelProjectAgentWait: "qits wait cancel, as a project's long-running agent (qits-2520); qits-landing-app has no page for it yet"
         createAgentWait: "qits wait; qits-landing-app has no page for it yet"
+        createProjectAgentWait: "qits wait --work, as a project's long-running agent (qits-2520); qits-landing-app has no page for it yet"
         getAgentTranscript: "qits agents transcript; qits-landing-app has no page for it yet"
         listAgentSessions: "qits agents sessions; qits-landing-app has no page for it yet"
         listAgentWaits: "qits wait list; qits-landing-app has no page for it yet"
+        listProjectAgentWaits: "qits wait list, as a project's long-running agent (qits-2520); qits-landing-app has no page for it yet"
         yieldAgent: "qits agents yield; qits-landing-app has no page for it yet"
