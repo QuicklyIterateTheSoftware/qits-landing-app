@@ -1306,7 +1306,7 @@ the server's bearer). Each rendered page
 carries `<meta name="traceparent">`, so the browser's page load joins the render's trace.
 
 The Observability section (qits-2313): `projects/<slug>/observability` is a parent route with no
-component whose pages are its children, one route per view (logs, errors, metrics, traces and
+component whose pages are its children, one route per view (logs, errors and one error issue, metrics, traces and
 one trace; the old `slow-spans` redirects to traces, qits-2536); its own address redirects to `logs` by a relative
 `redirectTo`, which keeps the query. The sidebar's Observability entry lists the section's pages
 below it while one is open (`open-sidebar-observability-page`). `observability/logs`
@@ -1318,24 +1318,45 @@ first, at most 200), each with its service, its `service.version` and, when it h
 id, which opens its trace page at the line's own `source` (`open-telemetry-trace`, qits-2535). The
 view lives in the query: `service` (→ `service`; options are every source row's
 `services[].name`), `level` (→ `minSeverity`, absent: all), `q` (→ `query`), `since` (minutes →
-`sinceMinutes`, absent: everything buffered) and `traceId` (→ `traceId`, set by the trace page's
-Logs links, qits-2535). An old link's `source` (a source key) still reads that one source, shown as
+`sinceMinutes`, absent: everything buffered), `traceId` (→ `traceId`, set by the trace page's
+Logs links, qits-2535) and `fingerprint` (→ `fingerprint`, qits-2538: an error issue's lines, set by
+the issue page's Show log lines, shown as a chip to clear like the trace's). A line whose
+`attributes['qits.error.fingerprint']` is set links its error issue's page beside its trace link
+(`open-log-error-issue`, qits-2537; `attributes` is read whole). An old link's `source` (a source key) still reads that one source, shown as
 a filter to clear; choosing a service clears it. Only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
 `qits:agent` may read telemetry; a 403 says so. No domain event follows the buffer: Refresh reads
 again. The source picker is one pattern the other pages show (`app-telemetry-source-picker`,
 `patterns/observability/source-picker/`, the page's sources read as its input); what the pages
 share of a record (time ranges, a line's time and level, a refusal, `service.version`) is
-`core/observability/telemetry.ts`. `observability/errors` (`ObservabilityErrorsPage`, qits-2339,
-the retired frontend's `errors`) reads `TELEMETRY_ERRORS` (`listTelemetryErrors`) by `source` and
-`since` (→ `sinceMinutes`) only, never before a source is chosen (a sourceless read answers an
-empty list, which would claim "no errors" about nothing): one row per group, in the service's
-order with the uncorrelated group (empty `traceId`) last, headed by its exception (`type:
-message`), else a span's status message, else a log's body (`core/observability/error-groups.ts`,
-ported from the old `error-group.ts`), expanding to its spans (stack trace included) and logs. Each
-row's Error logs opens `observability/logs?source=…&level=ERROR` (`open-telemetry-error-logs`); a
-correlated group's trace id opens its trace page (`open-telemetry-trace`, qits-2343; the
-uncorrelated group's empty id stays text). No recording holds an uncorrelated group, an empty
-list or a truncated answer, so those are the page's plain spec's, derived from the recorded group.
+`core/observability/telemetry.ts`. `observability/errors` (`ObservabilityErrorsPage`, qits-2538,
+which replaced qits-2339's groups derived from the buffer and the `error-groups.ts` they came from)
+lists the error issues qits-observability stores, one per fingerprint, estate-wide: no source
+picker, no `source`. It reads `LIST_ERROR_ISSUES` (`listErrorIssues`) with `?state=` (OPEN, the
+door's default and sent as none, DISMISSED or ALL; a segmented control) and `?service=` (a chip to
+clear), never `limit`. A row: the title (`<simple exceptionType>: <message>`, else the message;
+`core/observability/error-issues.ts`), service, location, count, last seen as a relative time (the
+instant in its tooltip), the state outside the OPEN lens and a "regressed" chip on an OPEN issue
+with `regressions > 0`; it opens the issue (`open-error-issue`). `observability/errors/<fingerprint>`
+(`ObservabilityErrorPage`, a detail page with no sidebar entry: Errors stays current) reads
+`GET_ERROR_ISSUE` (`getErrorIssue`) by the path alone (the door's default `hours`, 168, is the
+chart's week): title, state chip, "regressed N×"; Where (service, `firstVersion → lastVersion`,
+location); When (first and last seen, absolute and relative); How often (`occurrences` and an hourly
+bar chart, `hourChart`: 168 bars up to the newest hour seen, never the clock, so a screenshot is
+stable; the Metrics page's bar look, `bg-accent` on a `bg-surface-muted` track, each bar's hour and
+count in its tooltip); the sample message and the stack trace in a collapsed `<details>`. Show log
+lines opens `observability/logs?fingerprint=<fp>&level=ERROR` (`open-error-issue-logs`, qits-2537:
+by fingerprint, so an occurrence with no trace still shows; only lines still buffered do, which the
+page says); Open trace, only with a `sampleTraceId`, opens its trace page at the service's buffer
+source `_service/<serviceName>` (`open-error-issue-trace`); Dismiss, on an OPEN issue, posts
+`DISMISS_ERROR_ISSUE` on a second press (`dismiss-error-issue`) and shows the answered state; a
+refusal is said beside it (403: dismissing needs `qits:admin`, `qits:admin-agent` or
+`qits:desk-admin`; `qits:agent` may read issues but not dismiss). A refused read says so, a 404
+"No error issue has the fingerprint …", else Retry. No domain event refreshes either page
+(`ErrorIssueOpened` does not reach the browser): Refresh reads again. The pact reads all four calls
+in "stored error issues" (from `@qits/observability-golden-masters` 2026.1126.34016 on, skipped on
+an older pin); a regressed, dismissed-in-a-list, empty or truncated answer and an issue without a
+sample trace are the plain specs'. `listTelemetryErrors` is excluded from the CLI mirror parity
+(`.config/qits/release.yml`): `qits observe errors` still calls it, this app no longer does.
 `observability/metrics` (`ObservabilityMetricsPage`, qits-2340, the retired frontend's `metrics`)
 reads `TELEMETRY_METRICS` (`listTelemetryMetrics`) by `source` alone, never before a source is
 chosen: one latest point per series and no history, which the page says, so nothing is charted over

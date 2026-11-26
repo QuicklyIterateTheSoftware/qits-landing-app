@@ -1,7 +1,9 @@
 import type {
+  DismissErrorIssueResponses,
+  GetErrorIssueResponses,
   GetTelemetryStoreResponses,
   GetTelemetryTraceResponses,
-  ListTelemetryErrorsResponses,
+  ListErrorIssuesResponses,
   ListTelemetryMetricsResponses,
   ListTelemetrySourcesResponses,
   ListTelemetryTracesResponses,
@@ -33,8 +35,9 @@ export const LIST_TELEMETRY_SOURCES = [
 
 /**
  * `searchTelemetryLogs`: each line's time, level, body, the service that wrote it and the resource
- * attributes it shows `service.version` from (read whole: a key with a dot in it is not a consumed
- * path), its trace id and the source it lives in (its trace's page is read at that source,
+ * attributes it shows `service.version` from and its own attributes, whose
+ * `qits.error.fingerprint` links its error issue (qits-2538; both read whole: a key with a dot in
+ * it is not a consumed path), its trace id and the source it lives in (its trace's page is read at that source,
  * qits-2535), and whether the buffer held more than the answer.
  */
 export const SEARCH_TELEMETRY_LOGS = [
@@ -45,33 +48,59 @@ export const SEARCH_TELEMETRY_LOGS = [
   'logs[].traceId',
   'logs[].source',
   'logs[].resourceAttributes',
+  'logs[].attributes',
   'truncated',
 ] as const;
 
 /**
- * `listTelemetryErrors` (qits-2339): each group's trace id and service; its error spans' name, kind,
- * start, duration, status message, events (read whole: the `exception` flag and the
- * `exception.type` / `.message` / `.stacktrace` attributes) and resource attributes (read whole, for
- * `service.version`); its error logs' time, level, body and resource attributes; and how many groups
- * there were and whether the answer left some out.
+ * `listErrorIssues` (qits-2538): each stored issue's fingerprint (the issue page's address), state,
+ * service, exception type, location and message (its title), when it was last seen, how often it
+ * occurred and how often it regressed; and whether the answer left some out.
  */
-export const LIST_TELEMETRY_ERRORS = [
-  'groups[].traceId',
-  'groups[].serviceName',
-  'groups[].errorSpans[].name',
-  'groups[].errorSpans[].kind',
-  'groups[].errorSpans[].startEpochNanos',
-  'groups[].errorSpans[].durationMs',
-  'groups[].errorSpans[].statusMessage',
-  'groups[].errorSpans[].events',
-  'groups[].errorSpans[].resourceAttributes',
-  'groups[].errorLogs[].epochNanos',
-  'groups[].errorLogs[].severityText',
-  'groups[].errorLogs[].body',
-  'groups[].errorLogs[].resourceAttributes',
+export const ERROR_ISSUE_ROWS = [
+  'issues[].fingerprint',
+  'issues[].state',
+  'issues[].serviceName',
+  'issues[].exceptionType',
+  'issues[].location',
+  'issues[].message',
+  'issues[].lastSeen',
+  'issues[].occurrences',
+  'issues[].regressions',
   'total',
   'truncated',
 ] as const;
+
+/**
+ * `getErrorIssue` (qits-2538): the row's fields, plus where and when (the first seen instant and
+ * the first and last versions), the sample message, stack trace and trace id, and the hourly
+ * occurrence counts the chart draws.
+ */
+export const ERROR_ISSUE_DETAIL = [
+  'fingerprint',
+  'state',
+  'serviceName',
+  'exceptionType',
+  'location',
+  'message',
+  'lastSeen',
+  'occurrences',
+  'regressions',
+  'firstSeen',
+  'firstVersion',
+  'lastVersion',
+  'sampleMessage',
+  'sampleStacktrace',
+  'sampleTraceId',
+  'hourly[].hour',
+  'hourly[].count',
+] as const;
+
+/**
+ * `dismissErrorIssue` (qits-2538): the dismissed issue's state, which the issue page shows in
+ * place of the one it read.
+ */
+export const DISMISSED_ERROR_ISSUE = ['fingerprint', 'state'] as const;
 
 /**
  * `listTelemetryMetrics` (qits-2340): one latest point per series, each with its metric's name,
@@ -158,20 +187,23 @@ export type TelemetryLogLine = NonNullable<
   Consumed<SearchTelemetryLogsResponses[200], typeof SEARCH_TELEMETRY_LOGS>['logs']
 >[number];
 
-/** A source's error groups, cut to what the errors page reads. */
-export type TelemetryErrors = Consumed<
-  ListTelemetryErrorsResponses[200],
-  typeof LIST_TELEMETRY_ERRORS
+/** The stored error issues, cut to what the Errors page reads. */
+export type ErrorIssues = Consumed<ListErrorIssuesResponses[200], typeof ERROR_ISSUE_ROWS>;
+
+/** One stored error issue, as a row of the Errors page. */
+export type ErrorIssueRow = NonNullable<ErrorIssues['issues']>[number];
+
+/** One stored error issue, cut to what the issue page reads. */
+export type ErrorIssueDetail = Consumed<GetErrorIssueResponses[200], typeof ERROR_ISSUE_DETAIL>;
+
+/** One hour of an issue's occurrences. */
+export type ErrorIssueHour = NonNullable<ErrorIssueDetail['hourly']>[number];
+
+/** A dismissed issue, cut to what the issue page reads of it. */
+export type DismissedErrorIssue = Consumed<
+  DismissErrorIssueResponses[200],
+  typeof DISMISSED_ERROR_ISSUE
 >;
-
-/** One error group: a trace's (or, under an empty trace id, no trace's) error spans and logs. */
-export type TelemetryErrorGroup = NonNullable<TelemetryErrors['groups']>[number];
-
-/** One error span of a group. */
-export type TelemetryErrorSpan = NonNullable<TelemetryErrorGroup['errorSpans']>[number];
-
-/** One error log of a group. */
-export type TelemetryErrorLog = NonNullable<TelemetryErrorGroup['errorLogs']>[number];
 
 /** A source's metric series, cut to what the metrics page reads. */
 export type TelemetryMetrics = Consumed<

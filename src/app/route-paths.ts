@@ -58,6 +58,7 @@ export type RoutePath =
   | 'projects/:slug/maintenance/bumps/:bumpId'
   | 'projects/:slug/observability'
   | 'projects/:slug/observability/errors'
+  | 'projects/:slug/observability/errors/:fingerprint'
   | 'projects/:slug/observability/logs'
   | 'projects/:slug/observability/metrics'
   | 'projects/:slug/observability/traces'

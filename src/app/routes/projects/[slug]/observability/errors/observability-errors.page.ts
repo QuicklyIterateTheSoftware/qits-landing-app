@@ -1,12 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  PLATFORM_ID,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -19,82 +12,53 @@ import {
   qitsResource,
 } from '@qits/angular';
 import {
-  attribute,
-  evidenceCounts,
-  exceptionText,
-  firstException,
-  viewErrorGroups,
-  type ErrorGroupView,
-} from '$core/observability/error-groups';
-import type { TelemetryErrorSpan } from '$core/observability/observability.consumes';
-import { TELEMETRY_ERRORS, TELEMETRY_SOURCES } from '$core/observability/observability.operations';
-import {
-  levelTone,
-  lineTime,
-  minutesOf,
-  refused,
-  SINCE_MINUTES,
-  sinceLabel,
-  versionOf,
-} from '$core/observability/telemetry';
+  ISSUE_STATES,
+  issueStateLabel,
+  issueStateOf,
+  issueStateTone,
+  issueTitle,
+  isRegressed,
+  type IssueState,
+} from '$core/observability/error-issues';
+import { LIST_ERROR_ISSUES } from '$core/observability/observability.operations';
+import { refused } from '$core/observability/telemetry';
 import { SelectedProject } from '$core/projects/selected-project';
+import { formatInstant, formatRelativeTime } from '$core/release-requests/release-request-model';
 import { loadState } from '$core/resources/load-state';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
-import { TelemetrySourcePicker } from '$patterns/observability/source-picker/source-picker';
 import type { Action } from '$ui/components/action-button/action';
-import { Chip, type ChipTone } from '$ui/components/chip/chip';
+import { Chip } from '$ui/components/chip/chip';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
 import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 
-/** What the page reads of the URL's query (`?source=&since=`, the old frontend's names). */
+/** What the page reads of the URL's query (`?state=&service=`). */
 interface ErrorsQuery {
-  readonly source: string | undefined;
-  readonly since: number | undefined;
-}
-
-/** A group's identity on the page: its trace id and its service (the uncorrelated one has no id). */
-function groupKey(view: Pick<ErrorGroupView, 'traceId' | 'serviceName'>): string {
-  return `${view.traceId}\u0000${view.serviceName}`;
-}
-
-/** A span's duration: milliseconds below a second, else seconds. */
-export function spanDuration(durationMs: number | undefined): string {
-  if (durationMs === undefined) return '';
-  return durationMs < 1000 ? `${durationMs} ms` : `${(durationMs / 1000).toFixed(2)} s`;
+  readonly state: IssueState;
+  readonly service: string | undefined;
 }
 
 /**
- * The Observability section's Errors page, at `/projects/<slug>/observability/errors` (qits-2339,
- * the retired qits-observability-frontend's `errors`): what failed lately in one source of
- * qits-observability's telemetry buffer, which holds only the platform's recent records.
+ * The Observability section's Errors page, at `/projects/<slug>/observability/errors` (qits-2538,
+ * which replaced qits-2339's view derived from the telemetry buffer): the error issues
+ * qits-observability stores, one per fingerprint, across the whole estate (an issue belongs to no
+ * buffer source, so there is no source picker).
  *
- * On top, the source picker (`app-telemetry-source-picker`, shared with the Logs page); the chosen
- * source's key is `?source=`. Below, its error spans and ERROR-or-worse logs grouped by the trace
- * they belong to (`TELEMETRY_ERRORS`, `listTelemetryErrors`), narrowed by the time range (`?since=`
- * minutes → `sinceMinutes`; absent: everything buffered, the default). Nothing is read until a
- * source is chosen: a sourceless read answers an empty list, which would claim "no errors" about
- * nothing. The service answers at most 200 groups (its default `limit`) and says when it left some
- * out (`truncated`, `total`), which the page repeats.
+ * It reads `LIST_ERROR_ISSUES` (`listErrorIssues`), the lens in the URL: `?state=` (OPEN, the
+ * default and sent as none, DISMISSED or ALL; a segmented control) and `?service=` (→ `service`,
+ * shown as a filter to clear). Each row is an issue, most recently seen first as the service answers
+ * them: its title (`<simple exception type>: <message>`, else the message), the service, the
+ * location, the count, last seen as a relative time (the instant in its tooltip), its state when
+ * the lens shows more than OPEN, and a "regressed" chip on an OPEN issue that came back after a
+ * dismissal. A row opens the issue's page (`open-error-issue`). The service answers at most 200
+ * (its default `limit`, never sent) and says when it left some out, which the page repeats.
  *
- * One row per group (`error-groups.ts`), in the service's order with the uncorrelated group (its
- * empty trace id) last: the headline (the exception as `type: message`, else a span's status
- * message, else a log's body), the service, its evidence counts, its latest instant (UTC, like a
- * log line's time), the `service.version` its evidence carries and the trace id, a link to the
- * trace's page at the same source (`open-telemetry-trace`, qits-2343; the uncorrelated group's has
- * none). Each row's
- * Error logs link opens the Logs page at the same source from ERROR up
- * (`open-telemetry-error-logs`). Its headline expands it: the error spans (name, kind, duration,
- * status message, exception and stack trace) and the error logs (time, level, body), all of which
- * arrived inside the group.
+ * The read runs in the browser only (the server has no session), through `qitsResource`. A refusal
+ * (403: only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and `qits:agent` may read issues)
+ * is said as such; any other failure offers Retry; an empty answer says no issue is in that state.
+ * Marks (qits-2141): the list is the issues read, each row an issue by its `fingerprint`.
  *
- * Both reads run in the browser only (the server has no session), through `qitsResource`. A refusal
- * (403: only `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and `qits:agent` may read
- * telemetry) is said as such; any other failure offers Retry; an empty answer says no errors are
- * buffered, which on a working service is good news. Marks (qits-2141): the picker is the sources
- * read; the group list is the errors read, each row a group by its `traceId`, each span by its
- * `startEpochNanos` and each log by its `epochNanos`.
- *
- * Staleness (qits-1270): none, no domain event; Refresh re-reads.
+ * Staleness (qits-1270): no domain event refreshes it (`ErrorIssueOpened` does not reach the
+ * browser), so Refresh reads again.
  */
 @Component({
   selector: 'app-observability-errors-page',
@@ -108,262 +72,156 @@ export function spanDuration(durationMs: number | undefined): string {
     QitsExit,
     QitsField,
     Spinner,
-    TelemetrySourcePicker,
   ],
   host: { class: 'block' },
   template: `
     <div class="mx-auto max-w-[72rem] px-6 pt-8 pb-12">
       <app-page-layout title="Errors" [actions]="actions">
         <p class="mt-0 mb-4 text-sm text-fg-soft">
-          What failed lately: a source’s error spans and error logs, grouped by the trace they
-          belong to. The buffer holds only recent records; older ones are gone.
+          The errors the platform’s services raised, one issue per kind of failure, kept beyond the
+          telemetry buffer. Dismiss an issue once it is dealt with; it opens again if it comes back.
         </p>
         <p
           class="m-0 mb-4 rounded-md border border-line bg-surface-muted px-3 py-2 text-sm text-fg"
           role="alert"
           [class.hidden]="!refusal()"
         >
-          Reading telemetry needs qits:admin.
+          Reading error issues needs qits:admin.
         </p>
-        <app-telemetry-source-picker
-          [sources]="sources"
-          [state]="sourcesState()"
-          [selected]="query().source"
-          [refused]="refusal()"
-        />
 
-        <section
-          class="mt-6"
-          aria-label="Error groups"
-          [class.hidden]="!query().source || refusal()"
-        >
-          <div class="mb-3 flex flex-wrap items-end gap-3 text-sm">
-            <label class="flex flex-col gap-1 text-xs text-fg-muted">
-              Time range
-              <select
-                class="h-8 rounded-md border border-line-strong bg-surface px-2 text-sm text-fg"
-                (change)="setQuery({ since: value($event) || null })"
+        <section aria-label="Error issues" [class.hidden]="refusal()">
+          <div class="mb-3 flex flex-wrap items-center gap-3 text-sm">
+            <div role="group" aria-label="State" class="flex flex-wrap gap-1">
+              @for (state of states; track state) {
+                <button
+                  type="button"
+                  class="cursor-pointer rounded px-2 py-0.5 text-xs font-semibold"
+                  [class]="
+                    state === query().state
+                      ? 'bg-surface-inverse text-fg-on-inverse'
+                      : 'bg-surface-muted text-fg-soft hover:bg-surface-active'
+                  "
+                  [attr.aria-pressed]="state === query().state"
+                  (click)="setQuery({ state: state === 'OPEN' ? null : state })"
+                >
+                  {{ stateLabel(state) }}
+                </button>
+              }
+            </div>
+            <span
+              class="items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5 text-xs text-fg-muted"
+              [class]="query().service ? 'inline-flex' : 'hidden'"
+              data-service-filter
+            >
+              Service <span class="font-mono text-fg">{{ query().service }}</span>
+              <button
+                type="button"
+                class="ml-1 cursor-pointer border-0 bg-transparent p-0 text-accent hover:underline"
+                (click)="setQuery({ service: null })"
               >
-                <option value="" [selected]="!query().since">Everything buffered</option>
-                @for (minutes of sinceMinutes; track minutes) {
-                  <option [value]="minutes" [selected]="minutes === query().since">
-                    {{ sinceLabel(minutes) }}
-                  </option>
-                }
-              </select>
-            </label>
+                Clear
+              </button>
+            </span>
           </div>
           <ui-load-failure
-            message="This source’s errors could not be read."
-            [class.hidden]="errorsState() !== 'error' || refusal()"
-            (retry)="errors.reload()"
+            message="The error issues could not be read."
+            [class.hidden]="issuesState() !== 'error' || refusal()"
+            (retry)="issues.reload()"
           />
           <ui-spinner
-            [state]="errorsState()"
+            [state]="issuesState()"
             class="min-h-32"
-            [class.hidden]="errorsState() === 'error'"
+            [class.hidden]="issuesState() === 'error'"
           >
             <p
               class="m-0 mb-2 text-xs text-fg-muted"
               [class.hidden]="!truncated()"
-              [qitsEntityList]="errors"
-              [fieldOf]="errorsValue()"
-              [qitsField]="{ derived: ['groups', 'total'] }"
+              [qitsEntityList]="issues"
+              [fieldOf]="issuesValue()"
+              [qitsField]="{ derived: ['issues', 'total'] }"
               data-truncated
             >
-              More groups exist than are shown: {{ groups().length }} of {{ total() }}. Narrow the
-              time range.
+              More issues exist than are shown: {{ rows().length }} of {{ total() }}.
             </p>
             <ol
-              class="m-0 flex list-none flex-col gap-2 p-0"
-              [class.hidden]="groups().length === 0"
-              [qitsEntityList]="errors"
+              class="m-0 flex list-none flex-col divide-y divide-line rounded-md border border-line bg-surface p-0"
+              [class.hidden]="rows().length === 0"
+              [qitsEntityList]="issues"
             >
-              @for (view of groups(); track key(view)) {
-                <li
-                  class="rounded-md border border-line bg-surface text-sm"
-                  [qitsEntity]="view.group"
-                  entityKey="traceId"
-                >
-                  <div class="flex flex-wrap items-start gap-x-3 gap-y-1 px-3 pt-2">
-                    <button
-                      type="button"
-                      class="flex min-w-0 flex-1 cursor-pointer items-start gap-2 border-0 bg-transparent p-0 text-left text-fg"
-                      [attr.aria-expanded]="isOpen(view)"
-                      (click)="toggle(view)"
-                      [fieldOf]="view.group"
-                      [qitsField]="marks.headline"
-                    >
-                      <svg
-                        viewBox="0 0 16 16"
-                        aria-hidden="true"
-                        class="mt-0.5 size-4 shrink-0 text-fg-muted"
-                        [class.-rotate-90]="!isOpen(view)"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M4 6l4 4 4-4" />
-                      </svg>
-                      <span
-                        class="min-w-0 font-semibold break-words"
-                        [class.italic]="!view.headline"
-                      >
-                        {{ view.headline || 'No message on any of this group’s evidence.' }}
-                      </span>
-                    </button>
-                    <a
-                      class="text-accent no-underline hover:underline"
-                      [qitsExit]="opening.logs"
-                      [exitParams]="{ slug: slug() }"
-                      [exitQueryParams]="{ source: query().source, level: 'ERROR' }"
-                      >Error logs</a
-                    >
-                  </div>
-                  <p
-                    class="m-0 flex flex-wrap gap-x-2 px-3 pt-1 pb-2 pl-9 text-xs text-fg-muted"
-                    [fieldOf]="view.group"
-                    [qitsField]="marks.meta"
+              @for (issue of rows(); track issue.fingerprint) {
+                <li class="text-sm" [qitsEntity]="issue" entityKey="fingerprint">
+                  <a
+                    class="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 px-3 py-2 text-fg no-underline hover:bg-surface-muted"
+                    [qitsExit]="opening.issue"
+                    [exitParams]="{ slug: slug(), fingerprint: issue.fingerprint ?? '' }"
+                    data-issue
                   >
-                    <span class="font-semibold text-fg-soft">{{ view.serviceName || '—' }}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{{ counts(view) }}</span>
-                    @if (view.latestEpochMillis) {
-                      <span aria-hidden="true">·</span>
-                      <span class="font-mono">{{ latest(view) }}</span>
-                    }
-                    @if (view.version) {
-                      <span aria-hidden="true">·</span>
-                      <span class="font-mono">{{ view.version }}</span>
-                    }
-                    <span aria-hidden="true">·</span>
-                    @if (view.uncorrelated) {
-                      <span>Not correlated to a trace</span>
-                    } @else {
-                      <a
-                        class="font-mono text-accent no-underline hover:underline"
-                        [qitsExit]="tracing.trace"
-                        [exitParams]="{ slug: slug(), traceId: view.traceId }"
-                        [exitQueryParams]="{ source: query().source }"
-                        data-trace
-                        >trace {{ view.traceId }}</a
+                    <span class="flex min-w-0 flex-wrap items-baseline gap-2">
+                      <span
+                        class="min-w-0 font-semibold break-words text-accent"
+                        [fieldOf]="issue"
+                        [qitsField]="marks.title"
+                        >{{ title(issue) || 'No message' }}</span
                       >
-                    }
-                  </p>
-                  @if (isOpen(view)) {
-                    <div class="border-t border-line px-3 py-2" data-members>
-                      @if (view.spanCount) {
-                        <h3 class="mt-0 mb-1 text-sm font-semibold">Error spans</h3>
-                        <ul class="m-0 mb-3 flex list-none flex-col gap-2 p-0">
-                          @for (span of view.group.errorSpans; track $index) {
-                            <li [qitsEntity]="span" entityKey="startEpochNanos">
-                              <p class="m-0 flex flex-wrap items-baseline gap-x-2">
-                                <span
-                                  class="font-mono font-semibold text-fg"
-                                  [fieldOf]="span"
-                                  qitsField="name"
-                                  >{{ span.name || '(unnamed span)' }}</span
-                                >
-                                <ui-chip
-                                  [label]="span.kind || 'UNSPECIFIED'"
-                                  tone="neutral"
-                                  [fieldOf]="span"
-                                  [qitsField]="{ derived: ['kind'] }"
-                                />
-                                <span
-                                  class="text-xs text-fg-muted"
-                                  [fieldOf]="span"
-                                  [qitsField]="{ derived: ['durationMs'] }"
-                                  >{{ duration(span.durationMs) }}</span
-                                >
-                                <span
-                                  class="font-mono text-xs text-fg-muted"
-                                  [fieldOf]="span"
-                                  [qitsField]="{ derived: ['startEpochNanos'] }"
-                                  >{{ time(span.startEpochNanos) }}</span
-                                >
-                                <span
-                                  class="font-mono text-xs text-fg-muted"
-                                  [class.hidden]="!version(span.resourceAttributes)"
-                                  [fieldOf]="span"
-                                  [qitsField]="{ derived: ['resourceAttributes'] }"
-                                  >{{ version(span.resourceAttributes) }}</span
-                                >
-                              </p>
-                              <p
-                                class="m-0 mt-0.5 text-fg-soft"
-                                [class.hidden]="!span.statusMessage"
-                                [fieldOf]="span"
-                                qitsField="statusMessage"
-                              >
-                                {{ span.statusMessage }}
-                              </p>
-                              <p
-                                class="m-0 mt-0.5 font-semibold text-fg"
-                                [class.hidden]="!exception(span)"
-                                [fieldOf]="span"
-                                [qitsField]="{ derived: ['events'] }"
-                              >
-                                {{ exception(span) }}
-                              </p>
-                              <pre
-                                class="m-0 mt-1 overflow-x-auto rounded-md border border-line bg-surface-muted px-2 py-1 font-mono text-xs whitespace-pre text-fg"
-                                [class.hidden]="!stacktrace(span)"
-                                [fieldOf]="span"
-                                [qitsField]="{ derived: ['events'] }"
-                                >{{ stacktrace(span) }}</pre>
-                            </li>
-                          }
-                        </ul>
+                      @if (query().state !== 'OPEN') {
+                        <ui-chip
+                          [label]="issue.state ?? ''"
+                          [tone]="stateTone(issue.state)"
+                          [fieldOf]="issue"
+                          [qitsField]="{ derived: ['state'] }"
+                        />
                       }
-                      @if (view.logCount) {
-                        <h3 class="mt-0 mb-1 text-sm font-semibold">Error logs</h3>
-                        <ol
-                          class="m-0 flex list-none flex-col divide-y divide-line rounded-md border border-line p-0 font-mono text-xs"
+                      @if (regressed(issue)) {
+                        <ui-chip
+                          label="regressed"
+                          tone="waiting"
+                          [fieldOf]="issue"
+                          [qitsField]="marks.regressed"
+                          data-regressed
+                        />
+                      }
+                    </span>
+                    <span
+                      class="text-right font-mono font-semibold whitespace-nowrap text-fg tabular-nums"
+                      [fieldOf]="issue"
+                      [qitsField]="{ derived: ['occurrences'] }"
+                      [attr.aria-label]="(issue.occurrences ?? 0) + ' occurrences'"
+                      data-count
+                      >{{ issue.occurrences ?? 0 }}×</span
+                    >
+                    <span class="flex min-w-0 flex-wrap gap-x-2 text-xs text-fg-muted">
+                      <span
+                        class="font-semibold text-fg-soft"
+                        [fieldOf]="issue"
+                        qitsField="serviceName"
+                        >{{ issue.serviceName || '—' }}</span
+                      >
+                      @if (issue.location) {
+                        <span aria-hidden="true">·</span>
+                        <span
+                          class="min-w-0 font-mono break-all"
+                          [fieldOf]="issue"
+                          qitsField="location"
+                          >{{ issue.location }}</span
                         >
-                          @for (log of view.group.errorLogs; track $index) {
-                            <li
-                              class="grid grid-cols-[auto_4rem_1fr] items-baseline gap-x-3 px-3 py-1.5 max-md:grid-cols-[auto_1fr]"
-                              [qitsEntity]="log"
-                              entityKey="epochNanos"
-                            >
-                              <span
-                                class="whitespace-nowrap text-fg-muted"
-                                [fieldOf]="log"
-                                [qitsField]="{ derived: ['epochNanos'] }"
-                                >{{ time(log.epochNanos) }}</span
-                              >
-                              <ui-chip
-                                class="justify-self-start"
-                                [label]="log.severityText ?? ''"
-                                [tone]="tone(log.severityText)"
-                                [fieldOf]="log"
-                                [qitsField]="{ derived: ['severityText'] }"
-                              />
-                              <span
-                                class="min-w-0 break-words whitespace-pre-wrap text-fg max-md:col-span-2"
-                                [fieldOf]="log"
-                                qitsField="body"
-                                >{{ log.body }}</span
-                              >
-                            </li>
-                          }
-                        </ol>
                       }
-                    </div>
-                  }
+                    </span>
+                    <span
+                      class="text-right text-xs whitespace-nowrap text-fg-muted"
+                      [title]="instant(issue.lastSeen)"
+                      [fieldOf]="issue"
+                      [qitsField]="{ derived: ['lastSeen'] }"
+                      >last seen {{ ago(issue.lastSeen) }}</span
+                    >
+                  </a>
                 </li>
               }
             </ol>
             <p
               class="m-0 px-3 py-8 text-center text-sm text-fg-muted"
-              [class]="errorsState() === 'loaded' && groups().length === 0 ? 'block' : 'hidden'"
+              [class]="issuesState() === 'loaded' && rows().length === 0 ? 'block' : 'hidden'"
             >
-              No errors are buffered for this source{{
-                query().since ? ' in this time range' : ''
-              }}: nothing it sent lately failed.
+              {{ emptyText() }}
             </p>
           </ui-spinner>
         </section>
@@ -377,116 +235,71 @@ export class ObservabilityErrorsPage {
   private readonly router = inject(Router);
   private readonly selected = inject(SelectedProject);
 
-  protected readonly sinceMinutes = SINCE_MINUTES;
-  protected readonly sinceLabel = sinceLabel;
-  protected readonly time = lineTime;
-  protected readonly duration = spanDuration;
-  protected readonly version = versionOf;
-  protected readonly key = groupKey;
+  protected readonly states = ISSUE_STATES;
+  protected readonly stateLabel = issueStateLabel;
+  protected readonly stateTone = issueStateTone;
+  protected readonly title = issueTitle;
+  protected readonly regressed = isRegressed;
+  protected readonly instant = formatInstant;
   protected readonly marks = MARKS;
 
   private readonly params = toSignal(this.route.queryParamMap, { initialValue: null });
 
-  /** What the URL asks for: the source and the time range. */
+  /** What the URL asks for: the state and the service. */
   protected readonly query = computed((): ErrorsQuery => ({
-    source: this.params()?.get('source') || undefined,
-    since: minutesOf(this.params()?.get('since') ?? null),
+    state: issueStateOf(this.params()?.get('state')),
+    service: this.params()?.get('service') || undefined,
   }));
 
   protected readonly slug = computed(() => this.selected.slug() ?? '');
 
-  /** The buffer's sources, in the browser only (the server has no session). */
-  protected readonly sources = qitsResource(TELEMETRY_SOURCES, () =>
-    this.browser ? {} : undefined,
+  /** The stored issues in the lens, in the browser only; OPEN, the default, is sent as nothing. */
+  protected readonly issues = qitsResource(LIST_ERROR_ISSUES, () => {
+    const { state, service } = this.query();
+    if (!this.browser) return undefined;
+    return {
+      query: { ...(state !== 'OPEN' ? { state } : {}), ...(service ? { service } : {}) },
+    };
+  });
+
+  protected readonly issuesValue = computed(() =>
+    this.issues.hasValue() ? (this.issues.value() ?? {}) : {},
   );
 
-  /** The chosen source's error groups, over the time range; nothing until a source is chosen. */
-  protected readonly errors = qitsResource(TELEMETRY_ERRORS, () => {
-    const { source, since } = this.query();
-    if (!this.browser || !source) return undefined;
-    return { query: { source, ...(since ? { sinceMinutes: since } : {}) } };
+  protected readonly rows = computed(() => this.issuesValue().issues ?? []);
+
+  protected readonly truncated = computed(() => this.issuesValue().truncated === true);
+
+  protected readonly total = computed(() => this.issuesValue().total ?? this.rows().length);
+
+  protected readonly issuesState = computed((): LoadState => loadState(this.issues));
+
+  protected readonly refusal = computed(() => refused(this.issues));
+
+  /** What an empty answer says, by the lens. */
+  protected readonly emptyText = computed(() => {
+    const { state, service } = this.query();
+    const of = service ? ` for ${service}` : '';
+    if (state === 'DISMISSED') return `No error issue${of} is dismissed.`;
+    if (state === 'ALL') return `No error issue${of} is stored.`;
+    return `No error issue${of} is open: nothing has failed since the last ones were dismissed.`;
   });
 
-  protected readonly errorsValue = computed(() =>
-    this.errors.hasValue() ? (this.errors.value() ?? {}) : {},
-  );
-
-  /** The rows, the uncorrelated group last. */
-  protected readonly groups = computed(() => viewErrorGroups(this.errorsValue().groups ?? []));
-
-  protected readonly truncated = computed(() => this.errorsValue().truncated === true);
-
-  protected readonly total = computed(() => this.errorsValue().total ?? this.groups().length);
-
-  protected readonly sourcesState = computed((): LoadState => loadState(this.sources));
-  protected readonly errorsState = computed((): LoadState => loadState(this.errors));
-
-  /** Whether either read was refused for the viewer's roles. */
-  protected readonly refusal = computed(() => refused(this.sources) || refused(this.errors));
-
-  /** The expanded rows, by `groupKey`. */
-  private readonly open = signal<ReadonlySet<string>>(new Set());
-
-  /** A row's Error logs: the Logs page, a declared exit (epic qits-2000). */
-  protected readonly opening = outcomes('open-telemetry-error-logs', {
-    logs: exit('projects/:slug/observability/logs'),
+  /** A row: its issue's page (qits-2538), a declared exit (epic qits-2000). */
+  protected readonly opening = outcomes('open-error-issue', {
+    issue: exit('projects/:slug/observability/errors/:fingerprint'),
   });
 
-  /** A correlated group's trace id: the trace's page at the same source (qits-2343). */
-  protected readonly tracing = outcomes('open-telemetry-trace', {
-    trace: exit('projects/:slug/observability/traces/:traceId'),
-  });
-
-  /** Refresh: reads the sources and the shown errors again. */
+  /** Refresh: no domain event follows the issues (qits-1270), so it reads them again. */
   protected readonly actions: readonly Action[] = [
-    {
-      label: 'Refresh',
-      variant: 'muted',
-      callback: () => {
-        this.sources.reload();
-        this.errors.reload();
-      },
-    },
+    { label: 'Refresh', variant: 'muted', callback: () => this.issues.reload() },
   ];
 
-  protected isOpen(view: ErrorGroupView): boolean {
-    return this.open().has(groupKey(view));
+  protected ago(iso: string | undefined): string {
+    return formatRelativeTime(iso);
   }
 
-  protected toggle(view: ErrorGroupView): void {
-    const key = groupKey(view);
-    this.open.update((open) => {
-      const next = new Set(open);
-      if (!next.delete(key)) next.add(key);
-      return next;
-    });
-  }
-
-  protected counts(view: ErrorGroupView): string {
-    return evidenceCounts(view);
-  }
-
-  protected latest(view: ErrorGroupView): string {
-    return lineTime(view.latestEpochMillis * 1e6);
-  }
-
-  protected exception(span: TelemetryErrorSpan): string {
-    return exceptionText(firstException([span]));
-  }
-
-  protected stacktrace(span: TelemetryErrorSpan): string {
-    return attribute(firstException([span]), 'exception.stacktrace');
-  }
-
-  protected tone(level: string | undefined): ChipTone {
-    return levelTone(level);
-  }
-
-  protected value(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLSelectElement).value.trim();
-  }
-
-  /** Puts `change` into the URL's query, which is what reads the errors again. */
+  /** Puts `change` into the URL's query, which is what reads the issues again. */
   protected setQuery(change: Record<string, string | null>): void {
     void this.router.navigate([], {
       relativeTo: this.route,
@@ -496,8 +309,8 @@ export class ObservabilityErrorsPage {
   }
 }
 
-/** The marks of what a row computes from its group (`error-groups.ts`). */
+/** The marks of what a row computes from its issue. */
 const MARKS = {
-  headline: { derived: ['errorSpans', 'errorLogs'] },
-  meta: { derived: ['traceId', 'serviceName', 'errorSpans', 'errorLogs'] },
+  title: { derived: ['exceptionType', 'message'] },
+  regressed: { derived: ['state', 'regressions'] },
 } as const;

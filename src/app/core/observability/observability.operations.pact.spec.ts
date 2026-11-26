@@ -10,10 +10,12 @@ import { addGoldenInteraction, assertPactFile } from '@qits/angular/testing';
 import { client as observabilityClient } from '../../api/observability/client.gen';
 import { provideHeyApiClient } from '../../api/observability/client/client.gen';
 import type { InteractionSlug } from '../../interactions';
-import type { TelemetryTraces } from './observability.consumes';
-import { observabilityGoldenMasters as masters } from '../../../testing/golden-masters';
+import type { ErrorIssues, TelemetryTraces } from './observability.consumes';
+import { isRecorded, observabilityGoldenMasters as masters } from '../../../testing/golden-masters';
 import {
-  TELEMETRY_ERRORS,
+  DISMISS_ERROR_ISSUE,
+  GET_ERROR_ISSUE,
+  LIST_ERROR_ISSUES,
   TELEMETRY_LOGS,
   TELEMETRY_METRICS,
   TELEMETRY_SOURCES,
@@ -35,8 +37,7 @@ import {
  * qits-2534), with each line's service, source and trace id, and that state's sources (the
  * service filter's options), and the empty buffer's merged logs, none; that source's logs as an old
  * `?source=` link asks for them (the source alone), and the same narrowed to the last hour
- * (`sinceMinutes`, `telemetry records of every kind`); that source's error groups as the Errors page asks for them
- * by default (the source alone, qits-2339); that source's metric series, the latest point of
+ * (`sinceMinutes`, `telemetry records of every kind`); that source's metric series, the latest point of
  * each, as the Metrics page asks for them (the source alone, never `name`, qits-2340); that
  * source's traces as the Traces page asks for them by default (the source alone: newest first, no
  * floor, every service, everything buffered are the door's defaults, and `limit` is never sent,
@@ -45,6 +46,14 @@ import {
  * buffer's own state, which the page reads after an empty trace for whether it ever evicted
  * spans (`evictedSpans`); the empty buffer's own trace, no spans and no logs, and its own
  * state, nothing evicted (from `@qits/observability-golden-masters` 2026.1120.180009 on).
+ *
+ * The stored error issues (qits-2538, `stored error issues`, from
+ * `@qits/observability-golden-masters` 2026.1126.34016 on; each skips itself on an older pin): the
+ * open issues as the Errors page asks for them by default (no query: OPEN, every service and the
+ * door's `limit` are its defaults), one issue by its fingerprint as the issue page asks for it (the
+ * path alone: the door's default `hours` is the chart's week), its dismissal, and the log lines of
+ * that fingerprint as the issue page's Show log lines opens them (`fingerprint` alone), each line
+ * carrying the `qits.error.fingerprint` attribute the Logs page's issue link reads.
  *
  * Each interaction comes from the operation itself (`OP.operationId`, `OP.consumes`; `OP.provider`
  * checked against the spec's literal provider), and each test runs the operation's own `fetch`.
@@ -57,6 +66,10 @@ const EMPTY = 'an empty telemetry buffer';
 const ONE_SERVICE = 'telemetry from one platform service';
 const EVERY_KIND = 'telemetry records of every kind';
 const TWO_SERVICES = 'telemetry from two platform services';
+const STORED = 'stored error issues';
+
+/** Whether the installed golden masters record `operationId` in the stored issues' state. */
+const stored = (operationId: string) => isRecorded(STORED, operationId, masters);
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-observability-operations-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -187,22 +200,109 @@ describe('qits-landing-app → qits-observability-service pact: the Observabilit
       expect(data?.logs?.length).toBeGreaterThan(0);
     }));
 
-  it('show-telemetry-errors: a source’s error groups, each with its spans and logs', () =>
-    given(TELEMETRY_ERRORS, ONE_SERVICE, 'show-telemetry-errors').executeTest(async (server) => {
-      const { data, error } = await at(server.url, () =>
-        TELEMETRY_ERRORS.fetch({ query: { source: sourceOf(ONE_SERVICE) } }),
-      );
-      expect(error).toBeUndefined();
-      const [group] = data?.groups ?? [];
-      expect(group?.traceId).toBeTruthy();
-      expect(group?.serviceName).toBeTruthy();
-      const [span] = group?.errorSpans ?? [];
-      expect(span?.events?.some((event) => event.exception === true)).toBe(true);
-      expect(span?.resourceAttributes?.['service.version']).toBeTruthy();
-      expect(group?.errorLogs?.[0]?.severityText).toBe('ERROR');
-      expect(data?.total).toBe(data?.groups?.length);
-      expect(data?.truncated).toBe(false);
-    }));
+  it.skipIf(!stored('listErrorIssues'))(
+    'show-telemetry-errors: the open error issues, most recently seen first',
+    () =>
+      given(LIST_ERROR_ISSUES, STORED, 'show-telemetry-errors').executeTest(async (server) => {
+        const { data, error } = await at(server.url, () => LIST_ERROR_ISSUES.fetch({ query: {} }));
+        expect(error).toBeUndefined();
+        const issues = data?.issues ?? [];
+        expect(issues.length).toBeGreaterThan(0);
+        for (const issue of issues) {
+          expect(issue.fingerprint).toMatch(/^[0-9a-f]{32}$/);
+          expect(issue.state).toBe('OPEN');
+          expect(issue.serviceName).toBeTruthy();
+          expect(issue.message).toBeTruthy();
+          expect(issue.lastSeen).toBeTruthy();
+          expect(issue.occurrences).toBeGreaterThan(0);
+          expect(issue.regressions).toBe(0);
+        }
+        expect(data?.truncated).toBe(false);
+        // The mock answers the array with its recorded shapes; the recording itself holds an issue
+        // with an exception and a location and one with neither (a log's message alone).
+        const recorded = masters.body<ErrorIssues>(STORED, 'listErrorIssues').issues ?? [];
+        const fingerprint = masters.operation(STORED, 'getErrorIssue').params['fingerprint'];
+        expect(recorded.find((issue) => issue.fingerprint === fingerprint)?.exceptionType).toBe(
+          'java.lang.IllegalStateException',
+        );
+        expect(recorded.some((issue) => issue.exceptionType === null)).toBe(true);
+        expect(data?.total).toBe(recorded.length);
+      }),
+  );
+
+  it.skipIf(!stored('getErrorIssue'))(
+    'open-error-issue: one issue by its fingerprint, with its sample and hourly counts',
+    () =>
+      given(GET_ERROR_ISSUE, STORED, 'open-error-issue').executeTest(async (server) => {
+        const fingerprint = masters.operation(STORED, 'getErrorIssue').params['fingerprint'];
+        const { data, error } = await at(server.url, () =>
+          GET_ERROR_ISSUE.fetch({ path: { fingerprint } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.fingerprint).toBe(fingerprint);
+        expect(data?.state).toBe('OPEN');
+        expect(data?.serviceName).toBe(
+          masters.operation(STORED, 'getErrorIssue').params['service'],
+        );
+        expect(data?.exceptionType).toBeTruthy();
+        expect(data?.location).toBeTruthy();
+        expect(data?.firstVersion).toBeTruthy();
+        expect(data?.lastVersion).toBeTruthy();
+        expect(data?.firstSeen).toBeTruthy();
+        expect(data?.sampleMessage).toBeTruthy();
+        expect(data?.sampleStacktrace).toContain('\tat ');
+        expect(data?.sampleTraceId).toBe(
+          masters.operation(STORED, 'getErrorIssue').params['traceId'],
+        );
+        const hourly = data?.hourly ?? [];
+        expect(hourly.length).toBeGreaterThan(0);
+        for (const hour of hourly) {
+          expect(hour.hour).toBeTruthy();
+          expect(hour.count).toBeGreaterThan(0);
+        }
+        // The recording's hours add up to the issue's occurrences.
+        const recorded = masters.body<{ occurrences: number; hourly: { count: number }[] }>(
+          STORED,
+          'getErrorIssue',
+        );
+        expect(recorded.hourly.reduce((sum, hour) => sum + hour.count, 0)).toBe(
+          recorded.occurrences,
+        );
+      }),
+  );
+
+  it.skipIf(!stored('dismissErrorIssue'))(
+    'dismiss-error-issue: an open issue dismissed answers it DISMISSED',
+    () =>
+      given(DISMISS_ERROR_ISSUE, STORED, 'dismiss-error-issue').executeTest(async (server) => {
+        const fingerprint = masters.operation(STORED, 'dismissErrorIssue').params['fingerprint'];
+        const { data, error } = await at(server.url, () =>
+          DISMISS_ERROR_ISSUE.fetch({ path: { fingerprint } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.fingerprint).toBe(fingerprint);
+        expect(data?.state).toBe('DISMISSED');
+      }),
+  );
+
+  it.skipIf(!stored('searchTelemetryLogs'))(
+    'open-error-issue-logs: an issue’s log lines by its fingerprint, each carrying it',
+    () =>
+      given(TELEMETRY_LOGS, STORED, 'open-error-issue-logs').executeTest(async (server) => {
+        const fingerprint = masters.operation(STORED, 'searchTelemetryLogs').params['fingerprint'];
+        const { data, error } = await at(server.url, () =>
+          TELEMETRY_LOGS.fetch({ query: { fingerprint } }),
+        );
+        expect(error).toBeUndefined();
+        const logs = data?.logs ?? [];
+        expect(logs.length).toBeGreaterThan(0);
+        for (const line of logs) {
+          expect(line.severityText).toBe('ERROR');
+          expect(line.attributes?.['qits.error.fingerprint']).toBe(fingerprint);
+          expect(line.serviceName).toBeTruthy();
+        }
+      }),
+  );
 
   it('show-telemetry-metrics: a source’s metric series, the latest point of each', () =>
     given(TELEMETRY_METRICS, ONE_SERVICE, 'show-telemetry-metrics').executeTest(async (server) => {

@@ -669,7 +669,7 @@ export class ShellLayout {
 
   /**
    * The Observability pages below Observability in the sidebar, one exit per page (qits-2313;
-   * Errors, qits-2339; Metrics, qits-2340; Traces, qits-2342). Slow spans is no page of its own any
+   * Errors, qits-2339, the stored error issues since qits-2538, an issue page keeping it current; Metrics, qits-2340; Traces, qits-2342). Slow spans is no page of its own any
    * more but the Traces page's duration floor (qits-2536).
    */
   private readonly observabilityPages = outcomes('open-sidebar-observability-page', {

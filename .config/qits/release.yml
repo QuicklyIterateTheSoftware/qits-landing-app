@@ -108,6 +108,7 @@ contracts:
       qits-network-access-service: "qits-landing-app calls no qits-network-access-service door; CLI commands: qits network-access down, qits network-access up"
       qits-observability-service:
         listSlowSpans: "qits observe slow-spans; qits-landing-app has no page for it yet"
+        listTelemetryErrors: "qits observe errors; the Errors section lists stored error issues instead"
         searchTelemetryRecords: "qits observe query; qits-landing-app has no page for it yet"
       qits-projects-service:
         addPitchVersion: "qits pitches add-version; qits-landing-app has no page for it yet"

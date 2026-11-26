@@ -8,24 +8,121 @@
         "references": {
           "qits-call": {
             "app": "qits-observability-service",
-            "operationId": "listTelemetryErrors"
+            "operationId": "dismissErrorIssue"
           },
           "qits-trigger": {
             "app": "qits-landing-app",
-            "interaction": "show-telemetry-errors",
-            "kind": "ui",
-            "route": "projects/:slug/observability/errors"
+            "interaction": "dismiss-error-issue",
+            "kind": "ui"
           }
         }
       },
-      "description": "show-telemetry-errors: listTelemetryErrors",
+      "description": "dismiss-error-issue: dismissErrorIssue",
       "pending": false,
       "providerStates": [
         {
-          "name": "telemetry from one platform service",
+          "name": "stored error issues",
           "params": {
+            "dismissedFingerprint": "00112233445566778899aabbccddeeff",
+            "fingerprint": "0123456789abcdef0123456789abcdef",
             "service": "qits-example",
-            "source": "_service/qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/observability/api/error-issues/${fingerprint}/dismiss",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "^/observability/api/error-issues/0123456789abcdef0123456789abcdef/dismiss$"
+              }
+            ]
+          }
+        },
+        "method": "POST",
+        "path": "/observability/api/error-issues/0123456789abcdef0123456789abcdef/dismiss"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "fingerprint": "0123456789abcdef0123456789abcdef",
+            "state": "DISMISSED"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.fingerprint": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.state": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "searchTelemetryLogs"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-error-issue-logs",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-error-issue-logs: searchTelemetryLogs",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "stored error issues",
+          "params": {
+            "dismissedFingerprint": "00112233445566778899aabbccddeeff",
+            "fingerprint": "0123456789abcdef0123456789abcdef",
+            "service": "qits-example",
             "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
           }
         }
@@ -33,81 +130,54 @@
       "request": {
         "generators": {
           "query": {
-            "source": {
-              "expression": "${source}",
+            "fingerprint": {
+              "expression": "${fingerprint}",
               "type": "ProviderState"
             }
           }
         },
         "matchingRules": {
           "query": {
-            "source": {
+            "fingerprint": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "regex",
-                  "regex": "^_service/qits-example$"
+                  "regex": "^0123456789abcdef0123456789abcdef$"
                 }
               ]
             }
           }
         },
         "method": "GET",
-        "path": "/observability/api/telemetry/errors",
+        "path": "/observability/api/telemetry/logs",
         "query": {
-          "source": [
-            "_service/qits-example"
+          "fingerprint": [
+            "0123456789abcdef0123456789abcdef"
           ]
         }
       },
       "response": {
         "body": {
           "content": {
-            "groups": [
+            "logs": [
               {
-                "errorLogs": [
-                  {
-                    "body": "invoice store unreachable",
-                    "epochNanos": 1767225600700000000,
-                    "resourceAttributes": {
-                      "deployment.environment.name": "dev",
-                      "service.name": "qits-example",
-                      "service.version": "2026.1231.120000"
-                    },
-                    "severityText": "ERROR"
-                  }
-                ],
-                "errorSpans": [
-                  {
-                    "durationMs": 750,
-                    "events": [
-                      {
-                        "attributes": {
-                          "exception.message": "invoice store unreachable",
-                          "exception.stacktrace": "java.lang.IllegalStateException: invoice store unreachable\n\tat eu.example.InvoiceResource.list(InvoiceResource.java:42)\n",
-                          "exception.type": "java.lang.IllegalStateException"
-                        },
-                        "epochNanos": 1767225600700000000,
-                        "exception": true,
-                        "name": "exception"
-                      }
-                    ],
-                    "kind": "SERVER",
-                    "name": "GET /invoices",
-                    "resourceAttributes": {
-                      "deployment.environment.name": "dev",
-                      "service.name": "qits-example",
-                      "service.version": "2026.1231.120000"
-                    },
-                    "startEpochNanos": 1767225600000000000,
-                    "statusMessage": "invoice store unreachable"
-                  }
-                ],
+                "attributes": {
+                  "exception.type": "java.lang.IllegalStateException",
+                  "qits.error.fingerprint": "0123456789abcdef0123456789abcdef"
+                },
+                "body": "invoice store unreachable",
+                "epochNanos": 1767225600700000000,
+                "resourceAttributes": {
+                  "service.name": "qits-example",
+                  "service.version": "2026.1231.120000"
+                },
                 "serviceName": "qits-example",
+                "severityText": "ERROR",
+                "source": "_service/qits-example",
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               }
             ],
-            "total": 1,
             "truncated": false
           },
           "contentType": "application/json",
@@ -120,7 +190,7 @@
         },
         "matchingRules": {
           "body": {
-            "$.groups": {
+            "$.logs": {
               "combine": "AND",
               "matchers": [
                 {
@@ -130,17 +200,275 @@
                 }
               ]
             },
-            "$.groups[*].errorLogs": {
+            "$.logs[*].attributes['exception.type']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].attributes['qits.error.fingerprint']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].body": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].epochNanos": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['service.name']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].resourceAttributes['service.version']": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].serviceName": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].severityText": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].source": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.logs[*].traceId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.truncated": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "getErrorIssue"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "open-error-issue",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "open-error-issue: getErrorIssue",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "stored error issues",
+          "params": {
+            "dismissedFingerprint": "00112233445566778899aabbccddeeff",
+            "fingerprint": "0123456789abcdef0123456789abcdef",
+            "service": "qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/observability/api/error-issues/${fingerprint}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "^/observability/api/error-issues/0123456789abcdef0123456789abcdef$"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/observability/api/error-issues/0123456789abcdef0123456789abcdef"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "exceptionType": "java.lang.IllegalStateException",
+            "fingerprint": "0123456789abcdef0123456789abcdef",
+            "firstSeen": "2026-01-01T00:00:00Z",
+            "firstVersion": "2026.1230.090000",
+            "hourly": [
+              {
+                "count": 2,
+                "hour": "2026-01-01T00:00:00Z"
+              },
+              {
+                "count": 2,
+                "hour": "2026-01-01T00:00:00Z"
+              }
+            ],
+            "lastSeen": "2026-01-01T00:00:00Z",
+            "lastVersion": "2026.1231.120000",
+            "location": "eu.example.InvoiceResource.list",
+            "message": "invoice store unreachable",
+            "occurrences": 3,
+            "regressions": 0,
+            "sampleMessage": "invoice store unreachable",
+            "sampleStacktrace": "java.lang.IllegalStateException: invoice store unreachable\n\tat eu.example.InvoiceResource.list(InvoiceResource.java:42)\n",
+            "sampleTraceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01",
+            "serviceName": "qits-example",
+            "state": "OPEN"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.exceptionType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.fingerprint": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.firstSeen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.firstVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.hourly": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type",
-                  "max": 1,
-                  "min": 1
+                  "max": 2,
+                  "min": 2
                 }
               ]
             },
-            "$.groups[*].errorLogs[*].body": {
+            "$.hourly[*].count": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                },
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.hourly[*].hour": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                },
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.lastSeen": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.lastVersion": {
               "combine": "AND",
               "matchers": [
                 {
@@ -148,7 +476,7 @@
                 }
               ]
             },
-            "$.groups[*].errorLogs[*].epochNanos": {
+            "$.location": {
               "combine": "AND",
               "matchers": [
                 {
@@ -156,7 +484,7 @@
                 }
               ]
             },
-            "$.groups[*].errorLogs[*].resourceAttributes['deployment.environment.name']": {
+            "$.message": {
               "combine": "AND",
               "matchers": [
                 {
@@ -164,7 +492,7 @@
                 }
               ]
             },
-            "$.groups[*].errorLogs[*].resourceAttributes['service.name']": {
+            "$.occurrences": {
               "combine": "AND",
               "matchers": [
                 {
@@ -172,7 +500,7 @@
                 }
               ]
             },
-            "$.groups[*].errorLogs[*].resourceAttributes['service.version']": {
+            "$.regressions": {
               "combine": "AND",
               "matchers": [
                 {
@@ -180,7 +508,7 @@
                 }
               ]
             },
-            "$.groups[*].errorLogs[*].severityText": {
+            "$.sampleMessage": {
               "combine": "AND",
               "matchers": [
                 {
@@ -188,17 +516,7 @@
                 }
               ]
             },
-            "$.groups[*].errorSpans": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 1,
-                  "min": 1
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].durationMs": {
+            "$.sampleStacktrace": {
               "combine": "AND",
               "matchers": [
                 {
@@ -206,17 +524,7 @@
                 }
               ]
             },
-            "$.groups[*].errorSpans[*].events": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type",
-                  "max": 1,
-                  "min": 1
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].events[*].attributes['exception.message']": {
+            "$.sampleTraceId": {
               "combine": "AND",
               "matchers": [
                 {
@@ -224,7 +532,7 @@
                 }
               ]
             },
-            "$.groups[*].errorSpans[*].events[*].attributes['exception.stacktrace']": {
+            "$.serviceName": {
               "combine": "AND",
               "matchers": [
                 {
@@ -232,107 +540,249 @@
                 }
               ]
             },
-            "$.groups[*].errorSpans[*].events[*].attributes['exception.type']": {
+            "$.state": {
               "combine": "AND",
               "matchers": [
                 {
                   "match": "type"
                 }
               ]
-            },
-            "$.groups[*].errorSpans[*].events[*].epochNanos": {
+            }
+          },
+          "header": {
+            "Content-Type": {
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
+                  "match": "regex",
+                  "regex": "application/json.*"
                 }
               ]
-            },
-            "$.groups[*].errorSpans[*].events[*].exception": {
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-observability-service",
+            "operationId": "listErrorIssues"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-telemetry-errors",
+            "kind": "ui"
+          }
+        }
+      },
+      "description": "show-telemetry-errors: listErrorIssues",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "stored error issues",
+          "params": {
+            "dismissedFingerprint": "00112233445566778899aabbccddeeff",
+            "fingerprint": "0123456789abcdef0123456789abcdef",
+            "service": "qits-example",
+            "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/observability/api/error-issues"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "issues": [
+              {
+                "exceptionType": null,
+                "fingerprint": "fedcba9876543210fedcba9876543210",
+                "lastSeen": "2026-01-01T00:00:00Z",
+                "location": null,
+                "message": "nightly export finished with <n> failures",
+                "occurrences": 1,
+                "regressions": 0,
+                "serviceName": "qits-example",
+                "state": "OPEN"
+              },
+              {
+                "exceptionType": "java.lang.IllegalStateException",
+                "fingerprint": "0123456789abcdef0123456789abcdef",
+                "lastSeen": "2026-01-01T00:00:00Z",
+                "location": "eu.example.InvoiceResource.list",
+                "message": "invoice store unreachable",
+                "occurrences": 3,
+                "regressions": 0,
+                "serviceName": "qits-example",
+                "state": "OPEN"
+              }
+            ],
+            "total": 2,
+            "truncated": false
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.issues": {
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].events[*].name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].kind": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].name": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].resourceAttributes['deployment.environment.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].resourceAttributes['service.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].resourceAttributes['service.version']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].startEpochNanos": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].errorSpans[*].statusMessage": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].serviceName": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.groups[*].traceId": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.fingerprint": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastSeen": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.message": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurrences": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.regressions": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.exceptionType": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.fingerprint": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.lastSeen": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "regex",
+                              "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                            }
+                          ]
+                        },
+                        "$.location": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.message": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.occurrences": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.regressions": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.state": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -503,6 +953,7 @@
           "content": {
             "logs": [
               {
+                "attributes": {},
                 "body": "listing invoices",
                 "epochNanos": 1767225600010000000,
                 "resourceAttributes": {
@@ -516,15 +967,19 @@
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               },
               {
-                "body": "listing invoices",
-                "epochNanos": 1767225600010000000,
+                "attributes": {
+                  "exception.message": "invoice store unreachable",
+                  "exception.type": "java.lang.IllegalStateException"
+                },
+                "body": "invoice store unreachable",
+                "epochNanos": 1767225600700000000,
                 "resourceAttributes": {
                   "deployment.environment.name": "dev",
                   "service.name": "qits-example",
                   "service.version": "2026.1231.120000"
                 },
                 "serviceName": "qits-example",
-                "severityText": "INFO",
+                "severityText": "ERROR",
                 "source": "_service/qits-example",
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               }
@@ -545,108 +1000,179 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                }
-              ]
-            },
-            "$.logs[*].body": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].epochNanos": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['deployment.environment.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['service.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['service.version']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].serviceName": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].severityText": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].source": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].traceId": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.body": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.epochNanos": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['deployment.environment.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.version']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.severityText": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.source": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.traceId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.attributes['exception.message']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.attributes['exception.type']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.body": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.epochNanos": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['deployment.environment.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.version']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.severityText": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.source": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.traceId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -713,6 +1239,7 @@
           "content": {
             "logs": [
               {
+                "attributes": {},
                 "body": "listing invoices",
                 "epochNanos": 1767225600010000000,
                 "resourceAttributes": {
@@ -726,28 +1253,19 @@
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               },
               {
-                "body": "listing invoices",
-                "epochNanos": 1767225600010000000,
+                "attributes": {
+                  "exception.message": "invoice store unreachable",
+                  "exception.type": "java.lang.IllegalStateException"
+                },
+                "body": "invoice store unreachable",
+                "epochNanos": 1767225600700000000,
                 "resourceAttributes": {
                   "deployment.environment.name": "dev",
                   "service.name": "qits-example",
                   "service.version": "2026.1231.120000"
                 },
                 "serviceName": "qits-example",
-                "severityText": "INFO",
-                "source": "_service/qits-example",
-                "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
-              },
-              {
-                "body": "listing invoices",
-                "epochNanos": 1767225600010000000,
-                "resourceAttributes": {
-                  "deployment.environment.name": "dev",
-                  "service.name": "qits-example",
-                  "service.version": "2026.1231.120000"
-                },
-                "serviceName": "qits-example",
-                "severityText": "INFO",
+                "severityText": "ERROR",
                 "source": "_service/qits-example",
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               }
@@ -768,135 +1286,179 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "max": 3,
-                  "min": 3
-                }
-              ]
-            },
-            "$.logs[*].body": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].epochNanos": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['deployment.environment.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['service.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['service.version']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].serviceName": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].severityText": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].source": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].traceId": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.body": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.epochNanos": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['deployment.environment.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.version']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.severityText": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.source": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.traceId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.attributes['exception.message']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.attributes['exception.type']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.body": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.epochNanos": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['deployment.environment.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.version']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.severityText": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.source": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.traceId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -993,6 +1555,7 @@
           "content": {
             "logs": [
               {
+                "attributes": {},
                 "body": "listing invoices",
                 "epochNanos": 1767225600010000000,
                 "resourceAttributes": {
@@ -1006,15 +1569,19 @@
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               },
               {
-                "body": "listing invoices",
-                "epochNanos": 1767225600010000000,
+                "attributes": {
+                  "exception.message": "invoice store unreachable",
+                  "exception.type": "java.lang.IllegalStateException"
+                },
+                "body": "invoice store unreachable",
+                "epochNanos": 1767225600700000000,
                 "resourceAttributes": {
                   "deployment.environment.name": "dev",
                   "service.name": "qits-example",
                   "service.version": "2026.1231.120000"
                 },
                 "serviceName": "qits-example",
-                "severityText": "INFO",
+                "severityText": "ERROR",
                 "source": "_service/qits-example",
                 "traceId": "6a1f0c2b9d8e47f3a5b4c3d2e1f00a01"
               }
@@ -1035,108 +1602,179 @@
               "combine": "AND",
               "matchers": [
                 {
-                  "match": "type",
-                  "max": 2,
-                  "min": 2
-                }
-              ]
-            },
-            "$.logs[*].body": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].epochNanos": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['deployment.environment.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['service.name']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].resourceAttributes['service.version']": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].serviceName": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].severityText": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].source": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
-                }
-              ]
-            },
-            "$.logs[*].traceId": {
-              "combine": "AND",
-              "matchers": [
-                {
-                  "match": "type"
-                },
-                {
-                  "match": "type"
+                  "match": "arrayContains",
+                  "variants": [
+                    {
+                      "index": 0,
+                      "rules": {
+                        "$.body": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.epochNanos": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['deployment.environment.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.version']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.severityText": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.source": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.traceId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "index": 1,
+                      "rules": {
+                        "$.attributes['exception.message']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.attributes['exception.type']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.body": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.epochNanos": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['deployment.environment.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.name']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.resourceAttributes['service.version']": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.serviceName": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.severityText": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.source": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        },
+                        "$.traceId": {
+                          "combine": "AND",
+                          "matchers": [
+                            {
+                              "match": "type"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },

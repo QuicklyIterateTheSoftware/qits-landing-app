@@ -36,7 +36,7 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
 /** The levels the level filter offers, lowest first; none (All) reads every line. */
 export const LEVELS = ['DEBUG', 'INFO', 'WARN', 'ERROR'] as const;
 
-/** What a page reads of the URL's query (`?service=&level=&q=&since=&traceId=&source=`). */
+/** What a page reads of the URL's query (`?service=&level=&q=&since=&traceId=&fingerprint=&source=`). */
 interface LogsQuery {
   /** One source by its key: the old links' only lens, still honoured (absent: every source). */
   readonly source: string | undefined;
@@ -45,6 +45,13 @@ interface LogsQuery {
   readonly q: string | undefined;
   readonly since: number | undefined;
   readonly trace: string | undefined;
+  /** An error issue's fingerprint (qits-2538): its lines, set by the issue page's Show log lines. */
+  readonly fingerprint: string | undefined;
+}
+
+/** A line's error issue fingerprint (`qits.error.fingerprint`, qits-2537), or empty. */
+export function fingerprintOf(line: Pick<TelemetryLogLine, 'attributes'>): string {
+  return line.attributes?.['qits.error.fingerprint'] ?? '';
 }
 
 /** `value` as one of the offered levels, or undefined (All). */
@@ -78,13 +85,17 @@ export function shortTrace(traceId: string | undefined): string {
  * `TELEMETRY_SOURCES`, `listTelemetrySources`), the level (`?level=` → `minSeverity`, absent: all),
  * the body filter (`?q=` → `query`, applied on Enter or when the field is left), the time range
  * (`?since=` minutes → `sinceMinutes`; absent: everything buffered, the default) and the trace
- * (`?traceId=`, qits-2535: set by the trace page's Logs links, cleared here). An old
+ * (`?traceId=`, qits-2535: set by the trace page's Logs links, cleared here) and the error issue
+ * (`?fingerprint=` → `fingerprint`, qits-2538: set by the issue page's Show log lines, cleared
+ * here). An old
  * link's `?source=<key>` still reads that one source; it shows as a filter to clear, and choosing a
  * service clears it. The query names are the retired qits-observability-frontend's, so its `/logs`
  * bookmarks can be forwarded as they are. The service answers at most 200 lines (its default
  * `limit`), oldest first; the page shows them newest first, each with its time, level, the service
  * that wrote it, body, the `service.version` of its resource and, when it belongs to a trace, a
- * link to the trace's page at the line's own source (`open-telemetry-trace`, qits-2535), and says
+ * link to the trace's page at the line's own source (`open-telemetry-trace`, qits-2535), when it
+ * carries `attributes['qits.error.fingerprint']` an issue link to that error issue's page
+ * (`open-log-error-issue`, qits-2537), and says
  * so when the answer was `truncated`.
  *
  * Both reads run in the browser only (the server has no session), through `qitsResource`. A refusal
@@ -181,7 +192,7 @@ export function shortTrace(traceId: string | undefined): string {
           </div>
           <p
             class="m-0 mb-3 flex flex-wrap items-center gap-2 text-xs text-fg-muted"
-            [class.hidden]="!query().source && !query().trace"
+            [class.hidden]="!query().source && !query().trace && !query().fingerprint"
           >
             <span
               class="items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5"
@@ -207,6 +218,20 @@ export function shortTrace(traceId: string | undefined): string {
                 type="button"
                 class="ml-1 cursor-pointer border-0 bg-transparent p-0 text-accent hover:underline"
                 (click)="setQuery({ traceId: null })"
+              >
+                Clear
+              </button>
+            </span>
+            <span
+              class="items-center gap-1 rounded-md border border-line bg-surface-muted px-2 py-0.5"
+              [class]="query().fingerprint ? 'inline-flex' : 'hidden'"
+              data-fingerprint-filter
+            >
+              Error issue <span class="font-mono text-fg">{{ query().fingerprint }}</span>
+              <button
+                type="button"
+                class="ml-1 cursor-pointer border-0 bg-transparent p-0 text-accent hover:underline"
+                (click)="setQuery({ fingerprint: null })"
               >
                 Clear
               </button>
@@ -266,9 +291,11 @@ export function shortTrace(traceId: string | undefined): string {
                   >
                   <span
                     class="flex flex-wrap gap-x-3 text-fg-muted md:col-start-4 max-md:col-span-3"
-                    [class.hidden]="!version(line) && !line.traceId"
+                    [class.hidden]="!version(line) && !line.traceId && !issueOf(line)"
                     [fieldOf]="line"
-                    [qitsField]="{ derived: ['resourceAttributes', 'traceId', 'source'] }"
+                    [qitsField]="{
+                      derived: ['resourceAttributes', 'traceId', 'source', 'attributes'],
+                    }"
                   >
                     <span [class.hidden]="!version(line)">{{ version(line) }}</span>
                     @if (line.traceId) {
@@ -280,6 +307,16 @@ export function shortTrace(traceId: string | undefined): string {
                         [title]="line.traceId"
                         data-trace
                         >trace {{ short(line.traceId) }}</a
+                      >
+                    }
+                    @if (issueOf(line); as fingerprint) {
+                      <a
+                        class="text-accent no-underline hover:underline"
+                        [qitsExit]="issuing.issue"
+                        [exitParams]="{ slug: slug(), fingerprint }"
+                        [title]="fingerprint"
+                        data-issue
+                        >issue {{ short(fingerprint) }}</a
                       >
                     }
                   </span>
@@ -322,6 +359,7 @@ export class ObservabilityLogsPage {
       q: params?.get('q') || undefined,
       since: minutesOf(params?.get('since') ?? null),
       trace: params?.get('traceId') || undefined,
+      fingerprint: params?.get('fingerprint') || undefined,
     };
   });
 
@@ -334,7 +372,7 @@ export class ObservabilityLogsPage {
 
   /** The log lines, every source merged unless an old link names one, as the filters narrow them. */
   protected readonly logs = qitsResource(TELEMETRY_LOGS, () => {
-    const { source, service, level, q, since, trace } = this.query();
+    const { source, service, level, q, since, trace, fingerprint } = this.query();
     if (!this.browser) return undefined;
     return {
       query: {
@@ -344,6 +382,7 @@ export class ObservabilityLogsPage {
         ...(q ? { query: q } : {}),
         ...(since ? { sinceMinutes: since } : {}),
         ...(trace ? { traceId: trace } : {}),
+        ...(fingerprint ? { fingerprint } : {}),
       },
     };
   });
@@ -377,6 +416,13 @@ export class ObservabilityLogsPage {
   protected readonly tracing = outcomes('open-telemetry-trace', {
     trace: exit('projects/:slug/observability/traces/:traceId'),
   });
+
+  /** A line's issue link: its error issue's page (qits-2537, qits-2538). */
+  protected readonly issuing = outcomes('open-log-error-issue', {
+    issue: exit('projects/:slug/observability/errors/:fingerprint'),
+  });
+
+  protected readonly issueOf = fingerprintOf;
 
   /** Refresh: reads the sources and the shown logs again. */
   protected readonly actions: readonly Action[] = [

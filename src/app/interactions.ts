@@ -150,17 +150,38 @@ export const INTERACTIONS = {
    */
   'show-telemetry-logs': 'The Logs page shows the buffered log lines, newest first',
   /**
-   * `observability-errors.page.ts` via `TELEMETRY_ERRORS` (qits-2339): the Errors page shows the
-   * chosen source's buffered error spans and logs, grouped by trace, narrowed by age.
+   * `observability-errors.page.ts` via `LIST_ERROR_ISSUES` (qits-2538): the Errors page lists the
+   * stored error issues, OPEN by default, DISMISSED or all, narrowed by service.
    */
   'show-telemetry-errors':
-    'The Errors page shows a source’s buffered error spans and logs, grouped by trace',
+    'The Errors page lists the stored error issues, the open ones by default',
   /**
-   * `observability-errors.page.ts` (qits-2339): a group's Error logs on the Errors page opens the
-   * Logs page at the same source from ERROR up. Navigates only, and names no pact.
+   * `observability-errors.page.ts` (qits-2538): a row of the Errors page opens its issue's page.
+   * `observability-error.page.ts` reads it via `GET_ERROR_ISSUE`.
    */
-  'open-telemetry-error-logs':
-    'Error logs on an error group opens the Logs page at that source’s ERROR lines',
+  'open-error-issue': 'An error issue’s row on the Errors page opens the issue’s page',
+  /**
+   * `observability-error.page.ts` via `DISMISS_ERROR_ISSUE` (qits-2538): Dismiss on an OPEN
+   * issue's page dismisses it; a later occurrence opens it again as a regression.
+   */
+  'dismiss-error-issue': 'Dismiss on an open error issue’s page dismisses the issue',
+  /**
+   * `observability-error.page.ts` (qits-2538, qits-2537): Show log lines opens the Logs page at
+   * the issue's fingerprint from ERROR up, so occurrences with no trace still show. The Logs page
+   * reads them via `TELEMETRY_LOGS` (`fingerprint`).
+   */
+  'open-error-issue-logs': 'Show log lines on an error issue opens the Logs page at its lines',
+  /**
+   * `observability-error.page.ts` (qits-2538): Open trace opens the trace page at the issue's
+   * sample trace. Navigates only, and names no pact.
+   */
+  'open-error-issue-trace': 'Open trace on an error issue opens its sample trace’s page',
+  /**
+   * `observability-logs.page.ts` (qits-2538, qits-2537): a line's issue link (its
+   * `qits.error.fingerprint` attribute) opens that error issue's page. Navigates only, and names
+   * no pact.
+   */
+  'open-log-error-issue': 'The issue link on a log line opens that error issue’s page',
   /**
    * `observability-metrics.page.ts` via `TELEMETRY_METRICS` (qits-2340): the Metrics page shows the
    * chosen source's buffered metric series, the latest value of each, one card per metric name.
@@ -180,8 +201,7 @@ export const INTERACTIONS = {
   'show-telemetry-trace':
     'The trace page shows a trace’s buffered spans as a waterfall, with its correlated logs',
   /**
-   * `observability-errors.page.ts` (a correlated group's trace id), `observability-traces.page.ts`
-   * (a trace row's id) (qits-2343) and `observability-logs.page.ts` (a line's trace id, at the
+   * `observability-traces.page.ts` (a trace row's id) (qits-2343) and `observability-logs.page.ts` (a line's trace id, at the
    * line's own source, qits-2535): a trace id opens the trace page. Navigates only, and names no
    * pact.
    */

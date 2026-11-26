@@ -89,7 +89,8 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * component, its pages its children; `/observability` opens `logs` (`ObservabilityLogsPage`, the
  * telemetry buffer's log lines, every source merged, qits-2534) by a relative `redirectTo`, which
  * keeps the query, so `/observability?source=_service/qits-ci` lands on that source's logs. `errors`
- * (`ObservabilityErrorsPage`, qits-2339) is one source's error spans and logs, grouped by trace;
+ * (`ObservabilityErrorsPage`, qits-2538) is the stored error issues, `errors/<fingerprint>`
+ * (`ObservabilityErrorPage`) one of them;
  * `metrics` (`ObservabilityMetricsPage`, qits-2340) the latest value of each of its metric series;
  * `traces` (`ObservabilityTracesPage`, qits-2342) its traces, grouped by path.
  * `slow-spans` is no page any more (qits-2536): it redirects to `traces` with the floor the Slow
@@ -760,6 +761,14 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./routes/projects/[slug]/observability/errors/observability-errors.page').then(
                 (m) => m.ObservabilityErrorsPage,
+              ),
+          },
+          {
+            // One stored error issue (qits-2538), a detail page: the sidebar keeps Errors.
+            path: 'errors/:fingerprint',
+            loadComponent: () =>
+              import('./routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page').then(
+                (m) => m.ObservabilityErrorPage,
               ),
           },
           {

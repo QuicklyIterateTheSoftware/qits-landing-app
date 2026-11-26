@@ -18,7 +18,9 @@ import { shootShellMenus } from '../../../../../../testing/browser/shell-menus';
  * and `_service/qits-other`, and the merged tail: qits-example's INFO and ERROR in one trace and
  * qits-other's WARN between them, in no trace), "telemetry from one platform service" (one source
  * and its two lines, as an old `?source=` link reads them), "telemetry records of every kind" (the
- * same source's lines of the last hour) and "an empty telemetry buffer" (no source, no line). A
+ * same source's lines of the last hour), "stored error issues" (qits-2538: one error issue's
+ * ERROR line by its fingerprint, carrying `qits.error.fingerprint`) and "an empty telemetry
+ * buffer" (no source, no line). A
  * refusal is a 403 with no body, as the service answers a credential without a telemetry role.
  */
 describe('ObservabilityLogsPage (screenshots)', () => {
@@ -42,6 +44,8 @@ describe('ObservabilityLogsPage (screenshots)', () => {
   const SOURCES = '/observability/api/telemetry/sources';
   const LOGS = '/observability/api/telemetry/logs';
   const OBS = 'qits-observability';
+  const STORED = 'stored error issues';
+  const FINGERPRINT = '0123456789abcdef0123456789abcdef';
 
   /** The open logs reads. */
   const logsReads = (): TestRequest[] =>
@@ -151,6 +155,52 @@ describe('ObservabilityLogsPage (screenshots)', () => {
     all?.flush(await goldenMaster(TWO, 'searchTelemetryLogs', OBS));
     await rendered.opened.settled();
     expect(TestBed.inject(Router).url).not.toContain('traceId');
+  });
+
+  it('reads one error issue’s lines at ?fingerprint=, each linking its issue (qits-2538)', async () => {
+    const rendered = await render(`?fingerprint=${FINGERPRINT}&level=ERROR`);
+    http.expectOne(SOURCES).flush(await goldenMaster(TWO, 'listTelemetrySources', OBS));
+    const [issued] = logsReads();
+    expect(param(issued, 'fingerprint')).toBe(FINGERPRINT);
+    expect(param(issued, 'minSeverity')).toBe('ERROR');
+    issued?.flush(await goldenMaster(STORED, 'searchTelemetryLogs', OBS));
+    await rendered.opened.settled();
+    const filter = page.elementLocator(
+      rendered.opened.page.querySelector('[data-fingerprint-filter]')!,
+    );
+    await expect.element(filter).toMatchTextContent(FINGERPRINT);
+    const line = rendered.view.getByRole('region', { name: 'Log lines' }).getByRole('listitem');
+    await expect
+      .element(line.getByRole('link', { name: 'issue 01234567' }))
+      .toHaveAttribute(
+        'href',
+        `/projects/${rendered.opened.project.slug}/observability/errors/${FINGERPRINT}`,
+      );
+    await expect
+      .element(page.elementLocator(rendered.opened.frame))
+      .toMatchScreenshot('fingerprint-filter', { kind: 'DATA' });
+    await userEvent.click(filter.getByRole('button', { name: 'Clear' }));
+    await rendered.opened.idle();
+    const [all] = logsReads();
+    expect(param(all, 'fingerprint')).toBeNull();
+    all?.flush(await goldenMaster(TWO, 'searchTelemetryLogs', OBS));
+    await rendered.opened.settled();
+    expect(TestBed.inject(Router).url).not.toContain('fingerprint');
+  });
+
+  it('open-log-error-issue issue: a line’s issue link opens its error issue’s page', async () => {
+    const rendered = await render(`?fingerprint=${FINGERPRINT}`);
+    http.expectOne(SOURCES).flush(await goldenMaster(TWO, 'listTelemetrySources', OBS));
+    logsReads()[0]?.flush(await goldenMaster(STORED, 'searchTelemetryLogs', OBS));
+    await rendered.opened.settled();
+    await rendered.view.getByRole('link', { name: 'issue 01234567' }).click();
+    await leftFor(rendered.opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-log-error-issue:issue',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${rendered.opened.project.slug}/observability/errors/${FINGERPRINT}`,
+    );
   });
 
   it('open-telemetry-trace trace: a line’s trace id opens the trace at its own source', async () => {

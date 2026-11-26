@@ -1,17 +1,21 @@
 import { qitsOperation } from '@qits/angular';
 import {
+  dismissErrorIssue,
+  getErrorIssue,
   getTelemetryStore,
   getTelemetryTrace,
-  listTelemetryErrors,
+  listErrorIssues,
   listTelemetryMetrics,
   listTelemetrySources,
   listTelemetryTraces,
   searchTelemetryLogs,
 } from '../../api/observability';
 import {
+  DISMISSED_ERROR_ISSUE,
+  ERROR_ISSUE_DETAIL,
+  ERROR_ISSUE_ROWS,
   GET_TELEMETRY_STORE,
   GET_TELEMETRY_TRACE,
-  LIST_TELEMETRY_ERRORS,
   LIST_TELEMETRY_METRICS,
   LIST_TELEMETRY_SOURCES,
   LIST_TELEMETRY_TRACES,
@@ -19,11 +23,12 @@ import {
 } from './observability.consumes';
 
 /**
- * qits-observability's telemetry buffer reads declared as operations (qits-2313; the errors,
- * qits-2339; the metrics, qits-2340; the traces, qits-2342; a trace and the store, qits-2343), for the Observability section's pages, which read them through `qitsResource`;
+ * qits-observability's telemetry buffer reads declared as operations (qits-2313; the metrics, qits-2340; the traces, qits-2342; a trace and the store, qits-2343), for the Observability section's pages, which read them through `qitsResource`;
  * `observability.operations.pact.spec.ts` binds each with the same provider, operationId and
  * `consumes`. Every door answers `qits:admin`, `qits:admin-agent`, `qits:desk-admin` and
- * `qits:agent` only; anyone else gets a 403.
+ * `qits:agent` only; anyone else gets a 403. The stored error issues (qits-2538) are qits-observability's
+ * own table, not the buffer: read by the same roles, dismissed by `qits:admin`, `qits:admin-agent`
+ * and `qits:desk-admin` only (`qits:agent` gets a 403).
  */
 
 /** The buffer's sources (the platform's services, workspaces and the unscoped rest), with counts. */
@@ -48,15 +53,39 @@ export const TELEMETRY_LOGS = qitsOperation({
 });
 
 /**
- * A source's error spans and ERROR-or-worse logs, grouped by trace (the uncorrelated rest under an
- * empty trace id), narrowed by age (qits-2339).
+ * The stored error issues (qits-2538), most recently seen first: OPEN by default (`state`, also
+ * DISMISSED or ALL), narrowed by service. An issue belongs to the estate, not to a buffer source.
  */
-export const TELEMETRY_ERRORS = qitsOperation({
+export const LIST_ERROR_ISSUES = qitsOperation({
   provider: 'qits-observability-service',
-  operationId: 'listTelemetryErrors',
+  operationId: 'listErrorIssues',
   method: 'GET',
-  call: listTelemetryErrors,
-  consumes: LIST_TELEMETRY_ERRORS,
+  call: listErrorIssues,
+  consumes: ERROR_ISSUE_ROWS,
+});
+
+/**
+ * One stored error issue by its fingerprint (qits-2538), with its sample and its hourly counts over
+ * the last `hours` (default 168, seven days).
+ */
+export const GET_ERROR_ISSUE = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'getErrorIssue',
+  method: 'GET',
+  call: getErrorIssue,
+  consumes: ERROR_ISSUE_DETAIL,
+});
+
+/**
+ * Dismisses an OPEN issue (qits-2538), no body; the answer is the issue, DISMISSED. A later
+ * occurrence opens it again as a regression.
+ */
+export const DISMISS_ERROR_ISSUE = qitsOperation({
+  provider: 'qits-observability-service',
+  operationId: 'dismissErrorIssue',
+  method: 'POST',
+  call: dismissErrorIssue,
+  consumes: DISMISSED_ERROR_ISSUE,
 });
 
 /**
