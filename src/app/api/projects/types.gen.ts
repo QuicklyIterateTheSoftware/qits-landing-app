@@ -484,7 +484,7 @@ export type DesignDto = {
  */
 export type DeskTriggerEvent = {
     /**
-     * The source that admitted it: wait, work-verified, approval-needed, desk-mentioned, request-failed, request-stalled or capacity-opened
+     * The source that admitted it: wait, work-verified, approval-needed, desk-mentioned, issue-answered, request-failed, target-oom-killed, request-stalled, agent-idle, verified-unshipped, wait-broken or capacity-opened
      */
     source?: string;
     /**
@@ -515,6 +515,14 @@ export type DeskTriggerEvent = {
      * When it happened
      */
     occurredAt?: Instant;
+    /**
+     * When the sweep dropped it from the message because it no longer held; null while it is live
+     */
+    droppedAt?: Instant | null;
+    /**
+     * Why it was dropped: resolved (what it reported is over) or superseded (a newer line of the same request in the window says it); null while it is live
+     */
+    droppedReason?: string | null;
 };
 
 /**
@@ -523,7 +531,7 @@ export type DeskTriggerEvent = {
 export type DeskTriggerMessage = {
     id?: Uuid;
     /**
-     * OPEN, OWED, DELIVERED, QUEUED or FAILED
+     * OPEN, OWED, DELIVERED, QUEUED, FAILED or REDUNDANT (closed without a prompt: none of its lines still held at the close or before a delivery attempt)
      */
     state?: string;
     /**
@@ -563,11 +571,11 @@ export type DeskTriggerMessage = {
      */
     queuePosition?: number | null;
     /**
-     * The exact text sent to the desk; null while OPEN
+     * The exact text last sent, or about to be sent, to the desk: re-rendered from the lines still live before every attempt. Null while OPEN, and for a window that went REDUNDANT at its close
      */
     message?: string | null;
     /**
-     * The lines it collected, by admittedAt then itemRef
+     * The lines it collected, by admittedAt then itemRef, the dropped ones included
      */
     events?: Array<DeskTriggerEvent>;
 };
@@ -872,7 +880,7 @@ export type FrontDeskRefusal = {
 
 export type GuideResponse = {
     /**
-     * workstation, agent, desk or refinement
+     * workstation, agent, desk, refinement or project-agent
      */
     variant?: string;
     /**
@@ -2172,6 +2180,7 @@ export type TransitionedEntity = {
     inspiredBy?: string;
     tags?: Array<WorkTag>;
     relatedTo?: string;
+    errorIssue?: string;
     needs?: Array<NeedRef>;
     unmetNeeds?: number;
 };
@@ -2421,6 +2430,10 @@ export type WorkCreate = {
      */
     relatedTo?: string;
     /**
+     * A ticket's error issue: the qits-observability fingerprint (32 lower-case hex digits) it was made from. Refused on every other archetype.
+     */
+    errorIssue?: string;
+    /**
      * What an epic, a ticket, a feature or a task waits for (qits-1903): each entry a work item of the same project and the status it must reach. Refused on an issue.
      */
     needs?: Array<WorkNeedWrite>;
@@ -2650,7 +2663,7 @@ export type WorkPatch = {
      */
     inspiredBy?: string | null;
     /**
-     * The ranking among siblings, on every archetype: higher sorts first, null after every number, then by number. Editable at every status but DONE and DROPPED (409), outside every scope freeze; null clears it. PUT /projects/api/work/{qualifiedId}/priority ranks by drop instead.
+     * The ranking among siblings, on every archetype: higher sorts first; 0 by default, so a negative priority sorts below unranked work; then by number. Editable at every status but DONE and DROPPED (409), outside every scope freeze; null writes 0. PUT /projects/api/work/{qualifiedId}/priority ranks by drop instead.
      */
     priority?: number | null;
     /**
@@ -2661,6 +2674,10 @@ export type WorkPatch = {
      * What an epic, a ticket, a feature or a task waits for (qits-1903), the whole list: each entry a work item of the same project and the status it must reach. Editable at every status, outside every scope freeze; an empty array or null clears them. A transition never changes them.
      */
     needs?: Array<WorkNeedWrite> | null;
+    /**
+     * A ticket's error issue: the qits-observability fingerprint (32 lower-case hex digits) it was made from; null clears it. Refused on every other archetype.
+     */
+    errorIssue?: string | null;
 };
 
 /**
@@ -4761,7 +4778,27 @@ export type ListProjectWorkData = {
         project: string;
     };
     query?: {
+        /**
+         * true: only the items not VERIFIED, DONE or DROPPED.
+         */
+        active?: boolean;
         archetype?: string;
+        /**
+         * Only the items assigned to this name, matched exactly after trimming both. Excludes unassigned=true.
+         */
+        assignee?: string;
+        /**
+         * Only the tickets made from this qits-observability error issue: its fingerprint, 32 lower-case hex digits, matched exactly.
+         */
+        errorIssue?: string;
+        /**
+         * At most this many items (1 to 200), the first after filtering and ordering.
+         */
+        limit?: number;
+        /**
+         * priority: the backlog order instead of tree order — bugs first, then priority (highest first), then oldest by createdAt, then id.
+         */
+        order?: 'priority';
         /**
          * Only the DROPPED items closed with this outcome: DUPLICATE, RESOLVED_ELSEWHERE, SUPERSEDED, OBSOLETE, INVALID or WONT_DO.
          */
@@ -4776,13 +4813,17 @@ export type ListProjectWorkData = {
          * Only the items carrying this tag: RESERVED_FOR_HUMAN (any case, or its kebab form reserved-for-human).
          */
         tag?: string;
+        /**
+         * true: only the work an agent may take — an epic or a ticket with no assignee, in REPORTED, READY_FOR_DEV, IMPLEMENTING, IMPLEMENTED or VERIFYING, not blocked, tagged neither RESERVED_FOR_HUMAN nor CONDITION, with no unmet need. Excludes assignee.
+         */
+        unassigned?: boolean;
     };
     url: '/projects/api/projects/{project}/work';
 };
 
 export type ListProjectWorkErrors = {
     /**
-     * An archetype, a status, an outcome or a tag naming none
+     * An archetype, a status, an outcome or a tag naming none; a blank assignee; assignee together with unassigned; unassigned or active other than true; an order other than priority; a limit outside 1 to 200; an errorIssue that is no fingerprint
      */
     400: unknown;
     /**

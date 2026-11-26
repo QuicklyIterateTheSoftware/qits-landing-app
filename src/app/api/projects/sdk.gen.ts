@@ -523,7 +523,7 @@ export const startAgent = <ThrowOnError extends boolean = false>(options: Option
 /**
  * The messages the project's delivery desk was sent by its desk triggers
  *
- * Newest first by openedAt, every state: OPEN (collecting), OWED (closed, not yet taken — attempts, lastStatus and lastDetail say why), DELIVERED or QUEUED (taken, with acceptedAt and commandId) and FAILED (never to be delivered). Each carries the lines it collected, by admittedAt then itemRef. limit defaults to 20 and may be 1 to 100. An unknown project is a 404.
+ * Newest first by openedAt, every state: OPEN (collecting), OWED (closed, not yet taken — attempts, lastStatus and lastDetail say why), DELIVERED or QUEUED (taken, with acceptedAt and commandId), FAILED (never to be delivered) and REDUNDANT (closed without a prompt: no line still held). Each carries the lines it collected, by admittedAt then itemRef, the dropped ones included with droppedAt and droppedReason. limit defaults to 20 and may be 1 to 100. An unknown project is a 404.
  */
 export const listDeskTriggerMessages = <ThrowOnError extends boolean = false>(options: Options<ListDeskTriggerMessagesData, ThrowOnError>): RequestResult<ListDeskTriggerMessagesResponses, ListDeskTriggerMessagesErrors, ThrowOnError> => (options.client ?? client).get<ListDeskTriggerMessagesResponses, ListDeskTriggerMessagesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -677,7 +677,7 @@ export const postProjectsApiProjectsByProjectIdRepositoriesReconcile = <ThrowOnE
 /**
  * List a project's work of every archetype
  *
- * The project's whole planning tree, flat: each root oldest first, its descendants depth-first in position order. Optionally narrowed to one archetype, one status, the direct children of one parent (qualified id or UUID), one drop outcome, and the items naming one entity (qualified id or UUID) as their supersededBy — what that entity closed as a duplicate, resolved elsewhere or superseded, and the items carrying one tag. The project is its id or its slug. No entry carries its description: a ticket or an epic answers an excerpt instead, a short plain-text lead of it, and every other archetype answers null.
+ * The project's whole planning tree, flat: each root oldest first, its descendants depth-first in position order. Optionally narrowed to one archetype, one status, the direct children of one parent (qualified id or UUID), one drop outcome, and the items naming one entity (qualified id or UUID) as their supersededBy — what that entity closed as a duplicate, resolved elsewhere or superseded, and the items carrying one tag; and, for a long-running agent, the items assigned to one name, the work it may take (unassigned=true) or the unfinished ones (active=true), and the tickets made from one error issue (errorIssue). order=priority answers in the backlog order instead, and limit keeps the first rows. The project is its id or its slug. No entry carries its description: a ticket or an epic answers an excerpt instead, a short plain-text lead of it, and every other archetype answers null.
  */
 export const listProjectWork = <ThrowOnError extends boolean = false>(options: Options<ListProjectWorkData, ThrowOnError>): RequestResult<ListProjectWorkResponses, ListProjectWorkErrors, ThrowOnError> => (options.client ?? client).get<ListProjectWorkResponses, ListProjectWorkErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
