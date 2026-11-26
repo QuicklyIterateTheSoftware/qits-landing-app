@@ -39,12 +39,12 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  * One detail state per archetype and per ticket type, and the status states whose pages the action
  * screenshots show, each with the item's own reads (`ACTION_TICKETS`, `ACTION_EPICS`, and "an epic
  * with features and tasks"' open feature; `ACTION_EPICS` also carries the verified epic of the
- * off-board features screenshot, not itself a status screenshot). Each test makes ONE of the reads the work item page
- * makes, through the operation's own `fetch`, against a pact mock server answering with
- * qits-projects' golden master: a path from a provider state matches any path, so one interaction
- * per test keeps each answer to its own request. A read binds the fields its operation's
- * `consumes` names that the state's recording holds (`heldBy`), so a field a recording does not
- * have yet (`authorAgentOf`, `editable`: qits-1452, not yet in the installed golden-masters
+ * off-board features screenshot, not itself a status screenshot). Each test makes ONE of the
+ * reads the work item page makes, through the operation's own `fetch`, against a pact mock server
+ * answering with qits-projects' golden master: a path from a provider state matches any path, so
+ * one interaction per test keeps each answer to its own request. A read binds the fields its
+ * operation's `consumes` names that the state's recording holds (`heldBy`), so a field a recording
+ * does not have yet (`authorAgentOf`, `editable`: qits-1452, not yet in the installed golden-masters
  * devDependency) is simply left unbound there, rather than failing the test.
  *
  * What the item needs (epic qits-1899, `needs[]`) is bound in `NEEDS_STATE` only, and open-ended
