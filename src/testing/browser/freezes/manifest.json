@@ -277757,6 +277757,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -277907,6 +277912,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -278065,6 +278075,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -278196,6 +278211,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -278323,6 +278343,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -278481,6 +278506,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -278631,6 +278661,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -278824,6 +278859,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -279013,6 +279053,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -279179,6 +279224,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -279341,6 +279391,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -279530,6 +279585,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -279733,6 +279793,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -279875,6 +279940,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -280025,6 +280095,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -280148,6 +280223,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -280267,6 +280347,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -280642,6 +280727,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -281013,6 +281103,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -281361,6 +281456,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -281705,6 +281805,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -282080,6 +282185,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -282451,6 +282561,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -282597,6 +282712,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -282734,6 +282854,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -282879,6 +283004,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -283020,6 +283150,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -283138,6 +283273,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -283252,6 +283392,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -283397,6 +283542,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -283538,6 +283688,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -283667,6 +283822,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -283804,6 +283964,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -283914,6 +284079,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -284020,6 +284190,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -284157,6 +284332,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -284286,6 +284466,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -284449,6 +284634,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -284608,6 +284798,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -284744,6 +284939,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -284876,6 +285076,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -285039,6 +285244,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -285189,6 +285399,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -285347,6 +285562,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -285501,6 +285721,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -285632,6 +285857,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -285759,6 +285989,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -285917,6 +286152,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -286066,6 +286306,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -286197,6 +286442,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -286336,6 +286586,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -286448,6 +286703,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -286556,6 +286816,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -286691,6 +286956,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -286836,6 +287106,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -287005,6 +287280,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -287170,6 +287450,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -287312,6 +287597,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -287450,6 +287740,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -287615,6 +287910,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -287785,6 +288085,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -287988,6 +288293,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -288187,6 +288497,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -288363,6 +288678,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -288535,6 +288855,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -288738,6 +289063,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -288933,6 +289263,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -289323,6 +289658,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -289713,6 +290053,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -290080,6 +290425,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -290447,6 +290797,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -290837,6 +291192,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -291231,6 +291591,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -291598,6 +291963,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -291973,6 +292343,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -292321,6 +292696,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -292665,6 +293045,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -293040,6 +293425,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -293401,6 +293791,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -293578,6 +293973,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -293763,6 +294163,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -293921,6 +294326,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -294075,6 +294485,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -294256,6 +294671,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -294442,6 +294862,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -294635,6 +295060,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -294824,6 +295254,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -294990,6 +295425,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -295152,6 +295592,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -295345,6 +295790,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -295534,6 +295984,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -295696,6 +296151,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -295866,6 +296326,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -296009,6 +296474,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -296148,6 +296618,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -296318,6 +296793,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -296475,6 +296955,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -296637,6 +297122,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -296791,6 +297281,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -296954,6 +297449,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -297113,6 +297613,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -297248,6 +297753,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -297379,6 +297889,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -297541,6 +298056,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -297695,6 +298215,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -297892,6 +298417,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -298085,6 +298615,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -298251,6 +298786,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -298425,6 +298965,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -298572,6 +299117,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -298715,6 +299265,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -298889,6 +299444,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -299059,6 +299619,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -299210,6 +299775,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -299369,6 +299939,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -299501,6 +300076,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -299629,6 +300209,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -299784,6 +300369,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -299944,6 +300534,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -300120,6 +300715,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -300292,6 +300892,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -300440,6 +301045,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -300584,6 +301194,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -300760,6 +301375,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -300932,6 +301552,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -301091,6 +301716,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -301258,6 +301888,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -301398,6 +302033,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         },
         {
@@ -301534,6 +302174,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -301697,6 +302342,11 @@
           "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -301865,6 +302515,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -302255,6 +302910,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -302645,6 +303305,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -303012,6 +303677,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -303379,6 +304049,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -303769,6 +304444,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         }
       ],
       "triggers": [
@@ -304158,6 +304838,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -304343,6 +305028,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -304536,6 +305226,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -304702,6 +305397,11 @@
         {
           "provider": "qits-workspaces-service",
           "state": "a work item with no workspaces",
+          "operationId": "listAgents"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
           "operationId": "listWorkItemWorkspaces"
         }
       ],
@@ -304864,6 +305564,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",
@@ -305053,6 +305758,11 @@
           "provider": "qits-workspaces-service",
           "state": "a project with workspaces bound to work items",
           "operationId": "listOpenWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listAgents"
         },
         {
           "provider": "qits-workspaces-service",

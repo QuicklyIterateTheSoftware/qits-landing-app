@@ -2949,6 +2949,12 @@
     {
       "provider": "qits-workspaces-service",
       "state": "a work item with no workspaces",
+      "operationId": "listAgents",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-workspaces-service",
+      "state": "a work item with no workspaces",
       "operationId": "listWorkItemWorkspaces",
       "route": "projects/:slug/work/detail/:id"
     },
