@@ -1413,6 +1413,7 @@ describe('ShellLayout (screenshots)', () => {
       'Clients',
       'Users',
       'Signed-in devices',
+      'Toggles',
       'Network access',
     ]);
     await expect
