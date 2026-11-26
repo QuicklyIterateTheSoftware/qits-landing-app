@@ -291,8 +291,8 @@ describe('ShellLayout (screenshots)', () => {
     await expect.element(page.getByRole('navigation', { name: 'qits' })).toBeVisible();
     // At the root the navigation holds no project's sections: Projects (qits-2532), the global sections (System,
     // qits-2344; Mirror, qits-2357; Orchestrator, qits-2359; IdP admin,
-    // qits-2481), then Network access, the phone's way there (qits-2262); the "qits" brand leads
-    // home.
+    // qits-2481; Toggles, qits-2704), then Network access, the phone's way there (qits-2262); the
+    // "qits" brand leads home.
     const links = page.getByRole('navigation', { name: 'qits' }).getByRole('link');
     expect(links.elements().map((link) => link.textContent?.trim())).toEqual([
       'Projects',
@@ -300,6 +300,7 @@ describe('ShellLayout (screenshots)', () => {
       'Mirror',
       'Orchestrator',
       'IdP admin',
+      'Toggles',
       'Network access',
     ]);
     await expect.element(links.first()).toBeVisible();
@@ -1094,6 +1095,7 @@ describe('ShellLayout (screenshots)', () => {
       'Mirror',
       'Orchestrator',
       'IdP admin',
+      'Toggles',
       'Network access',
     ]);
     await expect.element(layout).toMatchScreenshot('root-sidebar', { kind: 'DATA' });
@@ -1211,6 +1213,7 @@ describe('ShellLayout (screenshots)', () => {
       'Mirror',
       'Orchestrator',
       'IdP admin',
+      'Toggles',
       'Network access',
     ]);
     await expect
@@ -1312,6 +1315,7 @@ describe('ShellLayout (screenshots)', () => {
       'OCI upstreams',
       'Orchestrator',
       'IdP admin',
+      'Toggles',
       'Network access',
     ]);
     await expect

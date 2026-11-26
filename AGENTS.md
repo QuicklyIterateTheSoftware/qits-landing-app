@@ -365,7 +365,7 @@ every page below it (the root Artifacts of qits-2316 is gone, qits-2477): first 
 (`open-sidebar-projects`, `exit('projects')`, qits-2532), the project picker, current on it; then System
 (`open-sidebar-system`, `exit('system')`, qits-2344), Mirror (`open-sidebar-mirror`,
 `exit('mirror')`, qits-2357) and Orchestrator (`open-sidebar-orchestrator`, `exit('orchestrator')`,
-qits-2359), IdP admin (below). Such a section may list its own pages below it
+qits-2359), IdP admin and Toggles (below). Such a section may list its own pages below it
 (`children`, qits-2346), as a project section does: rendered (not merely hidden, qits-2225) only
 while the URL is within the section (`openGlobalChildren`), with the same markup, each its own
 exit (a `GlobalPath`); the entry is then marked by `globalCurrentOf`, `currentOf`'s rule: `page`
@@ -388,7 +388,10 @@ IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
 `PlatformOrigins.page('idp')` + `/idp/<page>` in a frame filling the main slot
 (`patterns/idp/idp-frame/`). The idp's admin pages draw no navigation of their own; this sidebar is
 theirs. The door and the idp are the same site, so the frame opens signed in. With no idp origin
-(the server render) there is no frame. `kind: 'external'` leaves the app at `href` through an
+(the server render) there is no frame. Toggles (`open-sidebar-toggles`, `exit('toggles')`, qits-2704) comes
+last, after IdP admin: qits-toggles' declared feature toggles (`routes/toggles/`), the list at
+`/toggles` and each toggle's ordered rule editor at `/toggles/:slug`; it has no pages below it and
+no create control, since a toggle exists only by its declaration in qits-toggles-service's code. `kind: 'external'` leaves the app at `href` through an
 `external(...)` outcome; no global section uses it today. With a project open the list is empty.
 The trail in the top bar names the sidebar's layers, not the route taken (qits-2570, which
 replaced qits-2386's per-route trail): one crumb per layer of left navigation, each naming what owns
