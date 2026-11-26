@@ -33,7 +33,11 @@ import {
  *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings (the
  *   state records no thread or dossier: those answer 404);
  * - what an item needs (epic qits-1899): the READY_FOR_DEV ticket of "a ticket that needs another",
- *   its "needs" badge and its Needs panel, from its work and its `getWork` (no thread or dossier).
+ *   its "needs" badge and its Needs panel, from its work and its `getWork` (no thread or dossier);
+ * - a ticket made from an error issue (qits-2538): the bug of "a ticket made from an error issue",
+ *   its "Made from error issue" link, from its `getWork` (no thread or dossier). The state records
+ *   the project's work only filtered by the issue (`listProjectWork?errorIssue=`), which answers the
+ *   work read here: it holds the ticket alone.
  *
  * The workspaces come from qits-workspaces' golden masters, whose ids are those of the "… in
  * detail" states: the open workspaces (a frame read `openRoute` answers) from "a project with
@@ -42,9 +46,10 @@ import {
  *
  * The page follows transitions through the event stream; the stream here never connects.
  *
- * The link of the one linking pattern only this page draws is a declared exit (epic qits-2000),
- * followed once: a workspace in the item's history (`app-work-workspaces`' `open-workspace-agent`
- * `open`, shown by `workspaces-history`). The page it leaves for is not this spec's: its reads are
+ * The links only this page draws are declared exits (epic qits-2000), each followed once: a
+ * workspace in the item's history (`app-work-workspaces`' `open-workspace-agent` `open`, shown by
+ * `workspaces-history`), and a ticket's error issue (`app-ticket-detail`'s
+ * `open-ticket-error-issue` `issue`, shown by `detail-ticket-error-issue`). The page it leaves for is not this spec's: its reads are
  * answered with an error (`leftFor`).
  */
 
@@ -70,6 +75,8 @@ const EPIC = 'Work item actions';
  * qits-projects from 2026.1106.140436 on).
  */
 const NEEDS = 'a ticket that needs another';
+/** A bug ticket made from an error issue (qits-2538). */
+const FROM_ISSUE = 'a ticket made from an error issue';
 /**
  * States over a seed of their own, whose frozen ids may also be ids qits-workspaces' bound state
  * names: no item there has a workspace (`answerWorkspaces`). The action screenshots' status states
@@ -79,6 +86,7 @@ const NEEDS = 'a ticket that needs another';
 const UNBOUND: ReadonlySet<string> = new Set([
   WRAPPER_CLOSINGS,
   NEEDS,
+  FROM_ISSUE,
   IMPLEMENTED,
   REPORTED,
   VERIFIED,
@@ -445,6 +453,38 @@ describe('WorkItemPage (screenshots)', () => {
       'detail-needs',
       panel.getByRole('link', { name: 'Ticket: contract-00000001-1' }).element() as HTMLElement,
     );
+  });
+
+  // qits-2538: a ticket made from an error issue links the issue's page above its facts.
+  describe('a ticket made from an error issue', () => {
+    const TITLE = 'Export answers 500 for an empty quarter';
+    const FINGERPRINT = '0123456789abcdef0123456789abcdef';
+
+    it('says which error issue it was made from, linked', async () => {
+      const { element, frame, opened } = await render(FROM_ISSUE, TITLE, 'item');
+      const line = element.getByText('Made from error issue', { exact: false });
+      await expect.element(line).toMatchTextContent(`Made from error issue ${FINGERPRINT}`);
+      await expect
+        .element(line.getByRole('link', { name: FINGERPRINT }))
+        .toHaveAttribute(
+          'href',
+          `/projects/${opened.project.slug}/observability/errors/${FINGERPRINT}`,
+        );
+      await fitWholePage(opened);
+      await commands.parkPointer();
+      await expect.element(frame).toMatchScreenshot('detail-ticket-error-issue', { kind: 'DATA' });
+    });
+
+    it('open-ticket-error-issue issue: the link opens the error issue’s page', async () => {
+      const { element, opened } = await render(FROM_ISSUE, TITLE, 'item');
+      // The pinned actions float over the link at this width: a click on the element itself.
+      (element.getByRole('link', { name: FINGERPRINT }).element() as HTMLElement).click();
+      await leftFor(opened);
+      expect(reached()).toEqual(['open-ticket-error-issue:issue']);
+      expect(outcomeRecords()[0].url).toBe(
+        `/projects/${opened.project.slug}/observability/errors/${FINGERPRINT}`,
+      );
+    });
   });
 
   describe('workspaces', () => {

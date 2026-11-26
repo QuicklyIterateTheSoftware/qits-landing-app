@@ -29,6 +29,14 @@ export function isRoot(archetype: string | undefined): archetype is RootArchetyp
 /** A ticket's kinds a person files (MAINTENANCE is the platform's own). */
 export const TICKET_TYPES = ['BUG', 'IMPROVEMENT'] as const;
 
+/** `value` as one of the {@link TICKET_TYPES}, ignoring case; undefined when it is none. */
+export function ticketTypeOf(
+  value: string | null | undefined,
+): (typeof TICKET_TYPES)[number] | undefined {
+  const upper = value?.trim().toUpperCase();
+  return TICKET_TYPES.find((type) => type === upper);
+}
+
 /** A new root item of a project, as the create form fills it. */
 export interface WorkDraft {
   readonly archetype: RootArchetype;
@@ -41,6 +49,11 @@ export interface WorkDraft {
   readonly impetus?: string;
   /** The idea inspiring it. */
   readonly inspiredBy?: string;
+  /**
+   * A ticket's error issue (qits-2538): the qits-observability fingerprint it was made from. Sent
+   * for a ticket only (the service refuses it on any other archetype).
+   */
+  readonly errorIssue?: string;
 }
 
 /**
@@ -81,8 +94,8 @@ export function workWriteRunRefusal(error: unknown): string {
 
 /**
  * `CREATE_WORK`'s params: a root epic or ticket of a project, with the idea inspiring it when the
- * form was opened from an idea. Blank optional fields are not sent; a ticket's type and impetus
- * only for a ticket.
+ * form was opened from an idea. Blank optional fields are not sent; a ticket's type, impetus and
+ * error issue (qits-2538) only for a ticket.
  */
 export function createWorkParams(draft: WorkDraft) {
   const optional = (value: string | undefined) => value?.trim() || undefined;
@@ -91,6 +104,7 @@ export function createWorkParams(draft: WorkDraft) {
     ticketType: draft.archetype === 'TICKET' ? optional(draft.ticketType) : undefined,
     impetus: draft.archetype === 'TICKET' ? optional(draft.impetus) : undefined,
     inspiredBy: optional(draft.inspiredBy),
+    errorIssue: draft.archetype === 'TICKET' ? optional(draft.errorIssue) : undefined,
   };
   return {
     body: {

@@ -7,6 +7,8 @@ import {
   issueTitle,
   isRegressed,
   serviceSource,
+  TICKET_STACK_LINES,
+  ticketDraft,
   simpleType,
 } from './error-issues';
 
@@ -84,5 +86,47 @@ describe('error issues (qits-2538)', () => {
     expect(hourLabel('')).toBe('');
     expect(serviceSource('qits-example')).toBe('_service/qits-example');
     expect(serviceSource(undefined)).toBe('');
+  });
+
+  it('fills a ticket from an issue: where, when, how often and the first 40 stack lines', () => {
+    const stack = Array.from({ length: 45 }, (_, i) => (i ? `\tat f${i}()` : 'E: boom')).join('\n');
+    const draft = ticketDraft({
+      fingerprint: '0123456789abcdef0123456789abcdef',
+      exceptionType: 'java.lang.IllegalStateException',
+      message: 'invoice store unreachable',
+      serviceName: 'qits-example',
+      location: 'eu.example.InvoiceResource.list',
+      firstVersion: '2026.1230.090000',
+      lastVersion: '2026.1231.120000',
+      firstSeen: '2026-01-01T00:00:00Z',
+      lastSeen: '2026-01-02T00:00:00Z',
+      occurrences: 3,
+      sampleStacktrace: `${stack}\n`,
+    });
+    expect(draft.title).toBe('IllegalStateException: invoice store unreachable');
+    const lines = draft.description.split('\n');
+    expect(lines.slice(0, 8)).toEqual([
+      'Made from error issue `0123456789abcdef0123456789abcdef`.',
+      '',
+      '- Service: qits-example',
+      '- Location: `eu.example.InvoiceResource.list`',
+      '- Versions: 2026.1230.090000 → 2026.1231.120000',
+      '- First seen: 2026-01-01T00:00:00Z',
+      '- Last seen: 2026-01-02T00:00:00Z',
+      '- Occurrences: 3',
+    ]);
+    expect(lines[9]).toBe('Stack trace (the first 40 of 45 lines):');
+    const block = lines.slice(lines.indexOf('```') + 1, lines.lastIndexOf('```'));
+    expect(block).toHaveLength(TICKET_STACK_LINES);
+    expect(block[0]).toBe('E: boom');
+    expect(block[39]).toBe('\tat f39()');
+  });
+
+  it('fills a ticket from a bare issue: dashes, its fingerprint as the title, no stack block', () => {
+    const draft = ticketDraft({ fingerprint: 'ab', sampleStacktrace: '  ' });
+    expect(draft.title).toBe('Error issue ab');
+    expect(draft.description).toContain('- Service: —');
+    expect(draft.description).toContain('- Occurrences: 0');
+    expect(draft.description).not.toContain('```');
   });
 });

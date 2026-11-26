@@ -8,7 +8,11 @@ import {
 } from '../../api/projects';
 import { GET_WORK, WORK_COMMENT } from './work-detail.consumes';
 import { PATCH_WORK_INSPIRATION, WORK_REFUSAL } from './work-writes.consumes';
-import { PROJECT_CARD_WORK as PROJECT_CARD_WORK_PATHS, SET_WORK_STATUS } from './work.consumes';
+import {
+  LIST_ERROR_ISSUE_TICKETS,
+  PROJECT_CARD_WORK as PROJECT_CARD_WORK_PATHS,
+  SET_WORK_STATUS,
+} from './work.consumes';
 
 /**
  * qits-projects' work reads and writes declared as operations (qits-2145), for the components that
@@ -41,6 +45,18 @@ export const OPEN_ISSUES = qitsOperation({
   method: 'GET',
   call: listProjectWork,
   consumes: PROJECT_CARD_WORK_PATHS,
+});
+
+/**
+ * The tickets made from one error issue (`listProjectWork` with `errorIssue`, its fingerprint,
+ * qits-2538), as the issue page lists them: each by its qualified id, status and title.
+ */
+export const ERROR_ISSUE_TICKETS = qitsOperation({
+  provider: 'qits-projects-service',
+  operationId: 'listProjectWork',
+  method: 'GET',
+  call: listProjectWork,
+  consumes: LIST_ERROR_ISSUE_TICKETS,
 });
 
 /**

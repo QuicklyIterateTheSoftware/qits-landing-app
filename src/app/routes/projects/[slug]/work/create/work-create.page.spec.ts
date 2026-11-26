@@ -134,4 +134,41 @@ describe('WorkCreatePage', () => {
     harness.fixture.detectChanges();
     expect(element.querySelector('[role=alert]')?.textContent?.trim()).toBe('title is taken');
   });
+
+  it('is made from an error issue: a bug naming the issue, linked, sent as its errorIssue', async () => {
+    const fingerprint = '0123456789abcdef0123456789abcdef';
+    const query = new URLSearchParams({
+      archetype: 'TICKET',
+      errorIssue: fingerprint,
+      title: 'IllegalStateException: invoice store unreachable',
+      description: 'Made from error issue.',
+    });
+    const { element, field, type, button, project } = await shown(`?${query}`);
+    const made = element.querySelector('[data-error-issue]');
+    expect(made?.textContent).toContain(`Made from error issue ${fingerprint}`);
+    expect(made?.querySelector('a')?.getAttribute('href')).toBe(
+      `/projects/${project.slug}/observability/errors/${fingerprint}`,
+    );
+    expect(field<HTMLSelectElement>('Kind').value).toBe('BUG');
+    type('Impetus', 'It fails three times an hour.');
+    button('Create').click();
+    await settle();
+    const create = http.expectOne('/projects/api/work');
+    expect(create.request.body).toEqual({
+      archetype: 'TICKET',
+      project: project.id,
+      title: 'IllegalStateException: invoice store unreachable',
+      description: 'Made from error issue.',
+      ticketType: 'BUG',
+      impetus: 'It fails three times an hour.',
+      errorIssue: fingerprint,
+    });
+    create.flush({ message: 'nope' }, { status: 400, statusText: 'Bad Request' });
+    await ticked();
+  });
+
+  it('takes a ticket’s kind from the query', async () => {
+    const { field } = await shown('?archetype=TICKET&ticketType=bug');
+    expect(field<HTMLSelectElement>('Kind').value).toBe('BUG');
+  });
 });

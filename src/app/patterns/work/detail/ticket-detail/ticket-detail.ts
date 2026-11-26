@@ -1,6 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { SelectedProject } from '$core/projects/selected-project';
-import { QitsEntity, QitsField, type QitsFieldMark, type QitsResourceRef } from '@qits/angular';
+import {
+  exit,
+  outcomes,
+  QitsEntity,
+  QitsExit,
+  QitsField,
+  type QitsFieldMark,
+  type QitsResourceRef,
+} from '@qits/angular';
 import { valueMarks } from '$core/marks/value-marks';
 import type { DossierPages, EntityDetail, WorkThread } from '$core/work/work-detail.consumes';
 import type { WorkEntry } from '$core/work/work.consumes';
@@ -15,13 +23,34 @@ import { WorkFields, type WorkField } from '$patterns/work/detail/work-fields/wo
  *
  * qits-projects keeps no reason with the blocked flag: a block's reason is a comment on the
  * thread, so it shows there.
+ *
+ * A ticket made from an error issue (`errorIssue`, qits-2538) says so above its facts, "Made from
+ * error issue <fingerprint>", linking the issue's page (`open-ticket-error-issue` `issue`).
  */
 @Component({
   selector: 'app-ticket-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Markdown, QitsEntity, QitsField, WorkComments, WorkDossier, WorkFields],
+  imports: [Markdown, QitsEntity, QitsExit, QitsField, WorkComments, WorkDossier, WorkFields],
   host: { class: 'flex flex-col gap-8' },
   template: `
+    @if (entity(); as entity) {
+      @if (entity.errorIssue; as fingerprint) {
+        <p class="m-0 text-sm text-fg" data-error-issue>
+          Made from error issue
+          <a
+            class="font-mono text-xs font-semibold text-accent no-underline hover:underline"
+            [qitsExit]="erroring.issue"
+            [exitParams]="{ slug: slug() ?? '', fingerprint }"
+            [qitsEntity]="entity"
+            entityKey="id"
+            [entitySource]="item()"
+            [fieldOf]="entity"
+            qitsField="errorIssue"
+            >{{ entity.errorIssue }}</a
+          >
+        </p>
+      }
+    }
     <app-work-fields [fields]="fields()" />
     @if (entity(); as entity) {
       <ui-markdown
@@ -57,6 +86,11 @@ export class TicketDetail {
 
   /** The project's slug: the work ids the text names link with their briefs (qits-1898). */
   protected readonly slug = inject(SelectedProject).slug;
+
+  /** The "Made from error issue" link: the issue's page (qits-2538). */
+  protected readonly erroring = outcomes('open-ticket-error-issue', {
+    issue: exit('projects/:slug/observability/errors/:fingerprint'),
+  });
 
   protected readonly fields = computed((): readonly WorkField[] => {
     const entity = this.entity();

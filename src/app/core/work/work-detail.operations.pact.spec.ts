@@ -101,6 +101,9 @@ const ITEM_ONLY = [
   'a project with ideas',
 ];
 
+/** A ticket made from an error issue (qits-2538): the item alone, its `errorIssue` bound. */
+const FROM_ERROR_ISSUE = 'a ticket made from an error issue';
+
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-detail-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
 
@@ -244,6 +247,18 @@ describe('qits-landing-app → qits-projects-service pact: the work detail opera
         expect(data?.archetype).toBeTruthy();
       }),
   );
+
+  // A ticket made from an error issue (qits-2538): its `errorIssue`, the fingerprint the ticket's
+  // "Made from error issue" link opens. The state records the item alone, no thread or dossier.
+  it('show-work-item: the item of a ticket made from an error issue', () =>
+    given(FROM_ERROR_ISSUE, WORK_DETAIL.operationId, WORK_DETAIL.consumes).executeTest(
+      async (server) => {
+        const qualifiedId = refOf(FROM_ERROR_ISSUE, 'getWork');
+        const { data } = await at(server.url, () => WORK_DETAIL.fetch({ path: { qualifiedId } }));
+        expect(data?.archetype).toBe('TICKET');
+        expect(data?.errorIssue).toBe(param(FROM_ERROR_ISSUE, 'getWork', 'errorIssue'));
+      },
+    ));
 
   // What the item needs (epic qits-1899): a READY_FOR_DEV ticket needing another ticket at
   // VERIFIED, not met. Recorded by qits-projects from 2026.1106.140436 on: until the pin reaches

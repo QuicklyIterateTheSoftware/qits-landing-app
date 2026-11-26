@@ -18,6 +18,7 @@ import {
   isRoot,
   needsParams,
   reprioritizeParams,
+  ticketTypeOf,
   workWriteRefusal,
   workWriteRunRefusal,
 } from './work-writes';
@@ -99,6 +100,33 @@ describe('work writes', () => {
         impetus: 'It answers 500.',
       },
     });
+  });
+
+  it('reads a ticket kind from a query, ignoring case, and nothing else', () => {
+    expect(
+      ['bug', 'IMPROVEMENT', ' Bug ', 'MAINTENANCE', '', null, undefined].map(ticketTypeOf),
+    ).toEqual(['BUG', 'IMPROVEMENT', 'BUG', undefined, undefined, undefined, undefined]);
+  });
+
+  it('sends a ticket’s error issue, and leaves it out when blank or on an epic (qits-2538)', () => {
+    const fingerprint = '0123456789abcdef0123456789abcdef';
+    const ticket = {
+      archetype: 'TICKET',
+      project: 'p1',
+      title: 'Export fails',
+      ticketType: 'BUG',
+      impetus: 'It answers 500.',
+    } as const;
+    expect(createWorkParams({ ...ticket, errorIssue: ` ${fingerprint} ` }).body).toEqual({
+      ...ticket,
+      errorIssue: fingerprint,
+    });
+    expect(createWorkParams({ ...ticket, errorIssue: ' ' }).body).toEqual(ticket);
+    expect(createWorkParams({ ...ticket, errorIssue: undefined }).body).toEqual(ticket);
+    expect(
+      createWorkParams({ archetype: 'EPIC', project: 'p1', title: 'E', errorIssue: fingerprint })
+        .body,
+    ).toEqual({ archetype: 'EPIC', project: 'p1', title: 'E' });
   });
 
   it('writes the needs whole, as a merge patch of needs alone sent as plain JSON', () => {

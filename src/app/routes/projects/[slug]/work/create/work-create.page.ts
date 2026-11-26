@@ -26,6 +26,7 @@ import {
   isRoot,
   ROOT,
   TICKET_TYPES,
+  ticketTypeOf,
   workWriteRefusal,
   workWriteRunRefusal,
   type RootArchetype,
@@ -40,9 +41,14 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * `/projects/<slug>/work/create`: its archetype, title and description, and for a ticket its kind
  * (bug or improvement) and impetus (why it came about, which the service requires of a ticket).
  *
- * The query fills it: `archetype`, `title`, `description` and `inspiredBy`, an idea's id. An idea's
- * page opens it that way (Create epic, Create ticket), and the form then says which idea inspires
- * the item (its title from its `IDEA` read, a `qitsResource` in the browser only, qits-2146; linked) and sends it as `inspiredBy`.
+ * The query fills it: `archetype`, `title`, `description`, `ticketType` (BUG or IMPROVEMENT),
+ * `inspiredBy`, an idea's id, and `errorIssue`, an error issue's fingerprint. An idea's page opens
+ * it that way (Create epic, Create ticket), and the form then says which idea inspires the item
+ * (its title from its `IDEA` read, a `qitsResource` in the browser only, qits-2146; linked) and
+ * sends it as `inspiredBy`. An error issue's Make ticket opens it as a ticket (qits-2538): the form
+ * says "Made from error issue <fingerprint>", linking the issue's page, makes the ticket a bug
+ * unless the query names its kind, and sends the fingerprint as `errorIssue` (a ticket's field
+ * only: switched to an epic, it is not sent).
  *
  * Where each interaction leads is declared (epic qits-2000), and the buttons and the link carry the
  * marks of the outcomes they trigger:
@@ -54,6 +60,7 @@ import { ActionButton } from '$ui/components/action-button/action-button';
  * - `cancel-work-create`: Cancel goes back to the idea it was opened from (`toIdea`), or to the
  *   project's work (`toWork`). Its button names only the one its click fires.
  * - `open-inspiring-idea`: the "Inspired by" link opens the idea (`open`).
+ * - `open-work-form-error-issue`: the "Made from error issue" link opens the issue (`open`).
  *
  * Staleness (qits-1270): reads the inspiring idea once; nothing to follow on a form.
  */
@@ -69,6 +76,20 @@ import { ActionButton } from '$ui/components/action-button/action-button';
           class="flex max-w-2xl flex-col gap-4 text-sm text-fg"
           (submit)="$event.preventDefault(); create()"
         >
+          @if (errorIssue(); as fingerprint) {
+            <p class="m-0" data-error-issue>
+              Made from error issue
+              <a
+                class="font-mono text-xs font-semibold text-accent no-underline hover:underline"
+                [qitsExit]="erroring.open"
+                [exitParams]="{ slug: slug(), fingerprint }"
+                >{{ fingerprint }}</a
+              >
+              @if (archetype() !== 'TICKET') {
+                <span class="text-fg-muted">(only a ticket carries it)</span>
+              }
+            </p>
+          }
           @if (inspiredBy(); as ideaId) {
             <p class="m-0" data-inspired-by>
               Inspired by
@@ -186,6 +207,10 @@ export class WorkCreatePage {
   protected readonly inspiring = outcomes('open-inspiring-idea', {
     open: exit('projects/:slug/ideas/detail/:ideaId'),
   });
+  /** The "Made from error issue" link: the issue's page. */
+  protected readonly erroring = outcomes('open-work-form-error-issue', {
+    open: exit('projects/:slug/observability/errors/:fingerprint'),
+  });
 
   protected readonly archetypes = ROOT;
   protected readonly ticketTypes = TICKET_TYPES;
@@ -199,7 +224,13 @@ export class WorkCreatePage {
   );
   protected readonly title = signal(this.query.get('title') ?? '');
   protected readonly description = signal(this.query.get('description') ?? '');
-  protected readonly ticketType = signal<string>(TICKET_TYPES[1]);
+  /** The error issue the ticket is made from, from the query (qits-2538). */
+  protected readonly errorIssue = signal(this.query.get('errorIssue')?.trim() ?? '');
+  /** The query's kind, else a bug when made from an error issue, else an improvement. */
+  protected readonly ticketType = signal<string>(
+    ticketTypeOf(this.query.get('ticketType')) ??
+      (this.errorIssue() ? TICKET_TYPES[0] : TICKET_TYPES[1]),
+  );
   protected readonly impetus = signal('');
   /** The idea inspiring the item, from the query. */
   protected readonly inspiredBy = signal(this.query.get('inspiredBy') ?? '');
@@ -262,6 +293,7 @@ export class WorkCreatePage {
       ticketType: this.ticketType(),
       impetus: this.impetus(),
       inspiredBy: this.inspiredBy(),
+      errorIssue: this.errorIssue(),
     });
     const outcome = await this.creating.run(params).then(
       (created) =>

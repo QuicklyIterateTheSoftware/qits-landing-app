@@ -132,3 +132,64 @@ export function hourLabel(iso: string): string {
 export function serviceSource(serviceName: string | null | undefined): string {
   return serviceName ? `_service/${serviceName}` : '';
 }
+
+/** How many lines of the sample stack trace a ticket made from an issue carries. */
+export const TICKET_STACK_LINES = 40;
+
+/** What a ticket made from an issue is filled with: its title and its description (Markdown). */
+export interface TicketDraft {
+  readonly title: string;
+  readonly description: string;
+}
+
+/**
+ * The ticket Make ticket fills the work create form with (qits-2538): the issue's title (else its
+ * fingerprint), and a description saying where (service, location, versions), when (first and last
+ * seen), how often (occurrences) and the first {@link TICKET_STACK_LINES} lines of the sample stack
+ * trace in a code block. A fact the issue lacks is a dash; no stack trace, no block.
+ */
+export function ticketDraft(issue: {
+  readonly fingerprint?: string | null;
+  readonly exceptionType?: string | null;
+  readonly message?: string | null;
+  readonly serviceName?: string | null;
+  readonly location?: string | null;
+  readonly firstVersion?: string | null;
+  readonly lastVersion?: string | null;
+  readonly firstSeen?: string | null;
+  readonly lastSeen?: string | null;
+  readonly occurrences?: number | null;
+  readonly sampleStacktrace?: string | null;
+}): TicketDraft {
+  const or = (value: string | null | undefined) => value || '—';
+  const code = (value: string | null | undefined) => (value ? `\`${value}\`` : '—');
+  const lines = [
+    `Made from error issue ${code(issue.fingerprint)}.`,
+    '',
+    `- Service: ${or(issue.serviceName)}`,
+    `- Location: ${code(issue.location)}`,
+    `- Versions: ${or(issue.firstVersion)} → ${or(issue.lastVersion)}`,
+    `- First seen: ${or(issue.firstSeen)}`,
+    `- Last seen: ${or(issue.lastSeen)}`,
+    `- Occurrences: ${issue.occurrences ?? 0}`,
+  ];
+  const stack = (issue.sampleStacktrace ?? '').replace(/\s+$/, '');
+  if (stack) {
+    const all = stack.split('\n');
+    const shown = all.slice(0, TICKET_STACK_LINES);
+    lines.push(
+      '',
+      all.length > shown.length
+        ? `Stack trace (the first ${TICKET_STACK_LINES} of ${all.length} lines):`
+        : 'Stack trace:',
+      '',
+      '```',
+      ...shown,
+      '```',
+    );
+  }
+  return {
+    title: issueTitle(issue) || `Error issue ${issue.fingerprint ?? ''}`.trim(),
+    description: lines.join('\n'),
+  };
+}

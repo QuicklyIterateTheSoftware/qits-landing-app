@@ -15,6 +15,7 @@ import { numericPriority } from '../../../testing/numeric-priority';
 import { countsAsWork } from './work.consumes';
 import {
   ADD_WORK_COMMENT,
+  ERROR_ISSUE_TICKETS,
   MOVE_WORK,
   OPEN_ISSUES,
   PROJECT_CARD_WORK,
@@ -34,7 +35,10 @@ import {
  * - `comment-on-work-item` (`ADD_WORK_COMMENT`), a comment on a ticket's thread, which the Desk's
  *   Comment and Resolve write (and the work item page's thread, through `WorkDetailStore`);
  * - `move-work-item` (`MOVE_WORK`), one recorded move per status, which the Desk's Resolve sends
- *   (and the work item page's Status actions, through `WorkStore`).
+ *   (and the work item page's Status actions, through `WorkStore`);
+ * - `show-error-issue-tickets` (`ERROR_ISSUE_TICKETS`, qits-2538), the tickets an error issue's
+ *   page lists: `listProjectWork?errorIssue=<fingerprint>` in "a ticket made from an error issue"
+ *   (from `@qits/projects-golden-masters` 2026.1126.34009 on).
  *
  * The open issues', the comment's and the moves' interactions moved here from
  * `work.store.pact.spec.ts` and `work-detail.store.pact.spec.ts` with the Desk (group 3), unchanged:
@@ -57,7 +61,10 @@ const CONSUMER = 'qits-landing-app';
 const PROVIDER = 'qits-projects-service';
 const COMMITTED = resolve(process.cwd(), `pacts/${CONSUMER}_${PROVIDER}.json`);
 const OPERATIONS: readonly OwnedOperation[] = [
-  { operationId: 'listProjectWork', interactions: ['show-project-work', 'show-open-issues'] },
+  {
+    operationId: 'listProjectWork',
+    interactions: ['show-project-work', 'show-open-issues', 'show-error-issue-tickets'],
+  },
   { operationId: 'getWork', interactions: ['show-open-issues'] },
   'addWorkComment',
   { operationId: 'setWorkStatus', interactions: ['move-work-item'] },
@@ -65,6 +72,8 @@ const OPERATIONS: readonly OwnedOperation[] = [
 
 const OPEN_ISSUE = 'a project with an open issue';
 const COMMENTED = 'a ticket with a comment';
+/** A ticket made from the error issue `0123456789abcdef0123456789abcdef` (qits-2538). */
+const FROM_ERROR_ISSUE = 'a ticket made from an error issue';
 
 const dir = mkdtempSync(join(tmpdir(), 'qits-landing-work-operations-pact-'));
 const pact = new PactV4({ consumer: CONSUMER, provider: PROVIDER, dir, logLevel: 'warn' });
@@ -173,7 +182,14 @@ describe('qits-landing-app → qits-projects-service pact: the work operations',
   });
 
   it('declares the provider this spec binds', () => {
-    for (const op of [PROJECT_CARD_WORK, OPEN_ISSUES, WORK_ITEM, ADD_WORK_COMMENT, MOVE_WORK]) {
+    for (const op of [
+      PROJECT_CARD_WORK,
+      OPEN_ISSUES,
+      ERROR_ISSUE_TICKETS,
+      WORK_ITEM,
+      ADD_WORK_COMMENT,
+      MOVE_WORK,
+    ]) {
       expect(op.provider).toBe(PROVIDER);
     }
     expect(SET_WORK_INSPIRATION.provider).toBe(PROVIDER);
@@ -206,6 +222,22 @@ describe('qits-landing-app → qits-projects-service pact: the work operations',
       const { data } = await at(server.url, () => OPEN_ISSUES.fetch({ path: { project } }));
       expect(data?.entities?.some((e) => e.archetype === 'ISSUE')).toBe(true);
     }));
+
+  // An error issue's page lists the tickets made from it (qits-2538): the project's work filtered
+  // by the issue's fingerprint, as the state recorded it.
+  it('show-error-issue-tickets: the tickets made from an error issue', () =>
+    bound(ERROR_ISSUE_TICKETS, 'show-error-issue-tickets', FROM_ERROR_ISSUE).executeTest(
+      async (server) => {
+        const project = param(FROM_ERROR_ISSUE, 'listProjectWork', 'projectId');
+        const errorIssue = param(FROM_ERROR_ISSUE, 'listProjectWork', 'errorIssue');
+        const { data, error } = await at(server.url, () =>
+          ERROR_ISSUE_TICKETS.fetch({ path: { project }, query: { errorIssue } }),
+        );
+        expect(error).toBeUndefined();
+        expect(data?.entities?.[0]?.qualifiedId).toBeTruthy();
+        expect(data?.entities?.[0]?.status).toBe('REPORTED');
+      },
+    ));
 
   // The Desk's open issues read each issue's description (`issue-description.ts`, qits-1819): the
   // issue "a project with an open issue" records (qits-2039). The needs' rows are bound in the

@@ -46,6 +46,10 @@ import {
  * state is recorded by qits-projects from 2026.1106.140436 on: until the pin reaches it, the test
  * skips itself and the committed pact holds no such interaction.
  *
+ * `CREATE_WORK` also from "a ticket made from an error issue" (qits-2538): a bug ticket naming the
+ * error issue it was made from (`errorIssue`, its fingerprint), as the form opened by an issue's
+ * Make ticket sends it.
+ *
  * Not bound yet: a create naming an idea (`inspiredBy`) and `patchWork` setting or clearing it.
  * qits-projects records neither, so the work item page's inspiration and the form's `inspiredBy`
  * are covered by the plain specs only; an interaction follows the recording.
@@ -62,6 +66,7 @@ const OPERATIONS: readonly OwnedOperation[] = [
 const NO_WORK = 'a project with no work';
 const IDEAS = 'a project with ideas';
 const RANKED = 'three reported tickets, one with a priority';
+const FROM_ERROR_ISSUE = 'a ticket made from an error issue';
 /** The recorded patch the needs write is composed from. */
 const RECORDED_PATCH = 'a reported ticket';
 
@@ -148,6 +153,29 @@ describe('qits-landing-app → qits-projects-service pact: the work write operat
         title: sent['title'],
         ticketType: sent['ticketType'],
         impetus: sent['impetus'],
+      });
+      expect(error).toBeUndefined();
+      expect(data?.qualifiedId).toBeTruthy();
+    }));
+
+  it('create-work-item: a bug ticket made from an error issue', () =>
+    addGoldenInteraction(pact, masters, {
+      provider: PROVIDER,
+      state: FROM_ERROR_ISSUE,
+      operationId: CREATE_WORK.operationId,
+      trigger: { kind: 'ui', app: CONSUMER, interaction: 'create-work-item' },
+      consumes: CREATE_WORK.consumes,
+    }).executeTest(async (server) => {
+      // The body as the recording sent it: the provider's verification fills in `{projectId}` and
+      // `{errorIssue}` from the state's params.
+      const sent = masters.operation(FROM_ERROR_ISSUE, 'createWork').body as Record<string, string>;
+      const { data, error } = await create(server.url, {
+        archetype: 'TICKET',
+        project: sent['project'],
+        title: sent['title'],
+        ticketType: sent['ticketType'],
+        impetus: sent['impetus'],
+        errorIssue: sent['errorIssue'],
       });
       expect(error).toBeUndefined();
       expect(data?.qualifiedId).toBeTruthy();

@@ -27,6 +27,7 @@ import {
   issueStateTone,
   issueTitle,
   serviceSource,
+  ticketDraft,
 } from '$core/observability/error-issues';
 import type { ErrorIssueDetail } from '$core/observability/observability.consumes';
 import { DISMISS_ERROR_ISSUE, GET_ERROR_ISSUE } from '$core/observability/observability.operations';
@@ -39,6 +40,7 @@ import {
 } from '$core/release-requests/release-request-model';
 import { refusedBy } from '$core/release-requests/release-request-writes';
 import { loadState } from '$core/resources/load-state';
+import { ERROR_ISSUE_TICKETS } from '$core/work/work.operations';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import { ActionButton } from '$ui/components/action-button/action-button';
 import type { Action } from '$ui/components/action-button/action';
@@ -70,10 +72,20 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
  * one's place. A refusal is said beside the button (403: dismissing needs `qits:admin`,
  * `qits:admin-agent` or `qits:desk-admin`, so `qits:agent` cannot).
  *
+ * Tickets (qits-2538): the tickets made from the issue, read once the issue is in through
+ * `ERROR_ISSUE_TICKETS` (`listProjectWork?errorIssue=<fingerprint>` of the open project, by its id;
+ * a list entry does not carry `errorIssue`, the filter is the whole of it), each its qualified id,
+ * status and title, linking its page (`open-error-issue-ticket`); none says so. Make ticket opens
+ * the work create form as a new ticket (`make-ticket-from-error-issue`), its query
+ * `archetype=TICKET`, `errorIssue`, and `title` and `description` from `ticketDraft` (service,
+ * location, versions, first and last seen, occurrences and the first 40 lines of the stack trace);
+ * the form makes it a bug and sends `errorIssue`. A failed tickets read says so beside the issue,
+ * with Retry, and fails nothing else.
+ *
  * The read runs in the browser only (the server has no session). A refused read (403) says so, a
  * 404 that no issue has this fingerprint, anything else offers Retry. Staleness (qits-1270): no
- * domain event refreshes it (`ErrorIssueOpened` does not reach the browser), so Refresh reads
- * again.
+ * domain event refreshes it (`ErrorIssueOpened` does not reach the browser), and none says a ticket
+ * was made (qits-projects announces no creation), so Refresh reads the issue and its tickets again.
  */
 @Component({
   selector: 'app-observability-error-page',
@@ -291,6 +303,83 @@ import { Spinner, type LoadState } from '$ui/components/spinner/spinner';
                 }
               </section>
             </article>
+
+            <section
+              aria-label="Tickets"
+              class="mt-6 flex flex-col gap-2 border-t border-line pt-4"
+              data-tickets
+            >
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="m-0 text-sm font-semibold">Tickets</h3>
+                <a
+                  class="text-sm text-accent no-underline hover:underline"
+                  [qitsExit]="making.ticket"
+                  [exitParams]="{ slug: slug() }"
+                  [exitQueryParams]="makeTicketQuery(issue)"
+                  [qitsEntity]="issue"
+                  entityKey="fingerprint"
+                  [fieldOf]="issue"
+                  [qitsField]="marks.draft"
+                  data-make-ticket
+                  >Make ticket</a
+                >
+              </div>
+              <ui-load-failure
+                message="The tickets made from this issue could not be read."
+                [class.hidden]="ticketsState() !== 'error'"
+                (retry)="tickets.reload()"
+              />
+              <ui-spinner
+                [state]="ticketsState()"
+                class="min-h-8"
+                [class.hidden]="ticketsState() === 'error'"
+              >
+                <p
+                  class="m-0 text-sm text-fg-muted"
+                  [class.hidden]="ticketRows().length > 0"
+                  [qitsEntityList]="tickets"
+                  [fieldOf]="ticketsValue()"
+                  [qitsField]="{ derived: ['entities'] }"
+                  data-no-tickets
+                >
+                  No ticket has been made from this issue yet.
+                </p>
+                <ul
+                  class="m-0 flex list-none flex-col divide-y divide-line rounded-md border border-line bg-surface p-0"
+                  [class.hidden]="ticketRows().length === 0"
+                  [qitsEntityList]="tickets"
+                >
+                  @for (ticket of ticketRows(); track ticket.id) {
+                    <li
+                      class="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-3 py-2 text-sm"
+                      [qitsEntity]="ticket"
+                      entityKey="id"
+                      data-ticket
+                    >
+                      <a
+                        class="font-mono text-xs font-semibold text-accent no-underline hover:underline"
+                        [qitsExit]="ticketing.open"
+                        [exitParams]="{ slug: slug(), id: ticket.qualifiedId ?? '' }"
+                        [fieldOf]="ticket"
+                        qitsField="qualifiedId"
+                        >{{ ticket.qualifiedId }}</a
+                      >
+                      <ui-chip
+                        [label]="(ticket.status ?? '').toLowerCase()"
+                        [fieldOf]="ticket"
+                        [qitsField]="{ derived: ['status'] }"
+                      />
+                      <span
+                        class="min-w-0 break-words text-fg"
+                        [fieldOf]="ticket"
+                        qitsField="title"
+                        >{{ ticket.title }}</span
+                      >
+                    </li>
+                  }
+                </ul>
+              </ui-spinner>
+            </section>
           }
         </ui-spinner>
       </app-page-layout>
@@ -330,6 +419,25 @@ export class ObservabilityErrorPage {
   protected readonly state = computed((): LoadState => loadState(this.read));
 
   protected readonly refusal = computed(() => refused(this.read));
+
+  /**
+   * The tickets made from the issue (qits-2538), once the issue is in: the open project's work
+   * filtered by the issue's fingerprint.
+   */
+  protected readonly tickets = qitsResource(ERROR_ISSUE_TICKETS, () => {
+    const project = this.selected.project()?.id;
+    const errorIssue = this.issue()?.fingerprint;
+    if (!this.browser || !project || !errorIssue) return undefined;
+    return { path: { project }, query: { errorIssue } };
+  });
+
+  protected readonly ticketsValue = computed(() =>
+    this.tickets.hasValue() ? (this.tickets.value() ?? {}) : {},
+  );
+
+  protected readonly ticketRows = computed(() => this.ticketsValue().entities ?? []);
+
+  protected readonly ticketsState = computed((): LoadState => loadState(this.tickets));
 
   /** Whether the read answered that no issue has this fingerprint. */
   protected readonly missing = computed(() => {
@@ -382,7 +490,28 @@ export class ObservabilityErrorPage {
     trace: exit('projects/:slug/observability/traces/:traceId'),
   });
 
-  /** Refresh: no domain event follows the issue (qits-1270), so it reads it again. */
+  /** Make ticket: the work create form, filled from the issue (qits-2538). */
+  protected readonly making = outcomes('make-ticket-from-error-issue', {
+    ticket: exit('projects/:slug/work/create'),
+  });
+
+  /** A ticket made from the issue: its page. */
+  protected readonly ticketing = outcomes('open-error-issue-ticket', {
+    open: exit('projects/:slug/work/detail/:id'),
+  });
+
+  /** Make ticket's query: a new ticket naming the issue, filled from it (`ticketDraft`). */
+  protected makeTicketQuery(issue: ErrorIssueDetail): Record<string, string> {
+    const { title, description } = ticketDraft(issue);
+    return {
+      archetype: 'TICKET',
+      errorIssue: issue.fingerprint ?? '',
+      title,
+      description,
+    };
+  }
+
+  /** Refresh: no domain event follows the issue or its tickets (qits-1270), so it reads both again. */
   protected readonly actions: readonly Action[] = [
     { label: 'Refresh', variant: 'muted', callback: () => this.refresh() },
   ];
@@ -404,6 +533,7 @@ export class ObservabilityErrorPage {
   protected refresh(): void {
     this.dismissed.set(null);
     this.read.reload();
+    this.tickets.reload();
   }
 
   /** Dismiss's press: the first asks to confirm, the second sends it; a refusal is said. */
@@ -443,4 +573,19 @@ const MARKS = {
   title: { derived: ['exceptionType', 'message'] },
   regressed: { derived: ['state', 'regressions'] },
   chart: { derived: ['hourly', 'lastSeen'] },
+  draft: {
+    derived: [
+      'fingerprint',
+      'exceptionType',
+      'message',
+      'serviceName',
+      'location',
+      'firstVersion',
+      'lastVersion',
+      'firstSeen',
+      'lastSeen',
+      'occurrences',
+      'sampleStacktrace',
+    ],
+  },
 } as const;

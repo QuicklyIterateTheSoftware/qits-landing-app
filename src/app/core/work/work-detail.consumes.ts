@@ -17,6 +17,8 @@ import type { Consumed } from '@qits/angular';
  * impetus, assignee and whether it is blocked. A task: its repository, and when it was started and
  * implemented. Every archetype: its description (Markdown), and the idea inspiring it
  * (`inspiredBy`, epic qits-888; the answer omits it when none does, so no recording binds it yet).
+ * A ticket: the error issue it was made from (`errorIssue`, qits-2538: a qits-observability
+ * fingerprint; bound in "a ticket made from an error issue" only, the one recording holding it).
  * Every archetype but an issue: what it needs (epic qits-1899), each need's item (its id, qualified
  * id, title and archetype), the status it needs, where it stands now and whether it is met, and how
  * many are not (`unmetNeeds`): the page's "needs" badge and its Needs panel.
@@ -33,6 +35,7 @@ export const GET_WORK = [
   'implementingAt',
   'implementedAt',
   'inspiredBy',
+  'errorIssue',
   'needs[].id',
   'needs[].qualifiedId',
   'needs[].title',

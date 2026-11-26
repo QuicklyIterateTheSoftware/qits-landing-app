@@ -183,6 +183,34 @@ export const INTERACTIONS = {
    */
   'open-log-error-issue': 'The issue link on a log line opens that error issue’s page',
   /**
+   * `observability-error.page.ts` via `ERROR_ISSUE_TICKETS` (qits-2538): an error issue's page
+   * lists the tickets made from it, the open project's work filtered by the issue's fingerprint.
+   */
+  'show-error-issue-tickets': 'An error issue’s page lists the tickets made from it',
+  /**
+   * `observability-error.page.ts` (qits-2538): a ticket in an error issue's Tickets list opens the
+   * ticket's page. Navigates only, and names no pact.
+   */
+  'open-error-issue-ticket': 'A ticket listed on an error issue’s page opens the ticket’s page',
+  /**
+   * `observability-error.page.ts` (qits-2538): Make ticket opens the work create form as a new bug
+   * ticket, filled from the issue and naming it as the ticket's `errorIssue` (query params). The
+   * form's Create sends it (`create-work-item`). Navigates only, and names no pact.
+   */
+  'make-ticket-from-error-issue':
+    'Make ticket on an error issue opens the work form, filled from it',
+  /**
+   * `ticket-detail.ts` (qits-2538): a ticket's "Made from error issue" link opens the error issue's
+   * page. Navigates only, and names no pact.
+   */
+  'open-ticket-error-issue': 'A ticket’s “Made from error issue” link opens the issue’s page',
+  /**
+   * `work-create.page.ts` (qits-2538): the "Made from error issue" link on the work create form
+   * opens the issue's page. Navigates only, and names no pact.
+   */
+  'open-work-form-error-issue':
+    'The work form’s “Made from error issue” link opens the issue’s page',
+  /**
    * `observability-metrics.page.ts` via `TELEMETRY_METRICS` (qits-2340): the Metrics page shows the
    * chosen source's buffered metric series, the latest value of each, one card per metric name.
    */
@@ -1367,7 +1395,8 @@ export const INTERACTIONS = {
   'create-work-from-idea': 'Create epic or Create ticket on an idea’s page opens the work form',
   /**
    * The work create form (`routes/projects/[slug]/work/create/`) via `CREATE_WORK` (qits-2146): a
-   * root epic or ticket, inspired by an idea when opened from one (epic qits-888).
+   * root epic or ticket, inspired by an idea when opened from one (epic qits-888), made from an
+   * error issue when opened from one (qits-2538).
    */
   'create-work-item': 'Create on the work form files an epic or a ticket',
   /**

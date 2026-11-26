@@ -93,7 +93,11 @@ rules live (`idea-rules.ts`: paragraphs x/3, characters x/600) and shows a 400's
 They read again after `IDEA_EVENTS` (`IdeaCreated`, `IdeaUpdated`, `IdeaArchived`,
 `IdeaUnarchived`) whose `projectId` is the open project (each resource's `refreshOn`, narrowed by
 `aboutProjectIdeas`). An idea's Create epic / Create ticket open `work/create` (`WorkCreatePage`,
-`CREATE_WORK`, `work-writes.operations.ts`) filled from the query and sending `inspiredBy`; the work item page shows
+`CREATE_WORK`, `work-writes.operations.ts`) filled from the query (`archetype`, `title`,
+`description`, `ticketType`, `inspiredBy`, `errorIssue`) and sending `inspiredBy`; an error issue's
+Make ticket opens it the same way with `errorIssue` (qits-2538, see Telemetry): "Made from error
+issue <fingerprint>" linking the issue (`open-work-form-error-issue`), a bug unless `ticketType`
+says otherwise, and `createWorkParams` sends `errorIssue` for a TICKET only, never blank; the work item page shows
 and sets an item's inspiration (`patterns/ideas/work-inspiration/`, `SET_WORK_INSPIRATION` in
 `core/work/work.operations.ts`, a `patchWork` of `inspiredBy` alone, which no recording holds yet,
 so it has no pact interaction).
@@ -1351,10 +1355,24 @@ source `_service/<serviceName>` (`open-error-issue-trace`); Dismiss, on an OPEN 
 `DISMISS_ERROR_ISSUE` on a second press (`dismiss-error-issue`) and shows the answered state; a
 refusal is said beside it (403: dismissing needs `qits:admin`, `qits:admin-agent` or
 `qits:desk-admin`; `qits:agent` may read issues but not dismiss). A refused read says so, a 404
-"No error issue has the fingerprint …", else Retry. No domain event refreshes either page
-(`ErrorIssueOpened` does not reach the browser): Refresh reads again. The pact reads all four calls
+"No error issue has the fingerprint …", else Retry. Its Tickets (qits-2538), once the issue is in:
+`ERROR_ISSUE_TICKETS` (`work.operations.ts`, `listProjectWork?errorIssue=<fp>` of the open project
+by id; `show-error-issue-tickets`), each ticket's qualified id (linking its page,
+`open-error-issue-ticket`), status and title, or "No ticket has been made from this issue yet"; a
+list entry carries no `errorIssue` (only `getWork` does), the filter is the whole of it. Make ticket
+(`make-ticket-from-error-issue`) opens `work/create?archetype=TICKET&errorIssue=<fp>&title=…&
+description=…`, title and description from `ticketDraft` (`error-issues.ts`: service, location,
+versions, first and last seen, occurrences and the first 40 lines of the stack trace); the form
+makes it a bug and sends `errorIssue`. A ticket with `errorIssue` (bound in `GET_WORK`) says "Made
+from error issue <fp>" above its facts, linking the issue (`ticket-detail.ts`,
+`open-ticket-error-issue`). No domain event refreshes either page
+(`ErrorIssueOpened` does not reach the browser, and qits-projects announces no creation): Refresh
+reads the issue and its tickets again. The pact reads all four calls
 in "stored error issues" (from `@qits/observability-golden-masters` 2026.1126.34016 on, skipped on
-an older pin); a regressed, dismissed-in-a-list, empty or truncated answer and an issue without a
+an older pin); the projects pact reads `createWork` with `errorIssue`, `getWork` and
+`listProjectWork?errorIssue=` in "a ticket made from an error issue" (from
+`@qits/projects-golden-masters` 2026.1126.34009 on), the same fingerprint, so the issue page's
+screenshots show its recorded ticket; a regressed, dismissed-in-a-list, empty or truncated answer and an issue without a
 sample trace are the plain specs'. `listTelemetryErrors` is excluded from the CLI mirror parity
 (`.config/qits/release.yml`): `qits observe errors` still calls it, this app no longer does.
 `observability/metrics` (`ObservabilityMetricsPage`, qits-2340, the retired frontend's `metrics`)

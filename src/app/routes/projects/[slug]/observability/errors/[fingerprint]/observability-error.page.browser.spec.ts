@@ -19,6 +19,11 @@ import { shootShellMenus } from '../../../../../../../testing/browser/shell-menu
  * recording holds a regressed issue or one without a sample trace, so those are the plain spec's
  * (`observability-error.page.spec.ts`). A refusal is a 403 with no body, as the service answers a
  * credential without the role; an unknown fingerprint a 404.
+ *
+ * The issue's Tickets (qits-2538) come from qits-projects' "a ticket made from an error issue",
+ * whose `listProjectWork?errorIssue=` names the same fingerprint (one REPORTED bug), and none from
+ * "a project with no work"'s empty list. Its two exits, a ticket's link and Make ticket, are
+ * followed once each; the page they leave for is not this spec's (`leftFor`).
  */
 describe('ObservabilityErrorPage (screenshots)', () => {
   let http: HttpTestingController;
@@ -39,6 +44,9 @@ describe('ObservabilityErrorPage (screenshots)', () => {
   const FINGERPRINT = '0123456789abcdef0123456789abcdef';
   const ISSUE = `/observability/api/error-issues/${FINGERPRINT}`;
   const DISMISS = `${ISSUE}/dismiss`;
+  /** qits-projects' tickets made from the issue, and a project with none. */
+  const FROM_ISSUE = 'a ticket made from an error issue';
+  const NO_WORK = 'a project with no work';
 
   /** The open reads (or writes) of `url`. */
   const open = (url: string): TestRequest[] =>
@@ -61,11 +69,28 @@ describe('ObservabilityErrorPage (screenshots)', () => {
     return reads[0];
   }
 
-  /** The page with the recorded issue shown. */
-  async function loaded() {
+  /** Whether `request` is the issue's tickets read (`listProjectWork?errorIssue=<fingerprint>`). */
+  const isTicketsRead = (request: { urlWithParams: string }) =>
+    new URL(request.urlWithParams, 'http://x').searchParams.get('errorIssue') === FINGERPRINT;
+
+  /** Answers the one open tickets read (the issue's fingerprint) from `state`; the read. */
+  async function answerTickets(state = FROM_ISSUE) {
+    const reads = http.match((request) => isTicketsRead(request)).filter((r) => !r.cancelled);
+    expect(reads).toHaveLength(1);
+    reads[0].flush(await goldenMaster(state, 'listProjectWork'));
+    return reads[0];
+  }
+
+  /** The page with the recorded issue shown, and its tickets from `tickets`. */
+  async function loaded(tickets = FROM_ISSUE) {
     const rendered = await render();
     const read = await answerIssue();
     expect(read.request.urlWithParams).not.toContain('?');
+    await rendered.opened.settled();
+    const ticketsRead = await answerTickets(tickets);
+    expect(ticketsRead.request.url.split('?')[0]).toBe(
+      `/projects/api/projects/${rendered.opened.project.id}/work`,
+    );
     await rendered.opened.settled();
     return rendered;
   }
@@ -100,6 +125,12 @@ describe('ObservabilityErrorPage (screenshots)', () => {
         'href',
         `/projects/${opened.project.slug}/observability/traces/6a1f0c2b9d8e47f3a5b4c3d2e1f00a01?source=_service%2Fqits-example`,
       );
+    const tickets = view.getByRole('region', { name: 'Tickets' });
+    await expect
+      .element(tickets.getByRole('link', { name: 'contract-00000001-1' }))
+      .toHaveAttribute('href', `/projects/${opened.project.slug}/work/detail/contract-00000001-1`);
+    await expect.element(tickets).toMatchTextContent('Export answers 500 for an empty quarter');
+    await expect.element(tickets).toMatchTextContent('reported');
     await view.getByText('Stack trace').click();
     await expect.element(view.getByText(/at eu\.example\.InvoiceResource\.list/)).toBeVisible();
     await expect
@@ -169,11 +200,58 @@ describe('ObservabilityErrorPage (screenshots)', () => {
     );
   });
 
-  it('reads the issue again on Refresh', async () => {
+  it('says no ticket has been made from the issue yet', async () => {
+    const { opened, view } = await loaded(NO_WORK);
+    await expect
+      .element(view.getByRole('region', { name: 'Tickets' }))
+      .toMatchTextContent('No ticket has been made from this issue yet.');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('no-tickets', { kind: 'DATA' });
+  });
+
+  it('open-error-issue-ticket open: a ticket opens its page', async () => {
+    const { opened, view } = await loaded();
+    await view
+      .getByRole('region', { name: 'Tickets' })
+      .getByRole('link', { name: 'contract-00000001-1' })
+      .click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'open-error-issue-ticket:open',
+    ]);
+    expect(TestBed.inject(Router).url).toBe(
+      `/projects/${opened.project.slug}/work/detail/contract-00000001-1`,
+    );
+  });
+
+  it('make-ticket-from-error-issue ticket: Make ticket opens the work form filled from the issue', async () => {
+    const { opened, view } = await loaded();
+    await view.getByRole('link', { name: 'Make ticket' }).click();
+    await leftFor(opened);
+    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
+      'make-ticket-from-error-issue:ticket',
+    ]);
+    const url = new URL(TestBed.inject(Router).url, 'http://x');
+    expect(url.pathname).toBe(`/projects/${opened.project.slug}/work/create`);
+    expect(url.searchParams.get('archetype')).toBe('TICKET');
+    expect(url.searchParams.get('errorIssue')).toBe(FINGERPRINT);
+    expect(url.searchParams.get('title')).toBe('IllegalStateException: invoice store unreachable');
+    expect(url.searchParams.get('description')).toContain('- Service: qits-example');
+  });
+
+  it('reads the issue and its tickets again on Refresh', async () => {
     const { opened, view } = await loaded();
     await view.getByRole('button', { name: 'Refresh' }).click();
     await opened.idle();
     await answerIssue();
+    await opened.settled();
+    // The issue's read again may answer before the tickets' starts: answer every one open.
+    for (const read of http
+      .match((request) => isTicketsRead(request))
+      .filter((r) => !r.cancelled)) {
+      read.flush(await goldenMaster(FROM_ISSUE, 'listProjectWork'));
+    }
     await opened.settled();
   });
 

@@ -59,6 +59,25 @@ export type WorkEntry = NonNullable<
 >[number];
 
 /**
+ * `ERROR_ISSUE_TICKETS` (`work.operations.ts`, qits-2538): the tickets made from one error issue
+ * (`listProjectWork?errorIssue=<fingerprint>`), as the issue page lists them: each one's qualified
+ * id (its link), status and title. A list entry does not carry `errorIssue` itself; the filter is
+ * the whole of it.
+ */
+export const LIST_ERROR_ISSUE_TICKETS = [
+  'entities[].id',
+  'entities[].qualifiedId',
+  'entities[].title',
+  'entities[].status',
+] as const;
+
+/** The tickets made from one error issue, as the issue page reads them. */
+export type ErrorIssueTickets = Consumed<
+  ListProjectWorkResponses[200],
+  typeof LIST_ERROR_ISSUE_TICKETS
+>;
+
+/**
  * `WrapperClosingsStore.load(projectId)`: where each VERIFIED ticket's wrapper closing stands
  * (`listWrapperClosings`, qits-1873), one row per ticket, matched to it by its qualified id
  * (`ticket`). A VERIFIED ticket's line says it (`app-wrapper-closing`): the verdict of the
