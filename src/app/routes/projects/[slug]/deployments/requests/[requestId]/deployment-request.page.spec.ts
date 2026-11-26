@@ -8,7 +8,6 @@ import { QITS_DOMAIN_EVENTS } from '@qits/angular';
 import { filter, Subject } from 'rxjs';
 import { client as deploymentsClient } from '../../../../../../api/deployments/client.gen';
 import { provideHeyApiClient } from '../../../../../../api/deployments/client/client.gen';
-import { OpenDeploymentRequest } from '$core/deployments/open-deployment-request';
 import { DomainEvents, type DomainEvent } from '$core/events/domain-events';
 import { REFRESH_DEBOUNCE_MS } from '$core/events/refresh-on';
 import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
@@ -157,8 +156,8 @@ describe.skipIf(!isRecorded(DEPLOYED, 'getDeploymentRequest', deploymentsGoldenM
       payload: JSON.stringify(payload),
     });
 
-    it('shows a deployed version running in its tier and merged, and names it in the trail', async () => {
-      const { id, element } = await render(DEPLOYED);
+    it('shows a deployed version running in its tier and merged', async () => {
+      const { element } = await render(DEPLOYED);
       const request = recorded(DEPLOYED).deploymentRequest;
       expect(element.querySelector('h1')?.textContent?.trim()).toBe(
         `${request.version} · ${request.applicationName}`,
@@ -172,11 +171,6 @@ describe.skipIf(!isRecorded(DEPLOYED, 'getDeploymentRequest', deploymentsGoldenM
       const commit = element.querySelector('code[title]');
       expect(commit?.getAttribute('title')).toBe(recorded(DEPLOYED).deployment.commitSha);
       expect(commit?.textContent?.trim()).toBe(recorded(DEPLOYED).deployment.commitSha.slice(0, 7));
-      expect(TestBed.inject(OpenDeploymentRequest).shown()).toEqual({
-        id,
-        version: request.version,
-        applicationName: request.applicationName,
-      });
     });
 
     it('degrades only the tiles whose reads failed', async () => {

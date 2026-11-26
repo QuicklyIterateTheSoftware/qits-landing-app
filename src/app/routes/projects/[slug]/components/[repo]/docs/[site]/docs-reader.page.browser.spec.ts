@@ -469,23 +469,30 @@ describe('DocsReaderPage (screenshots)', () => {
     await expect.element(view).toMatchTextContent(`No docs site ${site}.`);
   });
 
-  it('follow-breadcrumb repositoryDocs: the trail’s Docs opens the repository’s Docs page (qits-2486)', async ({
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async ({
     skip,
   }) => {
     await recordedOrSkip(skip, [[CHANGELOG, 'listDocsVersions']]);
     const { site } = await bundleOf(CHANGELOG);
     const opened = await open(site);
-    (
-      page
-        .getByRole('navigation', { name: 'Breadcrumb' })
-        .getByRole('link', { name: 'Docs', exact: true })
-        .last()
-        .element() as HTMLElement
-    ).click();
-    await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/components/${REPO}/docs`,
-    );
-    expect(reached()).toEqual(['follow-breadcrumb:repositoryDocs']);
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb).toMatchTextContent(`qits›${opened.project.name}›${REPO}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Docs');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText(REPO, { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Docs', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
+    // The site's read, left unanswered above: answered so nothing stays open.
+    http
+      .expectOne(`${DOCS_STORE}/${encodeURIComponent(site)}`)
+      .flush(null, { status: 404, statusText: 'Not Found' });
+    await opened.settled();
   });
 });

@@ -100,7 +100,7 @@ describe('DeploymentRequestPage (screenshots)', () => {
     await expect.element(view).toMatchTextContent('Active');
     await expect
       .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toMatchTextContent(`Deployments›${request.version} · ${request.applicationName}`);
+      .toMatchTextContent(`qits›${opened.project.name ?? opened.project.slug}`);
     await expect
       .element(
         page

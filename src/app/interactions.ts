@@ -1734,14 +1734,13 @@ export const INTERACTIONS = {
   'open-sidebar-orchestrator-page':
     'A process below the sidebar’s Orchestrator entry opens that process’s page',
   /**
-   * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the brand and the crumbs before the current
-   * page (in the trail and in the "…" panel) open their pages: home, the picker, the project, and
-   * the Work or Releases section above a subpage, and Releases' Requests, Agents or CI page; with
-   * no project open, the global section (System, Mirror, Orchestrator or IdP admin) above one of
-   * its pages, to its root (qits-2386), and the section's page (Services, Nodes, Configs, Caches)
-   * above a page below it (qits-2533). Navigates only, and names no pact (epic qits-2000).
+   * `shell.layout.ts`, rendered by `ui-breadcrumbs`: the trail names the sidebar's layers, one crumb
+   * each (qits-2570), and every crumb before the last (in the trail and in the "…" panel) opens its
+   * layer's landing page: the brand home (`home`), the project its page (`project`), and the
+   * repository its Overview (`repository`). The last crumb, and the brand alone, are where the user
+   * is and lead nowhere. Navigates only, and names no pact (epic qits-2000).
    */
-  'follow-breadcrumb': 'A breadcrumb before the current page opens its page',
+  'follow-breadcrumb': 'A breadcrumb before the last opens its layer’s landing page',
   /**
    * `agents-menu.ts`: an agent's item in the top bar's agents menu opens the agent's page.
    * Navigates only, and names no pact (epic qits-2000).

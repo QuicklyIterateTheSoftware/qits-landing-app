@@ -26,20 +26,24 @@ export type CrumbMarks = ValueMarks;
 
 /**
  * The breadcrumb trail: the brand (`home`, the bold link home), then one link per crumb, the last
- * one the current page (not a link).
+ * one where the user is (not a link). With no crumbs the brand itself is where the user is: plain
+ * text, not a link, and shown at every width.
  *
  * It declares nothing (epic qits-2000): each crumb carries the exit its layout declares, bound to
  * `<a [qitsExit]>` (marked current only on its very page, `exitActiveExact`, so no ancestor reads as
- * the current page), and the current page is a plain `aria-current="page"` text.
+ * the current page), and the last one is a plain text marked `aria-current` with `current`: `page`
+ * (the default) when it is the page shown, `location` when it names where the page is, such as a
+ * layer of the navigation the page is one of (qits-2570).
  *
  * ```html
- * <ui-breadcrumbs [crumbs]="crumbs" />
+ * <ui-breadcrumbs [crumbs]="crumbs" current="location" />
  * ```
  *
- * From 768px up (the layout's burger breakpoint) the whole trail shows: "qits › Projects › qits ›
- * Work › qits-112". Below that only the current page and its parent show, after a "…" menu button
- * and with no separator between the "…" and the parent ("… Work › qits-112"). The breakpoint is CSS,
- * so the server renders the same markup as the browser, and the full trail stays in the DOM.
+ * From 768px up (the layout's burger breakpoint) the whole trail shows: "qits › qits ›
+ * qits-landing-app › UI Builder". Below that only the last crumb and its parent show, after a "…"
+ * menu button and with no separator between the "…" and the parent ("… qits-landing-app › UI
+ * Builder"). The breakpoint is CSS, so the server renders the same markup as the browser, and the
+ * full trail stays in the DOM. With no crumbs there is no "…": the brand is the whole path.
  *
  * The "…" is a `ui-dropdown` whose panel hangs from its left edge and lists the whole path, one
  * row each, top-down: the brand, every crumb before the current page as a link, then the current
@@ -61,62 +65,70 @@ export type CrumbMarks = ValueMarks;
   host: { class: 'flex min-w-0 items-center' },
   template: `
     <nav aria-label="Breadcrumb" class="flex min-w-0 items-center">
-      <div class="flex shrink-0 md:hidden" data-crumbs-ellipsis>
-        <ui-dropdown
-          align="start"
-          [label]="'Show the full path: ' + ancestors()"
-          panelLabel="Full path"
-        >
-          <svg
-            dropdown-trigger
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            class="size-5"
-            fill="currentColor"
+      @if (crumbs().length > 0) {
+        <div class="flex shrink-0 md:hidden" data-crumbs-ellipsis>
+          <ui-dropdown
+            align="start"
+            [label]="'Show the full path: ' + ancestors()"
+            panelLabel="Full path"
           >
-            <circle cx="5" cy="12" r="1.75" />
-            <circle cx="12" cy="12" r="1.75" />
-            <circle cx="19" cy="12" r="1.75" />
-          </svg>
-          <ol dropdown-panel class="m-0 list-none py-1 pl-0 text-sm">
-            @for (row of path(); track $index; let last = $last) {
-              <li
-                [attr.data-qits-source]="row.marks?.source"
-                [attr.data-qits-item]="row.marks?.item"
-                [attr.data-qits-field]="row.marks?.field"
-                [attr.data-qits-derived]="row.marks?.derived"
-              >
-                @if (last || !row.exit) {
-                  <span
-                    class="block px-3 py-1.5 font-medium whitespace-normal break-words text-fg"
-                    [attr.aria-current]="last ? 'page' : null"
-                    >{{ row.label }}</span
-                  >
-                } @else {
-                  <a
-                    class="block px-3 py-1.5 whitespace-normal break-words text-fg-soft no-underline hover:bg-surface-muted hover:text-fg focus-visible:-outline-offset-2"
-                    [qitsExit]="row.exit"
-                    [exitParams]="row.params"
-                    [exitActiveExact]="true"
-                    (click)="dropdown().close()"
-                    >{{ row.label }}</a
-                  >
-                }
-              </li>
-            }
-          </ol>
-        </ui-dropdown>
-      </div>
+            <svg
+              dropdown-trigger
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              class="size-5"
+              fill="currentColor"
+            >
+              <circle cx="5" cy="12" r="1.75" />
+              <circle cx="12" cy="12" r="1.75" />
+              <circle cx="19" cy="12" r="1.75" />
+            </svg>
+            <ol dropdown-panel class="m-0 list-none py-1 pl-0 text-sm">
+              @for (row of path(); track $index; let last = $last) {
+                <li
+                  [attr.data-qits-source]="row.marks?.source"
+                  [attr.data-qits-item]="row.marks?.item"
+                  [attr.data-qits-field]="row.marks?.field"
+                  [attr.data-qits-derived]="row.marks?.derived"
+                >
+                  @if (last || !row.exit) {
+                    <span
+                      class="block px-3 py-1.5 font-medium whitespace-normal break-words text-fg"
+                      [attr.aria-current]="last ? current() : null"
+                      >{{ row.label }}</span
+                    >
+                  } @else {
+                    <a
+                      class="block px-3 py-1.5 whitespace-normal break-words text-fg-soft no-underline hover:bg-surface-muted hover:text-fg focus-visible:-outline-offset-2"
+                      [qitsExit]="row.exit"
+                      [exitParams]="row.params"
+                      [exitActiveExact]="true"
+                      (click)="dropdown()?.close()"
+                      >{{ row.label }}</a
+                    >
+                  }
+                </li>
+              }
+            </ol>
+          </ui-dropdown>
+        </div>
+      }
       <!-- Below 768px the list runs reversed and wraps within one line's height, with the current
            page ordered first: the current page always takes the visible line, and the parent stays
            on it only when it fits whole, else it wraps out of sight. -->
       <ol
         class="m-0 flex min-w-0 list-none items-center overflow-hidden p-0 max-md:h-6 max-md:flex-row-reverse max-md:flex-wrap max-md:content-start max-md:justify-end"
       >
+        <!-- The brand; alone, it is where the user is: text, shown at every width. -->
         <li
-          class="hidden min-w-0 shrink-[1000] truncate *:focus-visible:-outline-offset-2 md:block"
+          class="min-w-0 truncate *:focus-visible:-outline-offset-2"
+          [class]="crumbs().length > 0 ? 'hidden shrink-[1000] md:block' : 'block'"
         >
-          @if (home().exit; as exit) {
+          @if (crumbs().length === 0) {
+            <span class="font-bold text-fg" [attr.aria-current]="current()">{{
+              home().label
+            }}</span>
+          } @else if (home().exit; as exit) {
             <a
               class="font-bold text-fg no-underline"
               [qitsExit]="exit"
@@ -149,11 +161,11 @@ export type CrumbMarks = ValueMarks;
               [class]="index >= crumbs().length - 2 ? 'hidden md:inline' : ''"
               >›</span
             >
-            <!-- The current page (the last crumb) is text, not a link. -->
+            <!-- Where the user is (the last crumb) is text, not a link. -->
             @if (index === crumbs().length - 1 || !crumb.exit) {
               <span
-                class="min-w-0 truncate text-fg-soft aria-[current=page]:text-fg"
-                [attr.aria-current]="index === crumbs().length - 1 ? 'page' : null"
+                class="min-w-0 truncate text-fg-soft aria-[current]:text-fg"
+                [attr.aria-current]="index === crumbs().length - 1 ? current() : null"
                 >{{ crumb.label }}</span
               >
             } @else {
@@ -186,8 +198,14 @@ export class Breadcrumbs {
   /** The trail's first item, ahead of the crumbs: the brand, linking home through its exit. */
   readonly home = input<Crumb>({ label: 'qits' });
 
-  /** The "…" menu, which a link in its panel closes as it navigates. */
-  protected readonly dropdown = viewChild.required(Dropdown);
+  /**
+   * The last crumb's (or the lone brand's) `aria-current`: `page` when it is the page shown,
+   * `location` when it names where the page is (a layer of the navigation, qits-2570).
+   */
+  readonly current = input<'page' | 'location'>('page');
+
+  /** The "…" menu, which a link in its panel closes as it navigates; none without crumbs. */
+  protected readonly dropdown = viewChild(Dropdown);
 
   /** The whole path, as the "…" panel lists it: the brand, then every crumb. */
   protected readonly path = computed(() => [this.home(), ...this.crumbs()]);

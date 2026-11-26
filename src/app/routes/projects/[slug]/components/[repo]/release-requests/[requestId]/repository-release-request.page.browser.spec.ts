@@ -24,8 +24,8 @@ const NOW = new Date('2026-01-01T02:00:00Z');
 /**
  * Screenshots of one release request opened under its repository (qits-2506): the release request
  * view, mounted at `repositories/contract-service/release-requests/<ref>`, so the repository
- * sidebar stays open, the trail reads Components › contract-service › Release requests › <ref>,
- * and its links stay under the repository: “← Release requests” (`leave-repository-release-request`)
+ * sidebar stays open with Release requests current, the trail reads qits › <project> ›
+ * contract-service (the repository's layer, qits-2570), and its links stay under the repository: “← Release requests” (`leave-repository-release-request`)
  * and the other requests it names (`open-related-repository-release-request`), each followed once,
  * on the states the project route's spec follows them on. The fold's reads, which those states do
  * not record, answer with an error.
@@ -140,16 +140,24 @@ describe('RepositoryReleaseRequestPage (screenshots)', () => {
     expect(url()).toBe(under(opened));
   });
 
-  it('follow-breadcrumb repositoryReleaseRequests: the trail’s Release requests opens the list', async () => {
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async () => {
     const { opened } = await obsolete();
-    await page
-      .getByRole('navigation', { name: 'Breadcrumb' })
-      .getByRole('link', { name: 'Release requests' })
-      .last()
-      .click();
-    await leftFor(opened);
-    expect(fired()).toEqual(['follow-breadcrumb:repositoryReleaseRequests']);
-    expect(url()).toBe(under(opened));
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect
+      .element(breadcrumb)
+      .toMatchTextContent(`qits›${opened.project.name}›${'contract-service'}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Release requests');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText('contract-service', { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Release requests', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
   });
 
   it('open-related-repository-release-request supersededBy: stays under the repository', async () => {

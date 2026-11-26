@@ -14,7 +14,7 @@ import {
 /**
  * The open project's ACTIVE agents with their waits and attention (epic qits-1681), as the shell
  * reads them (qits-2146): the top bar's agents menu, which the shell hands this service's
- * `resource`, and the trail's agent crumb (an agent named by its item). One root service holding
+ * `resource`. One root service holding
  * one `qitsResource` over `LIST_PROJECT_ACTIVE_AGENTS`, read once the open project is known, in the
  * browser only (the server render has no session to send), and again on each opening of the menu
  * (`resource.reload()`). A failed read again keeps the agents shown.

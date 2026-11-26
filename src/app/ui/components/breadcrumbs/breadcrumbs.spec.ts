@@ -17,30 +17,32 @@ function trailOf(to: ReturnType<typeof uiSpecExits>): readonly Crumb[] {
 
 @Component({
   imports: [Breadcrumbs],
-  template: `<ui-breadcrumbs [home]="home" [crumbs]="crumbs()" />`,
+  template: `<ui-breadcrumbs [home]="home" [crumbs]="crumbs()" [current]="current()" />`,
 })
 class Host {
   private readonly to = uiSpecExits();
   readonly home: Crumb = { label: 'qits', exit: this.to.home };
   readonly trail = trailOf(this.to);
   readonly crumbs = signal<readonly Crumb[]>(this.trail);
+  readonly current = signal<'page' | 'location'>('page');
 }
 
 /** A class list, sorted, as one string. */
 const classes = (element: Element | null | undefined) =>
   (element?.className ?? '').split(' ').filter(Boolean).sort().join(' ');
 
-/** The trail, or the first `length` crumbs of it. */
-function render(length?: number) {
+/** The trail, or the first `length` crumbs of it, its last one current as `current`. */
+function render(length?: number, current: 'page' | 'location' = 'page') {
   TestBed.configureTestingModule({ providers: [provideRouter([{ path: '**', children: [] }])] });
   const fixture = TestBed.createComponent(Host);
   const trail = fixture.componentInstance.trail;
   fixture.componentInstance.crumbs.set(length === undefined ? trail : trail.slice(0, length));
+  fixture.componentInstance.current.set(current);
   fixture.detectChanges();
   const element = fixture.nativeElement as HTMLElement;
-  const ellipsis = element.querySelector<HTMLElement>('[data-crumbs-ellipsis]')!;
-  const button = ellipsis.querySelector<HTMLButtonElement>('button')!;
-  const panel = ellipsis.querySelector<HTMLElement>('[role="region"]')!;
+  const ellipsis = element.querySelector<HTMLElement>('[data-crumbs-ellipsis]');
+  const button = ellipsis?.querySelector<HTMLButtonElement>('button') as HTMLButtonElement;
+  const panel = ellipsis?.querySelector<HTMLElement>('[role="region"]') as HTMLElement;
   const list = element.querySelector<HTMLElement>('nav > ol')!;
   const [brand, ...items] = [...list.querySelectorAll<HTMLElement>(':scope > li')];
   return { fixture, element, ellipsis, button, panel, list, brand, items };
@@ -84,7 +86,7 @@ describe('Breadcrumbs', () => {
 
   it('puts no separator after the "…" on a narrow screen, and the parent’s inside the parent', () => {
     const { ellipsis, items } = render();
-    expect(ellipsis.textContent).not.toContain('›');
+    expect(ellipsis?.textContent).not.toContain('›');
     const separators = items.map((item) =>
       [...item.querySelectorAll('span[aria-hidden="true"]')].map((separator) => classes(separator)),
     );
@@ -105,7 +107,8 @@ describe('Breadcrumbs', () => {
   });
 
   it('makes the "…" a menu button, below md only, named by the path before the current page', () => {
-    const { element, ellipsis, button, panel } = render();
+    const { element, ellipsis: found, button, panel } = render();
+    const ellipsis = found!;
     expect(element.querySelectorAll('[data-crumbs-ellipsis]')).toHaveLength(1);
     expect(classes(ellipsis)).toContain('md:hidden');
     expect(classes(ellipsis)).not.toMatch(/(^| )hidden/);
@@ -172,5 +175,36 @@ describe('Breadcrumbs', () => {
       'qits',
       'Projects',
     ]);
+  });
+
+  it('marks the last crumb `location` when it names where the page is, in the trail and the panel (qits-2570)', () => {
+    const { items, panel } = render(2, 'location');
+    expect(items[1].querySelector('a')).toBeNull();
+    expect(items[1].querySelector('span[aria-current]')?.getAttribute('aria-current')).toBe(
+      'location',
+    );
+    expect(items[0].querySelector('[aria-current]')).toBeNull();
+    const rows = [...panel.querySelectorAll('li')];
+    expect(rows.at(-1)?.querySelector('span')?.getAttribute('aria-current')).toBe('location');
+  });
+
+  it('makes the brand alone where the user is: text, not a link, at every width, with no "…" (qits-2570)', () => {
+    const { element, ellipsis, brand, items } = render(0);
+    expect(items).toHaveLength(0);
+    expect(ellipsis).toBeNull();
+    expect(element.querySelector('button')).toBeNull();
+    expect(brand.querySelector('a')).toBeNull();
+    const span = brand.querySelector('span')!;
+    expect(span.textContent?.trim()).toBe('qits');
+    expect(span.getAttribute('aria-current')).toBe('page');
+    expect(classes(span)).toContain('font-bold');
+    // Shown below 768px too: not hidden, as the brand before crumbs is.
+    expect(classes(brand)).not.toMatch(/(^| )hidden/);
+    expect(classes(brand)).toContain('block');
+  });
+
+  it('marks the brand alone `location` on a page of the root layer that is not its landing page', () => {
+    const { brand } = render(0, 'location');
+    expect(brand.querySelector('span')?.getAttribute('aria-current')).toBe('location');
   });
 });

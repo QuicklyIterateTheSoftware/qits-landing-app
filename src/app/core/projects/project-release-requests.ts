@@ -10,8 +10,7 @@ import { SelectedProject } from './selected-project';
 
 /**
  * The open project's release requests, as the shell reads them (qits-2146): the sidebar's Release
- * Requests line (its newest request), the trail's request crumb, and what an agent's wait on a
- * request shows (the agents menu, `app-agent-status`). One root service holding one `qitsResource`
+ * Requests line (its newest request) and what an agent's wait on a request shows (the agents menu, `app-agent-status`). One root service holding one `qitsResource`
  * over `PROJECT_RELEASE_REQUESTS`, read once the open project is known, in the browser only (the
  * server render has no session to send). A failed read again keeps the requests shown.
  *
