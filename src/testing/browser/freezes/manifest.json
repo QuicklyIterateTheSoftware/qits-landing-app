@@ -296453,6 +296453,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -296601,6 +296611,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -296746,6 +296766,16 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -296898,6 +296928,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -297047,6 +297087,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -297172,6 +297222,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -297294,6 +297354,16 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -297445,6 +297515,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket that needs another",
           "operationId": "getWork"
         },
@@ -297590,6 +297670,16 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -297773,6 +297863,16 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -299832,6 +299932,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -299991,6 +300101,16 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -300156,6 +300276,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -300294,6 +300424,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -300429,6 +300569,16 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
         },
         {
           "provider": "qits-projects-service",
@@ -300594,6 +300744,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "the archetype registry",
           "operationId": "listWorkArchetypes"
         },
@@ -300741,8 +300901,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a verified epic with every task implemented",
+          "state": "a verified epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -300751,13 +300931,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -300765,8 +300945,8 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:work",
+        "open-feature-list-row:feature",
         "open-feature-list-row:task",
-        "open-item-workspace:open",
         "open-project-desk:open",
         "open-project-settings:open",
         "open-sidebar-section:components",
@@ -300784,22 +300964,28 @@
       ],
       "dataMarks": [
         {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "needs"
           ]
         },
         {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "description",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -300809,7 +300995,7 @@
         },
         {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "title",
           "derived": []
         },
@@ -300834,16 +301020,6 @@
         {
           "source": "qits-projects-service#listProjectWork",
           "item": "id=00000000-0000-4000-8000-000000000004",
-          "field": null,
-          "derived": [
-            "qualifiedId",
-            "title",
-            "archetype"
-          ]
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000006",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -300888,8 +301064,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a verified epic with every task implemented",
+          "state": "a verified epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -300898,13 +301094,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -300912,8 +301108,8 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:work",
+        "open-feature-list-row:feature",
         "open-feature-list-row:task",
-        "open-item-workspace:open",
         "open-project-desk:open",
         "open-project-settings:open",
         "open-sidebar-section:components",
@@ -300931,22 +301127,28 @@
       ],
       "dataMarks": [
         {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "needs"
           ]
         },
         {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "description",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -300956,7 +301158,7 @@
         },
         {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "title",
           "derived": []
         },
@@ -300981,16 +301183,6 @@
         {
           "source": "qits-projects-service#listProjectWork",
           "item": "id=00000000-0000-4000-8000-000000000004",
-          "field": null,
-          "derived": [
-            "qualifiedId",
-            "title",
-            "archetype"
-          ]
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000006",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301035,8 +301227,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a verified epic with every task implemented",
+          "state": "a verified epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -301045,38 +301257,44 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
+        "open-feature-list-row:feature",
         "open-feature-list-row:task",
-        "open-item-workspace:open",
         "open-project-settings:open"
       ],
       "dataMarks": [
         {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "needs"
           ]
         },
         {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "description",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301086,7 +301304,7 @@
         },
         {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "title",
           "derived": []
         },
@@ -301111,16 +301329,6 @@
         {
           "source": "qits-projects-service#listProjectWork",
           "item": "id=00000000-0000-4000-8000-000000000004",
-          "field": null,
-          "derived": [
-            "qualifiedId",
-            "title",
-            "archetype"
-          ]
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000006",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301159,8 +301367,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a verified epic with every task implemented",
+          "state": "a verified epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -301169,38 +301397,44 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
+        "open-feature-list-row:feature",
         "open-feature-list-row:task",
-        "open-item-workspace:open",
         "open-project-settings:open"
       ],
       "dataMarks": [
         {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "needs"
           ]
         },
         {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "description",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301210,7 +301444,7 @@
         },
         {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "title",
           "derived": []
         },
@@ -301235,16 +301469,6 @@
         {
           "source": "qits-projects-service#listProjectWork",
           "item": "id=00000000-0000-4000-8000-000000000004",
-          "field": null,
-          "derived": [
-            "qualifiedId",
-            "title",
-            "archetype"
-          ]
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000006",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301283,8 +301507,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a verified epic with every task implemented",
+          "state": "a verified epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -301293,13 +301537,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -301307,8 +301551,8 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:work",
+        "open-feature-list-row:feature",
         "open-feature-list-row:task",
-        "open-item-workspace:open",
         "open-project-desk:open",
         "open-project-settings:open",
         "open-sidebar-section:components",
@@ -301326,22 +301570,28 @@
       ],
       "dataMarks": [
         {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "needs"
           ]
         },
         {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "description",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301351,7 +301601,7 @@
         },
         {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "title",
           "derived": []
         },
@@ -301376,16 +301626,6 @@
         {
           "source": "qits-projects-service#listProjectWork",
           "item": "id=00000000-0000-4000-8000-000000000004",
-          "field": null,
-          "derived": [
-            "qualifiedId",
-            "title",
-            "archetype"
-          ]
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000006",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301430,8 +301670,28 @@
         },
         {
           "provider": "qits-projects-service",
-          "state": "a verified epic with every task implemented",
+          "state": "a verified epic",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
           "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a verified epic",
+          "operationId": "listWorkDossierAssets"
         },
         {
           "provider": "qits-projects-service",
@@ -301440,13 +301700,13 @@
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a project with workspaces bound to work items",
-          "operationId": "listOpenWorkspaces"
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
         },
         {
           "provider": "qits-workspaces-service",
-          "state": "a work item with no workspaces",
-          "operationId": "listWorkItemWorkspaces"
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
         }
       ],
       "triggers": [
@@ -301454,8 +301714,8 @@
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
         "follow-breadcrumb:work",
+        "open-feature-list-row:feature",
         "open-feature-list-row:task",
-        "open-item-workspace:open",
         "open-project-desk:open",
         "open-project-settings:open",
         "open-sidebar-section:components",
@@ -301473,22 +301733,28 @@
       ],
       "dataMarks": [
         {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
-          "field": null,
-          "derived": []
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "needs"
           ]
         },
         {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "description",
+          "derived": []
+        },
+        {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": null,
           "derived": [
             "qualifiedId",
@@ -301498,7 +301764,7 @@
         },
         {
           "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000002",
+          "item": "id=00000000-0000-4000-8000-000000000001",
           "field": "title",
           "derived": []
         },
@@ -301523,16 +301789,6 @@
         {
           "source": "qits-projects-service#listProjectWork",
           "item": "id=00000000-0000-4000-8000-000000000004",
-          "field": null,
-          "derived": [
-            "qualifiedId",
-            "title",
-            "archetype"
-          ]
-        },
-        {
-          "source": "qits-projects-service#listProjectWork",
-          "item": "id=00000000-0000-4000-8000-000000000006",
           "field": null,
           "derived": [
             "qualifiedId",

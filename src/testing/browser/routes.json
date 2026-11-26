@@ -2768,8 +2768,32 @@
     },
     {
       "provider": "qits-projects-service",
-      "state": "a verified epic with every task implemented",
+      "state": "a verified epic",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified epic",
       "operationId": "listProjectWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified epic",
+      "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified epic",
+      "operationId": "listWorkDossier",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a verified epic",
+      "operationId": "listWorkDossierAssets",
       "route": "projects/:slug/work/detail/:id"
     },
     {
