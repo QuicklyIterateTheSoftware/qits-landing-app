@@ -45,7 +45,9 @@ import {
  * The workspaces come from qits-workspaces' golden masters, whose ids are those of the "… in
  * detail" states: the open workspaces (a frame read `openRoute` answers) from "a project with
  * workspaces bound to work items", and each item's own (`answerWorkspaces`): the bug ticket's
- * history, and "a work item with no workspaces" for every other item.
+ * history, and "a work item with no workspaces" for every other item. The project's ACTIVE agents
+ * (the agents menu, a frame read) are that state's empty list: refused, the menu `shootShellMenus`
+ * opens would show its "Failed to load" icon.
  *
  * The page follows transitions through the event stream; the stream here never connects.
  *
@@ -208,7 +210,10 @@ describe('WorkItemPage (screenshots)', () => {
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const opened = await openRoute(
       (project) => `/projects/${project.slug}/work/detail/${entity.qualifiedId}`,
-      { workspaces: UNBOUND.has(state) ? 'no work item has an open workspace' : BOUND },
+      {
+        workspaces: UNBOUND.has(state) ? 'no work item has an open workspace' : BOUND,
+        agents: NONE,
+      },
     );
     http.expectOne(`/projects/api/projects/${opened.project.id}/work`).flush(work);
     await opened.settled();
