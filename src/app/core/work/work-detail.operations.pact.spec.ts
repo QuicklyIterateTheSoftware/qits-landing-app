@@ -38,7 +38,8 @@ import { provideTestPlatformOrigins } from '../../../testing/platform-origins';
  *
  * One detail state per archetype and per ticket type, and the status states whose pages the action
  * screenshots show, each with the item's own reads (`ACTION_TICKETS`, `ACTION_EPICS`, and "an epic
- * with features and tasks"' open feature). Each test makes ONE of the reads the work item page
+ * with features and tasks"' open feature; `ACTION_EPICS` also carries the verified epic of the
+ * off-board features screenshot, not itself a status screenshot). Each test makes ONE of the reads the work item page
  * makes, through the operation's own `fetch`, against a pact mock server answering with
  * qits-projects' golden master: a path from a provider state matches any path, so one interaction
  * per test keeps each answer to its own request. A read binds the fields its operation's
@@ -85,8 +86,12 @@ const ACTION_TICKETS = [
   'a verified ticket',
   'a dropped ticket',
 ];
-/** The epics of the action screenshots, one status state each. */
-const ACTION_EPICS = ['a refined epic', 'a ready for dev epic'];
+/**
+ * The epics of the action screenshots, one status state each, and the verified epic of the
+ * off-board features screenshot (`work-item.page.browser.spec.ts`'s "an epic off the board"),
+ * which needs the same reads but is not a status screenshot itself.
+ */
+const ACTION_EPICS = ['a refined epic', 'a ready for dev epic', 'a verified epic'];
 const OTHERS = [...ACTION_TICKETS, ...ACTION_EPICS];
 /** The open feature of the action screenshots (the state's `qualifiedId` names it). */
 const OPEN_FEATURE = 'an epic with features and tasks';

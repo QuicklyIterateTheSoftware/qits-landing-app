@@ -366,7 +366,8 @@ describe('qits-landing-app → qits-projects-service pact: the project work oper
   });
 
   // The work item page reads each item's own state and its project's work (`work-item.page`): the
-  // status states of its action screenshots.
+  // status states of its action screenshots, and the verified epic of the off-board features
+  // screenshot.
   it.each([
     'an implemented ticket',
     'a reported ticket',
@@ -374,6 +375,7 @@ describe('qits-landing-app → qits-projects-service pact: the project work oper
     'a dropped ticket',
     'a refined epic',
     'a ready for dev epic',
+    'a verified epic',
   ])('show-project-work-board: the work of %s', (state) =>
     given('show-project-work-board', state).executeTest(async (server) => {
       expect(await workOf(server.url, state)).toBeDefined();
