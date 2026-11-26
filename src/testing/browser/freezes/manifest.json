@@ -298933,6 +298933,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket made from an error issue",
           "operationId": "getWork"
         },
@@ -298975,7 +298985,8 @@
         "open-sidebar-work-page:ideas",
         "open-sidebar-work-page:inProgress",
         "open-sidebar-work-page:refinement",
-        "open-sidebar-work-page:schedule"
+        "open-sidebar-work-page:schedule",
+        "open-ticket-error-issue:issue"
       ],
       "dataMarks": [
         {
@@ -299077,6 +299088,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket made from an error issue",
           "operationId": "getWork"
         },
@@ -299119,7 +299140,8 @@
         "open-sidebar-work-page:ideas",
         "open-sidebar-work-page:inProgress",
         "open-sidebar-work-page:refinement",
-        "open-sidebar-work-page:schedule"
+        "open-sidebar-work-page:schedule",
+        "open-ticket-error-issue:issue"
       ],
       "dataMarks": [
         {
@@ -299221,6 +299243,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket made from an error issue",
           "operationId": "getWork"
         },
@@ -299246,7 +299278,8 @@
         }
       ],
       "triggers": [
-        "open-project-settings:open"
+        "open-project-settings:open",
+        "open-ticket-error-issue:issue"
       ],
       "dataMarks": [
         {
@@ -299342,6 +299375,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket made from an error issue",
           "operationId": "getWork"
         },
@@ -299367,7 +299410,8 @@
         }
       ],
       "triggers": [
-        "open-project-settings:open"
+        "open-project-settings:open",
+        "open-ticket-error-issue:issue"
       ],
       "dataMarks": [
         {
@@ -299463,6 +299507,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket made from an error issue",
           "operationId": "getWork"
         },
@@ -299505,7 +299559,8 @@
         "open-sidebar-work-page:ideas",
         "open-sidebar-work-page:inProgress",
         "open-sidebar-work-page:refinement",
-        "open-sidebar-work-page:schedule"
+        "open-sidebar-work-page:schedule",
+        "open-ticket-error-issue:issue"
       ],
       "dataMarks": [
         {
@@ -299607,6 +299662,16 @@
         },
         {
           "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkComments"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a reported ticket",
+          "operationId": "listWorkDossier"
+        },
+        {
+          "provider": "qits-projects-service",
           "state": "a ticket made from an error issue",
           "operationId": "getWork"
         },
@@ -299649,7 +299714,8 @@
         "open-sidebar-work-page:ideas",
         "open-sidebar-work-page:inProgress",
         "open-sidebar-work-page:refinement",
-        "open-sidebar-work-page:schedule"
+        "open-sidebar-work-page:schedule",
+        "open-ticket-error-issue:issue"
       ],
       "dataMarks": [
         {
