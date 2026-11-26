@@ -1627,6 +1627,18 @@
       "state": "a project with no release requests",
       "operationId": "listProjectReleaseRequests",
       "route": "projects/:slug/observability/errors/:fingerprint"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a project with no work",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/observability/errors/:fingerprint"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket made from an error issue",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/observability/errors/:fingerprint"
     }
   ],
   "src/app/routes/projects/[slug]/observability/errors/observability-errors.page.browser.spec.ts": [
@@ -2469,6 +2481,18 @@
       "state": "a project with no work",
       "operationId": "listProjectWork",
       "route": "projects/:slug/work/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket made from an error issue",
+      "operationId": "createWork",
+      "route": "projects/:slug/work/create"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket made from an error issue",
+      "operationId": "listProjectWork",
+      "route": "projects/:slug/work/create"
     }
   ],
   "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts": [
@@ -2716,6 +2740,18 @@
       "provider": "qits-projects-service",
       "state": "a task in detail",
       "operationId": "listWorkComments",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket made from an error issue",
+      "operationId": "getWork",
+      "route": "projects/:slug/work/detail/:id"
+    },
+    {
+      "provider": "qits-projects-service",
+      "state": "a ticket made from an error issue",
+      "operationId": "listProjectWork",
       "route": "projects/:slug/work/detail/:id"
     },
     {
