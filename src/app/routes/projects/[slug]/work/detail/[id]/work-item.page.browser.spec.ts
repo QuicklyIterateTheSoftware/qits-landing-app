@@ -30,10 +30,12 @@ import {
  *   move or dispatch the same state recorded; done work, whose page shows no action, comes from
  *   "a project with work in every status", which records no item reads (they answer 404);
  * - a VERIFIED ticket's wrapper closing (qits-1873): the IN_FLIGHT ticket of "a project with
- *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings (the
- *   state records no thread or dossier: those answer 404);
+ *   VERIFIED tickets in every wrapper verdict", from its work, its `getWork` and its closings, its
+ *   empty thread and dossier from "a reported ticket" (the state records neither: a 404 would fail
+ *   the body's load);
  * - what an item needs (epic qits-1899): the READY_FOR_DEV ticket of "a ticket that needs another",
- *   its "needs" badge and its Needs panel, from its work and its `getWork` (no thread or dossier);
+ *   its "needs" badge and its Needs panel, from its work and its `getWork`, its empty thread and
+ *   dossier from "a reported ticket" (the state records neither: a 404 would fail the body's load);
  * - a ticket made from an error issue (qits-2538): the bug of "a ticket made from an error issue",
  *   its "Made from error issue" link, from its `getWork`, its empty thread and dossier from "a
  *   reported ticket" (the state records neither: a 404 would fail the body's load). The state records
@@ -65,6 +67,8 @@ const VERIFIED = 'a verified ticket';
 const DROPPED = 'a dropped ticket';
 const REFINED_EPIC = 'a refined epic';
 const READY_EPIC = 'a ready for dev epic';
+/** A VERIFIED epic off the board (no board at that status), one feature holding one task. */
+const VERIFIED_EPIC = 'a verified epic';
 /** An epic, its features and their tasks; its `getWork` and thread are its open feature's. */
 const FEATURES = 'an epic with features and tasks';
 /** The title of the ticket each ticket status state records (but "a verified ticket"). */
@@ -78,9 +82,9 @@ const EPIC = 'Work item actions';
 const NEEDS = 'a ticket that needs another';
 /**
  * How a test answers the item's own reads (`answerDetail`): not at all (404), from the state's
- * recordings, its item alone (`'item'`), or its item with the thread and dossier of another state.
+ * recordings, or its item alone with the thread and dossier of another state.
  */
-type Detail = boolean | 'item' | { readonly thread: string };
+type Detail = boolean | { readonly thread: string };
 /** A bug ticket made from an error issue (qits-2538). */
 const FROM_ISSUE = 'a ticket made from an error issue';
 /**
@@ -99,6 +103,7 @@ const UNBOUND: ReadonlySet<string> = new Set([
   DROPPED,
   REFINED_EPIC,
   READY_EPIC,
+  VERIFIED_EPIC,
   FEATURES,
 ]);
 /** qits-workspaces' states. */
@@ -138,9 +143,8 @@ describe('WorkItemPage (screenshots)', () => {
   /**
    * Answers the item's own reads (its `qitsResource`s, qits-2146): from `state`'s recordings when `recorded`,
    * else with 404 (an error answer is a status only): the body then shows its children only. With
-   * `'item'`, the item from `state`'s `getWork` and its thread and dossier 404 (a state recording
-   * the item alone). With `{ thread }`, the item from `state`'s `getWork` and its thread and dossier
-   * from the `thread` state's recordings (a state recording the item alone, its body shown in full).
+   * `{ thread }`, the item from `state`'s `getWork` and its thread and dossier from the `thread`
+   * state's recordings (a state recording the item alone, its body shown in full).
    */
   async function answerDetail(state: string, ref: string, recorded: Detail) {
     const items = http.match(`/projects/api/work/${ref}`);
@@ -153,17 +157,6 @@ describe('WorkItemPage (screenshots)', () => {
     }
     const entity = await goldenMaster(state, 'getWork');
     items[0]?.flush(entity);
-    if (recorded === 'item') {
-      thread.flush(null, { status: 404, statusText: 'Not Found' });
-      await settle();
-      // The dossier's read waits for the item's archetype; its resource starts it in an effect.
-      TestBed.tick();
-      await settle();
-      http
-        .match(`/projects/api/work/${ref}/dossier`)
-        .forEach((read) => read.flush(null, { status: 404, statusText: 'Not Found' }));
-      return;
-    }
     const rest = typeof recorded === 'object' ? recorded.thread : state;
     thread.flush(await goldenMaster(rest, 'listWorkComments'));
     await settle();
@@ -260,6 +253,12 @@ describe('WorkItemPage (screenshots)', () => {
     const width = window.innerWidth;
     await page.viewport(390, 844);
     await opened.settled();
+    // A read this case forgot to answer draws the spinner's error icon over the body instead of
+    // failing outright (`ui-spinner`'s overlay, hidden with `display:none` while there is no
+    // error): catch it here rather than let it reach a baseline.
+    expect(
+      page.elementLocator(opened.frame).getByRole('img', { name: 'Failed to load' }).elements(),
+    ).toHaveLength(0);
     const height = opened.frame.scrollHeight;
     await page.viewport(width, Math.max(height, 900) + 40);
     await opened.settled();
@@ -344,12 +343,9 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('an epic off the board: its features as rows, as before', async () => {
-      const { element, frame, opened } = await render(
-        'a verified epic with every task implemented',
-        'Verified epic',
-      );
+      const { element, frame, opened } = await render(VERIFIED_EPIC, 'Verified epic', true);
       const features = element.getByRole('region', { name: 'Features' });
-      await expect.element(features.getByRole('link', { name: 'Shipped feature' })).toBeVisible();
+      await expect.element(features.getByRole('link', { name: 'A feature' })).toBeVisible();
       expect(features.element().querySelector('app-epic-board')).toBeNull();
       expect(features.element().querySelectorAll('app-feature-list-row')).toHaveLength(1);
       await fitWholePage(opened);
@@ -421,7 +417,7 @@ describe('WorkItemPage (screenshots)', () => {
     const { element, frame, opened } = await render(
       WRAPPER_CLOSINGS,
       'Riding a pending wrapper request',
-      'item',
+      { thread: REPORTED },
     );
     const line = element.getByText('Closes with', { exact: false });
     await expect
@@ -442,7 +438,9 @@ describe('WorkItemPage (screenshots)', () => {
   // Epic qits-1899: the item's "needs" badge beside its facts, and its Needs panel below the body:
   // the needed ticket linked, at VERIFIED, now REFINED, not met.
   it('a ticket that needs another: its badge and its Needs panel', async () => {
-    const { element, frame, opened } = await render(NEEDS, 'Render work ids in the list', 'item');
+    const { element, frame, opened } = await render(NEEDS, 'Render work ids in the list', {
+      thread: REPORTED,
+    });
     const badge = element.getByText('needs 1');
     await expect.element(badge).toBeVisible();
     const panel = element.getByRole('region', { name: 'Needs' });
