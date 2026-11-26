@@ -4,7 +4,37 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetTelemetryStoreData, GetTelemetryStoreResponse, GetTelemetryTraceData, GetTelemetryTraceResponse2, ListSlowSpansData, ListSlowSpansResponse2, ListTelemetryErrorsData, ListTelemetryErrorsResponse2, ListTelemetryMetricsData, ListTelemetryMetricsResponse2, ListTelemetrySourcesData, ListTelemetrySourcesResponse2, ListTelemetryTracesData, ListTelemetryTracesResponse2, SearchTelemetryLogsData, SearchTelemetryLogsResponse2, SearchTelemetryRecordsData, SearchTelemetryRecordsResponse2 } from '../types.gen';
+import type { DismissErrorIssueData, DismissErrorIssueResponse, GetErrorIssueData, GetErrorIssueResponse, GetTelemetryStoreData, GetTelemetryStoreResponse, GetTelemetryTraceData, GetTelemetryTraceResponse2, ListErrorIssuesData, ListErrorIssuesResponse2, ListSlowSpansData, ListSlowSpansResponse2, ListTelemetryErrorsData, ListTelemetryErrorsResponse2, ListTelemetryMetricsData, ListTelemetryMetricsResponse2, ListTelemetrySourcesData, ListTelemetrySourcesResponse2, ListTelemetryTracesData, ListTelemetryTracesResponse2, SearchTelemetryLogsData, SearchTelemetryLogsResponse2, SearchTelemetryRecordsData, SearchTelemetryRecordsResponse2 } from '../types.gen';
+
+/**
+ * List
+ */
+export const listErrorIssuesRequest = <ThrowOnError extends boolean = false>(options?: Options<ListErrorIssuesData, ThrowOnError>): HttpRequest<ListErrorIssuesResponse2> => (options?.client ?? client).requestOptions<ListErrorIssuesResponse2, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/observability/api/error-issues',
+    ...options
+});
+
+/**
+ * Get
+ */
+export const getErrorIssueRequest = <ThrowOnError extends boolean = false>(options: Options<GetErrorIssueData, ThrowOnError>): HttpRequest<GetErrorIssueResponse> => (options?.client ?? client).requestOptions<GetErrorIssueResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'GET',
+    url: '/observability/api/error-issues/{fingerprint}',
+    ...options
+});
+
+/**
+ * Dismiss
+ */
+export const dismissErrorIssueRequest = <ThrowOnError extends boolean = false>(options: Options<DismissErrorIssueData, ThrowOnError>): HttpRequest<DismissErrorIssueResponse> => (options?.client ?? client).requestOptions<DismissErrorIssueResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/observability/api/error-issues/{fingerprint}/dismiss',
+    ...options
+});
 
 /**
  * Errors
@@ -94,6 +124,30 @@ export const getTelemetryTraceRequest = <ThrowOnError extends boolean = false>(o
     method: 'GET',
     url: '/observability/api/telemetry/traces/{traceId}',
     ...options
+});
+
+/**
+ * List
+ */
+export const listErrorIssuesResource = <ThrowOnError extends boolean = false>(options?: () => Options<ListErrorIssuesData, ThrowOnError> | undefined) => httpResource<ListErrorIssuesResponse2>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? listErrorIssuesRequest(opts) : undefined;
+});
+
+/**
+ * Get
+ */
+export const getErrorIssueResource = <ThrowOnError extends boolean = false>(options: () => Options<GetErrorIssueData, ThrowOnError> | undefined) => httpResource<GetErrorIssueResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? getErrorIssueRequest(opts) : undefined;
+});
+
+/**
+ * Dismiss
+ */
+export const dismissErrorIssueResource = <ThrowOnError extends boolean = false>(options: () => Options<DismissErrorIssueData, ThrowOnError> | undefined) => httpResource<DismissErrorIssueResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? dismissErrorIssueRequest(opts) : undefined;
 });
 
 /**

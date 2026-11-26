@@ -4,11 +4,64 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type ErrorIssueDetailDto = {
+    fingerprint?: string;
+    state?: string;
+    serviceName?: string;
+    exceptionType?: string;
+    location?: string;
+    message?: string;
+    sampleMessage?: string;
+    sampleTraceId?: string;
+    firstSeen?: Instant;
+    lastSeen?: Instant;
+    firstVersion?: string;
+    lastVersion?: string;
+    occurrences?: number;
+    regressions?: number;
+    regressedAt?: Instant;
+    dismissedAt?: Instant;
+    dismissedBy?: string;
+    sampleStacktrace?: string;
+    hourly?: Array<ErrorIssueHourDto>;
+};
+
+export type ErrorIssueDto = {
+    fingerprint?: string;
+    state?: string;
+    serviceName?: string;
+    exceptionType?: string;
+    location?: string;
+    message?: string;
+    sampleMessage?: string;
+    sampleTraceId?: string;
+    firstSeen?: Instant;
+    lastSeen?: Instant;
+    firstVersion?: string;
+    lastVersion?: string;
+    occurrences?: number;
+    regressions?: number;
+    regressedAt?: Instant;
+    dismissedAt?: Instant;
+    dismissedBy?: string;
+};
+
+export type ErrorIssueHourDto = {
+    hour?: Instant;
+    count?: number;
+};
+
 export type GetTelemetryTraceResponse = {
     trace?: TelemetryTraceDto;
 };
 
 export type Instant = string;
+
+export type ListErrorIssuesResponse = {
+    issues?: Array<ErrorIssueDto>;
+    total?: number;
+    truncated?: boolean;
+};
 
 export type ListSlowSpansResponse = {
     spans?: Array<TelemetrySpanDto>;
@@ -219,6 +272,97 @@ export type TelemetryTraceSummary = {
     rootMissing?: boolean;
 };
 
+export type ListErrorIssuesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        service?: string;
+        state?: string;
+    };
+    url: '/observability/api/error-issues';
+};
+
+export type ListErrorIssuesErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type ListErrorIssuesResponses = {
+    /**
+     * OK
+     */
+    200: ListErrorIssuesResponse;
+};
+
+export type ListErrorIssuesResponse2 = ListErrorIssuesResponses[keyof ListErrorIssuesResponses];
+
+export type GetErrorIssueData = {
+    body?: never;
+    path: {
+        fingerprint: string;
+    };
+    query?: {
+        hours?: number;
+    };
+    url: '/observability/api/error-issues/{fingerprint}';
+};
+
+export type GetErrorIssueErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type GetErrorIssueResponses = {
+    /**
+     * OK
+     */
+    200: ErrorIssueDetailDto;
+};
+
+export type GetErrorIssueResponse = GetErrorIssueResponses[keyof GetErrorIssueResponses];
+
+export type DismissErrorIssueData = {
+    body?: never;
+    path: {
+        fingerprint: string;
+    };
+    query?: never;
+    url: '/observability/api/error-issues/{fingerprint}/dismiss';
+};
+
+export type DismissErrorIssueErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not Allowed
+     */
+    403: unknown;
+};
+
+export type DismissErrorIssueResponses = {
+    /**
+     * OK
+     */
+    200: ErrorIssueDto;
+};
+
+export type DismissErrorIssueResponse = DismissErrorIssueResponses[keyof DismissErrorIssueResponses];
+
 export type ListTelemetryErrorsData = {
     body?: never;
     path?: never;
@@ -257,6 +401,7 @@ export type SearchTelemetryLogsData = {
     body?: never;
     path?: never;
     query?: {
+        fingerprint?: string;
         limit?: number;
         minSeverity?: string;
         query?: string;

@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetTelemetryStoreData, GetTelemetryStoreErrors, GetTelemetryStoreResponses, GetTelemetryTraceData, GetTelemetryTraceErrors, GetTelemetryTraceResponses, ListSlowSpansData, ListSlowSpansErrors, ListSlowSpansResponses, ListTelemetryErrorsData, ListTelemetryErrorsErrors, ListTelemetryErrorsResponses, ListTelemetryMetricsData, ListTelemetryMetricsErrors, ListTelemetryMetricsResponses, ListTelemetrySourcesData, ListTelemetrySourcesErrors, ListTelemetrySourcesResponses, ListTelemetryTracesData, ListTelemetryTracesErrors, ListTelemetryTracesResponses, SearchTelemetryLogsData, SearchTelemetryLogsErrors, SearchTelemetryLogsResponses, SearchTelemetryRecordsData, SearchTelemetryRecordsErrors, SearchTelemetryRecordsResponses } from './types.gen';
+import type { DismissErrorIssueData, DismissErrorIssueErrors, DismissErrorIssueResponses, GetErrorIssueData, GetErrorIssueErrors, GetErrorIssueResponses, GetTelemetryStoreData, GetTelemetryStoreErrors, GetTelemetryStoreResponses, GetTelemetryTraceData, GetTelemetryTraceErrors, GetTelemetryTraceResponses, ListErrorIssuesData, ListErrorIssuesErrors, ListErrorIssuesResponses, ListSlowSpansData, ListSlowSpansErrors, ListSlowSpansResponses, ListTelemetryErrorsData, ListTelemetryErrorsErrors, ListTelemetryErrorsResponses, ListTelemetryMetricsData, ListTelemetryMetricsErrors, ListTelemetryMetricsResponses, ListTelemetrySourcesData, ListTelemetrySourcesErrors, ListTelemetrySourcesResponses, ListTelemetryTracesData, ListTelemetryTracesErrors, ListTelemetryTracesResponses, SearchTelemetryLogsData, SearchTelemetryLogsErrors, SearchTelemetryLogsResponses, SearchTelemetryRecordsData, SearchTelemetryRecordsErrors, SearchTelemetryRecordsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,6 +17,33 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+/**
+ * List
+ */
+export const listErrorIssues = <ThrowOnError extends boolean = false>(options?: Options<ListErrorIssuesData, ThrowOnError>): RequestResult<ListErrorIssuesResponses, ListErrorIssuesErrors, ThrowOnError> => (options?.client ?? client).get<ListErrorIssuesResponses, ListErrorIssuesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/observability/api/error-issues',
+    ...options
+});
+
+/**
+ * Get
+ */
+export const getErrorIssue = <ThrowOnError extends boolean = false>(options: Options<GetErrorIssueData, ThrowOnError>): RequestResult<GetErrorIssueResponses, GetErrorIssueErrors, ThrowOnError> => (options.client ?? client).get<GetErrorIssueResponses, GetErrorIssueErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/observability/api/error-issues/{fingerprint}',
+    ...options
+});
+
+/**
+ * Dismiss
+ */
+export const dismissErrorIssue = <ThrowOnError extends boolean = false>(options: Options<DismissErrorIssueData, ThrowOnError>): RequestResult<DismissErrorIssueResponses, DismissErrorIssueErrors, ThrowOnError> => (options.client ?? client).post<DismissErrorIssueResponses, DismissErrorIssueErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/observability/api/error-issues/{fingerprint}/dismiss',
+    ...options
+});
 
 /**
  * Errors
