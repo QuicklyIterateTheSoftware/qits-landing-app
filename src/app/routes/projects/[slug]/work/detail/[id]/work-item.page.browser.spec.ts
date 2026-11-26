@@ -35,7 +35,8 @@ import {
  * - what an item needs (epic qits-1899): the READY_FOR_DEV ticket of "a ticket that needs another",
  *   its "needs" badge and its Needs panel, from its work and its `getWork` (no thread or dossier);
  * - a ticket made from an error issue (qits-2538): the bug of "a ticket made from an error issue",
- *   its "Made from error issue" link, from its `getWork` (no thread or dossier). The state records
+ *   its "Made from error issue" link, from its `getWork`, its empty thread and dossier from "a
+ *   reported ticket" (the state records neither: a 404 would fail the body's load). The state records
  *   the project's work only filtered by the issue (`listProjectWork?errorIssue=`), which answers the
  *   work read here: it holds the ticket alone.
  *
@@ -75,6 +76,11 @@ const EPIC = 'Work item actions';
  * qits-projects from 2026.1106.140436 on).
  */
 const NEEDS = 'a ticket that needs another';
+/**
+ * How a test answers the item's own reads (`answerDetail`): not at all (404), from the state's
+ * recordings, its item alone (`'item'`), or its item with the thread and dossier of another state.
+ */
+type Detail = boolean | 'item' | { readonly thread: string };
 /** A bug ticket made from an error issue (qits-2538). */
 const FROM_ISSUE = 'a ticket made from an error issue';
 /**
@@ -133,9 +139,10 @@ describe('WorkItemPage (screenshots)', () => {
    * Answers the item's own reads (its `qitsResource`s, qits-2146): from `state`'s recordings when `recorded`,
    * else with 404 (an error answer is a status only): the body then shows its children only. With
    * `'item'`, the item from `state`'s `getWork` and its thread and dossier 404 (a state recording
-   * the item alone).
+   * the item alone). With `{ thread }`, the item from `state`'s `getWork` and its thread and dossier
+   * from the `thread` state's recordings (a state recording the item alone, its body shown in full).
    */
-  async function answerDetail(state: string, ref: string, recorded: boolean | 'item') {
+  async function answerDetail(state: string, ref: string, recorded: Detail) {
     const items = http.match(`/projects/api/work/${ref}`);
     expect(items.length).toBeLessThanOrEqual(1);
     const thread = http.expectOne(`/projects/api/work/${ref}/comments`);
@@ -157,7 +164,8 @@ describe('WorkItemPage (screenshots)', () => {
         .forEach((read) => read.flush(null, { status: 404, statusText: 'Not Found' }));
       return;
     }
-    thread.flush(await goldenMaster(state, 'listWorkComments'));
+    const rest = typeof recorded === 'object' ? recorded.thread : state;
+    thread.flush(await goldenMaster(rest, 'listWorkComments'));
     await settle();
     // The dossier's reads wait for the item's archetype; their resources start them in an effect.
     TestBed.tick();
@@ -165,15 +173,15 @@ describe('WorkItemPage (screenshots)', () => {
     if (entity.archetype === 'EPIC') {
       http
         .expectOne(`/projects/api/work/${ref}/dossier`)
-        .flush(await goldenMaster(state, 'listWorkDossier'));
+        .flush(await goldenMaster(rest, 'listWorkDossier'));
       http
         .expectOne(`/projects/api/work/${ref}/dossier-assets`)
-        .flush(await goldenMaster(state, 'listWorkDossierAssets'));
+        .flush(await goldenMaster(rest, 'listWorkDossierAssets'));
     }
     if (entity.archetype === 'TICKET') {
       http
         .expectOne(`/projects/api/work/${ref}/dossier`)
-        .flush(await goldenMaster(state, 'listWorkDossier'));
+        .flush(await goldenMaster(rest, 'listWorkDossier'));
     }
   }
 
@@ -202,7 +210,7 @@ describe('WorkItemPage (screenshots)', () => {
    * closings a VERIFIED ticket's line asks for (`answerWrapperClosings`), the item's own reads from
    * `state` when `detail` (`answerDetail`). Gives the page (`element`) and the frame around it.
    */
-  async function render(state: string, title: string, detail: boolean | 'item' = false) {
+  async function render(state: string, title: string, detail: Detail = false) {
     const work = await goldenMaster(state, 'listProjectWork');
     const entity = work.entities.find((e: { title: string }) => e.title === title);
     const opened = await openRoute(
@@ -461,7 +469,7 @@ describe('WorkItemPage (screenshots)', () => {
     const FINGERPRINT = '0123456789abcdef0123456789abcdef';
 
     it('says which error issue it was made from, linked', async () => {
-      const { element, frame, opened } = await render(FROM_ISSUE, TITLE, 'item');
+      const { element, frame, opened } = await render(FROM_ISSUE, TITLE, { thread: REPORTED });
       const line = element.getByText('Made from error issue', { exact: false });
       await expect.element(line).toMatchTextContent(`Made from error issue ${FINGERPRINT}`);
       await expect
@@ -476,7 +484,7 @@ describe('WorkItemPage (screenshots)', () => {
     });
 
     it('open-ticket-error-issue issue: the link opens the error issue’s page', async () => {
-      const { element, opened } = await render(FROM_ISSUE, TITLE, 'item');
+      const { element, opened } = await render(FROM_ISSUE, TITLE, { thread: REPORTED });
       // The pinned actions float over the link at this width: a click on the element itself.
       (element.getByRole('link', { name: FINGERPRINT }).element() as HTMLElement).click();
       await leftFor(opened);
