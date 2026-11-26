@@ -180651,13 +180651,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -180673,6 +180680,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -180773,6 +180798,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -180808,13 +180865,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -180830,6 +180894,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -180930,6 +181012,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -180965,14 +181079,39 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -181073,6 +181212,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -181108,14 +181279,39 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -181216,6 +181412,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -181251,13 +181479,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -181273,6 +181508,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -181373,6 +181626,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -181408,13 +181693,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -181430,6 +181722,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -181530,6 +181840,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -181570,13 +181912,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -181592,6 +181941,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -181692,6 +182059,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -181732,13 +182131,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -181754,6 +182160,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -181854,6 +182278,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -181894,14 +182350,39 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182002,6 +182483,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182042,14 +182555,39 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182150,6 +182688,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182190,13 +182760,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -182212,6 +182789,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182312,6 +182907,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182352,13 +182979,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -182374,6 +183008,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182474,6 +183126,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182509,13 +183193,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -182531,6 +183222,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182637,6 +183346,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182672,13 +183413,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -182694,6 +183442,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182800,6 +183566,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182835,14 +183633,21 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-all-agents:agents",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -182858,6 +183663,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -182964,6 +183787,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -182999,14 +183854,21 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-all-agents:agents",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -183022,6 +183884,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -183128,6 +184008,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -183163,14 +184075,39 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -183277,6 +184214,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -183312,14 +184281,39 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-settings:open"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -183426,6 +184420,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -183461,13 +184487,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -183483,6 +184516,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -183589,6 +184640,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -183624,13 +184707,20 @@
           "provider": "qits-projects-service",
           "state": "a project with no release requests",
           "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
         }
       ],
       "triggers": [
         "follow-breadcrumb:home",
         "follow-breadcrumb:project",
         "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
         "open-error-issue-logs:logs",
+        "open-error-issue-ticket:open",
         "open-error-issue-trace:trace",
         "open-project-desk:open",
         "open-project-settings:open",
@@ -183646,6 +184736,24 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
         {
           "source": "qits-observability-service#getErrorIssue",
           "item": null,
@@ -183752,6 +184860,38 @@
           "source": "qits-observability-service#getErrorIssue",
           "item": "fingerprint=0123456789abcdef0123456789abcdef",
           "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "qualifiedId",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
           "derived": []
         },
         {
@@ -184274,6 +185414,1112 @@
         "open-sidebar-section:work"
       ],
       "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+      "test": "ObservabilityErrorPage (screenshots) > says no ticket has been made from the issue yet",
+      "name": "no-tickets",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/errors/:fingerprint",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "stored error issues",
+          "operationId": "getErrorIssue"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
+        "open-error-issue-logs:logs",
+        "open-error-issue-trace:trace",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "exceptionType",
+            "message"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstVersion",
+            "lastVersion"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "hourly",
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "sampleTraceId",
+            "serviceName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "fingerprint",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "occurrences",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "sampleMessage",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+      "test": "ObservabilityErrorPage (screenshots) > says no ticket has been made from the issue yet",
+      "name": "no-tickets",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/errors/:fingerprint",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "stored error issues",
+          "operationId": "getErrorIssue"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
+        "open-error-issue-logs:logs",
+        "open-error-issue-trace:trace",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "exceptionType",
+            "message"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstVersion",
+            "lastVersion"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "hourly",
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "sampleTraceId",
+            "serviceName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "fingerprint",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "occurrences",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "sampleMessage",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+      "test": "ObservabilityErrorPage (screenshots) > says no ticket has been made from the issue yet",
+      "name": "no-tickets",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/errors/:fingerprint",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "stored error issues",
+          "operationId": "getErrorIssue"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "make-ticket-from-error-issue:ticket",
+        "open-error-issue-logs:logs",
+        "open-error-issue-trace:trace",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "exceptionType",
+            "message"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstVersion",
+            "lastVersion"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "hourly",
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "sampleTraceId",
+            "serviceName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "fingerprint",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "occurrences",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "sampleMessage",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+      "test": "ObservabilityErrorPage (screenshots) > says no ticket has been made from the issue yet",
+      "name": "no-tickets",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/errors/:fingerprint",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "stored error issues",
+          "operationId": "getErrorIssue"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "make-ticket-from-error-issue:ticket",
+        "open-error-issue-logs:logs",
+        "open-error-issue-trace:trace",
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "exceptionType",
+            "message"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstVersion",
+            "lastVersion"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "hourly",
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "sampleTraceId",
+            "serviceName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "fingerprint",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "occurrences",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "sampleMessage",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+      "test": "ObservabilityErrorPage (screenshots) > says no ticket has been made from the issue yet",
+      "name": "no-tickets",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/errors/:fingerprint",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "stored error issues",
+          "operationId": "getErrorIssue"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
+        "open-error-issue-logs:logs",
+        "open-error-issue-trace:trace",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "exceptionType",
+            "message"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstVersion",
+            "lastVersion"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "hourly",
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "sampleTraceId",
+            "serviceName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "fingerprint",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "occurrences",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "sampleMessage",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+      "test": "ObservabilityErrorPage (screenshots) > says no ticket has been made from the issue yet",
+      "name": "no-tickets",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/observability/errors/:fingerprint",
+      "records": [
+        {
+          "provider": "qits-observability-service",
+          "state": "stored error issues",
+          "operationId": "getErrorIssue"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no work",
+          "operationId": "listProjectWork"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "make-ticket-from-error-issue:ticket",
+        "open-error-issue-logs:logs",
+        "open-error-issue-trace:trace",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-observability-page:errors",
+        "open-sidebar-observability-page:logs",
+        "open-sidebar-observability-page:metrics",
+        "open-sidebar-observability-page:traces",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "fingerprint",
+            "exceptionType",
+            "message",
+            "serviceName",
+            "location",
+            "firstVersion",
+            "lastVersion",
+            "firstSeen",
+            "lastSeen",
+            "occurrences",
+            "sampleStacktrace"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "exceptionType",
+            "message"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "firstVersion",
+            "lastVersion"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "hourly",
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "lastSeen"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "sampleTraceId",
+            "serviceName"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": null,
+          "derived": [
+            "state"
+          ]
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "fingerprint",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "location",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "occurrences",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "sampleMessage",
+          "derived": []
+        },
+        {
+          "source": "qits-observability-service#getErrorIssue",
+          "item": "fingerprint=0123456789abcdef0123456789abcdef",
+          "field": "serviceName",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": null,
+          "field": null,
+          "derived": [
+            "entities"
+          ]
+        },
         {
           "source": "qits-projects-service#listProjects",
           "item": "id=00000000-0000-4000-8000-000000000001",
@@ -273587,6 +275833,298 @@
       ]
     },
     {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > is filled from an error issue as a new bug ticket naming it",
+      "name": "from-error-issue",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule",
+        "open-work-form-error-issue:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > is filled from an error issue as a new bug ticket naming it",
+      "name": "from-error-issue",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule",
+        "open-work-form-error-issue:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > is filled from an error issue as a new bug ticket naming it",
+      "name": "from-error-issue",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "open-project-settings:open",
+        "open-work-form-error-issue:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > is filled from an error issue as a new bug ticket naming it",
+      "name": "from-error-issue",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "open-project-settings:open",
+        "open-work-form-error-issue:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > is filled from an error issue as a new bug ticket naming it",
+      "name": "from-error-issue",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule",
+        "open-work-form-error-issue:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+      "test": "WorkCreatePage (screenshots) > is filled from an error issue as a new bug ticket naming it",
+      "name": "from-error-issue",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/create",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        }
+      ],
+      "triggers": [
+        "cancel-work-create:toWork",
+        "create-work-item:created",
+        "create-work-item:refused",
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule",
+        "open-work-form-error-issue:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic-desktop-dark.html",
       "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
       "test": "WorkCreatePage (screenshots) > is filled from an idea as a new EPIC",
@@ -296368,6 +298906,824 @@
           "source": "qits-projects-service#listWorkComments",
           "item": "id=00000000-0000-4000-8000-000000000012",
           "field": "body",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-desktop-dark.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+      "test": "WorkItemPage (screenshots) > a ticket made from an error issue > says which error issue it was made from, linked",
+      "name": "detail-ticket-error-issue",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/detail/:id",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "the archetype registry",
+          "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:work",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "blocked"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "needs"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "assignee",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "errorIssue",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "impetus",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "ticketType",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualifiedId",
+            "archetype",
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listWorkDossier",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-desktop-light.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+      "test": "WorkItemPage (screenshots) > a ticket made from an error issue > says which error issue it was made from, linked",
+      "name": "detail-ticket-error-issue",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/detail/:id",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "the archetype registry",
+          "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:work",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "blocked"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "needs"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "assignee",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "errorIssue",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "impetus",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "ticketType",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualifiedId",
+            "archetype",
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listWorkDossier",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-phone-dark.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+      "test": "WorkItemPage (screenshots) > a ticket made from an error issue > says which error issue it was made from, linked",
+      "name": "detail-ticket-error-issue",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/detail/:id",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "the archetype registry",
+          "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "blocked"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "needs"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "assignee",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "errorIssue",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "impetus",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "ticketType",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualifiedId",
+            "archetype",
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listWorkDossier",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-phone-light.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+      "test": "WorkItemPage (screenshots) > a ticket made from an error issue > says which error issue it was made from, linked",
+      "name": "detail-ticket-error-issue",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/detail/:id",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "the archetype registry",
+          "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "open-project-settings:open"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "blocked"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "needs"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "assignee",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "errorIssue",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "impetus",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "ticketType",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualifiedId",
+            "archetype",
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listWorkDossier",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-tablet-dark.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+      "test": "WorkItemPage (screenshots) > a ticket made from an error issue > says which error issue it was made from, linked",
+      "name": "detail-ticket-error-issue",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/detail/:id",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "the archetype registry",
+          "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:work",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "blocked"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "needs"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "assignee",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "errorIssue",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "impetus",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "ticketType",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualifiedId",
+            "archetype",
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listWorkDossier",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-tablet-light.html",
+      "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+      "test": "WorkItemPage (screenshots) > a ticket made from an error issue > says which error issue it was made from, linked",
+      "name": "detail-ticket-error-issue",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "projects/:slug/work/detail/:id",
+      "records": [
+        {
+          "provider": "qits-projects-service",
+          "state": "a project exists",
+          "operationId": "listProjects"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a project with no release requests",
+          "operationId": "listProjectReleaseRequests"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "getWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "a ticket made from an error issue",
+          "operationId": "listProjectWork"
+        },
+        {
+          "provider": "qits-projects-service",
+          "state": "the archetype registry",
+          "operationId": "listWorkArchetypes"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "a work item with no workspaces",
+          "operationId": "listWorkItemWorkspaces"
+        },
+        {
+          "provider": "qits-workspaces-service",
+          "state": "no work item has an open workspace",
+          "operationId": "listOpenWorkspaces"
+        }
+      ],
+      "triggers": [
+        "follow-breadcrumb:home",
+        "follow-breadcrumb:project",
+        "follow-breadcrumb:projects",
+        "follow-breadcrumb:work",
+        "open-project-desk:open",
+        "open-project-settings:open",
+        "open-sidebar-section:components",
+        "open-sidebar-section:deployments",
+        "open-sidebar-section:events",
+        "open-sidebar-section:observability",
+        "open-sidebar-section:releases",
+        "open-sidebar-section:work",
+        "open-sidebar-work-page:acceptance",
+        "open-sidebar-work-page:archive",
+        "open-sidebar-work-page:ideas",
+        "open-sidebar-work-page:inProgress",
+        "open-sidebar-work-page:refinement",
+        "open-sidebar-work-page:schedule"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "blocked"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "needs"
+          ]
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "assignee",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "errorIssue",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "impetus",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#getWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "ticketType",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": null,
+          "derived": [
+            "qualifiedId",
+            "archetype",
+            "status"
+          ]
+        },
+        {
+          "source": "qits-projects-service#listProjectWork",
+          "item": "id=00000000-0000-4000-8000-000000000002",
+          "field": "title",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listProjects",
+          "item": "id=00000000-0000-4000-8000-000000000001",
+          "field": "name",
+          "derived": []
+        },
+        {
+          "source": "qits-projects-service#listWorkDossier",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -392433,6 +395789,12 @@
       "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/missing-phone-light.html",
       "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/missing-tablet-dark.html",
       "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/missing-tablet-light.html",
+      "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-desktop-dark.html",
+      "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-desktop-light.html",
+      "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-phone-dark.html",
+      "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-phone-light.html",
+      "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-tablet-dark.html",
+      "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/no-tickets-tablet-light.html",
       "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/refused-desktop-dark.html",
       "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/refused-desktop-light.html",
       "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts/refused-phone-dark.html",
@@ -393043,6 +396405,12 @@
       "src/app/routes/projects/[slug]/work/work.layout.browser.spec.ts/loading-tablet-light.html"
     ],
     "projects/:slug/work/create": [
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-desktop-dark.html",
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-desktop-light.html",
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-phone-dark.html",
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-phone-light.html",
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-tablet-dark.html",
+      "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-error-issue-tablet-light.html",
       "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic-desktop-dark.html",
       "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic-desktop-light.html",
       "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts/from-idea-epic-menu-agents-desktop-dark.html",
@@ -393179,6 +396547,12 @@
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-phone-light.html",
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-tablet-dark.html",
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-task-tablet-light.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-desktop-dark.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-desktop-light.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-phone-dark.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-phone-light.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-tablet-dark.html",
+      "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-error-issue-tablet-light.html",
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-wrapper-closing-desktop-dark.html",
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-wrapper-closing-desktop-light.html",
       "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts/detail-ticket-wrapper-closing-phone-dark.html",
@@ -394861,10 +398235,30 @@
       },
       {
         "route": "projects/:slug/observability/errors/:fingerprint",
+        "interaction": "make-ticket-from-error-issue",
+        "outcome": "ticket",
+        "kind": "exit",
+        "to": "projects/:slug/work/create",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.ts"
+      },
+      {
+        "route": "projects/:slug/observability/errors/:fingerprint",
         "interaction": "open-error-issue-logs",
         "outcome": "logs",
         "kind": "exit",
         "to": "projects/:slug/observability/logs",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.ts"
+      },
+      {
+        "route": "projects/:slug/observability/errors/:fingerprint",
+        "interaction": "open-error-issue-ticket",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/work/detail/:id",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.ts"
@@ -395205,6 +398599,16 @@
         "outcome": "open",
         "kind": "exit",
         "to": "projects/:slug/ideas/detail/:ideaId",
+        "global": false,
+        "triggered": true,
+        "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
+      },
+      {
+        "route": "projects/:slug/work/create",
+        "interaction": "open-work-form-error-issue",
+        "outcome": "open",
+        "kind": "exit",
+        "to": "projects/:slug/observability/errors/:fingerprint",
         "global": false,
         "triggered": true,
         "file": "src/app/routes/projects/[slug]/work/create/work-create.page.ts"
@@ -397048,6 +400452,16 @@
         "global": true,
         "triggered": true,
         "file": "src/app/patterns/work/ticket-card/ticket-card.ts"
+      },
+      {
+        "route": null,
+        "interaction": "open-ticket-error-issue",
+        "outcome": "issue",
+        "kind": "exit",
+        "to": "projects/:slug/observability/errors/:fingerprint",
+        "global": true,
+        "triggered": true,
+        "file": "src/app/patterns/work/detail/ticket-detail/ticket-detail.ts"
       },
       {
         "route": null,
@@ -399646,10 +403060,28 @@
       },
       {
         "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+        "test": "ObservabilityErrorPage (screenshots) > make-ticket-from-error-issue ticket: Make ticket opens the work form filled from the issue",
+        "route": "projects/:slug/observability/errors/:fingerprint",
+        "interaction": "make-ticket-from-error-issue",
+        "outcome": "ticket",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
         "test": "ObservabilityErrorPage (screenshots) > open-error-issue-logs logs: Show log lines opens the Logs page at the fingerprint",
         "route": "projects/:slug/observability/errors/:fingerprint",
         "interaction": "open-error-issue-logs",
         "outcome": "logs",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/observability/errors/[fingerprint]/observability-error.page.browser.spec.ts",
+        "test": "ObservabilityErrorPage (screenshots) > open-error-issue-ticket open: a ticket opens its page",
+        "route": "projects/:slug/observability/errors/:fingerprint",
+        "interaction": "open-error-issue-ticket",
+        "outcome": "open",
         "kind": "exit",
         "freeze": null
       },
@@ -400051,6 +403483,15 @@
       },
       {
         "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > create-work-item created: a ticket made from an error issue sends its errorIssue",
+        "route": "projects/:slug/work/create",
+        "interaction": "create-work-item",
+        "outcome": "created",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
         "test": "WorkCreatePage (screenshots) > create-work-item created: goes to the new ticket’s page",
         "route": "projects/:slug/work/create",
         "interaction": "create-work-item",
@@ -400072,6 +403513,15 @@
         "test": "WorkCreatePage (screenshots) > open-inspiring-idea open: the “Inspired by” link opens the idea",
         "route": "projects/:slug/work/create",
         "interaction": "open-inspiring-idea",
+        "outcome": "open",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/create/work-create.page.browser.spec.ts",
+        "test": "WorkCreatePage (screenshots) > open-work-form-error-issue open: the “Made from error issue” link opens the issue",
+        "route": "projects/:slug/work/create",
+        "interaction": "open-work-form-error-issue",
         "outcome": "open",
         "kind": "exit",
         "freeze": null
@@ -400127,6 +403577,15 @@
         "route": "projects/:slug/work/detail/:id/agent",
         "interaction": "follow-work-item-agent",
         "outcome": "toItem",
+        "kind": "exit",
+        "freeze": null
+      },
+      {
+        "spec": "src/app/routes/projects/[slug]/work/detail/[id]/work-item.page.browser.spec.ts",
+        "test": "WorkItemPage (screenshots) > a ticket made from an error issue > open-ticket-error-issue issue: the link opens the error issue’s page",
+        "route": "projects/:slug/work/detail/:id",
+        "interaction": "open-ticket-error-issue",
+        "outcome": "issue",
         "kind": "exit",
         "freeze": null
       },
