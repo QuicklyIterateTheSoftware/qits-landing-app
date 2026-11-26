@@ -18,6 +18,7 @@ import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as mirrorClient } from './api/mirror/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
 import { client as systemClient } from './api/system/client.gen';
+import { client as togglesClient } from './api/toggles/client.gen';
 import { client as workspacesClient } from './api/workspaces/client.gen';
 import { client as workspaceDaemonClient } from './api/workspace-daemon/client.gen';
 import { appConfig } from './app.config';
@@ -51,6 +52,7 @@ describe('appConfig', () => {
       mirrorClient,
       projectsClient,
       systemClient,
+      togglesClient,
       workspacesClient,
       workspaceDaemonClient,
     ]) {

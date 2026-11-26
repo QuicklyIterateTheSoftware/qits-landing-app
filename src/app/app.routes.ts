@@ -208,6 +208,12 @@ import { qitsAuthCallbackRoute, qitsSignedInGuard } from '@qits/angular';
  * the sidebar's processes: gc, scan and sbom-check since qits-2490); it is an entry point, where qits-orchestrator-frontend's old `''` and `processes/:kind`
  * hand off.
  *
+ * The Toggles section (qits-2704) is at `toggles` (`TogglesPage`): qits-toggles' declared feature
+ * toggles, each with its ordered rules in brief, reached from the root sidebar with no project open.
+ * One toggle's rule editor is at `toggles/:slug` (`TogglePage`), opened from the list
+ * (`open-toggle`). Neither page creates a toggle: a toggle exists by its declaration in
+ * qits-toggles-service's code.
+ *
  * The IdP admin section (qits-2481) is at `idp/clients`, `idp/users` and `idp/devices`
  * (`IdpClientsPage`, `IdpUsersPage`, `IdpDevicesPage`): the idp's own admin pages
  * (qits-idp-frontend), each in a frame filling the main slot (`IdpFrame`), reached from the root
@@ -1155,6 +1161,23 @@ export const routes: Routes = [
               import('./routes/orchestrator/processes/[kind]/orchestrator-process.page').then(
                 (m) => m.OrchestratorProcessPage,
               ),
+          },
+        ],
+      },
+      {
+        // The Toggles section (qits-2704): qits-toggles' declared toggles and their rules, bound to
+        // no project.
+        path: 'toggles',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () => import('./routes/toggles/toggles.page').then((m) => m.TogglesPage),
+          },
+          {
+            path: ':slug',
+            loadComponent: () =>
+              import('./routes/toggles/[slug]/toggle.page').then((m) => m.TogglePage),
           },
         ],
       },

@@ -63,6 +63,7 @@ contracts:
     qits-deployments-service: { packages: [maven] }
     qits-orchestrator-service: { packages: [maven] }
     qits-mirror-service: { packages: [maven] }
+    qits-toggles-service: { packages: [maven] }
 
   # qits-2465: pact parity with qits-platform-access-monorepo (the CLI), checked by qits-ci on
   # every release request. An operation the CLI makes that this page does not must be listed here

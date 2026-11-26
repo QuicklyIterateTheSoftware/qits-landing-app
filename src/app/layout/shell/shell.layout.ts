@@ -127,6 +127,7 @@ export type GlobalPath =
   | 'idp/clients'
   | 'idp/users'
   | 'idp/devices'
+  | 'toggles'
   | 'orchestrator/processes/:kind';
 
 /** A global section's own page: a route that takes no params (the sidebar's entry). */
@@ -234,7 +235,7 @@ export interface NavNote {
  * `open-sidebar-mirror`, and Orchestrator, `open-sidebar-orchestrator`, in-app sections, with
  * System's own pages below it while it is open, `open-sidebar-system-page`, and Mirror's,
  * `open-sidebar-mirror-page`; IdP admin, `open-sidebar-idp`, with its pages below it,
- * `open-sidebar-idp-page`, qits-2481) and Network access below them (`open-sidebar-network-access`,
+ * `open-sidebar-idp-page`, qits-2481; Toggles, `open-sidebar-toggles`, qits-2704) and Network access below them (`open-sidebar-network-access`,
  * external), the desk icon (`open-project-desk`) and its phone entry (`open-sidebar-desk`), the
  * gear (`open-project-settings`), and the trail's brand and crumbs (`follow-breadcrumb`: home,
  * the project and the repository, one per layer of the sidebar, qits-2570), handed to
@@ -803,6 +804,15 @@ export class ShellLayout {
     open: exit('idp'),
   });
 
+  /**
+   * The sidebar's Toggles (qits-2704): the Toggles section, qits-toggles' declared feature toggles,
+   * which belong to no project. `toggles` opens the list, and the entry stays current on a
+   * toggle's rule editor below it.
+   */
+  protected readonly toggles = outcomes('open-sidebar-toggles', {
+    open: exit('toggles'),
+  });
+
   /** The IdP admin section's pages below the sidebar's IdP admin, one exit per page (qits-2481). */
   private readonly idpPages = outcomes('open-sidebar-idp-page', {
     clients: exit('idp/clients'),
@@ -821,7 +831,8 @@ export class ShellLayout {
    * qits-2347…qits-2356 each add one child there. Mirror lists Caches and OCI upstreams
    * (qits-2479), one exit each of `open-sidebar-mirror-page`; Orchestrator lists its processes
    * (qits-2480): Garbage collection, which `orchestrator` opens, Manifest scan and SBOM check
-   * (qits-2490), one exit each of `open-sidebar-orchestrator-page`.
+   * (qits-2490), one exit each of `open-sidebar-orchestrator-page`. Toggles (qits-2704) lists no
+   * pages of its own.
    */
   protected readonly globalLinks = computed((): readonly GlobalLink[] => {
     if (this.selected.slug() !== undefined) return [];
@@ -892,6 +903,7 @@ export class ShellLayout {
           { label: 'Signed-in devices', exit: idp.devices, path: idp.devices.url() },
         ],
       },
+      { kind: 'exit', label: 'Toggles', exit: this.toggles.open },
     ];
   });
 

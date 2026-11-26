@@ -26,6 +26,7 @@ declare module 'vitest/browser' {
         | 'qits-deployments'
         | 'qits-orchestrator'
         | 'qits-mirror'
+        | 'qits-toggles'
         | 'qits-idp',
     ) => Promise<T>;
     /**

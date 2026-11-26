@@ -17,6 +17,7 @@ const REPOSITORY = {
   'qits-deployments': 'qits-deployments-service',
   'qits-orchestrator': 'qits-orchestrator-service',
   'qits-mirror': 'qits-mirror-service',
+  'qits-toggles': 'qits-toggles-service',
   'qits-idp': 'qits-idp-service',
 } as const;
 

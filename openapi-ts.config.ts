@@ -36,6 +36,8 @@ const services = [
   'qits-orchestrator/qits-orchestrator-service',
   // The Mirror section (qits-2357): the OCI registries the mirror fronts.
   'qits-mirror/qits-mirror-service',
+  // The Toggles section (qits-2704): the declared toggles and their ordered rules.
+  'qits-toggles/qits-toggles-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

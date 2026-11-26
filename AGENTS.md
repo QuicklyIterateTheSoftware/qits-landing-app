@@ -1675,6 +1675,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-maintenance-service   | `core/maintenance/maintenance.operations*.ts`                                                                                      | `pacts/qits-landing-app_qits-maintenance-service.json`   | `@qits/maintenance-golden-masters`      |
 | qits-orchestrator-service  | `core/orchestrator/processes.operations*.ts`                                                                                       | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
 | qits-mirror-service        | `core/mirror/{upstreams,repositories,repository-packages}.operations*.ts`                                                          | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
+| qits-toggles-service       | `core/toggles/toggles.operations*.ts`                                                                                              | `pacts/qits-landing-app_qits-toggles-service.json`       | `@qits/toggles-golden-masters`          |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,

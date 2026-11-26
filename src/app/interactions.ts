@@ -809,6 +809,22 @@ export const INTERACTIONS = {
    */
   'show-mirror-upstreams': 'The OCI upstreams page lists the registries the mirror fronts',
   /**
+   * `toggles.page.ts` via `TOGGLE_LIST` (qits-2704): the Toggles page lists qits-toggles' declared
+   * toggles, each with its description and its ordered rules in brief.
+   */
+  'show-toggles': 'The Toggles page lists the declared toggles and their rules',
+  /**
+   * `toggle.page.ts` via `TOGGLE_DETAIL` (qits-2704): a toggle's rule editor reads the toggle, its
+   * ordered rules and the version a save names; an undeclared slug is said as such (404).
+   */
+  'show-toggle': 'A toggle’s rule editor reads the toggle and its ordered rules',
+  /**
+   * `toggle.page.ts` via `TOGGLE_RULES_SAVE` (qits-2704): Save sends the whole ordered list and the
+   * version it was read at; a 400 names the rule at fault, a 403 needs qits:admin or the delivery
+   * desk, a 409 means someone else changed the rules first.
+   */
+  'save-toggle-rules': 'Saving a toggle’s rules replaces the whole ordered list',
+  /**
    * `mirror-repository.page.ts` via `REPOSITORY_PACKAGES` (qits-2358): the Mirror section's
    * repository page shows one cache root's type, upstream and eviction rule, its packages and the
    * selected package's versions. Refresh reads them again (no event announces a change).
@@ -1762,6 +1778,32 @@ export const INTERACTIONS = {
    * Navigates only, and names no pact.
    */
   'open-sidebar-orchestrator': 'The sidebar’s Orchestrator entry opens the Orchestrator section',
+  /**
+   * `shell.layout.ts`: the sidebar's Toggles, a global section shown with no project open, opens
+   * the Toggles section (`toggles`, qits-2704). Navigates only, and names no pact.
+   */
+  'open-sidebar-toggles': 'The sidebar’s Toggles entry opens the Toggles section',
+  /**
+   * `toggles.page.ts`: a toggle's slug opens its rule editor (qits-2704). Navigates only, and
+   * names no pact.
+   */
+  'open-toggle': 'A toggle of the Toggles list opens its rule editor',
+  /**
+   * `toggle.page.ts`: the editor's back link returns to the Toggles list (qits-2704). Navigates
+   * only, and names no pact.
+   */
+  'back-to-toggles': 'The rule editor’s back link returns to the Toggles list',
+  /**
+   * `toggle.page.ts`: adding a USER or TIME rule, removing one, moving one up or down and changing
+   * a rule's value, subjects or instant, all in the editor's draft (qits-2704). Sends nothing until
+   * Save, and names no pact.
+   */
+  'edit-toggle-rules': 'Editing a toggle’s ordered rules changes the draft until Save',
+  /**
+   * `toggle.page.ts`: after a 409, Reload reads the toggle again and drops the draft (qits-2704).
+   * The read is `show-toggle`'s; this names no pact of its own.
+   */
+  'reload-toggle-rules': 'After a conflicting save, Reload shows the rules someone else saved',
   /**
    * `shell.layout.ts`: the Mirror section's pages, listed below the sidebar's Mirror while the
    * section is open, open their page (Caches, OCI upstreams; qits-2479). Navigates only, and names

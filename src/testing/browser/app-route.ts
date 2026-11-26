@@ -47,6 +47,7 @@ import { client as mirrorClient } from '../../app/api/mirror/client.gen';
 import { client as observabilityClient } from '../../app/api/observability/client.gen';
 import { client as orchestratorClient } from '../../app/api/orchestrator/client.gen';
 import { client as projectsClient } from '../../app/api/projects/client.gen';
+import { client as togglesClient } from '../../app/api/toggles/client.gen';
 import { provideHeyApiClient } from '../../app/api/projects/client/client.gen';
 import { client as systemClient } from '../../app/api/system/client.gen';
 import { client as workspaceDaemonClient } from '../../app/api/workspace-daemon/client.gen';
@@ -95,6 +96,7 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(deploymentsClient),
     provideHeyApiClient(orchestratorClient),
     provideHeyApiClient(mirrorClient),
+    provideHeyApiClient(togglesClient),
     provideHeyApiClient(edgeClient),
     // The idp's page origin, so the IdP admin section's frames (qits-2481) have an address, as
     // they do deployed; the old artifacts explorer's, so the store
