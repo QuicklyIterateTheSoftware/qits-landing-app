@@ -139,8 +139,9 @@ export interface FrameReads {
   readonly releaseRequests?: string;
   /**
    * qits-workspaces' `listAgents` of the open project's ACTIVE agents (`ProjectActiveAgents`: the
-   * agents menu; the agent layout reads the same), or `'refused'` (403, the default:
-   * the menu shows its icon alone).
+   * agents menu; the agent layout reads the same), or `'refused'` (403). Default
+   * `'a work item with no workspaces'`, the recorded empty list (`NO_ACTIVE_AGENTS`): the closed
+   * menu shows its icon alone, the open one "No active agents" (qits-2719), never a failed read.
    */
   readonly agents?: string;
   /**
@@ -164,6 +165,14 @@ interface FrameRead {
   readonly answer: (state: string) => Promise<object>;
 }
 
+/**
+ * The recorded empty `listAgents`: qits-workspaces records no project whose ACTIVE agents are none,
+ * so the agents frame read is answered with the empty list it records for a work item with no
+ * workspaces (`{ "agents": [] }`), as the work item spec did first (qits-2708). A 403 default drew
+ * the open agents menu's "Failed to load" into every `shootShellMenus` shot (qits-2719).
+ */
+const NO_ACTIVE_AGENTS = 'a work item with no workspaces';
+
 const FRAME_READS: readonly FrameRead[] = [
   {
     key: 'projects',
@@ -179,7 +188,7 @@ const FRAME_READS: readonly FrameRead[] = [
   },
   {
     key: 'agents',
-    fallback: 'refused',
+    fallback: NO_ACTIVE_AGENTS,
     matches: (url) => /^\/workspaces\/api\/agents\?projectId=[^&]+&state=ACTIVE$/.test(url),
     answer: (state) => goldenMaster(state, 'listAgents', 'qits-workspaces'),
   },

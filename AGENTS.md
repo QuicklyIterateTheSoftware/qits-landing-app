@@ -2012,7 +2012,8 @@ step image that has Chromium, so a changed pixel fails the release request.
   `qitsSignedInGuard` passes), the spec's own providers after it; then `openRoute(url, reads?)`,
   which navigates to the page's URL and answers the frame's reads from golden masters by URL: the
   project list (`'a project exists'`), the open project's release requests (`'a project with no
-release requests'`), its ACTIVE agents (refused with 403: the agents menu shows its icon alone)
+release requests'`), its ACTIVE agents (the recorded empty list, "a work item with no
+  workspaces": the agents menu shows its icon alone, and open "No active agents"; qits-2719)
   and the open workspaces (`WorkLayout`). A page that reads one of them too gets the same
   answer as the frame (the page's request and the frame's may be two; the helper answers every one
   for that URL): `reads` names the state, or `'unanswered'` leaves them all to the spec, which
@@ -2022,7 +2023,8 @@ release requests'`), its ACTIVE agents (refused with 403: the agents menu shows 
   but for one rule (qits-2225): the outcome check judges the shell's triggers per page route, so
   each project page's spec calls `shootShellMenus(opened, name)` (`src/testing/browser/
 shell-menus.ts`) once, which shoots the page with each top-bar menu holding a declared exit
-  open, and a page drawing a work reference `shootWorkRefPreview` (its preview open). A trigger
+  open (failing a shot whose open panel shows a "Failed to load" image, qits-2719), and a page
+  drawing a work reference `shootWorkRefPreview` (its preview open). A trigger
   nobody can reach on a route is not rendered there at all (a closed sidebar section's pages, the
   agents menu and gear with no project, a hidden Workspace link), never only hidden. The
   shell's other states (wide, narrow, the burger, each menu) are `shell.layout.browser.spec.ts`'s, the
