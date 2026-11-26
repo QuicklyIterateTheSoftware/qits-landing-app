@@ -1,5 +1,11 @@
 import { QitsApiError, QitsOfflineError } from '@qits/angular';
-import { explainTargetRefusal, targetRefusalOf, targetRefusalText } from './target-refusals';
+import {
+  explainTargetRefusal,
+  isSlotsRefusal,
+  SLOTS_EXCEED_MEMORY,
+  targetRefusalOf,
+  targetRefusalText,
+} from './target-refusals';
 
 const OPERATION = {
   provider: 'qits-system-service',
@@ -50,6 +56,18 @@ describe('explainTargetRefusal (qits-2351)', () => {
     ['SIGN_IN_NOT_FOUND', 'This sign-in is gone: start again.'],
   ])('says %s in its own sentence', (code, sentence) => {
     expect(explainTargetRefusal({ status: 409, code, message: 'raw' }, 'do it')).toBe(sentence);
+  });
+
+  it('says SLOTS_EXCEED_MEMORY in the service’s own words, which name the limit (qits-2581)', () => {
+    const message =
+      'target workstation holds at most 3 CI lease(s) of 6 GiB (29.2 GiB less the 8 GiB builder), not 6';
+    const refusal = { status: 400, code: SLOTS_EXCEED_MEMORY, message };
+    expect(isSlotsRefusal(refusal)).toBe(true);
+    expect(explainTargetRefusal(refusal, 'save the target')).toBe(message);
+    expect(
+      explainTargetRefusal({ status: 400, code: SLOTS_EXCEED_MEMORY }, 'save the target'),
+    ).toBe('The target’s memory can never hold these slot settings.');
+    expect(isSlotsRefusal({ status: 409, code: 'RESERVATIONS_EXCEED_TOTAL' })).toBe(false);
   });
 
   it('says a 403 needs an admin role', () => {

@@ -43,8 +43,21 @@ const CODES: Readonly<Record<string, string>> = {
 };
 
 /**
+ * qits-system's refusal of slot settings the target's reported memory can never hold (qits-2581,
+ * 400). Its message names the limit (`target workstation holds at most 3 CI lease(s) of 6 GiB
+ * (29.2 GiB less the 8 GiB builder), not 6`), so it is said verbatim rather than as a fixed
+ * sentence, and the Edit form shows it beside the reserved slots.
+ */
+export const SLOTS_EXCEED_MEMORY = 'SLOTS_EXCEED_MEMORY';
+
+/** Whether `refusal` is {@link SLOTS_EXCEED_MEMORY}: the slot settings, not the write, are wrong. */
+export const isSlotsRefusal = (refusal: TargetRefusal): boolean =>
+  refusal.code === SLOTS_EXCEED_MEMORY;
+
+/**
  * A refusal, said for a person (qits-2351), `doing` naming the write ("declare the target"):
  *
+ * - `SLOTS_EXCEED_MEMORY` (qits-2581): the service's message verbatim, since it names the limit;
  * - a code qits-system names (`TARGET_NAME_TAKEN`, `RESERVATIONS_EXCEED_TOTAL`,
  *   `MAXIMUM_BELOW_RESERVATION`, `TARGET_BUSY`, `TARGET_UNAVAILABLE`, `SIGN_IN_RUNNING`,
  *   `SIGN_IN_NOT_AWAITING_CODE`, `SIGN_IN_NOT_FOUND`): its own sentence;
@@ -56,6 +69,9 @@ const CODES: Readonly<Record<string, string>> = {
  */
 export function explainTargetRefusal(refusal: TargetRefusal, doing: string): string {
   if (refusal.offline) return `Could not ${doing} — this browser is offline; nothing was sent.`;
+  if (isSlotsRefusal(refusal)) {
+    return refusal.message ?? 'The target’s memory can never hold these slot settings.';
+  }
   const known = refusal.code ? CODES[refusal.code] : undefined;
   if (known) return known;
   if (refusal.status === 403) return 'This needs an admin role.';
