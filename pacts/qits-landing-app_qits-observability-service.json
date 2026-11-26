@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "dismiss-error-issue",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/errors/:fingerprint"
           }
         }
       },
@@ -110,7 +111,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "open-error-issue-logs",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/logs"
           }
         }
       },
@@ -315,7 +317,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "open-error-issue",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/errors/:fingerprint"
           }
         }
       },
@@ -575,7 +578,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-telemetry-errors",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "projects/:slug/observability/errors"
           }
         }
       },
@@ -2066,7 +2070,7 @@
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
             "kind": "ui",
-            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/traces"
+            "route": "projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/traces"
           }
         }
       },
@@ -2127,7 +2131,7 @@
             "app": "qits-landing-app",
             "interaction": "show-telemetry-sources",
             "kind": "ui",
-            "route": "projects/:slug/observability/errors, projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/traces"
+            "route": "projects/:slug/observability/logs, projects/:slug/observability/metrics, projects/:slug/observability/traces"
           }
         }
       },
