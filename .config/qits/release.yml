@@ -95,6 +95,7 @@ contracts:
         abortDatabaseMove: "qits deployments database abort; qits-landing-app has no page for it yet"
         deleteSetting: "qits deployments settings delete; qits-landing-app has no page for it yet"
         getDatabaseMove: "qits deployments database move-status; qits-landing-app has no page for it yet"
+        getEgressGrants: "qits egress grants list; qits-landing-app has no page for it yet"
         listDatabaseMoves: "qits deployments database moves; qits-landing-app has no page for it yet"
         listSettings: "qits deployments settings list; qits-landing-app has no page for it yet"
         moveDatabase: "qits deployments database move; qits-landing-app has no page for it yet"
