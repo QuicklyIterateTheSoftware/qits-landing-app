@@ -174,18 +174,21 @@ describe('ContractStatePage (screenshots)', () => {
     );
   });
 
-  it('follow-breadcrumb repositoryContracts: the trail’s Contracts opens the list (qits-2478)', async () => {
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async () => {
     const opened = await withDependencies();
-    await page
-      .getByRole('navigation', { name: 'Breadcrumb' })
-      .getByRole('link', { name: 'Contracts', exact: true })
-      .last()
-      .click();
-    await commands.parkPointer();
-    await leftFor(opened);
-    expect(fired()).toEqual(['follow-breadcrumb:repositoryContracts']);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/components/${GITHOST}/contracts`,
-    );
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb).toMatchTextContent(`qits›${opened.project.name}›${GITHOST}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Contracts');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText(GITHOST, { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Contracts', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
   });
 });

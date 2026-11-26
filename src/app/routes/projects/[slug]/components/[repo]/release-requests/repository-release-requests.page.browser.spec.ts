@@ -168,31 +168,23 @@ describe('RepositoryReleaseRequestsPage (screenshots)', () => {
     expect(reached()).toEqual([`open-sidebar-repository-page:${key}`]);
   });
 
-  it('follow-breadcrumb repository: the trail’s repository opens its page', async () => {
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async () => {
     const opened = await render();
-    await userEvent.click(
-      page
-        .getByRole('navigation', { name: 'Breadcrumb' })
-        .getByRole('link', { name: 'contract-service' })
-        .last(),
-    );
-    await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/components/contract-service`,
-    );
-    expect(reached()).toEqual(['follow-breadcrumb:repository']);
-  });
-
-  it('follow-breadcrumb components: the trail’s Components opens the project’s list', async () => {
-    const opened = await render();
-    await userEvent.click(
-      page
-        .getByRole('navigation', { name: 'Breadcrumb' })
-        .getByRole('link', { name: 'Components' })
-        .last(),
-    );
-    await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(`/projects/${opened.project.slug}/components`);
-    expect(reached()).toEqual(['follow-breadcrumb:components']);
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect
+      .element(breadcrumb)
+      .toMatchTextContent(`qits›${opened.project.name}›${'contract-service'}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Release requests');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText('contract-service', { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Release requests', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
   });
 });

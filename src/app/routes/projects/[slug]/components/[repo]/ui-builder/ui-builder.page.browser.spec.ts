@@ -93,6 +93,13 @@ describe('UiBuilderPage (screenshots)', () => {
    */
   const sidebar = () => page.getByRole('navigation', { name: 'qits' });
 
+  /** The shell's trail, which names the sidebar's layers (qits-2570). */
+  const trail = () => page.getByRole('navigation', { name: 'Breadcrumb' });
+
+  /** What the trail reads on qits-landing-app's UI builder, from 768px up. */
+  const builderTrail = (opened: OpenedRoute) =>
+    `qits›${opened.project.name ?? opened.project.slug}›qits-landing-app›UI Builder`;
+
   /** The page for `repo`, with the project, its repositories and the docs catalog requested. */
   async function render(repo: string) {
     // Wide enough for the sidebar and the two columns.
@@ -178,6 +185,14 @@ describe('UiBuilderPage (screenshots)', () => {
     await expect.element(sidebar().getByRole('link', { name: '← qits-landing-app' })).toBeVisible();
     expect(sidebar().getByRole('list', { name: 'Repository' }).query()).toBeNull();
     expect(view.getByRole('navigation', { name: 'Routes' }).query()).toBeNull();
+    // Its own layer, the trail's last crumb (qits-2570): qits › <project> › <repo> › UI Builder.
+    await expect.element(trail()).toMatchTextContent(builderTrail(opened));
+    await expect
+      .element(trail().getByText('UI Builder', { exact: true }).last())
+      .toHaveAttribute('aria-current', 'page');
+    await expect
+      .element(trail().getByRole('link', { name: 'qits-landing-app', exact: true }).last())
+      .toHaveAttribute('href', `/projects/${opened.project.slug}/components/qits-landing-app`);
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('loaded', { kind: 'DATA' });
@@ -553,6 +568,14 @@ describe('UiBuilderPage (screenshots)', () => {
       .element(view)
       .toMatchTextContent('No frozen routes published for contract-frontend.');
     await expect.element(view).toMatchTextContent('Scope: contract');
+    // The trail is decided from the route, not from the sidebar the page holds (qits-2570): with
+    // nothing published the repository sidebar stays, and the trail still ends with UI Builder.
+    await expect.element(sidebar().getByRole('list', { name: 'Repository' })).toBeVisible();
+    await expect
+      .element(trail())
+      .toMatchTextContent(
+        `qits›${opened.project.name ?? opened.project.slug}›contract-frontend›UI Builder`,
+      );
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('none', { kind: 'NO_DATA' });

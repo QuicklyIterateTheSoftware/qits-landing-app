@@ -132,14 +132,14 @@ export interface FrameReads {
   readonly projects?: string;
   /**
    * qits-projects' `listProjectReleaseRequests` of the open project: the shell's one read
-   * (`ProjectReleaseRequests`: the sidebar's Releases line, the trail, the agents' waits,
+   * (`ProjectReleaseRequests`: the sidebar's Releases line, the agents' waits,
    * the lightning menu and the Release Requests page; qits-2146); default
    * `'a project with no release requests'`.
    */
   readonly releaseRequests?: string;
   /**
    * qits-workspaces' `listAgents` of the open project's ACTIVE agents (`ProjectActiveAgents`: the
-   * agents menu and the trail; the agent layout reads the same), or `'refused'` (403, the default:
+   * agents menu; the agent layout reads the same), or `'refused'` (403, the default:
    * the menu shows its icon alone).
    */
   readonly agents?: string;

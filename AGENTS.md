@@ -164,7 +164,7 @@ and again (at most once a second) after `RELEASE_REQUEST_EVENTS` about that proj
 (`core/projects/release-request-events.ts`; `ReleaseRequestStateChanged` is the only event a
 wrapper's READY → RELEASED → FINALIZED sends; deployment events name no project, and count only
 while a request is RELEASED; a rollback is `DeploymentFailed` with `status: ROLLED_BACK`). The
-shell's own copy of the open project's requests (the sidebar's line, the trail, the agents' waits)
+shell's own copy of the open project's requests (the sidebar's line, the agents' waits)
 is `ProjectReleaseRequests` (`core/projects/`, qits-2146), a `qitsResource` over that request with
 those events as its `refreshOn`; the shell hands it to the lightning menu, and the Releases section's Requests
 page reads it too, so the request is made once. The notifications menu reads the newest events through its own `qitsResource` on its first
@@ -188,7 +188,7 @@ The agents menu (the robot beside the lightning, `patterns/agents/agents-menu/`;
 shows the open project's ACTIVE agents, read when the project opens and on each opening, and again
 after `AGENT_STATUS_EVENTS` about the project (debounced 1 s): `ProjectActiveAgents`
 (`core/workspaces/`, qits-2146), a root service holding that `qitsResource`, which the shell hands
-the menu as an input (the trail names an agent from it too). Its waits' requests and items, like
+the menu as an input. Its waits' requests and items, like
 `app-agent-status`'s, come from `OpenProjectWaits` (`ProjectReleaseRequests`, and the work
 `SelectedWork`'s resource already holds once a work page wanted it, never read for the lines).
 The agent pages (epic qits-1681; Agents below the sidebar's Releases, `AGENTS = 'releases/agents'`,
@@ -390,15 +390,34 @@ IdP admin (`open-sidebar-idp`, `exit('idp')`, qits-2481) is the idp's own admin
 theirs. The door and the idp are the same site, so the frame opens signed in. With no idp origin
 (the server render) there is no frame. `kind: 'external'` leaves the app at `href` through an
 `external(...)` outcome; no global section uses it today. With a project open the list is empty.
-On a global section's page the trail is that section's, not `Projects` (qits-2386,
-`globalCrumbs`): the section, through its own `follow-breadcrumb` exit to its root (`system`,
-`mirror`, `orchestrator`, `idp`; every in-app section has one, an external one none), then the
-section's page as the sidebar marks it, `alsoOn` included (System › Nodes, Mirror › Caches,
-Orchestrator › Garbage collection or Manifest scan or SBOM check, IdP admin › Users). On a page below that page (qits-2533) it is
-a link through its own `follow-breadcrumb` exit (the child's `crumb`: `systemServices`,
-`systemNodes`, `systemConfigs`, `mirrorCaches`; only the pages with pages below them declare one),
-and the current page is named by its decoded id (`globalLeaf`): System › Services › `<id>`,
-System › Nodes › `<terminal id>`, Mirror › Caches › `<repository>`.
+The trail in the top bar names the sidebar's layers, not the route taken (qits-2570, which
+replaced qits-2386's per-route trail): one crumb per layer of left navigation, each naming what owns
+the layer, and none for the page within a layer, which the sidebar's highlight shows. `layer` in
+`layout/shell/shell.layout.ts` decides it from the route alone, so the server render reads the
+same. The shell draws three sidebars, and one page replaces one of them:
+
+| Layer                                                       | Pages                                                                                                       | Trail                                    |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| root (global sidebar)                                       | `/projects`, `/system/**`, `/mirror/**`, `/orchestrator/**`, `/idp/**`, legacy `/artifacts/repositories/**` | `qits`                                   |
+| project (project sidebar)                                   | every `/projects/<slug>/**` page outside a repository (Work, Ideas, Releases, Deployments, Desk, Setup, …)  | `qits › <project>`                       |
+| repository (repository sidebar, qits-2492)                  | `/projects/<slug>/components/<repo>/**`                                                                     | `qits › <project> › <repo>`              |
+| UI builder (its own navigation, `SidebarOutlet`, qits-2493) | `…/components/<repo>/ui-builder`                                                                            | `qits › <project> › <repo> › UI Builder` |
+
+Every crumb but the last links its layer's landing page through `follow-breadcrumb`, which has
+exactly three exits: `home` (the brand, `''`), `project` (`projects/:slug`, the crumb keeping its
+`CrumbMarks`) and `repository` (the repository's Overview); the UI Builder crumb is always last,
+and is there from the server render on, not once the page fills `SidebarOutlet`. The last crumb is
+text marked `aria-current` through `ui-breadcrumbs`' `current`: `page` on the layer's landing page
+(`/projects` for the root, `/projects/<slug>`, the repository's Overview, the UI builder),
+`location` on every other page of the layer. With no project open the brand alone is the trail:
+it is then where the user is, text and not a link, shown below 768px too, and with no "…". One
+exception keeps a crumb in the root layer (qits-2533): a page below a global section's page names
+its thing by its decoded id (`globalLeaf`), after the brand and with no section crumb:
+`qits › <service id>`, `qits › <node id>` (its tabs `location`), `qits › <terminal id>` (Nodes
+stays current there), `qits › <cache repository>`. None of these pages draws a sidebar of its own
+yet. The way back from a deep page (a request to its list, a contract state to Contracts) is the
+sidebar's highlighted entry, not the trail: every page keeps one (`shell.layout.browser.spec.ts`
+holds one table per layer with the entry each page highlights).
 
 An artifact's page is below the repository that publishes it (qits-2477, which removed the root
 Artifacts section of qits-2316, its store repository page and its listings):
@@ -1113,15 +1132,14 @@ SERVICE, UI builder for a FRONTEND or APP (`open-repository-pages`, as the card)
 (`open-repository-docs`); each artifact's name opens its page below the repository
 (`open-repository-artifact`: a docker `qits/<image>` the `qits` image store's `images/<image>`, npm
 `npm/packages`, maven `maven/maven-packages`, a daemon `daemons/daemons`, a docs site
-`docs/docs/<site>`). A repository card's name links it (`open-repository` `page`). The trail below
-Components is `Components › <repo> › Contracts › <state>` (`repositoryTrail` in the shell), each
-crumb before the last a link (`follow-breadcrumb` `components`, `repository`,
-`repositoryContracts`, `repositoryEntities`). Staleness: `SCMPublishCommit` to the wrapper's main
+`docs/docs/<site>`). A repository card's name links it (`open-repository` `page`). On every page
+of a repository the trail reads `qits › <project> › <repo>` (the repository's layer, qits-2570).
+Staleness: `SCMPublishCommit` to the wrapper's main
 (`movesWrapper`) → the repositories; nothing announces a release's artifacts, so Refresh reads all
 three again. The two lists are `app-repository-published` (`patterns/repositories/repository-published/`,
 which holds the artifacts' and the catalog's reads), mounted again by the repository's Artifacts page
 (`components/<repo>/artifacts`, `RepositoryArtifactsPage`, qits-2492). While a page of a repository
-is open (`repositoryTrail` finds one), the sidebar shows the repository's own entries in the
+is open (`repositoryAt` finds one), the sidebar shows the repository's own entries in the
 project's sections' place (qits-2492, `repositoryLinks` in the shell, `open-sidebar-repository-page`):
 Overview, Artifacts, Docs, Contracts, Entities, UI builder, Release requests, Depends on and
 Dependents, below "← Components"
@@ -1472,9 +1490,7 @@ older pin.
 
 `deployments/requests/<id>` (`DeploymentRequestPage`, qits-2322, the retired frontend's
 `deployment-requests/<id>` page) is one request end to end; the sidebar keeps Deployments ›
-Requests current, and the trail ends with `<version> · <applicationName>`
-(`deploymentRequestSubpage` in the shell, named from `OpenDeploymentRequest`, a root signal the page
-sets with what it shows: nothing is read twice). Its doors: `DEPLOYMENT_REQUEST`
+Requests current, and the trail reads `qits › <project>` (the project's layer). Its doors: `DEPLOYMENT_REQUEST`
 (`getDeploymentRequest`, the request and its deployment, `null` when none was queued), which alone
 can fail the page (403 names the roles, 404 says "No deployment request <id>.", else Retry);
 `TIER_DEPLOYMENTS` (`listDeployments?environmentId=`) and `ENVIRONMENTS` (`listEnvironments`), which
@@ -1507,7 +1523,7 @@ several are a table, newest first, with the Requests page's columns and a Varian
 row naming each declared variant no row deploys yet as still to come (`variantsToCome`); none says
 the release may deploy nothing or has not reached qits-deployments yet, with Look again. The heading
 is `<repository>@<version>`, named from `PROJECT_REPOSITORIES` (by id, else by name), else the
-`repoId`. The trail ends `release <version>`. 403 names the roles, else Retry. Staleness: the
+`repoId`. 403 names the roles, else Retry. Staleness: the
 list's rule (`affectsDeploymentRequests`, the release's `repoId` the one repository). The pact adds
 "a release with a variant deployed", "a release with no deployment requests" and "a release with
 one deployment request" (the last two, and their browser tests, skip themselves until the pin
@@ -1560,8 +1576,7 @@ through `MaintenanceRepositoryLinks` (`core/maintenance/repository-links.ts`,
 release-request helpers both bump-showing pages share.
 
 `components/<repo>/bumps/<bumpId>` (`RepositoryBumpPage`, qits-2332) is one bump, a detail page
-below Depends on (the sidebar keeps Depends on current, the trail is `<repo> › Depends on ›
-<bumpId>`). It reads only `MAINTENANCE_BUMP` (`getBump`, no project filter: the id is the whole
+below Depends on (the sidebar keeps Depends on current; the trail names the repository's layer). It reads only `MAINTENANCE_BUMP` (`getBump`, no project filter: the id is the whole
 address), again after `BUMP_EVENTS` (`core/maintenance/bump-events.ts`, shared with the bumps
 menu) only while the bump is REQUESTED or RUNNING. A bump whose `repository` is not `<repo>` moves
 to its own repository's address in place (`follow-bump-repository`, `replaceUrl`), reading nothing
@@ -1582,8 +1597,7 @@ recording holds it (`heldBy`).
 
 `components/<repo>/adoption/<version>` (`RepositoryAdoptionPage`, qits-2333, the retired
 frontend's `adoption/…`) is how far one release of the repository got downstream, a detail page
-below Dependents (the sidebar keeps Dependents current, the trail is `<repo> › Dependents ›
-<version>`). One read, `MAINTENANCE_ADOPTION` (`getAdoptionByRelease`, `?repository=&version=`, no
+below Dependents (the sidebar keeps Dependents current; the trail names the repository's layer). One read, `MAINTENANCE_ADOPTION` (`getAdoptionByRelease`, `?repository=&version=`, no
 project filter: the service traces the whole closure per request, so the page stitches nothing).
 The header names the release and its packages (`ecosystem name`, comma-joined); the caption counts
 the repositories downstream and those carrying it. The chart is a DAG drawn left to right by the
@@ -1700,7 +1714,7 @@ operations' part of the file (`assertPactPart`).
   app-wide, and `qits/data-through-fields` for every component, whose templates carry the data
   marks (`QitsEntityList`, `QitsEntity`, `QitsField`). What a component shows of a shared service
   is data the rule cannot trace, so the shell marks it with plain attributes (`sourceMark`,
-  `itemMark`; a crumb's `CrumbMarks`), and the agents menu takes the service's resource as an
+  `itemMark`; the project crumb's `CrumbMarks`), and the agents menu takes the service's resource as an
   input. A
   resource's `refreshOn` needs `QITS_DOMAIN_EVENTS`, which `app.config.ts` (and the browser specs'
   `provideAppRoute()`) provide as `DomainEvents`. A loading resource is a pending task, so

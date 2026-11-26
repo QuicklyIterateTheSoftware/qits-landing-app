@@ -25,7 +25,11 @@ import type { TargetLease } from '$core/system/leases.consumes';
 import { TARGET_LEASES } from '$core/system/leases.operations';
 import { HARNESSES } from '$core/system/sign-in';
 import { targetHealthOf } from '$core/system/target-health';
-import { explainTargetRefusal, targetRefusalOf } from '$core/system/target-refusals';
+import {
+  explainTargetRefusal,
+  isSlotsRefusal,
+  targetRefusalOf,
+} from '$core/system/target-refusals';
 import {
   draftOf,
   loginCommandOf,
@@ -78,7 +82,9 @@ import { Spinner } from '$ui/components/spinner/spinner';
  * - Memory: the node's and the host's OOM kills and the memory limit, only while reported.
  * - Leases: a disclosure reading this target's leases (`TARGET_LEASES`, `listLeases?targetId=`) on
  *   opening, again after a `TargetLeaseChanged` naming it.
- * - **Edit** (`edit-target`): the description and reservations, Save sends only what changed.
+ * - **Edit** (`edit-target`): the description and reservations, Save sends only what changed. A
+ *   `SLOTS_EXCEED_MEMORY` refusal (qits-2581) is said under "Reserved slots", in the service's
+ *   words, and the draft stays open to be corrected.
  * - **Rotate registration token** (`rotate-target-token`): an optional slots total (0..1024,
  *   checked here), then the new one-time install line.
  * - **Delete** (`ask-delete-target`, `delete-target`): asked on the first press, sent on the second,
@@ -371,7 +377,10 @@ import { Spinner } from '$ui/components/spinner/spinner';
               (input)="edit({ description: text($event) })"
             />
           </label>
-          <fieldset class="m-0 flex flex-wrap gap-3 border-0 p-0">
+          <fieldset
+            class="m-0 flex flex-wrap gap-3 border-0 p-0"
+            [attr.aria-describedby]="slotsRefusal() ? slotsRefusalId() : null"
+          >
             <legend class="mb-1 text-sm text-fg">Reserved slots</legend>
             @for (type of slotTypes; track type) {
               <label class="flex flex-col gap-1 text-xs text-fg-soft">
@@ -382,11 +391,15 @@ import { Spinner } from '$ui/components/spinner/spinner';
                   inputmode="numeric"
                   [name]="'reserved-' + type"
                   [value]="draft.reservations[type]"
+                  [attr.aria-invalid]="slotsRefusal() ? 'true' : null"
                   (input)="reserve(type, text($event))"
                 />
               </label>
             }
           </fieldset>
+          @if (slotsRefusal(); as said) {
+            <p class="m-0 text-sm text-danger" role="alert" [id]="slotsRefusalId()">{{ said }}</p>
+          }
           <div class="flex flex-wrap gap-2">
             <ui-action-button [action]="saveAction()" [fieldOf]="row" [qitsField]="marks.save" />
             <ui-action-button [action]="cancelEdit()" />
@@ -510,8 +523,16 @@ export class TargetCard {
   protected readonly note = signal<string | null>(null);
   /** Why the last write was refused, in the page's words. */
   protected readonly refusal = signal<string | null>(null);
+  /**
+   * Why the last Save's slot settings were refused (`SLOTS_EXCEED_MEMORY`, qits-2581): said under
+   * "Reserved slots", never again at the bottom of the card.
+   */
+  protected readonly slotsRefusal = signal<string | null>(null);
 
   private readonly id = computed(() => this.target().id ?? '');
+
+  /** The id the reserved slots' fieldset is described by while its refusal shows. */
+  protected readonly slotsRefusalId = computed(() => `target-slots-refusal-${this.id()}`);
 
   /** The last settled health check, read when Details open. */
   protected readonly healthRead = qitsResource(TARGET_HEALTH, () =>
@@ -631,7 +652,10 @@ export class TargetCard {
     label: 'Cancel',
     variant: 'muted',
     disabled: this.busy(),
-    callback: () => this.editing.set(null),
+    callback: () => {
+      this.editing.set(null);
+      this.slotsRefusal.set(null);
+    },
   }));
 
   protected readonly openRotate = computed((): Action => ({
@@ -705,6 +729,7 @@ export class TargetCard {
   private startEdit(): void {
     this.editing.set(draftOf(this.target()));
     this.refusal.set(null);
+    this.slotsRefusal.set(null);
     this.note.set(null);
   }
 
@@ -795,12 +820,17 @@ export class TargetCard {
     if (this.busy()) return;
     this.busy.set(true);
     this.refusal.set(null);
+    this.slotsRefusal.set(null);
     this.note.set(null);
     try {
       this.note.set(await run());
       this.changed.emit();
     } catch (error) {
-      this.refusal.set(explainTargetRefusal(targetRefusalOf(error), doing));
+      const refusal = targetRefusalOf(error);
+      const said = explainTargetRefusal(refusal, doing);
+      // Beside the reserved slots while the draft is open to correct them; else on the card.
+      if (isSlotsRefusal(refusal) && this.editing()) this.slotsRefusal.set(said);
+      else this.refusal.set(said);
     } finally {
       this.busy.set(false);
       outcome.reach();

@@ -193,22 +193,23 @@ describe('RepositoryAdoptionPage (screenshots)', () => {
     );
   });
 
-  it('follow-breadcrumb repositoryDependents: the trail’s Dependents opens the repository’s', async () => {
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async () => {
     const { opened } = await render(PENDING);
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect
-      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toMatchTextContent(`${RELEASE.repository}›Dependents›${RELEASE.version}`);
-    await page
-      .getByRole('navigation', { name: 'Breadcrumb' })
-      .getByRole('link', { name: 'Dependents' })
-      .last()
-      .click();
-    expect(outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`)).toEqual([
-      'follow-breadcrumb:repositoryDependents',
-    ]);
-    await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/components/${RELEASE.repository}/dependents`,
-    );
+      .element(breadcrumb)
+      .toMatchTextContent(`qits›${opened.project.name}›${RELEASE.repository}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Dependents');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText(RELEASE.repository, { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Dependents', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
   });
 });

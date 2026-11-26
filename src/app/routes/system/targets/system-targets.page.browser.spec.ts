@@ -52,7 +52,8 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * target" (Greenlight) and "a connected target with a claude sign-in awaiting its code" (followed,
  * given its code, cancelled); a target's leases (`leases`, `listLeases?targetId=`) are "a connected
  * target with leases"'s. A read still open (`loading`), a failure (`unavailable`) and a refusal
- * with a body of its own (`delete-busy`'s TARGET_BUSY) are statuses only.
+ * with a body of its own (`delete-busy`'s TARGET_BUSY, `edit-refused-memory`'s SLOTS_EXCEED_MEMORY)
+ * are statuses only.
  *
  * The shell's outcomes are shot once (`shootShellMenus`). The live stream (`EVENT_SOURCE`, the
  * transport seam) is fed a `TargetConnectionChanged` and a `TargetLeaseChanged` by hand.
@@ -354,6 +355,36 @@ describe('SystemTargetsPage (screenshots)', () => {
     expect(reached()).toEqual(['edit-target:sent']);
     await expect.element(card.getByRole('status')).toMatchTextContent('Saved.');
     await shot(opened).toMatchScreenshot('edited', { kind: 'DATA' });
+  });
+
+  it('edit-target sent: slots the memory can never hold are refused beside the field', async () => {
+    const { opened, card } = await render(DECLARED);
+    await card.getByRole('button', { name: 'Edit', exact: true }).click();
+    const form = card.getByRole('form', { name: 'Edit lab' });
+    await userEvent.fill(form.getByRole('textbox', { name: 'ci', exact: true }), '3');
+    await form.getByRole('button', { name: 'Save' }).click();
+    await opened.idle();
+    const message =
+      'target lab can honour at most 2 CI and 0 WORKSPACE reserved lease(s) of 6 GiB' +
+      ' (20 GiB less the 8 GiB builder), not 3 CI and 2 WORKSPACE';
+    one('PATCH', TARGET).flush(
+      { code: 'SLOTS_EXCEED_MEMORY', message },
+      { status: 400, statusText: 'Bad Request' },
+    );
+    await opened.settled();
+    expect(reached()).toEqual(['edit-target:sent']);
+    // Said once, under "Reserved slots", in the service's words; the draft stays open.
+    const slots = form.getByRole('group', { name: 'Reserved slots' });
+    const alert = form.getByRole('alert');
+    await expect.element(alert).toHaveTextContent(message);
+    await expect.element(card.getByRole('alert')).toHaveTextContent(message);
+    await expect.element(slots).toHaveAccessibleDescription(message);
+    await expect
+      .element(form.getByRole('textbox', { name: 'ci', exact: true }))
+      .toHaveAttribute('aria-invalid', 'true');
+    await expect.element(form.getByRole('textbox', { name: 'ci', exact: true })).toHaveValue('3');
+    expect(reads()).toHaveLength(0);
+    await shot(opened).toMatchScreenshot('edit-refused-memory', { kind: 'ERROR' });
   });
 
   it('rotate-target-token sent: a rotation shows the new one-time install line', async () => {

@@ -194,21 +194,21 @@ describe('EntityPage (screenshots)', () => {
     );
   });
 
-  it('follow-breadcrumb repositoryEntities: the trail’s Entities opens the list (qits-2478)', async () => {
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async () => {
     const opened = await openGithost('GitProject');
-    // The long entity crumb squeezes the ones before it: press the link itself.
-    (
-      page
-        .getByRole('navigation', { name: 'Breadcrumb' })
-        .getByRole('link', { name: 'Entities', exact: true })
-        .last()
-        .element() as HTMLElement
-    ).click();
-    await commands.parkPointer();
-    await leftFor(opened);
-    expect(fired()).toEqual(['follow-breadcrumb:repositoryEntities']);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/components/${GITHOST}/entities`,
-    );
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect.element(breadcrumb).toMatchTextContent(`qits›${opened.project.name}›${GITHOST}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Entities');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText(GITHOST, { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Entities', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
   });
 });

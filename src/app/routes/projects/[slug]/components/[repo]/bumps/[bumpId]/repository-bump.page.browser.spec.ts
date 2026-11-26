@@ -168,21 +168,24 @@ describe('RepositoryBumpPage (screenshots)', () => {
 
   const reached = () => outcomeRecords().map((r) => `${r.interaction}:${r.outcome}`);
 
-  it('follow-breadcrumb repositoryDependsOn: the trail’s Depends on opens the repository’s', async () => {
+  it('names the repository’s layer in the trail, not the page: qits › <project> › <repo> (qits-2570)', async () => {
     const { opened } = await render(NOTHING, AUTOMATION_ID, AUTOMATION_REPO);
+    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
     await expect
-      .element(page.getByRole('navigation', { name: 'Breadcrumb' }))
-      .toMatchTextContent(`contract-service›Depends on›${AUTOMATION_ID}`);
-    await page
-      .getByRole('navigation', { name: 'Breadcrumb' })
-      .getByRole('link', { name: 'Depends on' })
-      .last()
-      .click();
-    await leftFor(opened);
-    expect(TestBed.inject(Router).url).toBe(
-      `/projects/${opened.project.slug}/components/${AUTOMATION_REPO}/depends-on`,
-    );
-    expect(reached()).toEqual(['follow-breadcrumb:repositoryDependsOn']);
+      .element(breadcrumb)
+      .toMatchTextContent(`qits›${opened.project.name}›${AUTOMATION_REPO}`);
+    await expect.element(breadcrumb).not.toMatchTextContent('Depends on');
+    // The last crumb names the layer, not this page within it; the sidebar's highlight shows that.
+    await expect
+      .element(breadcrumb.getByText(AUTOMATION_REPO, { exact: true }).last())
+      .toHaveAttribute('aria-current', 'location');
+    await expect
+      .element(
+        page
+          .getByRole('navigation', { name: 'qits' })
+          .getByRole('link', { name: 'Depends on', exact: true }),
+      )
+      .toHaveAttribute('aria-current', 'page');
   });
 
   it('open-bump-release-request request: opens the release request the bump belongs to', async () => {

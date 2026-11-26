@@ -32,8 +32,7 @@ export const PROJECT_DETAIL = qitsOperation({
 
 /**
  * The open project's release requests (`listProjectReleaseRequests`), as `ProjectReleaseRequests`
- * holds them for the shell: the sidebar's Release Requests line, the trail's request crumb, and the
- * agents' waits on a request.
+ * holds them for the shell: the sidebar's Release Requests line and the agents' waits on a request.
  */
 export const PROJECT_RELEASE_REQUESTS = qitsOperation({
   provider: 'qits-projects-service',

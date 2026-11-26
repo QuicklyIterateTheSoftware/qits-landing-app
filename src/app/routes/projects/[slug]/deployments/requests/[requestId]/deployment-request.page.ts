@@ -3,8 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
-  effect,
   inject,
   PLATFORM_ID,
   signal,
@@ -50,7 +48,6 @@ import {
   ENVIRONMENTS,
   TIER_DEPLOYMENTS,
 } from '$core/deployments/deployments.operations';
-import { OpenDeploymentRequest } from '$core/deployments/open-deployment-request';
 import { valueMarks } from '$core/marks/value-marks';
 import { ProjectReleaseRequests } from '$core/projects/project-release-requests';
 import { SelectedProject } from '$core/projects/selected-project';
@@ -111,8 +108,8 @@ const MARK_TONE: Readonly<Record<LifecycleState, string>> = {
  * One deployment request, end to end, at `/projects/<slug>/deployments/requests/<requestId>`
  * (qits-2322, the retired qits-deployments-frontend's `deployment-requests/<id>` page): what was
  * asked for, what the gate said, what ran, and whether the change it carried reached main. The
- * sidebar keeps Deployments › Requests current below it, and the trail ends with
- * `<version> · <applicationName>` (`OpenDeploymentRequest`, which this page tells what it shows).
+ * sidebar keeps Deployments › Requests current below it, and the trail reads `qits › <project>`, the
+ * project's layer (qits-2570).
  *
  * Four reads, and only the first can fail the page. The request and its deployment
  * (`DEPLOYMENT_REQUEST`, `getDeploymentRequest`); the tier's deployments (`TIER_DEPLOYMENTS`,
@@ -411,7 +408,6 @@ export class DeploymentRequestPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly selected = inject(SelectedProject);
   private readonly releaseRequests = inject(ProjectReleaseRequests);
-  private readonly open = inject(OpenDeploymentRequest);
   private readonly approving = qitsMutation(APPROVE_DEPLOYMENT_REQUEST);
   private readonly declining = qitsMutation(DECLINE_DEPLOYMENT_REQUEST);
 
@@ -581,18 +577,6 @@ export class DeploymentRequestPage {
   protected readonly statusWord = statusLabel;
   protected readonly held = isHeldForApproval;
   protected readonly declined = isDeclined;
-
-  constructor() {
-    // The trail names the request on show (`OpenDeploymentRequest`), until the page closes.
-    effect(() => {
-      const request = this.request();
-      if (request?.id) this.open.show({ ...request, id: request.id });
-    });
-    inject(DestroyRef).onDestroy(() => {
-      const id = this.request()?.id;
-      if (id) this.open.clear(id);
-    });
-  }
 
   protected gate(request: DeploymentRequestDetail): string {
     return gateLabel(request);
