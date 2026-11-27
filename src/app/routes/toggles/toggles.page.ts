@@ -9,11 +9,13 @@ import {
   QitsField,
   qitsResource,
 } from '@qits/angular';
+import { QITS_WORK_LINK, type QitsWorkExitLink } from '@qits/ui-components';
 import { plural } from '$core/artifacts/artifact-listings';
 import { loadState } from '$core/resources/load-state';
 import type { ToggleRow, ToggleRows } from '$core/toggles/toggles.consumes';
 import { TOGGLE_LIST } from '$core/toggles/toggles.operations';
 import { ruleInBrief } from '$core/toggles/toggle-rules';
+import { lastUsedText, REMOVAL_TICKET_PROJECT, removalTicketId } from '$core/toggles/toggle-usage';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
 import type { Action } from '$ui/components/action-button/action';
 import { LoadFailure } from '$ui/components/load-failure/load-failure';
@@ -29,13 +31,15 @@ const NO_TOGGLES: ToggleRows = [];
  * **Load budget: 1, nothing per row.** `TOGGLE_LIST` (`getToggles`) is the table, by slug. The read
  * is made in the browser only (the server render has no session).
  *
- * - Rows: slug (opening its rule editor, `open-toggle`), description, and its ordered rules in brief
- *   (`user alice → on`, `from <instant> → on`, `else off`): the first that matches decides.
+ * - Rows: slug (opening its rule editor, `open-toggle`), description, its ordered rules in brief
+ *   (`user alice → on`, `from <instant> → on`, `else off`): the first that matches decides; when a
+ *   retirement run last saw a deployed pact evaluate it (`lastUsedAt`, `1 Jan 2026 00:00:00Z`, or
+ *   "never by a deployed pact"), and its open removal ticket (`removalTicket`, qits-2726): a
+ *   qualified id of project qits links to the item's page through the app's work link
+ *   (`QITS_WORK_LINK`, the exit `open-work-ref:opened`; no brief is read, so nothing per row), an
+ *   entity uuid is text, none is nothing.
  * - **No create control.** A toggle exists only by its declaration in qits-toggles-service's code;
  *   the lede says so, and so does the empty list.
- *
- * Last use by a deployed pact and an open removal ticket (qits-2714) are not shown yet: the released
- * qits-toggles document and golden masters do not carry them.
  *
  * States: loading; no toggle declared; any failure says the toggles cannot be read, with Retry.
  *
@@ -88,7 +92,9 @@ const NO_TOGGLES: ToggleRows = [];
                   <tr class="border-b border-line text-xs text-fg-muted">
                     <th class="py-1.5 pr-3 font-semibold">Toggle</th>
                     <th class="py-1.5 pr-3 font-semibold">Description</th>
-                    <th class="py-1.5 font-semibold">Rules, first match decides</th>
+                    <th class="py-1.5 pr-3 font-semibold">Rules, first match decides</th>
+                    <th class="py-1.5 pr-3 font-semibold">Last used</th>
+                    <th class="py-1.5 font-semibold">Removal ticket</th>
                   </tr>
                 </thead>
                 <tbody [qitsEntityList]="toggles">
@@ -111,12 +117,39 @@ const NO_TOGGLES: ToggleRows = [];
                       <td class="py-1.5 pr-3 text-fg-soft" [fieldOf]="row" qitsField="description">
                         {{ row.description }}
                       </td>
-                      <td class="py-1.5" [fieldOf]="row" [qitsField]="marks.rules">
+                      <td class="py-1.5 pr-3" [fieldOf]="row" [qitsField]="marks.rules">
                         <ol class="m-0 list-none p-0 font-mono text-xs">
                           @for (rule of row.rules ?? []; track $index) {
                             <li>{{ brief(rule) }}</li>
                           }
                         </ol>
+                      </td>
+                      <td
+                        class="py-1.5 pr-3 whitespace-nowrap text-fg-soft"
+                        [fieldOf]="row"
+                        [qitsField]="marks.lastUsed"
+                        data-last-used
+                      >
+                        {{ lastUsed(row) }}
+                      </td>
+                      <td class="py-1.5 whitespace-nowrap" data-removal-ticket>
+                        @if (ticketLink(row); as link) {
+                          <a
+                            class="font-mono text-accent no-underline hover:underline"
+                            [qitsExit]="link.exit"
+                            [exitParams]="link.params"
+                            [fieldOf]="row"
+                            qitsField="removalTicket"
+                            >{{ row.removalTicket }}</a
+                          >
+                        } @else if (row.removalTicket) {
+                          <span
+                            class="font-mono text-xs text-fg-soft"
+                            [fieldOf]="row"
+                            qitsField="removalTicket"
+                            >{{ row.removalTicket }}</span
+                          >
+                        }
                       </td>
                     </tr>
                   }
@@ -131,6 +164,8 @@ const NO_TOGGLES: ToggleRows = [];
 })
 export class TogglesPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+  /** Where a work id leads: `open-work-ref:opened`, `provideWorkReferences()`'s. */
+  private readonly workLink = inject(QITS_WORK_LINK);
 
   /** A row's slug: that toggle's rule editor. */
   protected readonly opening = outcomes('open-toggle', { toggle: exit('toggles/:slug') });
@@ -160,8 +195,28 @@ export class TogglesPage {
 
   protected readonly marks = MARKS;
 
+  /** Each row's removal ticket link, by slug: only a qualified id of project qits has one. */
+  private readonly ticketLinks = computed(() => {
+    const links = new Map<string, QitsWorkExitLink>();
+    for (const row of this.rows()) {
+      const id = removalTicketId(row.removalTicket);
+      if (!id) continue;
+      const link = this.workLink(REMOVAL_TICKET_PROJECT, id);
+      if ('exit' in link) links.set(row.slug ?? '', link);
+    }
+    return links;
+  });
+
   protected brief(rule: NonNullable<ToggleRow['rules']>[number]): string {
     return ruleInBrief(rule);
+  }
+
+  protected lastUsed(row: ToggleRow): string {
+    return lastUsedText(row.lastUsedAt);
+  }
+
+  protected ticketLink(row: ToggleRow): QitsWorkExitLink | undefined {
+    return this.ticketLinks().get(row.slug ?? '');
   }
 }
 
@@ -169,4 +224,5 @@ export class TogglesPage {
 const MARKS = {
   count: { derived: [] },
   rules: { derived: ['rules'] },
+  lastUsed: { derived: ['lastUsedAt'] },
 } as const;

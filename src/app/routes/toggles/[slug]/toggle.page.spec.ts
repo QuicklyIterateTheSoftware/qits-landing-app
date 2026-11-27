@@ -6,20 +6,24 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import { of } from 'rxjs';
 import { client as togglesClient } from '../../../api/toggles/client.gen';
 import { provideHeyApiClient } from '../../../api/toggles/client/client.gen';
+import { workLink } from '$core/work/work-briefs';
+import type { ToggleDetail } from '$core/toggles/toggles.consumes';
 import { togglesGoldenMaster } from '../../../../testing/golden-masters';
 import { TogglePage } from './toggle.page';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 const ADMIN = 'a toggle is declared, asked by an admin';
+const RETIRING = 'a toggle has an open removal ticket, asked by an admin';
 const SMOKE = '/toggles/api/toggles/toggles-smoke';
 const RULES = `${SMOKE}/rules`;
 
 /**
  * One toggle's rule editor (qits-2704) on qits-toggles' recordings: the smoke toggle read ("a toggle
  * is declared, asked by an admin"), a draft edited and saved (the whole list with the version read),
- * and each refusal (409 with Reload, 403, 400 beside its rule) and an undeclared slug (404). Its
- * screenshots are its browser spec's.
+ * and each refusal (409 with Reload, 403, 400 beside its rule) and an undeclared slug (404); its last
+ * use and removal ticket from "a toggle has an open removal ticket, asked by an admin" (qits-2726).
+ * Its screenshots are its browser spec's.
  */
 describe('TogglePage', () => {
   let http: HttpTestingController;
@@ -33,6 +37,7 @@ describe('TogglePage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(togglesClient),
+        workLink,
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -48,12 +53,12 @@ describe('TogglePage', () => {
     fixture.detectChanges();
   }
 
-  async function opened() {
+  async function opened(answer: () => unknown = () => togglesGoldenMaster(ADMIN, 'getToggle')) {
     configure('toggles-smoke');
     const fixture = TestBed.createComponent(TogglePage);
     fixture.detectChanges();
     await ticked(fixture);
-    http.expectOne(SMOKE).flush(togglesGoldenMaster(ADMIN, 'getToggle'));
+    http.expectOne(SMOKE).flush(answer() as object);
     await ticked(fixture);
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }
@@ -113,6 +118,33 @@ describe('TogglePage', () => {
     expect(text(element.querySelector('[role="status"]'))).toBe('Saved.');
     // The answer's rules (version 1: a USER, a TIME and the default) replace the draft.
     expect(element.querySelectorAll('li')).toHaveLength(3);
+  });
+
+  it('says a toggle no deployed pact used yet has no removal ticket', async () => {
+    const { element } = await opened();
+    expect(text(element.querySelector('[data-usage]'))).toBe('Last used: never by a deployed pact');
+    expect(element.querySelector('[data-removal-ticket]')).toBeNull();
+  });
+
+  it('shows the last use by a deployed pact and links the open removal ticket', async () => {
+    const { element } = await opened(() => togglesGoldenMaster(RETIRING, 'getToggle'));
+    expect(text(element.querySelector('[data-usage]'))).toBe(
+      'Last used: 1 Jan 2026 00:00:00Z · removal ticket qits-1',
+    );
+    const ticket = element.querySelector('a[data-removal-ticket]');
+    expect(ticket?.getAttribute('href')).toBe('/projects/qits/work/detail/qits-1');
+  });
+
+  it('shows a removal ticket that is an entity uuid as text, without a link', async () => {
+    // The recording with its ticket swapped for the entity uuid qits-toggles falls back to.
+    const { element } = await opened(() => ({
+      ...togglesGoldenMaster<ToggleDetail>(RETIRING, 'getToggle'),
+      removalTicket: '00000000-0000-4000-8000-000000000001',
+    }));
+    const ticket = element.querySelector('[data-removal-ticket]');
+    expect(ticket?.tagName).toBe('SPAN');
+    expect(text(ticket)).toBe('00000000-0000-4000-8000-000000000001');
+    expect(element.querySelector('[data-usage] a')).toBeNull();
   });
 
   it('says a stale save someone else made first (409), and Reload reads the rules again', async () => {

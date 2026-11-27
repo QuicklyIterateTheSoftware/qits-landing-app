@@ -19,7 +19,10 @@ import { TOGGLE_DETAIL, TOGGLE_LIST, TOGGLE_RULES_SAVE } from './toggles.operati
  *
  * - "a toggle is declared, asked by an admin": the Toggles page's list (`show-toggles`), the rule
  *   editor's read (`show-toggle`) and a save (`save-toggle-rules`, the recorded list: a USER, a TIME
- *   and the STATIC rule), answered with the toggle at its next version;
+ *   and the STATIC rule), answered with the toggle at its next version; never used by a deployed
+ *   pact, no removal ticket (both `null`);
+ * - "a toggle has an open removal ticket, asked by an admin" (qits-2726): the same list and read,
+ *   the toggle last used at a frozen instant and its removal ticket `qits-1`;
  * - "a toggle is declared, sent malformed rules by an admin": a save refused with 400, naming the
  *   rule at fault (`position`);
  * - "a toggle is declared, asked by an agent": a save refused with 403 (no body);
@@ -41,6 +44,7 @@ const MALFORMED = 'a toggle is declared, sent malformed rules by an admin';
 const AGENT = 'a toggle is declared, asked by an agent';
 const STALE = "a toggle's rules changed since an admin read them";
 const UNDECLARED = 'a toggle slug is not declared';
+const RETIRING = 'a toggle has an open removal ticket, asked by an admin';
 
 /** A state's param, as the recording names it. */
 const param = (state: string, operationId: string, name: string): string =>
@@ -110,6 +114,8 @@ describe('qits-landing-app → qits-toggles-service pact: the toggles', () => {
       expect(error).toBeUndefined();
       expect(data?.[0]?.slug).toBe('toggles-smoke');
       expect(data?.[0]?.rules?.map((rule) => rule.kind)).toEqual(['STATIC']);
+      expect(data?.[0]?.lastUsedAt).toBeNull();
+      expect(data?.[0]?.removalTicket).toBeNull();
     }));
 
   it('show-toggle: the rule editor reads the toggle, its rules and its version', () =>
@@ -122,7 +128,31 @@ describe('qits-landing-app → qits-toggles-service pact: the toggles', () => {
       expect(data?.rules).toEqual([
         { kind: 'STATIC', value: false, userSubjects: null, afterInstant: null },
       ]);
+      expect(data?.lastUsedAt).toBeNull();
+      expect(data?.removalTicket).toBeNull();
     }));
+
+  it('show-toggles: the list shows when a deployed pact last used a toggle and its removal ticket', () =>
+    given(RETIRING, 'getToggles', 'show-toggles', TOGGLE_LIST.consumes).executeTest(
+      async (server) => {
+        const { data, error } = await at(server.url, () => TOGGLE_LIST.fetch({}));
+        expect(error).toBeUndefined();
+        expect(data?.[0]?.slug).toBe('toggles-smoke');
+        expect(data?.[0]?.lastUsedAt).toBe('2026-01-01T00:00:00Z');
+        expect(data?.[0]?.removalTicket).toBe('qits-1');
+      },
+    ));
+
+  it('show-toggle: the rule editor shows the last use and the open removal ticket', () =>
+    given(RETIRING, 'getToggle', 'show-toggle', TOGGLE_DETAIL.consumes).executeTest(
+      async (server) => {
+        const slug = param(RETIRING, 'getToggle', 'slug');
+        const { data, error } = await at(server.url, () => TOGGLE_DETAIL.fetch({ path: { slug } }));
+        expect(error).toBeUndefined();
+        expect(data?.lastUsedAt).toBe('2026-01-01T00:00:00Z');
+        expect(data?.removalTicket).toBe('qits-1');
+      },
+    ));
 
   it('show-toggle: an undeclared slug answers 404', () =>
     given(UNDECLARED, 'getToggle', 'show-toggle', TOGGLE_REFUSAL).executeTest(async (server) => {

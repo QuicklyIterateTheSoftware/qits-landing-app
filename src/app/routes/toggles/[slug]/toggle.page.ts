@@ -22,6 +22,7 @@ import {
   QitsTriggers,
   stay,
 } from '@qits/angular';
+import { QITS_WORK_LINK, type QitsWorkExitLink } from '@qits/ui-components';
 import { map } from 'rxjs';
 import { loadState } from '$core/resources/load-state';
 import { explainToggleRefusal, toggleRefusalOf } from '$core/toggles/toggle-refusals';
@@ -34,6 +35,7 @@ import {
   withRule,
   type RuleDraft,
 } from '$core/toggles/toggle-rules';
+import { lastUsedText, REMOVAL_TICKET_PROJECT, removalTicketId } from '$core/toggles/toggle-usage';
 import type { ToggleDetail } from '$core/toggles/toggles.consumes';
 import { TOGGLE_DETAIL, TOGGLE_RULES_SAVE } from '$core/toggles/toggles.operations';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -54,6 +56,12 @@ interface Refused {
  *
  * **Load budget: 1.** `TOGGLE_DETAIL` (`getToggle`) is the toggle, its ordered rules and the version
  * a save names; read in the browser only. An undeclared slug (404) says so.
+ *
+ * Beside the description (qits-2726): when a retirement run last saw a deployed pact evaluate the
+ * toggle (`lastUsedAt`, `1 Jan 2026 00:00:00Z`, or "never by a deployed pact"), and its open removal
+ * ticket (`removalTicket`): a qualified id of project qits links to the item's page through the
+ * app's work link (`QITS_WORK_LINK`, the exit `open-work-ref:opened`; no brief is read), an entity
+ * uuid is text, none is nothing.
  *
  * The rules are an ordered list, the first that matches deciding, each with its own on/off value:
  * - **User**: the bearer subjects it matches, typed: a person's user id or an agent's `tok-…`
@@ -112,13 +120,40 @@ interface Refused {
                 >
                   {{ toggle.description }}
                 </p>
-                <p class="mt-0 mb-4 text-xs text-fg-muted">
+                <p class="mt-0 mb-1 text-xs text-fg-muted">
                   Declared default
                   <span [fieldOf]="toggle" [qitsField]="marks.declaredDefault">{{
                     toggle.declaredDefault ? 'on' : 'off'
                   }}</span>
                   · version <span [fieldOf]="toggle" qitsField="version">{{ toggle.version }}</span>
                   · the first rule that matches decides.
+                </p>
+                <p class="mt-0 mb-4 text-xs text-fg-muted" data-usage>
+                  Last used:
+                  <span [fieldOf]="toggle" [qitsField]="marks.lastUsed" data-last-used>{{
+                    lastUsed()
+                  }}</span>
+                  @if (ticketLink(); as link) {
+                    · removal ticket
+                    <a
+                      class="font-mono text-accent no-underline hover:underline"
+                      [qitsExit]="link.exit"
+                      [exitParams]="link.params"
+                      [fieldOf]="toggle"
+                      qitsField="removalTicket"
+                      data-removal-ticket
+                      >{{ toggle.removalTicket }}</a
+                    >
+                  } @else if (toggle.removalTicket) {
+                    · removal ticket
+                    <span
+                      class="font-mono"
+                      [fieldOf]="toggle"
+                      qitsField="removalTicket"
+                      data-removal-ticket
+                      >{{ toggle.removalTicket }}</span
+                    >
+                  }
                 </p>
               </div>
 
@@ -268,6 +303,8 @@ interface Refused {
 export class TogglePage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
+  /** Where a work id leads: `open-work-ref:opened`, `provideWorkReferences()`'s. */
+  private readonly workLink = inject(QITS_WORK_LINK);
 
   protected readonly back = outcomes('back-to-toggles', { list: exit('toggles') });
   protected readonly editing = outcomes('edit-toggle-rules', {
@@ -307,6 +344,17 @@ export class TogglePage {
   });
 
   protected readonly state = computed((): LoadState => loadState(this.toggle));
+
+  /** When a deployed pact last evaluated the toggle, or never. */
+  protected readonly lastUsed = computed(() => lastUsedText(this.detail()?.lastUsedAt));
+
+  /** The open removal ticket's link: only a qualified id of project qits has one. */
+  protected readonly ticketLink = computed((): QitsWorkExitLink | undefined => {
+    const id = removalTicketId(this.detail()?.removalTicket);
+    if (!id) return undefined;
+    const link = this.workLink(REMOVAL_TICKET_PROJECT, id);
+    return 'exit' in link ? link : undefined;
+  });
 
   /** The version a save names: the read's, or the last save's. */
   private readonly version = signal<number | undefined>(undefined);
@@ -420,4 +468,5 @@ export class TogglePage {
 /** The data marks of what the page derives (each a class constant, as the rule reads). */
 const MARKS = {
   declaredDefault: { derived: ['declaredDefault'] },
+  lastUsed: { derived: ['lastUsedAt'] },
 } as const;
