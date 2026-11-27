@@ -15,6 +15,7 @@ import {
   outcomes,
   QitsApiError,
   QitsEntity,
+  QitsEntityList,
   QitsExit,
   QitsField,
   qitsMutation,
@@ -29,13 +30,18 @@ import { explainToggleRefusal, toggleRefusalOf } from '$core/toggles/toggle-refu
 import {
   draftsOf,
   movedRule,
+  namedSubjects,
   newRule,
   sentRules,
   withoutRule,
   withRule,
+  withSubject,
+  type NamedSubject,
   type RuleDraft,
 } from '$core/toggles/toggle-rules';
 import { lastUsedText, REMOVAL_TICKET_PROJECT, removalTicketId } from '$core/toggles/toggle-usage';
+import type { UserSubject } from '$core/idp/user-subjects.consumes';
+import { USER_SUBJECTS } from '$core/idp/user-subjects.operations';
 import type { ToggleDetail } from '$core/toggles/toggles.consumes';
 import { TOGGLE_DETAIL, TOGGLE_RULES_SAVE } from '$core/toggles/toggles.operations';
 import { PageLayoutComponent } from '$layout/page-layout/page-layout';
@@ -54,8 +60,12 @@ interface Refused {
 /**
  * One toggle's rule editor (qits-2704), at `/toggles/:slug`, opened from the Toggles list.
  *
- * **Load budget: 1.** `TOGGLE_DETAIL` (`getToggle`) is the toggle, its ordered rules and the version
- * a save names; read in the browser only. An undeclared slug (404) says so.
+ * **Load budget: 2**, both read in the browser only:
+ * - `TOGGLE_DETAIL` (`getToggle`): the toggle, its ordered rules and the version a save names. An
+ *   undeclared slug (404) says so.
+ * - `USER_SUBJECTS` (`listUserSubjects`, qits-idp, qits-2725): the people a USER rule can name,
+ *   each account's subject and username. qits:admin or the delivery desk; refused (403) or failed,
+ *   the picker is hidden and one line says to type the ids. It never blocks the page or a save.
  *
  * Beside the description (qits-2726): when a retirement run last saw a deployed pact evaluate the
  * toggle (`lastUsedAt`, `1 Jan 2026 00:00:00Z`, or "never by a deployed pact"), and its open removal
@@ -64,8 +74,10 @@ interface Refused {
  * uuid is text, none is nothing.
  *
  * The rules are an ordered list, the first that matches deciding, each with its own on/off value:
- * - **User**: the bearer subjects it matches, typed: a person's user id or an agent's `tok-…`
- *   subject (the IdP's user list carries no user id, so people cannot be picked from it yet);
+ * - **User**: the bearer subjects it matches. **Add a person** picks one by username and appends
+ *   their subject; each subject that is an account is named under the rule, any other (an agent's
+ *   `tok-…`, a service client, a deleted user) shown as its id. The subjects stay typed text too,
+ *   the fallback for anyone the picker does not list;
  * - **Time**: from an instant on (ISO-8601, UTC);
  * - **Default**: the one STATIC rule, always last; it cannot be removed or moved, only its value
  *   changes.
@@ -84,6 +96,7 @@ interface Refused {
     LoadFailure,
     PageLayoutComponent,
     QitsEntity,
+    QitsEntityList,
     QitsExit,
     QitsField,
     QitsTriggers,
@@ -191,16 +204,73 @@ interface Refused {
                       <span class="w-16 font-semibold">{{ kindLabel(rule) }}</span>
                       @switch (rule.kind) {
                         @case ('USER') {
-                          <label class="flex flex-1 flex-col text-xs text-fg-muted">
-                            Subjects (user ids or tok-… agent subjects)
-                            <textarea
-                              rows="2"
-                              class="mt-1 rounded border border-line bg-surface px-2 py-1 font-mono text-sm text-fg"
-                              [value]="rule.subjects"
-                              [qitsTriggers]="[editing.changed]"
-                              (input)="change(i, { subjects: text($event) })"
-                            ></textarea>
-                          </label>
+                          <div class="flex flex-1 flex-col gap-1">
+                            @if (people().length) {
+                              <label class="flex flex-col text-xs text-fg-muted">
+                                Add a person
+                                <select
+                                  class="mt-1 rounded border border-line bg-surface px-1 py-0.5 text-sm text-fg"
+                                  [qitsEntityList]="subjects"
+                                  [qitsTriggers]="[editing.changed]"
+                                  (change)="pick(i, $event)"
+                                >
+                                  <option value="">Choose a person…</option>
+                                  @for (person of people(); track person.subject) {
+                                    <option
+                                      [value]="person.subject"
+                                      [qitsEntity]="person"
+                                      entityKey="subject"
+                                      [fieldOf]="person"
+                                      qitsField="username"
+                                    >
+                                      {{ person.username }}
+                                    </option>
+                                  }
+                                </select>
+                              </label>
+                            } @else if (peopleRefused()) {
+                              <p class="m-0 text-xs text-fg-muted">
+                                People cannot be listed with this sign-in; type their ids.
+                              </p>
+                            }
+                            @if (named(rule); as ruleSubjects) {
+                              @if (ruleSubjects.length) {
+                                <p
+                                  class="m-0 flex flex-wrap gap-x-3 gap-y-1 text-sm"
+                                  [attr.aria-label]="'Subjects of rule ' + (i + 1)"
+                                >
+                                  @for (one of ruleSubjects; track one.subject) {
+                                    <span data-subject>
+                                      @if (one.username) {
+                                        <span class="text-fg">{{ one.username }}</span>
+                                        &ngsp;<span class="ml-1 font-mono text-xs text-fg-muted">{{
+                                          one.subject
+                                        }}</span>
+                                      } @else {
+                                        <span class="font-mono text-fg">{{ one.subject }}</span>
+                                        @if (people().length) {
+                                          &ngsp;<span class="ml-1 text-xs text-fg-muted"
+                                            >not a person: an agent, a service client or a deleted
+                                            user</span
+                                          >
+                                        }
+                                      }
+                                    </span>
+                                  }
+                                </p>
+                              }
+                            }
+                            <label class="flex flex-col text-xs text-fg-muted">
+                              Or type subjects (user ids, tok-… agent subjects, client ids)
+                              <textarea
+                                rows="2"
+                                class="mt-1 rounded border border-line bg-surface px-2 py-1 font-mono text-sm text-fg"
+                                [value]="rule.subjects"
+                                [qitsTriggers]="[editing.changed]"
+                                (input)="change(i, { subjects: text($event) })"
+                              ></textarea>
+                            </label>
+                          </div>
                         }
                         @case ('TIME') {
                           <label class="flex flex-1 flex-col text-xs text-fg-muted">
@@ -330,6 +400,24 @@ export class TogglePage {
     this.browser && this.slug() ? { path: { slug: this.slug() } } : undefined,
   );
 
+  /** The people a USER rule can name (qits-idp); refused or failed, the picker is hidden. */
+  protected readonly subjects = qitsResource(USER_SUBJECTS, () => (this.browser ? {} : undefined));
+
+  /** The listed people, by username as the idp sorts them; none until (or unless) it answers. */
+  protected readonly people = computed((): readonly UserSubject[] =>
+    this.subjects.hasValue()
+      ? (this.subjects.value() ?? []).filter((person) => person.subject && person.username)
+      : [],
+  );
+
+  /** The listing failed or was refused: the editor says to type the ids instead. */
+  protected readonly peopleRefused = computed(() => this.subjects.error() !== undefined);
+
+  /** subject → username, for naming a rule's subjects. */
+  private readonly usernames = computed(
+    () => new Map(this.people().map((person) => [person.subject!, person.username!])),
+  );
+
   private readonly saveRun = qitsMutation(TOGGLE_RULES_SAVE, { offline: 'online-only' });
 
   /** The toggle as last read or saved; undefined until the read answers. */
@@ -419,6 +507,24 @@ export class TogglePage {
   protected change(index: number, change: Partial<RuleDraft>): void {
     this.drafts.update((drafts) =>
       drafts.map((draft, at) => (at === index ? { ...draft, ...change } : draft)),
+    );
+    this.touched();
+    this.editing.changed.reach();
+  }
+
+  /** A USER rule's subjects, each named where it is a listed person. */
+  protected named(rule: RuleDraft): NamedSubject[] {
+    return namedSubjects(rule, this.usernames());
+  }
+
+  /** "Add a person": the chosen person's subject joins the rule's, and the picker resets. */
+  protected pick(index: number, event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const subject = select.value;
+    select.value = '';
+    if (!subject) return;
+    this.drafts.update((drafts) =>
+      drafts.map((draft, at) => (at === index ? withSubject(draft, subject) : draft)),
     );
     this.touched();
     this.editing.changed.reach();

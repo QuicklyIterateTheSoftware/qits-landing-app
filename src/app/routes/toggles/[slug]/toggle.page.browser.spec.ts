@@ -17,6 +17,9 @@ const RETIRING = 'a toggle has an open removal ticket, asked by an admin';
 const TOGGLES = 'qits-toggles';
 const SMOKE = '/toggles/api/toggles/toggles-smoke';
 const RULES = `${SMOKE}/rules`;
+const PEOPLE = '/idp/api/user-subjects';
+const IDP = 'qits-idp';
+const PEOPLE_ADMIN = 'an admin signed in to the CLI';
 
 /**
  * Screenshots of one toggle's rule editor (qits-2704) inside the shell, with no project open. Its
@@ -27,6 +30,11 @@ const RULES = `${SMOKE}/rules`;
  * answer (version 1), or refused: 409 from "a toggle's rules changed since an admin read them", 400
  * from "a toggle is declared, sent malformed rules by an admin" (the rule at position 0), and 403 (no
  * body). An undeclared slug is "a toggle slug is not declared" (404).
+ *
+ * The people a USER rule can name (`listUserSubjects`, qits-idp, qits-2725) are qits-idp's "an admin
+ * signed in to the CLI" once the pinned `@qits/idp-golden-masters` records it and the pact holds it;
+ * until then every state is answered 403, the picker is hidden, and `user-picker` skips itself.
+ * `user-picker-refused` is the 403 on purpose.
  */
 describe('TogglePage (screenshots)', () => {
   let http: HttpTestingController;
@@ -43,10 +51,26 @@ describe('TogglePage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  async function open(state = ADMIN): Promise<OpenedRoute> {
+  /** qits-idp's recorded people, or undefined while the pinned golden masters predate the door. */
+  const recordedPeople = () =>
+    goldenMaster(PEOPLE_ADMIN, 'listUserSubjects', IDP).catch(() => undefined);
+
+  /** The people read: the recorded people, or 403 when `refused` or nothing is recorded yet. */
+  async function answerPeople(refused = false) {
+    const request = http.expectOne(PEOPLE);
+    const recorded = refused ? undefined : await recordedPeople();
+    if (recorded === undefined) {
+      request.flush(null, { status: 403, statusText: 'Forbidden' });
+      return;
+    }
+    request.flush(await goldenMaster(PEOPLE_ADMIN, 'listUserSubjects', IDP));
+  }
+
+  async function open(state = ADMIN, refused = false): Promise<OpenedRoute> {
     await page.viewport(1140, 900);
     const opened = await openRoute('/toggles/toggles-smoke');
     http.expectOne(SMOKE).flush(await goldenMaster(state, 'getToggle', TOGGLES));
+    await answerPeople(refused);
     await opened.settled();
     return opened;
   }
@@ -85,7 +109,9 @@ describe('TogglePage (screenshots)', () => {
 
     await view.getByRole('button', { name: 'Add user rule' }).click();
     await view.getByRole('button', { name: 'Add time rule' }).click();
-    await view.getByRole('textbox', { name: /Subjects/ }).fill('tok-project-agent-qits-developer');
+    await view
+      .getByRole('textbox', { name: /type subjects/ })
+      .fill('tok-project-agent-qits-developer');
     await view.getByRole('textbox', { name: /From/ }).fill('2026-12-01T00:00:00Z');
     expect(rules.getByRole('listitem').elements()).toHaveLength(3);
     await expect.element(rules.getByRole('listitem', { name: 'Rule 3: Default' })).toBeVisible();
@@ -177,6 +203,7 @@ describe('TogglePage (screenshots)', () => {
   it('says an undeclared slug is declared nowhere (404)', async () => {
     await page.viewport(1140, 900);
     const opened = await openRoute('/toggles/no-such-toggle');
+    await answerPeople();
     http
       .expectOne('/toggles/api/toggles/no-such-toggle')
       .flush(await goldenMaster(UNDECLARED, 'getToggle', TOGGLES), {
@@ -190,5 +217,43 @@ describe('TogglePage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('undeclared', { kind: 'NO_DATA' });
+  });
+
+  it('adds a person picked by username, and names the subjects it knows (qits-2725)', async (context) => {
+    // qits-idp records the state from its qits-2725 release on: until the pin reaches it (and the
+    // pact holds it), the reader refuses it and the test skips itself.
+    const people = (await recordedPeople()) as { subject: string; username: string }[] | undefined;
+    if (!people?.length) context.skip();
+    const person = people![0];
+    const opened = await open();
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('button', { name: 'Add user rule' }).click();
+    await view
+      .getByRole('textbox', { name: /type subjects/ })
+      .fill('tok-project-agent-qits-developer');
+    await view.getByRole('combobox', { name: 'Add a person' }).selectOptions(person.username);
+    await expect
+      .element(view.getByLabelText('Subjects of rule 1'))
+      .toMatchTextContent(person.username);
+    await expect
+      .element(view.getByLabelText('Subjects of rule 1'))
+      .toMatchTextContent(/not a person/);
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('user-picker', { kind: 'DATA' });
+  });
+
+  it('offers typing alone when the people cannot be listed (403)', async () => {
+    const opened = await open(ADMIN, true);
+    const view = page.elementLocator(opened.page);
+    await view.getByRole('button', { name: 'Add user rule' }).click();
+    expect(view.getByRole('combobox', { name: 'Add a person' }).elements()).toHaveLength(0);
+    await expect
+      .element(view)
+      .toMatchTextContent('People cannot be listed with this sign-in; type their ids.');
+    await expect.element(view.getByRole('textbox', { name: /type subjects/ })).toBeVisible();
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('user-picker-refused', { kind: 'DATA' });
   });
 });

@@ -75,6 +75,31 @@ export function subjectsOf(typed: string): string[] {
   return [...seen];
 }
 
+/**
+ * The draft with `subject` added to its typed subjects (qits-2725: a person picked by name), once:
+ * a subject it already names leaves it as it is. The text stays one subject per line.
+ */
+export function withSubject(draft: RuleDraft, subject: string): RuleDraft {
+  const subjects = subjectsOf(draft.subjects);
+  if (!subject.trim() || subjects.includes(subject.trim())) return draft;
+  return { ...draft, subjects: [...subjects, subject.trim()].join('\n') };
+}
+
+/** One subject of a USER rule as the editor names it: a known person's username, else the id. */
+export interface NamedSubject {
+  readonly subject: string;
+  /** The person's username; undefined for a subject that is no account (an agent, a client). */
+  readonly username?: string;
+}
+
+/** The draft's subjects, each named by `people` (subject → username) where it is an account. */
+export function namedSubjects(
+  draft: RuleDraft,
+  people: ReadonlyMap<string, string>,
+): NamedSubject[] {
+  return subjectsOf(draft.subjects).map((subject) => ({ subject, username: people.get(subject) }));
+}
+
 /** The rules as a save sends them, in order. The service checks the shape and names a fault. */
 export function sentRules(drafts: readonly RuleDraft[]): SentRule[] {
   return drafts.map((draft): SentRule => {

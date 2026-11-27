@@ -38,6 +38,8 @@ const services = [
   'qits-mirror/qits-mirror-service',
   // The Toggles section (qits-2704): the declared toggles and their ordered rules.
   'qits-toggles/qits-toggles-service',
+  // The Toggles rule editor's person picker (qits-2725): the idp's user subjects.
+  'qits-idp/qits-idp-service',
 ];
 
 /** `src/app/api/<component without qits->`, or `workspace-daemon` for the daemon. */

@@ -4,6 +4,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { client as idpClient } from '../../../api/idp/client.gen';
 import { client as togglesClient } from '../../../api/toggles/client.gen';
 import { provideHeyApiClient } from '../../../api/toggles/client/client.gen';
 import { workLink } from '$core/work/work-briefs';
@@ -17,6 +18,17 @@ const ADMIN = 'a toggle is declared, asked by an admin';
 const RETIRING = 'a toggle has an open removal ticket, asked by an admin';
 const SMOKE = '/toggles/api/toggles/toggles-smoke';
 const RULES = `${SMOKE}/rules`;
+const PEOPLE = '/idp/api/user-subjects';
+
+/**
+ * Two people as qits-idp's `listUserSubjects` answers them (qits-2725). Written here rather than read
+ * from `@qits/idp-golden-masters`, whose pinned version predates the door; the pact spec binds the
+ * recorded shape once the pin records it.
+ */
+const TWO_PEOPLE = [
+  { subject: '0b5c8a52-6f8e-4a77-9d1e-3c2b1a0f9e8d', username: 'alice' },
+  { subject: '7e4d2c19-1a3b-4c5d-8e6f-901234567890', username: 'bob' },
+];
 
 /**
  * One toggle's rule editor (qits-2704) on qits-toggles' recordings: the smoke toggle read ("a toggle
@@ -37,6 +49,7 @@ describe('TogglePage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideHeyApiClient(togglesClient),
+        provideHeyApiClient(idpClient),
         workLink,
       ],
     });
@@ -53,15 +66,31 @@ describe('TogglePage', () => {
     fixture.detectChanges();
   }
 
-  async function opened(answer: () => unknown = () => togglesGoldenMaster(ADMIN, 'getToggle')) {
+  /** The people read: answered with `people`, or refused with 403 when `people` is null. */
+  function answerPeople(people: unknown[] | null = TWO_PEOPLE) {
+    const request = http.expectOne(PEOPLE);
+    if (people === null) request.flush(null, { status: 403, statusText: 'Forbidden' });
+    else request.flush(people);
+  }
+
+  async function opened(
+    people: unknown[] | null = TWO_PEOPLE,
+    answer: () => unknown = () => togglesGoldenMaster(ADMIN, 'getToggle'),
+  ) {
     configure('toggles-smoke');
     const fixture = TestBed.createComponent(TogglePage);
     fixture.detectChanges();
     await ticked(fixture);
     http.expectOne(SMOKE).flush(answer() as object);
+    answerPeople(people);
     await ticked(fixture);
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }
+
+  const picker = (element: HTMLElement) =>
+    [...element.querySelectorAll('label')]
+      .find((label) => text(label).startsWith('Add a person'))
+      ?.querySelector('select') as HTMLSelectElement | undefined;
 
   const text = (element: Element | null | undefined) =>
     element?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
@@ -127,7 +156,7 @@ describe('TogglePage', () => {
   });
 
   it('shows the last use by a deployed pact and links the open removal ticket', async () => {
-    const { element } = await opened(() => togglesGoldenMaster(RETIRING, 'getToggle'));
+    const { element } = await opened(TWO_PEOPLE, () => togglesGoldenMaster(RETIRING, 'getToggle'));
     expect(text(element.querySelector('[data-usage]'))).toBe(
       'Last used: 1 Jan 2026 00:00:00Z · removal ticket qits-1',
     );
@@ -137,7 +166,7 @@ describe('TogglePage', () => {
 
   it('shows a removal ticket that is an entity uuid as text, without a link', async () => {
     // The recording with its ticket swapped for the entity uuid qits-toggles falls back to.
-    const { element } = await opened(() => ({
+    const { element } = await opened(TWO_PEOPLE, () => ({
       ...togglesGoldenMaster<ToggleDetail>(RETIRING, 'getToggle'),
       removalTicket: '00000000-0000-4000-8000-000000000001',
     }));
@@ -196,6 +225,7 @@ describe('TogglePage', () => {
     const fixture = TestBed.createComponent(TogglePage);
     fixture.detectChanges();
     await ticked(fixture);
+    answerPeople();
     http
       .expectOne('/toggles/api/toggles/no-such-toggle')
       .flush(togglesGoldenMaster('a toggle slug is not declared', 'getToggle'), {
@@ -206,5 +236,61 @@ describe('TogglePage', () => {
     expect(text((fixture.nativeElement as HTMLElement).querySelector('[role="status"]'))).toContain(
       'No toggle is declared as “no-such-toggle”.',
     );
+  });
+
+  it('adds a person picked by username, and names each subject (qits-2725)', async () => {
+    const { fixture, element } = await opened();
+    button(element, 'Add user rule').click();
+    fixture.detectChanges();
+    const subjects = element.querySelector('textarea') as HTMLTextAreaElement;
+    subjects.value = 'tok-agent-x';
+    subjects.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const select = picker(element)!;
+    expect([...select.options].map((option) => option.text)).toEqual([
+      'Choose a person…',
+      'alice',
+      'bob',
+    ]);
+    select.value = TWO_PEOPLE[1].subject;
+    select.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(select.value).toBe('');
+
+    const named = [...element.querySelectorAll('[data-subject]')].map(text);
+    expect(named).toEqual([
+      'tok-agent-x not a person: an agent, a service client or a deleted user',
+      `bob ${TWO_PEOPLE[1].subject}`,
+    ]);
+
+    const request = await save(fixture, element, (r) =>
+      r.flush(togglesGoldenMaster(ADMIN, 'putToggleRules')),
+    );
+    expect(request.request.body.rules[0]).toEqual({
+      kind: 'USER',
+      value: true,
+      userSubjects: ['tok-agent-x', TWO_PEOPLE[1].subject],
+    });
+  });
+
+  it('hides the picker when the people cannot be listed (403), and a typed subject still saves', async () => {
+    const { fixture, element } = await opened(null);
+    button(element, 'Add user rule').click();
+    fixture.detectChanges();
+    expect(picker(element)).toBeUndefined();
+    expect(text(element)).toContain('People cannot be listed with this sign-in; type their ids.');
+
+    const subjects = element.querySelector('textarea') as HTMLTextAreaElement;
+    subjects.value = 'tok-agent-x';
+    subjects.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    // Without the listing nothing is known to be a person, so nothing is called "not a person".
+    expect([...element.querySelectorAll('[data-subject]')].map(text)).toEqual(['tok-agent-x']);
+
+    const request = await save(fixture, element, (r) =>
+      r.flush(togglesGoldenMaster(ADMIN, 'putToggleRules')),
+    );
+    expect(request.request.body.rules[0].userSubjects).toEqual(['tok-agent-x']);
   });
 });
