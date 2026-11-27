@@ -402914,6 +402914,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -402982,6 +402987,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -403052,6 +403062,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403114,6 +403129,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403175,6 +403195,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -403245,6 +403270,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403314,6 +403344,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403368,6 +403403,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -403384,6 +403425,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403438,6 +403484,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -403454,6 +403506,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403501,6 +403558,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -403517,6 +403580,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403564,6 +403632,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -403580,6 +403654,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403634,6 +403713,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -403650,6 +403735,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403705,6 +403795,12 @@
           "item": "slug=toggles-smoke",
           "field": "version",
           "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
         }
       ]
     },
@@ -403719,6 +403815,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -403788,6 +403889,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403856,6 +403962,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403917,6 +404028,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -403977,6 +404093,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -404046,6 +404167,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -404113,6 +404239,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -404182,6 +404313,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -404250,6 +404386,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -404311,6 +404452,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -404371,6 +404517,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -404440,6 +404591,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -404507,6 +404663,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle has an open removal ticket, asked by an admin",
@@ -404583,6 +404744,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle has an open removal ticket, asked by an admin",
           "operationId": "getToggle"
@@ -404658,6 +404824,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle has an open removal ticket, asked by an admin",
           "operationId": "getToggle"
@@ -404726,6 +404897,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle has an open removal ticket, asked by an admin",
           "operationId": "getToggle"
@@ -404793,6 +404969,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle has an open removal ticket, asked by an admin",
@@ -404869,6 +405050,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle has an open removal ticket, asked by an admin",
           "operationId": "getToggle"
@@ -404944,6 +405130,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405011,6 +405202,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -405080,6 +405276,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405141,6 +405342,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405201,6 +405407,11 @@
       "colorSchemeReason": null,
       "route": "toggles/:slug",
       "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
         {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
@@ -405270,6 +405481,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405338,6 +405554,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405397,6 +405618,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -405413,6 +405640,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405472,6 +405704,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -405488,6 +405726,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405540,6 +405783,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -405556,6 +405805,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405608,6 +405862,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -405624,6 +405884,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405683,6 +405948,12 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -405699,6 +405970,11 @@
       "route": "toggles/:slug",
       "records": [
         {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
           "provider": "qits-toggles-service",
           "state": "a toggle is declared, asked by an admin",
           "operationId": "getToggle"
@@ -405759,6 +406035,12 @@
           "item": "slug=toggles-smoke",
           "field": "version",
           "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
         }
       ]
     },
@@ -405772,7 +406054,13 @@
       "colorScheme": "DARK",
       "colorSchemeReason": null,
       "route": "toggles/:slug",
-      "records": [],
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        }
+      ],
       "triggers": [
         "back-to-toggles:list",
         "open-sidebar-idp:open",
@@ -405794,7 +406082,13 @@
       "colorScheme": "LIGHT",
       "colorSchemeReason": null,
       "route": "toggles/:slug",
-      "records": [],
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        }
+      ],
       "triggers": [
         "back-to-toggles:list",
         "open-sidebar-idp:open",
@@ -405816,7 +406110,13 @@
       "colorScheme": "DARK",
       "colorSchemeReason": null,
       "route": "toggles/:slug",
-      "records": [],
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        }
+      ],
       "triggers": [
         "back-to-toggles:list"
       ]
@@ -405831,7 +406131,13 @@
       "colorScheme": "LIGHT",
       "colorSchemeReason": null,
       "route": "toggles/:slug",
-      "records": [],
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        }
+      ],
       "triggers": [
         "back-to-toggles:list"
       ]
@@ -405846,7 +406152,13 @@
       "colorScheme": "DARK",
       "colorSchemeReason": null,
       "route": "toggles/:slug",
-      "records": [],
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        }
+      ],
       "triggers": [
         "back-to-toggles:list",
         "open-sidebar-idp:open",
@@ -405868,7 +406180,13 @@
       "colorScheme": "LIGHT",
       "colorSchemeReason": null,
       "route": "toggles/:slug",
-      "records": [],
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        }
+      ],
       "triggers": [
         "back-to-toggles:list",
         "open-sidebar-idp:open",
@@ -405878,6 +406196,316 @@
         "open-sidebar-projects:open",
         "open-sidebar-system:open",
         "open-sidebar-toggles:open"
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+      "name": "user-picker",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+      "name": "user-picker",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-phone-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+      "name": "user-picker",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-phone-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+      "name": "user-picker",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
       ]
     },
     {
@@ -406282,6 +406910,168 @@
           "source": null,
           "item": "slug=toggles-smoke",
           "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-tablet-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+      "name": "user-picker",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-tablet-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+      "name": "user-picker",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-idp-service",
+          "state": "an admin signed in to the CLI",
+          "operationId": "listUserSubjects"
+        },
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        },
+        {
+          "source": "qits-idp-service#listUserSubjects",
+          "item": null,
+          "field": null,
           "derived": []
         }
       ]
@@ -411885,12 +412675,18 @@
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-phone-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-tablet-dark.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-tablet-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-phone-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-phone-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-dark.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-phone-dark.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-phone-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-dark.html",
-      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-light.html"
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-tablet-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-tablet-light.html"
     ]
   },
   "outcomes": {
@@ -418424,6 +419220,33 @@
         "outcome": "refused",
         "kind": "stay",
         "freeze": null
+      },
+      {
+        "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+        "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+        "route": "toggles/:slug",
+        "interaction": "edit-toggle-rules",
+        "outcome": "added",
+        "kind": "stay",
+        "freeze": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+        "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+        "route": "toggles/:slug",
+        "interaction": "edit-toggle-rules",
+        "outcome": "changed",
+        "kind": "stay",
+        "freeze": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-light.html"
+      },
+      {
+        "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+        "test": "TogglePage (screenshots) > adds a person picked by username, and names the subjects it knows (qits-2725)",
+        "route": "toggles/:slug",
+        "interaction": "edit-toggle-rules",
+        "outcome": "changed",
+        "kind": "stay",
+        "freeze": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-desktop-light.html"
       },
       {
         "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",

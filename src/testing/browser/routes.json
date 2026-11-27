@@ -3877,6 +3877,12 @@
   ],
   "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts": [
     {
+      "provider": "qits-idp-service",
+      "state": "an admin signed in to the CLI",
+      "operationId": "listUserSubjects",
+      "route": "toggles/:slug"
+    },
+    {
       "provider": "qits-toggles-service",
       "state": "a toggle has an open removal ticket, asked by an admin",
       "operationId": "getToggle",
