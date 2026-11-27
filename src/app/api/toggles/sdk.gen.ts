@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetToggleBooleanData, GetToggleBooleanErrors, GetToggleBooleanResponses, GetToggleData, GetToggleErrors, GetToggleResponses, GetTogglesData, GetTogglesErrors, GetTogglesResponses, PutToggleRulesData, PutToggleRulesErrors, PutToggleRulesResponses } from './types.gen';
+import type { GetToggleBooleanData, GetToggleBooleanErrors, GetToggleBooleanResponses, GetToggleData, GetToggleErrors, GetToggleResponses, GetTogglesData, GetTogglesErrors, GetTogglesResponses, PutToggleRulesData, PutToggleRulesErrors, PutToggleRulesResponses, RunToggleRetirementData, RunToggleRetirementErrors, RunToggleRetirementResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,6 +17,15 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+/**
+ * File a removal ticket for every toggle no deployed consumer's pact has used for qits.toggles.retire-after (qits:system)
+ */
+export const runToggleRetirement = <ThrowOnError extends boolean = false>(options?: Options<RunToggleRetirementData, ThrowOnError>): RequestResult<RunToggleRetirementResponses, RunToggleRetirementErrors, ThrowOnError> => (options?.client ?? client).post<RunToggleRetirementResponses, RunToggleRetirementErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/toggles/api/retirement/runs',
+    ...options
+});
 
 /**
  * A declared toggle's answer, frozen for the call chain's origin trace

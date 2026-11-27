@@ -11,16 +11,24 @@ import type { Consumed } from '@qits/angular';
  * binds the same lists. To read another field, add it here.
  */
 
-/** `TOGGLE_LIST`: each declared toggle's slug, description and its rules in brief. */
+/**
+ * `TOGGLE_LIST`: each declared toggle's slug, description, its rules in brief, when a retirement
+ * run last saw a deployed pact evaluate it and its open removal ticket (qits-2726).
+ */
 export const LIST_TOGGLES = [
   '[].slug',
   '[].description',
   '[].declaredDefault',
   '[].rules[].kind',
   '[].rules[].value',
+  '[].lastUsedAt',
+  '[].removalTicket',
 ] as const;
 
-/** `TOGGLE_DETAIL`: one toggle, its ordered rules whole, and the version a save names. */
+/**
+ * `TOGGLE_DETAIL`: one toggle, its ordered rules whole, the version a save names, its last use by
+ * a deployed pact and its open removal ticket (qits-2726).
+ */
 export const GET_TOGGLE = [
   'slug',
   'description',
@@ -30,6 +38,8 @@ export const GET_TOGGLE = [
   'rules[].value',
   'rules[].userSubjects',
   'rules[].afterInstant',
+  'lastUsedAt',
+  'removalTicket',
 ] as const;
 
 /** `TOGGLE_RULES_SAVE`: the toggle as it is now, its version moved by one. */
