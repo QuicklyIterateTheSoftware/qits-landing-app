@@ -402952,6 +402952,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403013,6 +403021,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403067,6 +403083,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403116,6 +403140,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -403182,6 +403214,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403238,6 +403278,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -403305,6 +403353,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403367,6 +403423,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403422,6 +403486,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403472,6 +403544,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -403539,6 +403619,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403596,6 +403684,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -403661,6 +403757,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403721,6 +403825,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403774,6 +403886,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403822,6 +403942,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -403887,6 +404015,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -403942,6 +404078,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -404007,6 +404151,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404067,6 +404219,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404120,6 +404280,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404168,6 +404336,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -404233,6 +404409,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404293,7 +404477,451 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-desktop-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > shows the last use by a deployed pact and links the open removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-work-ref:opened",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-desktop-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > shows the last use by a deployed pact and links the open removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-work-ref:opened",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-phone-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > shows the last use by a deployed pact and links the open removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "open-work-ref:opened",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-phone-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > shows the last use by a deployed pact and links the open removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "open-work-ref:opened",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-tablet-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > shows the last use by a deployed pact and links the open removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-work-ref:opened",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-tablet-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > shows the last use by a deployed pact and links the open removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-work-ref:opened",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
           "derived": []
         },
         {
@@ -404348,6 +404976,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -404413,6 +405049,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404466,6 +405110,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404514,6 +405166,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -404579,6 +405239,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404634,6 +405302,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -404706,6 +405382,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404773,6 +405457,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404833,6 +405525,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -404888,6 +405588,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -404960,6 +405668,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -405022,6 +405738,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -405207,6 +405931,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -405269,6 +406001,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -405324,6 +406064,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -405374,6 +406122,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -405441,6 +406197,14 @@
         {
           "source": null,
           "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
           "field": "description",
           "derived": []
         },
@@ -405498,6 +406262,14 @@
           "field": null,
           "derived": [
             "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
           ]
         },
         {
@@ -405625,6 +406397,440 @@
       ]
     },
     {
+      "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-desktop-dark.html",
+      "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
+      "test": "TogglesPage (screenshots) > shows when a deployed pact last used a toggle, and links its removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggles"
+        }
+      ],
+      "triggers": [
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-toggle:toggle",
+        "open-work-ref:opened"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "rules"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "slug",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-desktop-light.html",
+      "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
+      "test": "TogglesPage (screenshots) > shows when a deployed pact last used a toggle, and links its removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggles"
+        }
+      ],
+      "triggers": [
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-toggle:toggle",
+        "open-work-ref:opened"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "rules"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "slug",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-phone-dark.html",
+      "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
+      "test": "TogglesPage (screenshots) > shows when a deployed pact last used a toggle, and links its removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggles"
+        }
+      ],
+      "triggers": [
+        "open-toggle:toggle"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "rules"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "slug",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-phone-light.html",
+      "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
+      "test": "TogglesPage (screenshots) > shows when a deployed pact last used a toggle, and links its removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggles"
+        }
+      ],
+      "triggers": [
+        "open-toggle:toggle"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "rules"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "slug",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-tablet-dark.html",
+      "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
+      "test": "TogglesPage (screenshots) > shows when a deployed pact last used a toggle, and links its removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggles"
+        }
+      ],
+      "triggers": [
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-toggle:toggle",
+        "open-work-ref:opened"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "rules"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "slug",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-tablet-light.html",
+      "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
+      "test": "TogglesPage (screenshots) > shows when a deployed pact last used a toggle, and links its removal ticket",
+      "name": "removal-ticket",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle has an open removal ticket, asked by an admin",
+          "operationId": "getToggles"
+        }
+      ],
+      "triggers": [
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "open-toggle:toggle",
+        "open-work-ref:opened"
+      ],
+      "dataMarks": [
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": null,
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "rules"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "removalTicket",
+          "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": "slug",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/toggles-desktop-dark.html",
       "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
       "test": "TogglesPage (screenshots) > lists the declared toggles with their rules in brief, and creates none",
@@ -405663,6 +406869,14 @@
           "item": "slug=toggles-smoke",
           "field": null,
           "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
         },
         {
           "source": "qits-toggles-service#getToggles",
@@ -405731,6 +406945,14 @@
           "item": "slug=toggles-smoke",
           "field": null,
           "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
             "rules"
           ]
         },
@@ -405786,6 +407008,14 @@
           "item": "slug=toggles-smoke",
           "field": null,
           "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
             "rules"
           ]
         },
@@ -405835,6 +407065,14 @@
           "item": "slug=toggles-smoke",
           "field": null,
           "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
         },
         {
           "source": "qits-toggles-service#getToggles",
@@ -405903,6 +407141,14 @@
           "item": "slug=toggles-smoke",
           "field": null,
           "derived": [
+            "lastUsedAt"
+          ]
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
             "rules"
           ]
         },
@@ -405959,6 +407205,14 @@
           "item": "slug=toggles-smoke",
           "field": null,
           "derived": []
+        },
+        {
+          "source": "qits-toggles-service#getToggles",
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "lastUsedAt"
+          ]
         },
         {
           "source": "qits-toggles-service#getToggles",
@@ -410563,6 +411817,12 @@
       "src/app/routes/toggles/toggles.page.browser.spec.ts/loading-phone-light.html",
       "src/app/routes/toggles/toggles.page.browser.spec.ts/loading-tablet-dark.html",
       "src/app/routes/toggles/toggles.page.browser.spec.ts/loading-tablet-light.html",
+      "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-desktop-dark.html",
+      "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-desktop-light.html",
+      "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-phone-dark.html",
+      "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-phone-light.html",
+      "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-tablet-dark.html",
+      "src/app/routes/toggles/toggles.page.browser.spec.ts/removal-ticket-tablet-light.html",
       "src/app/routes/toggles/toggles.page.browser.spec.ts/toggles-desktop-dark.html",
       "src/app/routes/toggles/toggles.page.browser.spec.ts/toggles-desktop-light.html",
       "src/app/routes/toggles/toggles.page.browser.spec.ts/toggles-phone-dark.html",
@@ -410601,6 +411861,12 @@
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/refused-phone-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/refused-tablet-dark.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/refused-tablet-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-desktop-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-desktop-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-phone-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-phone-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-tablet-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/removal-ticket-tablet-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/rules-desktop-dark.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/rules-desktop-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/rules-phone-dark.html",
