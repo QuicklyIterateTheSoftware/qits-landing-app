@@ -592,6 +592,173 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a toggle has an open removal ticket, asked by an admin",
+          "params": {
+            "authorization": "Bearer contract-qits-admin",
+            "slug": "toggles-smoke"
+          }
+        }
+      ],
+      "request": {
+        "generators": {
+          "path": {
+            "expression": "/toggles/api/toggles/${slug}",
+            "type": "ProviderState"
+          }
+        },
+        "matchingRules": {
+          "path": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "regex",
+                "regex": "^/toggles/api/toggles/toggles-smoke$"
+              }
+            ]
+          }
+        },
+        "method": "GET",
+        "path": "/toggles/api/toggles/toggles-smoke"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "declaredDefault": false,
+            "description": "Smoke toggle of qits-toggles itself: proves evaluation and, since no pact uses it, retirement live.",
+            "lastUsedAt": "2026-01-01T00:00:00Z",
+            "removalTicket": "qits-1",
+            "rules": [
+              {
+                "afterInstant": null,
+                "kind": "STATIC",
+                "userSubjects": null,
+                "value": false
+              }
+            ],
+            "slug": "toggles-smoke",
+            "version": 0
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$.declaredDefault": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.lastUsedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$.removalTicket": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.rules": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$.rules[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.rules[*].value": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.slug": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.version": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-toggles-service",
+            "operationId": "getToggle"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-toggle",
+            "kind": "ui",
+            "route": "toggles/:slug"
+          }
+        }
+      },
+      "description": "show-toggle: getToggle",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a toggle is declared, asked by an admin",
           "params": {
             "authorization": "Bearer contract-qits-admin",
@@ -625,6 +792,8 @@
           "content": {
             "declaredDefault": false,
             "description": "Smoke toggle of qits-toggles itself: proves evaluation and, since no pact uses it, retirement live.",
+            "lastUsedAt": null,
+            "removalTicket": null,
             "rules": [
               {
                 "afterInstant": null,
@@ -827,6 +996,157 @@
       "pending": false,
       "providerStates": [
         {
+          "name": "a toggle has an open removal ticket, asked by an admin",
+          "params": {
+            "authorization": "Bearer contract-qits-admin",
+            "slug": "toggles-smoke"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/toggles/api/toggles"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "declaredDefault": false,
+              "description": "Smoke toggle of qits-toggles itself: proves evaluation and, since no pact uses it, retirement live.",
+              "lastUsedAt": "2026-01-01T00:00:00Z",
+              "removalTicket": "qits-1",
+              "rules": [
+                {
+                  "kind": "STATIC",
+                  "value": false
+                }
+              ],
+              "slug": "toggles-smoke"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].declaredDefault": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].lastUsedAt": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:?\\d{2})$"
+                }
+              ]
+            },
+            "$[*].removalTicket": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].rules": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "max": 1,
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].rules[*].kind": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].rules[*].value": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].slug": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          },
+          "header": {
+            "Content-Type": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "regex",
+                  "regex": "application/json.*"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "references": {
+          "qits-call": {
+            "app": "qits-toggles-service",
+            "operationId": "getToggles"
+          },
+          "qits-trigger": {
+            "app": "qits-landing-app",
+            "interaction": "show-toggles",
+            "kind": "ui",
+            "route": "toggles"
+          }
+        }
+      },
+      "description": "show-toggles: getToggles",
+      "pending": false,
+      "providerStates": [
+        {
           "name": "a toggle is declared, asked by an admin",
           "params": {
             "authorization": "Bearer contract-qits-admin",
@@ -844,6 +1164,8 @@
             {
               "declaredDefault": false,
               "description": "Smoke toggle of qits-toggles itself: proves evaluation and, since no pact uses it, retirement live.",
+              "lastUsedAt": null,
+              "removalTicket": null,
               "rules": [
                 {
                   "kind": "STATIC",

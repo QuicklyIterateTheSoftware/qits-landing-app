@@ -1,6 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { page } from 'vitest/browser';
+import { workLink } from '$core/work/work-briefs';
 import { goldenMaster } from '../../../../testing/browser/golden-master';
 import {
   openRoute,
@@ -12,6 +13,7 @@ const ADMIN = 'a toggle is declared, asked by an admin';
 const MALFORMED = 'a toggle is declared, sent malformed rules by an admin';
 const STALE = "a toggle's rules changed since an admin read them";
 const UNDECLARED = 'a toggle slug is not declared';
+const RETIRING = 'a toggle has an open removal ticket, asked by an admin';
 const TOGGLES = 'qits-toggles';
 const SMOKE = '/toggles/api/toggles/toggles-smoke';
 const RULES = `${SMOKE}/rules`;
@@ -19,7 +21,9 @@ const RULES = `${SMOKE}/rules`;
 /**
  * Screenshots of one toggle's rule editor (qits-2704) inside the shell, with no project open. Its
  * read (`getToggle`) is answered with qits-toggles' "a toggle is declared, asked by an admin" (the
- * smoke toggle at version 0, its one STATIC rule); a save (`putToggleRules`) with the same state's
+ * smoke toggle at version 0, its one STATIC rule, never used by a deployed pact, no removal ticket),
+ * or with "a toggle has an open removal ticket, asked by an admin" (qits-2726: last used at the
+ * frozen instant, its removal ticket `qits-1` a link to the item); a save (`putToggleRules`) with the same state's
  * answer (version 1), or refused: 409 from "a toggle's rules changed since an admin read them", 400
  * from "a toggle is declared, sent malformed rules by an admin" (the rule at position 0), and 403 (no
  * body). An undeclared slug is "a toggle slug is not declared" (404).
@@ -28,7 +32,9 @@ describe('TogglePage (screenshots)', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideAppRoute()] });
+    // The app's own work link (`open-work-ref:opened`, `app.config.ts`' `provideWorkReferences()`),
+    // so the removal ticket links to the item's page.
+    TestBed.configureTestingModule({ providers: [provideAppRoute(), workLink] });
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -37,10 +43,10 @@ describe('TogglePage (screenshots)', () => {
     await page.viewport(800, 600);
   });
 
-  async function open(): Promise<OpenedRoute> {
+  async function open(state = ADMIN): Promise<OpenedRoute> {
     await page.viewport(1140, 900);
     const opened = await openRoute('/toggles/toggles-smoke');
-    http.expectOne(SMOKE).flush(await goldenMaster(ADMIN, 'getToggle', TOGGLES));
+    http.expectOne(SMOKE).flush(await goldenMaster(state, 'getToggle', TOGGLES));
     await opened.settled();
     return opened;
   }
@@ -66,6 +72,8 @@ describe('TogglePage (screenshots)', () => {
       .element(view.getByRole('heading', { name: 'toggles-smoke', exact: true }))
       .toBeVisible();
     await expect.element(view).toMatchTextContent('version 0');
+    await expect.element(view).toMatchTextContent('Last used: never by a deployed pact');
+    expect(view.getByRole('link', { name: 'qits-1' }).elements()).toHaveLength(0);
     const rules = view.getByRole('list', { name: 'Rules' });
     expect(rules.getByRole('listitem').elements()).toHaveLength(1);
     await expect.element(rules.getByRole('listitem', { name: 'Rule 1: Default' })).toBeVisible();
@@ -100,6 +108,18 @@ describe('TogglePage (screenshots)', () => {
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot('saved', { kind: 'DATA' });
+  });
+
+  it('shows the last use by a deployed pact and links the open removal ticket', async () => {
+    const opened = await open(RETIRING);
+    const view = page.elementLocator(opened.page);
+    await expect.element(view).toMatchTextContent('Last used: 1 Jan 2026 00:00:00Z');
+    await expect
+      .element(view.getByRole('link', { name: 'qits-1' }))
+      .toHaveAttribute('href', '/projects/qits/work/detail/qits-1');
+    await expect
+      .element(page.elementLocator(opened.frame))
+      .toMatchScreenshot('removal-ticket', { kind: 'DATA' });
   });
 
   it('says someone else changed the rules (409) and reloads them', async () => {
