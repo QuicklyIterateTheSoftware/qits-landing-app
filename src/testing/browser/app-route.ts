@@ -42,6 +42,7 @@ import { client as edgeClient } from '../../app/api/edge/client.gen';
 import { client as deploymentsClient } from '../../app/api/deployments/client.gen';
 import { client as eventsClient } from '../../app/api/events/client.gen';
 import { client as githostClient } from '../../app/api/githost/client.gen';
+import { client as idpClient } from '../../app/api/idp/client.gen';
 import { client as maintenanceClient } from '../../app/api/maintenance/client.gen';
 import { client as mirrorClient } from '../../app/api/mirror/client.gen';
 import { client as observabilityClient } from '../../app/api/observability/client.gen';
@@ -97,6 +98,7 @@ export function provideAppRoute(): (Provider | EnvironmentProviders)[] {
     provideHeyApiClient(orchestratorClient),
     provideHeyApiClient(mirrorClient),
     provideHeyApiClient(togglesClient),
+    provideHeyApiClient(idpClient),
     provideHeyApiClient(edgeClient),
     // The idp's page origin, so the IdP admin section's frames (qits-2481) have an address, as
     // they do deployed; the old artifacts explorer's, so the store

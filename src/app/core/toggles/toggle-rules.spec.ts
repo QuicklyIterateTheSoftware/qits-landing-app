@@ -1,12 +1,14 @@
 import {
   draftsOf,
   movedRule,
+  namedSubjects,
   newRule,
   ruleInBrief,
   sentRules,
   subjectsOf,
   withoutRule,
   withRule,
+  withSubject,
 } from './toggle-rules';
 
 describe('toggle rules', () => {
@@ -54,5 +56,21 @@ describe('toggle rules', () => {
     expect(movedRule(drafts, 0, 1).map((draft) => draft.kind)).toEqual(['TIME', 'USER', 'STATIC']);
     expect(movedRule(drafts, 1, 1)).toEqual(drafts);
     expect(movedRule(drafts, 2, -1)).toEqual(drafts);
+  });
+
+  it('adds a picked subject once, after the typed ones (qits-2725)', () => {
+    const draft = { ...newRule('USER'), subjects: 'tok-agent-x, alice-id' };
+    expect(withSubject(draft, 'bob-id').subjects).toBe('tok-agent-x\nalice-id\nbob-id');
+    expect(withSubject(draft, 'alice-id')).toBe(draft);
+    expect(withSubject(draft, ' ')).toBe(draft);
+    expect(withSubject(newRule('USER'), 'bob-id').subjects).toBe('bob-id');
+  });
+
+  it('names each subject that is a person, and leaves the rest as ids', () => {
+    const draft = { ...newRule('USER'), subjects: 'alice-id\ntok-agent-x' };
+    expect(namedSubjects(draft, new Map([['alice-id', 'alice']]))).toEqual([
+      { subject: 'alice-id', username: 'alice' },
+      { subject: 'tok-agent-x', username: undefined },
+    ]);
   });
 });

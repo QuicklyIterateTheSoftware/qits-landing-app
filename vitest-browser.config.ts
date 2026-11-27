@@ -75,7 +75,9 @@ const READERS = {
   // this app, and qits-idp records no authorization code issued to this app's client (`qits-spa`,
   // redirecting to `<origin>/auth/callback`), so a pact interaction could not match the request.
   // The callback page's browser spec answers the swap with the CLI's recorded token answer, whose
-  // shape is the same for every public client.
+  // shape is the same for every public client. The Toggles rule editor's people (`listUserSubjects`,
+  // qits-2725) are read through it too; that operation's states are the ones
+  // `core/idp/user-subjects.operations.pact.spec.ts` pacts, once the pin records them.
   'qits-idp': idpGoldenMasters,
 };
 

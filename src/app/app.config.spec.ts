@@ -14,6 +14,7 @@ import { client as artifactsClient } from './api/artifacts/client.gen';
 import { client as ciClient } from './api/ci/client.gen';
 import { client as eventsClient } from './api/events/client.gen';
 import { client as githostClient } from './api/githost/client.gen';
+import { client as idpClient } from './api/idp/client.gen';
 import { client as maintenanceClient } from './api/maintenance/client.gen';
 import { client as mirrorClient } from './api/mirror/client.gen';
 import { client as projectsClient } from './api/projects/client.gen';
@@ -48,6 +49,7 @@ describe('appConfig', () => {
       ciClient,
       eventsClient,
       githostClient,
+      idpClient,
       maintenanceClient,
       mirrorClient,
       projectsClient,

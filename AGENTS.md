@@ -391,7 +391,16 @@ theirs. The door and the idp are the same site, so the frame opens signed in. Wi
 (the server render) there is no frame. Toggles (`open-sidebar-toggles`, `exit('toggles')`, qits-2704) comes
 last, after IdP admin: qits-toggles' declared feature toggles (`routes/toggles/`), the list at
 `/toggles` and each toggle's ordered rule editor at `/toggles/:slug`; it has no pages below it and
-no create control, since a toggle exists only by its declaration in qits-toggles-service's code. `kind: 'external'` leaves the app at `href` through an
+no create control, since a toggle exists only by its declaration in qits-toggles-service's code. A USER
+rule picks people by username (qits-2725): the editor reads qits-idp's `listUserSubjects`
+(`core/idp/user-subjects.operations.ts`, `USER_SUBJECTS`, qits:admin or the delivery desk) beside
+the toggle, and "Add a person" appends that person's subject. Each subject that is an account is
+named under the rule; any other (an agent's `tok-…`, a service client) stays its id, and typing
+stays the fallback. A refused (403) or failed listing hides the picker and says to type the ids.
+The idp pact (`user-subjects.operations.pact.spec.ts`) skips itself until the pinned
+`@qits/idp-golden-masters` records both states, and `contracts.pacts` names qits-idp-service only
+once that pin has written `pacts/qits-landing-app_qits-idp-service.json`, because a declared
+provider with no pact file is a publish the release refuses. `kind: 'external'` leaves the app at `href` through an
 `external(...)` outcome; no global section uses it today. With a project open the list is empty.
 The trail in the top bar names the sidebar's layers, not the route taken (qits-2570, which
 replaced qits-2386's per-route trail): one crumb per layer of left navigation, each naming what owns
@@ -1679,6 +1688,7 @@ file in a folder of that provider's, and published as a jar the provider verifie
 | qits-orchestrator-service  | `core/orchestrator/processes.operations*.ts`                                                                                       | `pacts/qits-landing-app_qits-orchestrator-service.json`  | `@qits/orchestrator-golden-masters`     |
 | qits-mirror-service        | `core/mirror/{upstreams,repositories,repository-packages}.operations*.ts`                                                          | `pacts/qits-landing-app_qits-mirror-service.json`        | `@qits/mirror-golden-masters`           |
 | qits-toggles-service       | `core/toggles/toggles.operations*.ts`                                                                                              | `pacts/qits-landing-app_qits-toggles-service.json`       | `@qits/toggles-golden-masters`          |
+| qits-idp-service           | `core/idp/user-subjects.operations*.ts`                                                                                            | `pacts/qits-landing-app_qits-idp-service.json`           | `@qits/idp-golden-masters`              |
 
 The githost pact has one interaction per kind of list a card meets, each from its own provider
 state: a repository counted (the card's language table), one counted at an older commit (`STALE`,
