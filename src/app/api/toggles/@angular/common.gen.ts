@@ -4,7 +4,17 @@ import { type HttpRequest, httpResource } from '@angular/common/http';
 
 import { client } from '../client.gen';
 import type { Options } from '../sdk.gen';
-import type { GetToggleBooleanData, GetToggleBooleanResponse, GetToggleData, GetToggleResponse, GetTogglesData, GetTogglesResponse, PutToggleRulesData, PutToggleRulesResponse } from '../types.gen';
+import type { GetToggleBooleanData, GetToggleBooleanResponse, GetToggleData, GetToggleResponse, GetTogglesData, GetTogglesResponse, PutToggleRulesData, PutToggleRulesResponse, RunToggleRetirementData, RunToggleRetirementResponse } from '../types.gen';
+
+/**
+ * File a removal ticket for every toggle no deployed consumer's pact has used for qits.toggles.retire-after (qits:system)
+ */
+export const runToggleRetirementRequest = <ThrowOnError extends boolean = false>(options?: Options<RunToggleRetirementData, ThrowOnError>): HttpRequest<RunToggleRetirementResponse> => (options?.client ?? client).requestOptions<RunToggleRetirementResponse, ThrowOnError>({
+    responseStyle: 'data',
+    method: 'POST',
+    url: '/toggles/api/retirement/runs',
+    ...options
+});
 
 /**
  * A declared toggle's answer, frozen for the call chain's origin trace
@@ -44,6 +54,14 @@ export const putToggleRulesRequest = <ThrowOnError extends boolean = false>(opti
     method: 'PUT',
     url: '/toggles/api/toggles/{slug}/rules',
     ...options
+});
+
+/**
+ * File a removal ticket for every toggle no deployed consumer's pact has used for qits.toggles.retire-after (qits:system)
+ */
+export const runToggleRetirementResource = <ThrowOnError extends boolean = false>(options?: () => Options<RunToggleRetirementData, ThrowOnError> | undefined) => httpResource<RunToggleRetirementResponse>(() => {
+    const opts = options ? options() : undefined;
+    return opts ? runToggleRetirementRequest(opts) : undefined;
 });
 
 /**

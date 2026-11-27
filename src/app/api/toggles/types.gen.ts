@@ -4,11 +4,43 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type Dropped = {
+    slug?: string;
+    ticket?: string;
+};
+
+export type Failed = {
+    slug?: string;
+    error?: string;
+};
+
+export type Filed = {
+    slug?: string;
+    ticket?: string;
+    unusedSince?: Instant;
+};
+
 export type Instant = string;
+
+export type Kept = {
+    slug?: string;
+    reason?: string;
+    ticket?: string;
+};
 
 export type Problem = {
     error?: string;
     position?: number;
+};
+
+export type RetirementReport = {
+    dryRun?: boolean;
+    at?: Instant;
+    used?: Array<string>;
+    filed?: Array<Filed>;
+    kept?: Array<Kept>;
+    dropped?: Array<Dropped>;
+    failed?: Array<Failed>;
 };
 
 export type RuleView = {
@@ -31,7 +63,44 @@ export type ToggleView = {
     firstDeclaredAt?: Instant;
     version?: number;
     rules?: Array<RuleView>;
+    lastUsedAt?: Instant;
+    removalTicket?: string;
 };
+
+export type RunToggleRetirementData = {
+    body?: never;
+    path?: never;
+    query?: {
+        dryRun?: boolean;
+    };
+    url: '/toggles/api/retirement/runs';
+};
+
+export type RunToggleRetirementErrors = {
+    /**
+     * Not Authorized
+     */
+    401: unknown;
+    /**
+     * Not qits:system
+     */
+    403: unknown;
+    /**
+     * qits-maintenance did not answer the deployed pacts: nothing was filed
+     */
+    502: Problem;
+};
+
+export type RunToggleRetirementError = RunToggleRetirementErrors[keyof RunToggleRetirementErrors];
+
+export type RunToggleRetirementResponses = {
+    /**
+     * What the run filed, kept and dropped; on a dry run, what it would
+     */
+    200: RetirementReport;
+};
+
+export type RunToggleRetirementResponse = RunToggleRetirementResponses[keyof RunToggleRetirementResponses];
 
 export type GetToggleBooleanData = {
     body?: never;
