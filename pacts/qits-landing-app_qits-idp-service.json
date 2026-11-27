@@ -82,7 +82,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-toggle",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "toggles/:slug"
           }
         }
       },
