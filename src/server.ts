@@ -9,6 +9,7 @@ import { basename, join } from 'node:path';
 import { idpClient, IdpTokens, NO_AUTH, type AuthHeaders } from './server/idp-token';
 import { telemetryTarget, type TelemetryTarget } from './server/otel-config';
 import { missingAssets } from './server/missing-assets';
+import { noSourceMaps } from './server/no-source-maps';
 import { otelRoutes } from './server/otel-routes';
 import { activeTraceparent, serverSpans, startTelemetry } from './server/otel-sdk';
 import { withTraceparentMeta } from './server/trace-meta';
@@ -65,6 +66,9 @@ const UNHASHED = new Set([
   'index.csr.html',
   'swagger-ui.css',
 ]);
+
+/** No source map is ever served, even one that reached `browser/` (qits-2767). */
+app.use(noSourceMaps());
 
 /**
  * Serve static files from /browser. The hashed build files are cached for a year.

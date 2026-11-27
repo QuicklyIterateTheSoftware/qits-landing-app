@@ -76,6 +76,45 @@ RUN --mount=type=secret,id=qits-npm-token \
         "${proxy_url#*:}" "$token" >> ~/.npmrc; ) ; \
     npm ci --no-audit --no-fund && npm run build
 
+# THE SOURCE MAPS LEAVE THE BUNDLE HERE (qits-2767). The production build writes HIDDEN maps
+# (angular.json `sourceMap.hidden`): no script names one, so a browser never asks, and the map sits
+# beside its script as `<file>.js.map`. They are moved, flat, into `/src/sourcemaps/` for the
+# `sourcemaps` stage below and so the runtime stage's COPY of `dist/` carries none: a map left in
+# `browser/` is a map `express.static` would hand out. The server bundle's maps are deleted — nothing
+# publishes them (the node server's logs feed no issue).
+#
+# FLAT IS THE CONTRACT. qits-observability looks a map up by the frame URL's basename plus `.map`,
+# so two maps with one basename would make one of them unreachable; that fails the build here rather
+# than publishing a site where one of them silently lost. An empty move fails too: the release
+# declares `@sourcemaps/qits-landing`, and the app recipe would fail on an empty export anyway, but
+# a workstation `docker build` should say so at the same line.
+RUN set -eu; \
+    out=dist/qits-landing-app; \
+    mkdir -p /src/sourcemaps; \
+    find "$out/browser" -type f -name '*.map' > /tmp/maps; \
+    [ -s /tmp/maps ] || { echo "the production build wrote no source map under $out/browser" >&2; exit 1; }; \
+    dupes=$(sed 's#.*/##' /tmp/maps | sort | uniq -d); \
+    [ -z "$dupes" ] || { echo "two source maps share a basename: $dupes" >&2; exit 1; }; \
+    while read -r map; do mv "$map" /src/sourcemaps/; done < /tmp/maps; \
+    find "$out" -type f -name '*.map' -delete; \
+    if find "$out/browser" -type f -name '*.js' -exec grep -l '^//# sourceMappingURL=' {} + | grep -q .; then \
+      echo "a browser script names its source map; the maps must be hidden" >&2; exit 1; \
+    fi
+
+# ---------------------------------------------------------------------------------------------
+# SOURCEMAPS STAGE (qits-2767)
+#
+# The browser bundle's hidden maps, flat at the stage's root, and nothing else. The `app` recipe
+# exports exactly this target after the image push (`buildctl --opt target=sourcemaps --output
+# type=local,dest=.qits-sourcemaps`) and the release publishes the directory as the docs site
+# `@sourcemaps/qits-landing` at its version, read by qits-observability with a bearer. BuildKit
+# reuses the build stage solved for the image, so these are the pushed bundle's maps.
+#
+# It sits BEFORE the runtime stage on purpose: an untargeted build — the image push, a workstation
+# `docker build` — builds the LAST stage, which must stay runtime.
+FROM scratch AS sourcemaps
+COPY --from=build /src/sourcemaps/ /
+
 # ---------------------------------------------------------------------------------------------
 # RUNTIME STAGE
 #
@@ -114,6 +153,8 @@ RUN apk add --no-cache curl
 # already, so there is nothing to create — and the bundle is read-only to it, which is right: this
 # process writes nothing.
 WORKDIR /app
+# No `.map` arrives with it: the build stage moved the browser maps to /src/sourcemaps/ and deleted
+# the server's (qits-2767).
 COPY --from=build --chown=root:root /src/dist/qits-landing-app ./
 
 ENV NODE_ENV=production

@@ -42,8 +42,14 @@
 # checked as screenshot-baselines, so the tree at the tag is the verified one.
 archetype: app
 
+# THE SOURCE MAPS (qits-2767, qits-2689): `@sourcemaps/qits-landing` makes the `app` recipe export
+# the Dockerfile's `sourcemaps` stage after the image push and publish it as that docs site at the
+# release version, every release, never `--if-changed`: qits-observability looks a browser error's
+# map up by the `service.version` it reports. No `path:` — the directory is the platform's. Same
+# one-line flow form as the docker line, for the same reason: the recipe reads it with a `sed -n`.
 artifacts:
   - { type: docker, name: qits/qits-landing, sbom: .sbom/sbom.json }
+  - { type: docs, name: "@sourcemaps/qits-landing" }
 
 contracts:
   application: qits-landing
