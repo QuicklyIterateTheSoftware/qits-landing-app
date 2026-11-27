@@ -3874,5 +3874,27 @@
       "operationId": "getTerminal",
       "route": "system/terminals/:id"
     }
+  ],
+  "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts": [
+    {
+      "provider": "qits-toggles-service",
+      "state": "a toggle is declared, asked by an admin",
+      "operationId": "getToggle",
+      "route": "toggles/:slug"
+    },
+    {
+      "provider": "qits-toggles-service",
+      "state": "a toggle is declared, asked by an admin",
+      "operationId": "putToggleRules",
+      "route": "toggles/:slug"
+    }
+  ],
+  "src/app/routes/toggles/toggles.page.browser.spec.ts": [
+    {
+      "provider": "qits-toggles-service",
+      "state": "a toggle is declared, asked by an admin",
+      "operationId": "getToggles",
+      "route": "toggles"
+    }
   ]
 }
