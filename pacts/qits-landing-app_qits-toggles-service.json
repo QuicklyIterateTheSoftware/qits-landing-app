@@ -13,7 +13,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "save-toggle-rules",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "toggles/:slug"
           }
         }
       },
@@ -582,7 +583,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-toggle",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "toggles/:slug"
           }
         }
       },
@@ -816,7 +818,8 @@
           "qits-trigger": {
             "app": "qits-landing-app",
             "interaction": "show-toggles",
-            "kind": "ui"
+            "kind": "ui",
+            "route": "toggles"
           }
         }
       },
