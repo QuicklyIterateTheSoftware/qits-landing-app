@@ -405157,6 +405157,364 @@
       ]
     },
     {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+      "name": "user-picker-refused",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+      "name": "user-picker-refused",
+      "kind": "DATA",
+      "viewport": "DESKTOP",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-phone-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+      "name": "user-picker-refused",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-phone-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+      "name": "user-picker-refused",
+      "kind": "DATA",
+      "viewport": "PHONE",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-dark.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+      "name": "user-picker-refused",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "DARK",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
+      "file": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-light.html",
+      "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+      "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+      "name": "user-picker-refused",
+      "kind": "DATA",
+      "viewport": "TABLET",
+      "colorScheme": "LIGHT",
+      "colorSchemeReason": null,
+      "route": "toggles/:slug",
+      "records": [
+        {
+          "provider": "qits-toggles-service",
+          "state": "a toggle is declared, asked by an admin",
+          "operationId": "getToggle"
+        }
+      ],
+      "triggers": [
+        "back-to-toggles:list",
+        "edit-toggle-rules:added",
+        "edit-toggle-rules:changed",
+        "edit-toggle-rules:moved",
+        "edit-toggle-rules:removed",
+        "open-sidebar-idp:open",
+        "open-sidebar-mirror:open",
+        "open-sidebar-network-access:networkAccess",
+        "open-sidebar-orchestrator:open",
+        "open-sidebar-projects:open",
+        "open-sidebar-system:open",
+        "open-sidebar-toggles:open",
+        "save-toggle-rules:refused",
+        "save-toggle-rules:saved"
+      ],
+      "dataMarks": [
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": null,
+          "derived": [
+            "declaredDefault"
+          ]
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "description",
+          "derived": []
+        },
+        {
+          "source": null,
+          "item": "slug=toggles-smoke",
+          "field": "version",
+          "derived": []
+        }
+      ]
+    },
+    {
       "file": "src/app/routes/toggles/toggles.page.browser.spec.ts/loading-desktop-dark.html",
       "spec": "src/app/routes/toggles/toggles.page.browser.spec.ts",
       "test": "TogglesPage (screenshots) > marks the page as loading, then says the toggles cannot be read, with Retry",
@@ -410260,7 +410618,13 @@
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-phone-dark.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-phone-light.html",
       "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-tablet-dark.html",
-      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-tablet-light.html"
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/undeclared-tablet-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-phone-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-phone-light.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-dark.html",
+      "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-tablet-light.html"
     ]
   },
   "outcomes": {
@@ -416794,6 +417158,15 @@
         "outcome": "refused",
         "kind": "stay",
         "freeze": null
+      },
+      {
+        "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",
+        "test": "TogglePage (screenshots) > offers typing alone when the people cannot be listed (403)",
+        "route": "toggles/:slug",
+        "interaction": "edit-toggle-rules",
+        "outcome": "added",
+        "kind": "stay",
+        "freeze": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts/user-picker-refused-desktop-light.html"
       },
       {
         "spec": "src/app/routes/toggles/[slug]/toggle.page.browser.spec.ts",

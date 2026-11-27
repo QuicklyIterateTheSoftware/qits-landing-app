@@ -120,9 +120,10 @@ export const mirrorGoldenMasters = goldenMasters('@qits/mirror-golden-masters', 
 export const togglesGoldenMasters = goldenMasters('@qits/toggles-golden-masters', 'qits-toggles');
 
 /**
- * qits-idp's golden masters (qits-2044), from its npm package. Only the browser spec of the sign-in
- * callback reads them: the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this
- * app, so no pact spec of this app calls the idp (see `vitest-browser.config.ts`).
+ * qits-idp's golden masters (qits-2044), from its npm package. The browser spec of the sign-in
+ * callback reads them (the token swap there is `@qits/angular`'s `QitsTokens`, not a store of this
+ * app), and since qits-2725 the Toggles rule editor's `listUserSubjects` pact
+ * (`core/idp/user-subjects.operations.pact.spec.ts`), which skips itself until the pin records it.
  */
 export const idpGoldenMasters = goldenMasters('@qits/idp-golden-masters', 'qits-idp');
 

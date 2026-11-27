@@ -108,7 +108,17 @@ contracts:
         moveDatabase: "qits deployments database move; qits-landing-app has no page for it yet"
         previewSettings: "qits deployments settings preview; qits-landing-app has no page for it yet"
         putSetting: "qits deployments settings set; qits-landing-app has no page for it yet"
-      qits-idp-service: "qits-landing-app calls no qits-idp-service door; CLI commands: qits git-credential, qits git-login, qits login, qits remembered-devices list, qits remembered-devices revoke, qits service-clients list, …"
+      qits-idp-service:
+        deleteUser: "qits users delete; qits-landing-app has no page for it yet: the idp frontend's own Users page deletes"
+        getJwks: "the qits-platform-access-mcp-service oidc tenant at startup; qits-landing-app verifies no token itself"
+        getOpenIdConfiguration: "the qits-platform-access-mcp-service oidc tenant at startup; qits-landing-app verifies no token itself"
+        issueToken: "qits login, qits git-login, qits git-credential, qits session-daemon; qits-landing-app signs in through @qits/angular's QitsTokens, which no pact of this app records"
+        listRememberedDevices: "qits remembered-devices list; qits-landing-app has no page for it yet: the idp frontend's own page lists them"
+        listServiceClients: "qits service-clients list; qits-landing-app has no page for it yet: the idp frontend's Clients page, framed by landing, reads it"
+        listUsers: "qits users list; qits-landing-app has no page for it yet: the idp frontend's own Users page lists them"
+        mintRegisterToken: "qits users invite; qits-landing-app has no page for it yet: the idp frontend's own page invites"
+        register: "qits users register; qits-landing-app has no page for it yet: the idp's own registration page registers"
+        revokeRememberedDevice: "qits remembered-devices revoke; qits-landing-app has no page for it yet: the idp frontend's own page revokes"
       qits-maintenance-service:
         listDeployedPacts: "qits artifacts fetch deployed-pacts; qits-landing-app has no page for it yet"
         listReleaseRequestAutomations: "qits maintenance automations; qits-landing-app has no page for it yet"
