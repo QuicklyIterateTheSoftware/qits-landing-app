@@ -67,7 +67,7 @@
     "@qits/orchestrator-golden-masters": "2026.1126.220230",
     "@qits/projects-golden-masters": "2026.1127.50902",
     "@qits/system-golden-masters": "2026.1126.221822",
-    "@qits/toggles-golden-masters": "2026.1126.194317",
+    "@qits/toggles-golden-masters": "2026.1126.203614",
     "@qits/workspace-daemon-golden-masters": "2026.1111.190934",
     "@qits/workspaces-golden-masters": "2026.1126.230805",
     "@tailwindcss/postcss": "^4.3.3",
