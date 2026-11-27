@@ -17,6 +17,9 @@
  * state, through `settled()`), and the lightning menu its runner slots and the active runs, which
  * no frame read answers; those are refused (403, an error answer is only a status, so no
  * recording and nothing in the route ledger): the slot line stays hidden and no run chip shows.
+ * An open panel never shows a failed read: a "Failed to load" image in it fails the shot
+ * (qits-2719), as a frame read left in error is a gap in the spec's answers, not the page's data. A
+ * menu's own error state is its pattern spec's.
  *
  * Menus are mutually exclusive (a click outside one closes it), so each gets its own shot, named
  * `<name>-menu-<button label>`. Only DESKTOP: a dropdown is the same panel at every width but a
@@ -92,6 +95,10 @@ export async function shootShellMenus(
     await opened.settled();
     expect(button.getAttribute('aria-expanded'), `the ${label} menu is open`).toBe('true');
     expect(panel.classList.contains('hidden')).toBe(false);
+    expect(
+      page.elementLocator(panel).getByRole('img', { name: 'Failed to load' }).elements(),
+      `the ${label} menu shows its data, not a failed read`,
+    ).toHaveLength(0);
     await expect
       .element(page.elementLocator(opened.frame))
       .toMatchScreenshot(`${name}-menu-${slug(label)}`, {
