@@ -152,6 +152,13 @@ contracts:
         startWorkRefinement: "qits work refinement open; qits-landing-app has no page for it yet"
         transitionWork: "qits work transition; qits-landing-app has no page for it yet"
         updateRefinementDesign: "qits work design put; qits-landing-app has no page for it yet"
+      # TEMPORARY, epic qits-2542 / qits-2732: the CLI's toggles pact and landing's can only
+      # release after each other, because parity reads open folds only at pact paths the
+      # release already declares. This releases alone first; dropped once both sides release.
+      qits-toggles-service:
+        getToggle: "TEMPORARY (epic qits-2542, qits-2732): breaks the contracts.mirror parity deadlock with the qits toggles CLI; the landing Toggles section makes it in epic/qits-2542, and this goes once both sides release"
+        getToggles: "TEMPORARY (epic qits-2542, qits-2732): breaks the contracts.mirror parity deadlock with the qits toggles CLI; the landing Toggles section makes it in epic/qits-2542, and this goes once both sides release"
+        putToggleRules: "TEMPORARY (epic qits-2542, qits-2732): breaks the contracts.mirror parity deadlock with the qits toggles CLI; the landing Toggles section makes it in epic/qits-2542, and this goes once both sides release"
       qits-workspaces-service:
         cancelAgentWait: "qits wait cancel; qits-landing-app has no page for it yet"
         cancelProjectAgentWait: "qits wait cancel, as a project's long-running agent (qits-2520); qits-landing-app has no page for it yet"
