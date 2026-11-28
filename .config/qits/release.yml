@@ -94,6 +94,7 @@ contracts:
         putNpmDistTag: "qits artifacts publish contract; qits-landing-app has no page for it yet"
         putNpmPackage: "qits artifacts publish contract; qits-landing-app has no page for it yet"
         putSbom: "qits artifacts publish sbom submit; qits-landing-app has no page for it yet"
+      qits-certificates-service: "qits-landing-app calls no qits-certificates-service door; CLI commands: qits certificate issue, qits certificate keep (a workload's own certificate, written to files in its container)"
       qits-ci-service:
         getRunBaseline: "qits ci report submit; qits-landing-app has no page for it yet"
         listRunBaselineReports: "qits ci report submit; qits-landing-app has no page for it yet"
